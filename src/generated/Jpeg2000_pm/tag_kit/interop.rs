@@ -46,36 +46,6 @@ static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
 
 static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("-1".to_string(), "10 m");
-    map.insert("-2".to_string(), "100 m");
-    map.insert("-3".to_string(), "km");
-    map.insert("0".to_string(), "m");
-    map.insert("1".to_string(), "10 cm");
-    map.insert("2".to_string(), "cm");
-    map.insert("3".to_string(), "mm");
-    map.insert("4".to_string(), "0.1 mm");
-    map.insert("5".to_string(), "0.01 mm");
-    map.insert("6".to_string(), "um");
-    map
-});
-
-static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("-1".to_string(), "10 m");
-    map.insert("-2".to_string(), "100 m");
-    map.insert("-3".to_string(), "km");
-    map.insert("0".to_string(), "m");
-    map.insert("1".to_string(), "10 cm");
-    map.insert("2".to_string(), "cm");
-    map.insert("3".to_string(), "mm");
-    map.insert("4".to_string(), "0.1 mm");
-    map.insert("5".to_string(), "0.01 mm");
-    map.insert("6".to_string(), "um");
-    map
-});
-
-static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
     map.insert("0".to_string(), "Not Specified");
     map.insert("1".to_string(), "Accurate");
     map.insert("2".to_string(), "Exceptional Quality");
@@ -84,7 +54,7 @@ static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Bi-level");
     map.insert("1".to_string(), "YCbCr(1)");
@@ -108,64 +78,39 @@ static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
+static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("-1".to_string(), "10 m");
+    map.insert("-2".to_string(), "100 m");
+    map.insert("-3".to_string(), "km");
+    map.insert("0".to_string(), "m");
+    map.insert("1".to_string(), "10 cm");
+    map.insert("2".to_string(), "cm");
+    map.insert("3".to_string(), "mm");
+    map.insert("4".to_string(), "0.1 mm");
+    map.insert("5".to_string(), "0.01 mm");
+    map.insert("6".to_string(), "um");
+    map
+});
+
+static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("-1".to_string(), "10 m");
+    map.insert("-2".to_string(), "100 m");
+    map.insert("-3".to_string(), "km");
+    map.insert("0".to_string(), "m");
+    map.insert("1".to_string(), "10 cm");
+    map.insert("2".to_string(), "cm");
+    map.insert("3".to_string(), "mm");
+    map.insert("4".to_string(), "0.1 mm");
+    map.insert("5".to_string(), "0.01 mm");
+    map.insert("6".to_string(), "um");
+    map
+});
+
 /// Get tag definitions for interop category
 pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
     vec![
-        (10, TagKitDef {
-            id: 10,
-            name: "BitsPerComponent",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("\n            $val == 0xff and return 'Variable';\n            my $sign = ($val & 0x80) ? 'Signed' : 'Unsigned';\n            return (($val & 0x7f) + 1) . \" Bits, $sign\";\n        "),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (4, TagKitDef {
-            id: 4,
-            name: "ImageWidth",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (8, TagKitDef {
-            id: 8,
-            name: "NumberOfComponents",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (1, TagKitDef {
-            id: 1,
-            name: "MinorVersion",
-            format: "undef[4]",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: Some("sprintf(\"%x.%x.%x\", unpack(\"nCC\", $val))"),
-            subdirectory: None,
-        }),
-        (2, TagKitDef {
-            id: 2,
-            name: "CompatibleBrands",
-            format: "undef[$size-8]",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: Some("my @a=($val=~/.{4}/sg); @a=grep(!/\\0/,@a); \\@a"),
-            subdirectory: None,
-        }),
         (4, TagKitDef {
             id: 4,
             name: "CaptureXResolution",
@@ -199,39 +144,6 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             value_conv: None,
             subdirectory: None,
         }),
-        (4, TagKitDef {
-            id: 4,
-            name: "DisplayXResolution",
-            format: "rational32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (8, TagKitDef {
-            id: 8,
-            name: "DisplayYResolutionUnit",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_2),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (9, TagKitDef {
-            id: 9,
-            name: "DisplayXResolutionUnit",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_3),
-            value_conv: None,
-            subdirectory: None,
-        }),
         (1, TagKitDef {
             id: 1,
             name: "ColorSpecPrecedence",
@@ -250,7 +162,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: Some("default for writing is 0"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_4),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_2),
             value_conv: None,
             subdirectory: None,
         }),
@@ -272,7 +184,7 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_5),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_3),
             value_conv: None,
             subdirectory: None,
         }),
@@ -280,6 +192,94 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
             id: 3,
             name: "ColorSpecData",
             format: "undef[$size-3]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4, TagKitDef {
+            id: 4,
+            name: "DisplayXResolution",
+            format: "rational32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (8, TagKitDef {
+            id: 8,
+            name: "DisplayYResolutionUnit",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_4),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (9, TagKitDef {
+            id: 9,
+            name: "DisplayXResolutionUnit",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_5),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1, TagKitDef {
+            id: 1,
+            name: "MinorVersion",
+            format: "undef[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("sprintf(\"%x.%x.%x\", unpack(\"nCC\", $val))"),
+            subdirectory: None,
+        }),
+        (2, TagKitDef {
+            id: 2,
+            name: "CompatibleBrands",
+            format: "undef[$size-8]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("my @a=($val=~/.{4}/sg); @a=grep(!/\\0/,@a); \\@a"),
+            subdirectory: None,
+        }),
+        (10, TagKitDef {
+            id: 10,
+            name: "BitsPerComponent",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\n            $val == 0xff and return 'Variable';\n            my $sign = ($val & 0x80) ? 'Signed' : 'Unsigned';\n            return (($val & 0x7f) + 1) . \" Bits, $sign\";\n        "),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4, TagKitDef {
+            id: 4,
+            name: "ImageWidth",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (8, TagKitDef {
+            id: 8,
+            name: "NumberOfComponents",
+            format: "int16u",
             groups: HashMap::new(),
             writable: false,
             notes: None,

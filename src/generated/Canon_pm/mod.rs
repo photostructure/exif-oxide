@@ -14,6 +14,7 @@ pub mod offon;
 pub mod picturestyles;
 pub mod previewimageinfo_binary_data;
 pub mod processing_binary_data;
+pub mod shotinfo_binary_data;
 pub mod tag_kit;
 pub mod userdefstyles;
 
@@ -29,5 +30,6 @@ pub use offon::*;
 pub use picturestyles::*;
 pub use previewimageinfo_binary_data::*;
 pub use processing_binary_data::*;
+pub use shotinfo_binary_data::*;
 pub use tag_kit::*;
 pub use userdefstyles::*;

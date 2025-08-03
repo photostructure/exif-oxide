@@ -14,7 +14,7 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_18: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Self-timer 10 s");
@@ -22,7 +22,7 @@ static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_8: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_19: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Self-timer 10 s");
@@ -30,7 +30,7 @@ static PRINT_CONV_8: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_9: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_20: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Self-timer 10 s");
@@ -38,7 +38,7 @@ static PRINT_CONV_9: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_10: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_21: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Self-timer 10 s");
@@ -46,7 +46,7 @@ static PRINT_CONV_10: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_11: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_22: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Self-timer 10 s");
@@ -54,7 +54,7 @@ static PRINT_CONV_11: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_12: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_23: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Self-timer 10 s");
@@ -62,7 +62,7 @@ static PRINT_CONV_12: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_13: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_24: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Self-timer 10 s");
@@ -70,7 +70,7 @@ static PRINT_CONV_13: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_25: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Self-timer 5 or 10 s");
@@ -78,7 +78,7 @@ static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_15: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_26: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "Self-timer 5 or 10 s");
@@ -144,6 +144,39 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             value_conv: Some("sony_exposure_time_value_conv"),
             subdirectory: None,
         }),
+        (102, TagKitDef {
+            id: 102,
+            name: "ExposureTime",
+            format: "int16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("Image::ExifTool::Exif::PrintExposureTime($val)"),
+            value_conv: Some("2 ** (-$val / 100)"),
+            subdirectory: None,
+        }),
+        (76, TagKitDef {
+            id: 76,
+            name: "DateTimeOriginal",
+            format: "int8u[6]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
+            value_conv: Some("\n            our @a = split ' ', $val;\n            $a[0] += $a[0] < 70 ? 2000 : 1900;\n            sprintf('%.4d:%.2d:%.2d %.2d:%.2d:%.2d', @a);\n        "),
+            subdirectory: None,
+        }),
+        (84, TagKitDef {
+            id: 84,
+            name: "ModifyDate",
+            format: "int8u[6]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
+            value_conv: Some("\n            our @a = split ' ', $val;\n            $a[0] += $a[0] < 70 ? 2000 : 1900;\n            sprintf('%.4d:%.2d:%.2d %.2d:%.2d:%.2d', @a);\n        "),
+            subdirectory: None,
+        }),
         (6, TagKitDef {
             id: 6,
             name: "SonyDateTime",
@@ -162,7 +195,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_7),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_18),
             value_conv: None,
             subdirectory: None,
         }),
@@ -174,7 +207,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
-            value_conv: Some("\n        my @v = unpack('vC*', $val);\n        return sprintf(\"%.4d:%.2d:%.2d %.2d:%.2d:%.2d\", @v)\n    "),
+            value_conv: Some("\n        our @v = unpack('vC*', $val);\n        return sprintf(\"%.4d:%.2d:%.2d %.2d:%.2d:%.2d\", @v)\n    "),
             subdirectory: None,
         }),
         (4404, TagKitDef {
@@ -184,7 +217,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_8),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_19),
             value_conv: None,
             subdirectory: None,
         }),
@@ -195,7 +228,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_9),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_20),
             value_conv: None,
             subdirectory: None,
         }),
@@ -207,7 +240,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
-            value_conv: Some("\n        my @v = unpack('vC*', $val);\n        return sprintf(\"%.4d:%.2d:%.2d %.2d:%.2d:%.2d\", @v)\n    "),
+            value_conv: Some("\n        our @v = unpack('vC*', $val);\n        return sprintf(\"%.4d:%.2d:%.2d %.2d:%.2d:%.2d\", @v)\n    "),
             subdirectory: None,
         }),
         (4492, TagKitDef {
@@ -217,7 +250,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_10),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_21),
             value_conv: None,
             subdirectory: None,
         }),
@@ -229,7 +262,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
-            value_conv: Some("\n        my @v = unpack('vC*', $val);\n        return sprintf(\"%.4d:%.2d:%.2d %.2d:%.2d:%.2d\", @v)\n    "),
+            value_conv: Some("\n        our @v = unpack('vC*', $val);\n        return sprintf(\"%.4d:%.2d:%.2d %.2d:%.2d:%.2d\", @v)\n    "),
             subdirectory: None,
         }),
         (4456, TagKitDef {
@@ -239,7 +272,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_11),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_22),
             value_conv: None,
             subdirectory: None,
         }),
@@ -251,7 +284,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             writable: false,
             notes: None,
             print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
-            value_conv: Some("\n        my @v = unpack('vC*', $val);\n        return sprintf(\"%.4d:%.2d:%.2d %.2d:%.2d:%.2d\", @v)\n    "),
+            value_conv: Some("\n        our @v = unpack('vC*', $val);\n        return sprintf(\"%.4d:%.2d:%.2d %.2d:%.2d:%.2d\", @v)\n    "),
             subdirectory: None,
         }),
         (4128, TagKitDef {
@@ -261,7 +294,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_12),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_23),
             value_conv: None,
             subdirectory: None,
         }),
@@ -272,7 +305,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_13),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_24),
             value_conv: None,
             subdirectory: None,
         }),
@@ -283,7 +316,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_14),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_25),
             value_conv: None,
             subdirectory: None,
         }),
@@ -294,8 +327,151 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_15),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_26),
             value_conv: None,
+            subdirectory: None,
+        }),
+        (58, TagKitDef {
+            id: 58,
+            name: "SonyExposureTime",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
+            value_conv: Some("$val ? 2 ** (16 - $val/256) : 0"),
+            subdirectory: None,
+        }),
+        (81, TagKitDef {
+            id: 81,
+            name: "SonyDateTime2",
+            format: "undef[6]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
+            value_conv: Some("\n            our @v = unpack('C*', $val);\n            return undef unless $v[0] > 0;\n            return sprintf(\"20%.2d:%.2d:%.2d %.2d:%.2d:%.2d\", @v)\n        "),
+            subdirectory: None,
+        }),
+        (70, TagKitDef {
+            id: 70,
+            name: "SonyExposureTime",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
+            value_conv: Some("$val ? 2 ** (16 - $val/256) : 0"),
+            subdirectory: None,
+        }),
+        (97, TagKitDef {
+            id: 97,
+            name: "SonyTimeMinSec",
+            format: "undef[2]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("\n            our @v = unpack('C*', $val);\n            return sprintf(\"%.2d:%.2d\", @v)\n        "),
+            subdirectory: None,
+        }),
+        (102, TagKitDef {
+            id: 102,
+            name: "SonyExposureTime",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
+            value_conv: Some("$val ? 2 ** (16 - $val/256) : 0"),
+            subdirectory: None,
+        }),
+        (70, TagKitDef {
+            id: 70,
+            name: "SonyExposureTime",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
+            value_conv: Some("$val ? 2 ** (16 - $val/256) : 0"),
+            subdirectory: None,
+        }),
+        (26, TagKitDef {
+            id: 26,
+            name: "SonyExposureTime",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
+            value_conv: Some("$val ? 2 ** (16 - $val/256) : 0"),
+            subdirectory: None,
+        }),
+        (14, TagKitDef {
+            id: 14,
+            name: "SonyExposureTime2",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
+            value_conv: Some("$val ? 2 ** (16 - $val/256) : 0"),
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "ExposureTime",
+            format: "rational32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (10, TagKitDef {
+            id: 10,
+            name: "SonyExposureTime2",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
+            value_conv: Some("$val ? 2 ** (16 - $val/256) : 0"),
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "ExposureTime",
+            format: "rational32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\""),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (33033, TagKitDef {
+            id: 33033,
+            name: "ExposureTime",
+            format: "rational64u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("Image::ExifTool::Exif::PrintExposureTime($val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (58116, TagKitDef {
+            id: 58116,
+            name: "DateTime",
+            format: "undef",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
+            value_conv: Some("my @a=unpack(\"x1H4H2H2H2H2H2\",$val); \"$a[0]:$a[1]:$a[2] $a[3]:$a[4]:$a[5]\""),
             subdirectory: None,
         }),
     ]

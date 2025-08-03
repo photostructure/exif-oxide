@@ -17,6 +17,28 @@ use std::sync::LazyLock;
 /// Get tag definitions for thumbnail category
 pub fn get_thumbnail_tags() -> Vec<(u32, TagKitDef)> {
     vec![
+        (0, TagKitDef {
+            id: 0,
+            name: "ThumbnailImage",
+            format: "1",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("this tag is writable, and may be used to update existing thumbnails, but may\n            only create a thumbnail in IFD1 of certain types of files.  Note that for\n            this and other Composite embedded-image tags the family 0 and 1 groups match\n            those of the originating tags"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ThumbnailTIFF",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
         (20507, TagKitDef {
             id: 20507,
             name: "ThumbnailData",

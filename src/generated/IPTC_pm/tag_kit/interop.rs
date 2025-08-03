@@ -35,6 +35,13 @@ static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
+static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Size Not Known");
+    map.insert("1".to_string(), "Size Known");
+    map
+});
+
 /// Get tag definitions for interop category
 pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
     vec![
@@ -132,6 +139,132 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 writable: false,
                 notes: None,
                 print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            1,
+            TagKitDef {
+                id: 1,
+                name: "IPTCEnvelope",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: Some(SubDirectoryType::Binary {
+                    processor: process_tag_0x1_subdirectory,
+                }),
+            },
+        ),
+        (
+            2,
+            TagKitDef {
+                id: 2,
+                name: "IPTCApplication",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: Some(SubDirectoryType::Binary {
+                    processor: process_tag_0x2_subdirectory,
+                }),
+            },
+        ),
+        (
+            3,
+            TagKitDef {
+                id: 3,
+                name: "IPTCNewsPhoto",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: Some(SubDirectoryType::Binary {
+                    processor: process_tag_0x3_subdirectory,
+                }),
+            },
+        ),
+        (
+            7,
+            TagKitDef {
+                id: 7,
+                name: "IPTCPreObjectData",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: Some(SubDirectoryType::Binary {
+                    processor: process_tag_0x7_subdirectory,
+                }),
+            },
+        ),
+        (
+            8,
+            TagKitDef {
+                id: 8,
+                name: "IPTCObjectData",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: Some(SubDirectoryType::Binary {
+                    processor: process_tag_0x8_subdirectory,
+                }),
+            },
+        ),
+        (
+            9,
+            TagKitDef {
+                id: 9,
+                name: "IPTCPostObjectData",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: Some(SubDirectoryType::Binary {
+                    processor: process_tag_0x9_subdirectory,
+                }),
+            },
+        ),
+        (
+            10,
+            TagKitDef {
+                id: 10,
+                name: "IPTCPictureNumber",
+                format: "string[16]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("4 numbers: 1-Manufacturer ID, 2-Equipment ID, 3-Date, 4-Sequence"),
+                print_conv: PrintConvType::Expression(
+                    "Image::ExifTool::IPTC::ConvertPictureNumber($val)",
+                ),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            10,
+            TagKitDef {
+                id: 10,
+                name: "SizeMode",
+                format: "int8u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Simple(&PRINT_CONV_2),
                 value_conv: None,
                 subdirectory: None,
             },

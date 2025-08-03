@@ -16,18 +16,34 @@ use std::sync::LazyLock;
 
 /// Get tag definitions for thumbnail category
 pub fn get_thumbnail_tags() -> Vec<(u32, TagKitDef)> {
-    vec![(
-        19,
-        TagKitDef {
-            id: 19,
-            name: "ThumbnailImageValidArea",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: Some("all zeros for full frame"),
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        },
-    )]
+    vec![
+        (
+            513,
+            TagKitDef {
+                id: 513,
+                name: "SoftFocusFilter",
+                format: "unknown",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Expression("ComplexHash"),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            19,
+            TagKitDef {
+                id: 19,
+                name: "ThumbnailImageValidArea",
+                format: "int16u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: Some("all zeros for full frame"),
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+    ]
 }

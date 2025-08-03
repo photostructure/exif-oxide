@@ -112,5 +112,27 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             value_conv: None,
             subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x2003_subdirectory }),
         }),
+        (0, TagKitDef {
+            id: 0,
+            name: "PanasonicDateTime",
+            format: "undef[8]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
+            value_conv: Some("sprintf(\"%s:%s:%s %s:%s:%s.%s\", unpack \"H4H2H2H2H2H2H2\", $val)"),
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "TimeLapseShotNumber",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
     ]
 }

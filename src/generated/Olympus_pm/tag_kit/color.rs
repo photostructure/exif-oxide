@@ -59,5 +59,19 @@ pub fn get_color_tags() -> Vec<(u32, TagKitDef)> {
                 subdirectory: None,
             },
         ),
+        (
+            532,
+            TagKitDef {
+                id: 532,
+                name: "Index02",
+                format: "int32u",
+                groups: HashMap::new(),
+                writable: false,
+                notes: None,
+                print_conv: PrintConvType::Expression("ConvertDuration($val)"),
+                value_conv: Some("$val / 1000"),
+                subdirectory: None,
+            },
+        ),
     ]
 }

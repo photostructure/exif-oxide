@@ -77,6 +77,80 @@ pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
     vec![
         (0, TagKitDef {
             id: 0,
+            name: "GPSAltitude",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression(r#"
+            foreach (0,2) {
+                next unless defined $val[$_] and IsFloat($val[$_]);
+                next unless defined $prt[$_+1] and $prt[$_+1] =~ /Sea/;
+                return((int($val[$_]*10)/10) . ' m ' . $prt[$_+1]);
+            }
+            $val = int($val * 10) / 10;
+            return(($val =~ s/^-// ? "$val m Below" : "$val m Above") . " Sea Level");
+        "#),
+            value_conv: Some("\n            foreach (0,2) {\n                next unless defined $val[$_] and IsFloat($val[$_]) and defined $val[$_+1];\n                return $val[$_+1] ? -abs($val[$_]) : $val[$_];\n            }\n            return undef;\n        "),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSDateTime",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
+            value_conv: Some("\"$val[0] $val[1]Z\""),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSDestLatitude",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")"),
+            value_conv: Some("$val[1] =~ /^S/i ? -$val[0] : $val[0]"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSDestLongitude",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")"),
+            value_conv: Some("$val[1] =~ /^W/i ? -$val[0] : $val[0]"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSLatitude",
+            format: "1",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")"),
+            value_conv: Some("$val[1] =~ /^S/i ? -$val[0] : $val[0]"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSLongitude",
+            format: "1",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")"),
+            value_conv: Some("$val[1] =~ /^W/i ? -$val[0] : $val[0]"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
             name: "GPSVersionID",
             format: "int8u",
             groups: HashMap::new(),

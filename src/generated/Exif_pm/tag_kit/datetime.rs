@@ -17,6 +17,50 @@ use std::sync::LazyLock;
 /// Get tag definitions for datetime category
 pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
     vec![
+        (0, TagKitDef {
+            id: 0,
+            name: "DateTimeOriginal",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
+            value_conv: Some("\n            return $val[0] if $val[0] and $val[0]=~/ /;\n            return \"$val[1] $val[2]\";\n        "),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SubSecCreateDate",
+            format: "1",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SubSecDateTimeOriginal",
+            format: "1",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SubSecModifyDate",
+            format: "1",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
         (20531, TagKitDef {
             id: 20531,
             name: "ThumbnailDateTime",
@@ -190,7 +234,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::Expression(r#"
-            my @a = map hex, split /[. ]+/, $val;
+            our @a = map hex, split /[. ]+/, $val;
             my @v;
             while (@a >= 8) {
                 my $str = sprintf("%.2x:%.2x:%.2x.%.2x", $a[3]&0x3f,
@@ -230,7 +274,7 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             }
             join ' ', @v;
         "#),
-            value_conv: Some("\n            my @a = split ' ', $val;\n            my @v;\n            push @v, join('.', map { sprintf('%.2x',$_) } splice(@a,0,8)) while @a >= 8;\n            join ' ', @v;\n        "),
+            value_conv: Some("\n            our @a = split ' ', $val;\n            my @v;\n            push @v, join('.', map { sprintf('%.2x',$_) } splice(@a,0,8)) while @a >= 8;\n            join ' ', @v;\n        "),
             subdirectory: None,
         }),
     ]

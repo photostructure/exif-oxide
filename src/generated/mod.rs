@@ -6,19 +6,27 @@
 //! This module re-exports all generated code for easy access.
 
 #[allow(non_snake_case)]
+pub mod CanonRaw_pm;
+#[allow(non_snake_case)]
 pub mod Canon_pm;
 #[allow(non_snake_case)]
 pub mod Casio_pm;
 #[allow(non_snake_case)]
+pub mod DNG_pm;
+#[allow(non_snake_case)]
 pub mod ExifTool_pm;
 #[allow(non_snake_case)]
 pub mod Exif_pm;
+#[allow(non_snake_case)]
+pub mod Font_pm;
 #[allow(non_snake_case)]
 pub mod FujiFilm_pm;
 #[allow(non_snake_case)]
 pub mod GPS_pm;
 #[allow(non_snake_case)]
 pub mod IPTC_pm;
+#[allow(non_snake_case)]
+pub mod JPEG_pm;
 #[allow(non_snake_case)]
 pub mod Jpeg2000_pm;
 #[allow(non_snake_case)]
@@ -34,6 +42,8 @@ pub mod Nikon_pm;
 #[allow(non_snake_case)]
 pub mod Olympus_pm;
 #[allow(non_snake_case)]
+pub mod PDF_pm;
+#[allow(non_snake_case)]
 pub mod PNG_pm;
 #[allow(non_snake_case)]
 pub mod PanasonicRaw_pm;
@@ -42,9 +52,19 @@ pub mod Panasonic_pm;
 #[allow(non_snake_case)]
 pub mod Pentax_pm;
 #[allow(non_snake_case)]
+pub mod Photoshop_pm;
+#[allow(non_snake_case)]
+pub mod PostScript_pm;
+#[allow(non_snake_case)]
 pub mod QuickTime_pm;
 #[allow(non_snake_case)]
 pub mod RIFF_pm;
+#[allow(non_snake_case)]
+pub mod Ricoh_pm;
+#[allow(non_snake_case)]
+pub mod Samsung_pm;
+#[allow(non_snake_case)]
+pub mod Sigma_pm;
 #[allow(non_snake_case)]
 pub mod Sony_pm;
 #[allow(non_snake_case)]

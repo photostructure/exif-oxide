@@ -16,15 +16,10 @@ use std::sync::LazyLock;
 
 static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "Uncompressed");
-    map.insert("1".to_string(), "Modified Huffman");
-    map.insert("2".to_string(), "Modified READ");
-    map.insert("3".to_string(), "Modified Modified READ");
-    map.insert("4".to_string(), "JBIG");
-    map.insert("5".to_string(), "JPEG");
-    map.insert("6".to_string(), "JPEG-LS");
-    map.insert("7".to_string(), "JPEG 2000");
-    map.insert("8".to_string(), "JBIG2");
+    map.insert("1".to_string(), "Enumerated");
+    map.insert("2".to_string(), "Restricted ICC");
+    map.insert("3".to_string(), "Any ICC");
+    map.insert("4".to_string(), "Vendor Color");
     map
 });
 
@@ -40,16 +35,148 @@ static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
 
 static PRINT_CONV_8: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("1".to_string(), "Enumerated");
-    map.insert("2".to_string(), "Restricted ICC");
-    map.insert("3".to_string(), "Any ICC");
-    map.insert("4".to_string(), "Vendor Color");
+    map.insert("0".to_string(), "Uncompressed");
+    map.insert("1".to_string(), "Modified Huffman");
+    map.insert("2".to_string(), "Modified READ");
+    map.insert("3".to_string(), "Modified Modified READ");
+    map.insert("4".to_string(), "JBIG");
+    map.insert("5".to_string(), "JPEG");
+    map.insert("6".to_string(), "JPEG-LS");
+    map.insert("7".to_string(), "JPEG 2000");
+    map.insert("8".to_string(), "JBIG2");
     map
 });
 
 /// Get tag definitions for other category
 pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
     vec![
+        (0, TagKitDef {
+            id: 0,
+            name: "CaptureYResolution",
+            format: "rational32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ColorSpecMethod",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("default for writing is 2 when writing ICC_Profile, 1 when writing\n            ColorSpace, or 4 when writing ColorSpecData"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_6),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "DisplayYResolution",
+            format: "rational32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MajorBrand",
+            format: "undef[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_7),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ImageHeight",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (11, TagKitDef {
+            id: 11,
+            name: "Compression",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_8),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "JUMDID",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "JUMDLabel",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "JUMDSignature",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("unpack \"H*\", $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "JUMDToggles",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("BITMASK"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "JUMDType",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression(r#"
+            our @a = $val =~ /^(\w{8})(\w{4})(\w{4})(\w{16})$/;
+            return $val unless @a;
+            my $ascii = pack 'H*', $a[0];
+            $a[0] = "($ascii)" if $ascii =~ /^[a-zA-Z0-9]{4}$/;
+            return join '-', @a;
+        "#),
+            value_conv: Some("unpack \"H*\", $val"),
+            subdirectory: None,
+        }),
         (0, TagKitDef {
             id: 0,
             name: "EXIF",
@@ -533,133 +660,6 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             print_conv: PrintConvType::None,
             value_conv: None,
             subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ImageHeight",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (11, TagKitDef {
-            id: 11,
-            name: "Compression",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_6),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "MajorBrand",
-            format: "undef[4]",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_7),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "CaptureYResolution",
-            format: "rational32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "DisplayYResolution",
-            format: "rational32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ColorSpecMethod",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("default for writing is 2 when writing ICC_Profile, 1 when writing\n            ColorSpace, or 4 when writing ColorSpecData"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_8),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "JUMDID",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "JUMDLabel",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "JUMDSignature",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("unpack \"H*\", $val"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "JUMDToggles",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("BITMASK"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "JUMDType",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression(r#"
-            my @a = $val =~ /^(\w{8})(\w{4})(\w{4})(\w{16})$/;
-            return $val unless @a;
-            my $ascii = pack 'H*', $a[0];
-            $a[0] = "($ascii)" if $ascii =~ /^[a-zA-Z0-9]{4}$/;
-            return join '-', @a;
-        "#),
-            value_conv: Some("unpack \"H*\", $val"),
-            subdirectory: None,
         }),
     ]
 }

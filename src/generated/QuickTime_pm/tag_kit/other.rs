@@ -14,21 +14,964 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_19: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert("0".to_string(), "iTunes");
-    map.insert("1".to_string(), "AOL");
+    map.insert("0".to_string(), "YUV 4:4:4");
+    map.insert("2".to_string(), "YUV 4:2:2");
+    map.insert("3".to_string(), "YUV 4:2:0");
+    map.insert("7".to_string(), "Monochrome 4:0:0");
     map
 });
 
-static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_20: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "Vertical");
+    map.insert("2".to_string(), "Colocated");
+    map.insert("3".to_string(), "(reserved)");
+    map
+});
+
+static PRINT_CONV_21: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_22: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert(" KD ".to_string(), "Kodak");
+    map.insert("AR.D".to_string(), "Parrot AR.Drone");
+    map.insert("FFMP".to_string(), "FFmpeg");
+    map.insert("GIC ".to_string(), "General Imaging Co.");
+    map.insert("KMPI".to_string(), "Konica-Minolta");
+    map.insert("NIKO".to_string(), "Nikon");
+    map.insert("SMI ".to_string(), "Sorenson Media Inc.");
+    map.insert("ZORA".to_string(), "Zoran Corporation");
+    map.insert("appl".to_string(), "Apple");
+    map.insert("fe20".to_string(), "Olympus (fe20)");
+    map.insert("kdak".to_string(), "Kodak");
+    map.insert("leic".to_string(), "Leica");
+    map.insert("mino".to_string(), "Minolta");
+    map.insert("niko".to_string(), "Nikon");
+    map.insert("olym".to_string(), "Olympus");
+    map.insert("pana".to_string(), "Panasonic");
+    map.insert("pent".to_string(), "Pentax");
+    map.insert("pr01".to_string(), "Olympus (pr01)");
+    map.insert("sany".to_string(), "Sanyo");
+    map
+});
+
+static PRINT_CONV_23: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unused");
+    map.insert("1".to_string(), "Left");
+    map.insert("10".to_string(), "LeftSurroundDirect");
+    map.insert("100".to_string(), "UseCoordinates");
+    map.insert("11".to_string(), "RightSurroundDirect");
+    map.insert("12".to_string(), "TopCenterSurround");
+    map.insert("13".to_string(), "VerticalHeightLeft");
+    map.insert("131071".to_string(), "Discrete_65535");
+    map.insert("14".to_string(), "VerticalHeightCenter");
+    map.insert("15".to_string(), "VerticalHeightRight");
+    map.insert("16".to_string(), "TopBackLeft");
+    map.insert("17".to_string(), "TopBackCenter");
+    map.insert("18".to_string(), "TopBackRight");
+    map.insert("2".to_string(), "Right");
+    map.insert("200".to_string(), "Ambisonic_W");
+    map.insert("201".to_string(), "Ambisonic_X");
+    map.insert("202".to_string(), "Ambisonic_Y");
+    map.insert("203".to_string(), "Ambisonic_Z");
+    map.insert("204".to_string(), "MS_Mid");
+    map.insert("205".to_string(), "MS_Side");
+    map.insert("206".to_string(), "XY_X");
+    map.insert("207".to_string(), "XY_Y");
+    map.insert("3".to_string(), "Center");
+    map.insert("301".to_string(), "HeadphonesLeft");
+    map.insert("302".to_string(), "HeadphonesRight");
+    map.insert("304".to_string(), "ClickTrack");
+    map.insert("305".to_string(), "ForeignLanguage");
+    map.insert("33".to_string(), "RearSurroundLeft");
+    map.insert("34".to_string(), "RearSurroundRight");
+    map.insert("35".to_string(), "LeftWide");
+    map.insert("36".to_string(), "RightWide");
+    map.insert("37".to_string(), "LFE2");
+    map.insert("38".to_string(), "LeftTotal");
+    map.insert("39".to_string(), "RightTotal");
+    map.insert("4".to_string(), "LFEScreen");
+    map.insert("40".to_string(), "HearingImpaired");
+    map.insert("400".to_string(), "Discrete");
+    map.insert("41".to_string(), "Narration");
+    map.insert("42".to_string(), "Mono");
+    map.insert("4294967295".to_string(), "Unknown");
+    map.insert("43".to_string(), "DialogCentricMix");
+    map.insert("44".to_string(), "CenterSurroundDirect");
+    map.insert("45".to_string(), "Haptic");
+    map.insert("5".to_string(), "LeftSurround");
+    map.insert("6".to_string(), "RightSurround");
+    map.insert("65536".to_string(), "Discrete_0");
+    map.insert("65537".to_string(), "Discrete_1");
+    map.insert("65538".to_string(), "Discrete_2");
+    map.insert("65539".to_string(), "Discrete_3");
+    map.insert("65540".to_string(), "Discrete_4");
+    map.insert("65541".to_string(), "Discrete_5");
+    map.insert("65542".to_string(), "Discrete_6");
+    map.insert("65543".to_string(), "Discrete_7");
+    map.insert("65544".to_string(), "Discrete_8");
+    map.insert("65545".to_string(), "Discrete_9");
+    map.insert("65546".to_string(), "Discrete_10");
+    map.insert("65547".to_string(), "Discrete_11");
+    map.insert("65548".to_string(), "Discrete_12");
+    map.insert("65549".to_string(), "Discrete_13");
+    map.insert("65550".to_string(), "Discrete_14");
+    map.insert("65551".to_string(), "Discrete_15");
+    map.insert("7".to_string(), "LeftCenter");
+    map.insert("8".to_string(), "RightCenter");
+    map.insert("9".to_string(), "CenterSurround");
+    map
+});
+
+static PRINT_CONV_24: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unused");
+    map.insert("1".to_string(), "Left");
+    map.insert("10".to_string(), "LeftSurroundDirect");
+    map.insert("100".to_string(), "UseCoordinates");
+    map.insert("11".to_string(), "RightSurroundDirect");
+    map.insert("12".to_string(), "TopCenterSurround");
+    map.insert("13".to_string(), "VerticalHeightLeft");
+    map.insert("131071".to_string(), "Discrete_65535");
+    map.insert("14".to_string(), "VerticalHeightCenter");
+    map.insert("15".to_string(), "VerticalHeightRight");
+    map.insert("16".to_string(), "TopBackLeft");
+    map.insert("17".to_string(), "TopBackCenter");
+    map.insert("18".to_string(), "TopBackRight");
+    map.insert("2".to_string(), "Right");
+    map.insert("200".to_string(), "Ambisonic_W");
+    map.insert("201".to_string(), "Ambisonic_X");
+    map.insert("202".to_string(), "Ambisonic_Y");
+    map.insert("203".to_string(), "Ambisonic_Z");
+    map.insert("204".to_string(), "MS_Mid");
+    map.insert("205".to_string(), "MS_Side");
+    map.insert("206".to_string(), "XY_X");
+    map.insert("207".to_string(), "XY_Y");
+    map.insert("3".to_string(), "Center");
+    map.insert("301".to_string(), "HeadphonesLeft");
+    map.insert("302".to_string(), "HeadphonesRight");
+    map.insert("304".to_string(), "ClickTrack");
+    map.insert("305".to_string(), "ForeignLanguage");
+    map.insert("33".to_string(), "RearSurroundLeft");
+    map.insert("34".to_string(), "RearSurroundRight");
+    map.insert("35".to_string(), "LeftWide");
+    map.insert("36".to_string(), "RightWide");
+    map.insert("37".to_string(), "LFE2");
+    map.insert("38".to_string(), "LeftTotal");
+    map.insert("39".to_string(), "RightTotal");
+    map.insert("4".to_string(), "LFEScreen");
+    map.insert("40".to_string(), "HearingImpaired");
+    map.insert("400".to_string(), "Discrete");
+    map.insert("41".to_string(), "Narration");
+    map.insert("42".to_string(), "Mono");
+    map.insert("4294967295".to_string(), "Unknown");
+    map.insert("43".to_string(), "DialogCentricMix");
+    map.insert("44".to_string(), "CenterSurroundDirect");
+    map.insert("45".to_string(), "Haptic");
+    map.insert("5".to_string(), "LeftSurround");
+    map.insert("6".to_string(), "RightSurround");
+    map.insert("65536".to_string(), "Discrete_0");
+    map.insert("65537".to_string(), "Discrete_1");
+    map.insert("65538".to_string(), "Discrete_2");
+    map.insert("65539".to_string(), "Discrete_3");
+    map.insert("65540".to_string(), "Discrete_4");
+    map.insert("65541".to_string(), "Discrete_5");
+    map.insert("65542".to_string(), "Discrete_6");
+    map.insert("65543".to_string(), "Discrete_7");
+    map.insert("65544".to_string(), "Discrete_8");
+    map.insert("65545".to_string(), "Discrete_9");
+    map.insert("65546".to_string(), "Discrete_10");
+    map.insert("65547".to_string(), "Discrete_11");
+    map.insert("65548".to_string(), "Discrete_12");
+    map.insert("65549".to_string(), "Discrete_13");
+    map.insert("65550".to_string(), "Discrete_14");
+    map.insert("65551".to_string(), "Discrete_15");
+    map.insert("7".to_string(), "LeftCenter");
+    map.insert("8".to_string(), "RightCenter");
+    map.insert("9".to_string(), "CenterSurround");
+    map
+});
+
+static PRINT_CONV_25: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unused");
+    map.insert("1".to_string(), "Left");
+    map.insert("10".to_string(), "LeftSurroundDirect");
+    map.insert("100".to_string(), "UseCoordinates");
+    map.insert("11".to_string(), "RightSurroundDirect");
+    map.insert("12".to_string(), "TopCenterSurround");
+    map.insert("13".to_string(), "VerticalHeightLeft");
+    map.insert("131071".to_string(), "Discrete_65535");
+    map.insert("14".to_string(), "VerticalHeightCenter");
+    map.insert("15".to_string(), "VerticalHeightRight");
+    map.insert("16".to_string(), "TopBackLeft");
+    map.insert("17".to_string(), "TopBackCenter");
+    map.insert("18".to_string(), "TopBackRight");
+    map.insert("2".to_string(), "Right");
+    map.insert("200".to_string(), "Ambisonic_W");
+    map.insert("201".to_string(), "Ambisonic_X");
+    map.insert("202".to_string(), "Ambisonic_Y");
+    map.insert("203".to_string(), "Ambisonic_Z");
+    map.insert("204".to_string(), "MS_Mid");
+    map.insert("205".to_string(), "MS_Side");
+    map.insert("206".to_string(), "XY_X");
+    map.insert("207".to_string(), "XY_Y");
+    map.insert("3".to_string(), "Center");
+    map.insert("301".to_string(), "HeadphonesLeft");
+    map.insert("302".to_string(), "HeadphonesRight");
+    map.insert("304".to_string(), "ClickTrack");
+    map.insert("305".to_string(), "ForeignLanguage");
+    map.insert("33".to_string(), "RearSurroundLeft");
+    map.insert("34".to_string(), "RearSurroundRight");
+    map.insert("35".to_string(), "LeftWide");
+    map.insert("36".to_string(), "RightWide");
+    map.insert("37".to_string(), "LFE2");
+    map.insert("38".to_string(), "LeftTotal");
+    map.insert("39".to_string(), "RightTotal");
+    map.insert("4".to_string(), "LFEScreen");
+    map.insert("40".to_string(), "HearingImpaired");
+    map.insert("400".to_string(), "Discrete");
+    map.insert("41".to_string(), "Narration");
+    map.insert("42".to_string(), "Mono");
+    map.insert("4294967295".to_string(), "Unknown");
+    map.insert("43".to_string(), "DialogCentricMix");
+    map.insert("44".to_string(), "CenterSurroundDirect");
+    map.insert("45".to_string(), "Haptic");
+    map.insert("5".to_string(), "LeftSurround");
+    map.insert("6".to_string(), "RightSurround");
+    map.insert("65536".to_string(), "Discrete_0");
+    map.insert("65537".to_string(), "Discrete_1");
+    map.insert("65538".to_string(), "Discrete_2");
+    map.insert("65539".to_string(), "Discrete_3");
+    map.insert("65540".to_string(), "Discrete_4");
+    map.insert("65541".to_string(), "Discrete_5");
+    map.insert("65542".to_string(), "Discrete_6");
+    map.insert("65543".to_string(), "Discrete_7");
+    map.insert("65544".to_string(), "Discrete_8");
+    map.insert("65545".to_string(), "Discrete_9");
+    map.insert("65546".to_string(), "Discrete_10");
+    map.insert("65547".to_string(), "Discrete_11");
+    map.insert("65548".to_string(), "Discrete_12");
+    map.insert("65549".to_string(), "Discrete_13");
+    map.insert("65550".to_string(), "Discrete_14");
+    map.insert("65551".to_string(), "Discrete_15");
+    map.insert("7".to_string(), "LeftCenter");
+    map.insert("8".to_string(), "RightCenter");
+    map.insert("9".to_string(), "CenterSurround");
+    map
+});
+
+static PRINT_CONV_26: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unused");
+    map.insert("1".to_string(), "Left");
+    map.insert("10".to_string(), "LeftSurroundDirect");
+    map.insert("100".to_string(), "UseCoordinates");
+    map.insert("11".to_string(), "RightSurroundDirect");
+    map.insert("12".to_string(), "TopCenterSurround");
+    map.insert("13".to_string(), "VerticalHeightLeft");
+    map.insert("131071".to_string(), "Discrete_65535");
+    map.insert("14".to_string(), "VerticalHeightCenter");
+    map.insert("15".to_string(), "VerticalHeightRight");
+    map.insert("16".to_string(), "TopBackLeft");
+    map.insert("17".to_string(), "TopBackCenter");
+    map.insert("18".to_string(), "TopBackRight");
+    map.insert("2".to_string(), "Right");
+    map.insert("200".to_string(), "Ambisonic_W");
+    map.insert("201".to_string(), "Ambisonic_X");
+    map.insert("202".to_string(), "Ambisonic_Y");
+    map.insert("203".to_string(), "Ambisonic_Z");
+    map.insert("204".to_string(), "MS_Mid");
+    map.insert("205".to_string(), "MS_Side");
+    map.insert("206".to_string(), "XY_X");
+    map.insert("207".to_string(), "XY_Y");
+    map.insert("3".to_string(), "Center");
+    map.insert("301".to_string(), "HeadphonesLeft");
+    map.insert("302".to_string(), "HeadphonesRight");
+    map.insert("304".to_string(), "ClickTrack");
+    map.insert("305".to_string(), "ForeignLanguage");
+    map.insert("33".to_string(), "RearSurroundLeft");
+    map.insert("34".to_string(), "RearSurroundRight");
+    map.insert("35".to_string(), "LeftWide");
+    map.insert("36".to_string(), "RightWide");
+    map.insert("37".to_string(), "LFE2");
+    map.insert("38".to_string(), "LeftTotal");
+    map.insert("39".to_string(), "RightTotal");
+    map.insert("4".to_string(), "LFEScreen");
+    map.insert("40".to_string(), "HearingImpaired");
+    map.insert("400".to_string(), "Discrete");
+    map.insert("41".to_string(), "Narration");
+    map.insert("42".to_string(), "Mono");
+    map.insert("4294967295".to_string(), "Unknown");
+    map.insert("43".to_string(), "DialogCentricMix");
+    map.insert("44".to_string(), "CenterSurroundDirect");
+    map.insert("45".to_string(), "Haptic");
+    map.insert("5".to_string(), "LeftSurround");
+    map.insert("6".to_string(), "RightSurround");
+    map.insert("65536".to_string(), "Discrete_0");
+    map.insert("65537".to_string(), "Discrete_1");
+    map.insert("65538".to_string(), "Discrete_2");
+    map.insert("65539".to_string(), "Discrete_3");
+    map.insert("65540".to_string(), "Discrete_4");
+    map.insert("65541".to_string(), "Discrete_5");
+    map.insert("65542".to_string(), "Discrete_6");
+    map.insert("65543".to_string(), "Discrete_7");
+    map.insert("65544".to_string(), "Discrete_8");
+    map.insert("65545".to_string(), "Discrete_9");
+    map.insert("65546".to_string(), "Discrete_10");
+    map.insert("65547".to_string(), "Discrete_11");
+    map.insert("65548".to_string(), "Discrete_12");
+    map.insert("65549".to_string(), "Discrete_13");
+    map.insert("65550".to_string(), "Discrete_14");
+    map.insert("65551".to_string(), "Discrete_15");
+    map.insert("7".to_string(), "LeftCenter");
+    map.insert("8".to_string(), "RightCenter");
+    map.insert("9".to_string(), "CenterSurround");
+    map
+});
+
+static PRINT_CONV_27: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unused");
+    map.insert("1".to_string(), "Left");
+    map.insert("10".to_string(), "LeftSurroundDirect");
+    map.insert("100".to_string(), "UseCoordinates");
+    map.insert("11".to_string(), "RightSurroundDirect");
+    map.insert("12".to_string(), "TopCenterSurround");
+    map.insert("13".to_string(), "VerticalHeightLeft");
+    map.insert("131071".to_string(), "Discrete_65535");
+    map.insert("14".to_string(), "VerticalHeightCenter");
+    map.insert("15".to_string(), "VerticalHeightRight");
+    map.insert("16".to_string(), "TopBackLeft");
+    map.insert("17".to_string(), "TopBackCenter");
+    map.insert("18".to_string(), "TopBackRight");
+    map.insert("2".to_string(), "Right");
+    map.insert("200".to_string(), "Ambisonic_W");
+    map.insert("201".to_string(), "Ambisonic_X");
+    map.insert("202".to_string(), "Ambisonic_Y");
+    map.insert("203".to_string(), "Ambisonic_Z");
+    map.insert("204".to_string(), "MS_Mid");
+    map.insert("205".to_string(), "MS_Side");
+    map.insert("206".to_string(), "XY_X");
+    map.insert("207".to_string(), "XY_Y");
+    map.insert("3".to_string(), "Center");
+    map.insert("301".to_string(), "HeadphonesLeft");
+    map.insert("302".to_string(), "HeadphonesRight");
+    map.insert("304".to_string(), "ClickTrack");
+    map.insert("305".to_string(), "ForeignLanguage");
+    map.insert("33".to_string(), "RearSurroundLeft");
+    map.insert("34".to_string(), "RearSurroundRight");
+    map.insert("35".to_string(), "LeftWide");
+    map.insert("36".to_string(), "RightWide");
+    map.insert("37".to_string(), "LFE2");
+    map.insert("38".to_string(), "LeftTotal");
+    map.insert("39".to_string(), "RightTotal");
+    map.insert("4".to_string(), "LFEScreen");
+    map.insert("40".to_string(), "HearingImpaired");
+    map.insert("400".to_string(), "Discrete");
+    map.insert("41".to_string(), "Narration");
+    map.insert("42".to_string(), "Mono");
+    map.insert("4294967295".to_string(), "Unknown");
+    map.insert("43".to_string(), "DialogCentricMix");
+    map.insert("44".to_string(), "CenterSurroundDirect");
+    map.insert("45".to_string(), "Haptic");
+    map.insert("5".to_string(), "LeftSurround");
+    map.insert("6".to_string(), "RightSurround");
+    map.insert("65536".to_string(), "Discrete_0");
+    map.insert("65537".to_string(), "Discrete_1");
+    map.insert("65538".to_string(), "Discrete_2");
+    map.insert("65539".to_string(), "Discrete_3");
+    map.insert("65540".to_string(), "Discrete_4");
+    map.insert("65541".to_string(), "Discrete_5");
+    map.insert("65542".to_string(), "Discrete_6");
+    map.insert("65543".to_string(), "Discrete_7");
+    map.insert("65544".to_string(), "Discrete_8");
+    map.insert("65545".to_string(), "Discrete_9");
+    map.insert("65546".to_string(), "Discrete_10");
+    map.insert("65547".to_string(), "Discrete_11");
+    map.insert("65548".to_string(), "Discrete_12");
+    map.insert("65549".to_string(), "Discrete_13");
+    map.insert("65550".to_string(), "Discrete_14");
+    map.insert("65551".to_string(), "Discrete_15");
+    map.insert("7".to_string(), "LeftCenter");
+    map.insert("8".to_string(), "RightCenter");
+    map.insert("9".to_string(), "CenterSurround");
+    map
+});
+
+static PRINT_CONV_28: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unused");
+    map.insert("1".to_string(), "Left");
+    map.insert("10".to_string(), "LeftSurroundDirect");
+    map.insert("100".to_string(), "UseCoordinates");
+    map.insert("11".to_string(), "RightSurroundDirect");
+    map.insert("12".to_string(), "TopCenterSurround");
+    map.insert("13".to_string(), "VerticalHeightLeft");
+    map.insert("131071".to_string(), "Discrete_65535");
+    map.insert("14".to_string(), "VerticalHeightCenter");
+    map.insert("15".to_string(), "VerticalHeightRight");
+    map.insert("16".to_string(), "TopBackLeft");
+    map.insert("17".to_string(), "TopBackCenter");
+    map.insert("18".to_string(), "TopBackRight");
+    map.insert("2".to_string(), "Right");
+    map.insert("200".to_string(), "Ambisonic_W");
+    map.insert("201".to_string(), "Ambisonic_X");
+    map.insert("202".to_string(), "Ambisonic_Y");
+    map.insert("203".to_string(), "Ambisonic_Z");
+    map.insert("204".to_string(), "MS_Mid");
+    map.insert("205".to_string(), "MS_Side");
+    map.insert("206".to_string(), "XY_X");
+    map.insert("207".to_string(), "XY_Y");
+    map.insert("3".to_string(), "Center");
+    map.insert("301".to_string(), "HeadphonesLeft");
+    map.insert("302".to_string(), "HeadphonesRight");
+    map.insert("304".to_string(), "ClickTrack");
+    map.insert("305".to_string(), "ForeignLanguage");
+    map.insert("33".to_string(), "RearSurroundLeft");
+    map.insert("34".to_string(), "RearSurroundRight");
+    map.insert("35".to_string(), "LeftWide");
+    map.insert("36".to_string(), "RightWide");
+    map.insert("37".to_string(), "LFE2");
+    map.insert("38".to_string(), "LeftTotal");
+    map.insert("39".to_string(), "RightTotal");
+    map.insert("4".to_string(), "LFEScreen");
+    map.insert("40".to_string(), "HearingImpaired");
+    map.insert("400".to_string(), "Discrete");
+    map.insert("41".to_string(), "Narration");
+    map.insert("42".to_string(), "Mono");
+    map.insert("4294967295".to_string(), "Unknown");
+    map.insert("43".to_string(), "DialogCentricMix");
+    map.insert("44".to_string(), "CenterSurroundDirect");
+    map.insert("45".to_string(), "Haptic");
+    map.insert("5".to_string(), "LeftSurround");
+    map.insert("6".to_string(), "RightSurround");
+    map.insert("65536".to_string(), "Discrete_0");
+    map.insert("65537".to_string(), "Discrete_1");
+    map.insert("65538".to_string(), "Discrete_2");
+    map.insert("65539".to_string(), "Discrete_3");
+    map.insert("65540".to_string(), "Discrete_4");
+    map.insert("65541".to_string(), "Discrete_5");
+    map.insert("65542".to_string(), "Discrete_6");
+    map.insert("65543".to_string(), "Discrete_7");
+    map.insert("65544".to_string(), "Discrete_8");
+    map.insert("65545".to_string(), "Discrete_9");
+    map.insert("65546".to_string(), "Discrete_10");
+    map.insert("65547".to_string(), "Discrete_11");
+    map.insert("65548".to_string(), "Discrete_12");
+    map.insert("65549".to_string(), "Discrete_13");
+    map.insert("65550".to_string(), "Discrete_14");
+    map.insert("65551".to_string(), "Discrete_15");
+    map.insert("7".to_string(), "LeftCenter");
+    map.insert("8".to_string(), "RightCenter");
+    map.insert("9".to_string(), "CenterSurround");
+    map
+});
+
+static PRINT_CONV_29: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unused");
+    map.insert("1".to_string(), "Left");
+    map.insert("10".to_string(), "LeftSurroundDirect");
+    map.insert("100".to_string(), "UseCoordinates");
+    map.insert("11".to_string(), "RightSurroundDirect");
+    map.insert("12".to_string(), "TopCenterSurround");
+    map.insert("13".to_string(), "VerticalHeightLeft");
+    map.insert("131071".to_string(), "Discrete_65535");
+    map.insert("14".to_string(), "VerticalHeightCenter");
+    map.insert("15".to_string(), "VerticalHeightRight");
+    map.insert("16".to_string(), "TopBackLeft");
+    map.insert("17".to_string(), "TopBackCenter");
+    map.insert("18".to_string(), "TopBackRight");
+    map.insert("2".to_string(), "Right");
+    map.insert("200".to_string(), "Ambisonic_W");
+    map.insert("201".to_string(), "Ambisonic_X");
+    map.insert("202".to_string(), "Ambisonic_Y");
+    map.insert("203".to_string(), "Ambisonic_Z");
+    map.insert("204".to_string(), "MS_Mid");
+    map.insert("205".to_string(), "MS_Side");
+    map.insert("206".to_string(), "XY_X");
+    map.insert("207".to_string(), "XY_Y");
+    map.insert("3".to_string(), "Center");
+    map.insert("301".to_string(), "HeadphonesLeft");
+    map.insert("302".to_string(), "HeadphonesRight");
+    map.insert("304".to_string(), "ClickTrack");
+    map.insert("305".to_string(), "ForeignLanguage");
+    map.insert("33".to_string(), "RearSurroundLeft");
+    map.insert("34".to_string(), "RearSurroundRight");
+    map.insert("35".to_string(), "LeftWide");
+    map.insert("36".to_string(), "RightWide");
+    map.insert("37".to_string(), "LFE2");
+    map.insert("38".to_string(), "LeftTotal");
+    map.insert("39".to_string(), "RightTotal");
+    map.insert("4".to_string(), "LFEScreen");
+    map.insert("40".to_string(), "HearingImpaired");
+    map.insert("400".to_string(), "Discrete");
+    map.insert("41".to_string(), "Narration");
+    map.insert("42".to_string(), "Mono");
+    map.insert("4294967295".to_string(), "Unknown");
+    map.insert("43".to_string(), "DialogCentricMix");
+    map.insert("44".to_string(), "CenterSurroundDirect");
+    map.insert("45".to_string(), "Haptic");
+    map.insert("5".to_string(), "LeftSurround");
+    map.insert("6".to_string(), "RightSurround");
+    map.insert("65536".to_string(), "Discrete_0");
+    map.insert("65537".to_string(), "Discrete_1");
+    map.insert("65538".to_string(), "Discrete_2");
+    map.insert("65539".to_string(), "Discrete_3");
+    map.insert("65540".to_string(), "Discrete_4");
+    map.insert("65541".to_string(), "Discrete_5");
+    map.insert("65542".to_string(), "Discrete_6");
+    map.insert("65543".to_string(), "Discrete_7");
+    map.insert("65544".to_string(), "Discrete_8");
+    map.insert("65545".to_string(), "Discrete_9");
+    map.insert("65546".to_string(), "Discrete_10");
+    map.insert("65547".to_string(), "Discrete_11");
+    map.insert("65548".to_string(), "Discrete_12");
+    map.insert("65549".to_string(), "Discrete_13");
+    map.insert("65550".to_string(), "Discrete_14");
+    map.insert("65551".to_string(), "Discrete_15");
+    map.insert("7".to_string(), "LeftCenter");
+    map.insert("8".to_string(), "RightCenter");
+    map.insert("9".to_string(), "CenterSurround");
+    map
+});
+
+static PRINT_CONV_30: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unused");
+    map.insert("1".to_string(), "Left");
+    map.insert("10".to_string(), "LeftSurroundDirect");
+    map.insert("100".to_string(), "UseCoordinates");
+    map.insert("11".to_string(), "RightSurroundDirect");
+    map.insert("12".to_string(), "TopCenterSurround");
+    map.insert("13".to_string(), "VerticalHeightLeft");
+    map.insert("131071".to_string(), "Discrete_65535");
+    map.insert("14".to_string(), "VerticalHeightCenter");
+    map.insert("15".to_string(), "VerticalHeightRight");
+    map.insert("16".to_string(), "TopBackLeft");
+    map.insert("17".to_string(), "TopBackCenter");
+    map.insert("18".to_string(), "TopBackRight");
+    map.insert("2".to_string(), "Right");
+    map.insert("200".to_string(), "Ambisonic_W");
+    map.insert("201".to_string(), "Ambisonic_X");
+    map.insert("202".to_string(), "Ambisonic_Y");
+    map.insert("203".to_string(), "Ambisonic_Z");
+    map.insert("204".to_string(), "MS_Mid");
+    map.insert("205".to_string(), "MS_Side");
+    map.insert("206".to_string(), "XY_X");
+    map.insert("207".to_string(), "XY_Y");
+    map.insert("3".to_string(), "Center");
+    map.insert("301".to_string(), "HeadphonesLeft");
+    map.insert("302".to_string(), "HeadphonesRight");
+    map.insert("304".to_string(), "ClickTrack");
+    map.insert("305".to_string(), "ForeignLanguage");
+    map.insert("33".to_string(), "RearSurroundLeft");
+    map.insert("34".to_string(), "RearSurroundRight");
+    map.insert("35".to_string(), "LeftWide");
+    map.insert("36".to_string(), "RightWide");
+    map.insert("37".to_string(), "LFE2");
+    map.insert("38".to_string(), "LeftTotal");
+    map.insert("39".to_string(), "RightTotal");
+    map.insert("4".to_string(), "LFEScreen");
+    map.insert("40".to_string(), "HearingImpaired");
+    map.insert("400".to_string(), "Discrete");
+    map.insert("41".to_string(), "Narration");
+    map.insert("42".to_string(), "Mono");
+    map.insert("4294967295".to_string(), "Unknown");
+    map.insert("43".to_string(), "DialogCentricMix");
+    map.insert("44".to_string(), "CenterSurroundDirect");
+    map.insert("45".to_string(), "Haptic");
+    map.insert("5".to_string(), "LeftSurround");
+    map.insert("6".to_string(), "RightSurround");
+    map.insert("65536".to_string(), "Discrete_0");
+    map.insert("65537".to_string(), "Discrete_1");
+    map.insert("65538".to_string(), "Discrete_2");
+    map.insert("65539".to_string(), "Discrete_3");
+    map.insert("65540".to_string(), "Discrete_4");
+    map.insert("65541".to_string(), "Discrete_5");
+    map.insert("65542".to_string(), "Discrete_6");
+    map.insert("65543".to_string(), "Discrete_7");
+    map.insert("65544".to_string(), "Discrete_8");
+    map.insert("65545".to_string(), "Discrete_9");
+    map.insert("65546".to_string(), "Discrete_10");
+    map.insert("65547".to_string(), "Discrete_11");
+    map.insert("65548".to_string(), "Discrete_12");
+    map.insert("65549".to_string(), "Discrete_13");
+    map.insert("65550".to_string(), "Discrete_14");
+    map.insert("65551".to_string(), "Discrete_15");
+    map.insert("7".to_string(), "LeftCenter");
+    map.insert("8".to_string(), "RightCenter");
+    map.insert("9".to_string(), "CenterSurround");
+    map
+});
+
+static PRINT_CONV_31: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert(
+        "3g2a".to_string(),
+        "3GPP2 Media (.3G2) compliant with 3GPP2 C.S0050-0 V1.0",
+    );
+    map.insert(
+        "3g2b".to_string(),
+        "3GPP2 Media (.3G2) compliant with 3GPP2 C.S0050-A V1.0.0",
+    );
+    map.insert(
+        "3g2c".to_string(),
+        "3GPP2 Media (.3G2) compliant with 3GPP2 C.S0050-B v1.0",
+    );
+    map.insert(
+        "3ge6".to_string(),
+        "3GPP (.3GP) Release 6 MBMS Extended Presentations",
+    );
+    map.insert(
+        "3ge7".to_string(),
+        "3GPP (.3GP) Release 7 MBMS Extended Presentations",
+    );
+    map.insert("3gg6".to_string(), "3GPP Release 6 General Profile");
+    map.insert(
+        "3gp1".to_string(),
+        "3GPP Media (.3GP) Release 1 (probably non-existent)",
+    );
+    map.insert(
+        "3gp2".to_string(),
+        "3GPP Media (.3GP) Release 2 (probably non-existent)",
+    );
+    map.insert(
+        "3gp3".to_string(),
+        "3GPP Media (.3GP) Release 3 (probably non-existent)",
+    );
+    map.insert("3gp4".to_string(), "3GPP Media (.3GP) Release 4");
+    map.insert("3gp5".to_string(), "3GPP Media (.3GP) Release 5");
+    map.insert(
+        "3gp6".to_string(),
+        "3GPP Media (.3GP) Release 6 Streaming Servers",
+    );
+    map.insert(
+        "3gs7".to_string(),
+        "3GPP Media (.3GP) Release 7 Streaming Servers",
+    );
+    map.insert("CAEP".to_string(), "Canon Digital Camera");
+    map.insert("CDes".to_string(), "Convergent Design");
+    map.insert("F4A ".to_string(), "Audio for Adobe Flash Player 9+ (.F4A)");
+    map.insert(
+        "F4B ".to_string(),
+        "Audio Book for Adobe Flash Player 9+ (.F4B)",
+    );
+    map.insert(
+        "F4P ".to_string(),
+        "Protected Video for Adobe Flash Player 9+ (.F4P)",
+    );
+    map.insert("F4V ".to_string(), "Video for Adobe Flash Player 9+ (.F4V)");
+    map.insert("JP2 ".to_string(), "JPEG 2000 Image (.JP2) [ISO 15444-1 ?]");
+    map.insert(
+        "JP20".to_string(),
+        "Unknown, from GPAC samples (prob non-existent)",
+    );
+    map.insert("KDDI".to_string(), "3GPP2 EZmovie for KDDI 3G cellphones");
+    map.insert("M4A ".to_string(), "Apple iTunes AAC-LC (.M4A) Audio");
+    map.insert("M4B ".to_string(), "Apple iTunes AAC-LC (.M4B) Audio Book");
+    map.insert(
+        "M4P ".to_string(),
+        "Apple iTunes AAC-LC (.M4P) AES Protected Audio",
+    );
+    map.insert("M4V ".to_string(), "Apple iTunes Video (.M4V) Video");
+    map.insert("M4VH".to_string(), "Apple TV (.M4V)");
+    map.insert("M4VP".to_string(), "Apple iPhone (.M4V)");
+    map.insert("MPPI".to_string(), "Photo Player, MAF [ISO/IEC 23000-3]");
+    map.insert("MSNV".to_string(), "MPEG-4 (.MP4) for SonyPSP");
+    map.insert(
+        "NDAS".to_string(),
+        "MP4 v2 [ISO 14496-14] Nero Digital AAC Audio",
+    );
+    map.insert("NDSC".to_string(), "MPEG-4 (.MP4) Nero Cinema Profile");
+    map.insert("NDSH".to_string(), "MPEG-4 (.MP4) Nero HDTV Profile");
+    map.insert("NDSM".to_string(), "MPEG-4 (.MP4) Nero Mobile Profile");
+    map.insert("NDSP".to_string(), "MPEG-4 (.MP4) Nero Portable Profile");
+    map.insert("NDSS".to_string(), "MPEG-4 (.MP4) Nero Standard Profile");
+    map.insert(
+        "NDXC".to_string(),
+        "H.264/MPEG-4 AVC (.MP4) Nero Cinema Profile",
+    );
+    map.insert(
+        "NDXH".to_string(),
+        "H.264/MPEG-4 AVC (.MP4) Nero HDTV Profile",
+    );
+    map.insert(
+        "NDXM".to_string(),
+        "H.264/MPEG-4 AVC (.MP4) Nero Mobile Profile",
+    );
+    map.insert(
+        "NDXP".to_string(),
+        "H.264/MPEG-4 AVC (.MP4) Nero Portable Profile",
+    );
+    map.insert(
+        "NDXS".to_string(),
+        "H.264/MPEG-4 AVC (.MP4) Nero Standard Profile",
+    );
+    map.insert("ROSS".to_string(), "Ross Video");
+    map.insert("XAVC".to_string(), "Sony XAVC");
+    map.insert("aax ".to_string(), "Audible Enhanced Audiobook (.AAX)");
+    map.insert(
+        "avc1".to_string(),
+        "MP4 Base w/ AVC ext [ISO 14496-12:2005]",
+    );
+    map.insert("avif".to_string(), "AV1 Image File Format (.AVIF)");
+    map.insert("caqv".to_string(), "Casio Digital Camera");
+    map.insert("crx ".to_string(), "Canon Raw (.CRX)");
+    map.insert(
+        "da0a".to_string(),
+        "DMB MAF w/ MPEG Layer II aud, MOT slides, DLS, JPG/PNG/MNG images",
+    );
+    map.insert(
+        "da0b".to_string(),
+        "DMB MAF, extending DA0A, with 3GPP timed text, DID, TVA, REL, IPMP",
+    );
+    map.insert(
+        "da1a".to_string(),
+        "DMB MAF audio with ER-BSAC audio, JPG/PNG/MNG images",
+    );
+    map.insert(
+        "da1b".to_string(),
+        "DMB MAF, extending da1a, with 3GPP timed text, DID, TVA, REL, IPMP",
+    );
+    map.insert(
+        "da2a".to_string(),
+        "DMB MAF aud w/ HE-AAC v2 aud, MOT slides, DLS, JPG/PNG/MNG images",
+    );
+    map.insert(
+        "da2b".to_string(),
+        "DMB MAF, extending da2a, with 3GPP timed text, DID, TVA, REL, IPMP",
+    );
+    map.insert(
+        "da3a".to_string(),
+        "DMB MAF aud with HE-AAC aud, JPG/PNG/MNG images",
+    );
+    map.insert(
+        "da3b".to_string(),
+        "DMB MAF, extending da3a w/ BIFS, 3GPP timed text, DID, TVA, REL, IPMP",
+    );
+    map.insert(
+        "dmb1".to_string(),
+        "DMB MAF supporting all the components defined in the specification",
+    );
+    map.insert("dmpf".to_string(), "Digital Media Project");
+    map.insert(
+        "drc1".to_string(),
+        "Dirac (wavelet compression), encapsulated in ISO base media (MP4)",
+    );
+    map.insert(
+        "dv1a".to_string(),
+        "DMB MAF vid w/ AVC vid, ER-BSAC aud, BIFS, JPG/PNG/MNG images, TS",
+    );
+    map.insert(
+        "dv1b".to_string(),
+        "DMB MAF, extending dv1a, with 3GPP timed text, DID, TVA, REL, IPMP",
+    );
+    map.insert(
+        "dv2a".to_string(),
+        "DMB MAF vid w/ AVC vid, HE-AAC v2 aud, BIFS, JPG/PNG/MNG images, TS",
+    );
+    map.insert(
+        "dv2b".to_string(),
+        "DMB MAF, extending dv2a, with 3GPP timed text, DID, TVA, REL, IPMP",
+    );
+    map.insert(
+        "dv3a".to_string(),
+        "DMB MAF vid w/ AVC vid, HE-AAC aud, BIFS, JPG/PNG/MNG images, TS",
+    );
+    map.insert(
+        "dv3b".to_string(),
+        "DMB MAF, extending dv3a, with 3GPP timed text, DID, TVA, REL, IPMP",
+    );
+    map.insert("dvr1".to_string(), "DVB (.DVB) over RTP");
+    map.insert(
+        "dvt1".to_string(),
+        "DVB (.DVB) over MPEG-2 Transport Stream",
+    );
+    map.insert(
+        "heic".to_string(),
+        "High Efficiency Image Format HEVC still image (.HEIC)",
+    );
+    map.insert(
+        "heix".to_string(),
+        "High Efficiency Image Format still image (.HEIF)",
+    );
+    map.insert(
+        "hevc".to_string(),
+        "High Efficiency Image Format HEVC sequence (.HEICS)",
+    );
+    map.insert("isc2".to_string(), "ISMACryp 2.0 Encrypted File");
+    map.insert("iso2".to_string(), "MP4 Base Media v2 [ISO 14496-12:2005]");
+    map.insert("iso3".to_string(), "MP4 Base Media v3");
+    map.insert("iso4".to_string(), "MP4 Base Media v4");
+    map.insert("iso5".to_string(), "MP4 Base Media v5");
+    map.insert("iso6".to_string(), "MP4 Base Media v6");
+    map.insert("iso7".to_string(), "MP4 Base Media v7");
+    map.insert("iso8".to_string(), "MP4 Base Media v8");
+    map.insert("iso9".to_string(), "MP4 Base Media v9");
+    map.insert("isom".to_string(), "MP4 Base Media v1 [IS0 14496-12:2003]");
+    map.insert(
+        "jpm ".to_string(),
+        "JPEG 2000 Compound Image (.JPM) [ISO 15444-6]",
+    );
+    map.insert(
+        "jpx ".to_string(),
+        "JPEG 2000 with extensions (.JPX) [ISO 15444-2]",
+    );
+    map.insert(
+        "mif1".to_string(),
+        "High Efficiency Image Format still image (.HEIF)",
+    );
+    map.insert(
+        "mj2s".to_string(),
+        "Motion JPEG 2000 [ISO 15444-3] Simple Profile",
+    );
+    map.insert(
+        "mjp2".to_string(),
+        "Motion JPEG 2000 [ISO 15444-3] General Profile",
+    );
+    map.insert(
+        "mmp4".to_string(),
+        "MPEG-4/3GPP Mobile Profile (.MP4/3GP) (for NTT)",
+    );
+    map.insert("mp21".to_string(), "MPEG-21 [ISO/IEC 21000-9]");
+    map.insert("mp41".to_string(), "MP4 v1 [ISO 14496-1:ch13]");
+    map.insert("mp42".to_string(), "MP4 v2 [ISO 14496-14]");
+    map.insert(
+        "mp71".to_string(),
+        "MP4 w/ MPEG-7 Metadata [per ISO 14496-12]",
+    );
+    map.insert(
+        "mqt ".to_string(),
+        "Sony / Mobile QuickTime (.MQV) US Patent 7,477,830 (Sony Corp)",
+    );
+    map.insert(
+        "msf1".to_string(),
+        "High Efficiency Image Format sequence (.HEIFS)",
+    );
+    map.insert(
+        "odcf".to_string(),
+        "OMA DCF DRM Format 2.0 (OMA-TS-DRM-DCF-V2_0-20060303-A)",
+    );
+    map.insert(
+        "opf2".to_string(),
+        "OMA PDCF DRM Format 2.1 (OMA-TS-DRM-DCF-V2_1-20070724-C)",
+    );
+    map.insert(
+        "opx2".to_string(),
+        "OMA PDCF DRM + XBS extensions (OMA-TS-DRM_XBS-V1_0-20070529-C)",
+    );
+    map.insert("pana".to_string(), "Panasonic Digital Camera");
+    map.insert("qt  ".to_string(), "Apple QuickTime (.MOV/QT)");
+    map.insert("sdv ".to_string(), "SD Memory Card Video");
+    map.insert("ssc1".to_string(), "Samsung stereoscopic, single stream");
+    map.insert("ssc2".to_string(), "Samsung stereoscopic, dual stream");
+    map
+});
+
+static PRINT_CONV_32: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Main Tier");
+    map.insert("1".to_string(), "High Tier");
+    map
+});
+
+static PRINT_CONV_33: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No Profile");
+    map.insert("1".to_string(), "Main");
+    map.insert("10".to_string(), "Scalable Format Range Extensions");
+    map.insert(
+        "11".to_string(),
+        "High Throughput Screen Content Coding Extensions",
+    );
+    map.insert("2".to_string(), "Main 10");
+    map.insert("3".to_string(), "Main Still Picture");
+    map.insert("4".to_string(), "Format Range Extensions");
+    map.insert("5".to_string(), "High Throughput");
+    map.insert("6".to_string(), "Multiview Main");
+    map.insert("7".to_string(), "Scalable Main");
+    map.insert("8".to_string(), "3D Main");
+    map.insert("9".to_string(), "Screen Content Coding Extensions");
+    map
+});
+
+static PRINT_CONV_34: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Monochrome");
+    map.insert("1".to_string(), "4:2:0");
+    map.insert("2".to_string(), "4:2:2");
+    map.insert("3".to_string(), "4:4:4");
+    map
+});
+
+static PRINT_CONV_35: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "Constant Frame Rate");
+    map.insert(
+        "2".to_string(),
+        "Each Temporal Layer is Constant Frame Rate",
+    );
+    map
+});
+
+static PRINT_CONV_36: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No");
     map.insert("1".to_string(), "Yes");
     map
 });
 
-static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_37: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert(" KD ".to_string(), "Kodak");
+    map.insert("AR.D".to_string(), "Parrot AR.Drone");
+    map.insert("FFMP".to_string(), "FFmpeg");
+    map.insert("GIC ".to_string(), "General Imaging Co.");
+    map.insert("KMPI".to_string(), "Konica-Minolta");
+    map.insert("NIKO".to_string(), "Nikon");
+    map.insert("SMI ".to_string(), "Sorenson Media Inc.");
+    map.insert("ZORA".to_string(), "Zoran Corporation");
+    map.insert("appl".to_string(), "Apple");
+    map.insert("fe20".to_string(), "Olympus (fe20)");
+    map.insert("kdak".to_string(), "Kodak");
+    map.insert("leic".to_string(), "Leica");
+    map.insert("mino".to_string(), "Minolta");
+    map.insert("niko".to_string(), "Nikon");
+    map.insert("olym".to_string(), "Olympus");
+    map.insert("pana".to_string(), "Panasonic");
+    map.insert("pent".to_string(), "Pentax");
+    map.insert("pr01".to_string(), "Olympus (pr01)");
+    map.insert("sany".to_string(), "Sanyo");
+    map
+});
+
+static PRINT_CONV_38: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "iTunes");
+    map.insert("1".to_string(), "AOL");
+    map
+});
+
+static PRINT_CONV_39: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No");
+    map.insert("1".to_string(), "Yes");
+    map
+});
+
+static PRINT_CONV_40: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("10".to_string(), "Music|Singer/Songwriter");
     map.insert("100000".to_string(), "Music|Christian & Gospel");
@@ -5048,35 +5991,35 @@ static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_41: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No");
     map.insert("1".to_string(), "Yes");
     map
 });
 
-static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_42: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No");
     map.insert("1".to_string(), "Yes");
     map
 });
 
-static PRINT_CONV_8: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_43: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No");
     map.insert("1".to_string(), "Yes");
     map
 });
 
-static PRINT_CONV_9: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_44: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Insert Gap");
     map.insert("1".to_string(), "No Gap");
     map
 });
 
-static PRINT_CONV_10: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_45: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "none");
     map.insert("1".to_string(), "Explicit");
@@ -5085,7 +6028,7 @@ static PRINT_CONV_10: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_11: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_46: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("143441".to_string(), "United States");
     map.insert("143442".to_string(), "France");
@@ -5245,14 +6188,14 @@ static PRINT_CONV_11: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_12: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_47: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "No");
     map.insert("1".to_string(), "Yes");
     map
 });
 
-static PRINT_CONV_13: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_48: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Movie (old)");
     map.insert("1".to_string(), "Normal (Music)");
@@ -5268,7 +6211,16 @@ static PRINT_CONV_13: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_49: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Horizontal (normal)");
+    map.insert("1".to_string(), "Rotate 270 CW");
+    map.insert("2".to_string(), "Rotate 180");
+    map.insert("3".to_string(), "Rotate 90 CW");
+    map
+});
+
+static PRINT_CONV_50: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Shooting Location");
     map.insert("1".to_string(), "Real Location");
@@ -5276,14 +6228,14 @@ static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_15: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_51: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
     map
 });
 
-static PRINT_CONV_16: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_52: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("1".to_string(), "Horizontal (normal)");
     map.insert("2".to_string(), "Mirror horizontal");
@@ -5296,7 +6248,24 @@ static PRINT_CONV_16: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_17: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_53: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Big-endian (Motorola, MM)");
+    map.insert("1".to_string(), "Little-endian (Intel, II)");
+    map
+});
+
+static PRINT_CONV_54: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Normal");
+    map.insert("1".to_string(), "Double Size");
+    map.insert("2".to_string(), "Half Size");
+    map.insert("3".to_string(), "Full Screen");
+    map.insert("4".to_string(), "Current Size");
+    map
+});
+
+static PRINT_CONV_55: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Monoscopic");
     map.insert("1".to_string(), "Stereoscopic Top-Bottom");
@@ -5306,66 +6275,2264 @@ static PRINT_CONV_17: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_18: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_56: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
-    map.insert(" KD ".to_string(), "Kodak");
-    map.insert("AR.D".to_string(), "Parrot AR.Drone");
-    map.insert("FFMP".to_string(), "FFmpeg");
-    map.insert("GIC ".to_string(), "General Imaging Co.");
-    map.insert("KMPI".to_string(), "Konica-Minolta");
-    map.insert("NIKO".to_string(), "Nikon");
-    map.insert("SMI ".to_string(), "Sorenson Media Inc.");
-    map.insert("ZORA".to_string(), "Zoran Corporation");
-    map.insert("appl".to_string(), "Apple");
-    map.insert("fe20".to_string(), "Olympus (fe20)");
-    map.insert("kdak".to_string(), "Kodak");
-    map.insert("leic".to_string(), "Leica");
-    map.insert("mino".to_string(), "Minolta");
-    map.insert("niko".to_string(), "Nikon");
-    map.insert("olym".to_string(), "Olympus");
-    map.insert("pana".to_string(), "Panasonic");
-    map.insert("pent".to_string(), "Pentax");
-    map.insert("pr01".to_string(), "Olympus (pr01)");
-    map.insert("sany".to_string(), "Sanyo");
-    map
-});
-
-static PRINT_CONV_19: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert(" KD ".to_string(), "Kodak");
-    map.insert("AR.D".to_string(), "Parrot AR.Drone");
-    map.insert("FFMP".to_string(), "FFmpeg");
-    map.insert("GIC ".to_string(), "General Imaging Co.");
-    map.insert("KMPI".to_string(), "Konica-Minolta");
-    map.insert("NIKO".to_string(), "Nikon");
-    map.insert("SMI ".to_string(), "Sorenson Media Inc.");
-    map.insert("ZORA".to_string(), "Zoran Corporation");
-    map.insert("appl".to_string(), "Apple");
-    map.insert("fe20".to_string(), "Olympus (fe20)");
-    map.insert("kdak".to_string(), "Kodak");
-    map.insert("leic".to_string(), "Leica");
-    map.insert("mino".to_string(), "Minolta");
-    map.insert("niko".to_string(), "Nikon");
-    map.insert("olym".to_string(), "Olympus");
-    map.insert("pana".to_string(), "Panasonic");
-    map.insert("pent".to_string(), "Pentax");
-    map.insert("pr01".to_string(), "Olympus (pr01)");
-    map.insert("sany".to_string(), "Sanyo");
-    map
-});
-
-static PRINT_CONV_20: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Horizontal (normal)");
-    map.insert("1".to_string(), "Rotate 270 CW");
-    map.insert("2".to_string(), "Rotate 180");
-    map.insert("3".to_string(), "Rotate 90 CW");
+    map.insert("0".to_string(), "Big-endian (Motorola, MM)");
+    map.insert("1".to_string(), "Little-endian (Intel, II)");
     map
 });
 
 /// Get tag definitions for other category
 pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
     vec![
+        (0, TagKitDef {
+            id: 0,
+            name: "AV1ConfigurationVersion",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1, TagKitDef {
+            id: 1,
+            name: "SeqLevelIdx0",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2, TagKitDef {
+            id: 2,
+            name: "HighBitDepth",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2, TagKitDef {
+            id: 2,
+            name: "TwelveBit",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2, TagKitDef {
+            id: 2,
+            name: "ChromaFormat",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("bits: 0x04 = Monochrome, 0x02 = SubSamplingX, 0x01 = SubSamplingY"),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_19),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2, TagKitDef {
+            id: 2,
+            name: "ChromaSamplePosition",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_20),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Mute",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_21),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AudioProfileVersion",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "AudioVendorID",
+            format: "undef[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_22),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "AudioChannels",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (26, TagKitDef {
+            id: 26,
+            name: "AudioBitsPerSample",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (32, TagKitDef {
+            id: 32,
+            name: "AudioSampleRate",
+            format: "fixed32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SpatialAudio",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "BitrateInfo",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AudioChannelLayout",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "DecodeConfig",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "PurchaseInfo",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ProtectionInfo",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Wave",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (100, TagKitDef {
+            id: 100,
+            name: "Channel5Flags",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("BITMASK"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (104, TagKitDef {
+            id: 104,
+            name: "Channel5Coordinates",
+            format: "float[3]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (116, TagKitDef {
+            id: 116,
+            name: "Channel6Label",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_23),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "NumChannelDescriptions",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (120, TagKitDef {
+            id: 120,
+            name: "Channel6Flags",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("BITMASK"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (124, TagKitDef {
+            id: 124,
+            name: "Channel6Coordinates",
+            format: "float[3]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (136, TagKitDef {
+            id: 136,
+            name: "Channel7Label",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_24),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (140, TagKitDef {
+            id: 140,
+            name: "Channel7Flags",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("BITMASK"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (144, TagKitDef {
+            id: 144,
+            name: "Channel7Coordinates",
+            format: "float[3]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (156, TagKitDef {
+            id: 156,
+            name: "Channel8Label",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_25),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "Channel1Label",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_26),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (160, TagKitDef {
+            id: 160,
+            name: "Channel8Flags",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("BITMASK"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (164, TagKitDef {
+            id: 164,
+            name: "Channel8Coordinates",
+            format: "float[3]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "Channel1Flags",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("BITMASK"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "Channel1Coordinates",
+            format: "float[3]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("3 numbers:  for rectangular coordinates left/right, back/front, down/up; for\n            spherical coordinates left/right degrees, down/up degrees, distance"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (36, TagKitDef {
+            id: 36,
+            name: "Channel2Label",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_27),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (40, TagKitDef {
+            id: 40,
+            name: "Channel2Flags",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("BITMASK"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (44, TagKitDef {
+            id: 44,
+            name: "Channel2Coordinates",
+            format: "float[3]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (56, TagKitDef {
+            id: 56,
+            name: "Channel3Label",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_28),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (60, TagKitDef {
+            id: 60,
+            name: "Channel3Flags",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("BITMASK"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (64, TagKitDef {
+            id: 64,
+            name: "Channel3Coordinates",
+            format: "float[3]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (76, TagKitDef {
+            id: 76,
+            name: "Channel4Label",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_29),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (80, TagKitDef {
+            id: 80,
+            name: "Channel4Flags",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("BITMASK"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (84, TagKitDef {
+            id: 84,
+            name: "Channel4Coordinates",
+            format: "float[3]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (96, TagKitDef {
+            id: 96,
+            name: "Channel5Label",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_30),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ColorProfiles",
+            format: "undef[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AvgBitrate",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ConvertBitrate($val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "CDDBDiscTracks",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val =~ /^.{6}([a-z0-9]{2})/i ? hex($1) : undef"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Rotation",
+            format: "1",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("degrees of clockwise camera rotation. Writing this tag updates QuickTime\n            MatrixStructure for all tracks with a non-zero image size"),
+            print_conv: PrintConvType::None,
+            value_conv: Some("Image::ExifTool::QuickTime::CalcRotation($self)"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "DataRef",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "URL",
+            format: "undef",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "URL",
+            format: "undef",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "URN",
+            format: "undef",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "EncoderVendor",
+            format: "undef[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AudioComponentVersion",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("join \".\", unpack(\"ncc\", pack(\"N\",$val))"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "FaceRec",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "FaceItem",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "FileProfileVersion",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MajorBrand",
+            format: "undef[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_31),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (14, TagKitDef {
+            id: 14,
+            name: "SerialNumber",
+            format: "string[16]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (28, TagKitDef {
+            id: 28,
+            name: "PreviewImage",
+            format: "undef[$val{13}]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GenMediaInfo",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Text",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "GenBalance",
+            format: "fixed16s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1, TagKitDef {
+            id: 1,
+            name: "GeneralTierFlag",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_32),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (1, TagKitDef {
+            id: 1,
+            name: "GeneralProfileIDC",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_33),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "GeneralLevelIDC",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%d (level %.1f)\", $val, $val/30)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (13, TagKitDef {
+            id: 13,
+            name: "MinSpatialSegmentationIDC",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (15, TagKitDef {
+            id: 15,
+            name: "ParallelismType",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "ChromaFormat",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_34),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (17, TagKitDef {
+            id: 17,
+            name: "BitDepthLuma",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val + 8"),
+            subdirectory: None,
+        }),
+        (18, TagKitDef {
+            id: 18,
+            name: "BitDepthChroma",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val + 8"),
+            subdirectory: None,
+        }),
+        (19, TagKitDef {
+            id: 19,
+            name: "AverageFrameRate",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val / 256"),
+            subdirectory: None,
+        }),
+        (21, TagKitDef {
+            id: 21,
+            name: "ConstantFrameRate",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_35),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (21, TagKitDef {
+            id: 21,
+            name: "NumTemporalLayers",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (21, TagKitDef {
+            id: 21,
+            name: "TemporalIDNested",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_36),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Unknown_slmt",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "HandlerVendorID",
+            format: "undef[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_37),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "HandlerDescription",
+            format: "string",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "RealtimeStreamingProtocol",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression(r"$val=~s/^sdp /(SDP) /; $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (16, TagKitDef {
+            id: 16,
+            name: "HintTrackVersion",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "MaxPacketSize",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SequenceNumberRandomOffset",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ImmediateDataBytes",
+            format: "int64u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "LargestPacketDuration",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.3f s\",$val/1000)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MediaTrackBytes",
+            format: "int64u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "RepeatedDataBytes",
+            format: "int64u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MaxDataRate",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("my @a=split(\" \",$val);sprintf(\"%d bytes in %.3f s\",$a[1],$a[0]/1000)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "NumPackets",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "NumPackets",
+            format: "int64u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "PayloadType",
+            format: "undef",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression(r"$val=~s/ /, /;$val"),
+            value_conv: Some("unpack(\"N\",$val) . \" \" . substr($val, 5)"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "LargestPacketSize",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TotalBytes",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TotalBytesNoRTPHeaders",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TotalBytesNoRTPHeaders",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TotalBytesNoRTPHeaders",
+            format: "int64u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TotalBytes",
+            format: "int64u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TotalBytes",
+            format: "int64u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ImageData",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ImageDescription",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ICC_Profile",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ItemInfoEntry",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("parsed, but not extracted as a tag"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "iTunesInfo",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AlbumArtist",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AppleStoreAccountType",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_38),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Album",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ArtistID",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Author",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AppleStoreCatalogID",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "CoverArt",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Compilation",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_39),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Copyright",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Description",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "DiskNumber",
+            format: "undef",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("\n            return \\$val unless length($val) >= 6;\n            our @a = unpack 'x2nn', $val;\n            return $a[1] ? join(' of ', @a) : $a[0];\n        "),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Description",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GenreID",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_40),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Genre",
+            format: "undef",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression(r#"
+            return $val unless $val =~ /^\d+$/;
+            require Image::ExifTool::ID3;
+            Image::ExifTool::ID3::PrintGenre($val - 1); # note the "- 1"
+        "#),
+            value_conv: Some("unpack(\"n\",$val)"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Grouping",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GoogleHostHeader",
+            format: "string",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GooglePingMessage",
+            format: "string",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GooglePingURL",
+            format: "string",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GoogleSourceData",
+            format: "string",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GoogleTrackDuration",
+            format: "string",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("ConvertDuration($val)"),
+            value_conv: Some("$val / 1000"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "HDVideo",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_41),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "iTunesU",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_42),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Podcast",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_43),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "PlayGap",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_44),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AlbumID",
+            format: "int64u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Rating",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_45),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AppleStoreCountry",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_46),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ShowMovement",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_47),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "PreviewImage",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MediaType",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_48),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Title",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "BeatsPerMinute",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TrackNumber",
+            format: "undef",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("\n            return \\$val unless length($val) >= 6;\n            our @a = unpack 'x2nn', $val;\n            return $a[1] ? join(' of ', @a) : $a[0];\n        "),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TVEpisode",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TVSeason",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Author",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Composer",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Copyright",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MovementCount",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MovementNumber",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ItemPropertyContainer",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ItemPropertyAssociation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("parsed, but not extracted as a tag"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AuxiliaryImageType",
+            format: "undef",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AV1Configuration",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "CleanAperture",
+            format: "rational64s",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("4 numbers: width, height, left and top"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ContentLightLevel",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ICC_Profile",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ColorRepresentation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "HEVCConfiguration",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Rotation",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_49),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ImageSpatialExtent",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression(r"$val =~ tr/ /x/; $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "PixelAspectRatio",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ImagePixelDepth",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "RelativeLocation",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AuxiliaryImageRef",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ContentDescribes",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "DerivedImageRef",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ApplePhotosVariationIdentifier",
+            format: "int64s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagartist",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagartwork",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Author",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AndroidCaptureFPS",
+            format: "float",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "XiaomiHDR10",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "XiaomiPreviewVideoCover",
+            format: "int32s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagcomment",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "CompatibleBrands",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Copyright",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagdescription",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "FaceInfo",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "DetectedFaceBounds",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Expression("my @a=split \" \",$val;$_=int($_*1e6+.5)/1e6 foreach @a;join \" \",@a"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "DetectedFaceID",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "DetectedFaceRollAngle",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "DetectedFaceYawAngle",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "CameraDirection",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "CameraMotion",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagdirector",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "DisplayName",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagencoder",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Taggenre",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Taginformation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagkeywords",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "LivePhotoInfo",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("join \" \",unpack \"VfVVf6c4lCCcclf4Vvv\", $val"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "LivePhotoAuto",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "LivePhotoVitalityScore",
+            format: "float",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "LivePhotoVitalityScoringVersion",
+            format: "int64s",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "LocationAccuracyHorizontal",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "LocationBody",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "LocationName",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "LocationNote",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "LocationRole",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_50),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MajorBrand",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Make",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MinorVersion",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Model",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Mute",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_51),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagproducer",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagpublisher",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SceneIlluminance",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: true,
+            notes: Some("milli-lux"),
+            print_conv: PrintConvType::None,
+            value_conv: Some("unpack(\"N\", $val)"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagsoftware",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagtitle",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "VideoOrientation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_52),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagyear",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
         (0, TagKitDef {
             id: 0,
             name: "HTCInfo",
@@ -5841,6 +9008,402 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
         }),
         (0, TagKitDef {
             id: 0,
+            name: "Handler",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MediaHeader",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MediaInfo",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MediaHeaderVersion",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "DataInfo",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GenMediaHeader",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Handler",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "HintHeader",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "NullMediaHeader",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AudioHeader",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SampleTable",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "VideoHeader",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "BinaryXML",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "DataInfo",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Free",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Unknown_grpl",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Handler",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MetaImageSize",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression(r"$val =~ s/^(\d+) (\d+) (\d+) (\d+)/${3}x$4/; $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ItemInformation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ItemInformation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ItemLocation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("parsed, but not extracted as a tag"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ItemList",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "IPMPControl",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ItemProtection",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ItemProperties",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ItemReference",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AudioKeys",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "VideoKeys",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Keys",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "PrimaryItemReference",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "PrimaryItemReference",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MetaVersion",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "UUID-Unknown",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val =~ /^([\\x20-\\x7e]*)\\0*$/ ? $1 : \\$val"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "XML",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "BitrateInfo",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Keys",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
             name: "CompressedMovie",
             format: "unknown",
             groups: HashMap::new(),
@@ -5984,6 +9547,1227 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
         }),
         (0, TagKitDef {
             id: 0,
+            name: "Meta",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MovieFragmentHeader",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TrackFragment",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MovieHeaderVersion",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (19, TagKitDef {
+            id: 19,
+            name: "PreviewDuration",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$$self{TimeScale} ? ConvertDuration($val) : $val"),
+            value_conv: Some("$$self{TimeScale} ? $val / $$self{TimeScale} : $val"),
+            subdirectory: None,
+        }),
+        (22, TagKitDef {
+            id: 22,
+            name: "SelectionDuration",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("$$self{TimeScale} ? ConvertDuration($val) : $val"),
+            value_conv: Some("$$self{TimeScale} ? $val / $$self{TimeScale} : $val"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SecondCam",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagAlerts",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagAlexa",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagAlexa - Paired Device Name",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagAlexa - Pairing",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagAlexa - Privacy Mode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagAlexa - Wake Word Language",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagAudio",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagAuto Power Off",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagBattery Status",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagBluetooth MAC Address",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagBluetooth Name",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagCountry",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagDefault Settings",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagDevice Sounds",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagDual Files",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagEmergency SOS",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagExposure",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagExtreme Weather Mode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagFCC-ID",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagFirmware",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagFirmware Version",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagFormat SD Card",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagG Sensor",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagGPS Stamp",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagImage Stabilisation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagKeep User Settings",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagLanguage",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagLinux",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagModel",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagModel Stamp",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagMyNextbase - Paired Device Name",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagMyNextbase - Pairing",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagNumber / License Plate",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagParking Mode",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagRecording History",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagResolution",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagReversing Camera",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagSD Card Class",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagSD Card Format",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagSD Card Manf ID",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagSD Card Model No",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagSD Card OEM ID",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagSD Card Serial No",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagSD Card Size",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagSD Card Type",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagSD Card Used Space",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagScreen Dimming",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagScreen Saver",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SerialNumber",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagSpeed Stamp",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagSpeed Units",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagSystem Info",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagVideo Length",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagWi-Fi MAC Address",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagWi-Fi Password",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagWi-Fi SSID",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "What3Words",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MetaRelation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Meta",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "PlaybackFrameRate",
+            format: "rational64u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "FontTable",
+            format: "undef",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("substr($val, 5)"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MarlinDictionary",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MarlinHeader",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MarlinValues",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "OtherName",
+            format: "undef",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("substr($val, 4)"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AccelData",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "OriginalFileName",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("substr($val, 4, -1)"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagptrh",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "PreviewImage",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Endianness",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_53),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SchemeInfo",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SchemeType",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ItemTool",
+            format: "string",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ChunkOffset64",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SamplePaddingBits",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SampleToGroup",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "IdependentAndDisposableSamples",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SampleGroupDescription",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ChunkOffset",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SampleDegradationPriority",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "PartialSyncSamples",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("join \" \",unpack(\"x8N*\",$val)"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SampleToChunk",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AudioSampleDesc",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "VisualSampleDesc",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "HintSampleDesc",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "MetaSampleDesc",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "OtherSampleDesc",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ShadowSyncSampleTable",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SyncSampleTable",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SampleSizes",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "VideoFrameRate",
+            format: "undef",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("average rate calculated from time-to-sample table for video media"),
+            print_conv: PrintConvType::Expression("int($val * 1000 + 0.5) / 1000"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "CompactSampleSizes",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Sub-sampleInformation",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Certificate",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("\"0x\" . unpack(\"H*\",$val)"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "InitializationVector",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("unpack(\"H*\",$val)"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "KeyID",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("\"0x\" . unpack(\"H*\",$val)"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "UserName",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Rights",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "UserID",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("\"0x\" . unpack(\"H*\",$val)"),
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "AmbisonicChannelMap",
+            format: "int32u[$val{8}]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (12, TagKitDef {
+            id: 12,
+            name: "TextColor",
+            format: "int16u[3]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (18, TagKitDef {
+            id: 18,
+            name: "BackgroundColor",
+            format: "int16u[3]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (24, TagKitDef {
+            id: 24,
+            name: "FontName",
+            format: "pstring",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("$self->Decode($val, $self->Options(\"CharsetQuickTime\"))"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TCMediaInfo",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
             name: "Media",
             format: "unknown",
             groups: HashMap::new(),
@@ -6094,7 +10878,40 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
         }),
         (0, TagKitDef {
             id: 0,
-            name: "Handler",
+            name: "CleanApertureDimensions",
+            format: "fixed32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression(r"$val =~ tr/ /x/; $val"),
+            value_conv: Some("$val =~ s/^.*? //; $val"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "EncodedPixelsDimensions",
+            format: "fixed32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression(r"$val =~ tr/ /x/; $val"),
+            value_conv: Some("$val =~ s/^.*? //; $val"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ProductionApertureDimensions",
+            format: "fixed32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression(r"$val =~ tr/ /x/; $val"),
+            value_conv: Some("$val =~ s/^.*? //; $val"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Meta",
             format: "unknown",
             groups: HashMap::new(),
             writable: false,
@@ -6105,25 +10922,146 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
         }),
         (0, TagKitDef {
             id: 0,
-            name: "MediaHeader",
+            name: "TrackHeaderVersion",
+            format: "int8u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (19, TagKitDef {
+            id: 19,
+            name: "ImageWidth",
             format: "unknown",
             groups: HashMap::new(),
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+            subdirectory: None,
+        }),
+        (20, TagKitDef {
+            id: 20,
+            name: "ImageHeight",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
         }),
         (0, TagKitDef {
             id: 0,
-            name: "MediaInfo",
-            format: "unknown",
+            name: "ContentDescribes",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("\"Track $val\""),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ChapterListTrackID",
+            format: "int32u",
             groups: HashMap::new(),
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
             value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ClosedCaptionTrack",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "AlternateFormatTrack",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SubtitleTrack",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ForcedSubtitleTrack",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ElementaryStreamTrack",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: Some("$val =~ s/^1 //; $val"),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TranscriptTrack",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Non-primarySourceTrack",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "SyncronizedTrack",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
         }),
         (0, TagKitDef {
             id: 0,
@@ -6985,1408 +11923,18 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
         }),
         (0, TagKitDef {
             id: 0,
-            name: "BinaryXML",
+            name: "DisplaySize",
             format: "unknown",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_54),
             value_conv: None,
             subdirectory: None,
         }),
         (0, TagKitDef {
             id: 0,
-            name: "DataInfo",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Free",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Unknown_grpl",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Handler",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "MetaImageSize",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression(r"$val =~ s/^(\d+) (\d+) (\d+) (\d+)/${3}x$4/; $val"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ItemInformation",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ItemInformation",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ItemLocation",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("parsed, but not extracted as a tag"),
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ItemList",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "IPMPControl",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ItemProtection",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ItemProperties",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ItemReference",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "AudioKeys",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "VideoKeys",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Keys",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "PrimaryItemReference",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "PrimaryItemReference",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "MetaVersion",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "UUID-Unknown",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: Some("$val =~ /^([\\x20-\\x7e]*)\\0*$/ ? $1 : \\$val"),
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "XML",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "iTunesInfo",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "AlbumArtist",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "AppleStoreAccountType",
-            format: "int8u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_3),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Album",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ArtistID",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Author",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "AppleStoreCatalogID",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "CoverArt",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Compilation",
-            format: "int8u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_4),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Copyright",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Description",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "DiskNumber",
-            format: "undef",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: Some("\n            return \\$val unless length($val) >= 6;\n            my @a = unpack 'x2nn', $val;\n            return $a[1] ? join(' of ', @a) : $a[0];\n        "),
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Description",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "GenreID",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_5),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Genre",
-            format: "undef",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression(r#"
-            return $val unless $val =~ /^\d+$/;
-            require Image::ExifTool::ID3;
-            Image::ExifTool::ID3::PrintGenre($val - 1); # note the "- 1"
-        "#),
-            value_conv: Some("unpack(\"n\",$val)"),
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Grouping",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "GoogleHostHeader",
-            format: "string",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "GooglePingMessage",
-            format: "string",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "GooglePingURL",
-            format: "string",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "GoogleSourceData",
-            format: "string",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "GoogleTrackDuration",
-            format: "string",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("ConvertDuration($val)"),
-            value_conv: Some("$val / 1000"),
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "HDVideo",
-            format: "int8u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_6),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "iTunesU",
-            format: "int8u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_7),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Podcast",
-            format: "int8u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_8),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "PlayGap",
-            format: "int8u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_9),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "AlbumID",
-            format: "int64u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Rating",
-            format: "int8u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_10),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "AppleStoreCountry",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_11),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ShowMovement",
-            format: "int8u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_12),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "PreviewImage",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "MediaType",
-            format: "int8u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_13),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Title",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "BeatsPerMinute",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "TrackNumber",
-            format: "undef",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: Some("\n            return \\$val unless length($val) >= 6;\n            my @a = unpack 'x2nn', $val;\n            return $a[1] ? join(' of ', @a) : $a[0];\n        "),
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "TVEpisode",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "TVSeason",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Author",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Composer",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Copyright",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "MovementCount",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "MovementNumber",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ApplePhotosVariationIdentifier",
-            format: "int64s",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Tagartist",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Tagartwork",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Author",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "AndroidCaptureFPS",
-            format: "float",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "XiaomiHDR10",
-            format: "int32s",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "XiaomiPreviewVideoCover",
-            format: "int32s",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Tagcomment",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "CompatibleBrands",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Copyright",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Tagdescription",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "FaceInfo",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "DetectedFaceBounds",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Expression("my @a=split \" \",$val;$_=int($_*1e6+.5)/1e6 foreach @a;join \" \",@a"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "DetectedFaceID",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "DetectedFaceRollAngle",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "DetectedFaceYawAngle",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "CameraDirection",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "CameraMotion",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Tagdirector",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "DisplayName",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Tagencoder",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Taggenre",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Taginformation",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Tagkeywords",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "LivePhotoInfo",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: Some("join \" \",unpack \"VfVVf6c4lCCcclf4Vvv\", $val"),
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "LivePhotoAuto",
-            format: "int8u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "LivePhotoVitalityScore",
-            format: "float",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "LivePhotoVitalityScoringVersion",
-            format: "int64s",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "LocationAccuracyHorizontal",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "LocationBody",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "LocationName",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "LocationNote",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "LocationRole",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_14),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "MajorBrand",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Make",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "MinorVersion",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Model",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Mute",
-            format: "int8u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_15),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Tagproducer",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Tagpublisher",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "SceneIlluminance",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: true,
-            notes: Some("milli-lux"),
-            print_conv: PrintConvType::None,
-            value_conv: Some("unpack(\"N\", $val)"),
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Tagsoftware",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Tagtitle",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "VideoOrientation",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_16),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Tagyear",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ChunkOffset64",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "SamplePaddingBits",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "SampleToGroup",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "IdependentAndDisposableSamples",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "SampleGroupDescription",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ChunkOffset",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "SampleDegradationPriority",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "PartialSyncSamples",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: Some("join \" \",unpack(\"x8N*\",$val)"),
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "SampleToChunk",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "AudioSampleDesc",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "VisualSampleDesc",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "HintSampleDesc",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "MetaSampleDesc",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "OtherSampleDesc",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ShadowSyncSampleTable",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "SyncSampleTable",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "SampleSizes",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "VideoFrameRate",
-            format: "undef",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("average rate calculated from time-to-sample table for video media"),
-            print_conv: PrintConvType::Expression("int($val * 1000 + 0.5) / 1000"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "CompactSampleSizes",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Sub-sampleInformation",
+            name: "VideoProfileVersion",
             format: "unknown",
             groups: HashMap::new(),
             writable: false,
@@ -8534,7 +12082,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_17),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_55),
             value_conv: Some("$val =~ s/.* //; $val"),
             subdirectory: None,
         }),
@@ -8549,174 +12097,20 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
             value_conv: None,
             subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
         }),
-        (20, TagKitDef {
-            id: 20,
-            name: "AudioVendorID",
-            format: "undef[4]",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_18),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (24, TagKitDef {
-            id: 24,
-            name: "AudioChannels",
+        (0, TagKitDef {
+            id: 0,
+            name: "Endianness",
             format: "int16u",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (26, TagKitDef {
-            id: 26,
-            name: "AudioBitsPerSample",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (32, TagKitDef {
-            id: 32,
-            name: "AudioSampleRate",
-            format: "fixed32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_56),
             value_conv: None,
             subdirectory: None,
         }),
         (0, TagKitDef {
             id: 0,
-            name: "SpatialAudio",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "BitrateInfo",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "AudioChannelLayout",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "DecodeConfig",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "PurchaseInfo",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ProtectionInfo",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Wave",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "DataInfo",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "GenMediaHeader",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Handler",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "HintHeader",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "NullMediaHeader",
+            name: "Tag",
             format: "unknown",
             groups: HashMap::new(),
             writable: false,
@@ -8727,194 +12121,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
         }),
         (0, TagKitDef {
             id: 0,
-            name: "AudioHeader",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "SampleTable",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "VideoHeader",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (12, TagKitDef {
-            id: 12,
-            name: "HandlerVendorID",
-            format: "undef[4]",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_19),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (24, TagKitDef {
-            id: 24,
-            name: "HandlerDescription",
-            format: "string",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ItemPropertyContainer",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ItemPropertyAssociation",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("parsed, but not extracted as a tag"),
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "AuxiliaryImageType",
-            format: "undef",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "AV1Configuration",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "CleanAperture",
-            format: "rational64s",
-            groups: HashMap::new(),
-            writable: false,
-            notes: Some("4 numbers: width, height, left and top"),
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ContentLightLevel",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ICC_Profile",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ColorRepresentation",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "HEVCConfiguration",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Rotation",
-            format: "int8u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_20),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ImageSpatialExtent",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression(r"$val =~ tr/ /x/; $val"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "PixelAspectRatio",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "ImagePixelDepth",
+            name: "Tagcamm",
             format: "unknown",
             groups: HashMap::new(),
             writable: false,
@@ -8925,35 +12132,178 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
         }),
         (0, TagKitDef {
             id: 0,
-            name: "RelativeLocation",
+            name: "Tagctbx",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagdata",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagmeta",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagsbtl",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagtext",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Tagvide",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "TagActors",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "EncodingParams",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Data",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ContentRating",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("standard | rating | score | reasons"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "iTunMOVI",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "VolumeNormalization",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression(r"$val=~s/ 0+(\w)/ $1/g; $val=~s/^\s+//; $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "iTunSMPB",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression(r"$val=~s/ 0+(\w)/ $1/g; $val=~s/^\s+//; $val"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Mean",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "Name",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "iTunTool",
             format: "int32u",
             groups: HashMap::new(),
             writable: false,
             notes: None,
-            print_conv: PrintConvType::None,
+            print_conv: PrintConvType::Expression("sprintf(\"0x%.8x\",$val)"),
             value_conv: None,
-            subdirectory: None,
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Projection",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "MetadataSource",
-            format: "undef",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: Some("$val=~tr/\\0//d; $val"),
             subdirectory: None,
         }),
         (0, TagKitDef {
@@ -8991,7 +12341,7 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
         }),
         (0, TagKitDef {
             id: 0,
-            name: "Meta",
+            name: "Projection",
             format: "unknown",
             groups: HashMap::new(),
             writable: false,
@@ -9002,36 +12352,14 @@ pub fn get_other_tags() -> Vec<(u32, TagKitDef)> {
         }),
         (0, TagKitDef {
             id: 0,
-            name: "MovieFragmentHeader",
-            format: "unknown",
+            name: "MetadataSource",
+            format: "undef",
             groups: HashMap::new(),
             writable: false,
             notes: None,
             print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "TrackFragment",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
-        }),
-        (0, TagKitDef {
-            id: 0,
-            name: "Meta",
-            format: "unknown",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
-            value_conv: None,
-            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x0_subdirectory }),
+            value_conv: Some("$val=~tr/\\0//d; $val"),
+            subdirectory: None,
         }),
     ]
 }

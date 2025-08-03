@@ -235,5 +235,33 @@ pub fn get_interop_tags() -> Vec<(u32, TagKitDef)> {
                 subdirectory: None,
             },
         ),
+        (
+            4,
+            TagKitDef {
+                id: 4,
+                name: "WB_GBRGLevels",
+                format: "int16u[4]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("DiMAGE A200"),
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            4,
+            TagKitDef {
+                id: 4,
+                name: "WB_RGGBLevels",
+                format: "int16u[4]",
+                groups: HashMap::new(),
+                writable: false,
+                notes: Some("other models"),
+                print_conv: PrintConvType::None,
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
     ]
 }

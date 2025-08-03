@@ -14,7 +14,7 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "RAW");
     map.insert("1".to_string(), "Super Fine");
@@ -30,7 +30,7 @@ static PRINT_CONV_4: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "None");
     map.insert("136".to_string(), "Minolta/Sony AF 1.4x APO (D)");
@@ -44,7 +44,7 @@ static PRINT_CONV_5: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
-static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_7: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Auto");
     map.insert("1".to_string(), "Color Temperature/Color Filter");
@@ -59,9 +59,1011 @@ static PRINT_CONV_6: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| 
     map
 });
 
+static PRINT_CONV_8: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "A-mount");
+    map.insert("2".to_string(), "E-mount");
+    map
+});
+
+static PRINT_CONV_9: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "APS-C");
+    map.insert("2".to_string(), "Full-frame");
+    map
+});
+
+static PRINT_CONV_10: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown E-mount lens or other lens");
+    map.insert("0.1".to_string(), "Sigma 19mm F2.8 [EX] DN");
+    map.insert("0.10".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("0.11".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("0.12".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("0.13".to_string(), "Viltrox 85mm F1.8");
+    map.insert("0.2".to_string(), "Sigma 30mm F2.8 [EX] DN");
+    map.insert("0.3".to_string(), "Sigma 60mm F2.8 DN");
+    map.insert("0.4".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("0.5".to_string(), "Tamron 18-200mm F3.5-6.3 Di III VC");
+    map.insert("0.6".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("0.7".to_string(), "Tokina FiRIN 20mm F2 FE MF");
+    map.insert("0.8".to_string(), "Zeiss Touit 12mm F2.8");
+    map.insert("0.9".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("1".to_string(), "Sony LA-EA1 or Sigma MC-11 Adapter");
+    map.insert("13".to_string(), "Samyang AF 35-150mm F2-2.8");
+    map.insert("184".to_string(), "Metabones Canon EF Speed Booster Ultra");
+    map.insert("2".to_string(), "Sony LA-EA2 Adapter");
+    map.insert("20".to_string(), "Samyang AF 35mm F1.4 P FE");
+    map.insert("21".to_string(), "Samyang AF 14-24mm F2.8");
+    map.insert(
+        "234".to_string(),
+        "Metabones Canon EF Smart Adapter Mark IV",
+    );
+    map.insert("239".to_string(), "Metabones Canon EF Speed Booster");
+    map.insert("24593".to_string(), "LA-EA4r MonsterAdapter");
+    map.insert("3".to_string(), "Sony LA-EA3 Adapter");
+    map.insert("32784".to_string(), "Sony E 16mm F2.8");
+    map.insert("32785".to_string(), "Sony E 18-55mm F3.5-5.6 OSS");
+    map.insert("32786".to_string(), "Sony E 55-210mm F4.5-6.3 OSS");
+    map.insert("32787".to_string(), "Sony E 18-200mm F3.5-6.3 OSS");
+    map.insert("32788".to_string(), "Sony E 30mm F3.5 Macro");
+    map.insert(
+        "32789".to_string(),
+        "Sony E 24mm F1.8 ZA or Samyang AF 50mm F1.4",
+    );
+    map.insert("32789.1".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "32790".to_string(),
+        "Sony E 50mm F1.8 OSS or Samyang AF 14mm F2.8",
+    );
+    map.insert("32790.1".to_string(), "Samyang AF 14mm F2.8");
+    map.insert("32791".to_string(), "Sony E 16-70mm F4 ZA OSS");
+    map.insert("32792".to_string(), "Sony E 10-18mm F4 OSS");
+    map.insert("32793".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS");
+    map.insert("32794".to_string(), "Sony FE 35mm F2.8 ZA or Samyang Lens");
+    map.insert("32794.1".to_string(), "Samyang AF 24mm F2.8");
+    map.insert("32794.2".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("32795".to_string(), "Sony FE 24-70mm F4 ZA OSS");
+    map.insert(
+        "32796".to_string(),
+        "Sony FE 85mm F1.8 or Viltrox PFU RBMH 85mm F1.8",
+    );
+    map.insert("32796.1".to_string(), "Viltrox PFU RBMH 85mm F1.8");
+    map.insert("32797".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("32798".to_string(), "Sony E 20mm F2.8");
+    map.insert("32799".to_string(), "Sony E 35mm F1.8 OSS");
+    map.insert("32800".to_string(), "Sony E PZ 18-105mm F4 G OSS");
+    map.insert("32801".to_string(), "Sony FE 12-24mm F4 G");
+    map.insert("32802".to_string(), "Sony FE 90mm F2.8 Macro G OSS");
+    map.insert("32803".to_string(), "Sony E 18-50mm F4-5.6");
+    map.insert("32804".to_string(), "Sony FE 24mm F1.4 GM");
+    map.insert("32805".to_string(), "Sony FE 24-105mm F4 G OSS");
+    map.insert("32807".to_string(), "Sony E PZ 18-200mm F3.5-6.3 OSS");
+    map.insert("32808".to_string(), "Sony FE 55mm F1.8 ZA");
+    map.insert("32810".to_string(), "Sony FE 70-200mm F4 G OSS");
+    map.insert("32811".to_string(), "Sony FE 16-35mm F4 ZA OSS");
+    map.insert("32812".to_string(), "Sony FE 50mm F2.8 Macro");
+    map.insert("32813".to_string(), "Sony FE 28-70mm F3.5-5.6 OSS");
+    map.insert("32814".to_string(), "Sony FE 35mm F1.4 ZA");
+    map.insert("32815".to_string(), "Sony FE 24-240mm F3.5-6.3 OSS");
+    map.insert("32816".to_string(), "Sony FE 28mm F2");
+    map.insert("32817".to_string(), "Sony FE PZ 28-135mm F4 G OSS");
+    map.insert("32819".to_string(), "Sony FE 100mm F2.8 STF GM OSS");
+    map.insert("32820".to_string(), "Sony E PZ 18-110mm F4 G OSS");
+    map.insert("32821".to_string(), "Sony FE 24-70mm F2.8 GM");
+    map.insert("32822".to_string(), "Sony FE 50mm F1.4 ZA");
+    map.insert(
+        "32823".to_string(),
+        "Sony FE 85mm F1.4 GM or Samyang AF 85mm F1.4",
+    );
+    map.insert("32823.1".to_string(), "Samyang AF 85mm F1.4");
+    map.insert("32824".to_string(), "Sony FE 50mm F1.8");
+    map.insert(
+        "32826".to_string(),
+        "Sony FE 21mm F2.8 (SEL28F20 + SEL075UWC)",
+    );
+    map.insert(
+        "32827".to_string(),
+        "Sony FE 16mm F3.5 Fisheye (SEL28F20 + SEL057FEC)",
+    );
+    map.insert("32828".to_string(), "Sony FE 70-300mm F4.5-5.6 G OSS");
+    map.insert("32829".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS");
+    map.insert("32830".to_string(), "Sony FE 70-200mm F2.8 GM OSS");
+    map.insert("32831".to_string(), "Sony FE 16-35mm F2.8 GM");
+    map.insert("32848".to_string(), "Sony FE 400mm F2.8 GM OSS");
+    map.insert("32849".to_string(), "Sony E 18-135mm F3.5-5.6 OSS");
+    map.insert("32850".to_string(), "Sony FE 135mm F1.8 GM");
+    map.insert("32851".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS");
+    map.insert("32852".to_string(), "Sony FE 600mm F4 GM OSS");
+    map.insert("32853".to_string(), "Sony E 16-55mm F2.8 G");
+    map.insert("32854".to_string(), "Sony E 70-350mm F4.5-6.3 G OSS");
+    map.insert("32855".to_string(), "Sony FE C 16-35mm T3.1 G");
+    map.insert("32858".to_string(), "Sony FE 35mm F1.8");
+    map.insert("32859".to_string(), "Sony FE 20mm F1.8 G");
+    map.insert("32860".to_string(), "Sony FE 12-24mm F2.8 GM");
+    map.insert("32862".to_string(), "Sony FE 50mm F1.2 GM");
+    map.insert("32863".to_string(), "Sony FE 14mm F1.8 GM");
+    map.insert("32864".to_string(), "Sony FE 28-60mm F4-5.6");
+    map.insert("32865".to_string(), "Sony FE 35mm F1.4 GM");
+    map.insert("32866".to_string(), "Sony FE 24mm F2.8 G");
+    map.insert("32867".to_string(), "Sony FE 40mm F2.5 G");
+    map.insert("32868".to_string(), "Sony FE 50mm F2.5 G");
+    map.insert("32871".to_string(), "Sony FE PZ 16-35mm F4 G");
+    map.insert("32873".to_string(), "Sony E PZ 10-20mm F4 G");
+    map.insert("32874".to_string(), "Sony FE 70-200mm F2.8 GM OSS II");
+    map.insert("32875".to_string(), "Sony FE 24-70mm F2.8 GM II");
+    map.insert("32876".to_string(), "Sony E 11mm F1.8");
+    map.insert("32877".to_string(), "Sony E 15mm F1.4 G");
+    map.insert("32878".to_string(), "Sony FE 20-70mm F4 G");
+    map.insert("32879".to_string(), "Sony FE 50mm F1.4 GM");
+    map.insert("32880".to_string(), "Sony FE 16mm F1.8 G");
+    map.insert("32881".to_string(), "Sony FE 24-50mm F2.8 G");
+    map.insert("32882".to_string(), "Sony FE 16-25mm F2.8 G");
+    map.insert("32884".to_string(), "Sony FE 70-200mm F4 Macro G OSS II");
+    map.insert("32885".to_string(), "Sony FE 16-35mm F2.8 GM II");
+    map.insert("32886".to_string(), "Sony FE 300mm F2.8 GM OSS");
+    map.insert("32887".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS II");
+    map.insert("32888".to_string(), "Sony FE 85mm F1.4 GM II");
+    map.insert("32889".to_string(), "Sony FE 28-70mm F2 GM");
+    map.insert("32890".to_string(), "Sony FE 400-800mm F6.3-8 G OSS");
+    map.insert("32891".to_string(), "Sony FE 50-150mm F2 GM");
+    map.insert(
+        "33072".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33073".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33076".to_string(),
+        "Sony FE 100mm F2.8 STF GM OSS (macro mode)",
+    );
+    map.insert(
+        "33077".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33078".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33079".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33080".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33081".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33082".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33083".to_string(),
+        "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33084".to_string(),
+        "Sony FE 600mm F4 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33085".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33086".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33087".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33088".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33089".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33090".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33091".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33092".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
+    );
+    map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
+    map.insert(
+        "49201".to_string(),
+        "Zeiss Touit 12mm F2.8 or other Touit lens",
+    );
+    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
+    map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("49216".to_string(), "Zeiss Batis 25mm F2");
+    map.insert("49217".to_string(), "Zeiss Batis 85mm F1.8");
+    map.insert("49218".to_string(), "Zeiss Batis 18mm F2.8");
+    map.insert("49219".to_string(), "Zeiss Batis 135mm F2.8");
+    map.insert("49220".to_string(), "Zeiss Batis 40mm F2 CF");
+    map.insert("49232".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("49233".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("49234".to_string(), "Zeiss Loxia 21mm F2.8");
+    map.insert("49235".to_string(), "Zeiss Loxia 85mm F2.4");
+    map.insert("49236".to_string(), "Zeiss Loxia 25mm F2.4");
+    map.insert("49456".to_string(), "Tamron E 18-200mm F3.5-6.3 Di III VC");
+    map.insert("49457".to_string(), "Tamron 28-75mm F2.8 Di III RXD");
+    map.insert("49458".to_string(), "Tamron 17-28mm F2.8 Di III RXD");
+    map.insert("49459".to_string(), "Tamron 35mm F2.8 Di III OSD M1:2");
+    map.insert("49460".to_string(), "Tamron 24mm F2.8 Di III OSD M1:2");
+    map.insert("49461".to_string(), "Tamron 20mm F2.8 Di III OSD M1:2");
+    map.insert("49462".to_string(), "Tamron 70-180mm F2.8 Di III VXD");
+    map.insert("49463".to_string(), "Tamron 28-200mm F2.8-5.6 Di III RXD");
+    map.insert("49464".to_string(), "Tamron 70-300mm F4.5-6.3 Di III RXD");
+    map.insert("49465".to_string(), "Tamron 17-70mm F2.8 Di III-A VC RXD");
+    map.insert("49466".to_string(), "Tamron 150-500mm F5-6.7 Di III VC VXD");
+    map.insert("49467".to_string(), "Tamron 11-20mm F2.8 Di III-A RXD");
+    map.insert(
+        "49468".to_string(),
+        "Tamron 18-300mm F3.5-6.3 Di III-A VC VXD",
+    );
+    map.insert("49469".to_string(), "Tamron 35-150mm F2-F2.8 Di III VXD");
+    map.insert("49470".to_string(), "Tamron 28-75mm F2.8 Di III VXD G2");
+    map.insert(
+        "49471".to_string(),
+        "Tamron 50-400mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49472".to_string(), "Tamron 20-40mm F2.8 Di III VXD");
+    map.insert(
+        "49473".to_string(),
+        "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens",
+    );
+    map.insert("49473.1".to_string(), "Tokina atx-m 85mm F1.8 FE");
+    map.insert("49473.2".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49473.3".to_string(), "Viltrox 56mm F1.4 E");
+    map.insert("49473.4".to_string(), "Viltrox 85mm F1.8 II FE");
+    map.insert(
+        "49474".to_string(),
+        "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens",
+    );
+    map.insert("49474.1".to_string(), "Viltrox 13mm F1.4 E");
+    map.insert("49474.10".to_string(), "Viltrox 20mm F2.8 FE");
+    map.insert("49474.2".to_string(), "Viltrox 16mm F1.8 FE");
+    map.insert("49474.3".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49474.4".to_string(), "Viltrox 24mm F1.8 FE");
+    map.insert("49474.5".to_string(), "Viltrox 28mm F1.8 FE");
+    map.insert("49474.6".to_string(), "Viltrox 33mm F1.4 E");
+    map.insert("49474.7".to_string(), "Viltrox 35mm F1.8 FE");
+    map.insert("49474.8".to_string(), "Viltrox 50mm F1.8 FE");
+    map.insert("49474.9".to_string(), "Viltrox 75mm F1.2 E");
+    map.insert(
+        "49475".to_string(),
+        "Tamron 50-300mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49476".to_string(), "Tamron 28-300mm F4-7.1 Di III VC VXD");
+    map.insert("49477".to_string(), "Tamron 90mm F2.8 Di III Macro VXD");
+    map.insert("49712".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("49713".to_string(), "Tokina FiRIN 100mm F2.8 FE MACRO");
+    map.insert("49714".to_string(), "Tokina atx-m 11-18mm F2.8 E");
+    map.insert("50480".to_string(), "Sigma 30mm F1.4 DC DN | C");
+    map.insert("50481".to_string(), "Sigma 50mm F1.4 DG HSM | A");
+    map.insert(
+        "50482".to_string(),
+        "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert("50483".to_string(), "Sigma 18-35mm F1.8 DC HSM | A + MC-11");
+    map.insert("50484".to_string(), "Sigma 24-35mm F2 DG HSM | A + MC-11");
+    map.insert("50485".to_string(), "Sigma 24mm F1.4 DG HSM | A + MC-11");
+    map.insert(
+        "50486".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50487".to_string(), "Sigma 20mm F1.4 DG HSM | A + MC-11");
+    map.insert("50488".to_string(), "Sigma 35mm F1.4 DG HSM | A");
+    map.insert(
+        "50489".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50490".to_string(),
+        "Sigma 120-300mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50492".to_string(),
+        "Sigma 24-105mm F4 DG OS HSM | A + MC-11",
+    );
+    map.insert(
+        "50493".to_string(),
+        "Sigma 17-70mm F2.8-4 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert(
+        "50495".to_string(),
+        "Sigma 50-100mm F1.8 DC HSM | A + MC-11",
+    );
+    map.insert("50499".to_string(), "Sigma 85mm F1.4 DG HSM | A");
+    map.insert(
+        "50501".to_string(),
+        "Sigma 100-400mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50503".to_string(), "Sigma 16mm F1.4 DC DN | C");
+    map.insert("50507".to_string(), "Sigma 105mm F1.4 DG HSM | A");
+    map.insert("50508".to_string(), "Sigma 56mm F1.4 DC DN | C");
+    map.insert(
+        "50512".to_string(),
+        "Sigma 70-200mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert("50513".to_string(), "Sigma 70mm F2.8 DG MACRO | A");
+    map.insert("50514".to_string(), "Sigma 45mm F2.8 DG DN | C");
+    map.insert("50515".to_string(), "Sigma 35mm F1.2 DG DN | A");
+    map.insert("50516".to_string(), "Sigma 14-24mm F2.8 DG DN | A");
+    map.insert("50517".to_string(), "Sigma 24-70mm F2.8 DG DN | A");
+    map.insert("50518".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C");
+    map.insert("50521".to_string(), "Sigma 85mm F1.4 DG DN | A");
+    map.insert("50522".to_string(), "Sigma 105mm F2.8 DG DN MACRO | A");
+    map.insert("50523".to_string(), "Sigma 65mm F2 DG DN | C");
+    map.insert("50524".to_string(), "Sigma 35mm F2 DG DN | C");
+    map.insert("50525".to_string(), "Sigma 24mm F3.5 DG DN | C");
+    map.insert("50526".to_string(), "Sigma 28-70mm F2.8 DG DN | C");
+    map.insert("50527".to_string(), "Sigma 150-600mm F5-6.3 DG DN OS | S");
+    map.insert("50528".to_string(), "Sigma 35mm F1.4 DG DN | A");
+    map.insert("50529".to_string(), "Sigma 90mm F2.8 DG DN | C");
+    map.insert("50530".to_string(), "Sigma 24mm F2 DG DN | C");
+    map.insert("50531".to_string(), "Sigma 18-50mm F2.8 DC DN | C");
+    map.insert("50532".to_string(), "Sigma 20mm F2 DG DN | C");
+    map.insert("50533".to_string(), "Sigma 16-28mm F2.8 DG DN | C");
+    map.insert("50534".to_string(), "Sigma 20mm F1.4 DG DN | A");
+    map.insert("50535".to_string(), "Sigma 24mm F1.4 DG DN | A");
+    map.insert("50536".to_string(), "Sigma 60-600mm F4.5-6.3 DG DN OS | S");
+    map.insert("50537".to_string(), "Sigma 50mm F2 DG DN | C");
+    map.insert("50538".to_string(), "Sigma 17mm F4 DG DN | C");
+    map.insert("50539".to_string(), "Sigma 50mm F1.4 DG DN | A");
+    map.insert("50540".to_string(), "Sigma 14mm F1.4 DG DN | A");
+    map.insert("50543".to_string(), "Sigma 70-200mm F2.8 DG DN OS | S");
+    map.insert("50544".to_string(), "Sigma 23mm F1.4 DC DN | C");
+    map.insert("50545".to_string(), "Sigma 24-70mm F2.8 DG DN II | A");
+    map.insert("50546".to_string(), "Sigma 500mm F5.6 DG DN OS | S");
+    map.insert("50547".to_string(), "Sigma 10-18mm F2.8 DC DN | C");
+    map.insert(
+        "50548".to_string(),
+        "Sigma 15mm F1.4 DG DN DIAGONAL FISHEYE | A",
+    );
+    map.insert("50549".to_string(), "Sigma 50mm F1.2 DG DN | A");
+    map.insert("50550".to_string(), "Sigma 28-105mm F2.8 DG DN | A");
+    map.insert("50551".to_string(), "Sigma 28-45mm F1.8 DG DN | A");
+    map.insert("50553".to_string(), "Sigma 300-600mm F4 DG OS | S");
+    map.insert(
+        "50992".to_string(),
+        "Voigtlander SUPER WIDE-HELIAR 15mm F4.5 III",
+    );
+    map.insert(
+        "50993".to_string(),
+        "Voigtlander HELIAR-HYPER WIDE 10mm F5.6",
+    );
+    map.insert(
+        "50994".to_string(),
+        "Voigtlander ULTRA WIDE-HELIAR 12mm F5.6 III",
+    );
+    map.insert(
+        "50995".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 65mm F2 Aspherical",
+    );
+    map.insert(
+        "50996".to_string(),
+        "Voigtlander NOKTON 40mm F1.2 Aspherical",
+    );
+    map.insert("50997".to_string(), "Voigtlander NOKTON classic 35mm F1.4");
+    map.insert(
+        "50998".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 110mm F2.5",
+    );
+    map.insert(
+        "50999".to_string(),
+        "Voigtlander COLOR-SKOPAR 21mm F3.5 Aspherical",
+    );
+    map.insert(
+        "51000".to_string(),
+        "Voigtlander NOKTON 50mm F1.2 Aspherical",
+    );
+    map.insert(
+        "51001".to_string(),
+        "Voigtlander NOKTON 21mm F1.4 Aspherical",
+    );
+    map.insert(
+        "51002".to_string(),
+        "Voigtlander APO-LANTHAR 50mm F2 Aspherical",
+    );
+    map.insert(
+        "51003".to_string(),
+        "Voigtlander NOKTON 35mm F1.2 Aspherical SE",
+    );
+    map.insert(
+        "51006".to_string(),
+        "Voigtlander APO-LANTHAR 35mm F2 Aspherical",
+    );
+    map.insert("51007".to_string(), "Voigtlander NOKTON 50mm F1 Aspherical");
+    map.insert(
+        "51008".to_string(),
+        "Voigtlander NOKTON 75mm F1.5 Aspherical",
+    );
+    map.insert(
+        "51009".to_string(),
+        "Voigtlander NOKTON 28mm F1.5 Aspherical",
+    );
+    map.insert("51072".to_string(), "ZEISS Otus ML 50mm F1.4");
+    map.insert("51073".to_string(), "ZEISS Otus ML 85mm F1.4");
+    map.insert("51504".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "51505".to_string(),
+        "Samyang AF 14mm F2.8 or Samyang AF 35mm F2.8",
+    );
+    map.insert("51505.1".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("51507".to_string(), "Samyang AF 35mm F1.4");
+    map.insert("51508".to_string(), "Samyang AF 45mm F1.8");
+    map.insert(
+        "51510".to_string(),
+        "Samyang AF 18mm F2.8 or Samyang AF 35mm F1.8",
+    );
+    map.insert("51510.1".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51512".to_string(), "Samyang AF 75mm F1.8");
+    map.insert("51513".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51514".to_string(), "Samyang AF 24mm F1.8");
+    map.insert("51515".to_string(), "Samyang AF 12mm F2.0");
+    map.insert("51516".to_string(), "Samyang AF 24-70mm F2.8");
+    map.insert("51517".to_string(), "Samyang AF 50mm F1.4 II");
+    map.insert("51518".to_string(), "Samyang AF 135mm F1.8");
+    map.insert("6".to_string(), "Sony LA-EA4 Adapter");
+    map.insert("61569".to_string(), "LAOWA FFII 10mm F2.8 C&D Dreamer");
+    map.insert("61761".to_string(), "Viltrox 28mm F4.5 FE");
+    map.insert("7".to_string(), "Sony LA-EA5 Adapter");
+    map.insert(
+        "78".to_string(),
+        "Metabones Canon EF Smart Adapter Mark III or Other Adapter",
+    );
+    map
+});
+
+static PRINT_CONV_11: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No");
+    map.insert("1".to_string(), "Yes");
+    map
+});
+
+static PRINT_CONV_12: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_13: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "A-mount");
+    map.insert("2".to_string(), "E-mount");
+    map
+});
+
+static PRINT_CONV_14: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown");
+    map.insert("1".to_string(), "APS-C");
+    map.insert("2".to_string(), "Full-frame");
+    map
+});
+
+static PRINT_CONV_15: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Unknown E-mount lens or other lens");
+    map.insert("0.1".to_string(), "Sigma 19mm F2.8 [EX] DN");
+    map.insert("0.10".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("0.11".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("0.12".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("0.13".to_string(), "Viltrox 85mm F1.8");
+    map.insert("0.2".to_string(), "Sigma 30mm F2.8 [EX] DN");
+    map.insert("0.3".to_string(), "Sigma 60mm F2.8 DN");
+    map.insert("0.4".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("0.5".to_string(), "Tamron 18-200mm F3.5-6.3 Di III VC");
+    map.insert("0.6".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("0.7".to_string(), "Tokina FiRIN 20mm F2 FE MF");
+    map.insert("0.8".to_string(), "Zeiss Touit 12mm F2.8");
+    map.insert("0.9".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("1".to_string(), "Sony LA-EA1 or Sigma MC-11 Adapter");
+    map.insert("13".to_string(), "Samyang AF 35-150mm F2-2.8");
+    map.insert("184".to_string(), "Metabones Canon EF Speed Booster Ultra");
+    map.insert("2".to_string(), "Sony LA-EA2 Adapter");
+    map.insert("20".to_string(), "Samyang AF 35mm F1.4 P FE");
+    map.insert("21".to_string(), "Samyang AF 14-24mm F2.8");
+    map.insert(
+        "234".to_string(),
+        "Metabones Canon EF Smart Adapter Mark IV",
+    );
+    map.insert("239".to_string(), "Metabones Canon EF Speed Booster");
+    map.insert("24593".to_string(), "LA-EA4r MonsterAdapter");
+    map.insert("3".to_string(), "Sony LA-EA3 Adapter");
+    map.insert("32784".to_string(), "Sony E 16mm F2.8");
+    map.insert("32785".to_string(), "Sony E 18-55mm F3.5-5.6 OSS");
+    map.insert("32786".to_string(), "Sony E 55-210mm F4.5-6.3 OSS");
+    map.insert("32787".to_string(), "Sony E 18-200mm F3.5-6.3 OSS");
+    map.insert("32788".to_string(), "Sony E 30mm F3.5 Macro");
+    map.insert(
+        "32789".to_string(),
+        "Sony E 24mm F1.8 ZA or Samyang AF 50mm F1.4",
+    );
+    map.insert("32789.1".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "32790".to_string(),
+        "Sony E 50mm F1.8 OSS or Samyang AF 14mm F2.8",
+    );
+    map.insert("32790.1".to_string(), "Samyang AF 14mm F2.8");
+    map.insert("32791".to_string(), "Sony E 16-70mm F4 ZA OSS");
+    map.insert("32792".to_string(), "Sony E 10-18mm F4 OSS");
+    map.insert("32793".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS");
+    map.insert("32794".to_string(), "Sony FE 35mm F2.8 ZA or Samyang Lens");
+    map.insert("32794.1".to_string(), "Samyang AF 24mm F2.8");
+    map.insert("32794.2".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("32795".to_string(), "Sony FE 24-70mm F4 ZA OSS");
+    map.insert(
+        "32796".to_string(),
+        "Sony FE 85mm F1.8 or Viltrox PFU RBMH 85mm F1.8",
+    );
+    map.insert("32796.1".to_string(), "Viltrox PFU RBMH 85mm F1.8");
+    map.insert("32797".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE");
+    map.insert("32798".to_string(), "Sony E 20mm F2.8");
+    map.insert("32799".to_string(), "Sony E 35mm F1.8 OSS");
+    map.insert("32800".to_string(), "Sony E PZ 18-105mm F4 G OSS");
+    map.insert("32801".to_string(), "Sony FE 12-24mm F4 G");
+    map.insert("32802".to_string(), "Sony FE 90mm F2.8 Macro G OSS");
+    map.insert("32803".to_string(), "Sony E 18-50mm F4-5.6");
+    map.insert("32804".to_string(), "Sony FE 24mm F1.4 GM");
+    map.insert("32805".to_string(), "Sony FE 24-105mm F4 G OSS");
+    map.insert("32807".to_string(), "Sony E PZ 18-200mm F3.5-6.3 OSS");
+    map.insert("32808".to_string(), "Sony FE 55mm F1.8 ZA");
+    map.insert("32810".to_string(), "Sony FE 70-200mm F4 G OSS");
+    map.insert("32811".to_string(), "Sony FE 16-35mm F4 ZA OSS");
+    map.insert("32812".to_string(), "Sony FE 50mm F2.8 Macro");
+    map.insert("32813".to_string(), "Sony FE 28-70mm F3.5-5.6 OSS");
+    map.insert("32814".to_string(), "Sony FE 35mm F1.4 ZA");
+    map.insert("32815".to_string(), "Sony FE 24-240mm F3.5-6.3 OSS");
+    map.insert("32816".to_string(), "Sony FE 28mm F2");
+    map.insert("32817".to_string(), "Sony FE PZ 28-135mm F4 G OSS");
+    map.insert("32819".to_string(), "Sony FE 100mm F2.8 STF GM OSS");
+    map.insert("32820".to_string(), "Sony E PZ 18-110mm F4 G OSS");
+    map.insert("32821".to_string(), "Sony FE 24-70mm F2.8 GM");
+    map.insert("32822".to_string(), "Sony FE 50mm F1.4 ZA");
+    map.insert(
+        "32823".to_string(),
+        "Sony FE 85mm F1.4 GM or Samyang AF 85mm F1.4",
+    );
+    map.insert("32823.1".to_string(), "Samyang AF 85mm F1.4");
+    map.insert("32824".to_string(), "Sony FE 50mm F1.8");
+    map.insert(
+        "32826".to_string(),
+        "Sony FE 21mm F2.8 (SEL28F20 + SEL075UWC)",
+    );
+    map.insert(
+        "32827".to_string(),
+        "Sony FE 16mm F3.5 Fisheye (SEL28F20 + SEL057FEC)",
+    );
+    map.insert("32828".to_string(), "Sony FE 70-300mm F4.5-5.6 G OSS");
+    map.insert("32829".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS");
+    map.insert("32830".to_string(), "Sony FE 70-200mm F2.8 GM OSS");
+    map.insert("32831".to_string(), "Sony FE 16-35mm F2.8 GM");
+    map.insert("32848".to_string(), "Sony FE 400mm F2.8 GM OSS");
+    map.insert("32849".to_string(), "Sony E 18-135mm F3.5-5.6 OSS");
+    map.insert("32850".to_string(), "Sony FE 135mm F1.8 GM");
+    map.insert("32851".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS");
+    map.insert("32852".to_string(), "Sony FE 600mm F4 GM OSS");
+    map.insert("32853".to_string(), "Sony E 16-55mm F2.8 G");
+    map.insert("32854".to_string(), "Sony E 70-350mm F4.5-6.3 G OSS");
+    map.insert("32855".to_string(), "Sony FE C 16-35mm T3.1 G");
+    map.insert("32858".to_string(), "Sony FE 35mm F1.8");
+    map.insert("32859".to_string(), "Sony FE 20mm F1.8 G");
+    map.insert("32860".to_string(), "Sony FE 12-24mm F2.8 GM");
+    map.insert("32862".to_string(), "Sony FE 50mm F1.2 GM");
+    map.insert("32863".to_string(), "Sony FE 14mm F1.8 GM");
+    map.insert("32864".to_string(), "Sony FE 28-60mm F4-5.6");
+    map.insert("32865".to_string(), "Sony FE 35mm F1.4 GM");
+    map.insert("32866".to_string(), "Sony FE 24mm F2.8 G");
+    map.insert("32867".to_string(), "Sony FE 40mm F2.5 G");
+    map.insert("32868".to_string(), "Sony FE 50mm F2.5 G");
+    map.insert("32871".to_string(), "Sony FE PZ 16-35mm F4 G");
+    map.insert("32873".to_string(), "Sony E PZ 10-20mm F4 G");
+    map.insert("32874".to_string(), "Sony FE 70-200mm F2.8 GM OSS II");
+    map.insert("32875".to_string(), "Sony FE 24-70mm F2.8 GM II");
+    map.insert("32876".to_string(), "Sony E 11mm F1.8");
+    map.insert("32877".to_string(), "Sony E 15mm F1.4 G");
+    map.insert("32878".to_string(), "Sony FE 20-70mm F4 G");
+    map.insert("32879".to_string(), "Sony FE 50mm F1.4 GM");
+    map.insert("32880".to_string(), "Sony FE 16mm F1.8 G");
+    map.insert("32881".to_string(), "Sony FE 24-50mm F2.8 G");
+    map.insert("32882".to_string(), "Sony FE 16-25mm F2.8 G");
+    map.insert("32884".to_string(), "Sony FE 70-200mm F4 Macro G OSS II");
+    map.insert("32885".to_string(), "Sony FE 16-35mm F2.8 GM II");
+    map.insert("32886".to_string(), "Sony FE 300mm F2.8 GM OSS");
+    map.insert("32887".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS II");
+    map.insert("32888".to_string(), "Sony FE 85mm F1.4 GM II");
+    map.insert("32889".to_string(), "Sony FE 28-70mm F2 GM");
+    map.insert("32890".to_string(), "Sony FE 400-800mm F6.3-8 G OSS");
+    map.insert("32891".to_string(), "Sony FE 50-150mm F2 GM");
+    map.insert(
+        "33072".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33073".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33076".to_string(),
+        "Sony FE 100mm F2.8 STF GM OSS (macro mode)",
+    );
+    map.insert(
+        "33077".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33078".to_string(),
+        "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33079".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33080".to_string(),
+        "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33081".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33082".to_string(),
+        "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33083".to_string(),
+        "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33084".to_string(),
+        "Sony FE 600mm F4 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33085".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33086".to_string(),
+        "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33087".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33088".to_string(),
+        "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter",
+    );
+    map.insert(
+        "33089".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33090".to_string(),
+        "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter",
+    );
+    map.insert(
+        "33091".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
+    );
+    map.insert(
+        "33092".to_string(),
+        "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter",
+    );
+    map.insert("44".to_string(), "Metabones Canon EF Smart Adapter");
+    map.insert(
+        "49201".to_string(),
+        "Zeiss Touit 12mm F2.8 or other Touit lens",
+    );
+    map.insert("49201.1".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49201.2".to_string(), "Zeiss Touit 50mm F2.8");
+    map.insert("49202".to_string(), "Zeiss Touit 32mm F1.8");
+    map.insert("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro");
+    map.insert("49216".to_string(), "Zeiss Batis 25mm F2");
+    map.insert("49217".to_string(), "Zeiss Batis 85mm F1.8");
+    map.insert("49218".to_string(), "Zeiss Batis 18mm F2.8");
+    map.insert("49219".to_string(), "Zeiss Batis 135mm F2.8");
+    map.insert("49220".to_string(), "Zeiss Batis 40mm F2 CF");
+    map.insert("49232".to_string(), "Zeiss Loxia 50mm F2");
+    map.insert("49233".to_string(), "Zeiss Loxia 35mm F2");
+    map.insert("49234".to_string(), "Zeiss Loxia 21mm F2.8");
+    map.insert("49235".to_string(), "Zeiss Loxia 85mm F2.4");
+    map.insert("49236".to_string(), "Zeiss Loxia 25mm F2.4");
+    map.insert("49456".to_string(), "Tamron E 18-200mm F3.5-6.3 Di III VC");
+    map.insert("49457".to_string(), "Tamron 28-75mm F2.8 Di III RXD");
+    map.insert("49458".to_string(), "Tamron 17-28mm F2.8 Di III RXD");
+    map.insert("49459".to_string(), "Tamron 35mm F2.8 Di III OSD M1:2");
+    map.insert("49460".to_string(), "Tamron 24mm F2.8 Di III OSD M1:2");
+    map.insert("49461".to_string(), "Tamron 20mm F2.8 Di III OSD M1:2");
+    map.insert("49462".to_string(), "Tamron 70-180mm F2.8 Di III VXD");
+    map.insert("49463".to_string(), "Tamron 28-200mm F2.8-5.6 Di III RXD");
+    map.insert("49464".to_string(), "Tamron 70-300mm F4.5-6.3 Di III RXD");
+    map.insert("49465".to_string(), "Tamron 17-70mm F2.8 Di III-A VC RXD");
+    map.insert("49466".to_string(), "Tamron 150-500mm F5-6.7 Di III VC VXD");
+    map.insert("49467".to_string(), "Tamron 11-20mm F2.8 Di III-A RXD");
+    map.insert(
+        "49468".to_string(),
+        "Tamron 18-300mm F3.5-6.3 Di III-A VC VXD",
+    );
+    map.insert("49469".to_string(), "Tamron 35-150mm F2-F2.8 Di III VXD");
+    map.insert("49470".to_string(), "Tamron 28-75mm F2.8 Di III VXD G2");
+    map.insert(
+        "49471".to_string(),
+        "Tamron 50-400mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49472".to_string(), "Tamron 20-40mm F2.8 Di III VXD");
+    map.insert(
+        "49473".to_string(),
+        "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens",
+    );
+    map.insert("49473.1".to_string(), "Tokina atx-m 85mm F1.8 FE");
+    map.insert("49473.2".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49473.3".to_string(), "Viltrox 56mm F1.4 E");
+    map.insert("49473.4".to_string(), "Viltrox 85mm F1.8 II FE");
+    map.insert(
+        "49474".to_string(),
+        "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens",
+    );
+    map.insert("49474.1".to_string(), "Viltrox 13mm F1.4 E");
+    map.insert("49474.10".to_string(), "Viltrox 20mm F2.8 FE");
+    map.insert("49474.2".to_string(), "Viltrox 16mm F1.8 FE");
+    map.insert("49474.3".to_string(), "Viltrox 23mm F1.4 E");
+    map.insert("49474.4".to_string(), "Viltrox 24mm F1.8 FE");
+    map.insert("49474.5".to_string(), "Viltrox 28mm F1.8 FE");
+    map.insert("49474.6".to_string(), "Viltrox 33mm F1.4 E");
+    map.insert("49474.7".to_string(), "Viltrox 35mm F1.8 FE");
+    map.insert("49474.8".to_string(), "Viltrox 50mm F1.8 FE");
+    map.insert("49474.9".to_string(), "Viltrox 75mm F1.2 E");
+    map.insert(
+        "49475".to_string(),
+        "Tamron 50-300mm F4.5-6.3 Di III VC VXD",
+    );
+    map.insert("49476".to_string(), "Tamron 28-300mm F4-7.1 Di III VC VXD");
+    map.insert("49477".to_string(), "Tamron 90mm F2.8 Di III Macro VXD");
+    map.insert("49712".to_string(), "Tokina FiRIN 20mm F2 FE AF");
+    map.insert("49713".to_string(), "Tokina FiRIN 100mm F2.8 FE MACRO");
+    map.insert("49714".to_string(), "Tokina atx-m 11-18mm F2.8 E");
+    map.insert("50480".to_string(), "Sigma 30mm F1.4 DC DN | C");
+    map.insert("50481".to_string(), "Sigma 50mm F1.4 DG HSM | A");
+    map.insert(
+        "50482".to_string(),
+        "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert("50483".to_string(), "Sigma 18-35mm F1.8 DC HSM | A + MC-11");
+    map.insert("50484".to_string(), "Sigma 24-35mm F2 DG HSM | A + MC-11");
+    map.insert("50485".to_string(), "Sigma 24mm F1.4 DG HSM | A + MC-11");
+    map.insert(
+        "50486".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50487".to_string(), "Sigma 20mm F1.4 DG HSM | A + MC-11");
+    map.insert("50488".to_string(), "Sigma 35mm F1.4 DG HSM | A");
+    map.insert(
+        "50489".to_string(),
+        "Sigma 150-600mm F5-6.3 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50490".to_string(),
+        "Sigma 120-300mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert(
+        "50492".to_string(),
+        "Sigma 24-105mm F4 DG OS HSM | A + MC-11",
+    );
+    map.insert(
+        "50493".to_string(),
+        "Sigma 17-70mm F2.8-4 DC MACRO OS HSM | C + MC-11",
+    );
+    map.insert(
+        "50495".to_string(),
+        "Sigma 50-100mm F1.8 DC HSM | A + MC-11",
+    );
+    map.insert("50499".to_string(), "Sigma 85mm F1.4 DG HSM | A");
+    map.insert(
+        "50501".to_string(),
+        "Sigma 100-400mm F5-6.3 DG OS HSM | C + MC-11",
+    );
+    map.insert("50503".to_string(), "Sigma 16mm F1.4 DC DN | C");
+    map.insert("50507".to_string(), "Sigma 105mm F1.4 DG HSM | A");
+    map.insert("50508".to_string(), "Sigma 56mm F1.4 DC DN | C");
+    map.insert(
+        "50512".to_string(),
+        "Sigma 70-200mm F2.8 DG OS HSM | S + MC-11",
+    );
+    map.insert("50513".to_string(), "Sigma 70mm F2.8 DG MACRO | A");
+    map.insert("50514".to_string(), "Sigma 45mm F2.8 DG DN | C");
+    map.insert("50515".to_string(), "Sigma 35mm F1.2 DG DN | A");
+    map.insert("50516".to_string(), "Sigma 14-24mm F2.8 DG DN | A");
+    map.insert("50517".to_string(), "Sigma 24-70mm F2.8 DG DN | A");
+    map.insert("50518".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C");
+    map.insert("50521".to_string(), "Sigma 85mm F1.4 DG DN | A");
+    map.insert("50522".to_string(), "Sigma 105mm F2.8 DG DN MACRO | A");
+    map.insert("50523".to_string(), "Sigma 65mm F2 DG DN | C");
+    map.insert("50524".to_string(), "Sigma 35mm F2 DG DN | C");
+    map.insert("50525".to_string(), "Sigma 24mm F3.5 DG DN | C");
+    map.insert("50526".to_string(), "Sigma 28-70mm F2.8 DG DN | C");
+    map.insert("50527".to_string(), "Sigma 150-600mm F5-6.3 DG DN OS | S");
+    map.insert("50528".to_string(), "Sigma 35mm F1.4 DG DN | A");
+    map.insert("50529".to_string(), "Sigma 90mm F2.8 DG DN | C");
+    map.insert("50530".to_string(), "Sigma 24mm F2 DG DN | C");
+    map.insert("50531".to_string(), "Sigma 18-50mm F2.8 DC DN | C");
+    map.insert("50532".to_string(), "Sigma 20mm F2 DG DN | C");
+    map.insert("50533".to_string(), "Sigma 16-28mm F2.8 DG DN | C");
+    map.insert("50534".to_string(), "Sigma 20mm F1.4 DG DN | A");
+    map.insert("50535".to_string(), "Sigma 24mm F1.4 DG DN | A");
+    map.insert("50536".to_string(), "Sigma 60-600mm F4.5-6.3 DG DN OS | S");
+    map.insert("50537".to_string(), "Sigma 50mm F2 DG DN | C");
+    map.insert("50538".to_string(), "Sigma 17mm F4 DG DN | C");
+    map.insert("50539".to_string(), "Sigma 50mm F1.4 DG DN | A");
+    map.insert("50540".to_string(), "Sigma 14mm F1.4 DG DN | A");
+    map.insert("50543".to_string(), "Sigma 70-200mm F2.8 DG DN OS | S");
+    map.insert("50544".to_string(), "Sigma 23mm F1.4 DC DN | C");
+    map.insert("50545".to_string(), "Sigma 24-70mm F2.8 DG DN II | A");
+    map.insert("50546".to_string(), "Sigma 500mm F5.6 DG DN OS | S");
+    map.insert("50547".to_string(), "Sigma 10-18mm F2.8 DC DN | C");
+    map.insert(
+        "50548".to_string(),
+        "Sigma 15mm F1.4 DG DN DIAGONAL FISHEYE | A",
+    );
+    map.insert("50549".to_string(), "Sigma 50mm F1.2 DG DN | A");
+    map.insert("50550".to_string(), "Sigma 28-105mm F2.8 DG DN | A");
+    map.insert("50551".to_string(), "Sigma 28-45mm F1.8 DG DN | A");
+    map.insert("50553".to_string(), "Sigma 300-600mm F4 DG OS | S");
+    map.insert(
+        "50992".to_string(),
+        "Voigtlander SUPER WIDE-HELIAR 15mm F4.5 III",
+    );
+    map.insert(
+        "50993".to_string(),
+        "Voigtlander HELIAR-HYPER WIDE 10mm F5.6",
+    );
+    map.insert(
+        "50994".to_string(),
+        "Voigtlander ULTRA WIDE-HELIAR 12mm F5.6 III",
+    );
+    map.insert(
+        "50995".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 65mm F2 Aspherical",
+    );
+    map.insert(
+        "50996".to_string(),
+        "Voigtlander NOKTON 40mm F1.2 Aspherical",
+    );
+    map.insert("50997".to_string(), "Voigtlander NOKTON classic 35mm F1.4");
+    map.insert(
+        "50998".to_string(),
+        "Voigtlander MACRO APO-LANTHAR 110mm F2.5",
+    );
+    map.insert(
+        "50999".to_string(),
+        "Voigtlander COLOR-SKOPAR 21mm F3.5 Aspherical",
+    );
+    map.insert(
+        "51000".to_string(),
+        "Voigtlander NOKTON 50mm F1.2 Aspherical",
+    );
+    map.insert(
+        "51001".to_string(),
+        "Voigtlander NOKTON 21mm F1.4 Aspherical",
+    );
+    map.insert(
+        "51002".to_string(),
+        "Voigtlander APO-LANTHAR 50mm F2 Aspherical",
+    );
+    map.insert(
+        "51003".to_string(),
+        "Voigtlander NOKTON 35mm F1.2 Aspherical SE",
+    );
+    map.insert(
+        "51006".to_string(),
+        "Voigtlander APO-LANTHAR 35mm F2 Aspherical",
+    );
+    map.insert("51007".to_string(), "Voigtlander NOKTON 50mm F1 Aspherical");
+    map.insert(
+        "51008".to_string(),
+        "Voigtlander NOKTON 75mm F1.5 Aspherical",
+    );
+    map.insert(
+        "51009".to_string(),
+        "Voigtlander NOKTON 28mm F1.5 Aspherical",
+    );
+    map.insert("51072".to_string(), "ZEISS Otus ML 50mm F1.4");
+    map.insert("51073".to_string(), "ZEISS Otus ML 85mm F1.4");
+    map.insert("51504".to_string(), "Samyang AF 50mm F1.4");
+    map.insert(
+        "51505".to_string(),
+        "Samyang AF 14mm F2.8 or Samyang AF 35mm F2.8",
+    );
+    map.insert("51505.1".to_string(), "Samyang AF 35mm F2.8");
+    map.insert("51507".to_string(), "Samyang AF 35mm F1.4");
+    map.insert("51508".to_string(), "Samyang AF 45mm F1.8");
+    map.insert(
+        "51510".to_string(),
+        "Samyang AF 18mm F2.8 or Samyang AF 35mm F1.8",
+    );
+    map.insert("51510.1".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51512".to_string(), "Samyang AF 75mm F1.8");
+    map.insert("51513".to_string(), "Samyang AF 35mm F1.8");
+    map.insert("51514".to_string(), "Samyang AF 24mm F1.8");
+    map.insert("51515".to_string(), "Samyang AF 12mm F2.0");
+    map.insert("51516".to_string(), "Samyang AF 24-70mm F2.8");
+    map.insert("51517".to_string(), "Samyang AF 50mm F1.4 II");
+    map.insert("51518".to_string(), "Samyang AF 135mm F1.8");
+    map.insert("6".to_string(), "Sony LA-EA4 Adapter");
+    map.insert("61569".to_string(), "LAOWA FFII 10mm F2.8 C&D Dreamer");
+    map.insert("61761".to_string(), "Viltrox 28mm F4.5 FE");
+    map.insert("7".to_string(), "Sony LA-EA5 Adapter");
+    map.insert(
+        "78".to_string(),
+        "Metabones Canon EF Smart Adapter Mark III or Other Adapter",
+    );
+    map
+});
+
+static PRINT_CONV_16: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "No");
+    map.insert("1".to_string(), "Yes");
+    map
+});
+
+static PRINT_CONV_17: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
 /// Get tag definitions for core category
 pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
     vec![
+        (276, TagKitDef {
+            id: 276,
+            name: "FolderNumber",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Expression("sprintf(\"%.3d\",$val)"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (259, TagKitDef {
+            id: 259,
+            name: "Face8Position",
+            format: "int16u[4]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
         (258, TagKitDef {
             id: 258,
             name: "Quality",
@@ -69,7 +1071,7 @@ pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_4),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_5),
             value_conv: None,
             subdirectory: None,
         }),
@@ -91,7 +1093,7 @@ pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_5),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_6),
             value_conv: None,
             subdirectory: None,
         }),
@@ -157,7 +1159,7 @@ pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_6),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_7),
             value_conv: None,
             subdirectory: None,
         }),
@@ -194,17 +1196,6 @@ pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
             value_conv: None,
             subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x116_subdirectory }),
         }),
-        (276, TagKitDef {
-            id: 276,
-            name: "FolderNumber",
-            format: "int32u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::Expression("sprintf(\"%.3d\",$val)"),
-            value_conv: None,
-            subdirectory: None,
-        }),
         (263, TagKitDef {
             id: 263,
             name: "TiffMeteringImage",
@@ -214,6 +1205,182 @@ pub fn get_core_tags() -> Vec<(u32, TagKitDef)> {
             notes: Some("10-bit RGB data from the 1200 AE metering segments, extracted as a 16-bit\n            TIFF image"),
             print_conv: PrintConvType::None,
             value_conv: None,
+            subdirectory: None,
+        }),
+        (283, TagKitDef {
+            id: 283,
+            name: "ImageCount",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("not valid for the A450, A500 or A550"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (261, TagKitDef {
+            id: 261,
+            name: "LensMount",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_8),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (262, TagKitDef {
+            id: 262,
+            name: "LensFormat",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_9),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (263, TagKitDef {
+            id: 263,
+            name: "LensType2",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_10),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (265, TagKitDef {
+            id: 265,
+            name: "LensType",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("SLT models, and NEX with A-mount lenses"),
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (267, TagKitDef {
+            id: 267,
+            name: "DistortionCorrParamsPresent",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_11),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (276, TagKitDef {
+            id: 276,
+            name: "APS-CSizeCapture",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_12),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (277, TagKitDef {
+            id: 277,
+            name: "LensSpecFeatures",
+            format: "undef[2]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Manual("code_ref_printconv"),
+            value_conv: Some("join \" \", unpack \"H2H2\", $val"),
+            subdirectory: None,
+        }),
+        (278, TagKitDef {
+            id: 278,
+            name: "LensSpecFeatures",
+            format: "undef[2]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Manual("code_ref_printconv"),
+            value_conv: Some("join \" \", unpack \"H2H2\", $val"),
+            subdirectory: None,
+        }),
+        (261, TagKitDef {
+            id: 261,
+            name: "LensMount",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_13),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (262, TagKitDef {
+            id: 262,
+            name: "LensFormat",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_14),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (263, TagKitDef {
+            id: 263,
+            name: "LensType2",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_15),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (265, TagKitDef {
+            id: 265,
+            name: "LensType",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("SLT models, and NEX with A-mount lenses"),
+            print_conv: PrintConvType::Expression("ComplexHash"),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (267, TagKitDef {
+            id: 267,
+            name: "DistortionCorrParamsPresent",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_16),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (276, TagKitDef {
+            id: 276,
+            name: "APS-CSizeCapture",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_17),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (278, TagKitDef {
+            id: 278,
+            name: "LensSpecFeatures",
+            format: "undef[2]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Manual("code_ref_printconv"),
+            value_conv: Some("join \" \", unpack \"H2H2\", $val"),
             subdirectory: None,
         }),
     ]

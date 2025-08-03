@@ -21,6 +21,22 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
             0,
             TagKitDef {
                 id: 0,
+                name: "TagExposureTime",
+                format: "rational64u",
+                groups: HashMap::new(),
+                writable: true,
+                notes: None,
+                print_conv: PrintConvType::Expression(
+                    "Image::ExifTool::Exif::PrintExposureTime($val)",
+                ),
+                value_conv: None,
+                subdirectory: None,
+            },
+        ),
+        (
+            0,
+            TagKitDef {
+                id: 0,
                 name: "TagCreateDate",
                 format: "unknown",
                 groups: HashMap::new(),
@@ -55,22 +71,6 @@ pub fn get_datetime_tags() -> Vec<(u32, TagKitDef)> {
                 writable: false,
                 notes: None,
                 print_conv: PrintConvType::Expression("$self->ConvertDateTime($val)"),
-                value_conv: None,
-                subdirectory: None,
-            },
-        ),
-        (
-            0,
-            TagKitDef {
-                id: 0,
-                name: "TagExposureTime",
-                format: "rational64u",
-                groups: HashMap::new(),
-                writable: true,
-                notes: None,
-                print_conv: PrintConvType::Expression(
-                    "Image::ExifTool::Exif::PrintExposureTime($val)",
-                ),
                 value_conv: None,
                 subdirectory: None,
             },

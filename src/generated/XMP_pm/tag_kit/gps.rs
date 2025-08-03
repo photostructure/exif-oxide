@@ -14,9 +14,81 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+static PRINT_CONV_0: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("N".to_string(), "North");
+    map.insert("S".to_string(), "South");
+    map
+});
+
+static PRINT_CONV_1: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("E".to_string(), "East");
+    map.insert("W".to_string(), "West");
+    map
+});
+
+static PRINT_CONV_2: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("N".to_string(), "North");
+    map.insert("S".to_string(), "South");
+    map
+});
+
+static PRINT_CONV_3: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("E".to_string(), "East");
+    map.insert("W".to_string(), "West");
+    map
+});
+
 /// Get tag definitions for gps category
 pub fn get_gps_tags() -> Vec<(u32, TagKitDef)> {
     vec![
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSDestLatitudeRef",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_0),
+            value_conv: Some("\n            IsFloat($val[0]) and return $val[0] < 0 ? \"S\" : \"N\";\n            $val[0] =~ /^.*([NS])/;\n            return $1;\n        "),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSDestLongitudeRef",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_1),
+            value_conv: Some("\n            IsFloat($val[0]) and return $val[0] < 0 ? \"W\" : \"E\";\n            $val[0] =~ /^.*([EW])/;\n            return $1;\n        "),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSLatitudeRef",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_2),
+            value_conv: Some("\n            IsFloat($val[0]) and return $val[0] < 0 ? \"S\" : \"N\";\n            $val[0] =~ /^.*([NS])/;\n            return $1;\n        "),
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "GPSLongitudeRef",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_3),
+            value_conv: Some("\n            IsFloat($val[0]) and return $val[0] < 0 ? \"W\" : \"E\";\n            $val[0] =~ /^.*([EW])/;\n            return $1;\n        "),
+            subdirectory: None,
+        }),
         (0, TagKitDef {
             id: 0,
             name: "GPSDateTime",

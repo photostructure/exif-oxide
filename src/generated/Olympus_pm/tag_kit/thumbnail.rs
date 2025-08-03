@@ -14,7 +14,25 @@ use crate::types::TagValue;
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-static PRINT_CONV_71: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_80: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("0".to_string(), "Off");
+    map.insert("1".to_string(), "On");
+    map
+});
+
+static PRINT_CONV_81: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+    let mut map = HashMap::new();
+    map.insert("1027".to_string(), "Spot+Shadow control");
+    map.insert("2".to_string(), "Center-weighted average");
+    map.insert("261".to_string(), "Pattern+AF");
+    map.insert("3".to_string(), "Spot");
+    map.insert("5".to_string(), "ESP");
+    map.insert("515".to_string(), "Spot+Highlight control");
+    map
+});
+
+static PRINT_CONV_82: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0 00 00".to_string(), "None");
     map.insert(
@@ -436,25 +454,7 @@ static PRINT_CONV_71: LazyLock<HashMap<String, &'static str>> = LazyLock::new(||
     map
 });
 
-static PRINT_CONV_72: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("0".to_string(), "Off");
-    map.insert("1".to_string(), "On");
-    map
-});
-
-static PRINT_CONV_73: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
-    let mut map = HashMap::new();
-    map.insert("1027".to_string(), "Spot+Shadow control");
-    map.insert("2".to_string(), "Center-weighted average");
-    map.insert("261".to_string(), "Pattern+AF");
-    map.insert("3".to_string(), "Spot");
-    map.insert("5".to_string(), "ESP");
-    map.insert("515".to_string(), "Spot+Highlight control");
-    map
-});
-
-static PRINT_CONV_74: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
+static PRINT_CONV_83: LazyLock<HashMap<String, &'static str>> = LazyLock::new(|| {
     let mut map = HashMap::new();
     map.insert("0".to_string(), "Off");
     map.insert("1".to_string(), "On");
@@ -467,12 +467,34 @@ pub fn get_thumbnail_tags() -> Vec<(u32, TagKitDef)> {
     vec![
         (513, TagKitDef {
             id: 513,
+            name: "AELock",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_80),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (514, TagKitDef {
+            id: 514,
+            name: "MeteringMode",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: true,
+            notes: None,
+            print_conv: PrintConvType::Simple(&PRINT_CONV_81),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (513, TagKitDef {
+            id: 513,
             name: "LensType",
             format: "int8u",
             groups: HashMap::new(),
             writable: true,
             notes: Some("6 numbers: 1. Make, 2. Unknown, 3. Model, 4. Sub-model, 5-6. Unknown.  Only\n            the Make, Model and Sub-model are used to identify the lens type"),
-            print_conv: PrintConvType::Simple(&PRINT_CONV_71),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_82),
             value_conv: Some("my @a=split(\" \",$val); sprintf(\"%x %.2x %.2x\",@a[0,2,3])"),
             subdirectory: None,
         }),
@@ -484,28 +506,6 @@ pub fn get_thumbnail_tags() -> Vec<(u32, TagKitDef)> {
             writable: true,
             notes: None,
             print_conv: PrintConvType::Expression(r"$val=~s/\s+$//;$val"),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (513, TagKitDef {
-            id: 513,
-            name: "AELock",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_72),
-            value_conv: None,
-            subdirectory: None,
-        }),
-        (514, TagKitDef {
-            id: 514,
-            name: "MeteringMode",
-            format: "int16u",
-            groups: HashMap::new(),
-            writable: true,
-            notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_73),
             value_conv: None,
             subdirectory: None,
         }),
@@ -538,7 +538,117 @@ pub fn get_thumbnail_tags() -> Vec<(u32, TagKitDef)> {
             groups: HashMap::new(),
             writable: true,
             notes: None,
-            print_conv: PrintConvType::Simple(&PRINT_CONV_74),
+            print_conv: PrintConvType::Simple(&PRINT_CONV_83),
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (131, TagKitDef {
+            id: 131,
+            name: "Thumbnail",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: Some(SubDirectoryType::Binary { processor: process_tag_0x83_subdirectory }),
+        }),
+        (265, TagKitDef {
+            id: 265,
+            name: "ThumbnailWidth",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (267, TagKitDef {
+            id: 267,
+            name: "ThumbnailHeight",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4, TagKitDef {
+            id: 4,
+            name: "ThumbnailOffset",
+            format: "unknown",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ThumbnailLength",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4, TagKitDef {
+            id: 4,
+            name: "ThumbnailImage",
+            format: "undef[$val{0}]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("160x120 JPEG thumbnail image"),
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (0, TagKitDef {
+            id: 0,
+            name: "ThumbnailWidth",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (2, TagKitDef {
+            id: 2,
+            name: "ThumbnailHeight",
+            format: "int16u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (4, TagKitDef {
+            id: 4,
+            name: "ThumbnailLength",
+            format: "int32u",
+            groups: HashMap::new(),
+            writable: false,
+            notes: None,
+            print_conv: PrintConvType::None,
+            value_conv: None,
+            subdirectory: None,
+        }),
+        (8, TagKitDef {
+            id: 8,
+            name: "ThumbnailImage",
+            format: "undef[$val{4}]",
+            groups: HashMap::new(),
+            writable: false,
+            notes: Some("160x120 JPEG thumbnail image"),
+            print_conv: PrintConvType::None,
             value_conv: None,
             subdirectory: None,
         }),
