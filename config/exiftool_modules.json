@@ -1,0 +1,42 @@
+{
+  "description": "Shared configuration of ExifTool modules for codegen processing",
+  "modules": {
+    "core": [
+      "Exif.pm",
+      "JPEG.pm",
+      "DNG.pm",
+      "GPS.pm",
+      "XMP.pm",
+      "IPTC.pm",
+      "RIFF.pm",
+      "PNG.pm"
+    ],
+    "manufacturer": [
+      "Canon.pm",
+      "Nikon.pm",
+      "Sony.pm",
+      "Olympus.pm",
+      "Panasonic.pm",
+      "FujiFilm.pm",
+      "Pentax.pm",
+      "Casio.pm",
+      "Samsung.pm",
+      "Ricoh.pm",
+      "Sigma.pm"
+    ],
+    "format": [
+      "QuickTime.pm",
+      "Matroska.pm",
+      "MIE.pm",
+      "Jpeg2000.pm",
+      "PDF.pm",
+      "PostScript.pm",
+      "Font.pm",
+      "Photoshop.pm",
+      "CanonRaw.pm",
+      "MinoltaRaw.pm",
+      "PanasonicRaw.pm",
+      "KyoceraRaw.pm"
+    ]
+  }
+}
