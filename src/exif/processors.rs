@@ -643,8 +643,10 @@ impl ExifReader {
 
         // Add parent tags for context (simplified - just the extracted tags)
         let mut parent_tags = HashMap::new();
-        for (&(tag_id, _), tag_value) in &self.extracted_tags {
-            let tag_name = format!("Tag_{tag_id:04X}");
+        for (&(tag_id, ref namespace), tag_value) in &self.extracted_tags {
+            // Use TAG_PREFIX mechanism for consistent naming
+            let source_info = self.tag_sources.get(&(tag_id, namespace.clone()));
+            let tag_name = Self::generate_tag_prefix_name(tag_id, source_info);
             parent_tags.insert(tag_name, tag_value.clone());
         }
         context = context.with_parent_tags(parent_tags);
