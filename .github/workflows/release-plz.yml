@@ -43,7 +43,7 @@ jobs:
         id: auth
 
       - name: Run release-plz
-        uses: release-plz/action@8724d33cd97b8295051102e2e19ca592962238f5 # v0.5.108
+        uses: release-plz/action@ccf6dd998441f26020f4315f1ebe95d9e2e42600 # v0.5.110
         with:
           command: release
         env:
@@ -80,7 +80,7 @@ jobs:
             cargo-check-${{ runner.os }}-
 
       - name: Create release PR
-        uses: release-plz/action@8724d33cd97b8295051102e2e19ca592962238f5 # v0.5.108
+        uses: release-plz/action@ccf6dd998441f26020f4315f1ebe95d9e2e42600 # v0.5.110
         with:
           command: release-pr
         env:
