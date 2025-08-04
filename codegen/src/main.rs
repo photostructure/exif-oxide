@@ -65,12 +65,6 @@ fn main() -> Result<()> {
                 .help("Output directory for generated code")
                 .default_value("../src/generated"),
         )
-        .arg(
-            Arg::new("universal")
-                .long("universal")
-                .help("Use universal symbol table extraction instead of config-based extraction")
-                .action(clap::ArgAction::SetTrue),
-        )
         .get_matches();
 
     // Check if single config mode
@@ -80,7 +74,6 @@ fn main() -> Result<()> {
     }
 
     let output_dir = matches.get_one::<String>("output").unwrap();
-    let use_universal = matches.get_flag("universal");
 
     // We're running from the codegen directory
     let current_dir = std::env::current_dir()?;
@@ -91,16 +84,9 @@ fn main() -> Result<()> {
     info!("🔧 exif-oxide Code Generation");
     debug!("=============================");
     
-    if use_universal {
-        info!("🔄 Using universal symbol table extraction");
-        run_universal_extraction(&current_dir, output_dir)?;
-    } else {
-        // Extract all tables using Rust orchestration (replaces Makefile extract-* targets)
-        // This now includes tag definitions and composite tags via the config system
-        let start = Instant::now();
-        extract_all_simple_tables()?;
-        info!("📊 Extract phase completed in {:.2}s", start.elapsed().as_secs_f64());
-    }
+    // Universal symbol table extraction is now the default approach
+    info!("🔄 Using universal symbol table extraction");
+    run_universal_extraction(&current_dir, output_dir)?;
 
     // Process modular tag tables (only for composite tags now)
     let extract_dir = current_dir.join("generated").join("extract");
@@ -231,6 +217,7 @@ fn run_universal_extraction(current_dir: &Path, output_dir: &str) -> Result<()> 
     
     info!("📦 Found {} ExifTool modules to process", module_paths.len());
     
+    // TODO: FIX THIS TO USE config/exiftool_modules.json 
     // Process a subset for initial testing (GPS, DNG, Canon for comprehensive validation)
     let test_modules = ["GPS.pm", "DNG.pm", "Canon.pm"];
     let test_paths: Vec<_> = module_paths
