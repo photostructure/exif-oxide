@@ -17,9 +17,9 @@ pub trait ExtractionStrategy: Send + Sync {
     /// Name of the strategy for logging and debugging
     fn name(&self) -> &'static str;
     
-    /// Check if this strategy can handle the given symbol data
-    /// Uses duck-typing pattern recognition on JSON structure
-    fn can_handle(&self, symbol_data: &JsonValue) -> bool;
+    /// Check if this strategy can handle the given symbol
+    /// Uses duck-typing pattern recognition on symbol structure
+    fn can_handle(&self, symbol: &FieldSymbol) -> bool;
     
     /// Extract data from the symbol and generate appropriate code
     fn extract(&mut self, symbol_data: &FieldSymbol, context: &mut ExtractionContext) -> Result<()>;
@@ -154,7 +154,7 @@ impl StrategyDispatcher {
         let mut reasoning = String::new();
         
         for (index, strategy) in self.strategies.iter().enumerate() {
-            if strategy.can_handle(&symbol.data) {
+            if strategy.can_handle(&symbol) {
                 reasoning = format!("Pattern matched: {}", self.describe_pattern(&symbol.data));
                 matched_strategy_index = Some(index);
                 break;

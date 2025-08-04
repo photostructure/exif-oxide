@@ -178,13 +178,8 @@ impl ExtractionStrategy for BinaryDataStrategy {
         "BinaryDataStrategy"
     }
     
-    fn can_handle(&self, symbol_data: &JsonValue) -> bool {
-        // Convert JsonValue to FieldSymbol for analysis
-        if let Ok(symbol) = serde_json::from_value::<FieldSymbol>(symbol_data.clone()) {
-            Self::is_binary_data_symbol(&symbol)
-        } else {
-            false
-        }
+    fn can_handle(&self, symbol: &FieldSymbol) -> bool {
+        Self::is_binary_data_symbol(symbol)
     }
     
     fn extract(&mut self, symbol_data: &FieldSymbol, context: &mut ExtractionContext) -> Result<()> {

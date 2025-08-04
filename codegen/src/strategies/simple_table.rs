@@ -169,9 +169,9 @@ impl ExtractionStrategy for SimpleTableStrategy {
         "SimpleTableStrategy"
     }
     
-    fn can_handle(&self, symbol_data: &JsonValue) -> bool {
+    fn can_handle(&self, symbol: &FieldSymbol) -> bool {
         // Check if this is a hash with simple string values
-        if let JsonValue::Object(map) = symbol_data {
+        if let JsonValue::Object(map) = &symbol.data {
             // Must have at least one entry
             if map.is_empty() {
                 return false;
