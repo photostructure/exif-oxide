@@ -235,26 +235,31 @@ impl Default for StrategyDispatcher {
 
 // Strategy implementations
 mod simple_table;
+mod tag_kit;
+mod binary_data;
+mod boolean_set;
+mod composite_tag;
 
 // Output location utilities
 pub mod output_locations;
 
 // Re-export strategy implementations
 pub use simple_table::SimpleTableStrategy;
+pub use tag_kit::TagKitStrategy;
+pub use binary_data::BinaryDataStrategy;
+pub use boolean_set::BooleanSetStrategy;
+pub use composite_tag::CompositeTagStrategy;
 
 /// Registry of all available strategies
 /// Ordered by precedence - first-match-wins
 pub fn all_strategies() -> Vec<Box<dyn ExtractionStrategy>> {
     vec![
-        // Start with simple strategies for initial implementation
-        Box::new(SimpleTableStrategy::new()),
-        
-        // TODO: Add more strategies as they're implemented:
-        // Box::new(TagKitStrategy::new()),
-        // Box::new(BinaryDataStrategy::new()),
-        // Box::new(BooleanSetStrategy::new()),
-        // Box::new(StaticArrayStrategy::new()),
-        // etc.
+        // Order matters: first-match wins
+        Box::new(TagKitStrategy::new()),      // Complex tag definitions (Main, Composite tables)
+        Box::new(BinaryDataStrategy::new()),  // ProcessBinaryData tables (CameraInfo*, etc.)
+        Box::new(CompositeTagStrategy::new()), // Composite tag definitions
+        Box::new(BooleanSetStrategy::new()),  // Membership sets (isDat*, isTxt*, etc.)
+        Box::new(SimpleTableStrategy::new()), // Simple key-value lookups (fallback)
     ]
 }
 
