@@ -16,6 +16,7 @@ pub mod schemas;
 pub mod table_processor;
 pub mod field_extractor;
 pub mod strategies;
+pub mod types;
 pub mod validation;
 
 // Re-export commonly used types
