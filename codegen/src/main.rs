@@ -3,12 +3,12 @@
 //! This tool reads JSON output from Perl extractors and generates
 //! Rust code following the "runtime references, no stubs" architecture.
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use clap::{Arg, Command};
 use std::fs;
 use std::path::Path;
 use std::time::Instant;
-use tracing::{info, debug};
+use tracing::{info, debug, warn};
 use tracing_subscriber::EnvFilter;
 
 mod common;
@@ -18,9 +18,11 @@ mod discovery;
 mod expression_compiler;
 mod extraction;
 mod extractors;
+mod field_extractor;
 mod file_operations;
 mod generators;
 mod schemas;
+mod strategies;
 mod table_processor;
 mod validation;
 
@@ -31,6 +33,8 @@ use table_processor::process_composite_tags_only;
 use file_operations::{create_directories, file_exists, write_file_atomic};
 use generators::generate_mod_file;
 use validation::validate_all_configs;
+use field_extractor::FieldExtractor;
+use strategies::{StrategyDispatcher, GeneratedFile};
 
 
 fn main() -> Result<()> {
@@ -61,6 +65,12 @@ fn main() -> Result<()> {
                 .help("Output directory for generated code")
                 .default_value("../src/generated"),
         )
+        .arg(
+            Arg::new("universal")
+                .long("universal")
+                .help("Use universal symbol table extraction instead of config-based extraction")
+                .action(clap::ArgAction::SetTrue),
+        )
         .get_matches();
 
     // Check if single config mode
@@ -70,6 +80,7 @@ fn main() -> Result<()> {
     }
 
     let output_dir = matches.get_one::<String>("output").unwrap();
+    let use_universal = matches.get_flag("universal");
 
     // We're running from the codegen directory
     let current_dir = std::env::current_dir()?;
@@ -80,11 +91,16 @@ fn main() -> Result<()> {
     info!("🔧 exif-oxide Code Generation");
     debug!("=============================");
     
-    // Extract all tables using Rust orchestration (replaces Makefile extract-* targets)
-    // This now includes tag definitions and composite tags via the config system
-    let start = Instant::now();
-    extract_all_simple_tables()?;
-    info!("📊 Extract phase completed in {:.2}s", start.elapsed().as_secs_f64());
+    if use_universal {
+        info!("🔄 Using universal symbol table extraction");
+        run_universal_extraction(&current_dir, output_dir)?;
+    } else {
+        // Extract all tables using Rust orchestration (replaces Makefile extract-* targets)
+        // This now includes tag definitions and composite tags via the config system
+        let start = Instant::now();
+        extract_all_simple_tables()?;
+        info!("📊 Extract phase completed in {:.2}s", start.elapsed().as_secs_f64());
+    }
 
     // Process modular tag tables (only for composite tags now)
     let extract_dir = current_dir.join("generated").join("extract");
@@ -190,6 +206,118 @@ fn main() -> Result<()> {
 
     info!("✅ Code generation complete!");
 
+    Ok(())
+}
+
+/// Run field extraction with strategy-based processing
+fn run_universal_extraction(current_dir: &Path, output_dir: &str) -> Result<()> {
+    let extractor = FieldExtractor::new();
+    let mut dispatcher = StrategyDispatcher::new();
+    let exiftool_lib_dir = current_dir.join("../third-party/exiftool/lib/Image/ExifTool");
+    
+    info!("🔍 Scanning ExifTool modules in: {}", exiftool_lib_dir.display());
+    
+    // Find all .pm files in the ExifTool directory
+    let mut module_paths = Vec::new();
+    
+    if let Ok(entries) = std::fs::read_dir(&exiftool_lib_dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.extension().and_then(|s| s.to_str()) == Some("pm") {
+                module_paths.push(path);
+            }
+        }
+    }
+    
+    info!("📦 Found {} ExifTool modules to process", module_paths.len());
+    
+    // Process a subset for initial testing (GPS, DNG, Canon for comprehensive validation)
+    let test_modules = ["GPS.pm", "DNG.pm", "Canon.pm"];
+    let test_paths: Vec<_> = module_paths
+        .iter()
+        .filter(|path| {
+            path.file_name()
+                .and_then(|name| name.to_str())
+                .map(|name| test_modules.contains(&name))
+                .unwrap_or(false)
+        })
+        .collect();
+    
+    info!("🧪 Processing {} test modules: {:?}", test_paths.len(), 
+          test_paths.iter().map(|p| p.file_name().unwrap().to_string_lossy()).collect::<Vec<_>>());
+    
+    let start = Instant::now();
+    let mut all_symbols = Vec::new();
+    
+    // Extract symbols from all modules
+    for module_path in test_paths {
+        match extractor.extract_module(module_path) {
+            Ok((symbols, stats)) => {
+                info!("✅ {}: {} symbols extracted from {} total", 
+                      stats.module_name, stats.extracted_symbols, stats.total_symbols);
+                
+                debug!("  📋 {} symbols ready for strategy processing", symbols.len());
+                all_symbols.extend(symbols);
+            }
+            Err(e) => {
+                warn!("❌ Failed to extract from {}: {}", module_path.display(), e);
+            }
+        }
+    }
+    
+    let extraction_time = start.elapsed();
+    info!("🔄 Field extraction completed in {:.2}s", extraction_time.as_secs_f64());
+    
+    // Process extracted symbols through strategy system
+    if !all_symbols.is_empty() {
+        let strategy_start = Instant::now();
+        info!("🎯 Processing {} symbols through strategy system", all_symbols.len());
+        
+        match dispatcher.process_symbols(all_symbols, output_dir) {
+            Ok(generated_files) => {
+                let strategy_time = strategy_start.elapsed();
+                info!("✅ Strategy processing completed in {:.2}s", strategy_time.as_secs_f64());
+                
+                // Write generated files to disk
+                let write_start = Instant::now();
+                write_generated_files(&generated_files, output_dir)?;
+                let write_time = write_start.elapsed();
+                
+                info!("📁 {} files written in {:.2}s", generated_files.len(), write_time.as_secs_f64());
+                info!("🏁 Total field extraction time: {:.2}s", 
+                      (extraction_time + strategy_time + write_time).as_secs_f64());
+            }
+            Err(e) => {
+                warn!("❌ Strategy processing failed: {}", e);
+                return Err(e);
+            }
+        }
+    } else {
+        warn!("⚠️  No symbols extracted for processing");
+    }
+    
+    Ok(())
+}
+
+/// Write generated files to disk with appropriate directory structure
+fn write_generated_files(files: &[GeneratedFile], base_output_dir: &str) -> Result<()> {
+    use std::fs;
+    
+    for file in files {
+        let full_path = Path::new(base_output_dir).join(&file.path);
+        
+        // Create parent directories if they don't exist
+        if let Some(parent) = full_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        
+        // Write the file
+        fs::write(&full_path, &file.content)
+            .with_context(|| format!("Failed to write generated file: {}", full_path.display()))?;
+        
+        debug!("📝 Written: {} ({} bytes)", file.path, file.content.len());
+    }
+    
     Ok(())
 }
 
