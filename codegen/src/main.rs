@@ -51,13 +51,6 @@ fn main() -> Result<()> {
         .version("0.1.0")
         .about("Generate Rust code from ExifTool extraction data")
         .arg(
-            Arg::new("config")
-                .help("Single config file to process (for debugging)")
-                .value_name("CONFIG_FILE")
-                .index(1)
-                .required(false),
-        )
-        .arg(
             Arg::new("output")
                 .short('o')
                 .long("output")
@@ -65,15 +58,24 @@ fn main() -> Result<()> {
                 .help("Output directory for generated code")
                 .default_value("../src/generated"),
         )
+        .arg(
+            Arg::new("modules")
+                .long("modules")
+                .short('m')
+                .help("Specific ExifTool modules to process (e.g., GPS.pm Canon.pm)")
+                .value_name("MODULES")
+                .action(clap::ArgAction::Append)
+                .required(false),
+        )
         .get_matches();
 
-    // Check if single config mode
-    if let Some(config_file) = matches.get_one::<String>("config") {
-        info!("🔧 Running single config extraction for: {}", config_file);
-        return extract_single_config(config_file);
-    }
 
     let output_dir = matches.get_one::<String>("output").unwrap();
+    
+    // Extract specific modules if provided
+    let selected_modules: Option<Vec<String>> = matches
+        .get_many::<String>("modules")
+        .map(|values| values.map(|s| s.clone()).collect());
 
     // We're running from the codegen directory
     let current_dir = std::env::current_dir()?;
@@ -86,7 +88,7 @@ fn main() -> Result<()> {
     
     // Universal symbol table extraction is now the default approach
     info!("🔄 Using universal symbol table extraction");
-    run_universal_extraction(&current_dir, output_dir)?;
+    run_universal_extraction(&current_dir, output_dir, selected_modules.as_ref())?;
 
     // Process modular tag tables (only for composite tags now)
     let extract_dir = current_dir.join("generated").join("extract");
@@ -152,37 +154,42 @@ fn main() -> Result<()> {
         debug!("  ✓ file_types mod.rs already contains all necessary declarations");
     }
 
-    // NEW: Process using the new macro-based configuration system
-    debug!("🔄 Processing new macro-based configuration...");
+    // Config-based generation only runs when processing all modules (no --modules specified)
+    if selected_modules.is_none() {
+        // NEW: Process using the new macro-based configuration system
+        debug!("🔄 Processing new macro-based configuration...");
 
-    let config_dir = current_dir.join("config");
-    let schemas_dir = current_dir.join("schemas");
+        let config_dir = current_dir.join("config");
+        let schemas_dir = current_dir.join("schemas");
 
-    // Validate all configurations first
-    if config_dir.exists() && schemas_dir.exists() {
-        let start = Instant::now();
-        validate_all_configs(&config_dir, &schemas_dir)?;
-        debug!("  ✓ Config validation completed in {:.2}s", start.elapsed().as_secs_f64());
+        // Validate all configurations first
+        if config_dir.exists() && schemas_dir.exists() {
+            let start = Instant::now();
+            validate_all_configs(&config_dir, &schemas_dir)?;
+            debug!("  ✓ Config validation completed in {:.2}s", start.elapsed().as_secs_f64());
 
-        // Load all extracted tables with their configurations
-        let extract_dir = current_dir.join("generated/extract");
-        let start = Instant::now();
-        let all_extracted_tables = load_extracted_tables_with_config(&extract_dir, &config_dir)?;
-        debug!("  ✓ Loaded {} extracted tables in {:.2}s", all_extracted_tables.len(), start.elapsed().as_secs_f64());
+            // Load all extracted tables with their configurations
+            let extract_dir = current_dir.join("generated/extract");
+            let start = Instant::now();
+            let all_extracted_tables = load_extracted_tables_with_config(&extract_dir, &config_dir)?;
+            debug!("  ✓ Loaded {} extracted tables in {:.2}s", all_extracted_tables.len(), start.elapsed().as_secs_f64());
 
-        // Auto-discover and process each module directory
-        let start = Instant::now();
-        discover_and_process_modules(&config_dir, &all_extracted_tables, output_dir)?;
-        info!("🔄 Module processing phase completed in {:.2}s", start.elapsed().as_secs_f64());
+            // Auto-discover and process each module directory
+            let start = Instant::now();
+            discover_and_process_modules(&config_dir, &all_extracted_tables, output_dir)?;
+            info!("🔄 Module processing phase completed in {:.2}s", start.elapsed().as_secs_f64());
 
-        // No macros.rs needed - using direct code generation
+            // No macros.rs needed - using direct code generation
 
-        // Update the main mod.rs to include new modules
-        let start = Instant::now();
-        update_generated_mod_file(output_dir)?;
-        debug!("  ✓ Updated generated mod.rs in {:.2}s", start.elapsed().as_secs_f64());
+            // Update the main mod.rs to include new modules
+            let start = Instant::now();
+            update_generated_mod_file(output_dir)?;
+            debug!("  ✓ Updated generated mod.rs in {:.2}s", start.elapsed().as_secs_f64());
+        } else {
+            debug!("  ⚠️  New config directory structure not found, using legacy generation only");
+        }
     } else {
-        debug!("  ⚠️  New config directory structure not found, using legacy generation only");
+        debug!("🎯 Skipping config-based generation - processing specific modules only");
     }
 
     // Generate module file
@@ -196,7 +203,7 @@ fn main() -> Result<()> {
 }
 
 /// Run field extraction with strategy-based processing
-fn run_universal_extraction(current_dir: &Path, output_dir: &str) -> Result<()> {
+fn run_universal_extraction(current_dir: &Path, output_dir: &str, selected_modules: Option<&Vec<String>>) -> Result<()> {
     let extractor = FieldExtractor::new();
     let mut dispatcher = StrategyDispatcher::new();
     let exiftool_lib_dir = current_dir.join("../third-party/exiftool/lib/Image/ExifTool");
@@ -217,27 +224,58 @@ fn run_universal_extraction(current_dir: &Path, output_dir: &str) -> Result<()> 
     
     info!("📦 Found {} ExifTool modules to process", module_paths.len());
     
-    // TODO: FIX THIS TO USE config/exiftool_modules.json 
-    // Process a subset for initial testing (GPS, DNG, Canon for comprehensive validation)
-    let test_modules = ["GPS.pm", "DNG.pm", "Canon.pm"];
-    let test_paths: Vec<_> = module_paths
-        .iter()
-        .filter(|path| {
-            path.file_name()
-                .and_then(|name| name.to_str())
-                .map(|name| test_modules.contains(&name))
-                .unwrap_or(false)
-        })
-        .collect();
-    
-    info!("🧪 Processing {} test modules: {:?}", test_paths.len(), 
-          test_paths.iter().map(|p| p.file_name().unwrap().to_string_lossy()).collect::<Vec<_>>());
+    // Select modules to process
+    let selected_paths: Vec<&std::path::PathBuf> = if let Some(modules) = selected_modules {
+        // User specified specific modules - resolve and validate them
+        let mut resolved_paths = Vec::new();
+        
+        for module_name in modules {
+            // Find the module path
+            if let Some(module_path) = module_paths
+                .iter()
+                .find(|path| {
+                    path.file_name()
+                        .and_then(|name| name.to_str())
+                        .map(|name| name == module_name)
+                        .unwrap_or(false)
+                }) {
+                resolved_paths.push(module_path);
+            } else {
+                return Err(anyhow::anyhow!("Module not found: {}. Available modules: {:?}", 
+                    module_name, 
+                    module_paths.iter()
+                        .filter_map(|p| p.file_name()?.to_str())
+                        .collect::<Vec<_>>()
+                ));
+            }
+        }
+        
+        info!("🎯 Processing {} user-selected modules: {:?}", resolved_paths.len(), 
+              resolved_paths.iter().map(|p| p.file_name().unwrap().to_string_lossy()).collect::<Vec<_>>());
+        resolved_paths
+    } else {
+        // Default behavior - process test subset for now (GPS, DNG, Canon for comprehensive validation)
+        let default_modules = ["GPS.pm", "DNG.pm", "Canon.pm"];
+        let filtered_paths: Vec<&std::path::PathBuf> = module_paths
+            .iter()
+            .filter(|path| {
+                path.file_name()
+                    .and_then(|name| name.to_str())
+                    .map(|name| default_modules.contains(&name))
+                    .unwrap_or(false)
+            })
+            .collect();
+        
+        info!("🧪 Processing {} default test modules: {:?}", filtered_paths.len(), 
+              filtered_paths.iter().map(|p| p.file_name().unwrap().to_string_lossy()).collect::<Vec<_>>());
+        filtered_paths
+    };
     
     let start = Instant::now();
     let mut all_symbols = Vec::new();
     
-    // Extract symbols from all modules
-    for module_path in test_paths {
+    // Extract symbols from selected modules
+    for module_path in selected_paths {
         match extractor.extract_module(module_path) {
             Ok((symbols, stats)) => {
                 info!("✅ {}: {} symbols extracted from {} total", 
