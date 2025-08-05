@@ -34,10 +34,10 @@ for module_group in "Core: $CORE_MODULES" "Manufacturer: $MANUFACTURER_MODULES" 
   for module in $modules; do
     count=$((count + 1))
     module_name=$(basename "$module" .pm)
-    module_path="../third-party/exiftool/lib/Image/ExifTool/$module"
+    module_path="../third-party/exiftool/$module"
 
     if [ ! -f "$module_path" ]; then
-      printf "  %-20s... ⚠️  (not found)\n" "$module_name"
+      printf "  %-20s... ⚠️  (not found at %s)\n" "$module_name" "$module_path"
       continue
     fi
 

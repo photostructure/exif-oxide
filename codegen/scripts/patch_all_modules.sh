@@ -17,7 +17,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CODEGEN_DIR="$(dirname "$SCRIPT_DIR")"
 cd "$CODEGEN_DIR"
 
-EXIFTOOL_LIB="$(cd ../third-party/exiftool/lib/Image/ExifTool && pwd)"
+EXIFTOOL_BASE="$(cd ../third-party/exiftool && pwd)"
 PATCHER="./scripts/patch_exiftool_modules_universal.pl"
 CONFIG_FILE="../config/exiftool_modules.json"
 
@@ -26,8 +26,8 @@ if [ ! -f "$PATCHER" ]; then
   exit 1
 fi
 
-if [ ! -d "$EXIFTOOL_LIB" ]; then
-  echo "Error: ExifTool lib directory not found: $EXIFTOOL_LIB"
+if [ ! -d "$EXIFTOOL_BASE" ]; then
+  echo "Error: ExifTool base directory not found: $EXIFTOOL_BASE"
   exit 1
 fi
 
@@ -49,31 +49,28 @@ readarray -t FORMAT_MODULES < <(jq -r '.modules.format[]' "$CONFIG_FILE")
 
 # Function to patch a module
 patch_module() {
-  local module="$1"
-  local module_path="${EXIFTOOL_LIB}${module}"
+  local module_relative_path="$1"
+  local module_path="${EXIFTOOL_BASE}/${module_relative_path}"
 
   if [ ! -f "$module_path" ]; then
-    echo "⚠️  Skipping $module (not found)"
+    echo "⚠️  Skipping $module_relative_path (not found at $module_path)"
     return
   fi
 
   perl "$PATCHER" "$module_path"
 }
 
-# Patch ExifTool.pm:
-patch_module ".pm" &
-
-# Patch all modules
+# Patch all modules using relative paths from JSON config
 for module in "${CORE_MODULES[@]}"; do
-  patch_module "/$module" &
+  patch_module "$module" &
 done
 
 for module in "${MANUFACTURER_MODULES[@]}"; do
-  patch_module "/$module" &
+  patch_module "$module" &
 done
 
 for module in "${FORMAT_MODULES[@]}"; do
-  patch_module "/$module" &
+  patch_module "$module" &
 done
 
 wait
