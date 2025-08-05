@@ -7,7 +7,7 @@
 //!
 //! lib/Image/ExifTool/Olympus.pm - Equipment section, CameraSettings, FocusInfo, etc.
 
-use crate::generated::Olympus_pm::{lookup_olympus_camera_types, lookup_olympus_lens_types};
+use crate::generated::olympus_pm::{lookup_olympus_camera_types, lookup_olympus_lens_types};
 use crate::processor_registry::{
     BinaryDataProcessor, ProcessorCapability, ProcessorContext, ProcessorMetadata, ProcessorResult,
 };

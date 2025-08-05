@@ -285,7 +285,7 @@ pub fn extract_focal_length(
 
     // Use Canon tag kit system for PrintConv lookups
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::Canon_pm::tag_kit;
+    use crate::generated::canon_pm::tag_kit;
 
     // Extract FocalType (index 0)
     // ExifTool: Canon.pm:2643 Name => 'FocalType'
@@ -395,7 +395,7 @@ pub fn extract_shot_info(
 
     // Use Canon tag kit system for PrintConv lookups
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::Canon_pm::tag_kit;
+    use crate::generated::canon_pm::tag_kit;
 
     // Extract AutoISO (index 1)
     // ExifTool: Canon.pm:2724 Name => 'AutoISO'
@@ -624,7 +624,7 @@ pub fn extract_panorama(
 
     // Use Canon tag kit system for PrintConv lookups
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::Canon_pm::tag_kit;
+    use crate::generated::canon_pm::tag_kit;
 
     // Canon Panorama format: int16s (signed 16-bit), starting at index 0
     // ExifTool: Canon.pm:3001 FORMAT => 'int16s', FIRST_ENTRY => 0
@@ -691,7 +691,7 @@ pub fn extract_my_colors(
 
     // Use Canon tag kit system for PrintConv lookups
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::Canon_pm::tag_kit;
+    use crate::generated::canon_pm::tag_kit;
 
     // Canon MyColors format: int16u (unsigned 16-bit), starting at index 0
     // ExifTool: Canon.pm:3133 FORMAT => 'int16u', FIRST_ENTRY => 0
@@ -1824,7 +1824,7 @@ mod tests {
 
         // For debugging: also test with tag ID directly
         use crate::expressions::ExpressionEvaluator;
-        use crate::generated::Canon_pm::tag_kit;
+        use crate::generated::canon_pm::tag_kit;
         let mut evaluator = ExpressionEvaluator::new();
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
@@ -1838,7 +1838,7 @@ mod tests {
         println!("Warnings: {:?}", warnings);
 
         // Check if tag ID 1 is in CANON_PM_TAG_KITS
-        use crate::generated::Canon_pm::tag_kit::CANON_PM_TAG_KITS;
+        use crate::generated::canon_pm::tag_kit::CANON_PM_TAG_KITS;
         if let Some(tag_def) = CANON_PM_TAG_KITS.get(&1) {
             println!(
                 "Tag ID 1 found in CANON_PM_TAG_KITS: name={}, print_conv={:?}",

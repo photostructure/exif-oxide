@@ -13,7 +13,7 @@
 //!
 //! Reference: ExifTool lib/Image/ExifTool/IPTC.pm ProcessIPTC function (lines 1050-1200)
 
-use crate::generated::IPTC_pm::tag_kit::{datetime, interop, other, TagKitDef};
+use crate::generated::iptc_pm::tag_kit::{datetime, interop, other, TagKitDef};
 use crate::types::{ExifError, Result, TagValue};
 use std::collections::HashMap;
 use tracing::{debug, warn};
@@ -332,7 +332,7 @@ pub fn parse_iptc_from_app13(app13_data: &[u8]) -> Result<HashMap<String, TagVal
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::generated::IPTC_pm::tag_kit::PrintConvType;
+    use crate::generated::iptc_pm::tag_kit::PrintConvType;
 
     #[test]
     fn test_iptc_dataset_parsing() {

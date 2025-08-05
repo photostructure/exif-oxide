@@ -259,7 +259,7 @@ pub fn apply_print_conv_with_tag_id(tag_id: Option<u32>, name: &str, value: &Tag
 fn try_tag_kit_print_conv(tag_id: u32, value: &TagValue) -> Option<TagValue> {
     // For now, try EXIF tag kit (we can extend this to other modules later)
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::Exif_pm::tag_kit;
+    use crate::generated::exif_pm::tag_kit;
 
     // Create temporary containers for errors/warnings
     // TODO: These should be passed through the API to collect for the user

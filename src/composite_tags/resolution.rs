@@ -7,9 +7,8 @@
 use std::collections::{HashMap, HashSet};
 use tracing::{debug, trace};
 
-use crate::generated::CompositeTagDef;
-use crate::generated::Exif_pm::tag_kit;
-use crate::generated::GPS_pm::tag_kit as gps_tag_kit;
+use crate::generated::exif_pm::main_tags::MAIN_TAGS as EXIF_MAIN_TAGS;
+use crate::generated::gps_pm::main_tags::MAIN_TAGS as GPS_MAIN_TAGS;
 use crate::types::TagValue;
 
 /// Build the initial available tags map from extracted tags with group prefixes
@@ -37,12 +36,12 @@ pub fn build_available_tags_map(
         };
 
         let base_tag_name = if group_name == "EXIF" {
-            tag_kit::EXIF_PM_TAG_KITS
-                .get(&(tag_id as u32))
+            EXIF_MAIN_TAGS
+                .get(&tag_id)
                 .map(|tag_def| tag_def.name.to_string())
                 .or_else(|| {
-                    gps_tag_kit::GPS_PM_TAG_KITS
-                        .get(&(tag_id as u32))
+                    GPS_MAIN_TAGS
+                        .get(&tag_id)
                         .map(|tag_def| tag_def.name.to_string())
                 })
                 .unwrap_or_else(|| {
