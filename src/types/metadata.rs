@@ -841,6 +841,27 @@ impl TagSourceInfo {
             _ => "IFD0".to_string(),
         }
     }
+
+    /// Get ExifTool Group1 value with tag-specific overrides for correct context assignment
+    /// ExifTool: Certain tags belong to specific contexts regardless of processing order
+    /// Fixes issue where Canon MakerNotes processing steals ExifIFD tags like ColorSpace
+    pub fn get_group1_with_tag_override(&self, tag_id: u16) -> String {
+        // ExifIFD-specific tags should always have group1="ExifIFD" regardless of processing context
+        // ExifTool: These tags are defined in Exif.pm ExifIFD table, not manufacturer tables
+        match tag_id {
+            // Core ExifIFD tags that should never be assigned to manufacturer context
+            0x9000 => "ExifIFD".to_string(), // ExifVersion - Always in ExifIFD
+            0xA000 => "ExifIFD".to_string(), // FlashpixVersion - Always in ExifIFD
+            0xA001 => "ExifIFD".to_string(), // ColorSpace - Always in ExifIFD
+            0xA002 => "ExifIFD".to_string(), // ExifImageWidth - Always in ExifIFD
+            0xA003 => "ExifIFD".to_string(), // ExifImageHeight - Always in ExifIFD
+            0xA005 => "ExifIFD".to_string(), // InteropIFD pointer - Always in ExifIFD
+            // GPS IFD pointer should always have GPS group1
+            0x8825 => "GPS".to_string(), // GPSInfo - Always GPS context
+            // For all other tags, use normal context-based assignment
+            _ => self.get_group1(),
+        }
+    }
 }
 
 /// Temporary placeholder for ProcessorDispatch during Phase 5 cleanup

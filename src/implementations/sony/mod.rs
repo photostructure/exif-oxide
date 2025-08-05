@@ -17,7 +17,7 @@ use tracing::debug;
 /// Find Sony tag ID by name from the tag kit system
 /// Used for applying PrintConv to subdirectory-extracted tags
 fn find_sony_tag_id_by_name(tag_name: &str) -> Option<u32> {
-    use crate::generated::Sony_pm::tag_kit::SONY_PM_TAG_KITS;
+    use crate::generated::sony_pm::tag_kit::SONY_PM_TAG_KITS;
 
     // Search through all Sony tag kit entries to find matching name
     for (&tag_id, tag_def) in SONY_PM_TAG_KITS.iter() {
@@ -32,7 +32,7 @@ fn find_sony_tag_id_by_name(tag_name: &str) -> Option<u32> {
 /// ExifTool: Sony.pm SubDirectory processing for binary data expansion
 pub fn process_sony_subdirectory_tags(exif_reader: &mut ExifReader) -> Result<()> {
     use crate::exif::subdirectory_processing::process_subdirectories_with_printconv;
-    use crate::generated::Sony_pm::tag_kit;
+    use crate::generated::sony_pm::tag_kit;
 
     debug!("Processing Sony subdirectory tags using generic system");
 

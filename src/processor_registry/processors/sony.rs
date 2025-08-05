@@ -13,7 +13,7 @@
 //! without any improvements or simplifications. Every algorithm, offset calculation,
 //! and quirk is copied exactly as documented in the ExifTool source.
 
-use crate::generated::Sony_pm;
+use crate::generated::sony_pm;
 use crate::processor_registry::{
     BinaryDataProcessor, ProcessorCapability, ProcessorContext, ProcessorMetadata, ProcessorResult,
 };
@@ -84,7 +84,7 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
             let af_point_raw = u16::from_le_bytes([data[0x1e], data[0x1f]]);
 
             use crate::expressions::ExpressionEvaluator;
-            use crate::generated::Sony_pm::tag_kit;
+            use crate::generated::sony_pm::tag_kit;
 
             let mut evaluator = ExpressionEvaluator::new();
             let mut errors = Vec::new();
@@ -115,7 +115,7 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
             let focus_mode_raw = u16::from_le_bytes([data[0x20], data[0x21]]);
 
             use crate::expressions::ExpressionEvaluator;
-            use crate::generated::Sony_pm::tag_kit;
+            use crate::generated::sony_pm::tag_kit;
 
             let mut evaluator = ExpressionEvaluator::new();
             let mut errors = Vec::new();
@@ -143,7 +143,7 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
             let focus_status_raw = u16::from_le_bytes([data[0x22], data[0x23]]);
 
             use crate::expressions::ExpressionEvaluator;
-            use crate::generated::Sony_pm::tag_kit;
+            use crate::generated::sony_pm::tag_kit;
 
             let mut evaluator = ExpressionEvaluator::new();
             let mut errors = Vec::new();
@@ -556,7 +556,7 @@ impl BinaryDataProcessor for SonyCameraSettingsProcessor {
         // ExifTool: Sony.pm line 4184
         if let Some(wb_setting) = read_u16(0x05) {
             if let Some(wb_desc) =
-                Sony_pm::whitebalancesetting::lookup_sony_white_balance_setting(wb_setting)
+                sony_pm::whitebalancesetting::lookup_sony_white_balance_setting(wb_setting)
             {
                 result.extracted_tags.insert(
                     "WhiteBalanceSetting".to_string(),

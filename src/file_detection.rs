@@ -14,8 +14,8 @@
 //! - Conflict resolution patterns
 //! - Error recovery mechanisms
 
-use crate::generated::ExifTool_pm::lookup_mime_types;
-// use crate::generated::ExifTool_pm::lookup_weakmagic;
+use crate::generated::exiftool_pm::lookup_mime_types;
+// use crate::generated::exiftool_pm::lookup_weakmagic;
 use std::io::{Read, Seek};
 use std::path::Path;
 
@@ -25,7 +25,7 @@ const MAGIC_TEST_BUFFER_SIZE: usize = 1024;
 
 /// File types with weak magic numbers that defer to extension detection
 /// Now using generated lookup from ExifTool.pm:1030 %weakMagic hash
-/// See src/generated/ExifTool_pm/weakmagic.rs for the generated implementation
+/// See src/generated/exiftool_pm/weakmagic.rs for the generated implementation
 
 // All magic number patterns are now generated from ExifTool.pm %magicNumber hash
 // See src/generated/file_types/magic_numbers.rs for the complete patterns
@@ -300,7 +300,7 @@ impl FileTypeDetector {
 
         // Use generated magic number patterns from ExifTool's %magicNumber hash
         // ExifTool.pm:912-1027 - patterns extracted and compiled from regex patterns
-        use crate::generated::ExifTool_pm::regex_patterns::REGEX_PATTERNS;
+        use crate::generated::exiftool_pm::regex_patterns::REGEX_PATTERNS;
 
         // Use generated magic number patterns from ExifTool's %magicNumber hash
         // ExifTool logic: Extension-based candidates are validated with magic numbers
