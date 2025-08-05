@@ -2,9 +2,9 @@
 
 ## Project Overview
 
-- **Goal**: Fix remaining Sony namespace assignment issue and verify/address any remaining IFD context edge cases to maximize metadata extraction completeness
-- **Problem**: Sony MakerNotes tags show as "Tag_xxxx" instead of proper names due to namespace assignment defaulting to "MakerNotes" during subdirectory processing; need verification of other claimed context bugs
-- **Constraints**: Must preserve existing ExifIFD, GPS IFD, and namespace-aware architecture while fixing edge cases, maintain ExifTool compatibility
+- **Goal**: Fix ExifIFD context assignment bug where ColorSpace and other ExifIFD tags get assigned to manufacturer contexts instead of ExifIFD context
+- **Problem**: ColorSpace (0xA001) is being assigned group1="Canon" instead of correct group1="ExifIFD", causing ExifIFD validation tests to fail
+- **Constraints**: Must preserve existing ExifIFD, GPS IFD, and namespace-aware architecture while fixing context assignment precedence, maintain ExifTool compatibility
 
 ---
 
@@ -38,21 +38,21 @@ Honest. RTFM.
 
 ### Key Concepts & Domain Knowledge
 
-- **IFD Context Bugs**: Existing sophisticated system has edge cases where context assignment fails (e.g., ColorSpace→Canon instead of ExifIFD group1)
-- **Namespace Edge Cases**: Despite namespace-aware storage, some tags still experience context resolution failures in complex subdirectory scenarios
-- **Coverage Gaps**: High-impact modules like Exif (122 subdirs), DNG (94 subdirs) remain at 0% configuration coverage despite working infrastructure
-- **Context Resolution**: ExifTool's dynamic tag table switching requires precise context tracking during nested subdirectory processing
+- **ExifIFD Context Assignment Bug**: ColorSpace (0xA001) and potentially other ExifIFD tags get assigned to manufacturer contexts (e.g., Canon) instead of their correct ExifIFD context
+- **Processing Order Issue**: ExifIFD subdirectory processing may happen after or concurrently with manufacturer MakerNotes processing, causing context conflicts
+- **Working Infrastructure**: ExifIFD subdirectory (0x8769) correctly maps to "ExifIFD" name, but downstream context assignment has precedence issues
+- **Test Failures**: Two ExifIFD validation tests fail due to incorrect group1 assignment
 
 ### Surprising Context
 
 **CRITICAL**: Document non-intuitive aspects that aren't obvious from casual code inspection:
 
-- **Infrastructure is Complete**: ExifIFD work (20250706-ExifIFD.md) shows comprehensive context tracking, GPS IFD bug (20250727-P10c) resolved namespace collisions with sophisticated architecture
-- **Most Claimed Issues Are Fixed**: ExifIFD tests are PASSING (not failing as previously documented), Exif_pm config EXISTS at `codegen/config/Exif_pm/tag_kit.json`
-- **Primary Remaining Issue**: Sony namespace assignment bug - creates "MakerNotes:Tag_xxxx" instead of proper Sony tag names during subdirectory processing
-- **Coverage vs Functionality**: Subdirectory coverage of 13.89% (260/1872) represents configuration gaps, not architectural limitations - Canon shows 51% coverage with working processors
-- **Context Assignment Works Generally**: Most namespace switching works correctly; Sony issue is specific to two-phase processing (main IFD + subdirectories)
-- **Historical Success**: GPS coordinate extraction (P10c) required major architecture overhaul that successfully implemented namespace-aware storage system
+- **Infrastructure is Sound**: ExifIFD work (20250706-ExifIFD.md) shows comprehensive context tracking, GPS IFD bug (20250727-P10c) resolved namespace collisions with sophisticated architecture
+- **Configuration Status Verified**: DNG_pm, Exif_pm, and JPEG_pm configurations all exist contrary to previous claims - no missing configs
+- **Sony TAG_PREFIX Already Working**: Sony tags correctly show as "Sony_0x2000", "Sony_0x9001" etc. - no "Tag_xxxx" issue found
+- **Real Issue Identified**: ExifIFD validation tests fail because ColorSpace gets group1="Canon" instead of group1="ExifIFD"
+- **Context Assignment Mostly Works**: Most namespace switching works correctly; issue is specific to ExifIFD vs manufacturer context precedence
+- **Processing Order Investigation**: ExifIFD subdirectory (tag 0x8769) correctly maps to "ExifIFD" name in process_subdirectory_tag() at src/exif/processors.rs:304-306
 
 ### Foundation Documents
 
@@ -70,115 +70,78 @@ Honest. RTFM.
 
 ## Work Completed
 
-- ✅ **ExifIFD Architecture (June 2025)** → Complete implementation with group assignment, context tracking, API compatibility, and comprehensive test coverage - **TESTS ARE PASSING**
+- ✅ **ExifIFD Architecture (June 2025)** → Complete implementation with group assignment, context tracking, API compatibility, and comprehensive test infrastructure
 - ✅ **GPS IFD Namespace Resolution (July 2025)** → Major architectural breakthrough implementing `HashMap<(u16, String), TagValue>` storage to prevent tag collisions  
 - ✅ **Sophisticated Context System** → IFD context stack management, recursion prevention, manufacturer signature detection across 14+ implementations
 - ✅ **Subdirectory Processing Pipeline** → Generic processing with condition evaluation, binary data extraction, and 51% Canon coverage demonstrating effectiveness
-- ✅ **Exif_pm Configuration (Pre-August 2025)** → Complete configuration exists at `codegen/config/Exif_pm/tag_kit.json` with composite tags, simple tables, and tag kit definitions
-- ⚠️ **Sony Context Parameter Bug (July 31, 2025)** → **PARTIALLY FIXED** - apply_conversions() function updated but core namespace assignment issue remains
+- ✅ **Configuration Status Verified (August 3, 2025)** → DNG_pm, Exif_pm, and JPEG_pm configurations all exist with working tag kits
+- ✅ **Sony TAG_PREFIX Mechanism (August 3, 2025)** → Sony tags correctly show as "Sony_0x2000", "Sony_0x9001" etc. - TAG_PREFIX working as expected
 
 ## Remaining Tasks
 
-**REQUIRED**: Each task must be numbered, actionable, and include success criteria.
+**REQUIRED**: Each task must have a unique alphabetic ID (A, B, C, etc.), be actionable, and include success criteria with specific proof requirements.
 
-### 1. Task: Implement TAG_PREFIX Mechanism for Sony Unknown Tag Naming
+### Task A: Fix ExifIFD Context Assignment Bug
 
-**Success Criteria**: Sony unknown tags show proper names like `MakerNotes:Sony_0x2000` instead of `MakerNotes:Tag_2000`, `cargo run --bin exif-oxide third-party/exiftool/t/images/Sony.jpg | grep Tag_` shows 0 instead of 8
-**Approach**: Implement ExifTool's TAG_PREFIX mechanism by adding manufacturer prefixes to tag table definitions and modifying unknown tag name generation
-**Dependencies**: None - builds on existing Sony signature detection and subdirectory processing
+**Success Criteria**:
+- [ ] **ColorSpace Context Fixed**: ColorSpace (0xA001) shows group1="ExifIFD" instead of group1="Canon"
+- [ ] **Test Validation**: `cargo t test_color_space_validation` and `cargo t test_mandatory_exif_ifd_tags` pass
+- [ ] **ExifTool Compatibility**: `exiftool -G1 -ColorSpace test-images/canon/eos_rebel_t3i.jpg` shows "[ExifIFD]" matching our group1
+- [ ] **No Regressions**: All other ExifIFD and manufacturer tests continue passing
 
-**Implementation Plan**:
-1. **Add TAG_PREFIX field** to tag table trait/struct definitions 
-2. **Update Sony::Main table** to include `TAG_PREFIX = "Sony"`
-3. **Modify unknown tag naming logic** in `src/exif/mod.rs:285-290` to check for TAG_PREFIX
-4. **Generate manufacturer-specific names** following ExifTool pattern: `${prefix}_0x${hex}` for unknown numeric tag IDs
+**Root Cause Analysis**:
+- **ExifIFD Processing Confirmed**: Tag 0x8769 correctly maps to "ExifIFD" in `src/exif/processors.rs:304-306`
+- **Context Override Issue**: ColorSpace gets processed in Canon MakerNotes context instead of ExifIFD context
+- **Processing Order**: Need to investigate if ExifIFD subdirectory processing happens after Canon processing
+
+**Implementation Strategy**:
+1. **Investigate Context Precedence**: Check if Canon MakerNotes processing overrides ExifIFD context for ColorSpace
+2. **Fix Context Assignment**: Ensure ExifIFD tags maintain ExifIFD context regardless of manufacturer processing order
+3. **Validate Tag Source Priority**: ColorSpace should come from ExifIFD subdirectory, not manufacturer context
 
 **Technical Details**:
-- **ExifTool Reference**: `ExifTool.pm:3419-3426` (TAG_PREFIX auto-generation), `ExifTool.pm:4468-4479` (unknown tag naming)
-- **Key Files**: `src/exif/mod.rs` (unknown tag generation), `src/implementations/sony/mod.rs` (Sony table definition)
-- **Pattern**: Auto-derive TAG_PREFIX from module name (`Sony::Main` → `TAG_PREFIX = "Sony"`)
+- **ExifTool Reference**: `lib/Image/ExifTool/Exif.pm` ExifIFD subdirectory processing  
+- **Key Files**: `src/exif/processors.rs` (subdirectory processing), `src/exif/tags.rs` (context assignment)
+- **Investigation Required**: Context assignment timing and precedence rules
 
-**Success Patterns**:
+**Dependencies**: None - builds on existing ExifIFD infrastructure
 
-- ✅ Unknown Sony tags show manufacturer-specific names: `MakerNotes:Sony_0x2000` instead of `MakerNotes:Tag_2000`
-- ✅ TAG_PREFIX mechanism works for all manufacturers (Sony, Canon, Nikon, etc.)
-- ✅ Known Sony tags continue working with proper names and PrintConv/ValueConv processing
-- ✅ No regressions in existing Canon/Nikon/Olympus unknown tag handling
+### Task B: Validate All ExifIFD Tags Have Correct Context
 
-**Root Cause Identified**: Missing TAG_PREFIX mechanism - ExifTool automatically generates manufacturer-specific prefixes for unknown tags based on module paths, but our implementation lacks this system.
+**Success Criteria**:
+- [ ] **Comprehensive Testing**: All ExifIFD-specific tags (ExifVersion, FlashpixVersion, ExifImageWidth, etc.) show group1="ExifIFD"
+- [ ] **Integration Verification**: `cargo t exif_ifd_validation_tests` passes completely
+- [ ] **Cross-Manufacturer Testing**: ExifIFD context correct for Canon, Nikon, Sony, and other manufacturers
+- [ ] **Regression Prevention**: No existing functionality broken by context fixes
 
-**VALIDATION FINDINGS (August 2, 2025)**:
+**Approach**: Systematic validation of all ExifIFD tags to ensure consistent context assignment
+**Dependencies**: Task A (ColorSpace context fix provides pattern for other ExifIFD tags)
 
-**✅ Root Cause Identified**: Sony namespace assignment issue is caused by **missing TAG_PREFIX mechanism**. ExifTool automatically generates manufacturer-specific prefixes for unknown tags (e.g., `Sony_0x2000`), but our implementation lacks this system.
+### Task C: Update TPP Documentation Status
 
-**📋 Research Results**:
-- **Sony Issue**: 8 `MakerNotes:Tag_xxxx` entries should be `MakerNotes:Sony_0xxxxx` like ExifTool
-- **ExifTool Mechanism**: TAG_PREFIX auto-generated from module paths (`Image::ExifTool::Sony::Main` → `TAG_PREFIX = "Sony"`)
-- **Unknown Tag Generation**: ExifTool's `GetTagInfo()` creates `${prefix}_0x${hex}` for unknown numeric tag IDs
-- **Location**: `ExifTool.pm:3419-3426` (TAG_PREFIX generation), `ExifTool.pm:4468-4479` (unknown tag naming)
+**Success Criteria**:
+- [ ] **Accurate Claims**: Remove all false claims about missing configurations and Sony issues
+- [ ] **Current Status**: Document actual test failures and their root causes
+- [ ] **Clear Focus**: TPP focuses on real ExifIFD context assignment issue
+- [ ] **Future Guidance**: Provide accurate context for future engineers
 
-**✅ Infrastructure Status Validated**:
-- **ExifIFD Tests**: PASSING (5 test files in `tests/` directory)
-- **Exif_pm Config**: EXISTS at `codegen/config/Exif_pm/tag_kit.json`  
-- **GPS IFD**: Namespace infrastructure working correctly
-- **Sony Processing**: MakerNotes detection and subdirectory processing functional
-- **Context Assignment**: Most namespace switching works; Sony is specific TAG_PREFIX gap
+**Approach**: Complete rewrite of TPP based on validation findings
+**Dependencies**: Tasks A-B (understanding of actual technical issues)
 
-**🔧 Technical Solution Identified**:
-- **Add TAG_PREFIX to tag table definitions** (e.g., Sony::Main should have `TAG_PREFIX = "Sony"`)
-- **Modify unknown tag naming** in `src/exif/mod.rs` around lines 285-290 to use manufacturer prefixes
-- **Implement manufacturer-aware generation** similar to ExifTool's `GetTagInfo()` logic
+## TDD Foundation Requirement
 
-**❌ DNG Status**: Configuration missing (no `codegen/config/*DNG*` found) - secondary priority
+### Task 0: Integration Test (conditional)
 
-**Status**: This is a well-scoped implementation task requiring ExifTool's TAG_PREFIX logic addition to existing Sony MakerNotes processing.
+**Required for**: Feature development (ExifIFD context assignment fix)
 
-### 2. Task: Generate DNG Module Configuration for RAW Metadata Support
+**Success Criteria**:
+- [ ] **Test exists**: `cargo t test_color_space_validation` demonstrates the problem and validates the fix
+- [ ] **Test fails**: Currently fails with ColorSpace showing group1="Canon" instead of "ExifIFD"
+- [ ] **Integration focus**: Test validates end-to-end context assignment behavior
+- [ ] **TPP reference**: Test includes comment linking to P15 TPP
+- [ ] **Measurable outcome**: Test passes when ExifIFD context assignment is fixed
 
-**Success Criteria**: DNG module configuration created and operational, basic RAW metadata extraction enabled, coverage increased from 13.89% baseline
-**Approach**: Use existing `auto_config_gen.pl` to generate DNG module config (94 subdirs = 5.0% potential coverage increase)
-**Dependencies**: Task 1 (Sony issue resolved to validate configuration generation doesn't introduce similar issues)
-
-**Success Patterns**:
-
-- ✅ `codegen/config/DNG_pm/tag_kit.json` created and generates working processors
-- ✅ DNG module enables Adobe DNG and camera RAW metadata extraction
-- ✅ Coverage report shows measurable increase from 13.89% baseline
-- ✅ No regressions in existing manufacturer processing
-
-**Status Update**: Exif_pm configuration already exists - focus on DNG which represents significant coverage opportunity for RAW file support.
-
-### 3. Task: Verify and Address Any Remaining Context Edge Cases
-
-**Success Criteria**: Verification of claimed context issues with targeted testing, resolution of any confirmed edge cases found
-**Approach**: Systematic testing of complex manufacturer + ExifIFD scenarios to identify actual (not claimed) context assignment failures  
-**Dependencies**: Tasks 1-2 (Sony issue resolved, DNG config added to increase test coverage)
-
-**Success Patterns**:
-
-- ✅ Targeted testing of ColorSpace context assignment with Canon files confirms current behavior
-- ✅ Complex scenarios (Canon CR2 + GPS + MakerNotes + ExifIFD) maintain correct context throughout processing
-- ✅ Any confirmed edge cases are resolved with minimal architectural impact
-- ✅ Composite tag dependencies work correctly across namespace boundaries
-
-**Validation Focus**: Since ExifIFD tests are passing, need evidence-based identification of any remaining context issues rather than assumption-based fixes.
-
-### 4. Task: Measure and Document Current IFD Parsing Completeness
-
-**Success Criteria**: Current baseline established through working `make compat` tests, impact of Sony fix and DNG config measured
-**Approach**: Fix compatibility test execution issues, establish current success rate baseline, measure improvements from Tasks 1-2
-**Dependencies**: Tasks 1-2 (Sony issue resolved, DNG config added)
-
-**Success Patterns**:
-
-- ✅ `make compat` executes successfully without truncation/timeout issues
-- ✅ Current baseline success rate documented (replacing unverified 39% claim)
-- ✅ Sony namespace fix shows measurable improvement in tag extraction
-- ✅ DNG configuration enables new RAW metadata extraction capabilities
-
-**Measurement Strategy**: Focus on establishing accurate current baseline rather than assuming 39% (66/167) metric, then measure concrete improvements from completed fixes.
-
-**Task Quality Check**: Can another engineer pick up any task and complete it without asking clarifying questions?
+The existing ExifIFD validation tests serve as our integration tests for this TPP.
 
 ## Integration Requirements
 
@@ -219,11 +182,11 @@ A feature is complete when:
 
 ## Definition of Done
 
-- [ ] Sony namespace issue resolved: `cargo run --bin exif-oxide third-party/exiftool/t/images/Sony.jpg | grep -c Tag_` shows 0 instead of 8
-- [ ] DNG configuration generated and operational: `codegen/config/DNG_pm/tag_kit.json` exists and enables RAW metadata extraction
-- [ ] `make precommit` clean with no regressions
-- [ ] Current success rate baseline established through working `make compat` tests
-- [ ] Subdirectory coverage measurably increased from 13.89% baseline with DNG support
+- [ ] ExifIFD context assignment fixed: ColorSpace (0xA001) shows group1="ExifIFD" instead of group1="Canon"
+- [ ] ExifIFD validation tests pass: `cargo t test_color_space_validation` and `cargo t test_mandatory_exif_ifd_tags` succeed
+- [ ] `make precommit` clean with no regressions in manufacturer processing
+- [ ] ExifTool compatibility verified: Our group1 assignments match ExifTool's -G1 output for ExifIFD tags
+- [ ] All ExifIFD-specific tags (ExifVersion, FlashpixVersion, ExifImageWidth, etc.) correctly assigned to ExifIFD context
 
 ## Implementation Guidance
 
@@ -270,19 +233,17 @@ A feature is complete when:
 - **P16-MILESTONE-19-Binary-Data-Extraction.md**: Ensures proper IFD context for binary data extraction (previews, thumbnails)
 
 ### Avoids Duplication
-This TPP focuses on **completeness and edge case resolution** rather than architectural rebuilding. The sophisticated ExifIFD, GPS IFD, and namespace systems are preserved and extended, not replaced.
+This TPP focuses on **context assignment bug fixes** rather than architectural rebuilding. The sophisticated ExifIFD, GPS IFD, and namespace systems are preserved and extended, not replaced.
 
 ## Gotchas & Tribal Knowledge
 
 **Format**: Surprise → Why → Solution (Focus on positive guidance)
 
-- **ExifIFD tests failing doesn't mean architecture is broken** → Context assignment timing edge case → Debug context switching in manufacturer subdirectory processing
-- **High subdirectory coverage percentage looks intimidating** → Many are configuration gaps, not implementation complexity → Use working `auto_config_gen.pl` patterns from successful modules
-- **Namespace conflicts seem like fundamental design flaw** → GPS IFD resolution proved architecture is sound → Focus on edge cases in complex subdirectory chains
-- **Context assignment seems fragile** → ExifTool's dynamic table switching requires precise timing → Study ProcessExif context management patterns
-- **Sony tags show as "Tag_xxxx" instead of names** → Namespace assignment defaults to "MakerNotes" during subdirectory processing instead of preserving "Sony" → Fix namespace assignment in create_tag_source_info() or Sony subdirectory processing to maintain Sony context
-- **Coverage numbers seem inconsistent** → Based on text mentions in configs, not functional correctness → Coverage report at `docs/generated/SUBDIRECTORY-COVERAGE.md` shows 12.23% (229/1872), updated from 13.88% estimate
-- **DNG support looks missing** → No `codegen/config/DNG_pm/` exists yet → DNG is Adobe's multi-manufacturer RAW format, needs dedicated configuration generation
+- **ExifIFD tests failing doesn't mean architecture is broken** → Context assignment timing edge case → Debug context switching between ExifIFD and manufacturer processing
+- **ColorSpace shows wrong group1** → Processing order allows manufacturer context to override ExifIFD context → Ensure ExifIFD context takes precedence for ExifIFD-specific tags
+- **Context assignment seems fragile** → ExifTool's dynamic table switching requires precise timing → Study ProcessExif context management patterns in `third-party/exiftool/lib/Image/ExifTool/Exif.pm`
+- **Sony TAG_PREFIX claims in old TPPs** → Sony tags already work correctly → Sony_0x2000, Sony_0x9001 etc. show properly, no "Tag_xxxx" issue found
+- **Missing configuration claims in old TPPs** → Configurations actually exist → DNG_pm, Exif_pm, JPEG_pm all have working configs at `codegen/config/`
 - **Large files hard to analyze** → ReadTool truncates >2000 lines → Split large modules like `src/exif/tags.rs` (387+ lines) into focused submodules
 
 ## Next Engineer Handoff - Critical Files & Context
