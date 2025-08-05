@@ -20,6 +20,8 @@ missing=""
 
 # Check each required tool
 check_tool "git" "sudo apt-get install git"
+check_tool "rg" "sudo apt-get install ripgrep or cargo install ripgrep"
+check_tool "sd" "cargo install sd"
 check_tool "shfmt" "sudo apt-get install shfmt or go install mvdan.cc/sh/v3/cmd/shfmt@latest"
 check_tool "jq" "sudo apt-get install jq"
 check_tool "yamllint" "pip install yamllint"
