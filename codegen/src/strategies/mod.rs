@@ -119,19 +119,37 @@ impl StrategyDispatcher {
         symbols: Vec<FieldSymbol>, 
         output_dir: &str
     ) -> Result<Vec<GeneratedFile>> {
+        use std::collections::HashSet;
+        
         let mut context = ExtractionContext::new(output_dir.to_string());
         let mut generated_files = Vec::new();
         
         info!("🔄 Processing {} symbols through strategy system", symbols.len());
         
+        // Track which modules are being processed
+        let mut processed_modules = HashSet::new();
+        
         // Register all symbols first for cross-references
         for symbol in &symbols {
             context.register_symbol(symbol.clone());
+            processed_modules.insert(symbol.module.clone());
         }
+        
+        info!("📦 Found {} unique modules to process: {:?}", 
+              processed_modules.len(), 
+              processed_modules.iter().collect::<Vec<_>>());
         
         // Process each symbol through strategies
         for symbol in symbols {
             self.process_single_symbol(symbol, &mut context)?;
+        }
+        
+        // Call finish_module() for each processed module
+        for module_name in &processed_modules {
+            debug!("🔧 Finalizing module: {}", module_name);
+            for strategy in &mut self.strategies {
+                strategy.finish_module(module_name)?;
+            }
         }
         
         // Finalize all strategies and collect generated files
@@ -139,6 +157,9 @@ impl StrategyDispatcher {
             let mut files = strategy.finish_extraction()?;
             generated_files.append(&mut files);
         }
+        
+        // Generate main mod.rs file to include all processed modules
+        self.update_main_mod_file(output_dir, &processed_modules, &generated_files)?;
         
         // Write strategy selection log for debugging
         self.write_strategy_log(&context, output_dir)?;
@@ -225,6 +246,129 @@ impl StrategyDispatcher {
         
         Ok(())
     }
+    
+    /// Update the main src/generated/mod.rs file to include all processed modules
+    fn update_main_mod_file(
+        &self,
+        output_dir: &str,
+        _processed_modules: &std::collections::HashSet<String>,
+        generated_files: &[GeneratedFile],
+    ) -> Result<()> {
+        use std::fs;
+        use std::collections::HashMap;
+        
+        // Group generated files by module to identify which modules have files
+        let mut modules_with_files = HashMap::new();
+        for file in generated_files {
+            // Extract module name from file path (e.g., "canon_pm/file.rs" -> "canon_pm")
+            if let Some(module_dir) = file.path.split('/').next() {
+                if module_dir.ends_with("_pm") {
+                    let files_list = modules_with_files.entry(module_dir.to_string()).or_insert_with(Vec::new);
+                    // Extract filename without .rs extension
+                    if let Some(filename) = file.path.split('/').last() {
+                        if let Some(name) = filename.strip_suffix(".rs") {
+                            files_list.push(name.to_string());
+                        }
+                    }
+                }
+            }
+        }
+        
+        info!("📝 Creating mod.rs files for {} modules", modules_with_files.len());
+        
+        // Create mod.rs files for each module directory
+        for (module_dir, file_list) in &modules_with_files {
+            let module_dir_path = Path::new(output_dir).join(module_dir);
+            let module_mod_path = module_dir_path.join("mod.rs");
+            
+            // Ensure the module directory exists
+            if let Err(e) = fs::create_dir_all(&module_dir_path) {
+                warn!("Failed to create directory {}: {}", module_dir_path.display(), e);
+                continue;
+            }
+            
+            let mut content = String::new();
+            content.push_str(&format!(
+                "//! Generated module for {}\n",
+                module_dir.strip_suffix("_pm").unwrap_or(module_dir)
+            ));
+            content.push_str("//!\n");
+            content.push_str("//! This file is auto-generated. Do not edit manually.\n\n");
+            
+            // Sort files for consistent output
+            let mut sorted_files = file_list.clone();
+            sorted_files.sort();
+            
+            // Generate pub mod declarations
+            for filename in &sorted_files {
+                content.push_str(&format!("pub mod {};\n", filename));
+            }
+            
+            content.push('\n');
+            
+            // Generate re-exports for commonly used items
+            content.push_str("// Re-export commonly used items\n");
+            for filename in &sorted_files {
+                // Only re-export lookup functions and constants
+                if filename.contains("white_balance") || filename.contains("lens") || 
+                   filename.contains("quality") || filename.contains("model") {
+                    content.push_str(&format!("pub use {}::*;\n", filename));
+                }
+            }
+            
+            if let Err(e) = fs::write(&module_mod_path, content) {
+                return Err(anyhow::anyhow!(
+                    "Failed to write mod.rs file for module '{}' at path '{}': {}",
+                    module_dir,
+                    module_mod_path.display(),
+                    e
+                ));
+            }
+            debug!("📄 Created mod.rs for {} with {} files", module_dir, file_list.len());
+        }
+        
+        // Update main src/generated/mod.rs to include all snake_case modules
+        let main_mod_path = Path::new(output_dir).join("mod.rs");
+        let mut main_content = String::new();
+        
+        // Read existing content or create new
+        if main_mod_path.exists() {
+            main_content = fs::read_to_string(&main_mod_path)?;
+        } else {
+            main_content.push_str("//! Generated code module\n");
+            main_content.push_str("//!\n");
+            main_content.push_str("//! This file is automatically generated by codegen.\n");
+            main_content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten.\n");
+            main_content.push_str("//!\n");
+            main_content.push_str("//! This module re-exports all generated code for easy access.\n\n");
+        }
+        
+        // Add module declarations for snake_case modules that have mod.rs files
+        let mut modules_added = 0;
+        for module_dir in modules_with_files.keys() {
+            let module_declaration = format!("pub mod {};\n", module_dir);
+            if !main_content.contains(&module_declaration) {
+                // Insert before existing re-exports
+                if let Some(reexport_pos) = main_content.find("// Re-export commonly used types") {
+                    main_content.insert_str(reexport_pos, &module_declaration);
+                } else {
+                    main_content.push_str(&module_declaration);
+                }
+                modules_added += 1;
+            }
+        }
+        
+        if let Err(e) = fs::write(&main_mod_path, main_content) {
+            return Err(anyhow::anyhow!(
+                "Failed to write main mod.rs file at path '{}': {}",
+                main_mod_path.display(),
+                e
+            ));
+        }
+        info!("📋 Updated main mod.rs with {} new modules", modules_added);
+        
+        Ok(())
+    }
 }
 
 impl Default for StrategyDispatcher {
@@ -255,9 +399,9 @@ pub use composite_tag::CompositeTagStrategy;
 pub fn all_strategies() -> Vec<Box<dyn ExtractionStrategy>> {
     vec![
         // Order matters: first-match wins
-        Box::new(TagKitStrategy::new()),      // Complex tag definitions (Main, Composite tables)
+        Box::new(CompositeTagStrategy::new()), // Composite tag definitions (MUST be first)
+        Box::new(TagKitStrategy::new()),      // Complex tag definitions (Main tables)
         Box::new(BinaryDataStrategy::new()),  // ProcessBinaryData tables (CameraInfo*, etc.)
-        Box::new(CompositeTagStrategy::new()), // Composite tag definitions
         Box::new(BooleanSetStrategy::new()),  // Membership sets (isDat*, isTxt*, etc.)
         Box::new(SimpleTableStrategy::new()), // Simple key-value lookups (fallback)
     ]
@@ -286,7 +430,6 @@ mod tests {
             metadata: crate::field_extractor::FieldMetadata {
                 size: 1,
                 complexity: "simple".to_string(),
-                has_non_serializable: false,
             },
         };
         

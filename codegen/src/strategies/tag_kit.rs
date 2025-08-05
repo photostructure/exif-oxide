@@ -55,9 +55,9 @@ impl TagKitStrategy {
                 return true;
             }
             
-            // Large hash with potential tag definitions
-            if symbol.metadata.has_non_serializable {
-                // Non-serializable content often indicates complex tag structures
+            // Large hash with potential tag definitions - check complexity
+            if symbol.metadata.complexity == "composite" || symbol.metadata.size > 50 {
+                // Complex or large structures often indicate tag definitions
                 return true;
             }
         }
