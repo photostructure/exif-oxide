@@ -14,14 +14,14 @@
 //! Phase 3+ Implementation: Actual decryption algorithms (future milestone)
 
 use crate::exif::ExifReader;
-use crate::generated::Nikon_pm::{XLAT_0, XLAT_1};
+use crate::generated::nikon_pm::{XLAT_0, XLAT_1};
 use crate::tiff_types::{ByteOrder, IfdEntry};
 use crate::types::{Result, TagValue};
 use tracing::{debug, trace, warn};
 
 // XOR decryption lookup tables now imported from generated code
 // Generated from ExifTool Nikon.pm @xlat arrays (lines 13505-13538)
-// See: src/generated/Nikon_pm/xlat_0.rs and xlat_1.rs
+// See: src/generated/nikon_pm/xlat_0.rs and xlat_1.rs
 
 /// Nikon decryption state management
 /// ExifTool: $ci0, $cj0, $ck0, $decryptStart variables (lines 13540, 13566-13568)

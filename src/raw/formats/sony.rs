@@ -29,9 +29,9 @@ use crate::types::{Result, TagValue};
 use tracing::debug;
 
 // Import generated Sony lookup tables and ProcessBinaryData processors
-use crate::generated::Sony_pm;
+use crate::generated::sony_pm;
 // TODO: Uncomment when Sony tag structure is generated
-// pub use crate::generated::Sony_pm::tag_structure::SonyDataType;
+// pub use crate::generated::sony_pm::tag_structure::SonyDataType;
 
 /// Sony RAW format variants  
 /// ExifTool: Sony.pm handles multiple format types with version detection
@@ -210,7 +210,7 @@ pub enum IDCCorruption {
 }
 
 // TODO: Use generated Sony tag structure from codegen when available
-// pub use crate::generated::Sony_pm::tag_structure::SonyDataType;
+// pub use crate::generated::sony_pm::tag_structure::SonyDataType;
 
 /// Sony RAW Handler - main processor for Sony RAW formats
 /// ExifTool: Sony.pm ProcessSony() main entry point  
@@ -473,7 +473,7 @@ impl SonyRawHandler {
             // White Balance Setting (commonly used tag)
             0x9003 => {
                 if let Some(wb_value) = tag_value.as_u16() {
-                    if let Some(description) = Sony_pm::lookup_sony_white_balance_setting(wb_value)
+                    if let Some(description) = sony_pm::lookup_sony_white_balance_setting(wb_value)
                     {
                         return Some(TagValue::String(description.to_string()));
                     }
@@ -483,7 +483,7 @@ impl SonyRawHandler {
             // ISO Setting (commonly used tag)
             0x9204 => {
                 if let Some(iso_value) = tag_value.as_u8() {
-                    if let Some(description) = Sony_pm::lookup_sony_iso_setting_2010(iso_value) {
+                    if let Some(description) = sony_pm::lookup_sony_iso_setting_2010(iso_value) {
                         return Some(TagValue::String(description.to_string()));
                     }
                 }
@@ -492,7 +492,7 @@ impl SonyRawHandler {
             // Exposure Program
             0x8822 => {
                 if let Some(exp_value) = tag_value.as_u8() {
-                    if let Some(description) = Sony_pm::lookup_sony_exposure_program(exp_value) {
+                    if let Some(description) = sony_pm::lookup_sony_exposure_program(exp_value) {
                         return Some(TagValue::String(description.to_string()));
                     }
                 }
@@ -698,7 +698,7 @@ impl SonyRawHandler {
     ) -> Result<u64> {
         // Import generated offset patterns - will be used when full implementation is added
         // TODO: Generate Sony offset patterns
-        // use crate::generated::Sony_pm::offset_patterns::{
+        // use crate::generated::sony_pm::offset_patterns::{
         //     OFFSET_CALCULATION_TYPES, OFFSET_EXAMPLES,
         // };
         // let _ = (OFFSET_CALCULATION_TYPES.len(), OFFSET_EXAMPLES.len()); // Suppress unused warnings for now

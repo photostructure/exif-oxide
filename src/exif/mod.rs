@@ -19,8 +19,8 @@ mod tags;
 
 // Only re-export what needs to be public - most functionality is internal
 
-// use crate::generated::Canon_pm::main_conditional_tags::{CanonConditionalTags, ConditionalContext}; // TODO: Generate conditional tags
-// use crate::generated::FujiFilm_pm::main_model_detection::{
+// use crate::generated::canon_pm::main_conditional_tags::{CanonConditionalTags, ConditionalContext}; // TODO: Generate conditional tags
+// use crate::generated::fujifilm_pm::main_model_detection::{
 //     ConditionalContext as FujiFilmConditionalContext, FujiFilmModelDetection,
 // }; // TODO: Generate FujiFilm model detection
 use crate::tiff_types::TiffHeader;
@@ -238,9 +238,9 @@ impl ExifReader {
         tag_id: u16,
         source_info: Option<&TagSourceInfo>,
     ) -> String {
-        use crate::generated::Exif_pm::tag_kit::EXIF_PM_TAG_KITS;
-        use crate::generated::GPS_pm::tag_kit::GPS_PM_TAG_KITS;
-        use crate::generated::Sony_pm::tag_kit::SONY_PM_TAG_KITS;
+        use crate::generated::exif_pm::tag_kit::EXIF_PM_TAG_KITS;
+        use crate::generated::gps_pm::tag_kit::GPS_PM_TAG_KITS;
+        use crate::generated::sony_pm::tag_kit::SONY_PM_TAG_KITS;
 
         tracing::debug!(
             "lookup_tag_name_by_source: tag_id=0x{:x}, source_info={:?}",
@@ -291,8 +291,8 @@ impl ExifReader {
     /// matching ExifTool's -G mode behavior
     /// Milestone 8f: Now includes composite tags with "Composite:" prefix
     pub fn get_all_tags(&self) -> HashMap<String, TagValue> {
-        use crate::generated::Exif_pm::tag_kit::EXIF_PM_TAG_KITS;
-        use crate::generated::GPS_pm::tag_kit::GPS_PM_TAG_KITS;
+        use crate::generated::exif_pm::tag_kit::EXIF_PM_TAG_KITS;
+        use crate::generated::gps_pm::tag_kit::GPS_PM_TAG_KITS;
         use crate::implementations::canon;
         use crate::implementations::sony;
 
@@ -424,8 +424,8 @@ impl ExifReader {
     /// This is the new API that returns both ValueConv and PrintConv results
     /// Milestone 8b: TagEntry API implementation
     pub fn get_all_tag_entries(&mut self) -> Vec<crate::types::TagEntry> {
-        use crate::generated::Exif_pm::tag_kit::EXIF_PM_TAG_KITS;
-        use crate::generated::GPS_pm::tag_kit::GPS_PM_TAG_KITS;
+        use crate::generated::exif_pm::tag_kit::EXIF_PM_TAG_KITS;
+        use crate::generated::gps_pm::tag_kit::GPS_PM_TAG_KITS;
         use crate::generated::COMPOSITE_TAGS;
         use crate::implementations::canon;
         use crate::implementations::olympus;
@@ -647,11 +647,18 @@ impl ExifReader {
             // ExifTool: GPS.pm:52 GROUPS => { 0 => 'EXIF', 1 => 'GPS', 2 => 'Location' }
             // Manufacturer MakerNotes use manufacturer namespace internally but display as Group0="MakerNotes"
             // Apply this mapping to ALL tags (both synthetic and regular) for consistency
-            let group_name = match raw_group_name {
-                "GPS" => "EXIF", // GPS tags have Group0="EXIF" per ExifTool GPS.pm:52
-                // Manufacturer MakerNotes tags display as "MakerNotes" group per ExifTool output
-                "Canon" | "Nikon" | "Sony" | "Olympus" | "Panasonic" | "Fujifilm" => "MakerNotes",
-                other => other, // Keep other namespaces as-is
+            let group_name = match tag_id {
+                // ExifIFD-specific tags should always have group="EXIF" regardless of processing context
+                // Fixes issue where Canon MakerNotes processing steals ExifIFD tags like ColorSpace
+                0x9000 | 0xA000 | 0xA001 | 0xA002 | 0xA003 | 0xA005 => "EXIF",
+                _ => match raw_group_name {
+                    "GPS" => "EXIF", // GPS tags have Group0="EXIF" per ExifTool GPS.pm:52
+                    // Manufacturer MakerNotes tags display as "MakerNotes" group per ExifTool output
+                    "Canon" | "Nikon" | "Sony" | "Olympus" | "Panasonic" | "Fujifilm" => {
+                        "MakerNotes"
+                    }
+                    other => other, // Keep other namespaces as-is
+                },
             };
 
             // Apply conversions to get both value and print
@@ -662,15 +669,11 @@ impl ExifReader {
 
             let (value, print) = self.apply_conversions(raw_value, tag_id, ifd_name, source_info);
 
-            // Get group1 value using TagSourceInfo with special handling for IFD pointer tags
+            // Get group1 value using TagSourceInfo with tag-specific overrides for correct context assignment
             let group1_name = if let Some(source_info) = source_info {
-                // Special case: GPSInfo tag (0x8825) should have group1='GPS' even when in IFD0
-                // ExifTool: GPS IFD pointer tags belong to GPS group logically
-                if tag_id == 0x8825 {
-                    "GPS".to_string()
-                } else {
-                    source_info.get_group1()
-                }
+                // Use tag-specific override to ensure ExifIFD tags get correct context
+                // Fixes issue where Canon MakerNotes processing steals ExifIFD tags like ColorSpace
+                source_info.get_group1_with_tag_override(tag_id)
             } else {
                 "IFD0".to_string() // Default fallback
             };
@@ -806,7 +809,7 @@ impl ExifReader {
         count: Option<u32>,
         format: Option<String>,
         binary_data: Option<Vec<u8>>,
-    ) -> crate::generated::Canon_pm::main_conditional_tags::ConditionalContext {
+    ) -> crate::generated::canon_pm::main_conditional_tags::ConditionalContext {
         let make = self
             .get_tag_across_namespaces(0x010F)
             .and_then(|v| v.as_string())
@@ -815,7 +818,7 @@ impl ExifReader {
             .get_tag_across_namespaces(0x0110)
             .and_then(|v| v.as_string())
             .map(|s| s.to_string());
-        crate::generated::Canon_pm::main_conditional_tags::ConditionalContext {
+        crate::generated::canon_pm::main_conditional_tags::ConditionalContext {
             make,
             model,
             count,
@@ -829,7 +832,7 @@ impl ExifReader {
         &self,
         count: Option<u32>,
         format: Option<String>,
-    ) -> crate::generated::FujiFilm_pm::main_model_detection::ConditionalContext {
+    ) -> crate::generated::fujifilm_pm::main_model_detection::ConditionalContext {
         let make = self
             .get_tag_across_namespaces(0x010F)
             .and_then(|v| v.as_string())
@@ -838,7 +841,7 @@ impl ExifReader {
             .get_tag_across_namespaces(0x0110)
             .and_then(|v| v.as_string())
             .map(|s| s.to_string());
-        crate::generated::FujiFilm_pm::main_model_detection::ConditionalContext {
+        crate::generated::fujifilm_pm::main_model_detection::ConditionalContext {
             make,
             model,
             count,
@@ -863,7 +866,7 @@ impl ExifReader {
             if make.contains("Canon") {
                 let context = self.create_conditional_context(count, format, binary_data);
                 let canon_resolver =
-                    crate::generated::Canon_pm::main_conditional_tags::CanonConditionalTags::new();
+                    crate::generated::canon_pm::main_conditional_tags::CanonConditionalTags::new();
 
                 if let Some(resolved) = canon_resolver.resolve_tag(&tag_id.to_string(), &context) {
                     trace!(
@@ -879,7 +882,7 @@ impl ExifReader {
                     .and_then(|v| v.as_string())
                     .unwrap_or("")
                     .to_string();
-                let fujifilm_resolver = crate::generated::FujiFilm_pm::main_model_detection::FujiFilmModelDetection::new(model);
+                let fujifilm_resolver = crate::generated::fujifilm_pm::main_model_detection::FujiFilmModelDetection::new(model);
 
                 if let Some(resolved_name) =
                     fujifilm_resolver.resolve_conditional_tag(&tag_id.to_string(), &context)

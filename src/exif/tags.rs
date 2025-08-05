@@ -137,9 +137,9 @@ impl ExifReader {
         source_info: Option<&TagSourceInfo>,
     ) -> (TagValue, TagValue) {
         use crate::expressions::ExpressionEvaluator;
-        use crate::generated::Exif_pm::tag_kit;
-        use crate::generated::GPS_pm::tag_kit as gps_tag_kit;
-        use crate::generated::Sony_pm::tag_kit as sony_tag_kit;
+        use crate::generated::exif_pm::tag_kit;
+        use crate::generated::gps_pm::tag_kit as gps_tag_kit;
+        use crate::generated::sony_pm::tag_kit as sony_tag_kit;
 
         let mut value = raw_value.clone();
 

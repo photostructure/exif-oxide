@@ -5,15 +5,15 @@
 //! following the Trust ExifTool principle exactly.
 //!
 //! ExifTool Reference: lib/Image/ExifTool/PanasonicRaw.pm
-//! Generated tag kits: src/generated/PanasonicRaw_pm/tag_kit/
+//! Generated tag kits: src/generated/panasonicraw_pm/tag_kit/
 
 use crate::expressions::ExpressionEvaluator;
-use crate::generated::PanasonicRaw_pm::tag_kit;
+use crate::generated::panasonicraw_pm::tag_kit;
 use crate::types::TagValue;
 
 /// Panasonic Main Compression PrintConv
 /// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Compression, tag ID 11)
-/// Tag kit: src/generated/PanasonicRaw_pm/tag_kit/other.rs (PRINT_CONV_3)
+/// Tag kit: src/generated/panasonicraw_pm/tag_kit/other.rs (PRINT_CONV_3)
 pub fn main_compression_print_conv(val: &TagValue) -> TagValue {
     let mut evaluator = ExpressionEvaluator::new();
     let mut errors = Vec::new();
@@ -24,7 +24,7 @@ pub fn main_compression_print_conv(val: &TagValue) -> TagValue {
 
 /// Panasonic Main Orientation PrintConv  
 /// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Orientation, tag ID 274)
-/// Tag kit: src/generated/PanasonicRaw_pm/tag_kit/core.rs (PRINT_CONV_0)
+/// Tag kit: src/generated/panasonicraw_pm/tag_kit/core.rs (PRINT_CONV_0)
 pub fn main_orientation_print_conv(val: &TagValue) -> TagValue {
     let mut evaluator = ExpressionEvaluator::new();
     let mut errors = Vec::new();
@@ -35,7 +35,7 @@ pub fn main_orientation_print_conv(val: &TagValue) -> TagValue {
 
 /// Panasonic Main Multishot PrintConv
 /// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Multishot, tag ID 289)
-/// Tag kit: src/generated/PanasonicRaw_pm/tag_kit/document.rs (PRINT_CONV_1)
+/// Tag kit: src/generated/panasonicraw_pm/tag_kit/document.rs (PRINT_CONV_1)
 pub fn main_multishot_print_conv(val: &TagValue) -> TagValue {
     let mut evaluator = ExpressionEvaluator::new();
     let mut errors = Vec::new();
@@ -46,7 +46,7 @@ pub fn main_multishot_print_conv(val: &TagValue) -> TagValue {
 
 /// Panasonic Main CFAPattern PrintConv
 /// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (CFAPattern, tag ID 9)
-/// Tag kit: src/generated/PanasonicRaw_pm/tag_kit/interop.rs (PRINT_CONV_2)
+/// Tag kit: src/generated/panasonicraw_pm/tag_kit/interop.rs (PRINT_CONV_2)
 pub fn main_cfa_pattern_print_conv(val: &TagValue) -> TagValue {
     let mut evaluator = ExpressionEvaluator::new();
     let mut errors = Vec::new();
