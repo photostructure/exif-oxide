@@ -5,6 +5,7 @@
 
 use anyhow::{Context, Result};
 use clap::{Arg, Command};
+use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
 use std::time::Instant;
@@ -35,6 +36,19 @@ use generators::generate_mod_file;
 use validation::validate_all_configs;
 use field_extractor::FieldExtractor;
 use strategies::{StrategyDispatcher, GeneratedFile};
+
+#[derive(Debug, Deserialize, Serialize)]
+struct ExifToolModulesConfig {
+    description: String,
+    modules: ModuleGroups,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+struct ModuleGroups {
+    core: Vec<String>,
+    manufacturer: Vec<String>,
+    format: Vec<String>,
+}
 
 
 fn main() -> Result<()> {
@@ -202,23 +216,52 @@ fn main() -> Result<()> {
     Ok(())
 }
 
+/// Load default modules from exiftool_modules.json config
+fn load_default_modules(current_dir: &Path) -> Result<Vec<String>> {
+    let config_path = current_dir.join("../config/exiftool_modules.json");
+    
+    if !config_path.exists() {
+        warn!("⚠️  exiftool_modules.json not found at {}, using fallback modules", config_path.display());
+        return Ok(vec!["GPS.pm".to_string(), "DNG.pm".to_string(), "Canon.pm".to_string()]);
+    }
+    
+    let config_content = fs::read_to_string(&config_path)
+        .with_context(|| format!("Failed to read config file: {}", config_path.display()))?;
+    
+    let config: ExifToolModulesConfig = serde_json::from_str(&config_content)
+        .with_context(|| format!("Failed to parse config file: {}", config_path.display()))?;
+    
+    // Combine all module groups
+    let mut all_modules = Vec::new();
+    all_modules.extend(config.modules.core);
+    all_modules.extend(config.modules.manufacturer);
+    all_modules.extend(config.modules.format);
+    
+    info!("📋 Loaded {} modules from exiftool_modules.json", all_modules.len());
+    debug!("  Modules: {:?}", all_modules);
+    
+    Ok(all_modules)
+}
+
 /// Run field extraction with strategy-based processing
 fn run_universal_extraction(current_dir: &Path, output_dir: &str, selected_modules: Option<&Vec<String>>) -> Result<()> {
     let extractor = FieldExtractor::new();
     let mut dispatcher = StrategyDispatcher::new();
-    let exiftool_lib_dir = current_dir.join("../third-party/exiftool/lib/Image/ExifTool");
+    let exiftool_base_dir = current_dir.join("../third-party/exiftool");
     
-    info!("🔍 Scanning ExifTool modules in: {}", exiftool_lib_dir.display());
+    info!("🔍 Building ExifTool module paths from configuration");
     
-    // Find all .pm files in the ExifTool directory
+    // Load module paths from configuration
+    let default_modules = load_default_modules(current_dir)?;
     let mut module_paths = Vec::new();
     
-    if let Ok(entries) = std::fs::read_dir(&exiftool_lib_dir) {
-        for entry in entries.flatten() {
-            let path = entry.path();
-            if path.extension().and_then(|s| s.to_str()) == Some("pm") {
-                module_paths.push(path);
-            }
+    // Convert relative paths from JSON config to absolute paths
+    for module_path_str in &default_modules {
+        let full_path = exiftool_base_dir.join(module_path_str);
+        if full_path.exists() {
+            module_paths.push(full_path);
+        } else {
+            warn!("⚠️  Module path not found: {} (resolved to {})", module_path_str, full_path.display());
         }
     }
     
@@ -230,7 +273,7 @@ fn run_universal_extraction(current_dir: &Path, output_dir: &str, selected_modul
         let mut resolved_paths = Vec::new();
         
         for module_name in modules {
-            // Find the module path
+            // Find the module path by filename match
             if let Some(module_path) = module_paths
                 .iter()
                 .find(|path| {
@@ -254,21 +297,12 @@ fn run_universal_extraction(current_dir: &Path, output_dir: &str, selected_modul
               resolved_paths.iter().map(|p| p.file_name().unwrap().to_string_lossy()).collect::<Vec<_>>());
         resolved_paths
     } else {
-        // Default behavior - process test subset for now (GPS, DNG, Canon for comprehensive validation)
-        let default_modules = ["GPS.pm", "DNG.pm", "Canon.pm"];
-        let filtered_paths: Vec<&std::path::PathBuf> = module_paths
-            .iter()
-            .filter(|path| {
-                path.file_name()
-                    .and_then(|name| name.to_str())
-                    .map(|name| default_modules.contains(&name))
-                    .unwrap_or(false)
-            })
-            .collect();
+        // Process all configured modules (paths already loaded and validated above)
+        let all_paths: Vec<&std::path::PathBuf> = module_paths.iter().collect();
         
-        info!("🧪 Processing {} default test modules: {:?}", filtered_paths.len(), 
-              filtered_paths.iter().map(|p| p.file_name().unwrap().to_string_lossy()).collect::<Vec<_>>());
-        filtered_paths
+        info!("🏭 Processing {} configured modules: {:?}", all_paths.len(), 
+              all_paths.iter().map(|p| p.file_name().unwrap().to_string_lossy()).collect::<Vec<_>>());
+        all_paths
     };
     
     let start = Instant::now();

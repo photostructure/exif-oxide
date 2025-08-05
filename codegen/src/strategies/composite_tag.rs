@@ -6,44 +6,66 @@
 use anyhow::{Context, Result};
 use serde_json::Value as JsonValue;
 use std::collections::HashMap;
-use std::process::Command;
 use tracing::{debug, info, warn};
 
 use super::{ExtractionStrategy, ExtractionContext, GeneratedFile};
 use crate::field_extractor::FieldSymbol;
-use crate::strategies::output_locations::generate_module_path;
 
 /// Strategy for processing composite tag definitions  
 pub struct CompositeTagStrategy {
-    /// Composite tags to be generated
-    pending_extractions: Vec<CompositeExtraction>,
+    /// Composite symbols from field extractor
+    composite_symbols: Vec<FieldSymbol>,
 }
 
+
+/// Parsed composite tag definition from field extractor
 #[derive(Debug, Clone)]
-struct CompositeExtraction {
-    module_name: String,
-    module_path: String,
-    table_name: String,
-    symbol_name: String,
+struct CompositeDefinition {
+    name: String,
+    module: String,
+    require: Vec<String>,
+    desire: Vec<String>,
+    inhibit: Vec<String>,
+    value_conv: Option<String>,
+    print_conv: Option<String>,
+    description: Option<String>,
+    groups: HashMap<String, String>,
 }
 
 impl CompositeTagStrategy {
     pub fn new() -> Self {
         Self {
-            pending_extractions: Vec::new(),
+            composite_symbols: Vec::new(),
         }
     }
     
     /// Check if symbol contains composite tag characteristics
     fn is_composite_symbol(symbol: &FieldSymbol) -> bool {
+        // Check symbol metadata from field extractor first
+        if let Some(metadata) = symbol.data.get("metadata") {
+            if let Some(complexity) = metadata.get("complexity") {
+                if complexity == "composite" {
+                    return true;
+                }
+            }
+        }
+        
+        // Check symbol type from field extractor
+        if let Some(symbol_type) = symbol.data.get("type") {
+            if symbol_type == "composite_hash" {
+                return true;
+            }
+        }
+        
         // Composite table is always a composite symbol
-        if symbol.name == "Composite" {
+        if symbol.name == "Composite" || symbol.name.ends_with("Composite") {
             return true;
         }
         
-        if let Some(data) = symbol.data.as_object() {
-            // Look for composite tag indicators
-            let has_require = data.values().any(|v| {
+        // Check for composite structure patterns in the nested data
+        if let Some(data) = symbol.data.get("data").and_then(|d| d.as_object()) {
+            // Look for composite tag indicators (Require/Desire dependencies)
+            let has_composite_deps = data.values().any(|v| {
                 if let Some(obj) = v.as_object() {
                     obj.contains_key("Require") || obj.contains_key("Desire")
                 } else {
@@ -51,20 +73,20 @@ impl CompositeTagStrategy {
                 }
             });
             
-            if has_require {
+            if has_composite_deps {
                 return true;
             }
             
-            // Look for composite-style calculations
-            let has_calculations = data.values().any(|v| {
+            // Look for composite-style calculations with IsComposite marker
+            let has_composite_marker = data.values().any(|v| {
                 if let Some(obj) = v.as_object() {
-                    obj.contains_key("ValueConv") && obj.get("Groups").is_some()
+                    obj.get("IsComposite").and_then(|ic| ic.as_i64()) == Some(1)
                 } else {
                     false
                 }
             });
             
-            if has_calculations {
+            if has_composite_marker {
                 return true;
             }
         }
@@ -72,134 +94,286 @@ impl CompositeTagStrategy {
         false
     }
     
-    /// Extract composite tags using composite_tags.pl extractor
-    fn extract_composite_tags(&self, extraction: &CompositeExtraction) -> Result<String> {
-        debug!("Extracting composite tags: {}::{}", extraction.module_name, extraction.table_name);
+    /// Extract composite tags from field extractor symbol data
+    fn extract_composite_definitions(&self, symbol: &FieldSymbol) -> Result<Vec<CompositeDefinition>> {
+        debug!("Processing composite symbol: {}::{}", symbol.module, symbol.name);
         
-        let output = Command::new("perl")
-            .arg("extractors/composite_tags.pl")
-            .arg(&extraction.module_path)
-            .arg(&extraction.table_name)
-            .arg("--frequency-threshold")
-            .arg("0.1") // Lower threshold for universal extraction
-            .arg("--include-mainstream")
-            .current_dir(".")
-            .output()
-            .with_context(|| format!("Failed to run composite_tags.pl for {}::{}", 
-                                   extraction.module_name, extraction.table_name))?;
-
-        if !output.status.success() {
-            let stderr = String::from_utf8_lossy(&output.stderr);
-            return Err(anyhow::anyhow!("composite_tags.pl failed: {}", stderr));
+        let mut definitions = Vec::new();
+        
+        // Get the nested composite data
+        let data = symbol.data.get("data")
+            .and_then(|d| d.as_object())
+            .ok_or_else(|| anyhow::anyhow!("No data object found in composite symbol"))?;
+        
+        // Process each composite tag definition
+        for (tag_name, tag_def) in data.iter() {
+            // Skip non-tag entries (like GROUPS)
+            if tag_name == "GROUPS" {
+                continue;
+            }
+            
+            if let Some(tag_obj) = tag_def.as_object() {
+                // Check if this is a composite tag (has IsComposite = 1)
+                if tag_obj.get("IsComposite").and_then(|v| v.as_i64()) == Some(1) {
+                    definitions.push(self.parse_composite_definition(tag_name, tag_obj)?);
+                }
+            }
         }
-
-        let stdout = String::from_utf8(output.stdout)?;
-        Ok(stdout)
+        
+        Ok(definitions)
     }
     
-    /// Generate Rust code from composite tags JSON
-    fn generate_composite_code(&self, json_data: &str, extraction: &CompositeExtraction) -> Result<String> {
-        let composite_data: JsonValue = serde_json::from_str(json_data)?;
+    /// Parse a composite tag definition from ExifTool field extractor output
+    fn parse_composite_definition(&self, tag_name: &str, tag_obj: &serde_json::Map<String, JsonValue>) -> Result<CompositeDefinition> {
+        let mut definition = CompositeDefinition {
+            name: tag_name.to_string(),
+            module: String::new(), // Will be set later
+            require: Vec::new(),
+            desire: Vec::new(), 
+            inhibit: Vec::new(),
+            value_conv: None,
+            print_conv: None,
+            description: None,
+            groups: HashMap::new(),
+        };
         
-        let composites = composite_data["composites"].as_array()
-            .ok_or_else(|| anyhow::anyhow!("No composites array found"))?;
-            
-        if composites.is_empty() {
-            return Ok(String::new()); // Skip empty tables
+        // Parse Require dependencies
+        if let Some(require_obj) = tag_obj.get("Require").and_then(|r| r.as_object()) {
+            for (_, tag_name) in require_obj.iter() {
+                if let Some(tag_str) = tag_name.as_str() {
+                    definition.require.push(tag_str.to_string());
+                }
+            }
         }
         
+        // Parse Desire dependencies
+        if let Some(desire_obj) = tag_obj.get("Desire").and_then(|d| d.as_object()) {
+            for (_, tag_name) in desire_obj.iter() {
+                if let Some(tag_str) = tag_name.as_str() {
+                    definition.desire.push(tag_str.to_string());
+                }
+            }
+        }
+        
+        // Parse Inhibit dependencies
+        if let Some(inhibit_obj) = tag_obj.get("Inhibit").and_then(|i| i.as_object()) {
+            for (_, tag_name) in inhibit_obj.iter() {
+                if let Some(tag_str) = tag_name.as_str() {
+                    definition.inhibit.push(tag_str.to_string());
+                }
+            }
+        }
+        
+        // Extract ValueConv expression
+        if let Some(value_conv) = tag_obj.get("ValueConv").and_then(|v| v.as_str()) {
+            definition.value_conv = Some(value_conv.to_string());
+        }
+        
+        // Extract PrintConv expression  
+        if let Some(print_conv) = tag_obj.get("PrintConv").and_then(|p| p.as_str()) {
+            definition.print_conv = Some(print_conv.to_string());
+        }
+        
+        // Extract description
+        if let Some(desc) = tag_obj.get("Description").and_then(|d| d.as_str()) {
+            definition.description = Some(desc.to_string());
+        }
+        
+        // Parse Groups
+        if let Some(groups_obj) = tag_obj.get("Groups").and_then(|g| g.as_object()) {
+            for (group_num, group_name) in groups_obj.iter() {
+                if let Some(name_str) = group_name.as_str() {
+                    definition.groups.insert(group_num.to_string(), name_str.to_string());
+                }
+            }
+        }
+        
+        Ok(definition)
+    }
+    
+    /// Generate the main composite_tags.rs module with CompositeTagDef structures
+    fn generate_composite_tags_module(&self, definitions: &[CompositeDefinition]) -> Result<String> {
         let mut code = String::new();
-        code.push_str("//! Generated composite tag definitions\n");
+        
+        // File header
+        code.push_str("//! Generated composite tag definitions and registry\n");
         code.push_str("//!\n");
-        code.push_str(&format!("//! Extracted from {}::{}\n", 
-                              extraction.module_name, extraction.table_name));
+        code.push_str("//! This file is automatically generated by codegen.\n");
+        code.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten.\n");
+        code.push_str("//!\n");
+        code.push_str("//! This module provides:\n");
+        code.push_str("//! - CompositeTagDef: Structure defining composite tag dependencies and calculation logic\n");
+        code.push_str("//! - COMPOSITE_TAGS: Global registry of all composite tag definitions\n");
         code.push_str("\n");
-        code.push_str("use std::sync::LazyLock;\n");
+        
+        // Imports
         code.push_str("use std::collections::HashMap;\n");
-        code.push_str("use crate::types::CompositeTagInfo;\n");
+        code.push_str("use std::sync::LazyLock;\n");
         code.push_str("\n");
         
-        // Generate composite definitions
-        code.push_str(&format!("/// Composite tag definitions for {} table\n", extraction.table_name));
-        code.push_str(&format!("pub static {}_COMPOSITES: LazyLock<HashMap<&'static str, CompositeTagInfo>> = LazyLock::new(|| {{\n", 
-                              extraction.table_name.to_uppercase()));
-        code.push_str("    let mut tags = HashMap::new();\n");
+        // CompositeTagDef structure
+        code.push_str("/// Definition of a composite tag with dependencies and calculation logic\n");
+        code.push_str("///\n");
+        code.push_str("/// Mirrors ExifTool's composite tag structure from AddCompositeTags() function.\n");
+        code.push_str("/// See: third-party/exiftool/lib/Image/ExifTool.pm:5662-5720\n");
+        code.push_str("#[derive(Debug, Clone)]\n");
+        code.push_str("pub struct CompositeTagDef {\n");
+        code.push_str("    /// Tag name (e.g., \"GPSLatitude\", \"ImageSize\")\n");
+        code.push_str("    pub name: &'static str,\n");
+        code.push_str("    \n");
+        code.push_str("    /// Source module (e.g., \"GPS\", \"Exif\", \"Canon\")\n");
+        code.push_str("    pub module: &'static str,\n");
+        code.push_str("    \n");
+        code.push_str("    /// Required tag dependencies that must exist\n");
+        code.push_str("    pub require: &'static [&'static str],\n");
+        code.push_str("    \n");
+        code.push_str("    /// Optional tag dependencies that enhance calculation\n");
+        code.push_str("    pub desire: &'static [&'static str],\n");
+        code.push_str("    \n");
+        code.push_str("    /// Tags that inhibit this composite if present\n");
+        code.push_str("    pub inhibit: &'static [&'static str],\n");
+        code.push_str("    \n");
+        code.push_str("    /// ExifTool ValueConv expression for calculation\n");
+        code.push_str("    pub value_conv: Option<&'static str>,\n");
+        code.push_str("    \n");
+        code.push_str("    /// ExifTool PrintConv expression for formatting\n");
+        code.push_str("    pub print_conv: Option<&'static str>,\n");
+        code.push_str("    \n");
+        code.push_str("    /// Human-readable description\n");
+        code.push_str("    pub description: Option<&'static str>,\n");
+        code.push_str("    \n");
+        code.push_str("    /// Group assignments by family number\n");
+        code.push_str("    pub groups: &'static [(u8, &'static str)],\n");
+        code.push_str("}\n");
+        code.push_str("\n");
         
-        for composite in composites {
-            let name = composite["name"].as_str().unwrap_or("Unknown");
-            let empty_map = serde_json::Map::new();
-            let groups = composite["groups"].as_object().unwrap_or(&empty_map);
-            let require = composite["require"].as_array();
-            let desire = composite["desire"].as_array();
+        // Generate individual composite tag definitions
+        for def in definitions {
+            let safe_name = def.name.replace([':', '-'], "_").to_uppercase();
             
-            code.push_str(&format!("    tags.insert(\"{}\", CompositeTagInfo {{\n", name));
-            code.push_str(&format!("        name: \"{}\",\n", name));
-            
-            // Generate groups
-            code.push_str("        groups: {\n");
-            code.push_str("            let mut g = HashMap::new();\n");
-            for (group_num, group_name) in groups {
-                if let Some(group_str) = group_name.as_str() {
-                    code.push_str(&format!("            g.insert({}, \"{}\");\n", group_num, group_str));
-                }
+            code.push_str(&format!("/// {} composite tag definition from {} module\n", def.name, def.module));
+            if let Some(desc) = &def.description {
+                code.push_str(&format!("/// {}\n", desc));
             }
-            code.push_str("            g\n");
-            code.push_str("        },\n");
+            code.push_str(&format!("pub static COMPOSITE_{}: CompositeTagDef = CompositeTagDef {{\n", safe_name));
+            code.push_str(&format!("    name: \"{}\",\n", def.name));
+            code.push_str(&format!("    module: \"{}\",\n", def.module));
             
-            // Generate dependencies
-            code.push_str("        require: vec![\n");
-            if let Some(req_array) = require {
-                for req in req_array {
-                    if let Some(req_str) = req.as_str() {
-                        code.push_str(&format!("            \"{}\",\n", req_str));
+            // Require dependencies
+            if def.require.is_empty() {
+                code.push_str("    require: &[],\n");
+            } else {
+                code.push_str("    require: &[\n");
+                for req in &def.require {
+                    code.push_str(&format!("        \"{}\",\n", req));
+                }
+                code.push_str("    ],\n");
+            }
+            
+            // Desire dependencies
+            if def.desire.is_empty() {
+                code.push_str("    desire: &[],\n");
+            } else {
+                code.push_str("    desire: &[\n");
+                for des in &def.desire {
+                    code.push_str(&format!("        \"{}\",\n", des));
+                }
+                code.push_str("    ],\n");
+            }
+            
+            // Inhibit dependencies
+            if def.inhibit.is_empty() {
+                code.push_str("    inhibit: &[],\n");
+            } else {
+                code.push_str("    inhibit: &[\n");
+                for inh in &def.inhibit {
+                    code.push_str(&format!("        \"{}\",\n", inh));
+                }
+                code.push_str("    ],\n");
+            }
+            
+            // ValueConv
+            match &def.value_conv {
+                Some(conv) => {
+                    // Escape the Perl expression properly
+                    let escaped = conv.replace('\\', "\\\\").replace('"', "\\\"").replace('\n', "\\n");
+                    code.push_str(&format!("    value_conv: Some(\"{}\"),\n", escaped));
+                }
+                None => code.push_str("    value_conv: None,\n"),
+            }
+            
+            // PrintConv
+            match &def.print_conv {
+                Some(conv) => {
+                    let escaped = conv.replace('\\', "\\\\").replace('"', "\\\"").replace('\n', "\\n");
+                    code.push_str(&format!("    print_conv: Some(\"{}\"),\n", escaped));
+                }
+                None => code.push_str("    print_conv: None,\n"),
+            }
+            
+            // Description
+            match &def.description {
+                Some(desc) => {
+                    let escaped = desc.replace('"', "\\\"");
+                    code.push_str(&format!("    description: Some(\"{}\"),\n", escaped));
+                }
+                None => code.push_str("    description: None,\n"),
+            }
+            
+            // Groups
+            if def.groups.is_empty() {
+                code.push_str("    groups: &[],\n");
+            } else {
+                code.push_str("    groups: &[\n");
+                let mut sorted_groups: Vec<_> = def.groups.iter().collect();
+                sorted_groups.sort_by_key(|&(k, _)| k.parse::<u8>().unwrap_or(0));
+                for (family, name) in sorted_groups {
+                    if let Ok(family_num) = family.parse::<u8>() {
+                        code.push_str(&format!("        ({}, \"{}\"),\n", family_num, name));
                     }
                 }
+                code.push_str("    ],\n");
             }
-            code.push_str("        ],\n");
             
-            code.push_str("        desire: vec![\n");
-            if let Some(des_array) = desire {
-                for des in des_array {
-                    if let Some(des_str) = des.as_str() {
-                        code.push_str(&format!("            \"{}\",\n", des_str));
-                    }
-                }
-            }
-            code.push_str("        ],\n");
-            
-            code.push_str("        value_conv: None, // TODO: Implement ValueConv processing\n");
-            code.push_str("    });\n");
+            code.push_str("};\n");
+            code.push_str("\n");
         }
         
+        // Generate COMPOSITE_TAGS registry
+        code.push_str("/// Global registry of all composite tag definitions\n");
+        code.push_str("///\n");
+        code.push_str("/// Maps composite tag names to their definitions for runtime lookup.\n");
+        code.push_str("/// Populated from all ExifTool modules with composite tables.\n");
+        code.push_str("pub static COMPOSITE_TAGS: LazyLock<HashMap<&'static str, &'static CompositeTagDef>> = LazyLock::new(|| {\n");
+        code.push_str("    let mut tags = HashMap::new();\n");
+        code.push_str("    \n");
+        
+        for def in definitions {
+            let safe_name = def.name.replace([':', '-'], "_").to_uppercase();
+            code.push_str(&format!("    tags.insert(\"{}\", &COMPOSITE_{});\n", def.name, safe_name));
+        }
+        
+        code.push_str("    \n");
         code.push_str("    tags\n");
         code.push_str("});\n");
         code.push_str("\n");
         
-        // Generate lookup function
-        code.push_str(&format!("/// Look up composite tag information for {} table\n", extraction.table_name));
-        code.push_str(&format!("pub fn lookup_{}_composite(name: &str) -> Option<&'static CompositeTagInfo> {{\n", 
-                              extraction.table_name.to_lowercase()));
-        code.push_str(&format!("    {}_COMPOSITES.get(name)\n", extraction.table_name.to_uppercase()));
+        // Helper functions
+        code.push_str("/// Look up a composite tag definition by name\n");
+        code.push_str("pub fn lookup_composite_tag(name: &str) -> Option<&'static CompositeTagDef> {\n");
+        code.push_str("    COMPOSITE_TAGS.get(name).copied()\n");
         code.push_str("}\n");
-        
-        // Generate calculation function stub
         code.push_str("\n");
-        code.push_str(&format!("/// Calculate {} composite values\n", extraction.table_name));
-        code.push_str(&format!("pub fn calculate_{}_composites(tags: &HashMap<String, String>) -> HashMap<String, String> {{\n", 
-                              extraction.table_name.to_lowercase()));
-        code.push_str("    let mut result = HashMap::new();\n");
-        code.push_str("    \n");
-        code.push_str(&format!("    for (name, composite) in {}_COMPOSITES.iter() {{\n", 
-                              extraction.table_name.to_uppercase()));
-        code.push_str("        // Check if all required tags are present\n");
-        code.push_str("        let has_required = composite.require.iter().all(|req| tags.contains_key(*req));\n");
-        code.push_str("        if has_required {\n");
-        code.push_str("            // TODO: Implement actual composite calculation logic\n");
-        code.push_str("            result.insert(name.to_string(), \"[Composite]\".to_string());\n");
-        code.push_str("        }\n");
-        code.push_str("    }\n");
-        code.push_str("    \n");
-        code.push_str("    result\n");
+        
+        code.push_str("/// Get all composite tag names\n");
+        code.push_str("pub fn all_composite_tag_names() -> Vec<&'static str> {\n");
+        code.push_str("    COMPOSITE_TAGS.keys().copied().collect()\n");
+        code.push_str("}\n");
+        code.push_str("\n");
+        
+        code.push_str(&format!("/// Total number of composite tags: {}\n", definitions.len()));
+        code.push_str("pub fn composite_tag_count() -> usize {\n");
+        code.push_str("    COMPOSITE_TAGS.len()\n");
         code.push_str("}\n");
         
         Ok(code)
@@ -219,20 +393,8 @@ impl ExtractionStrategy for CompositeTagStrategy {
         context.log_strategy_selection(symbol_data, self.name(), 
             "Detected Composite table or symbols with Require/Desire dependencies");
         
-        // Build path to ExifTool module
-        let module_path = format!("../third-party/exiftool/lib/Image/ExifTool/{}.pm", 
-                                symbol_data.module);
-        
-        // Queue extraction for processing
-        let extraction = CompositeExtraction {
-            module_name: symbol_data.module.clone(),
-            module_path,
-            table_name: symbol_data.name.clone(),
-            symbol_name: symbol_data.name.clone(),
-        };
-        
-        debug!("Queued Composite extraction: {}::{}", extraction.module_name, extraction.table_name);
-        self.pending_extractions.push(extraction);
+        debug!("Storing composite symbol: {}::{}", symbol_data.module, symbol_data.name);
+        self.composite_symbols.push(symbol_data.clone());
         
         Ok(())
     }
@@ -245,38 +407,40 @@ impl ExtractionStrategy for CompositeTagStrategy {
     fn finish_extraction(&mut self) -> Result<Vec<GeneratedFile>> {
         let mut files = Vec::new();
         
-        info!("Processing {} queued Composite extractions", self.pending_extractions.len());
+        info!("Processing {} composite symbols", self.composite_symbols.len());
         
-        for extraction in &self.pending_extractions {
-            match self.extract_composite_tags(extraction) {
-                Ok(json_data) => {
-                    match self.generate_composite_code(&json_data, extraction) {
-                        Ok(code) => {
-                            if !code.trim().is_empty() {
-                                let path = generate_module_path(&extraction.module_name, 
-                                    &format!("{}_composite", extraction.table_name.to_lowercase()));
-                                
-                                files.push(GeneratedFile {
-                                    path,
-                                    content: code,
-                                    strategy: self.name().to_string(),
-                                });
-                                
-                                debug!("Generated Composite code for {}::{}", 
-                                      extraction.module_name, extraction.table_name);
-                            }
-                        }
-                        Err(e) => {
-                            warn!("Failed to generate code for {}::{}: {}", 
-                                 extraction.module_name, extraction.table_name, e);
-                        }
+        // Collect all composite definitions from all modules
+        let mut all_definitions = Vec::new();
+        
+        for symbol in &self.composite_symbols {
+            match self.extract_composite_definitions(symbol) {
+                Ok(mut defs) => {
+                    // Set module name for each definition
+                    for def in &mut defs {
+                        def.module = symbol.module.clone();
                     }
+                    all_definitions.extend(defs);
+                    debug!("Extracted {} composite definitions from {}::{}", 
+                           all_definitions.len(), symbol.module, symbol.name);
                 }
                 Err(e) => {
-                    warn!("Failed to extract composite tags {}::{}: {}", 
-                         extraction.module_name, extraction.table_name, e);
+                    warn!("Failed to extract composite definitions from {}::{}: {}", 
+                         symbol.module, symbol.name, e);
                 }
             }
+        }
+        
+        if !all_definitions.is_empty() {
+            // Generate the main composite_tags.rs file
+            let composite_code = self.generate_composite_tags_module(&all_definitions)?;
+            
+            files.push(GeneratedFile {
+                path: "composite_tags.rs".to_string(),
+                content: composite_code,
+                strategy: self.name().to_string(),
+            });
+            
+            info!("Generated composite_tags.rs with {} composite definitions", all_definitions.len());
         }
         
         info!("CompositeTagStrategy generated {} files", files.len());

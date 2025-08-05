@@ -4,7 +4,7 @@
 //! script and provides structures for strategy pattern dispatch.
 
 use anyhow::{Context, Result};
-use serde::{Deserialize, Deserializer, Serialize};
+use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
 use std::collections::HashMap;
 use std::io::{BufRead, BufReader};
@@ -38,12 +38,8 @@ pub struct FieldMetadata {
     /// Estimated size (hash key count, array length, or string length)
     pub size: u32,
     
-    /// Complexity assessment: "simple", "nested", or "scalar"
+    /// Complexity assessment: "simple", "composite", or "scalar"
     pub complexity: String,
-    
-    /// Whether non-serializable values were detected and removed
-    #[serde(deserialize_with = "deserialize_bool_from_int")]
-    pub has_non_serializable: bool,
 }
 
 /// Statistics from field extraction process
@@ -65,7 +61,7 @@ impl FieldExtractor {
     /// Create new field extractor instance
     pub fn new() -> Self {
         Self {
-            script_path: "extractors/field_extractor.pl".to_string(),
+            script_path: "scripts/field_extractor.pl".to_string(),
         }
     }
     
@@ -185,26 +181,6 @@ fn parse_extraction_stats(stderr: &str) -> Result<FieldExtractionStats> {
     })
 }
 
-/// Deserialize boolean from integer (Perl compatibility)
-fn deserialize_bool_from_int<'de, D>(deserializer: D) -> Result<bool, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    use serde::de::Error;
-    
-    let value = serde_json::Value::deserialize(deserializer)?;
-    match value {
-        serde_json::Value::Bool(b) => Ok(b),
-        serde_json::Value::Number(n) => {
-            if let Some(i) = n.as_i64() {
-                Ok(i != 0)
-            } else {
-                Err(D::Error::custom("expected integer or boolean"))
-            }
-        }
-        _ => Err(D::Error::custom("expected integer or boolean")),
-    }
-}
 
 #[cfg(test)]
 mod tests {
@@ -214,7 +190,7 @@ mod tests {
     
     #[test]
     fn test_parse_field_symbol_json() {
-        let json = r#"{"type":"hash","name":"canonWhiteBalance","data":{"0":"Auto","1":"Daylight","2":"Cloudy"},"module":"Canon","metadata":{"size":3,"complexity":"simple","has_non_serializable":false}}"#;
+        let json = r#"{"type":"hash","name":"canonWhiteBalance","data":{"0":"Auto","1":"Daylight","2":"Cloudy"},"module":"Canon","metadata":{"size":3,"complexity":"simple"}}"#;
         
         let symbol: FieldSymbol = serde_json::from_str(json).unwrap();
         
@@ -223,7 +199,6 @@ mod tests {
         assert_eq!(symbol.module, "Canon");
         assert_eq!(symbol.metadata.size, 3);
         assert_eq!(symbol.metadata.complexity, "simple");
-        assert!(!symbol.metadata.has_non_serializable);
         
         // Check data content
         if let JsonValue::Object(data) = symbol.data {
@@ -252,7 +227,7 @@ mod tests {
     
     #[test]
     fn test_parse_array_symbol() {
-        let json = r#"{"type":"array","name":"xlat_array","data":[193,191,109,158],"module":"Nikon","metadata":{"size":4,"complexity":"simple","has_non_serializable":false}}"#;
+        let json = r#"{"type":"array","name":"xlat_array","data":[193,191,109,158],"module":"Nikon","metadata":{"size":4,"complexity":"simple"}}"#;
         
         let symbol: FieldSymbol = serde_json::from_str(json).unwrap();
         
@@ -272,7 +247,7 @@ mod tests {
     
     #[test]
     fn test_parse_scalar_symbol() {
-        let json = r#"{"type":"scalar","name":"VERSION","data":"1.25","module":"DNG","metadata":{"size":4,"complexity":"scalar","has_non_serializable":false}}"#;
+        let json = r#"{"type":"scalar","name":"VERSION","data":"1.25","module":"DNG","metadata":{"size":4,"complexity":"scalar"}}"#;
         
         let symbol: FieldSymbol = serde_json::from_str(json).unwrap();
         
