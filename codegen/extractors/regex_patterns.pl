@@ -59,12 +59,6 @@ for my $file_type ( sort keys %$hash_ref ) {
     my $pattern = $hash_ref->{$file_type};
     $total_count++;
 
-    # Create pattern entry
-    # Store the raw pattern string as-is for the Rust side to process
-    # The historical document (20250715-regex-pattern-extraction.md) shows
-    # this approach was working successfully before. The Rust side handles
-    # pattern processing with RegexBuilder::new().unicode(false).
-
     push @patterns,
       {
         file_type => $file_type,
