@@ -157,7 +157,11 @@ If you see ANY of these, immediately suggest codegen extraction:
 
 Everything in `src/generated` **is generated code** -- if you edit the file directly, the next time `make codegen` is run, your edit will be deleted. Fix the generating code in `codegen/src` instead.
 
-YOU WILL BE IMMEDIATELY FIRED IF YOU IGNORE THIS WARNING, as you've obviously not read this manual, and all your other work will be circumspect.
+YOU WILL BE DISMISSED AND ALL YOUR WORK REVERTED IF YOU IGNORE THIS WARNING, as you've obviously not read this manual, and all of your other work will be circumspect.
+
+### MultiEdit can be buggy: use rg|sd
+
+Use `rg`|`sd` pipelines instead of the default MultiEdit tool: `rg -l 'old-pattern' directory | xargs sd 'old-pattern' 'new-pattern'`
 
 ### Choosing the Right Extractor
 
