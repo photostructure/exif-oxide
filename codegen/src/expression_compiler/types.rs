@@ -20,6 +20,8 @@ pub struct CompiledExpression {
 pub enum AstNode {
     /// Variable reference ($val)
     Variable,
+    /// Indexed variable reference ($val[n])
+    ValIndex(usize),
     /// Numeric literal
     Number(Number),
     /// String literal with optional variable interpolation
@@ -96,6 +98,8 @@ pub enum FuncType {
 #[derive(Debug, Clone, PartialEq)]
 pub enum ParseToken {
     Variable,
+    /// Indexed variable reference like $val[0], $val[1]
+    ValIndex(usize),
     Number(Number),
     String(String),
     Undefined,

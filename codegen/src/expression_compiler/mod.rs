@@ -81,11 +81,8 @@ impl CompiledExpression {
             return false;
         }
         
-        // Check for array indexing patterns like $val[0], $val[1], etc.
-        // These are used in composite tags and require special handling
-        if expr.contains("$val[") {
-            return false;
-        }
+        // Array indexing patterns like $val[0], $val[1] are now supported
+        // for composite tag ValueConv expressions
         
         // Check for simple ExifTool function calls (single argument)
         if expr.contains("Image::ExifTool::") {
