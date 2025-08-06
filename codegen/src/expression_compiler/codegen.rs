@@ -25,6 +25,7 @@ impl CompiledExpression {
     fn generate_ast_expression(&self, node: &AstNode) -> String {
         match node {
             AstNode::Variable => "TagValue::F64(val)".to_string(),
+            AstNode::ValIndex(index) => format!("resolved_dependencies.get({}).unwrap_or(&TagValue::Empty).clone()", index),
             AstNode::Number(n) => format!("TagValue::F64({})", format_number(*n)),
             AstNode::String { value, has_interpolation } => {
                 if *has_interpolation {
@@ -180,6 +181,7 @@ impl CompiledExpression {
     fn generate_value_expression_without_outer_parens(&self, node: &AstNode) -> String {
         match node {
             AstNode::Variable => "val".to_string(),
+            AstNode::ValIndex(index) => format!("resolved_dependencies.get({}).unwrap_or(&TagValue::Empty).as_f64().unwrap_or(0.0)", index),
             AstNode::Number(n) => format_number(*n),
             AstNode::BinaryOp { op, left, right } => {
                 let left_expr = self.generate_value_expression_without_outer_parens(left);
@@ -204,6 +206,7 @@ impl CompiledExpression {
     fn generate_value_expression(&self, node: &AstNode) -> String {
         match node {
             AstNode::Variable => "val".to_string(),
+            AstNode::ValIndex(index) => format!("resolved_dependencies.get({}).unwrap_or(&TagValue::Empty).as_f64().unwrap_or(0.0)", index),
             AstNode::Number(n) => format_number(*n),
             AstNode::BinaryOp { op, left, right } => {
                 let left_expr = self.generate_value_expression(left);

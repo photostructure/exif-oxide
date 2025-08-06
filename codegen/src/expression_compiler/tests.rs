@@ -46,6 +46,74 @@ mod integration_tests {
     }
     
     #[test]
+    fn test_val_index_patterns() {
+        // Test basic $val[0] pattern
+        let expr = CompiledExpression::compile("$val[0]").unwrap();
+        match expr.ast.as_ref() {
+            AstNode::ValIndex(index) => {
+                assert_eq!(*index, 0);
+            }
+            _ => panic!("Expected ValIndex for $val[0]")
+        }
+        
+        let code = expr.generate_rust_code();
+        assert!(code.contains("resolved_dependencies.get(0)"));
+    }
+    
+    #[test]
+    fn test_val_index_expression() {
+        // Test GPS ValueConv pattern: $val[1] =~ /^S/i ? -$val[0] : $val[0]
+        let expr = CompiledExpression::compile("$val[1] >= 0 ? -$val[0] : $val[0]").unwrap();
+        match expr.ast.as_ref() {
+            AstNode::TernaryOp { condition, true_expr, false_expr } => {
+                // Condition should be comparison with $val[1]
+                match condition.as_ref() {
+                    AstNode::ComparisonOp { left, .. } => {
+                        assert!(matches!(left.as_ref(), AstNode::ValIndex(1)));
+                    }
+                    _ => panic!("Expected comparison in condition")
+                }
+                // True expr should be -$val[0]
+                match true_expr.as_ref() {
+                    AstNode::UnaryMinus { operand } => {
+                        assert!(matches!(operand.as_ref(), AstNode::ValIndex(0)));
+                    }
+                    _ => panic!("Expected unary minus of $val[0]")
+                }
+                // False expr should be $val[0]
+                assert!(matches!(false_expr.as_ref(), AstNode::ValIndex(0)));
+            }
+            _ => panic!("Expected ternary expression")
+        }
+    }
+    
+    #[test]
+    fn test_val_index_arithmetic() {
+        // Test arithmetic with indexed values
+        let expr = CompiledExpression::compile("$val[0] + $val[1]").unwrap();
+        match expr.ast.as_ref() {
+            AstNode::BinaryOp { op, left, right } => {
+                assert_eq!(*op, OpType::Add);
+                assert!(matches!(left.as_ref(), AstNode::ValIndex(0)));
+                assert!(matches!(right.as_ref(), AstNode::ValIndex(1)));
+            }
+            _ => panic!("Expected BinaryOp for addition")
+        }
+        
+        let code = expr.generate_rust_code();
+        assert!(code.contains("resolved_dependencies.get(0)"));
+        assert!(code.contains("resolved_dependencies.get(1)"));
+    }
+    
+    #[test]
+    fn test_val_index_compilation_check() {
+        // Test that expressions with $val[n] are now compilable
+        assert!(CompiledExpression::is_compilable("$val[0]"));
+        assert!(CompiledExpression::is_compilable("$val[1] >= 0 ? -$val[0] : $val[0]"));
+        assert!(CompiledExpression::is_compilable("$val[0] + $val[1] * $val[2]"));
+    }
+
+    #[test]
     fn test_decimal_numbers() {
         let expr = CompiledExpression::compile("$val * 25.4").unwrap();
         // Verify AST handles decimal numbers correctly

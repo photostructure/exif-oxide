@@ -132,6 +132,7 @@ impl Parser {
                 Ok(AstNode::UnaryMinus { operand: Box::new(operand) })
             }
             Some(ParseToken::Variable) => Ok(AstNode::Variable),
+            Some(ParseToken::ValIndex(index)) => Ok(AstNode::ValIndex(*index)),
             Some(ParseToken::Number(n)) => Ok(AstNode::Number(*n)),
             Some(ParseToken::String(s)) => {
                 let has_interpolation = s.contains('$');
