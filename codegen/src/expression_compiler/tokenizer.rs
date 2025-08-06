@@ -137,7 +137,38 @@ fn parse_variable(chars: &mut Peekable<Chars>) -> Result<ParseToken, String> {
     // Expect "val" after $
     let val_chars: String = chars.by_ref().take(3).collect();
     if val_chars == "val" {
-        Ok(ParseToken::Variable)
+        // Check if this is indexed variable ($val[n])
+        if chars.peek() == Some(&'[') {
+            chars.next(); // consume '['
+            
+            // Parse the index number
+            let mut index_str = String::new();
+            while let Some(&next_ch) = chars.peek() {
+                if next_ch.is_ascii_digit() {
+                    index_str.push(chars.next().unwrap());
+                } else {
+                    break;
+                }
+            }
+            
+            if index_str.is_empty() {
+                return Err("Expected digit after '$val['".to_string());
+            }
+            
+            // Expect closing bracket
+            if chars.next() != Some(']') {
+                return Err("Expected ']' after index in $val[n]".to_string());
+            }
+            
+            // Parse index as usize
+            let index: usize = index_str.parse()
+                .map_err(|_| format!("Invalid index in $val[{}]", index_str))?;
+            
+            Ok(ParseToken::ValIndex(index))
+        } else {
+            // Regular $val variable
+            Ok(ParseToken::Variable)
+        }
     } else {
         Err(format!("Expected 'val' after '$', found '{}'", val_chars))
     }
