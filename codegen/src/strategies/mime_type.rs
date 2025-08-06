@@ -1,0 +1,201 @@
+//! MimeTypeStrategy for processing ExifTool's MIME type mappings
+//!
+//! This strategy handles the %mimeType symbol which contains simple string->string
+//! mappings from file types to MIME types (e.g., "JPEG":"image/jpeg")
+
+use anyhow::Result;
+use serde_json::Value as JsonValue;
+use std::collections::HashMap;
+use tracing::{debug, info};
+
+use super::{ExtractionContext, ExtractionStrategy, GeneratedFile};
+use crate::field_extractor::FieldSymbol;
+
+/// Strategy for processing ExifTool's mimeType mappings
+pub struct MimeTypeStrategy {
+    /// Collected MIME type data by module
+    mime_data: HashMap<String, MimeTypeData>,
+}
+
+/// MIME type mappings extracted from ExifTool
+#[derive(Debug, Clone)]
+struct MimeTypeData {
+    /// Symbol name (should be "mimeType")
+    name: String,
+    
+    /// Module name (should be "ExifTool")
+    module: String,
+    
+    /// File type to MIME type mappings
+    mappings: HashMap<String, String>,
+}
+
+impl MimeTypeStrategy {
+    /// Create new MimeTypeStrategy
+    pub fn new() -> Self {
+        Self {
+            mime_data: HashMap::new(),
+        }
+    }
+    
+    /// Generate Rust code for MIME type mappings
+    fn generate_mime_type_code(&self, data: &MimeTypeData) -> String {
+        let mut code = String::new();
+        
+        // File header
+        code.push_str("//! MIME type mappings generated from ExifTool's mimeType hash\n");
+        code.push_str("//!\n");
+        code.push_str(&format!("//! Total mappings: {}\n", data.mappings.len()));
+        code.push_str("//! Source: ExifTool.pm %mimeType\n\n");
+        
+        // Imports
+        code.push_str("use std::collections::HashMap;\n");
+        code.push_str("use std::sync::LazyLock;\n\n");
+        
+        // MIME type mapping static table
+        code.push_str("/// MIME type mappings from file types\n");
+        code.push_str("static MIME_TYPE_MAP: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::new(|| {\n");
+        code.push_str("    let mut map = HashMap::new();\n");
+        
+        // Sort mappings for consistent output
+        let mut mappings: Vec<_> = data.mappings.iter().collect();
+        mappings.sort_by_key(|&(k, _)| k);
+        
+        for (file_type, mime_type) in mappings {
+            code.push_str(&format!("    map.insert(\"{}\", \"{}\");\n", file_type, mime_type));
+        }
+        
+        code.push_str("    map\n");
+        code.push_str("});\n\n");
+        
+        // Generate public API functions
+        self.generate_mime_api_functions(&mut code);
+        
+        code
+    }
+    
+    /// Generate public API functions for MIME types
+    fn generate_mime_api_functions(&self, code: &mut String) {
+        // lookup_mime_types - main lookup function expected by file_detection.rs
+        code.push_str("/// Lookup MIME type for a file type\n");
+        code.push_str("/// This function is expected by src/file_detection.rs\n");
+        code.push_str("pub fn lookup_mime_types(file_type: &str) -> Option<&'static str> {\n");
+        code.push_str("    MIME_TYPE_MAP.get(file_type).copied()\n");
+        code.push_str("}\n\n");
+        
+        // get_mime_type - alternative name
+        code.push_str("/// Get MIME type for a file type (alias for lookup_mime_types)\n");
+        code.push_str("pub fn get_mime_type(file_type: &str) -> Option<&'static str> {\n");
+        code.push_str("    lookup_mime_types(file_type)\n");
+        code.push_str("}\n\n");
+        
+        // get_all_mime_types - utility function
+        code.push_str("/// Get all supported file types with their MIME types\n");
+        code.push_str("pub fn get_all_mime_types() -> Vec<(&'static str, &'static str)> {\n");
+        code.push_str("    MIME_TYPE_MAP.iter().map(|(&k, &v)| (k, v)).collect()\n");
+        code.push_str("}\n\n");
+        
+        // find_file_types_by_mime - reverse lookup
+        code.push_str("/// Find file types that use a specific MIME type\n");
+        code.push_str("pub fn find_file_types_by_mime(mime_type: &str) -> Vec<&'static str> {\n");
+        code.push_str("    MIME_TYPE_MAP\n");
+        code.push_str("        .iter()\n");
+        code.push_str("        .filter_map(|(&file_type, &mt)| {\n");
+        code.push_str("            if mt == mime_type {\n");
+        code.push_str("                Some(file_type)\n");
+        code.push_str("            } else {\n");
+        code.push_str("                None\n");
+        code.push_str("            }\n");
+        code.push_str("        })\n");
+        code.push_str("        .collect()\n");
+        code.push_str("}\n");
+    }
+}
+
+impl ExtractionStrategy for MimeTypeStrategy {
+    fn name(&self) -> &'static str {
+        "MimeTypeStrategy"
+    }
+    
+    fn can_handle(&self, symbol: &FieldSymbol) -> bool {
+        // Only handle mimeType from ExifTool module
+        if symbol.name != "mimeType" || symbol.module != "ExifTool" {
+            return false;
+        }
+        
+        // Must be a hash with simple string->string mappings
+        if let JsonValue::Object(map) = &symbol.data {
+            if map.is_empty() {
+                return false;
+            }
+            
+            // All values must be strings (MIME types)
+            let all_strings = map.values().all(|v| v.is_string());
+            
+            debug!("mimeType pattern check: all_strings={}, size={}", all_strings, map.len());
+            
+            all_strings
+        } else {
+            false
+        }
+    }
+    
+    fn extract(&mut self, symbol: &FieldSymbol, context: &mut ExtractionContext) -> Result<()> {
+        info!("🔧 Extracting mimeType mappings");
+        
+        if let JsonValue::Object(map) = &symbol.data {
+            let mut mappings = HashMap::new();
+            
+            for (file_type, value) in map {
+                if let Some(mime_type) = value.as_str() {
+                    mappings.insert(file_type.clone(), mime_type.to_string());
+                }
+            }
+            
+            let data = MimeTypeData {
+                name: symbol.name.clone(),
+                module: symbol.module.clone(),
+                mappings,
+            };
+            
+            info!("    ✓ Parsed {} MIME type mappings", data.mappings.len());
+            
+            self.mime_data.insert(symbol.module.clone(), data);
+            
+            context.log_strategy_selection(symbol, self.name(), 
+                "Hash with string->string MIME type mappings");
+        }
+        
+        Ok(())
+    }
+    
+    fn finish_module(&mut self, _module_name: &str) -> Result<()> {
+        // No per-module finalization needed
+        Ok(())
+    }
+    
+    fn finish_extraction(&mut self) -> Result<Vec<GeneratedFile>> {
+        let mut files = Vec::new();
+        
+        for (_module, data) in &self.mime_data {
+            let content = self.generate_mime_type_code(data);
+            
+            files.push(GeneratedFile {
+                path: "exiftool_pm/mime_types.rs".to_string(),
+                content,
+                strategy: self.name().to_string(),
+            });
+            
+            info!("📁 Generated mime_types.rs with {} MIME type mappings", 
+                  data.mappings.len());
+        }
+        
+        Ok(files)
+    }
+}
+
+impl Default for MimeTypeStrategy {
+    fn default() -> Self {
+        Self::new()
+    }
+}
