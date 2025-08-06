@@ -5,7 +5,7 @@ use warnings;
 use FindBin qw($Bin);
 use File::Basename;
 use JSON::XS;
-use Sub::Util qw(subname);
+use Sub::Util    qw(subname);
 use Scalar::Util qw(blessed reftype refaddr);
 
 # Add ExifTool lib directory to @INC
@@ -18,13 +18,20 @@ my $skipped_symbols   = 0;
 my @skipped_list      = ();
 
 # JSON serializer - let JSON::XS handle complex structures automatically
-my $json = JSON::XS->new->canonical(1)->allow_blessed(1)->convert_blessed(1)->allow_nonref(1);
+my $json =
+  JSON::XS->new->canonical(1)->allow_blessed(1)->convert_blessed(1)
+  ->allow_nonref(1);
 
-if ( @ARGV != 1 ) {
-    die "Usage: $0 <module_path>\n";
+if ( @ARGV < 1 ) {
+    die "Usage: $0 <module_path> [field1] [field2] ...\n"
+      . "  Extract all hash symbols from ExifTool module, optionally filtered to specific fields\n"
+      . "  Examples:\n"
+      . "    $0 third-party/exiftool/lib/Image/ExifTool.pm\n"
+      . "    $0 third-party/exiftool/lib/Image/ExifTool.pm fileTypeLookup magicNumber mimeType\n";
 }
 
-my $module_path = $ARGV[0];
+my $module_path   = shift @ARGV;
+my @target_fields = @ARGV;         # Optional list of specific fields to extract
 
 # Extract module name from path
 my $module_name = basename($module_path);
@@ -34,10 +41,12 @@ print STDERR "Universal extraction starting for $module_name:\n";
 
 # Load the module - handle special case for main ExifTool.pm
 my $package_name;
-if ($module_name eq 'ExifTool') {
+if ( $module_name eq 'ExifTool' ) {
+
     # Main ExifTool.pm uses package "Image::ExifTool"
     $package_name = "Image::ExifTool";
-} else {
+}
+else {
     # All other modules use "Image::ExifTool::ModuleName"
     $package_name = "Image::ExifTool::$module_name";
 }
@@ -48,7 +57,7 @@ if ($@) {
 }
 
 # Extract symbols
-extract_symbols( $package_name, $module_name );
+extract_symbols( $package_name, $module_name, \@target_fields );
 
 # Print summary
 print STDERR "Universal extraction complete for $module_name:\n";
@@ -57,7 +66,7 @@ print STDERR "  Successfully extracted: $extracted_symbols\n";
 print STDERR "  Skipped (non-serializable): $skipped_symbols\n";
 
 # Print debug info about skipped symbols if requested
-if ($ENV{DEBUG} && @skipped_list) {
+if ( $ENV{DEBUG} && @skipped_list ) {
     print STDERR "\nSkipped symbols:\n";
     for my $skipped (@skipped_list) {
         print STDERR "  - $skipped\n";
@@ -65,15 +74,31 @@ if ($ENV{DEBUG} && @skipped_list) {
 }
 
 sub extract_symbols {
-    my ( $package_name, $module_name ) = @_;
+    my ( $package_name, $module_name, $target_fields ) = @_;
 
     # Get module's symbol table
     no strict 'refs';
     my $symbol_table = *{"${package_name}::"};
 
+    # Create a filter set if target fields are specified
+    my %field_filter;
+    if (@$target_fields) {
+        %field_filter = map { $_ => 1 } @$target_fields;
+        print STDERR "  Filtering for specific fields: "
+          . join( ", ", @$target_fields ) . "\n";
+    }
+
     # Examine each symbol in the package
     foreach my $symbol_name ( sort keys %$symbol_table ) {
         $total_symbols++;
+
+        # Skip symbols not in our filter list (if filtering is enabled)
+        if ( @$target_fields && !exists $field_filter{$symbol_name} ) {
+            print STDERR "  Skipping symbol (not in filter): $symbol_name\n"
+              if $ENV{DEBUG};
+            next;
+        }
+
         print STDERR "  Processing symbol: $symbol_name\n" if $ENV{DEBUG};
 
         my $glob = $symbol_table->{$symbol_name};
@@ -81,12 +106,15 @@ sub extract_symbols {
         # Try to extract hash symbols (most important for ExifTool)
         if ( my $hash_ref = *$glob{HASH} ) {
             if (%$hash_ref) {    # Skip empty hashes
-                my $hash_size = scalar(keys %$hash_ref);
-                print STDERR "    Hash found with $hash_size keys\n" if $ENV{DEBUG};
+                my $hash_size = scalar( keys %$hash_ref );
+                print STDERR "    Hash found with $hash_size keys\n"
+                  if $ENV{DEBUG};
                 extract_hash_symbol( $symbol_name, $hash_ref, $module_name );
-                print STDERR "    Hash extraction completed for $symbol_name\n" if $ENV{DEBUG};
+                print STDERR "    Hash extraction completed for $symbol_name\n"
+                  if $ENV{DEBUG};
             }
-        } else {
+        }
+        else {
             print STDERR "    No hash found for $symbol_name\n" if $ENV{DEBUG};
         }
     }
@@ -96,25 +124,29 @@ sub extract_hash_symbol {
     my ( $symbol_name, $hash_ref, $module_name ) = @_;
 
     print STDERR "    Starting extraction for: $symbol_name\n" if $ENV{DEBUG};
-    
+
     # Detect composite tables by name pattern
-    my $is_composite = ($symbol_name eq 'Composite' || $symbol_name =~ /Composite$/);
-    print STDERR "    Composite table: " . ($is_composite ? 'YES' : 'NO') . "\n" if $ENV{DEBUG};
-    
+    my $is_composite =
+      ( $symbol_name eq 'Composite' || $symbol_name =~ /Composite$/ );
+    print STDERR "    Composite table: "
+      . ( $is_composite ? 'YES' : 'NO' ) . "\n"
+      if $ENV{DEBUG};
+
     # Filter out function references (JSON::XS can't handle them)
     print STDERR "    Filtering code references...\n" if $ENV{DEBUG};
     my $filtered_data = filter_code_refs($hash_ref);
     print STDERR "    Code reference filtering completed\n" if $ENV{DEBUG};
-    my $size = scalar(keys %$filtered_data);
-    
+    my $size = scalar( keys %$filtered_data );
+
     # Skip if no data after filtering
     return unless $size > 0;
-    
+
     # For non-composite tables, apply size limit to prevent huge output
-    if (!$is_composite && $size > 1000) {
+    if ( !$is_composite && $size > 1000 ) {
         $skipped_symbols++;
         push @skipped_list, "$module_name:$symbol_name (size: $size)";
-        print STDERR "  Skipping large symbol: $symbol_name (size: $size)\n" if $ENV{DEBUG};
+        print STDERR "  Skipping large symbol: $symbol_name (size: $size)\n"
+          if $ENV{DEBUG};
         return;
     }
 
@@ -132,7 +164,10 @@ sub extract_hash_symbol {
     eval {
         print $json->encode($symbol_data) . "\n";
         $extracted_symbols++;
-        print STDERR "  Extracted: $symbol_name (type: " . ($is_composite ? 'composite' : 'simple') . ", size: $size)\n" if $ENV{DEBUG};
+        print STDERR "  Extracted: $symbol_name (type: "
+          . ( $is_composite ? 'composite' : 'simple' )
+          . ", size: $size)\n"
+          if $ENV{DEBUG};
     };
     if ($@) {
         $skipped_symbols++;
@@ -142,59 +177,69 @@ sub extract_hash_symbol {
 }
 
 sub filter_code_refs {
-    my ($data, $depth, $seen) = @_;
+    my ( $data, $depth, $seen ) = @_;
     $depth //= 0;
-    $seen //= {};
-    
+    $seen  //= {};
+
     # Prevent excessive recursion depth
     return "[MaxDepth]" if $depth > 10;
-    
-    if (!ref($data)) {
+
+    if ( !ref($data) ) {
         return $data;
     }
-    elsif (reftype($data) eq 'CODE') {
+    elsif ( reftype($data) eq 'CODE' ) {
+
         # Convert function reference to function name
         my $name = subname($data);
         return defined($name) ? "[Function: $name]" : "[Function: __ANON__]";
     }
-    elsif (reftype($data) eq 'HASH') {
+    elsif ( reftype($data) eq 'HASH' ) {
+
         # Check for circular references using memory address
         my $addr = refaddr($data);
         return "[Circular]" if $seen->{$addr};
         $seen->{$addr} = 1;
-        
+
         my $filtered = {};
-        for my $key (keys %$data) {
+        for my $key ( keys %$data ) {
+
             # Check if this is a Table reference that could cause circularity
             # Use reftype to check physical type, ignoring blessing
-            if ($key eq 'Table' && defined(reftype($data->{$key})) && reftype($data->{$key}) eq 'HASH') {
-                # Replace Table references with string representation to break circularity
-                # These are metadata pointers in ExifTool, not structural data
-                if (blessed($data->{$key})) {
-                    $filtered->{$key} = "[TableRef: " . blessed($data->{$key}) . "]";
-                } else {
+            if (   $key eq 'Table'
+                && defined( reftype( $data->{$key} ) )
+                && reftype( $data->{$key} ) eq 'HASH' )
+            {
+      # Replace Table references with string representation to break circularity
+      # These are metadata pointers in ExifTool, not structural data
+                if ( blessed( $data->{$key} ) ) {
+                    $filtered->{$key} =
+                      "[TableRef: " . blessed( $data->{$key} ) . "]";
+                }
+                else {
                     $filtered->{$key} = "[TableRef: HASH]";
                 }
-            } else {
-                $filtered->{$key} = filter_code_refs($data->{$key}, $depth + 1, $seen);
+            }
+            else {
+                $filtered->{$key} =
+                  filter_code_refs( $data->{$key}, $depth + 1, $seen );
             }
         }
-        
+
         # Remove from seen after processing to allow legitimate re-references
         delete $seen->{$addr};
         return $filtered;
     }
-    elsif (reftype($data) eq 'ARRAY') {
+    elsif ( reftype($data) eq 'ARRAY' ) {
         my $filtered = [];
         for my $item (@$data) {
-            push @$filtered, filter_code_refs($item, $depth + 1, $seen);
+            push @$filtered, filter_code_refs( $item, $depth + 1, $seen );
         }
         return $filtered;
     }
-    elsif (reftype($data) eq 'SCALAR') {
+    elsif ( reftype($data) eq 'SCALAR' ) {
         return "[ScalarRef: " . $$data . "]";
     }
-    elsif (blessed($data)) {
+    elsif ( blessed($data) ) {
         return "[Object: " . blessed($data) . "]";
     }
     else {
