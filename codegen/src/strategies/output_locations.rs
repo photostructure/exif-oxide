@@ -7,26 +7,61 @@ use std::path::Path;
 
 /// Generate standardized module path following Rust naming conventions
 /// 
-/// Converts ExifTool module names to lowercase directory names (e.g., "Canon" → "canon_pm", 
-/// "GPS" → "gps_pm") and symbol names to snake_case filenames for consistent Rust organization.
+/// Converts ExifTool module names to snake_case directory names (e.g., "Canon" → "canon", 
+/// "GPS" → "gps", "PanasonicRaw" → "panasonic_raw") and symbol names to snake_case filenames 
+/// for consistent Rust organization. Only adds suffix for the 2 known name collisions.
 ///
 /// # Arguments
-/// * `module_name` - ExifTool module name (e.g., "Canon", "GPS", "DNG")
+/// * `module_name` - ExifTool module name (e.g., "Canon", "GPS", "DNG", "PanasonicRaw")
 /// * `symbol_name` - Symbol name from the module (e.g., "canonWhiteBalance")
 /// 
 /// # Returns
-/// Relative path from output directory: `[module_name]_pm/[symbol_name].rs`
+/// Relative path from output directory: `[module_name]/[symbol_name].rs` (with suffix only for collisions)
 ///
 /// # Examples
 /// ```
 /// # use crate::strategies::output_locations::generate_module_path;
-/// assert_eq!(generate_module_path("Canon", "canonWhiteBalance"), "canon_pm/canon_white_balance.rs");
-/// assert_eq!(generate_module_path("GPS", "coordConv"), "gps_pm/coord_conv.rs");
+/// assert_eq!(generate_module_path("Canon", "canonWhiteBalance"), "canon/canon_white_balance.rs");
+/// assert_eq!(generate_module_path("GPS", "coordConv"), "gps/coord_conv.rs");
+/// assert_eq!(generate_module_path("PanasonicRaw", "whiteBalance"), "panasonic_raw/white_balance.rs");
 /// ```
 pub fn generate_module_path(module_name: &str, symbol_name: &str) -> String {
-    let module_dir = format!("{}_pm", module_name.to_lowercase());
+    let module_dir = module_name_to_directory(module_name);
     let filename = format!("{}.rs", to_snake_case(symbol_name));
     format!("{}/{}", module_dir, filename)
+}
+
+/// Convert ExifTool module name to directory name
+///
+/// Handles compound module names and known collisions:
+/// - Simple names: "Canon" → "canon"
+/// - Acronyms: "GPS" → "gps", "DNG" → "dng" (idiomatic lowercase)  
+/// - Compound names: "PanasonicRaw" → "panasonic_raw", "MinoltaRaw" → "minolta_raw"
+/// - Known collisions: "Charset" → "charset_pm", "Geolocation" → "geolocation_pm"
+///
+/// # Arguments
+/// * `module_name` - ExifTool module name (e.g., "Canon", "PanasonicRaw")
+///
+/// # Returns
+/// Directory name string
+///
+/// # Examples
+/// ```
+/// # use crate::strategies::output_locations::module_name_to_directory;
+/// assert_eq!(module_name_to_directory("Canon"), "canon");
+/// assert_eq!(module_name_to_directory("PanasonicRaw"), "panasonic_raw");
+/// assert_eq!(module_name_to_directory("Charset"), "charset_pm");
+/// ```
+pub fn module_name_to_directory(module_name: &str) -> String {
+    // Handle known collisions (only 2 exist according to TPP)
+    match module_name {
+        "Charset" => "charset_pm".to_string(),
+        "Geolocation" => "geolocation_pm".to_string(),
+        _ => {
+            // Convert to snake_case for compound names
+            to_snake_case(module_name)
+        }
+    }
 }
 
 /// Generate path for specialized pattern types (arrays, binary data, etc.)
@@ -35,20 +70,21 @@ pub fn generate_module_path(module_name: &str, symbol_name: &str) -> String {
 /// generated code structures.
 ///
 /// # Arguments
-/// * `module_name` - ExifTool module name (e.g., "Canon")
+/// * `module_name` - ExifTool module name (e.g., "Canon", "PanasonicRaw")
 /// * `pattern_type` - Type of pattern (e.g., "arrays", "binary_data")
 /// * `symbol_name` - Symbol name from the module
 ///
 /// # Returns
-/// Relative path: `[module_name]_pm/[pattern_type]/[symbol_name].rs`
+/// Relative path: `[module_name]/[pattern_type]/[symbol_name].rs` (with suffix only for collisions)
 ///
 /// # Examples
 /// ```
 /// # use crate::strategies::output_locations::generate_pattern_path;
-/// assert_eq!(generate_pattern_path("Nikon", "arrays", "xlat_0"), "nikon_pm/arrays/xlat_0.rs");
+/// assert_eq!(generate_pattern_path("Nikon", "arrays", "xlat_0"), "nikon/arrays/xlat_0.rs");
+/// assert_eq!(generate_pattern_path("PanasonicRaw", "binary_data", "wbInfo"), "panasonic_raw/binary_data/wb_info.rs");
 /// ```
 pub fn generate_pattern_path(module_name: &str, pattern_type: &str, symbol_name: &str) -> String {
-    let module_dir = format!("{}_pm", module_name.to_lowercase());
+    let module_dir = module_name_to_directory(module_name);
     let filename = format!("{}.rs", to_snake_case(symbol_name));
     format!("{}/{}/{}", module_dir, pattern_type, filename)
 }
@@ -72,11 +108,19 @@ pub fn generate_pattern_path(module_name: &str, pattern_type: &str, symbol_name:
 /// # use crate::strategies::output_locations::to_snake_case;
 /// assert_eq!(to_snake_case("Canon"), "canon");
 /// assert_eq!(to_snake_case("canonWhiteBalance"), "canon_white_balance");
-/// assert_eq!(to_snake_case("GPS"), "gps");
-/// assert_eq!(to_snake_case("AFInfo2"), "a_f_info2");
+/// assert_eq!(to_snake_case("GPS"), "gps");  // Acronym: simple lowercase
+/// assert_eq!(to_snake_case("DNG"), "dng");  // Acronym: simple lowercase  
+/// assert_eq!(to_snake_case("AFInfo2"), "a_f_info2");  // Mixed: traditional snake_case
 /// ```
 pub fn to_snake_case(name: &str) -> String {
-    // Use the same simple algorithm as SimpleTableStrategy for compatibility
+    // Check if this is an all-uppercase acronym (like GPS, DNG, IPTC)
+    // More idiomatic: GPS -> "gps" (not "g_p_s") following Rust stdlib conventions
+    if name.chars().all(|c| c.is_uppercase() || c.is_digit(10)) && name.len() > 1 {
+        // All-caps acronym: GPS -> gps, JPEG2000 -> jpeg2000
+        return name.to_lowercase();
+    }
+    
+    // Traditional snake_case for mixed case names
     let mut result = String::new();
     let mut chars = name.chars().peekable();
     
@@ -117,7 +161,7 @@ pub fn extract_directory_path(file_path: &str) -> &str {
 /// Validate that a path follows standardized naming conventions
 ///
 /// Checks that generated file paths conform to expected patterns:
-/// - snake_case module directories ending in "_pm"
+/// - snake_case module directories (suffix only for known collisions)
 /// - snake_case filenames ending in ".rs"
 /// - No mixed case violations
 ///
@@ -130,8 +174,10 @@ pub fn extract_directory_path(file_path: &str) -> &str {
 /// # Examples
 /// ```
 /// # use crate::strategies::output_locations::is_valid_path;
-/// assert!(is_valid_path("canon_pm/white_balance.rs"));
-/// assert!(!is_valid_path("Canon_pm/WhiteBalance.rs")); // PascalCase violation
+/// assert!(is_valid_path("canon/white_balance.rs"));
+/// assert!(is_valid_path("panasonic_raw/white_balance.rs"));
+/// assert!(is_valid_path("charset_pm/encoding.rs")); // Known collision
+/// assert!(!is_valid_path("Canon/WhiteBalance.rs")); // PascalCase violation
 /// ```
 pub fn is_valid_path(path: &str) -> bool {
     let path_obj = Path::new(path);
@@ -151,7 +197,7 @@ pub fn is_valid_path(path: &str) -> bool {
                     return false;
                 }
             } else if comp_str.ends_with("_pm") {
-                // Check module directory is snake_case
+                // Check module directory with _pm suffix is snake_case (only for known collisions)
                 let module_name = comp_str.strip_suffix("_pm").unwrap_or(comp_str);
                 if !is_snake_case(module_name) {
                     return false;
@@ -209,16 +255,39 @@ mod tests {
     
     #[test]
     fn test_generate_module_path() {
-        assert_eq!(generate_module_path("Canon", "canonWhiteBalance"), "canon_pm/canon_white_balance.rs");
-        assert_eq!(generate_module_path("GPS", "coordConv"), "gps_pm/coord_conv.rs");
-        assert_eq!(generate_module_path("DNG", "AdobeData"), "dng_pm/adobe_data.rs");
-        assert_eq!(generate_module_path("Nikon", "AFPoints105"), "nikon_pm/a_f_points105.rs");
+        assert_eq!(generate_module_path("Canon", "canonWhiteBalance"), "canon/canon_white_balance.rs");
+        assert_eq!(generate_module_path("GPS", "coordConv"), "gps/coord_conv.rs");
+        assert_eq!(generate_module_path("DNG", "AdobeData"), "dng/adobe_data.rs");
+        assert_eq!(generate_module_path("Nikon", "AFPoints105"), "nikon/a_f_points105.rs");
+        assert_eq!(generate_module_path("PanasonicRaw", "whiteBalance"), "panasonic_raw/white_balance.rs");
+        assert_eq!(generate_module_path("MinoltaRaw", "testPattern"), "minolta_raw/test_pattern.rs");
+        // Test known collisions
+        assert_eq!(generate_module_path("Charset", "encoding"), "charset_pm/encoding.rs");
+        assert_eq!(generate_module_path("Geolocation", "coords"), "geolocation_pm/coords.rs");
     }
     
     #[test]
     fn test_generate_pattern_path() {
-        assert_eq!(generate_pattern_path("Nikon", "arrays", "xlat_0"), "nikon_pm/arrays/xlat_0.rs");
-        assert_eq!(generate_pattern_path("Canon", "binary_data", "ProcessingBinaryData"), "canon_pm/binary_data/processing_binary_data.rs");
+        assert_eq!(generate_pattern_path("Nikon", "arrays", "xlat_0"), "nikon/arrays/xlat_0.rs");
+        assert_eq!(generate_pattern_path("Canon", "binary_data", "ProcessingBinaryData"), "canon/binary_data/processing_binary_data.rs");
+        assert_eq!(generate_pattern_path("PanasonicRaw", "binary_data", "wbInfo"), "panasonic_raw/binary_data/wb_info.rs");
+    }
+    
+    #[test]
+    fn test_module_name_to_directory() {
+        // Simple names - just lowercase
+        assert_eq!(module_name_to_directory("Canon"), "canon");
+        assert_eq!(module_name_to_directory("GPS"), "gps");
+        assert_eq!(module_name_to_directory("DNG"), "dng");
+        
+        // Compound names - convert to snake_case
+        assert_eq!(module_name_to_directory("PanasonicRaw"), "panasonic_raw");
+        assert_eq!(module_name_to_directory("MinoltaRaw"), "minolta_raw");
+        assert_eq!(module_name_to_directory("CanonRaw"), "canon_raw");
+        
+        // Known collisions - keep _pm suffix
+        assert_eq!(module_name_to_directory("Charset"), "charset_pm");
+        assert_eq!(module_name_to_directory("Geolocation"), "geolocation_pm");
     }
     
     #[test]
@@ -226,15 +295,24 @@ mod tests {
         // Basic cases - single words just lowercase
         assert_eq!(to_snake_case("Canon"), "canon");
         
-        // Acronyms - each letter gets underscore
-        assert_eq!(to_snake_case("GPS"), "g_p_s");
-        assert_eq!(to_snake_case("DNG"), "d_n_g");
+        // Acronyms - all-caps become simple lowercase (more idiomatic)
+        assert_eq!(to_snake_case("GPS"), "gps");
+        assert_eq!(to_snake_case("DNG"), "dng");
+        assert_eq!(to_snake_case("IPTC"), "iptc");
+        assert_eq!(to_snake_case("JPEG"), "jpeg");
+        assert_eq!(to_snake_case("PDF"), "pdf");
+        assert_eq!(to_snake_case("PNG"), "png");
+        assert_eq!(to_snake_case("RIFF"), "riff");
+        assert_eq!(to_snake_case("XMP"), "xmp");
+        
+        // Acronyms with numbers
+        assert_eq!(to_snake_case("JPEG2000"), "jpeg2000");
         
         // camelCase - lowercase with underscores
         assert_eq!(to_snake_case("canonWhiteBalance"), "canon_white_balance");
         assert_eq!(to_snake_case("coordConv"), "coord_conv");
         
-        // Mixed cases - each uppercase gets underscore
+        // Mixed cases - each uppercase gets underscore (not pure acronyms)
         assert_eq!(to_snake_case("AFInfo2"), "a_f_info2");
         assert_eq!(to_snake_case("AFPoints105"), "a_f_points105");
         
@@ -251,28 +329,36 @@ mod tests {
     
     #[test]
     fn test_extract_directory_path() {
-        assert_eq!(extract_directory_path("canon_pm/white_balance.rs"), "canon_pm");
-        assert_eq!(extract_directory_path("nikon_pm/arrays/xlat_0.rs"), "nikon_pm/arrays");
+        assert_eq!(extract_directory_path("canon/white_balance.rs"), "canon");
+        assert_eq!(extract_directory_path("nikon/arrays/xlat_0.rs"), "nikon/arrays");
+        assert_eq!(extract_directory_path("panasonic_raw/white_balance.rs"), "panasonic_raw");
+        assert_eq!(extract_directory_path("charset_pm/encoding.rs"), "charset_pm");
         assert_eq!(extract_directory_path("single_file.rs"), "");
     }
     
     #[test]
     fn test_is_valid_path() {
-        // Valid paths
-        assert!(is_valid_path("canon_pm/white_balance.rs"));
-        assert!(is_valid_path("gps_pm/coord_conv.rs"));
-        assert!(is_valid_path("nikon_pm/arrays/xlat_0.rs"));
+        // Valid paths - new naming without _pm suffix
+        assert!(is_valid_path("canon/white_balance.rs"));
+        assert!(is_valid_path("gps/coord_conv.rs"));
+        assert!(is_valid_path("nikon/arrays/xlat_0.rs"));
+        assert!(is_valid_path("panasonic_raw/white_balance.rs"));
+        
+        // Valid paths - known collisions with _pm suffix
+        assert!(is_valid_path("charset_pm/encoding.rs"));
+        assert!(is_valid_path("geolocation_pm/coords.rs"));
         
         // Invalid paths (PascalCase)
-        assert!(!is_valid_path("Canon_pm/WhiteBalance.rs"));
-        assert!(!is_valid_path("GPS_pm/CoordConv.rs"));
+        assert!(!is_valid_path("Canon/WhiteBalance.rs"));
+        assert!(!is_valid_path("GPS/CoordConv.rs"));
+        assert!(!is_valid_path("PanasonicRaw/WhiteBalance.rs"));
         
         // Invalid file extension
-        assert!(!is_valid_path("canon_pm/white_balance.txt"));
+        assert!(!is_valid_path("canon/white_balance.txt"));
         
         // Invalid snake_case
-        assert!(!is_valid_path("canon_pm/White_Balance.rs"));
-        assert!(!is_valid_path("Canon_PM/white_balance.rs"));
+        assert!(!is_valid_path("canon/White_Balance.rs"));
+        assert!(!is_valid_path("CANON/white_balance.rs"));
     }
     
     #[test]
