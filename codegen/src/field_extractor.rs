@@ -7,7 +7,6 @@ use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
 use std::collections::HashMap;
-use std::io::{BufRead, BufReader};
 use std::path::Path;
 use std::process::{Command, Stdio};
 use tracing::{debug, info, warn};
@@ -69,29 +68,34 @@ impl FieldExtractor {
     pub fn extract_module(&self, module_path: &Path) -> Result<(Vec<FieldSymbol>, FieldExtractionStats)> {
         info!("Extracting symbols from module: {}", module_path.display());
         
-        // Run the field extractor
-        let mut cmd = Command::new("perl")
+        // Run the field extractor and capture all output at once
+        let output = Command::new("perl")
             .arg(&self.script_path)
             .arg(module_path)
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
-            .spawn()
+            .output()
             .with_context(|| format!("Failed to execute field extractor for {}", module_path.display()))?;
         
-        // Parse JSON Lines output
-        let stdout = cmd.stdout.take().unwrap();
-        let reader = BufReader::new(stdout);
+        // Check if the process succeeded
+        if !output.status.success() {
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            return Err(anyhow::anyhow!("Field extractor failed: {}", stderr));
+        }
+        
+        // Parse JSON Lines output from stdout
+        let stdout_str = String::from_utf8_lossy(&output.stdout);
         let mut symbols = Vec::new();
         
-        for line in reader.lines() {
-            let line = line.with_context(|| "Failed to read line from field extractor")?;
+        for line in stdout_str.lines() {
+            let line = line.trim();
             
-            if line.trim().is_empty() {
+            if line.is_empty() {
                 continue;
             }
             
             // Parse JSON line
-            match serde_json::from_str::<FieldSymbol>(&line) {
+            match serde_json::from_str::<FieldSymbol>(line) {
                 Ok(symbol) => {
                     debug!("Extracted symbol: {} ({})", symbol.name, symbol.symbol_type);
                     symbols.push(symbol);
@@ -101,15 +105,6 @@ impl FieldExtractor {
                     // Continue processing other lines rather than failing
                 }
             }
-        }
-        
-        // Wait for process to complete and capture stderr
-        let output = cmd.wait_with_output()
-            .with_context(|| "Failed to wait for field extractor completion")?;
-        
-        if !output.status.success() {
-            let stderr = String::from_utf8_lossy(&output.stderr);
-            return Err(anyhow::anyhow!("Field extractor failed: {}", stderr));
         }
         
         // Parse extraction statistics from stderr
