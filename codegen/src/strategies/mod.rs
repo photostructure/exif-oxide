@@ -6,7 +6,7 @@
 
 use anyhow::Result;
 use serde_json::Value as JsonValue;
-use std::collections::HashMap;
+use std::collections::{HashMap, BTreeSet};
 use std::path::Path;
 use tracing::{debug, info, warn};
 
@@ -263,7 +263,7 @@ impl StrategyDispatcher {
             // Extract module name from file path (e.g., "canon/file.rs" -> "canon" or "canon_pm/file.rs" -> "canon_pm")
             if let Some(module_dir) = file.path.split('/').next() {
                 // Accept both old _pm suffixed and new snake_case modules
-                if module_dir.ends_with("_pm") || (!module_dir.contains('.') && !module_dir.eq("file_types") && !module_dir.eq("supported_tags")) {
+                if module_dir.ends_with("_pm") || (!module_dir.contains('.') && !module_dir.eq("supported_tags")) {
                     let files_list = modules_with_files.entry(module_dir.to_string()).or_insert_with(Vec::new);
                     // Extract filename without .rs extension
                     if let Some(filename) = file.path.split('/').last() {
@@ -374,28 +374,32 @@ impl StrategyDispatcher {
         main_content.push_str("//!\n");
         main_content.push_str("//! This module re-exports all generated code for easy access.\n\n");
         
-        // Sort modules for consistent output
-        let mut module_names: Vec<String> = modules_with_files.keys().cloned().collect();
-        module_names.sort();
+        // Collect all modules in a BTreeSet for deterministic, sorted output
+        let mut all_modules = BTreeSet::new();
         
-        // Generate module declarations for all generated modules
-        for module_dir in &module_names {
+        // Add all generated modules
+        for module_dir in modules_with_files.keys() {
+            all_modules.insert(module_dir.clone());
+        }
+        
+        // Add standalone files if they exist
+        if Path::new(output_dir).join("file_types").join("mod.rs").exists() {
+            all_modules.insert("file_types".to_string());
+        }
+        if Path::new(output_dir).join("composite_tags.rs").exists() {
+            all_modules.insert("composite_tags".to_string());
+        }
+        if Path::new(output_dir).join("supported_tags.rs").exists() {
+            all_modules.insert("supported_tags".to_string());
+        }
+        
+        // Generate module declarations in sorted order
+        for module_dir in &all_modules {
             // Add special attribute for non-snake-case modules
             if module_dir.ends_with("_pm") {
                 main_content.push_str("#[allow(non_snake_case)]\n");
             }
             main_content.push_str(&format!("pub mod {};\n", module_dir));
-        }
-        
-        // Add file_types, composite_tags, and supported_tags if they exist as standalone files
-        if Path::new(output_dir).join("file_types").join("mod.rs").exists() {
-            main_content.push_str("pub mod file_types;\n");
-        }
-        if Path::new(output_dir).join("composite_tags.rs").exists() {
-            main_content.push_str("pub mod composite_tags;\n");
-        }
-        if Path::new(output_dir).join("supported_tags.rs").exists() {
-            main_content.push_str("pub mod supported_tags;\n");
         }
         
         main_content.push('\n');
@@ -419,7 +423,7 @@ impl StrategyDispatcher {
         main_content.push_str("pub fn initialize_all() {\n");
         main_content.push_str("}\n");
         
-        let modules_added = module_names.len();
+        let modules_added = all_modules.len();
         
         if let Err(e) = fs::write(&main_mod_path, main_content) {
             return Err(anyhow::anyhow!(
