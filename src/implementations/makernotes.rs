@@ -2,7 +2,7 @@
 // Implements ExifTool's signature-based manufacturer detection
 // Based on third-party/exiftool/lib/Image/ExifTool/MakerNotes.pm
 
-use crate::generated::fujifilm_pm::tag_kit::FUJIFILM_PM_TAG_KITS;
+use crate::generated::fuji_film::main_tags::FUJIFILM_MAIN_TAGS;
 use crate::tiff_types::ByteOrder;
 use crate::types::{Result, TagValue};
 use tracing::{debug, trace};
@@ -536,7 +536,7 @@ fn parse_fujifilm_ifd(data: &[u8], byte_order: ByteOrder) -> Result<Vec<(String,
 
 /// Get FujiFilm tag name from tag ID using the generated tag kit
 fn get_fujifilm_tag_name(tag_id: u32) -> String {
-    if let Some(tag_kit) = FUJIFILM_PM_TAG_KITS.get(&tag_id) {
+    if let Some(tag_kit) = FUJIFILM_MAIN_TAGS.get(&tag_id) {
         tag_kit.name.to_string()
     } else {
         format!("Fujifilm_0x{:04X}", tag_id)

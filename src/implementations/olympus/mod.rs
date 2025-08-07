@@ -96,10 +96,10 @@ pub fn is_olympus_makernote(make: &str) -> bool {
 /// Find Olympus tag ID by name from the tag kit system
 /// Used for applying PrintConv to subdirectory-extracted tags
 fn find_olympus_tag_id_by_name(tag_name: &str) -> Option<u32> {
-    use crate::generated::olympus_pm::tag_kit::OLYMPUS_PM_TAG_KITS;
+    use crate::generated::olympus::OLYMPUS_MAIN_TAGS;
 
-    // Search through all Olympus tag kit entries to find matching name
-    for (&tag_id, tag_def) in OLYMPUS_PM_TAG_KITS.iter() {
+    // Search through all Olympus main tags entries to find matching name
+    for (&tag_id, tag_def) in OLYMPUS_MAIN_TAGS.iter() {
         if tag_def.name == tag_name {
             return Some(tag_id);
         }
@@ -386,7 +386,8 @@ pub fn process_olympus_subdirectory_tags(
     exif_reader: &mut crate::exif::ExifReader,
 ) -> crate::types::Result<()> {
     use crate::exif::subdirectory_processing::process_subdirectories_with_printconv;
-    use crate::generated::olympus_pm::tag_kit;
+    // TODO: Task E - Replace tag_kit functions with manufacturer-specific implementations
+    // use crate::generated::olympus::tag_kit;
     use crate::tiff_types::ByteOrder;
     use crate::types::TagValue;
     use tracing::debug;
@@ -464,15 +465,16 @@ pub fn process_olympus_subdirectory_tags(
 
     // Use the generic subdirectory processing with Olympus-specific functions
     // Fix Group1 assignment: Use "Olympus" as namespace for group1="Olympus" instead of "MakerNotes"
-    process_subdirectories_with_printconv(
-        exif_reader,
-        "Olympus",
-        "Olympus",
-        tag_kit::has_subdirectory,
-        tag_kit::process_subdirectory,
-        tag_kit::apply_print_conv,
-        find_olympus_tag_id_by_name,
-    )?;
+    // TODO: Task E - Replace tag_kit functions with manufacturer-specific implementations
+    // process_subdirectories_with_printconv(
+    //     exif_reader,
+    //     "Olympus",
+    //     "Olympus",
+    //     tag_kit::has_subdirectory,
+    //     tag_kit::process_subdirectory,
+    //     tag_kit::apply_print_conv,
+    //     find_olympus_tag_id_by_name,
+    // )?;
 
     debug!("Olympus subdirectory processing completed");
     Ok(())

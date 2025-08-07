@@ -29,7 +29,7 @@ If you read this document, you **MUST** read and follow [CLAUDE.md](../CLAUDE.md
 - **Trust ExifTool** (Translate and cite references, but using codegen is preferred)
 - **Ask clarifying questions** (Maximize "velocity made good")
 - **Assume Concurrent Edits** (STOP if you find a compilation error that isn't related to your work)
-- **Don't edit generated code** (read [CODEGEN.md](CODEGEN.md) if you find yourself wanting to edit `src/generated/**.*rs`)
+- **DO NOT DIRECTLY EDIT ANYTHING IN `src/generated/**/*.rs`** (Read [CODEGEN.md](CODEGEN.md) -- fix the generator or strategy in codegen/src instead!)
 - **Keep documentation current** (so update this TPP with status updates, and any novel context that will be helpful to future engineers that are tasked with completing this TPP. Do not use hyperbolic "DRAMATIC IMPROVEMENT"/"GROUNDBREAKING PROGRESS" styled updates -- that causes confusion and partially-completed low-quality work)
 
 **NOTE**: These rules prevent build breaks, data corruption, and wasted effort across the team. 
