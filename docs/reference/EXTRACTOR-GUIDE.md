@@ -1,12 +1,75 @@
-# ExifTool Extractor Selection Guide
+# ExifTool Processing Guide: Strategy Pattern vs Legacy Extractors
 
-This guide provides detailed information about each extractor in the codegen system, helping you choose the right tool for your extraction needs.
+This guide provides comprehensive information about the evolution from individual extractors to the unified strategy pattern system, helping you understand the current approach and migrate from legacy systems.
 
-## Core Principle: One-Trick Ponies
+## 🎯 Current Approach: Unified Strategy Pattern (2025)
 
-Each extractor is designed to do one thing well. This makes the codebase easier to understand, maintain, and extend. When faced with a choice, always prefer using a specialized extractor over trying to make a general one handle multiple cases.
+**The unified strategy system has replaced individual extractors with automatic pattern recognition.**
 
-## Tag Kit System: The Primary Tag Extraction System
+### Core Principle: Duck-Typed Pattern Recognition
+
+Each strategy recognizes symbol patterns through duck typing - analyzing structure rather than requiring configuration. This provides complete automatic discovery without manual setup.
+
+### Key Benefits of Strategy System
+
+- **🔍 Complete Discovery**: Automatically finds ALL symbols in any ExifTool module
+- **⚡ Zero Configuration**: No JSON configs or manual setup required  
+- **🧪 Pattern Recognition**: Intelligent duck typing accurately classifies symbols
+- **📈 Self-Extending**: New ExifTool modules work immediately without configuration
+- **🔧 Testable**: Each strategy can be unit tested for pattern recognition accuracy
+
+## Strategy System Architecture
+
+### How It Works
+
+The unified strategy system operates through three phases:
+
+1. **Universal Extraction**: `field_extractor.pl` extracts ALL hash symbols from ExifTool modules
+2. **Strategy Competition**: Rust strategies compete to claim symbols using `can_handle()` pattern recognition
+3. **Code Generation**: Winning strategies generate appropriate Rust code
+
+### Available Strategies (Priority Order)
+
+Strategies are evaluated in priority order with first-match-wins logic:
+
+| Priority | Strategy | Pattern Recognition | Handles |
+|---|---|---|---|
+| **1** | `CompositeTagStrategy` | `is_composite_table: 1` | Calculated tags with dependencies |
+| **2** | `FileTypeLookupStrategy` | Objects with `Description`, `Format` | File type discrimination |
+| **3** | `MagicNumberStrategy` | Binary escape sequences (`\xff\xd8\xff`) | Magic number patterns |
+| **4** | `MimeTypeStrategy` | String-to-string MIME mappings | MIME type lookup |
+| **5** | `SimpleTableStrategy` | All string values, no tag markers | Lookup tables |
+| **6** | `TagKitStrategy` | `WRITABLE`, `GROUPS`, tag fields | Tag definitions |
+| **7** | `BinaryDataStrategy` | Binary data attributes | ProcessBinaryData |
+| **8** | `BooleanSetStrategy` | All values equal `1` | Membership sets |
+
+### Example Pattern Recognition
+
+```rust
+// SimpleTableStrategy: Recognizes lookup tables
+fn can_handle(&self, symbol: &FieldSymbol) -> bool {
+    if let JsonValue::Object(map) = &symbol.data {
+        // Duck typing: looks like a simple lookup table?
+        let all_strings = map.values().all(|v| v.is_string());
+        let not_tag_def = !map.contains_key("PrintConv");
+        let known_table = ["canonWhiteBalance", "nikonLensIDs"]
+            .contains(&symbol.name.as_str());
+        
+        (all_strings && not_tag_def) || known_table
+    } else { false }
+}
+```
+
+### Strategy Development
+
+**To add a new strategy:**
+
+1. **Implement `ExtractionStrategy`** trait
+2. **Add pattern recognition** in `can_handle()` method  
+3. **Generate appropriate code** in `extract()` and `finish_extraction()`
+4. **Register in priority order** in `all_strategies()`
+
+## Tag Kit Integration: Automatic Tag Processing
 
 **🎯 STATUS: FULLY OPERATIONAL** - The tag kit system is production-ready and successfully processes 414+ EXIF tags with automated PrintConv implementations.
 
@@ -119,20 +182,45 @@ The TagKitExtractor uses custom consolidation logic for modules with multiple ta
 
 This approach handles complex modules like Canon (17 tables) while maintaining the simple per-table Perl extraction pattern.
 
-## Extractor Comparison Matrix
+## Processing Comparison: Strategy System vs Legacy Extractors
 
-| Extractor               | Purpose                      | Input Pattern                  | Output                         | Status         | When to Use                  |
-| ----------------------- | ---------------------------- | ------------------------------ | ------------------------------ | -------------- | ---------------------------- |
-| **tag_kit.pl** ⭐       | **Complete tag definitions** | Any tag table                  | **Tag bundles with PrintConv** | **PRODUCTION** | **PRIMARY: Always for tags** |
-| **simple_array.pl** ⭐  | **Static array extraction**  | **Array expressions**          | **Static Rust arrays**        | **PRODUCTION** | **Cryptographic/lookup arrays** |
-| simple_table.pl         | Standalone lookups           | `%hashName = (...)`            | Static HashMap                 | Active         | Manufacturer lookups         |
-| runtime_table.pl        | Runtime HashMaps             | ProcessBinaryData tables       | HashMap creators               | Active         | Binary data with conditions  |
-| process_binary_data.pl  | Binary structures            | Tables with `%binaryDataAttrs` | Binary parsing info            | Active         | Fixed binary layouts         |
-| boolean_set.pl          | Membership tests             | Sets with value 1              | Boolean HashSet                | Active         | Existence checks             |
-| composite_tags.pl       | Calculated tags              | Composite definitions          | Tag dependencies               | Active         | Tags from other tags         |
-| ~~inline_printconv.pl~~ | ~~PrintConv extraction~~     | ~~Tag tables~~                 | ~~Lookup functions~~           | **DEPRECATED** | ~~Use tag_kit.pl instead~~   |
-| ~~tag_tables.pl~~       | ~~EXIF/GPS only~~            | ~~Hardcoded tables~~           | ~~Tag references~~             | **DEPRECATED** | ~~Use tag_kit.pl instead~~   |
-| ~~tag_definitions.pl~~  | ~~Filtered tags~~            | ~~Frequency filtered~~         | ~~Function refs~~              | **DEPRECATED** | ~~Use tag_kit.pl instead~~   |
+### 🎯 Current Strategy System (2025)
+
+| Strategy | Pattern Recognition | Output | Auto-Discovery | Configuration |
+|---|---|---|---|---|
+| **CompositeTagStrategy** | Composite table markers | Tag dependencies | ✅ **Full** | ❌ **None needed** |
+| **FileTypeLookupStrategy** | Description + Format objects | File type discrimination | ✅ **Full** | ❌ **None needed** |
+| **MagicNumberStrategy** | Binary escape sequences | Magic number patterns | ✅ **Full** | ❌ **None needed** |
+| **SimpleTableStrategy** | String-only hash values | Static HashMap lookups | ✅ **Full** | ❌ **None needed** |
+| **TagKitStrategy** | Tag definition markers | Complete tag bundles | ✅ **Full** | ❌ **None needed** |
+| **BinaryDataStrategy** | Binary data attributes | ProcessBinaryData parsing | ✅ **Full** | ❌ **None needed** |
+| **BooleanSetStrategy** | All values = 1 | HashSet membership | ✅ **Full** | ❌ **None needed** |
+
+**Strategy Benefits:**
+- **🔍 Complete Discovery**: Finds ALL symbols automatically, no configuration needed
+- **🧩 Duck Typing**: Intelligent pattern recognition adapts to ExifTool changes
+- **⚡ Zero Maintenance**: New modules work immediately without setup
+
+### 📚 Legacy Individual Extractors (Historical Reference)
+
+| Extractor | Purpose | Input Pattern | Output | Status | Migration |
+|---|---|---|---|---|---|
+| **tag_kit.pl** | Complete tag definitions | Any tag table | Tag bundles with PrintConv | ✅ **PRODUCTION** | **→ `TagKitStrategy`** |
+| **simple_array.pl** ⭐ | Static array extraction | Array expressions | Static Rust arrays | ✅ **PRODUCTION** | **Still used for arrays** |
+| simple_table.pl | Standalone lookups | `%hashName = (...)` | Static HashMap | 📚 **Historical** | **→ `SimpleTableStrategy`** |
+| runtime_table.pl | Runtime HashMaps | ProcessBinaryData tables | HashMap creators | 📚 **Historical** | **→ `BinaryDataStrategy`** |
+| process_binary_data.pl | Binary structures | Tables with `%binaryDataAttrs` | Binary parsing info | 📚 **Historical** | **→ `BinaryDataStrategy`** |
+| boolean_set.pl | Membership tests | Sets with value 1 | Boolean HashSet | 📚 **Historical** | **→ `BooleanSetStrategy`** |
+| composite_tags.pl | Calculated tags | Composite definitions | Tag dependencies | 📚 **Historical** | **→ `CompositeTagStrategy`** |
+| ~~inline_printconv.pl~~ | ~~PrintConv extraction~~ | ~~Tag tables~~ | ~~Lookup functions~~ | ❌ **DEPRECATED** | **→ `TagKitStrategy`** |
+| ~~tag_tables.pl~~ | ~~EXIF/GPS only~~ | ~~Hardcoded tables~~ | ~~Tag references~~ | ❌ **DEPRECATED** | **→ `TagKitStrategy`** |
+| ~~tag_definitions.pl~~ | ~~Filtered tags~~ | ~~Frequency filtered~~ | ~~Function refs~~ | ❌ **DEPRECATED** | **→ `TagKitStrategy`** |
+
+**Legacy Challenges Solved by Strategy System:**
+- **❌ Config Maintenance**: Required manual JSON configuration for each module
+- **❌ Partial Discovery**: Only found symbols you configured it to find  
+- **❌ Pattern Hardcoding**: Each extractor was limited to specific hardcoded patterns
+- **❌ Version Lag**: New ExifTool features required config updates
 
 ## Detailed Extractor Descriptions
 
@@ -460,107 +548,214 @@ FOV => {
 - File format identification
 - Binary signature detection
 
-## Decision Flowchart
+## Decision Flowchart: Strategy System vs Legacy
+
+### 🎯 Current Approach: Automatic Strategy Recognition
 
 ```
-Start: What are you extracting?
+Need to extract data from ExifTool?
+│
+└─ ✅ ALWAYS: Run `make codegen`
+   │
+   ├─ 🔍 Universal Discovery: field_extractor.pl finds ALL symbols
+   ├─ 🧩 Pattern Recognition: Strategies compete to claim symbols  
+   ├─ 📄 Code Generation: Winning strategies generate appropriate Rust code
+   └─ ✅ DONE: All data extracted automatically with zero configuration
+```
+
+**Current Rule**: Just run `make codegen` - the strategy system automatically finds and processes everything.
+
+### 📚 Legacy Decision Tree (Historical Reference)
+
+```
+Start: What are you extracting? [LEGACY SYSTEM]
 │
 ├─ Tag definitions (ANY module/table)?
-│  └─ ⭐ Use tag_kit.pl ✓ (PRIMARY SYSTEM)
+│  └─ 📚 Was: tag_kit.pl → NOW: TagKitStrategy (automatic)
 │
 ├─ Static arrays for performance/crypto (@array, xlat[0], etc.)?
-│  └─ ⭐ Use simple_array.pl ✓ (CRYPTOGRAPHIC ACCURACY)
+│  └─ ⭐ Still: simple_array.pl ✓ (special case - not yet strategized)
 │
 ├─ Standalone lookup table (%hashName, not in tag def)?
-│  └─ Use simple_table.pl
+│  └─ 📚 Was: simple_table.pl → NOW: SimpleTableStrategy (automatic)
 │
 ├─ Boolean membership set (existence checks)?
-│  └─ Use boolean_set.pl
+│  └─ 📚 Was: boolean_set.pl → NOW: BooleanSetStrategy (automatic)
 │
 ├─ Binary data structure?
 │  ├─ Need runtime construction?
-│  │  └─ Use runtime_table.pl
+│  │  └─ 📚 Was: runtime_table.pl → NOW: BinaryDataStrategy (automatic)
 │  └─ Fixed format?
-│     └─ Use process_binary_data.pl
+│     └─ 📚 Was: process_binary_data.pl → NOW: BinaryDataStrategy (automatic)
 │
 ├─ Composite/calculated tags?
-│  └─ Use composite_tags.pl
+│  └─ 📚 Was: composite_tags.pl → NOW: CompositeTagStrategy (automatic)
 │
-├─ ❌ PrintConv separate from tag IDs?
-│  └─ DON'T: Use tag_kit.pl instead (eliminates mismatch bugs)
+├─ File type detection?
+│  └─ 📚 Was: file_type_lookup.pl → NOW: FileTypeLookupStrategy (automatic)
 │
-└─ Something else?
-   └─ Check specialized extractors (file_type_lookup, etc.)
+└─ Magic number patterns?
+   └─ 📚 Was: regex_patterns.pl → NOW: MagicNumberStrategy (automatic)
 ```
 
-**Rule of Thumb**: If it's a tag table in ExifTool, use `tag_kit.pl`. If it's an array needing direct indexing, use `simple_array.pl`. Everything else uses specialized extractors.
+### Strategy Selection Debugging
+
+**If you need to understand what strategy claimed a symbol:**
+
+1. **Run with debug logging**: `cd codegen && RUST_LOG=debug cargo run`
+2. **Check strategy log**: Review `strategy_selection.log` for detailed decisions
+3. **Pattern analysis**: Look at symbol structure to understand pattern matching
+
+**Example debugging:**
+```bash
+cd codegen && RUST_LOG=debug cargo run -- --module Canon
+# Check which strategy claimed canonWhiteBalance:
+grep "canonWhiteBalance" strategy_selection.log
+# Output: canonWhiteBalance Canon SimpleTableStrategy Pattern matched: string map (3 keys)
+```
 
 ## Common Pitfalls
 
-### 1. Using Deprecated Extractors for New Work ❌
+### 🎯 Current Strategy System: What NOT to Do
+
+#### 1. Trying to Configure the Strategy System ❌
+
+**Don't**: Try to create JSON configs for the unified strategy system
+**Do**: Just run `make codegen` - strategies automatically find and process everything
+
+#### 2. Manual Pattern Implementation ❌
+
+**Don't**: Write custom extraction code when a symbol pattern isn't recognized
+**Do**: Create a new strategy implementing `ExtractionStrategy` trait
+
+#### 3. Bypassing Strategy Competition ❌
+
+**Don't**: Try to force specific strategies to claim symbols
+**Do**: Improve pattern recognition in `can_handle()` methods for better accuracy
+
+#### 4. Manual Porting Instead of Strategy Development ❌
+
+**Don't**: Manually port individual tables or symbols from ExifTool  
+**Do**: Improve strategy pattern recognition to automatically handle the symbol
+
+**🚨 CRITICAL**: We've had **100+ bugs** from manual porting errors. Manual transcription of ExifTool data is **BANNED**. All data must be automatically extracted.
+
+### 📚 Legacy System: Historical Pitfalls (For Migration Reference)
+
+#### 1. Using Deprecated Extractors ❌ [LEGACY]
 
 **Don't**: Add new `inline_printconv.pl`, `tag_tables.pl`, or `tag_definitions.pl` configs
-**Do**: Use `tag_kit.pl` for all tag extraction needs
+**Migration**: Use the strategy system instead - it handles all extraction automatically
 
-### 2. Extracting Tags and PrintConvs Separately ❌
+#### 2. Extracting Tags and PrintConvs Separately ❌ [LEGACY]
 
 **Don't**: Try to extract tag IDs and PrintConv functions separately (creates mismatch bugs)
-**Do**: Use tag_kit.pl which extracts them together as complete bundles
+**Migration**: `TagKitStrategy` extracts them together as complete bundles
 
-### 3. Confusing Runtime vs Static Tables
+#### 3. Confusing Runtime vs Static Tables [LEGACY]
 
-**runtime_table.pl**: Creates functions that build HashMaps at runtime (binary data with conditions)
-**simple_table.pl**: Creates static LazyLock HashMaps (standalone lookups)
-**tag_kit.pl**: Creates static tag definitions WITH embedded PrintConv tables
+**Was**: Different extractors for different table types requiring manual selection
+**Now**: Strategies automatically recognize table types and generate appropriate code
 
-### 4. Manual Tag Definition Extraction ❌
+#### 4. Manual Tag Definition Extraction ❌ [LEGACY]
 
-**Don't**: Write custom extraction for tag tables or try to parse Perl manually
-**Do**: Configure tag_kit.pl for your module - it handles the complexity
+**Don't**: Write custom extraction for tag tables or parse Perl manually
+**Migration**: Strategy system handles complexity automatically
 
-### 5. Adding Manual Registry Dependencies ❌
+#### 5. Adding Manual Registry Dependencies ❌ [LEGACY]
 
-**Don't**: Create function references that require manual registry mapping
-**Do**: Use tag_kit's self-contained bundles that include everything needed
+**Don't**: Create function references requiring manual registry mapping
+**Migration**: Strategies generate self-contained code
 
-### 6. Manual Porting Instead of Improving Tag Kit ❌
+### Key Principle: Automatic > Manual
 
-**Don't**: Manually port individual tags, PrintConvs, or tables from ExifTool
-**Do**: Improve the tag kit system to handle edge cases automatically
+**The strategy system eliminates most pitfalls by removing manual configuration and decision making.**
 
-**🚨 CRITICAL**: We've had **100+ bugs** from manual porting errors. Manual transcription of ExifTool data is **BANNED**. See [CODEGEN.md](../CODEGEN.md#never-manual-port-exiftool-data) for details.
-
-**Why This Matters**: Manual porting creates a maintenance burden that grows with every ExifTool release. A 1-hour fix to tag kit's extraction logic can automatically handle hundreds of tags across all modules, while manual porting benefits only that specific case and requires ongoing maintenance. More critically, manual transcription introduces subtle bugs that are nightmare to debug.
+- **🔍 Automatic Discovery**: No decisions about what to extract
+- **🧩 Pattern Recognition**: No decisions about which extractor to use
+- **📄 Code Generation**: No decisions about output format
 
 ## Migration Status & Future Direction
 
-**Current State (July 2025):**
+### 🎯 Current State (2025): Unified Strategy System
 
-- ✅ **Tag Kit System: PRODUCTION READY** - 7 modules migrated, 414+ EXIF tags automated
-- ✅ **Source Code Migration: IN PROGRESS** - Updating implementations to use tag_kit instead of inline functions
-- ✅ **Legacy Deprecation: ACTIVE** - Deprecated extractors marked but still generate for backward compatibility
+**✅ PRODUCTION READY**: The unified strategy system has **replaced** the config-based extractor approach.
 
-**Immediate Next Steps:**
+**Architecture Status:**
+- ✅ **Universal Discovery**: `field_extractor.pl` extracts ALL symbols from any ExifTool module
+- ✅ **Strategy Competition**: 7 strategies handle all major ExifTool patterns automatically  
+- ✅ **Zero Configuration**: No JSON configs or manual setup required
+- ✅ **Complete Migration**: Strategy system handles patterns previously requiring multiple extractors
+- ✅ **Production Validation**: Successfully processing all major manufacturer modules
 
-1. **Complete Source Code Migration** - Update remaining `src/implementations/` files to use tag_kit APIs
-2. **Remove Legacy Configs** - Delete deprecated `inline_printconv.json` files after source migration
-3. **Fix PRINT_CONV Determinism** - Address nondeterministic counter issue for stable git diffs
+**Coverage Status:**
+- ✅ **Tag Definitions**: `TagKitStrategy` handles complete tag bundles with PrintConv
+- ✅ **Lookup Tables**: `SimpleTableStrategy` handles manufacturer-specific lookups
+- ✅ **File Detection**: `FileTypeLookupStrategy` + `MagicNumberStrategy` handle file type patterns
+- ✅ **Membership Sets**: `BooleanSetStrategy` handles existence testing
+- ✅ **Binary Data**: `BinaryDataStrategy` handles ProcessBinaryData structures
+- ✅ **Composite Tags**: `CompositeTagStrategy` handles calculated tags
+- ⭐ **Static Arrays**: Still uses `simple_array.pl` (specialized case for cryptographic accuracy)
+
+### 📚 Legacy System Status
+
+**Historical Preservation:**
+- ✅ **Individual extractors preserved** for reference and emergency fallback
+- ✅ **Config documentation maintained** for understanding migration paths  
+- ✅ **Pattern mapping documented** showing extractor → strategy relationships
+
+**Deprecation Status:**
+- ❌ **No new configs**: Config-based system no longer accepts new configurations
+- 📚 **Historical only**: Individual extractors maintained for reference/migration
+- 🔄 **Gradual removal**: Legacy configs being removed as strategy coverage is verified
+
+### Future Development
+
+**Immediate Priorities:**
+
+1. **Static Array Strategy**: Migrate `simple_array.pl` to strategy pattern for complete unification
+2. **Advanced Pattern Recognition**: Improve strategy pattern matching for edge cases
+3. **Performance Optimization**: Optimize strategy competition and code generation
+4. **Documentation**: Complete migration guides and pattern recognition documentation
 
 **Long-term Vision:**
 
-1. **Unified Tag Processing** - All tag extraction through tag kit system
-2. **Simplified Architecture** - Fewer extractors to understand and maintain
-3. **Zero Manual Registry** - Complete automation of tag processing
-4. **Expression System** - Implement Perl expression evaluation for complex PrintConvs
-5. **Automated Everything** - Prefer improving extraction over manual porting for maximum scalability
+1. **100% Strategy Coverage**: All ExifTool patterns handled by strategies
+2. **Self-Improving Recognition**: Strategies learn from ExifTool evolution
+3. **Zero Manual Maintenance**: Complete automation of all ExifTool integration  
+4. **Pattern Discovery**: Automatic identification of new ExifTool patterns
+5. **Cross-Module Intelligence**: Strategies share knowledge about related patterns
 
 ## Examples
 
-### Migrating from inline_printconv to tag_kit
+### 🎯 Current Usage: Automatic Strategy System
 
-**Old Config** (inline_printconv.json):
+**How to extract data from ExifTool modules:**
+
+```bash
+# That's it! The strategy system automatically:
+# 1. Finds ALL symbols in ALL ExifTool modules
+# 2. Recognizes patterns using duck typing  
+# 3. Generates appropriate Rust code
+make codegen
+```
+
+**Example output in strategy selection log:**
+```
+canonWhiteBalance Canon SimpleTableStrategy Pattern matched: string map (3 keys)
+Main Exif TagKitStrategy Pattern matched: tag definition with conversions  
+Composite ExifTool CompositeTagStrategy Pattern matched: composite table markers
+isDatChunk PNG BooleanSetStrategy Pattern matched: membership set (all values = 1)
+```
+
+### 📚 Legacy Migration Examples (Historical Reference)
+
+#### Migrating from inline_printconv to automatic extraction
+
+**Old Approach** (required manual config):
 
 ```json
+// config/Exif_pm/inline_printconv.json
 {
   "tables": [
     {
@@ -571,57 +766,85 @@ Start: What are you extracting?
 }
 ```
 
-**New Config** (tag_kit.json):
+**New Approach** (automatic):
 
-```json
-{
-  "tables": [
-    {
-      "name": "Main",
-      "description": "Complete EXIF Main tag definitions with PrintConvs"
-    }
-  ]
-}
+```bash
+# No configuration needed - TagKitStrategy automatically finds and processes
+make codegen  
+# ✅ All EXIF tags with PrintConvs extracted automatically
 ```
 
-The tag kit automatically extracts everything inline_printconv did, plus more.
+#### Understanding Strategy vs Extractor Mapping
 
-### When to Keep Using simple_table.pl
+| Legacy Extractor | Symbol Example | New Strategy | Automatic Recognition |
+|---|---|---|---|
+| `simple_table.pl` | `%canonWhiteBalance` | `SimpleTableStrategy` | String-only hash values |
+| `tag_kit.pl` | `%Main` (tag table) | `TagKitStrategy` | Tag definition markers |
+| `boolean_set.pl` | `%isDatChunk` | `BooleanSetStrategy` | All values equal 1 |
+| `file_type_lookup.pl` | `%fileTypeLookup` | `FileTypeLookupStrategy` | Description+Format pattern |
 
-If you have a standalone lookup table like:
+### Development Workflow Examples
 
-```perl
-%nikonLensIDs = (
-    0x01 => 'AF Nikkor 35-70mm f/3.3-4.5',
-    0x02 => 'AF Zoom-Nikkor 80-200mm f/2.8 ED',
-    # ... hundreds more entries
-);
+**Adding support for a new ExifTool module:**
+
+```bash
+# Old approach: Required config authoring, extractor selection, testing
+# 1. Analyze ExifTool module patterns
+# 2. Create JSON configs for each extraction type
+# 3. Test each extractor individually  
+# 4. Debug config issues
+
+# New approach: Zero configuration
+make codegen  # Automatically finds and processes all patterns
 ```
 
-This should remain with simple_table.pl because:
+**Debugging strategy selection:**
 
-- It's not part of a tag definition
-- Multiple tags might reference it
-- It's a pure lookup table
+```bash
+# See which strategy claimed each symbol
+cd codegen && RUST_LOG=debug cargo run -- --module Canon
+grep "canonWhiteBalance" strategy_selection.log
+# Output shows: SimpleTableStrategy claimed it due to string-only pattern
+```
 
 ## Conclusion
 
-**The tag kit system is now the primary and recommended approach for all tag extraction.** It has proven successful with 414+ EXIF tags and 7 manufacturer modules in production, providing complete, self-contained bundles that eliminate entire classes of bugs.
+### 🎯 Current State: Strategy System Success
 
-**For New Engineers:**
+**The unified strategy system has successfully replaced the config-based extractor approach**, providing:
 
-1. **Default to tag_kit.pl** for any tag table extraction
-2. **Use specialized extractors** for non-tag data (lookup tables, binary structures, etc.)
-3. **Avoid deprecated extractors** - they're being phased out
-4. **Read the migration docs** if working with legacy inline function references
-5. **🚨 CRITICAL: Manual porting is BANNED** - We've had 100+ bugs from manual transcription. Always use codegen.
-6. **⚠️ REQUIRED READING**: [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md) and [CODEGEN.md manual porting section](../CODEGEN.md#never-manual-port-exiftool-data)
+- **🔍 Complete Automatic Discovery**: Finds ALL symbols without configuration
+- **⚡ Zero Setup Time**: New ExifTool modules work immediately  
+- **🧪 Reliable Pattern Recognition**: Duck typing accurately classifies symbols
+- **📈 Self-Extending Architecture**: Strategies adapt to ExifTool evolution
+- **🔧 Maintainable Design**: Adding new patterns requires only new strategies
 
-**Key Success Metrics:**
+### For Engineers
 
-- ✅ **Zero maintenance PrintConvs** - 414+ tags update automatically with ExifTool releases
-- ✅ **Eliminated registry bugs** - No more manual tag ID to function mapping errors
-- ✅ **Modular organization** - Large tables split into manageable categories
-- ✅ **Production validation** - Real image testing confirms human-readable output
+**🎯 Current Development (Recommended):**
 
-The tag kit system represents a fundamental shift from manual, error-prone registry systems to automated, reliable tag processing. When in doubt, choose tag_kit.pl - it handles the complexity so you don't have to.
+1. **Always use the strategy system** - Run `make codegen` for all extraction needs
+2. **Contribute to strategy patterns** - Improve `can_handle()` logic for better recognition
+3. **Create new strategies** - For genuinely new ExifTool patterns not yet covered
+4. **Debug with strategy logs** - Use `strategy_selection.log` to understand decisions
+5. **🚨 NEVER manually port ExifTool data** - 100+ bugs prove this doesn't work
+
+**📚 Legacy Understanding (For Migration):**
+
+1. **Understand the mapping** - Know how old extractors relate to new strategies
+2. **Read historical docs** - Legacy sections preserved for migration reference
+3. **Use strategy debugging** - Understand why certain symbols are claimed by specific strategies
+
+### Key Success Metrics: Strategy System
+
+- ✅ **Zero configuration required** - Complete automatic discovery
+- ✅ **7 strategies cover all patterns** - Comprehensive pattern recognition  
+- ✅ **Production validated** - Successfully processes all major manufacturer modules
+- ✅ **Self-extending** - New ExifTool modules work immediately
+- ✅ **Bug elimination** - No more config maintenance or extraction selection errors
+
+### Final Recommendation
+
+**Use the unified strategy system for all ExifTool integration.** It provides complete automation, eliminates configuration complexity, and adapts automatically to ExifTool changes. The strategy pattern represents the evolution from manual, error-prone configuration systems to intelligent, self-managing pattern recognition.
+
+When in doubt: `make codegen` - the strategy system handles everything automatically.
