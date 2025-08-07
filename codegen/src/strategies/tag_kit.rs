@@ -35,6 +35,12 @@ impl TagKitStrategy {
     
     /// Check if symbol contains tag definition patterns
     fn is_tag_table_symbol(symbol: &FieldSymbol) -> bool {
+        // Don't claim Composite tables - let CompositeTagStrategy handle those
+        // Check if this is marked as a composite table (has AddCompositeTags call)
+        if symbol.metadata.is_composite_table == 1 {
+            return false;
+        }
+        
         // Look for common tag table indicators in the data
         if let Some(data) = symbol.data.as_object() {
             // Check for ExifTool tag table characteristics
@@ -48,16 +54,23 @@ impl TagKitStrategy {
                 return true;
             }
             
-            // Common tag table names
-            let common_tables = ["Main", "Composite", "Extra", "Image"];
+            // Common tag table names (excluding Composite which we handle above)
+            let common_tables = ["Main", "Extra", "Image"];
             if common_tables.contains(&symbol.name.as_str()) {
                 return true;
             }
             
-            // Large hash with potential tag definitions - check complexity
-            if symbol.metadata.complexity == "composite" || symbol.metadata.size > 50 {
-                // Complex or large structures often indicate tag definitions
-                return true;
+            // Check for actual tag definition structure in the data
+            // Real tag tables have entries with Name, Format, PrintConv, etc.
+            for (_key, value) in data {
+                if let Some(entry) = value.as_object() {
+                    // Look for tag definition fields
+                    if entry.contains_key("Name") || entry.contains_key("Format") || 
+                       entry.contains_key("Writable") || entry.contains_key("PrintConv") ||
+                       entry.contains_key("ValueConv") {
+                        return true;
+                    }
+                }
             }
         }
         

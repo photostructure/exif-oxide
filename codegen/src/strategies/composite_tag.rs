@@ -42,57 +42,8 @@ impl CompositeTagStrategy {
     
     /// Check if symbol contains composite tag characteristics
     fn is_composite_symbol(symbol: &FieldSymbol) -> bool {
-        // Check symbol metadata from field extractor first
-        if let Some(metadata) = symbol.data.get("metadata") {
-            if let Some(complexity) = metadata.get("complexity") {
-                if complexity == "composite" {
-                    return true;
-                }
-            }
-        }
-        
-        // Check symbol type from field extractor
-        if let Some(symbol_type) = symbol.data.get("type") {
-            if symbol_type == "composite_hash" {
-                return true;
-            }
-        }
-        
-        // Composite table is always a composite symbol
-        if symbol.name == "Composite" || symbol.name.ends_with("Composite") {
-            return true;
-        }
-        
-        // Check for composite structure patterns in the nested data
-        if let Some(data) = symbol.data.get("data").and_then(|d| d.as_object()) {
-            // Look for composite tag indicators (Require/Desire dependencies)
-            let has_composite_deps = data.values().any(|v| {
-                if let Some(obj) = v.as_object() {
-                    obj.contains_key("Require") || obj.contains_key("Desire")
-                } else {
-                    false
-                }
-            });
-            
-            if has_composite_deps {
-                return true;
-            }
-            
-            // Look for composite-style calculations with IsComposite marker
-            let has_composite_marker = data.values().any(|v| {
-                if let Some(obj) = v.as_object() {
-                    obj.get("IsComposite").and_then(|ic| ic.as_i64()) == Some(1)
-                } else {
-                    false
-                }
-            });
-            
-            if has_composite_marker {
-                return true;
-            }
-        }
-        
-        false
+        // Simply trust the metadata flag set by our patcher when AddCompositeTags was called
+        symbol.metadata.is_composite_table == 1
     }
     
     /// Extract composite tags from field extractor symbol data
