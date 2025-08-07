@@ -56,8 +56,16 @@ if ($@) {
     die "Failed to load module $package_name: $@\n";
 }
 
+# Check if this module has composite tags (set by our patcher)
+my $has_composite_tags = 0;
+{
+    no strict 'refs';
+    $has_composite_tags = 1 if ${"${package_name}::__hasCompositeTags"};
+}
+
 # Extract symbols
-extract_symbols( $package_name, $module_name, \@target_fields );
+extract_symbols( $package_name, $module_name, \@target_fields,
+    $has_composite_tags );
 
 # Print summary
 print STDERR "Universal extraction complete for $module_name:\n";
@@ -74,7 +82,8 @@ if ( $ENV{DEBUG} && @skipped_list ) {
 }
 
 sub extract_symbols {
-    my ( $package_name, $module_name, $target_fields ) = @_;
+    my ( $package_name, $module_name, $target_fields, $has_composite_tags ) =
+      @_;
 
     # Get module's symbol table
     no strict 'refs';
@@ -109,7 +118,10 @@ sub extract_symbols {
                 my $hash_size = scalar( keys %$hash_ref );
                 print STDERR "    Hash found with $hash_size keys\n"
                   if $ENV{DEBUG};
-                extract_hash_symbol( $symbol_name, $hash_ref, $module_name );
+                extract_hash_symbol(
+                    $symbol_name, $hash_ref,
+                    $module_name, $has_composite_tags
+                );
                 print STDERR "    Hash extraction completed for $symbol_name\n"
                   if $ENV{DEBUG};
             }
@@ -121,16 +133,19 @@ sub extract_symbols {
 }
 
 sub extract_hash_symbol {
-    my ( $symbol_name, $hash_ref, $module_name ) = @_;
+    my ( $symbol_name, $hash_ref, $module_name, $has_composite_tags ) = @_;
 
     print STDERR "    Starting extraction for: $symbol_name\n" if $ENV{DEBUG};
 
-    # Detect composite tables by name pattern
-    my $is_composite =
-      ( $symbol_name eq 'Composite' || $symbol_name =~ /Composite$/ );
-    print STDERR "    Composite table: "
-      . ( $is_composite ? 'YES' : 'NO' ) . "\n"
-      if $ENV{DEBUG};
+    # Detect composite tables by checking if this module called AddCompositeTags
+    # AND the symbol is named exactly "Composite"
+    my $is_composite_table = 0;
+    if ( $symbol_name eq 'Composite' && $has_composite_tags ) {
+        $is_composite_table = 1;
+        print STDERR
+          "    Composite table detected (has AddCompositeTags marker)\n"
+          if $ENV{DEBUG};
+    }
 
     # Filter out function references (JSON::XS can't handle them)
     print STDERR "    Filtering code references...\n" if $ENV{DEBUG};
@@ -142,7 +157,7 @@ sub extract_hash_symbol {
     return unless $size > 0;
 
     # For non-composite tables, apply size limit to prevent huge output
-    if ( !$is_composite && $size > 1000 ) {
+    if ( !$is_composite_table && $size > 1000 ) {
         $skipped_symbols++;
         push @skipped_list, "$module_name:$symbol_name (size: $size)";
         print STDERR "  Skipping large symbol: $symbol_name (size: $size)\n"
@@ -151,21 +166,21 @@ sub extract_hash_symbol {
     }
 
     my $symbol_data = {
-        type     => $is_composite ? 'composite_hash' : 'hash',
+        type     => 'hash',
         name     => $symbol_name,
         data     => $filtered_data,
         module   => $module_name,
         metadata => {
-            size       => $size,
-            complexity => $is_composite ? 'composite' : 'simple',
+            size               => $size,
+            is_composite_table => $is_composite_table ? 1 : 0,
         }
     };
 
     eval {
         print $json->encode($symbol_data) . "\n";
         $extracted_symbols++;
-        print STDERR "  Extracted: $symbol_name (type: "
-          . ( $is_composite ? 'composite' : 'simple' )
+        print STDERR "  Extracted: $symbol_name ("
+          . ( $is_composite_table ? 'composite table' : 'regular hash' )
           . ", size: $size)\n"
           if $ENV{DEBUG};
     };

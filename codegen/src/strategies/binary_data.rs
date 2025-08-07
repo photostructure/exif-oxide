@@ -36,6 +36,11 @@ impl BinaryDataStrategy {
     
     /// Check if symbol contains ProcessBinaryData characteristics
     fn is_binary_data_symbol(symbol: &FieldSymbol) -> bool {
+        // Don't claim composite tables - let CompositeTagStrategy handle those
+        if symbol.metadata.is_composite_table == 1 {
+            return false;
+        }
+        
         if let Some(data) = symbol.data.as_object() {
             // ProcessBinaryData tables have these characteristic fields
             let has_first_entry = data.contains_key("FIRST_ENTRY");

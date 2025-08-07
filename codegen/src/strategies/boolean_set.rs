@@ -34,6 +34,11 @@ impl BooleanSetStrategy {
     
     /// Check if symbol is a boolean set (keys mapping to truthy values)
     fn is_boolean_set_symbol(symbol: &FieldSymbol) -> bool {
+        // Don't claim composite tables - let CompositeTagStrategy handle those
+        if symbol.metadata.is_composite_table == 1 {
+            return false;
+        }
+        
         if let Some(data) = symbol.data.as_object() {
             // Skip ProcessBinaryData indicators
             if data.contains_key("FIRST_ENTRY") || data.contains_key("FORMAT") {
