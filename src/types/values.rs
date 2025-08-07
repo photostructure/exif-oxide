@@ -81,6 +81,9 @@ pub enum TagValue {
     /// Array of heterogeneous values (e.g., XMP RDF containers)
     /// Used for RDF Bag/Seq containers and mixed-type arrays
     Array(Vec<TagValue>),
+    /// Empty/undefined value for missing dependencies or composite tag failures
+    /// ExifTool equivalent: undef
+    Empty,
 }
 
 /// Check if a string matches ExifTool's JSON numeric pattern
@@ -237,6 +240,7 @@ impl Serialize for TagValue {
             TagValue::Binary(data) => data.serialize(serializer),
             TagValue::Object(map) => map.serialize(serializer),
             TagValue::Array(values) => values.serialize(serializer),
+            TagValue::Empty => serializer.serialize_str("undef"), // ExifTool compatibility
         }
     }
 }
@@ -447,6 +451,7 @@ impl std::fmt::Display for TagValue {
                 }
                 write!(f, "]")
             }
+            TagValue::Empty => write!(f, "undef"),
         }
     }
 }

@@ -10,10 +10,70 @@
 //! - lib/Image/ExifTool/Canon.pm:2166+ %Canon::CameraSettings table
 //! - ExifTool's ProcessBinaryData with FORMAT => 'int16s', FIRST_ENTRY => 1
 
+use crate::expressions::ExpressionEvaluator;
+use crate::generated::canon::main_tags::CANON_MAIN_TAGS;
 use crate::tiff_types::ByteOrder;
-use crate::types::{BinaryDataFormat, BinaryDataTable, BinaryDataTag, ExifError, Result, TagValue};
+use crate::types::{
+    BinaryDataFormat, BinaryDataTable, BinaryDataTag, ExifError, PrintConv, Result, TagValue,
+};
 use std::collections::HashMap;
 use tracing::debug;
+
+/// Canon-specific PrintConv application using the generated tag table
+/// ExifTool: Canon.pm PrintConv processing with registry fallback
+fn apply_canon_print_conv(
+    tag_id: u32,
+    value: &TagValue,
+    evaluator: &mut ExpressionEvaluator,
+    errors: &mut Vec<String>,
+    warnings: &mut Vec<String>,
+) -> TagValue {
+    // Look up the tag in Canon main tags table
+    if let Some(tag_info) = CANON_MAIN_TAGS.get(&(tag_id as u16)) {
+        debug!("Found Canon tag {}: {}", tag_id, tag_info.name);
+
+        match &tag_info.print_conv {
+            Some(PrintConv::Expression(expr)) => {
+                debug!("Using PrintConv expression: {}", expr);
+                // Use the expression evaluator for complex Perl expressions
+                match evaluator.evaluate_expression(expr, value) {
+                    Ok(result) => result,
+                    Err(e) => {
+                        warnings.push(format!(
+                            "Failed to evaluate PrintConv expression for tag {}: {}",
+                            tag_id, e
+                        ));
+                        value.clone()
+                    }
+                }
+            }
+            Some(PrintConv::Complex) => {
+                debug!("Complex PrintConv for tag {}, using registry", tag_id);
+                // For complex conversions, try the registry
+                let func_name = format!("canon_{}", tag_info.name.to_lowercase());
+                crate::registry::get_global_registry()
+                    .write()
+                    .unwrap()
+                    .apply_print_conv(&func_name, value)
+            }
+            Some(PrintConv::Simple(_table)) => {
+                debug!(
+                    "Simple PrintConv table for tag {} (not yet implemented)",
+                    tag_id
+                );
+                // TODO: Handle simple lookup tables
+                value.clone()
+            }
+            Some(PrintConv::None) | None => {
+                debug!("No PrintConv for Canon tag {}", tag_id);
+                value.clone()
+            }
+        }
+    } else {
+        debug!("Canon tag {} not found in main tags table", tag_id);
+        value.clone()
+    }
+}
 
 /// Canon CameraSettings binary data tag definition
 /// ExifTool: lib/Image/ExifTool/Canon.pm:2166-2240+ %Canon::CameraSettings
@@ -285,7 +345,7 @@ pub fn extract_focal_length(
 
     // Use Canon tag kit system for PrintConv lookups
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::canon_pm::tag_kit;
+    use crate::generated::canon;
 
     // Extract FocalType (index 0)
     // ExifTool: Canon.pm:2643 Name => 'FocalType'
@@ -299,7 +359,7 @@ pub fn extract_focal_length(
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
 
-        let final_value = tag_kit::apply_print_conv(
+        let final_value = apply_canon_print_conv(
             0, // FocalType tag ID
             &raw_value,
             &mut evaluator,
@@ -395,7 +455,7 @@ pub fn extract_shot_info(
 
     // Use Canon tag kit system for PrintConv lookups
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::canon_pm::tag_kit;
+    use crate::generated::canon;
 
     // Extract AutoISO (index 1)
     // ExifTool: Canon.pm:2724 Name => 'AutoISO'
@@ -481,7 +541,7 @@ pub fn extract_shot_info(
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
 
-        let final_value = tag_kit::apply_print_conv(
+        let final_value = apply_canon_print_conv(
             7, // WhiteBalance tag ID
             &raw_value,
             &mut evaluator,
@@ -515,7 +575,7 @@ pub fn extract_shot_info(
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
 
-        let final_value = tag_kit::apply_print_conv(
+        let final_value = apply_canon_print_conv(
             14, // AFPointsInFocus tag ID
             &raw_value,
             &mut evaluator,
@@ -549,7 +609,7 @@ pub fn extract_shot_info(
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
 
-        let final_value = tag_kit::apply_print_conv(
+        let final_value = apply_canon_print_conv(
             16, // AutoExposureBracketing tag ID
             &raw_value,
             &mut evaluator,
@@ -583,7 +643,7 @@ pub fn extract_shot_info(
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
 
-        let final_value = tag_kit::apply_print_conv(
+        let final_value = apply_canon_print_conv(
             26, // CameraType tag ID
             &raw_value,
             &mut evaluator,
@@ -624,7 +684,7 @@ pub fn extract_panorama(
 
     // Use Canon tag kit system for PrintConv lookups
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::canon_pm::tag_kit;
+    use crate::generated::canon;
 
     // Canon Panorama format: int16s (signed 16-bit), starting at index 0
     // ExifTool: Canon.pm:3001 FORMAT => 'int16s', FIRST_ENTRY => 0
@@ -649,7 +709,7 @@ pub fn extract_panorama(
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
 
-        let direction_value = tag_kit::apply_print_conv(
+        let direction_value = apply_canon_print_conv(
             5, // PanoramaDirection tag ID
             &raw_value,
             &mut evaluator,
@@ -691,7 +751,7 @@ pub fn extract_my_colors(
 
     // Use Canon tag kit system for PrintConv lookups
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::canon_pm::tag_kit;
+    use crate::generated::canon;
 
     // Canon MyColors format: int16u (unsigned 16-bit), starting at index 0
     // ExifTool: Canon.pm:3133 FORMAT => 'int16u', FIRST_ENTRY => 0
@@ -724,7 +784,7 @@ pub fn extract_my_colors(
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
 
-        let color_mode_value = tag_kit::apply_print_conv(
+        let color_mode_value = apply_canon_print_conv(
             2, // MyColorMode tag ID
             &raw_value,
             &mut evaluator,
@@ -1824,12 +1884,12 @@ mod tests {
 
         // For debugging: also test with tag ID directly
         use crate::expressions::ExpressionEvaluator;
-        use crate::generated::canon_pm::tag_kit;
+        use crate::generated::canon;
         let mut evaluator = ExpressionEvaluator::new();
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
         let direct_result =
-            tag_kit::apply_print_conv(1, &raw_value, &mut evaluator, &mut errors, &mut warnings);
+            apply_canon_print_conv(1, &raw_value, &mut evaluator, &mut errors, &mut warnings);
         println!(
             "Direct tag ID 1 PrintConv: {:?} -> {:?}",
             raw_value, direct_result
@@ -1837,15 +1897,15 @@ mod tests {
         println!("Errors: {:?}", errors);
         println!("Warnings: {:?}", warnings);
 
-        // Check if tag ID 1 is in CANON_PM_TAG_KITS
-        use crate::generated::canon_pm::tag_kit::CANON_PM_TAG_KITS;
-        if let Some(tag_def) = CANON_PM_TAG_KITS.get(&1) {
+        // Check if tag ID 1 is in CANON_MAIN_TAGS
+        use crate::generated::canon::main_tags::CANON_MAIN_TAGS;
+        if let Some(tag_def) = CANON_MAIN_TAGS.get(&1) {
             println!(
-                "Tag ID 1 found in CANON_PM_TAG_KITS: name={}, print_conv={:?}",
+                "Tag ID 1 found in CANON_MAIN_TAGS: name={}, print_conv={:?}",
                 tag_def.name, tag_def.print_conv
             );
         } else {
-            println!("Tag ID 1 NOT found in CANON_PM_TAG_KITS");
+            println!("Tag ID 1 NOT found in CANON_MAIN_TAGS");
         }
     }
 

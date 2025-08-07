@@ -3,13 +3,14 @@
 //! This strategy recognizes and processes symbols that contain composite tag
 //! definitions with dependencies and calculation logic.
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use serde_json::Value as JsonValue;
 use std::collections::HashMap;
 use tracing::{debug, info, warn};
 
 use super::{ExtractionStrategy, ExtractionContext, GeneratedFile};
 use crate::field_extractor::FieldSymbol;
+use crate::common::utils::format_rust_string;
 
 /// Strategy for processing composite tag definitions  
 pub struct CompositeTagStrategy {
@@ -97,13 +98,15 @@ impl CompositeTagStrategy {
     /// Extract composite tags from field extractor symbol data
     fn extract_composite_definitions(&self, symbol: &FieldSymbol) -> Result<Vec<CompositeDefinition>> {
         debug!("Processing composite symbol: {}::{}", symbol.module, symbol.name);
+        debug!("Symbol data keys: {:?}", symbol.data.as_object().map(|o| o.keys().collect::<Vec<_>>()));
         
         let mut definitions = Vec::new();
         
-        // Get the nested composite data
-        let data = symbol.data.get("data")
-            .and_then(|d| d.as_object())
-            .ok_or_else(|| anyhow::anyhow!("No data object found in composite symbol"))?;
+        // Get the composite data from the field extractor symbol
+        // The composite definitions are directly in symbol.data (not in symbol.data["data"])
+        // This matches the structure from field extractor JSON output
+        let data = symbol.data.as_object()
+            .ok_or_else(|| anyhow::anyhow!("Symbol data is not an object"))?;
         
         // Process each composite tag definition
         for (tag_name, tag_def) in data.iter() {
@@ -249,7 +252,11 @@ impl CompositeTagStrategy {
         
         // Generate individual composite tag definitions
         for def in definitions {
-            let safe_name = def.name.replace([':', '-'], "_").to_uppercase();
+            // Include module name to prevent conflicts from same tag name across different modules
+            // e.g., LensID from Exif -> COMPOSITE_EXIF_LENSID, LensID from Nikon -> COMPOSITE_NIKON_LENSID
+            let safe_module = def.module.to_uppercase();
+            let safe_tag = def.name.replace([':', '-'], "_").to_uppercase();
+            let safe_name = format!("{}_{}", safe_module, safe_tag);
             
             code.push_str(&format!("/// {} composite tag definition from {} module\n", def.name, def.module));
             if let Some(desc) = &def.description {
@@ -296,8 +303,8 @@ impl CompositeTagStrategy {
             match &def.value_conv {
                 Some(conv) => {
                     // Escape the Perl expression properly
-                    let escaped = conv.replace('\\', "\\\\").replace('"', "\\\"").replace('\n', "\\n");
-                    code.push_str(&format!("    value_conv: Some(\"{}\"),\n", escaped));
+                    let escaped = format_rust_string(conv);
+                    code.push_str(&format!("    value_conv: Some({}),\n", escaped));
                 }
                 None => code.push_str("    value_conv: None,\n"),
             }
@@ -305,8 +312,8 @@ impl CompositeTagStrategy {
             // PrintConv
             match &def.print_conv {
                 Some(conv) => {
-                    let escaped = conv.replace('\\', "\\\\").replace('"', "\\\"").replace('\n', "\\n");
-                    code.push_str(&format!("    print_conv: Some(\"{}\"),\n", escaped));
+                    let escaped = format_rust_string(conv);
+                    code.push_str(&format!("    print_conv: Some({}),\n", escaped));
                 }
                 None => code.push_str("    print_conv: None,\n"),
             }
@@ -349,7 +356,10 @@ impl CompositeTagStrategy {
         code.push_str("    \n");
         
         for def in definitions {
-            let safe_name = def.name.replace([':', '-'], "_").to_uppercase();
+            // Use same naming scheme as static variable generation
+            let safe_module = def.module.to_uppercase();
+            let safe_tag = def.name.replace([':', '-'], "_").to_uppercase();
+            let safe_name = format!("{}_{}", safe_module, safe_tag);
             code.push_str(&format!("    tags.insert(\"{}\", &COMPOSITE_{});\n", def.name, safe_name));
         }
         
@@ -386,7 +396,7 @@ impl ExtractionStrategy for CompositeTagStrategy {
     }
     
     fn can_handle(&self, symbol: &FieldSymbol) -> bool {
-        Self::is_composite_symbol(symbol)
+        return Self::is_composite_symbol(symbol);
     }
     
     fn extract(&mut self, symbol_data: &FieldSymbol, context: &mut ExtractionContext) -> Result<()> {
@@ -409,19 +419,56 @@ impl ExtractionStrategy for CompositeTagStrategy {
         
         info!("Processing {} composite symbols", self.composite_symbols.len());
         
+        // Debug: Log first composite symbol to see its structure
+        if let Some(first_symbol) = self.composite_symbols.first() {
+            debug!("First composite symbol structure:");
+            debug!("  Module: {}, Name: {}", first_symbol.module, first_symbol.name);
+            debug!("  Data keys: {:?}", first_symbol.data.as_object().map(|o| o.keys().collect::<Vec<_>>()));
+            debug!("  Full data: {}", serde_json::to_string_pretty(&first_symbol.data).unwrap_or_else(|_| "Failed to serialize".to_string()));
+        }
+        
         // Collect all composite definitions from all modules
         let mut all_definitions = Vec::new();
         
         for symbol in &self.composite_symbols {
+            // TEMP: Debug symbol structure before attempting extraction
+            debug!("Processing stored composite symbol: {}::{}", symbol.module, symbol.name);
+            debug!("Symbol data keys: {:?}", symbol.data.as_object().map(|o| o.keys().collect::<Vec<_>>()));
+            
+            // Check if it has the expected "data" field
+            if let Some(data_field) = symbol.data.get("data") {
+                debug!("Found 'data' field in symbol, type: {}", 
+                    if data_field.is_object() { "object" } 
+                    else if data_field.is_array() { "array" } 
+                    else if data_field.is_string() { "string" } 
+                    else { "other" });
+                    
+                if let Some(data_obj) = data_field.as_object() {
+                    debug!("Data field has {} keys: {:?}", data_obj.len(), data_obj.keys().collect::<Vec<_>>());
+                    
+                    // Check for composite indicators
+                    let composite_count = data_obj.values().filter(|v| {
+                        v.as_object().map_or(false, |obj| 
+                            obj.get("IsComposite").and_then(|ic| ic.as_i64()) == Some(1))
+                    }).count();
+                    debug!("Found {} composite tags in this symbol", composite_count);
+                }
+            } else {
+                debug!("No 'data' field found in symbol");
+                debug!("Available top-level keys: {:?}", symbol.data.as_object().map(|o| o.keys().collect::<Vec<_>>()));
+            }
+            
+            // Now try the actual extraction to see the error
             match self.extract_composite_definitions(symbol) {
                 Ok(mut defs) => {
                     // Set module name for each definition
                     for def in &mut defs {
                         def.module = symbol.module.clone();
                     }
+                    let count = defs.len();
                     all_definitions.extend(defs);
                     debug!("Extracted {} composite definitions from {}::{}", 
-                           all_definitions.len(), symbol.module, symbol.name);
+                           count, symbol.module, symbol.name);
                 }
                 Err(e) => {
                     warn!("Failed to extract composite definitions from {}::{}: {}", 

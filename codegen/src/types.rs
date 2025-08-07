@@ -64,6 +64,9 @@ pub enum PrintConv {
     /// Expression to evaluate
     Expression(String),
     
+    /// Manual function reference (module_path, function_name)
+    Manual(&'static str, &'static str),
+    
     /// Complex conversion requiring custom logic
     Complex,
 }

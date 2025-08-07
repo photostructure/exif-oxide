@@ -1,36 +1,35 @@
 //! TagKitStrategy - Processes ExifTool tag table definitions
 //!
 //! This strategy recognizes and processes hash symbols that contain tag definitions
-//! with Names, PrintConv, ValueConv, etc. - the complex structures that tag_kit.pl
-//! extracts from ExifTool modules.
+//! with Names, PrintConv, ValueConv, etc. from field_extractor.pl FieldSymbol data.
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use serde_json::Value as JsonValue;
-use std::process::Command;
 use tracing::{debug, info, warn};
 
 use super::{ExtractionStrategy, ExtractionContext, GeneratedFile};
 use crate::field_extractor::FieldSymbol;
 use crate::strategies::output_locations::generate_module_path;
+use crate::conv_registry::{lookup_printconv, lookup_tag_specific_printconv};
+use crate::common::escape_string;
 
 /// Strategy for processing tag table definitions (Main, Composite, etc.)
 pub struct TagKitStrategy {
-    /// Tag kits to be generated per module
-    pending_extractions: Vec<TagKitExtraction>,
+    /// Tag table symbols processed per module
+    processed_symbols: Vec<ProcessedTagTable>,
 }
 
 #[derive(Debug, Clone)]
-struct TagKitExtraction {
+struct ProcessedTagTable {
     module_name: String,
-    module_path: String,
     table_name: String,
-    symbol_name: String,
+    symbol_data: JsonValue,
 }
 
 impl TagKitStrategy {
     pub fn new() -> Self {
         Self {
-            pending_extractions: Vec::new(),
+            processed_symbols: Vec::new(),
         }
     }
     
@@ -41,7 +40,7 @@ impl TagKitStrategy {
             // Check for ExifTool tag table characteristics
             let has_writable = data.contains_key("WRITABLE");
             let has_groups = data.contains_key("GROUPS");
-            let has_notes = data.contains_key("NOTES");
+            let _has_notes = data.contains_key("NOTES");
             let has_write_group = data.contains_key("WRITE_GROUP");
             
             // Tag tables often have these metadata fields
@@ -65,87 +64,120 @@ impl TagKitStrategy {
         false
     }
     
-    /// Extract tag kits using tag_kit.pl extractor
-    fn extract_tag_kit(&self, extraction: &TagKitExtraction) -> Result<String> {
-        debug!("Extracting tag kit: {}::{}", extraction.module_name, extraction.table_name);
+    /// Generate Rust code from FieldSymbol tag table data  
+    fn generate_tag_table_code(&self, symbol: &ProcessedTagTable) -> Result<String> {
+        let table_data = symbol.symbol_data.as_object()
+            .ok_or_else(|| anyhow::anyhow!("Expected tag table to be an object"))?;
         
-        let output = Command::new("perl")
-            .arg("extractors/tag_kit.pl")
-            .arg(&extraction.module_path)
-            .arg(&extraction.table_name)
-            .current_dir(".")
-            .output()
-            .with_context(|| format!("Failed to run tag_kit.pl for {}::{}", 
-                                   extraction.module_name, extraction.table_name))?;
-
-        if !output.status.success() {
-            let stderr = String::from_utf8_lossy(&output.stderr);
-            return Err(anyhow::anyhow!("tag_kit.pl failed: {}", stderr));
-        }
-
-        let stdout = String::from_utf8(output.stdout)?;
-        Ok(stdout)
-    }
-    
-    /// Generate Rust code from tag kit JSON
-    fn generate_tag_kit_code(&self, json_data: &str, extraction: &TagKitExtraction) -> Result<String> {
-        let tag_kit_data: JsonValue = serde_json::from_str(json_data)?;
-        
-        let tag_kits = tag_kit_data["tag_kits"].as_array()
-            .ok_or_else(|| anyhow::anyhow!("No tag_kits array found"))?;
-            
-        if tag_kits.is_empty() {
-            return Ok(String::new()); // Skip empty tables
+        if table_data.is_empty() {
+            return Ok(String::new());
         }
         
         let mut code = String::new();
-        code.push_str("//! Generated tag kit definitions\n");
-        code.push_str("//!\n");
-        code.push_str(&format!("//! Extracted from {}::{}\n", 
-                              extraction.module_name, extraction.table_name));
+        code.push_str("//! Generated tag table definitions\n");
+        code.push_str("//!\n"); 
+        code.push_str(&format!("//! Extracted from {}::{} via field_extractor.pl\n", 
+                              symbol.module_name, symbol.table_name));
         code.push_str("\n");
         code.push_str("use std::sync::LazyLock;\n");
         code.push_str("use std::collections::HashMap;\n");
-        code.push_str("use crate::types::TagInfo;\n");
+        code.push_str("use crate::types::{TagInfo, PrintConv};\n");
         code.push_str("\n");
         
-        // Generate tag definitions
-        code.push_str(&format!("/// Tag definitions for {} table\n", extraction.table_name));
-        code.push_str(&format!("pub static {}_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {{\n", 
-                              extraction.table_name.to_uppercase()));
+        // Generate constant name
+        let module_snake_case = symbol.module_name.to_lowercase()
+            .replace("exiftool", "exif_tool");
+        let constant_name = format!("{}_{}_TAGS", 
+                                  module_snake_case.to_uppercase(), 
+                                  symbol.table_name.to_uppercase());
+        
+        code.push_str(&format!("/// Tag definitions for {}::{} table\n", 
+                              symbol.module_name, symbol.table_name));
+        code.push_str(&format!("pub static {}: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {{\n", 
+                              constant_name));
         code.push_str("    let mut tags = HashMap::new();\n");
         
-        for tag_kit in tag_kits {
-            let tag_id = tag_kit["tag_id"].as_str().unwrap_or("0");
-            let name = tag_kit["name"].as_str().unwrap_or("Unknown");
-            let format = tag_kit["format"].as_str().unwrap_or("unknown");
-            
-            // Parse tag_id (could be hex string)
-            let id_value = if tag_id.starts_with("0x") || tag_id.starts_with("0X") {
-                u16::from_str_radix(&tag_id[2..], 16).unwrap_or(0)
-            } else {
-                tag_id.parse::<u16>().unwrap_or(0)
-            };
-            
-            code.push_str(&format!("    tags.insert({}, TagInfo {{\n", id_value));
-            code.push_str(&format!("        name: \"{}\",\n", name));
-            code.push_str(&format!("        format: \"{}\",\n", format));
-            code.push_str("        print_conv: None, // TODO: Implement PrintConv processing\n");
-            code.push_str("    });\n");
+        // Process each tag in the table
+        for (tag_key, tag_data) in table_data {
+            if let Some(tag_obj) = tag_data.as_object() {
+                self.process_tag_entry(&mut code, tag_key, tag_obj, &symbol.module_name)?;
+            }
         }
         
         code.push_str("    tags\n");
         code.push_str("});\n");
-        code.push_str("\n");
-        
-        // Generate lookup function
-        code.push_str(&format!("/// Look up tag information for {} table\n", extraction.table_name));
-        code.push_str(&format!("pub fn lookup_{}_tag(tag_id: u16) -> Option<&'static TagInfo> {{\n", 
-                              extraction.table_name.to_lowercase()));
-        code.push_str(&format!("    {}_TAGS.get(&tag_id)\n", extraction.table_name.to_uppercase()));
-        code.push_str("}\n");
         
         Ok(code)
+    }
+    
+    /// Process a single tag entry from the field_extractor data
+    fn process_tag_entry(&self, code: &mut String, tag_key: &str, tag_data: &serde_json::Map<String, JsonValue>, module: &str) -> Result<()> {
+        // Extract basic tag information
+        let name = tag_data.get("Name").and_then(|v| v.as_str()).unwrap_or(tag_key);
+        let format = tag_data.get("Format").and_then(|v| v.as_str()).unwrap_or("unknown");
+        
+        // Parse tag ID (could be string or number)
+        let tag_id = if let Ok(id) = tag_key.parse::<u16>() {
+            id
+        } else if tag_key.starts_with("0x") || tag_key.starts_with("0X") {
+            u16::from_str_radix(&tag_key[2..], 16).unwrap_or(0)
+        } else {
+            debug!("Skipping non-numeric tag key: {}", tag_key);
+            return Ok(());
+        };
+        
+        code.push_str(&format!("    tags.insert({}, TagInfo {{\n", tag_id));
+        code.push_str(&format!("        name: \"{}\",\n", name));
+        code.push_str(&format!("        format: \"{}\",\n", format));
+        
+        // Process PrintConv if present
+        let print_conv = self.process_print_conv(tag_data, module, name)?;
+        code.push_str(&format!("        print_conv: {},\n", print_conv));
+        
+        // Process ValueConv if present (when we add it to TagInfo)
+        // let value_conv = self.process_value_conv(tag_data, module, name)?;
+        // code.push_str(&format!("        value_conv: {},\n", value_conv));
+        
+        code.push_str("    });\n");
+        
+        Ok(())
+    }
+    
+
+    /// Process PrintConv field using the existing conv_registry system
+    fn process_print_conv(&self, tag_data: &serde_json::Map<String, JsonValue>, module: &str, tag_name: &str) -> Result<String> {
+        // Check for PrintConv field
+        if let Some(print_conv_value) = tag_data.get("PrintConv") {
+            if let Some(print_conv_str) = print_conv_value.as_str() {
+                // First try tag-specific lookup
+                if let Some((module_path, func_name)) = lookup_tag_specific_printconv(module, tag_name) {
+                    return Ok(format!("Some(PrintConv::Manual(\"{}\", \"{}\"))", module_path, func_name));
+                }
+                
+                // Then try expression lookup
+                if let Some((module_path, func_name)) = lookup_printconv(print_conv_str, module) {
+                    return Ok(format!("Some(PrintConv::Manual(\"{}\", \"{}\"))", module_path, func_name));
+                }
+                
+                // For hash references (lookup tables), generate Simple variant
+                if print_conv_str.starts_with("{") || print_conv_str.contains("=>") {
+                    // This indicates a hash lookup - we'd need to parse it
+                    // For now, leave as raw expression
+                    return Ok(format!("Some(PrintConv::Expression(\"{}\".to_string()))", 
+                                    escape_string(print_conv_str)));
+                }
+                
+                // Default to Expression type for any other string
+                return Ok(format!("Some(PrintConv::Expression(\"{}\".to_string()))", 
+                                escape_string(print_conv_str)));
+            } else if let Some(_print_conv_obj) = print_conv_value.as_object() {
+                // This is likely a hash reference lookup table
+                return Ok("Some(PrintConv::Complex)".to_string());
+            }
+        }
+        
+        // No PrintConv found
+        Ok("None".to_string())
     }
 }
 
@@ -162,22 +194,17 @@ impl ExtractionStrategy for TagKitStrategy {
     
     fn extract(&mut self, symbol_data: &FieldSymbol, context: &mut ExtractionContext) -> Result<()> {
         context.log_strategy_selection(symbol_data, self.name(), 
-            "Detected tag table with WRITABLE/GROUPS or common table name");
+            "Detected tag table with PrintConv/ValueConv definitions");
         
-        // Build path to ExifTool module
-        let module_path = format!("../third-party/exiftool/lib/Image/ExifTool/{}.pm", 
-                                symbol_data.module);
-        
-        // Queue extraction for processing
-        let extraction = TagKitExtraction {
+        // Store the symbol data directly for processing
+        let processed_table = ProcessedTagTable {
             module_name: symbol_data.module.clone(),
-            module_path,
             table_name: symbol_data.name.clone(),
-            symbol_name: symbol_data.name.clone(),
+            symbol_data: symbol_data.data.clone(),
         };
         
-        debug!("Queued TagKit extraction: {}::{}", extraction.module_name, extraction.table_name);
-        self.pending_extractions.push(extraction);
+        debug!("Stored TagTable symbol: {}::{}", processed_table.module_name, processed_table.table_name);
+        self.processed_symbols.push(processed_table);
         
         Ok(())
     }
@@ -190,39 +217,38 @@ impl ExtractionStrategy for TagKitStrategy {
     fn finish_extraction(&mut self) -> Result<Vec<GeneratedFile>> {
         let mut files = Vec::new();
         
-        info!("Processing {} queued TagKit extractions", self.pending_extractions.len());
+        if self.processed_symbols.is_empty() {
+            return Ok(files);
+        }
         
-        for extraction in &self.pending_extractions {
-            match self.extract_tag_kit(extraction) {
-                Ok(json_data) => {
-                    match self.generate_tag_kit_code(&json_data, extraction) {
-                        Ok(code) => {
-                            if !code.trim().is_empty() {
-                                let path = generate_module_path(&extraction.module_name, 
-                                    &format!("{}_tags", extraction.table_name.to_lowercase()));
-                                
-                                files.push(GeneratedFile {
-                                    path,
-                                    content: code,
-                                    strategy: self.name().to_string(),
-                                });
-                                
-                                debug!("Generated TagKit code for {}::{}", 
-                                      extraction.module_name, extraction.table_name);
-                            }
-                        }
-                        Err(e) => {
-                            warn!("Failed to generate code for {}::{}: {}", 
-                                 extraction.module_name, extraction.table_name, e);
-                        }
+        info!("Processing {} TagTable symbols", self.processed_symbols.len());
+        
+        for symbol in &self.processed_symbols {
+            match self.generate_tag_table_code(symbol) {
+                Ok(code) => {
+                    if !code.trim().is_empty() {
+                        let path = generate_module_path(&symbol.module_name, 
+                            &format!("{}_tags", symbol.table_name.to_lowercase()));
+                        
+                        files.push(GeneratedFile {
+                            path,
+                            content: code,
+                            strategy: self.name().to_string(),
+                        });
+                        
+                        debug!("Generated TagTable code for {}::{}", 
+                              symbol.module_name, symbol.table_name);
                     }
                 }
                 Err(e) => {
-                    warn!("Failed to extract tag kit {}::{}: {}", 
-                         extraction.module_name, extraction.table_name, e);
+                    warn!("Failed to generate code for {}::{}: {}", 
+                         symbol.module_name, symbol.table_name, e);
                 }
             }
         }
+        
+        // Clear processed symbols
+        self.processed_symbols.clear();
         
         info!("TagKitStrategy generated {} files", files.len());
         Ok(files)
