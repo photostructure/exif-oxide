@@ -13,7 +13,7 @@
 //! without any improvements or simplifications. Every algorithm, offset calculation,
 //! and quirk is copied exactly as documented in the ExifTool source.
 
-use crate::generated::sony_pm;
+use crate::generated::sony::main_tags as sony_main_tags;
 use crate::processor_registry::{
     BinaryDataProcessor, ProcessorCapability, ProcessorContext, ProcessorMetadata, ProcessorResult,
 };
@@ -84,14 +84,14 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
             let af_point_raw = u16::from_le_bytes([data[0x1e], data[0x1f]]);
 
             use crate::expressions::ExpressionEvaluator;
-            use crate::generated::sony_pm::tag_kit;
+            use crate::generated::sony::main_tags;
 
             let mut evaluator = ExpressionEvaluator::new();
             let mut errors = Vec::new();
             let mut warnings = Vec::new();
 
-            // AFPointSelected tag ID 20 from Sony tag kit other.rs
-            let af_point_desc = tag_kit::apply_print_conv(
+            // AFPointSelected tag ID 20 from Sony main tags
+            let af_point_desc = sony_main_tags::apply_print_conv(
                 20,
                 &TagValue::U8(af_point_raw as u8),
                 &mut evaluator,
@@ -115,14 +115,14 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
             let focus_mode_raw = u16::from_le_bytes([data[0x20], data[0x21]]);
 
             use crate::expressions::ExpressionEvaluator;
-            use crate::generated::sony_pm::tag_kit;
+            use crate::generated::sony::main_tags;
 
             let mut evaluator = ExpressionEvaluator::new();
             let mut errors = Vec::new();
             let mut warnings = Vec::new();
 
-            // FocusMode tag ID 21 from Sony tag kit other.rs
-            let focus_mode_desc = tag_kit::apply_print_conv(
+            // FocusMode tag ID 21 from Sony main tags
+            let focus_mode_desc = sony_main_tags::apply_print_conv(
                 21,
                 &TagValue::U8(focus_mode_raw as u8),
                 &mut evaluator,
@@ -143,14 +143,14 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
             let focus_status_raw = u16::from_le_bytes([data[0x22], data[0x23]]);
 
             use crate::expressions::ExpressionEvaluator;
-            use crate::generated::sony_pm::tag_kit;
+            use crate::generated::sony::main_tags;
 
             let mut evaluator = ExpressionEvaluator::new();
             let mut errors = Vec::new();
             let mut warnings = Vec::new();
 
-            // FocusStatus tag ID 25 from Sony tag kit other.rs
-            let focus_status_desc = tag_kit::apply_print_conv(
+            // FocusStatus tag ID 25 from Sony main tags
+            let focus_status_desc = sony_main_tags::apply_print_conv(
                 25,
                 &TagValue::U8(focus_status_raw as u8),
                 &mut evaluator,
@@ -556,7 +556,7 @@ impl BinaryDataProcessor for SonyCameraSettingsProcessor {
         // ExifTool: Sony.pm line 4184
         if let Some(wb_setting) = read_u16(0x05) {
             if let Some(wb_desc) =
-                sony_pm::whitebalancesetting::lookup_sony_white_balance_setting(wb_setting)
+                sony::whitebalancesetting::lookup_sony_white_balance_setting(wb_setting)
             {
                 result.extracted_tags.insert(
                     "WhiteBalanceSetting".to_string(),

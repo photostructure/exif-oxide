@@ -137,9 +137,9 @@ impl ExifReader {
         source_info: Option<&TagSourceInfo>,
     ) -> (TagValue, TagValue) {
         use crate::expressions::ExpressionEvaluator;
-        use crate::generated::exif_pm::tag_kit;
-        use crate::generated::gps_pm::tag_kit as gps_tag_kit;
-        use crate::generated::sony_pm::tag_kit as sony_tag_kit;
+        use crate::generated::exif::main_tags;
+        use crate::generated::gps::main_tags as gps_tag_kit;
+        use crate::generated::sony::main_tags as sony_tag_kit;
 
         let mut value = raw_value.clone();
 
@@ -154,7 +154,7 @@ impl ExifReader {
         // Process based on IFD context
         if ifd_name == "GPS" {
             // For GPS IFD, check GPS tag kit
-            if let Some(tag_def) = gps_tag_kit::GPS_PM_TAG_KITS.get(&(tag_id as u32)) {
+            if let Some(tag_def) = gps_tag_kit::GPS_MAIN_TAGS.get(&tag_id) {
                 // Apply ValueConv first (if present) using generated function
                 if tag_def.value_conv.is_some() {
                     let mut value_conv_errors = Vec::new();
@@ -267,7 +267,7 @@ impl ExifReader {
                 ))
             );
             // For Sony IFD, check Sony tag kit
-            if let Some(tag_def) = sony_tag_kit::SONY_PM_TAG_KITS.get(&(tag_id as u32)) {
+            if let Some(tag_def) = sony_tag_kit::SONY_MAIN_TAGS.get(&tag_id) {
                 debug!(
                     "Found Sony tag definition for tag 0x{:04x}: {}",
                     tag_id, tag_def.name
@@ -327,7 +327,7 @@ impl ExifReader {
             }
         } else {
             // For other IFDs, check EXIF tag kit
-            if let Some(tag_def) = tag_kit::EXIF_PM_TAG_KITS.get(&(tag_id as u32)) {
+            if let Some(tag_def) = main_tags::EXIF_MAIN_TAGS.get(&tag_id) {
                 debug!(
                     "Found tag definition for tag 0x{:04x}: {}",
                     tag_id, tag_def.name
@@ -335,7 +335,8 @@ impl ExifReader {
                 // Apply ValueConv first (if present) using generated function
                 if tag_def.value_conv.is_some() {
                     let mut value_conv_errors = Vec::new();
-                    match tag_kit::apply_value_conv(tag_id as u32, &value, &mut value_conv_errors) {
+                    match main_tags::apply_value_conv(tag_id as u32, &value, &mut value_conv_errors)
+                    {
                         Ok(converted) => {
                             debug!(
                                 "Applied ValueConv to EXIF tag 0x{:04x}: {:?} -> {:?}",
@@ -370,8 +371,8 @@ impl ExifReader {
                         }
                     }
                     _ => {
-                        // Use generic tag kit PrintConv
-                        tag_kit::apply_print_conv(
+                        // Use EXIF tag kit PrintConv - call the specific function from generated EXIF module
+                        main_tags::apply_print_conv(
                             tag_id as u32,
                             &value,
                             &mut evaluator,

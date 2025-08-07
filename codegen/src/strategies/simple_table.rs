@@ -268,26 +268,62 @@ impl Default for SimpleTableStrategy {
 mod tests {
     use super::*;
     use serde_json::json;
-    use crate::field_extractor::FieldMetadata;
+    use crate::field_extractor::{FieldMetadata, FieldSymbol};
     
     #[test]
     fn test_can_handle_simple_hash() {
         let strategy = SimpleTableStrategy::new();
         
         // Should handle simple string map
-        let simple_hash = json!({"0": "Auto", "1": "Daylight", "2": "Cloudy"});
+        let simple_hash = FieldSymbol {
+            symbol_type: "hash".to_string(),
+            name: "whiteBalance".to_string(),
+            data: json!({"0": "Auto", "1": "Daylight", "2": "Cloudy"}),
+            module: "Canon".to_string(),
+            metadata: FieldMetadata {
+                size: 3,
+                complexity: "simple".to_string(),
+            },
+        };
         assert!(strategy.can_handle(&simple_hash));
         
         // Should reject empty hash
-        let empty_hash = json!({});
+        let empty_hash = FieldSymbol {
+            symbol_type: "hash".to_string(),
+            name: "emptyHash".to_string(),
+            data: json!({}),
+            module: "Canon".to_string(),
+            metadata: FieldMetadata {
+                size: 0,
+                complexity: "simple".to_string(),
+            },
+        };
         assert!(!strategy.can_handle(&empty_hash));
         
         // Should reject tag definition
-        let tag_def = json!({"Name": "WhiteBalance", "PrintConv": "..."});
+        let tag_def = FieldSymbol {
+            symbol_type: "hash".to_string(),
+            name: "tagTable".to_string(),
+            data: json!({"Name": "WhiteBalance", "PrintConv": "..."}),
+            module: "Canon".to_string(),
+            metadata: FieldMetadata {
+                size: 2,
+                complexity: "composite".to_string(),
+            },
+        };
         assert!(!strategy.can_handle(&tag_def));
         
         // Should reject non-string values
-        let mixed_values = json!({"0": "Auto", "1": 123});
+        let mixed_values = FieldSymbol {
+            symbol_type: "hash".to_string(),
+            name: "mixedHash".to_string(),
+            data: json!({"0": "Auto", "1": 123}),
+            module: "Canon".to_string(),
+            metadata: FieldMetadata {
+                size: 2,
+                complexity: "composite".to_string(),
+            },
+        };
         assert!(!strategy.can_handle(&mixed_values));
     }
     
@@ -304,7 +340,6 @@ mod tests {
             metadata: FieldMetadata {
                 size: 3,
                 complexity: "simple".to_string(),
-                has_non_serializable: false,
             },
         };
         

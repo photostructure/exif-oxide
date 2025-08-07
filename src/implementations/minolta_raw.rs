@@ -11,32 +11,18 @@ use crate::types::TagValue;
 
 /// Minolta PRD StorageMethod PrintConv
 /// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm PRD hash (StorageMethod)
-/// Using MinoltaRaw tag kit system: StorageMethod has tag ID 18
+/// TODO: Replace with proper generated lookup table when available
 pub fn prd_storage_method_print_conv(val: &TagValue) -> TagValue {
-    use crate::expressions::ExpressionEvaluator;
-    use crate::generated::minoltaraw_pm::tag_kit;
-
-    let mut evaluator = ExpressionEvaluator::new();
-    let mut errors = Vec::new();
-    let mut warnings = Vec::new();
-
-    // StorageMethod tag ID 18 from MinoltaRaw tag kit other.rs
-    tag_kit::apply_print_conv(18, val, &mut evaluator, &mut errors, &mut warnings)
+    // Use registry approach for now - tag_kit::apply_print_conv is no longer available
+    crate::registry::apply_print_conv("StorageMethod", val)
 }
 
 /// Minolta PRD BayerPattern PrintConv
 /// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm PRD hash (BayerPattern)
-/// Using MinoltaRaw tag kit system: BayerPattern has tag ID 23
+/// TODO: Replace with proper generated lookup table when available
 pub fn prd_bayer_pattern_print_conv(val: &TagValue) -> TagValue {
-    use crate::expressions::ExpressionEvaluator;
-    use crate::generated::minoltaraw_pm::tag_kit;
-
-    let mut evaluator = ExpressionEvaluator::new();
-    let mut errors = Vec::new();
-    let mut warnings = Vec::new();
-
-    // BayerPattern tag ID 23 from MinoltaRaw tag kit other.rs
-    tag_kit::apply_print_conv(23, val, &mut evaluator, &mut errors, &mut warnings)
+    // Use registry approach for now - tag_kit::apply_print_conv is no longer available
+    crate::registry::apply_print_conv("BayerPattern", val)
 }
 
 /// Minolta RIF ProgramMode PrintConv
@@ -44,14 +30,14 @@ pub fn prd_bayer_pattern_print_conv(val: &TagValue) -> TagValue {
 /// Using MinoltaRaw tag kit system: ProgramMode has tag ID 5
 pub fn rif_program_mode_print_conv(val: &TagValue) -> TagValue {
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::minoltaraw_pm::tag_kit;
+    use crate::generated::minolta_raw::main_tags;
 
     let mut evaluator = ExpressionEvaluator::new();
     let mut errors = Vec::new();
     let mut warnings = Vec::new();
 
-    // ProgramMode tag ID 5 from MinoltaRaw tag kit interop.rs
-    tag_kit::apply_print_conv(5, val, &mut evaluator, &mut errors, &mut warnings)
+    // ProgramMode tag ID 5 from MinoltaRaw main tags
+    main_tags::apply_print_conv(5, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
 /// Minolta RIF ZoneMatching PrintConv
@@ -59,14 +45,14 @@ pub fn rif_program_mode_print_conv(val: &TagValue) -> TagValue {
 /// Using MinoltaRaw tag kit system: ZoneMatching has tag ID 58
 pub fn rif_zone_matching_print_conv(val: &TagValue) -> TagValue {
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::minoltaraw_pm::tag_kit;
+    use crate::generated::minolta_raw::main_tags;
 
     let mut evaluator = ExpressionEvaluator::new();
     let mut errors = Vec::new();
     let mut warnings = Vec::new();
 
-    // ZoneMatching tag ID 58 from MinoltaRaw tag kit other.rs
-    tag_kit::apply_print_conv(58, val, &mut evaluator, &mut errors, &mut warnings)
+    // ZoneMatching tag ID 58 from MinoltaRaw main tags
+    main_tags::apply_print_conv(58, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
 /// Minolta RIF ZoneMatching74 PrintConv (for tag offset 74)
@@ -74,14 +60,14 @@ pub fn rif_zone_matching_print_conv(val: &TagValue) -> TagValue {
 /// Using MinoltaRaw tag kit system: ZoneMatching74 has tag ID 74
 pub fn rif_zone_matching_74_print_conv(val: &TagValue) -> TagValue {
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::minoltaraw_pm::tag_kit;
+    use crate::generated::minolta_raw::main_tags;
 
     let mut evaluator = ExpressionEvaluator::new();
     let mut errors = Vec::new();
     let mut warnings = Vec::new();
 
-    // ZoneMatching74 tag ID 74 from MinoltaRaw tag kit other.rs
-    tag_kit::apply_print_conv(74, val, &mut evaluator, &mut errors, &mut warnings)
+    // ZoneMatching74 tag ID 74 from MinoltaRaw main tags
+    main_tags::apply_print_conv(74, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
 /// Apply PrintConv to Minolta PRD block tags

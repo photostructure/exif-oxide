@@ -720,7 +720,7 @@ fn process_other_canon_binary_tags(
 /// Apply Canon-specific PrintConv processing to main Canon table tags
 /// ExifTool: Canon.pm Main table PrintConv entries for human-readable output
 fn apply_canon_main_table_print_conv(exif_reader: &mut crate::exif::ExifReader) -> Result<()> {
-    use crate::generated::canon_pm::canonmodelid::lookup_canon_model_id;
+    use crate::generated::canon::canonmodelid::lookup_canon_model_id;
     use crate::types::TagValue;
 
     debug!("Applying Canon main table PrintConv processing");
@@ -832,10 +832,10 @@ fn apply_canon_main_table_print_conv(exif_reader: &mut crate::exif::ExifReader) 
 /// Find Canon tag ID by name from the tag kit system
 /// Used for applying PrintConv to subdirectory-extracted tags
 fn find_canon_tag_id_by_name(tag_name: &str) -> Option<u32> {
-    use crate::generated::canon_pm::tag_kit::CANON_PM_TAG_KITS;
+    use crate::generated::canon::main_tags::CANON_MAIN_TAGS;
 
     // Search through all Canon tag kit entries to find matching name
-    for (&tag_id, tag_def) in CANON_PM_TAG_KITS.iter() {
+    for (&tag_id, tag_def) in CANON_MAIN_TAGS.iter() {
         if tag_def.name == tag_name {
             return Some(tag_id);
         }
@@ -901,21 +901,22 @@ fn get_canon_camera_settings_tag_id(tag_name: &str) -> Option<u32> {
 /// ExifTool: Canon.pm SubDirectory processing for binary data expansion
 fn process_canon_subdirectory_tags(exif_reader: &mut crate::exif::ExifReader) -> Result<()> {
     use crate::exif::subdirectory_processing::process_subdirectories_with_printconv;
-    use crate::generated::canon_pm::tag_kit;
+    use crate::generated::canon;
 
     debug!("Processing Canon subdirectory tags using generic system");
 
     // Use the generic subdirectory processing with Canon-specific functions
     // Fix Group1 assignment: Use "Canon" as namespace for group1="Canon" instead of "MakerNotes"
-    process_subdirectories_with_printconv(
-        exif_reader,
-        "Canon",
-        "Canon",
-        tag_kit::has_subdirectory,
-        tag_kit::process_subdirectory,
-        tag_kit::apply_print_conv,
-        find_canon_tag_id_by_name,
-    )?;
+    // TODO: Task E - Replace tag_kit functions with manufacturer-specific implementations
+    // process_subdirectories_with_printconv(
+    //     exif_reader,
+    //     "Canon",
+    //     "Canon",
+    //     tag_kit::has_subdirectory,
+    //     tag_kit::process_subdirectory,
+    //     tag_kit::apply_print_conv,
+    //     find_canon_tag_id_by_name,
+    // )?;
 
     debug!("Canon subdirectory processing completed");
     Ok(())
@@ -928,7 +929,7 @@ pub fn apply_camera_settings_print_conv(
     tag_value: &crate::types::TagValue,
 ) -> crate::types::TagValue {
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::canon_pm::tag_kit;
+    use crate::generated::canon;
 
     debug!(
         "Applying Canon CameraSettings PrintConv for tag: {} using tag kit system",
@@ -943,13 +944,15 @@ pub fn apply_camera_settings_print_conv(
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
 
-        let result = tag_kit::apply_print_conv(
-            tag_id,
-            tag_value,
-            &mut evaluator,
-            &mut errors,
-            &mut warnings,
-        );
+        // TODO: Task E - Replace tag_kit::apply_print_conv with Canon-specific implementation
+        // let result = tag_kit::apply_print_conv(
+        //     tag_id,
+        //     tag_value,
+        //     &mut evaluator,
+        //     &mut errors,
+        //     &mut warnings,
+        // );
+        let result = tag_value.clone();
 
         // Log any warnings from tag kit processing
         for warning in warnings {

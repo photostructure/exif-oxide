@@ -843,19 +843,19 @@ impl ExifReader {
     /// Get tag name from tag kits
     /// ExifTool: Uses format-specific tag tables with conditional logic
     fn get_tag_name(&self, tag_id: u16, ifd_name: &str) -> String {
-        use crate::generated::exif_pm::tag_kit;
-        use crate::generated::gps_pm::tag_kit as gps_tag_kit;
+        use crate::generated::exif::main_tags;
+        use crate::generated::gps::main_tags as gps_tag_kit;
 
         // For GPS IFD, check GPS tag kit first to avoid conflicts
         // (e.g., tag 0x0002 is GPSLatitude in GPS IFD, InteropVersion in InteropIFD)
         if ifd_name == "GPS" {
-            if let Some(tag_def) = gps_tag_kit::GPS_PM_TAG_KITS.get(&(tag_id as u32)) {
+            if let Some(tag_def) = gps_tag_kit::GPS_MAIN_TAGS.get(&tag_id) {
                 return tag_def.name.to_string();
             }
         }
 
         // Check EXIF tag kit for other IFDs
-        if let Some(tag_def) = tag_kit::EXIF_PM_TAG_KITS.get(&(tag_id as u32)) {
+        if let Some(tag_def) = main_tags::EXIF_MAIN_TAGS.get(&tag_id) {
             return tag_def.name.to_string();
         }
 
@@ -876,7 +876,7 @@ impl ExifReader {
     fn try_conditional_tag_resolution_with_entry(
         &self,
         _entry: &crate::tiff_types::IfdEntry,
-    ) -> Option<crate::generated::canon_pm::main_conditional_tags::ResolvedTag> {
+    ) -> Option<crate::generated::canon::main_conditional_tags::ResolvedTag> {
         // TODO: Generate conditional tags first
         // let make = self.extracted_tags.get(&0x010F)?.as_string()?;
         // if !make.to_lowercase().contains("canon") {

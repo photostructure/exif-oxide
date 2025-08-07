@@ -1366,7 +1366,7 @@ pub fn compute_lens_id(available_tags: &HashMap<String, TagValue>) -> Option<Tag
         if let Some(lens_model) = available_tags.get("EXIF:LensModel") {
             if let Some(lens_string) = lens_model.as_string() {
                 // Try to find a match in the olympusLensTypes table for the EXIF lens model
-                use crate::generated::olympus_pm::olympuslenstypes::lookup_olympus_lens_types;
+                use crate::generated::olympus::olympus_lens_types::lookup_olympus_lens_types;
 
                 // Extract focal length range from EXIF:LensModel (e.g., "14-42mm")
                 if lens_string.contains("14-42") {
@@ -1401,7 +1401,7 @@ pub fn compute_lens_id(available_tags: &HashMap<String, TagValue>) -> Option<Tag
             // that should be converted to hex key format: sprintf("%x %.2x %.2x", @a[0,2,3])
             // For now, check if we can find the lens name in the olympusLensTypes table
 
-            use crate::generated::olympus_pm::olympuslenstypes::lookup_olympus_lens_types;
+            use crate::generated::olympus::olympus_lens_types::lookup_olympus_lens_types;
 
             if let Some(lens_string) = lens_type.as_string() {
                 // Current approach: try to match the full lens name

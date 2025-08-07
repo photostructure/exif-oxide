@@ -19,8 +19,8 @@ mod tags;
 
 // Only re-export what needs to be public - most functionality is internal
 
-// use crate::generated::canon_pm::main_conditional_tags::{CanonConditionalTags, ConditionalContext}; // TODO: Generate conditional tags
-// use crate::generated::fujifilm_pm::main_model_detection::{
+// use crate::generated::canon::main_conditional_tags::{CanonConditionalTags, ConditionalContext}; // TODO: Generate conditional tags
+// use crate::generated::fuji_film::main_model_detection::{
 //     ConditionalContext as FujiFilmConditionalContext, FujiFilmModelDetection,
 // }; // TODO: Generate FujiFilm model detection
 use crate::tiff_types::TiffHeader;
@@ -238,9 +238,9 @@ impl ExifReader {
         tag_id: u16,
         source_info: Option<&TagSourceInfo>,
     ) -> String {
-        use crate::generated::exif_pm::tag_kit::EXIF_PM_TAG_KITS;
-        use crate::generated::gps_pm::tag_kit::GPS_PM_TAG_KITS;
-        use crate::generated::sony_pm::tag_kit::SONY_PM_TAG_KITS;
+        use crate::generated::exif::main_tags::EXIF_MAIN_TAGS as EXIF_PM_TAG_KITS;
+        use crate::generated::gps::main_tags::GPS_MAIN_TAGS as GPS_PM_TAG_KITS;
+        use crate::generated::sony::main_tags::SONY_MAIN_TAGS as SONY_PM_TAG_KITS;
 
         tracing::debug!(
             "lookup_tag_name_by_source: tag_id=0x{:x}, source_info={:?}",
@@ -291,8 +291,8 @@ impl ExifReader {
     /// matching ExifTool's -G mode behavior
     /// Milestone 8f: Now includes composite tags with "Composite:" prefix
     pub fn get_all_tags(&self) -> HashMap<String, TagValue> {
-        use crate::generated::exif_pm::tag_kit::EXIF_PM_TAG_KITS;
-        use crate::generated::gps_pm::tag_kit::GPS_PM_TAG_KITS;
+        use crate::generated::exif::main_tags::EXIF_MAIN_TAGS as EXIF_PM_TAG_KITS;
+        use crate::generated::gps::main_tags::GPS_MAIN_TAGS as GPS_PM_TAG_KITS;
         use crate::implementations::canon;
         use crate::implementations::sony;
 
@@ -424,8 +424,8 @@ impl ExifReader {
     /// This is the new API that returns both ValueConv and PrintConv results
     /// Milestone 8b: TagEntry API implementation
     pub fn get_all_tag_entries(&mut self) -> Vec<crate::types::TagEntry> {
-        use crate::generated::exif_pm::tag_kit::EXIF_PM_TAG_KITS;
-        use crate::generated::gps_pm::tag_kit::GPS_PM_TAG_KITS;
+        use crate::generated::exif::main_tags::EXIF_MAIN_TAGS as EXIF_PM_TAG_KITS;
+        use crate::generated::gps::main_tags::GPS_MAIN_TAGS as GPS_PM_TAG_KITS;
         use crate::generated::COMPOSITE_TAGS;
         use crate::implementations::canon;
         use crate::implementations::olympus;
@@ -809,7 +809,7 @@ impl ExifReader {
         count: Option<u32>,
         format: Option<String>,
         binary_data: Option<Vec<u8>>,
-    ) -> crate::generated::canon_pm::main_conditional_tags::ConditionalContext {
+    ) -> crate::generated::canon::main_conditional_tags::ConditionalContext {
         let make = self
             .get_tag_across_namespaces(0x010F)
             .and_then(|v| v.as_string())
@@ -818,7 +818,7 @@ impl ExifReader {
             .get_tag_across_namespaces(0x0110)
             .and_then(|v| v.as_string())
             .map(|s| s.to_string());
-        crate::generated::canon_pm::main_conditional_tags::ConditionalContext {
+        crate::generated::canon::main_conditional_tags::ConditionalContext {
             make,
             model,
             count,
@@ -832,7 +832,7 @@ impl ExifReader {
         &self,
         count: Option<u32>,
         format: Option<String>,
-    ) -> crate::generated::fujifilm_pm::main_model_detection::ConditionalContext {
+    ) -> crate::generated::fuji_film::main_model_detection::ConditionalContext {
         let make = self
             .get_tag_across_namespaces(0x010F)
             .and_then(|v| v.as_string())
@@ -841,7 +841,7 @@ impl ExifReader {
             .get_tag_across_namespaces(0x0110)
             .and_then(|v| v.as_string())
             .map(|s| s.to_string());
-        crate::generated::fujifilm_pm::main_model_detection::ConditionalContext {
+        crate::generated::fuji_film::main_model_detection::ConditionalContext {
             make,
             model,
             count,
@@ -866,7 +866,7 @@ impl ExifReader {
             if make.contains("Canon") {
                 let context = self.create_conditional_context(count, format, binary_data);
                 let canon_resolver =
-                    crate::generated::canon_pm::main_conditional_tags::CanonConditionalTags::new();
+                    crate::generated::canon::main_conditional_tags::CanonConditionalTags::new();
 
                 if let Some(resolved) = canon_resolver.resolve_tag(&tag_id.to_string(), &context) {
                     trace!(
@@ -882,7 +882,10 @@ impl ExifReader {
                     .and_then(|v| v.as_string())
                     .unwrap_or("")
                     .to_string();
-                let fujifilm_resolver = crate::generated::fujifilm_pm::main_model_detection::FujiFilmModelDetection::new(model);
+                let fujifilm_resolver =
+                    crate::generated::fuji_film::main_model_detection::FujiFilmModelDetection::new(
+                        model,
+                    );
 
                 if let Some(resolved_name) =
                     fujifilm_resolver.resolve_conditional_tag(&tag_id.to_string(), &context)

@@ -731,12 +731,12 @@ impl ExifReader {
     /// Resolve tag name to tag ID using generated tag tables
     /// This bridges the gap between processor string-based tag names and ExifReader's u16 tag IDs
     pub(crate) fn resolve_tag_name_to_id(&mut self, tag_name: &str) -> Option<u16> {
-        use crate::generated::exif_pm::main_tags::MAIN_TAGS;
-        use crate::generated::gps_pm::main_tags::MAIN_TAGS as GPS_MAIN_TAGS;
+        use crate::generated::exif::main_tags::EXIF_MAIN_TAGS;
+        use crate::generated::gps::main_tags::GPS_MAIN_TAGS;
 
         // 1. Direct lookup in generated tables
         // Since we don't have BY_NAME maps, search through the tag tables
-        for (tag_id, tag_def) in MAIN_TAGS.iter() {
+        for (tag_id, tag_def) in EXIF_MAIN_TAGS.iter() {
             if tag_def.name == tag_name {
                 return Some(*tag_id);
             }

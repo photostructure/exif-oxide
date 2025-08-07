@@ -1,15 +1,72 @@
 //! Panasonic RAW PrintConv implementations
 //!
 //! This module contains PrintConv functions for Panasonic RW2/RWL format tags.
-//! All implementations use the tag kit system from generated code,
+//! All implementations use the generated tag system from the new universal extraction,
 //! following the Trust ExifTool principle exactly.
 //!
 //! ExifTool Reference: lib/Image/ExifTool/PanasonicRaw.pm
-//! Generated tag kits: src/generated/panasonicraw_pm/tag_kit/
+//! Generated tags: src/generated/panasonic_raw/main_tags.rs
 
 use crate::expressions::ExpressionEvaluator;
-use crate::generated::panasonicraw_pm::tag_kit;
-use crate::types::TagValue;
+use crate::generated::panasonic_raw::main_tags::PANASONICRAW_MAIN_TAGS;
+use crate::types::{PrintConv, TagValue};
+use tracing::debug;
+
+/// Panasonic RAW-specific PrintConv application using the generated tag table
+/// ExifTool: PanasonicRaw.pm PrintConv processing with registry fallback
+fn apply_panasonic_raw_print_conv(
+    tag_id: u32,
+    value: &TagValue,
+    evaluator: &mut ExpressionEvaluator,
+    errors: &mut Vec<String>,
+    warnings: &mut Vec<String>,
+) -> TagValue {
+    // Look up the tag in PanasonicRaw main tags table
+    if let Some(tag_info) = PANASONICRAW_MAIN_TAGS.get(&(tag_id as u16)) {
+        debug!("Found PanasonicRaw tag {}: {}", tag_id, tag_info.name);
+
+        match &tag_info.print_conv {
+            Some(PrintConv::Expression(expr)) => {
+                debug!("Using PrintConv expression: {}", expr);
+                // Use the expression evaluator for complex Perl expressions
+                match evaluator.evaluate_expression(expr, value) {
+                    Ok(result) => result,
+                    Err(e) => {
+                        warnings.push(format!(
+                            "Failed to evaluate PrintConv expression for tag {}: {}",
+                            tag_id, e
+                        ));
+                        value.clone()
+                    }
+                }
+            }
+            Some(PrintConv::Complex) => {
+                debug!("Complex PrintConv for tag {}, using registry", tag_id);
+                // For complex conversions, try the registry
+                let func_name = format!("panasonic_raw_{}", tag_info.name.to_lowercase());
+                crate::registry::get_global_registry()
+                    .write()
+                    .unwrap()
+                    .apply_print_conv(&func_name, value)
+            }
+            Some(PrintConv::Simple(_table)) => {
+                debug!(
+                    "Simple PrintConv table for tag {} (not yet implemented)",
+                    tag_id
+                );
+                // TODO: Handle simple lookup tables
+                value.clone()
+            }
+            Some(PrintConv::None) | None => {
+                debug!("No PrintConv for PanasonicRaw tag {}", tag_id);
+                value.clone()
+            }
+        }
+    } else {
+        debug!("PanasonicRaw tag {} not found in main tags table", tag_id);
+        value.clone()
+    }
+}
 
 /// Panasonic Main Compression PrintConv
 /// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Compression, tag ID 11)
@@ -19,7 +76,7 @@ pub fn main_compression_print_conv(val: &TagValue) -> TagValue {
     let mut errors = Vec::new();
     let mut warnings = Vec::new();
 
-    tag_kit::apply_print_conv(11, val, &mut evaluator, &mut errors, &mut warnings)
+    apply_panasonic_raw_print_conv(11, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
 /// Panasonic Main Orientation PrintConv  
@@ -30,7 +87,7 @@ pub fn main_orientation_print_conv(val: &TagValue) -> TagValue {
     let mut errors = Vec::new();
     let mut warnings = Vec::new();
 
-    tag_kit::apply_print_conv(274, val, &mut evaluator, &mut errors, &mut warnings)
+    apply_panasonic_raw_print_conv(274, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
 /// Panasonic Main Multishot PrintConv
@@ -41,7 +98,7 @@ pub fn main_multishot_print_conv(val: &TagValue) -> TagValue {
     let mut errors = Vec::new();
     let mut warnings = Vec::new();
 
-    tag_kit::apply_print_conv(289, val, &mut evaluator, &mut errors, &mut warnings)
+    apply_panasonic_raw_print_conv(289, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
 /// Panasonic Main CFAPattern PrintConv
@@ -52,7 +109,7 @@ pub fn main_cfa_pattern_print_conv(val: &TagValue) -> TagValue {
     let mut errors = Vec::new();
     let mut warnings = Vec::new();
 
-    tag_kit::apply_print_conv(9, val, &mut evaluator, &mut errors, &mut warnings)
+    apply_panasonic_raw_print_conv(9, val, &mut evaluator, &mut errors, &mut warnings)
 }
 
 /// Apply PrintConv to Panasonic Main table tags

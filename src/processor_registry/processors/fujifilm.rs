@@ -11,7 +11,7 @@
 use super::super::{
     BinaryDataProcessor, ProcessorCapability, ProcessorContext, ProcessorMetadata, ProcessorResult,
 };
-// use crate::generated::fujifilm_pm::ffmv_binary_data::FujiFilmFFMVTable; // TODO: Generate FujiFilm binary data tables
+// use crate::generated::fuji_film::ffmv_binary_data::FujiFilmFFMVTable; // TODO: Generate FujiFilm binary data tables
 use crate::types::{Result, TagValue};
 use tracing::debug;
 
@@ -25,13 +25,13 @@ use tracing::debug;
 ///
 /// FujiFilm.pm FFMV ProcessBinaryData table
 pub struct FujiFilmFFMVProcessor {
-    table: crate::generated::fujifilm_pm::ffmv_binary_data::FujiFilmFFMVTable,
+    table: crate::generated::fuji_film::ffmv_binary_data::FujiFilmFFMVTable,
 }
 
 impl FujiFilmFFMVProcessor {
     pub fn new() -> Self {
         Self {
-            table: crate::generated::fujifilm_pm::ffmv_binary_data::FujiFilmFFMVTable::new(),
+            table: crate::generated::fuji_film::ffmv_binary_data::FujiFilmFFMVTable::new(),
         }
     }
 }

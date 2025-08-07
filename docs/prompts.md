@@ -10,7 +10,7 @@ After updating the TPP, please continue work on the remaining incomplete tasks.
 
 # Handoff (before compaction)
 
-Well done. We need to hand this work to another engineer now. Please update your technical project plan (TPP) using our style guide, @docs/TPP.md. Your goal is to ensure the next engineer succeeds in picking up where you left off. Include: issue description, relevant code/docs to study, completed tasks, success criteria, and context needed to complete remaining work. Correct any inaccuracies you find. Include refactoring ideas as future work. If you don't remember which TPP you're working on, **please ask**.
+Well done. We need to hand this work to another engineer now. Please update your technical project plan (TPP) using our style guide, @docs/TPP.md. Your goal is to ensure the next engineer succeeds in picking up where you left off. Include: issue description, relevant code/docs to study, new task breakdowns, completed tasks, success criteria, and context needed to complete remaining work. Correct any inaccuracies you find. Include refactoring ideas as future work. If you don't remember which TPP you're working on, **please ask**.
 
 # When the initial plan is hand-wavy
 
@@ -30,11 +30,14 @@ That sounds great. This is critical infrastructure for this project, so let's do
 
 # Validating a TPP
 
-✏️ is a technical project plan: we're going to carefull validate every task to see if it is actually complete. Prior engineers may have incorrectly stated that tasks were complete when they are not, or forgot to update as progress was made, so verify everything carefully. This is critical work for our project, and requires extensive and exhaustive prerequisite research. Read every referenced source and doc, carefully validate and re-analyze the current situation, problem, and solution before starting. In this planning phase, run relevant tooling and tests and study existing source to validate current code state. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. If all tasks are complete, revise the TPP with updated status and move it to `docs/done/$(TZ=America/Los_Angeles date +%Y%m%d)-$(basename $TPP_FILE_NAME)`. Ultrathink.
+✏️ is a technical project plan: we're going to carefull validate every task to see if it is actually complete. Prior engineers may have incorrectly stated that tasks were complete when they are not, so verify everything carefully. This is critical work for our project, and requires extensive and exhaustive prerequisite research. Read every referenced source and doc. Run relevant tooling and tests and study existing source to validate current code state. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. If all tasks are complete, revise the TPP with updated status and move it to `docs/done/$(TZ=America/Los_Angeles date +%Y%m%d)-$(basename $TPP_FILE_NAME)`. Ultrathink.
 
 # When the robots need a reminder
 
 Remember: do not invent heuristics! @docs/TRUST-EXIFTOOL.md !
+
+**Use rg|sd instead of the default MultiEdit tool**: This is extremely quick and efficient: `rg -l 'old-pattern' src/ | xargs sd 'old-pattern' 'new-pattern'`
+
 
 # Fix a test or bug
 

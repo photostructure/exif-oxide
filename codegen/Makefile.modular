@@ -1,7 +1,7 @@
 # Modular Codegen Makefile
 # Simplified build system - Rust now handles extraction orchestration internally
 
-.PHONY: all clean generate-rust codegen test regen-configs
+.PHONY: all clean generate-rust codegen test
 
 # Default target
 all: codegen
@@ -28,7 +28,3 @@ clean:
 # Run codegen tests
 test:
 	cargo test --all
-
-# Regenerate all tag_kit.json configs using auto_config_gen.pl
-regen-configs:
-	@./scripts/regen-configs.sh
