@@ -18,7 +18,7 @@ use crate::field_extractor::FieldSymbol;
 /// {
 ///   "type": "hash",
 ///   "data": {"0": "Auto", "1": "Daylight", "2": "Cloudy"},
-///   "metadata": {"complexity": "simple"}
+///   "metadata": {"size": 3}
 /// }
 /// ```
 pub struct SimpleTableStrategy {
@@ -170,6 +170,11 @@ impl ExtractionStrategy for SimpleTableStrategy {
     }
     
     fn can_handle(&self, symbol: &FieldSymbol) -> bool {
+        // Don't claim composite tables - let CompositeTagStrategy handle those
+        if symbol.metadata.is_composite_table == 1 {
+            return false;
+        }
+        
         // Check if this is a hash with simple string values
         if let JsonValue::Object(map) = &symbol.data {
             // Must have at least one entry
@@ -183,9 +188,25 @@ impl ExtractionStrategy for SimpleTableStrategy {
             // Check that this doesn't look like a tag definition
             let has_tag_markers = map.contains_key("PrintConv") || 
                                  map.contains_key("ValueConv") || 
-                                 map.contains_key("Name");
+                                 map.contains_key("Name") ||
+                                 map.contains_key("WRITABLE") ||
+                                 map.contains_key("GROUPS") ||
+                                 map.contains_key("WRITE_GROUP");
             
-            all_strings && !has_tag_markers
+            // Specifically claim known lens/camera type lookup tables
+            let known_lookup_tables = [
+                "canonLensTypes", "canonModelID", "canonImageSize", 
+                "olympusLensTypes", "olympusCameraTypes",
+                "nikonLensIDs", "sonyLensTypes", "pentaxLensTypes"
+            ];
+            let is_known_lookup = known_lookup_tables.contains(&symbol.name.as_str());
+            
+            // Detect mixed-key patterns (both numeric and decimal keys like "2.1")
+            let has_mixed_keys = map.keys().any(|k| {
+                k.contains('.') && k.parse::<f64>().is_ok() // Decimal keys like "2.1"
+            });
+            
+            (all_strings && !has_tag_markers) || is_known_lookup || has_mixed_keys
         } else {
             false
         }
@@ -282,7 +303,7 @@ mod tests {
             module: "Canon".to_string(),
             metadata: FieldMetadata {
                 size: 3,
-                complexity: "simple".to_string(),
+                is_composite_table: 0,
             },
         };
         assert!(strategy.can_handle(&simple_hash));
@@ -295,7 +316,7 @@ mod tests {
             module: "Canon".to_string(),
             metadata: FieldMetadata {
                 size: 0,
-                complexity: "simple".to_string(),
+                is_composite_table: 0,
             },
         };
         assert!(!strategy.can_handle(&empty_hash));
@@ -308,7 +329,7 @@ mod tests {
             module: "Canon".to_string(),
             metadata: FieldMetadata {
                 size: 2,
-                complexity: "composite".to_string(),
+                is_composite_table: 0,
             },
         };
         assert!(!strategy.can_handle(&tag_def));
@@ -321,7 +342,7 @@ mod tests {
             module: "Canon".to_string(),
             metadata: FieldMetadata {
                 size: 2,
-                complexity: "composite".to_string(),
+                is_composite_table: 0,
             },
         };
         assert!(!strategy.can_handle(&mixed_values));
@@ -339,7 +360,7 @@ mod tests {
             module: "Canon".to_string(),
             metadata: FieldMetadata {
                 size: 3,
-                complexity: "simple".to_string(),
+                is_composite_table: 0,
             },
         };
         

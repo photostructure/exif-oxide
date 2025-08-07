@@ -37,8 +37,9 @@ pub struct FieldMetadata {
     /// Estimated size (hash key count, array length, or string length)
     pub size: u32,
     
-    /// Complexity assessment: "simple", "composite", or "scalar"
-    pub complexity: String,
+    /// Flag indicating if this is a composite table (set when AddCompositeTags was called)
+    #[serde(default)]
+    pub is_composite_table: u8,
 }
 
 /// Statistics from field extraction process

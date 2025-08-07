@@ -70,6 +70,15 @@ sub convert_all_my_to_package_variables {
         $modified = 1;
     }
 
+   # Add marker for AddCompositeTags calls
+   # This helps our field_extractor identify which modules have composite tables
+    if ( $content =~
+s/^(Image::ExifTool::AddCompositeTags\('Image::ExifTool::\w+'\);)$/our \$__hasCompositeTags = 1; $1/gm
+      )
+    {
+        $modified = 1;
+    }
+
     if ($modified) {
 
         # Write back the modified content

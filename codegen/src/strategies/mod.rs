@@ -475,11 +475,12 @@ pub fn all_strategies() -> Vec<Box<dyn ExtractionStrategy>> {
         Box::new(MagicNumberStrategy::new()),    // ExifTool %magicNumber regex patterns
         Box::new(MimeTypeStrategy::new()),       // ExifTool %mimeType simple mappings
         
+        // Simple lookup tables (MUST be before TagKitStrategy to claim mixed-key tables like canonLensTypes)
+        Box::new(SimpleTableStrategy::new()), // Simple key-value lookups with mixed keys
+        
         Box::new(TagKitStrategy::new()),      // Complex tag definitions (Main tables) - after specific patterns
         Box::new(BinaryDataStrategy::new()),  // ProcessBinaryData tables (CameraInfo*, etc.)
         Box::new(BooleanSetStrategy::new()),  // Membership sets (isDat*, isTxt*, etc.)
-        
-        Box::new(SimpleTableStrategy::new()), // Simple key-value lookups (fallback)
     ]
 }
 
@@ -491,7 +492,7 @@ mod tests {
     #[test]
     fn test_strategy_dispatcher_creation() {
         let dispatcher = StrategyDispatcher::new();
-        assert_eq!(dispatcher.strategies.len(), 8); // All 8 strategies registered
+        assert_eq!(dispatcher.strategies.len(), 7); // All 7 strategies registered
     }
     
     #[test]
@@ -505,7 +506,7 @@ mod tests {
             module: "TestModule".to_string(),
             metadata: crate::field_extractor::FieldMetadata {
                 size: 1,
-                complexity: "simple".to_string(),
+                is_composite_table: 0,
             },
         };
         
