@@ -8,76 +8,105 @@ This document describes the complete system for integrating ExifTool's metadata 
 
 ## Overview
 
-The ExifTool integration system uses a hybrid approach combining automated code generation with targeted manual implementations:
+The ExifTool integration system uses a **unified strategy-based architecture** that combines automated pattern recognition with targeted manual implementations:
+
+### Architecture Evolution
+
+**🎯 CURRENT SYSTEM (2025)**: **Unified Strategy Pattern**
+- **Universal extraction**: Single `field_extractor.pl` discovers ALL ExifTool symbols automatically
+- **Dynamic processing**: Rust strategies compete to recognize and process symbol patterns 
+- **Comprehensive discovery**: No manual configuration needed - finds all tables in any module
+- **Pattern-driven**: Code generation based on symbol structure, not hardcoded extractors
+
+**📚 LEGACY SYSTEM**: **Config-Based Extractors** (see [Historical Approach](#historical-config-based-approach))
+- Multiple specialized extractors (`tag_kit.pl`, `simple_table.pl`, etc.)  
+- Manual configuration files specify what to extract
+- Static discovery limited to configured tables
 
 ### Generated Components
 
-- **Tag tables** with runtime conversion references
+- **Tag tables** with runtime conversion references and complete PrintConv implementations
 - **Lookup tables** from manufacturer modules (Canon white balance, Nikon lenses, etc.)
 - **File type detection** patterns and discriminated unions
+- **Boolean membership sets** for fast existence checking
+- **Binary data processors** for structured data parsing
 - **Reference lists** showing what manual implementations are needed
 
 ### Manual Components
 
 - **Conversion functions** (PrintConv/ValueConv) with complex logic
 - **Manufacturer processors** for binary data parsing
-- **Encryption/decryption** algorithms
+- **Encryption/decryption** algorithms  
 - **Format handlers** for variable-length data structures
 
 **Core Principle**: Generated code provides data and structure; manual code provides ExifTool-equivalent logic. Complex logic is never generated - it's faithfully translated from ExifTool source.
 
 ## System Architecture
 
+### Unified Strategy Pattern (Current)
+
 ```mermaid
-flowchart
-    A[ExifTool Source] --> B[Perl Extractors]
-    B --> C[JSON]
-    C --> D[Rust Codegen]
-    D --> E[Generated Code]
-    E -->|Function References| F[Runtime Registry]
-    F -->|Manual Implementations| G[Manual Implementations]
-    G -.-> F
+flowchart TB
+    A[ExifTool Source] --> B[field_extractor.pl]
+    B --> C[JSON Symbol Stream]
+    C --> D[Strategy Dispatcher]
+    D --> E[Pattern Recognition]
+    E --> F1[SimpleTableStrategy]
+    E --> F2[TagKitStrategy] 
+    E --> F3[BinaryDataStrategy]
+    E --> F4[BooleanSetStrategy]
+    E --> F5[FileTypeLookupStrategy]
+    E --> F6[MagicNumberStrategy]
+    E --> F7[CompositeTagStrategy]
+    F1 --> G[Generated Code]
+    F2 --> G
+    F3 --> G
+    F4 --> G
+    F5 --> G
+    F6 --> G
+    F7 --> G
+    G --> H[Runtime Registry]
+    H --> I[Manual Implementations]
+    I -.-> H
 ```
 
-### Build System
+**Key Benefits:**
+- **🔍 Complete Discovery**: Finds ALL symbols in any ExifTool module automatically
+- **🧩 Duck Typing**: Strategies recognize patterns without manual configuration
+- **⚡ Dynamic Processing**: New modules work immediately without configuration
+- **🔧 Extensible**: Add new strategies without changing extraction layer
+
+### Unified Build System (Current)
 
 ```
 codegen/
-├── src/                 # Rust orchestration (simplified architecture)
-│   ├── main.rs         # Command-line interface and coordination
-│   ├── discovery.rs    # Auto-discovery of module directories
-│   ├── config/         # Configuration management
-│   ├── extraction.rs   # Calls Perl extractors with explicit arguments
-│   ├── patching.rs     # Atomic ExifTool patching with tempfile
-│   ├── file_operations.rs # Atomic file I/O operations
-│   ├── table_processor.rs # Table processing and validation
-│   └── generators/     # Rust code generation
-│       ├── lookup_tables/ # Lookup table generators (modular output)
-│       ├── file_detection/ # File type detection
-│       ├── data_sets/   # Boolean set generators
-│       ├── tags.rs     # Tag table generator (semantic grouping)
-│       └── composite_tags.rs # Composite tag generator
-├── config/             # Source-file-based configuration
-│   ├── Canon_pm/      # Canon.pm extractions
-│   │   └── simple_table.json
-│   ├── ExifTool_pm/   # ExifTool.pm extractions
-│   │   ├── simple_table.json
-│   │   ├── file_type_lookup.json
-│   │   ├── boolean_set.json
-│   │   └── regex_patterns.json
-│   ├── Nikon_pm/      # Nikon.pm extractions
-│   │   ├── simple_table.json
-│   │   └── print_conv.json
-│   └── [Other]_pm/    # Auto-discovered modules
-├── extractors/        # Simple Perl scripts (explicit arguments)
-│   ├── simple_table.pl     # Takes file path + hash name
-│   ├── tag_tables.pl       # Tag definitions
-│   ├── file_type_lookup.pl # File detection
-│   ├── boolean_set.pl      # Boolean sets
-│   └── regex_patterns.pl   # Pattern extraction
-├── schemas/           # JSON schema validation
-└── generated/         # Temporary extraction data (gitignored)
+├── src/                        # Rust orchestration (strategy pattern)
+│   ├── main.rs                # Command-line interface and coordination
+│   ├── field_extractor.rs     # Interface to field_extractor.pl
+│   ├── strategies/            # Strategy pattern implementations
+│   │   ├── mod.rs             # Strategy dispatcher and trait definition
+│   │   ├── simple_table.rs    # Simple key-value lookup tables
+│   │   ├── tag_kit.rs         # Complete tag definitions with PrintConv
+│   │   ├── binary_data.rs     # ProcessBinaryData table structures
+│   │   ├── boolean_set.rs     # Membership testing sets
+│   │   ├── composite_tag.rs   # Calculated/composite tags
+│   │   ├── file_type_lookup.rs # File type discrimination
+│   │   ├── magic_number.rs    # Binary signature patterns
+│   │   ├── mime_type.rs       # MIME type mappings
+│   │   └── output_locations.rs # Output path utilities
+│   ├── conv_registry.rs       # PrintConv/ValueConv function registry
+│   └── common.rs              # Shared utilities
+├── scripts/                   # Perl extraction scripts
+│   ├── field_extractor.pl     # ⭐ UNIVERSAL EXTRACTOR - extracts all symbols
+│   └── patch_all_modules.sh   # ExifTool patching utilities
+├── extractors/               # 📚 LEGACY - Individual extractors (historical)
+│   ├── tag_kit.pl            # Legacy tag extraction
+│   ├── simple_table.pl       # Legacy table extraction
+│   └── [others...]           # Preserved for reference/migration
+└── generated/                # Generated output files
 ```
+
+**🎯 Key Change**: Single universal `field_extractor.pl` replaces dozens of specialized extractors.
 
 ### Runtime System
 
@@ -142,11 +171,102 @@ src/
     └── capability.rs            # Capability assessment
 ```
 
-## Config Philosophy
+## How the Strategy Pattern Works
+
+The unified strategy system operates in three phases:
+
+### Phase 1: Universal Extraction
+
+```bash
+# field_extractor.pl extracts ALL hash symbols from any ExifTool module
+field_extractor.pl third-party/exiftool/lib/Image/ExifTool/Canon.pm
+```
+
+**Output**: Stream of JSON symbols with structure information:
+```json
+{
+  "type": "hash",
+  "name": "canonWhiteBalance", 
+  "data": {"0": "Auto", "1": "Daylight", "2": "Cloudy"},
+  "module": "Canon",
+  "metadata": {"size": 3, "is_composite_table": 0}
+}
+```
+
+### Phase 2: Strategy Competition
+
+Each strategy implements `can_handle()` to claim symbols:
+
+```rust
+impl ExtractionStrategy for SimpleTableStrategy {
+    fn can_handle(&self, symbol: &FieldSymbol) -> bool {
+        // Duck typing: Does this look like a simple lookup table?
+        if let JsonValue::Object(map) = &symbol.data {
+            map.values().all(|v| v.is_string()) && 
+            !symbol.name.contains("Composite") &&
+            !map.contains_key("PrintConv")
+        } else {
+            false
+        }
+    }
+}
+```
+
+**Strategy Priority Order** (first-match wins):
+1. `CompositeTagStrategy` - Composite tag definitions (highest priority)
+2. `FileTypeLookupStrategy` - ExifTool file type discrimination 
+3. `SimpleTableStrategy` - Key-value lookup tables
+4. `TagKitStrategy` - Complex tag definitions with PrintConv
+5. `BinaryDataStrategy` - ProcessBinaryData structures
+6. `BooleanSetStrategy` - Membership testing sets
+
+### Phase 3: Code Generation
+
+Each strategy generates appropriate Rust code:
+
+```rust
+// SimpleTableStrategy output
+pub static WHITE_BALANCE: LazyLock<HashMap<u8, &'static str>> = LazyLock::new(|| {
+    [(0, "Auto"), (1, "Daylight"), (2, "Cloudy")].iter().copied().collect()
+});
+
+pub fn lookup_white_balance(key: u8) -> Option<&'static str> {
+    WHITE_BALANCE.get(&key).copied()
+}
+```
+
+### Key Advantages
+
+- **🔍 Complete Discovery**: No configuration needed - finds ALL symbols automatically
+- **🎯 Pattern Recognition**: Strategies compete using duck typing for accurate classification
+- **⚡ Zero Configuration**: New modules work immediately without manual setup
+- **🧪 Testable**: Each strategy can be unit tested independently
+- **📈 Extensible**: Add new pattern types without modifying extraction layer
+
+## Strategy Philosophy vs Legacy Config Approach
+
+### 🎯 Current Strategy Approach: Zero Configuration
+
+**The unified strategy system eliminates configuration files entirely.**
+
+**How it works:**
+1. **Universal Discovery**: `field_extractor.pl` finds ALL symbols in any ExifTool module
+2. **Pattern Recognition**: Strategies compete to claim symbols based on structure  
+3. **Dynamic Processing**: No manual configuration required
+
+**Benefits:**
+- **🚀 Instant Support**: New modules work immediately without configuration
+- **🔍 Complete Discovery**: Finds symbols you didn't know existed
+- **🧪 Testable**: Each strategy has clear pattern recognition rules
+- **📈 Scalable**: Adding new pattern types doesn't require config updates
+
+### 📚 Legacy Config Philosophy (Historical)
+
+**Note**: The config-based system is preserved for reference and migration purposes.
 
 **CRITICAL**: Configuration files specify **WHAT** to extract, not extracted data itself.
 
-### Simple Config Principle
+#### Simple Config Principle (Legacy)
 
 **✅ CORRECT** - Simple declarative config (10-20 lines):
 ```json
@@ -179,50 +299,77 @@ src/
 }
 ```
 
-### Architecture Flow
+#### Architecture Flow Comparison
 
-**Correct**: Config → Extractor → Generated Code
+**🎯 CURRENT (Strategy Pattern)**: Universal Extraction → Pattern Recognition → Generated Code
+1. **field_extractor.pl** discovers all symbols automatically
+2. **Strategies** compete to process symbols based on duck-typing
+3. **Generated code** contains appropriate data structures
+
+**📚 LEGACY (Config-Based)**: Config → Extractor → Generated Code
 1. **Simple config** specifies tables to extract
 2. **Extractor** runs during `make codegen` 
 3. **Generated code** contains the extracted data structures
 
-**Broken**: Config → Extractor → Config → Extractor (circular dependency)
+**❌ BROKEN**: Config → Extractor → Config → Extractor (circular dependency)
 1. Script generates config containing extracted data
 2. Config becomes the data source instead of ExifTool
 3. Updates require regenerating configs instead of updating source
 
-### Validation Rules
+#### Legacy Validation Rules
 
 - **Config files should be <100 lines** - if larger, you're doing extraction in config instead of letting extractors do their job
 - **Configs should be human-readable and git-diffable** - engineers should understand what's being extracted
 - **Configs describe intent** ("extract Canon camera settings"), **not implementation** (actual tag structures)
 - **Source of truth remains ExifTool** - configs just point to what to extract
 
-### Tools & Workflow
+### 🎯 Current Workflow: Unified Strategy System
 
-**Standard Workflow for New Modules**:
+**Standard Workflow for New Modules** (Zero Configuration Required):
+1. **Universal Processing**: `make codegen` - automatically discovers and processes ALL symbols
+2. **Pattern Recognition**: Strategies compete to claim symbols based on structure
+3. **Code Generation**: Generated code appears automatically in `src/generated/`
+
+**Command Examples:**
+```bash
+# Process all ExifTool modules with unified system
+make codegen
+
+# Process specific module (for development/debugging)
+cd codegen && RUST_LOG=debug cargo run -- --module Canon
+```
+
+**Key Benefits of Strategy System**:
+- **🔍 Complete Discovery**: Finds ALL symbols in any ExifTool module automatically
+- **⚡ Zero Configuration**: New modules work immediately without setup
+- **🧪 Pattern Recognition**: Duck-typing accurately classifies symbols
+- **📈 Extensible**: Add new strategies without touching extraction layer
+
+### 📚 Legacy Workflow: Config-Based System (Historical)
+
+**Legacy Workflow for New Modules** (Preserved for Reference):
 1. **Universal Patching**: `./scripts/patch_all_modules.sh` (patches all modules at once)
 2. **Config Generation**: `perl scripts/auto_config_gen.pl ../third-party/exiftool/lib/Image/ExifTool/ModuleName.pm`
 3. **Code Generation**: `make codegen`
 
-**Individual Tools**:
+**Legacy Individual Tools**:
 - `scripts/patch_all_modules.sh` - **Recommended**: Patches all ExifTool modules for symbol table access
 - `scripts/auto_config_gen.pl` - Symbol table introspection to generate simple configs (finds ALL tables)
 - `scripts/patch_exiftool_modules_universal.pl` - Individual module patching (used by auto_config_gen.pl)
 - Expression parser - Handles most conversion logic automatically
 - PrintConv/ValueConv registry - Handles exotic conversion cases only
 
-**Key Benefits of Universal Patching**:
+**Benefits of Legacy Universal Patching**:
 - **Complete Discovery**: Finds ALL tag tables (171 tables in Nikon vs ~10 manually)
 - **Zero Maintenance**: Once patched, always accessible for symbol table introspection
 - **Safe & Reversible**: Only converts top-level `my` to `our`, semantically equivalent
 - **Eliminates Manual Errors**: No more missing tables or transcription mistakes
 
-**Remember**: Universal patching + simple configs + powerful extractors = comprehensive, maintainable architecture.
-
 ## Daily Development Workflow
 
-### 1. Adding New PrintConv/ValueConv Functions
+### 🎯 Current Strategy-Based Development
+
+#### 1. Adding New PrintConv/ValueConv Functions
 
 **Step 1: Identify Need**
 
@@ -236,16 +383,13 @@ cargo run -- photo.jpg --show-missing
 # - canon_wb_lookup (Canon:WhiteBalance)
 ```
 
-**Step 2: Find ExifTool Source**
+**Step 2: Check Generated Code First**
 
-```perl
-# Located in ExifTool source
-%orientation = (
-    1 => 'Horizontal (normal)',
-    2 => 'Mirror horizontal',
-    3 => 'Rotate 180',
-    # ...
-);
+```bash
+# Strategy system automatically generates lookup tables
+# Check if the table already exists:
+ls src/generated/exif/orientation.rs
+ls src/generated/canon/white_balance.rs
 ```
 
 **Step 3: Implement Using Generated Tables**
@@ -253,9 +397,9 @@ cargo run -- photo.jpg --show-missing
 ```rust
 /// EXIF Orientation PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:281-290 (%orientation hash)
-/// Generated table: src/generated/Exif_pm/mod.rs
+/// Generated by SimpleTableStrategy
 pub fn orientation_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::Exif_pm::lookup_orientation;
+    use crate::generated::exif::lookup_orientation;
 
     if let Some(orientation_val) = val.as_u8() {
         if let Some(description) = lookup_orientation(orientation_val) {
@@ -282,6 +426,32 @@ pub fn register_all_conversions() {
 exiftool -j test.jpg > expected.json
 cargo run -- test.jpg > actual.json
 # Compare orientation values
+```
+
+#### 2. Adding Support for New Symbol Types
+
+**If you find a pattern that no strategy recognizes:**
+
+1. **Analyze the pattern** in the `strategy_selection.log` file
+2. **Create new strategy** implementing `ExtractionStrategy`
+3. **Add pattern recognition** in `can_handle()` method
+4. **Register strategy** in `all_strategies()` with proper priority
+
+**Example new strategy:**
+```rust
+pub struct MyNewStrategy {
+    // Implementation
+}
+
+impl ExtractionStrategy for MyNewStrategy {
+    fn can_handle(&self, symbol: &FieldSymbol) -> bool {
+        // Pattern recognition logic here
+    }
+    
+    fn extract(&mut self, symbol: &FieldSymbol, context: &mut ExtractionContext) -> Result<()> {
+        // Processing logic here
+    }
+}
 ```
 
 ### 2. Using Generated Lookup Tables
@@ -664,99 +834,98 @@ The system supports three extraction patterns:
 - **Binary Safety**: Proper handling of non-UTF-8 bytes in patterns
 - **Minimal Dependencies**: Uses std::sync::LazyLock, no external crates for core functionality
 
-### Extractor Selection Guide
+### 🎯 Current Strategy Selection Guide
 
-The codegen system includes multiple specialized extractors, each serving a specific purpose. Following the "one-trick pony" principle, each extractor excels at one type of extraction.
+The unified strategy system replaces individual extractors with pattern recognition. Strategies compete to claim symbols based on duck-typing pattern analysis.
 
-#### Tag-Related Extractors
+#### Available Strategies (Priority Order)
 
-**Primary Extractor (Use This)**:
-- **`tag_kit.pl`** - Extracts complete tag definitions with embedded PrintConv implementations
-  - Purpose: Create self-contained "tag kits" with everything needed to process a tag
-  - Target: Any ExifTool tag table (EXIF, GPS, manufacturer-specific)
-  - Output: Tag ID, name, format, groups, AND PrintConv data together
-  - Benefit: Eliminates tag ID/PrintConv mismatch bugs
-  - Note: Extracts ALL tags including those marked `Unknown => 1` (which we filter during runtime)
+**1. `CompositeTagStrategy`** - Composite tag definitions (highest priority)
+  - **Pattern**: Symbols marked `is_composite_table: 1` 
+  - **Handles**: Tags calculated from other tags with dependencies
+  - **Output**: Composite tag definitions with requirements
 
-**Deprecated Extractors (Being Replaced by Tag Kit)**:
-- **`inline_printconv.pl`** - ⚠️ DEPRECATED - Extracts PrintConv hashes from tag definitions
-  - Being replaced: Tag kit extracts the same data as part of complete bundles
-- **`tag_tables.pl`** - ⚠️ DEPRECATED - Hardcoded to extract only EXIF/GPS tags
-  - Being replaced: Tag kit is config-driven and works with any module
-- **`tag_definitions.pl`** - ⚠️ DEPRECATED - Extracts tags with frequency filtering
-  - Being replaced: Tag kit provides complete bundles instead of function references
+**2. `FileTypeLookupStrategy`** - ExifTool file type discrimination
+  - **Pattern**: Objects with `Description`, `Format` fields and string aliases
+  - **Handles**: File type detection with discriminated unions
+  - **Output**: File format identification code
 
-#### Static Array Extractors
+**3. `MagicNumberStrategy`** - Binary signature patterns  
+  - **Pattern**: Keys with binary escape sequences like `\xff\xd8\xff`
+  - **Handles**: Magic number patterns for file detection
+  - **Output**: Binary signature matching code with non-UTF-8 support
 
-- **`simple_array.pl`** ⭐ - Extracts static arrays for performance-critical operations
-  - Purpose: Direct array indexing for cryptographic operations and large lookups
-  - Example: Nikon XLAT encryption arrays, AF point name arrays
-  - When to use: **Always** for ExifTool arrays needing direct indexing vs key-value lookup
-  - Features: Complex expression support (`xlat[0]`, `%widget->payload`), byte-perfect accuracy
-  - Output: Static Rust arrays (`[u8; 256]`) with O(1) direct access
+**4. `MimeTypeStrategy`** - MIME type mappings
+  - **Pattern**: Simple string-to-string mappings for known MIME types
+  - **Handles**: File extension to MIME type associations
+  - **Output**: MIME type lookup tables
 
-#### Lookup Table Extractors
+**5. `SimpleTableStrategy`** - Key-value lookup tables
+  - **Pattern**: Hash with all string values, no PrintConv markers
+  - **Handles**: Manufacturer lookup tables (white balance, lens IDs, etc.)
+  - **Output**: Static HashMap lookup functions with type inference
 
-- **`simple_table.pl`** - Extracts standalone key-value lookup tables
-  - Purpose: Static lookups not associated with specific tags
-  - Example: Canon white balance names, Nikon lens IDs
-  - When to use: Manufacturer-specific lookup tables referenced by multiple tags
+**6. `TagKitStrategy`** - Complex tag definitions
+  - **Pattern**: Tables with `WRITABLE`, `GROUPS`, or tag fields like `Name`, `Format`
+  - **Handles**: Complete tag definitions with PrintConv implementations  
+  - **Output**: Tag registry entries with conversion functions
 
-- **`boolean_set.pl`** - Extracts boolean membership sets
-  - Purpose: Fast membership testing (hash keys mapping to 1)
-  - Example: `if ($isDatChunk{$chunk})`
-  - When to use: ExifTool sets used for existence checks
+**7. `BinaryDataStrategy`** - ProcessBinaryData structures
+  - **Pattern**: Tables with binary data attributes and processing metadata
+  - **Handles**: Binary data parsing table definitions
+  - **Output**: Binary parsing structures and offset information
 
-#### Binary Data Extractors
+**8. `BooleanSetStrategy`** - Membership testing sets (lowest priority)
+  - **Pattern**: Hash with all values equal to `1` (membership sets)
+  - **Handles**: Fast existence checks (`isDatChunk`, `isTxtChunk`)
+  - **Output**: HashSet membership testing functions
 
-- **`process_binary_data.pl`** - Extracts ProcessBinaryData table structures
-  - Purpose: Binary data parsing table definitions
-  - Target: Tables with `%binaryDataAttrs`
-  - Output: Offset, format, and tag information for binary parsing
+#### Pattern Recognition Logic
 
-- **`runtime_table.pl`** - Generates runtime HashMap creation code
-  - Purpose: Tables requiring runtime context (camera model, firmware)
-  - Target: ProcessBinaryData tables with conditional logic
-  - Output: Functions that create HashMaps at runtime
+Each strategy implements smart pattern recognition:
 
-#### Specialized Extractors
+```rust
+// Example: SimpleTableStrategy recognizes lookup tables
+fn can_handle(&self, symbol: &FieldSymbol) -> bool {
+    if let JsonValue::Object(map) = &symbol.data {
+        // All values must be strings
+        let all_strings = map.values().all(|v| v.is_string());
+        
+        // Must not be a tag definition  
+        let has_tag_markers = map.contains_key("PrintConv") || 
+                             map.contains_key("Name");
+        
+        // Known lookup table patterns
+        let known_tables = ["canonWhiteBalance", "nikonLensIDs"];
+        let is_known = known_tables.contains(&symbol.name.as_str());
+        
+        (all_strings && !has_tag_markers) || is_known
+    } else {
+        false
+    }
+}
+```
 
-- **`composite_tags.pl`** - Extracts composite tag definitions
-  - Purpose: Tags calculated from other tags
-  - Features: Dependencies, expressions, requirements
+#### Strategy Benefits vs Legacy Extractors
 
-- **`conditional_tags.pl`** - Extracts complex conditional tag arrays
-  - Purpose: Model/firmware-specific tag variations
-  - Features: Condition parsing, count/format detection
+- **🔍 Automatic Discovery**: No configuration needed - strategies automatically find and process symbols
+- **🧩 Duck Typing**: Pattern recognition adapts to ExifTool's evolving symbol structures  
+- **⚡ Zero Maintenance**: New ExifTool modules work immediately without config updates
+- **🧪 Testable Logic**: Each strategy's recognition logic can be unit tested independently
+- **📈 Extensible**: Add new strategies without modifying extraction layer
 
-- **`file_type_lookup.pl`** - Extracts file type detection structures
-  - Purpose: File format identification
-  - Output: Discriminated unions with aliases
+### 📚 Legacy Extractor Selection Guide (Historical)
 
-- **`regex_patterns.pl`** - Extracts magic number patterns
-  - Purpose: Binary file signature detection
-  - Features: Non-UTF-8 byte handling
+**Note**: The individual extractor system is preserved for reference. See [EXTRACTOR-GUIDE.md](../reference/EXTRACTOR-GUIDE.md) for complete migration information.
 
-- **`model_detection.pl`** - Extracts camera model patterns
-  - Purpose: Model-specific behavior detection
+The legacy config-based system used specialized extractors:
+- `tag_kit.pl` - Tag definitions with PrintConv (→ `TagKitStrategy`)
+- `simple_table.pl` - Lookup tables (→ `SimpleTableStrategy`) 
+- `boolean_set.pl` - Membership sets (→ `BooleanSetStrategy`)
+- `file_type_lookup.pl` - File type detection (→ `FileTypeLookupStrategy`)
+- `composite_tags.pl` - Calculated tags (→ `CompositeTagStrategy`)
 
-- **`offset_patterns.pl`** - Extracts offset calculation patterns
-  - Purpose: Sony-specific complex offset schemes
-
-- **`tag_table_structure.pl`** - Extracts manufacturer table structures
-  - Purpose: Generate Rust enums for manufacturer tables
-
-#### Quick Decision Guide
-
-1. **Extracting tags with their PrintConvs?** → Use `tag_kit.pl`
-2. **Extracting static arrays for direct indexing?** → Use `simple_array.pl` ⭐ 
-3. **Extracting standalone lookup tables?** → Use `simple_table.pl`
-4. **Extracting binary data structures?** → Use `process_binary_data.pl`
-5. **Need runtime HashMap creation?** → Use `runtime_table.pl`
-6. **Extracting boolean sets?** → Use `boolean_set.pl`
-7. **Extracting composite tags?** → Use `composite_tags.pl`
-
-For detailed extractor comparisons and examples, see [EXTRACTOR-GUIDE.md](../reference/EXTRACTOR-GUIDE.md).
+**Migration**: The strategy system provides equivalent functionality with automatic discovery and no configuration requirements.
 
 ### Non-UTF-8 Data Handling
 
@@ -800,9 +969,42 @@ When extracting patterns from ExifTool that contain raw bytes:
 
 Example: BPG magic number `BPG\xfb` becomes `"BPG\\xfb"` in generated Rust code.
 
-### Build Pipeline
+### 🎯 Current Build Pipeline: Unified Strategy System
 
-The simplified build pipeline uses Rust orchestration with simple Perl scripts:
+The strategy-based build pipeline uses universal extraction with dynamic processing:
+
+1. **Universal Extraction**: `field_extractor.pl` discovers ALL symbols in ExifTool modules
+2. **Strategy Competition**: Rust strategies compete to claim symbols based on pattern recognition
+3. **Code Generation**: Strategies generate appropriate Rust code for claimed symbols
+4. **Module Assembly**: Generated files are organized into semantic modules
+
+```bash
+# Full pipeline with unified strategy system
+make codegen              # Complete build - processes all ExifTool modules automatically
+
+# Development commands  
+cd codegen && cargo run --release                    # Run unified extraction + strategies
+cd codegen && RUST_LOG=debug cargo run             # Verbose debug output
+cd codegen && RUST_LOG=trace cargo run -- --module Canon  # Debug specific module
+```
+
+#### Strategy Processing Flow
+
+1. **field_extractor.pl** extracts symbols from ExifTool modules (JSON stream)
+2. **StrategyDispatcher** processes symbols through available strategies
+3. **Pattern Recognition** - strategies compete using `can_handle()` methods
+4. **Code Generation** - winning strategy generates appropriate Rust code
+5. **File Organization** - generated files organized by module and type
+
+**Key Benefits:**
+- **🔍 Complete Discovery**: Automatically finds ALL symbols in any module
+- **⚡ Zero Configuration**: No JSON configs or manual setup required  
+- **🧪 Pattern Recognition**: Duck typing accurately classifies symbol types
+- **📈 Extensible**: New strategies handle new patterns without changing extraction
+
+### 📚 Legacy Build Pipeline: Config-Based System (Historical)
+
+**Legacy system** (preserved for reference):
 
 1. **Auto-discovery**: Rust scans `codegen/config/` directories for modules
 2. **Configuration**: Each module has JSON configs with explicit `source` paths
@@ -811,39 +1013,29 @@ The simplified build pipeline uses Rust orchestration with simple Perl scripts:
 5. **Generation**: Creates modular Rust code directly from individual JSON files
 6. **Cleanup**: Makefile reverts ExifTool patches using git checkout
 
+**Legacy Commands:**
 ```bash
-# Full pipeline
-make codegen              # Complete build with schema validation
-make -j4 codegen         # Parallel execution (faster)
-
-# Development commands
+# Legacy config-based system
 make check-schemas       # Validate all configuration files
-cd codegen && cargo run --release  # Run code generation directly
-
-# Single config debugging (extraction + generation)
 cd codegen && cargo run -- config/Canon_pm/simple_table.json    # Debug specific config
-cd codegen && RUST_LOG=debug cargo run -- config/Module_pm/config.json  # Verbose debug output
 ```
 
-#### Architecture Improvements
+#### Architecture Evolution
 
-**Old System** (pre-July 2025):
+**🎯 CURRENT (Strategy Pattern 2025)**:
+
+- **Universal Extraction** - Single `field_extractor.pl` discovers all symbols  
+- **Dynamic Processing** - Strategies compete based on pattern recognition
+- **Zero Configuration** - No config files or manual setup needed
+- **Complete Discovery** - Finds symbols you didn't know existed
+
+**📚 LEGACY (Config-Based 2024)**:
 
 - Complex Makefile with parallel extraction logic
 - Perl scripts read JSON configs and knew about structure
 - Combined extraction → split-extractions → individual files
 - Hardcoded module lists in Rust main.rs
-- Path guessing logic for ExifTool modules
-
-**New System** (July 2025):
-
-- **Rust orchestrates everything** - Single `cargo run` handles full pipeline
-- **Simple Perl scripts** - Take explicit file paths and hash names as arguments
-- **Direct JSON output** - No split-extractions step needed
-- **Auto-discovery** - Scans config directories, no hardcoded module lists
-- **Atomic file operations** - Uses tempfile crate for safe ExifTool patching
-- **Modular generated code** - Semantic grouping and functional splitting
-- **Explicit source paths** - No path guessing, all configured in JSON
+- Manual configuration required for each extraction
 
 #### Why Patching is Required
 
@@ -1035,36 +1227,51 @@ cargo test
 # Most updates require no manual intervention
 ```
 
-### Build System Capabilities
+### 🎯 Current Build System Capabilities
 
-The simplified build system supports efficient development:
+The unified strategy system supports efficient development with zero configuration:
 
 ```bash
-# Parallel execution (faster development)
-make -j4 codegen
+# Unified strategy system (current)
+make codegen                                    # Complete pipeline - processes all modules automatically
+cd codegen && cargo run --release             # Direct execution with all strategies
+cd codegen && RUST_LOG=debug cargo run        # Debug output showing strategy selections
+cd codegen && cargo run -- --module Canon     # Process specific module (development/debugging)
 
-# Direct Rust execution (for debugging)
-cd codegen && cargo run --release
+# General utilities
+make clean                                     # Clean generated files
+make check-perl                               # Check Perl script syntax
+```
 
-# Schema validation
-make check-schemas
+### 📚 Legacy Build System (Historical)
 
-# Syntax checking
-make check-perl
-
-# Clean generated files
-make clean
+```bash
+# Legacy config-based system (preserved for reference)
+make check-schemas       # Validate configuration files (legacy)
+make -j4 codegen         # Parallel execution (legacy)
 ```
 
 ## Complete Command Reference
 
-### Generation
+### 🎯 Current Generation (Strategy System)
 
 ```bash
-make codegen              # Full pipeline with schema validation
-make -j4 codegen         # Parallel execution
-cd codegen && cargo run --release  # Direct Rust execution
+# Primary commands
+make codegen                                    # Full unified pipeline - zero configuration needed
+cd codegen && cargo run --release             # Direct strategy-based processing
+cd codegen && RUST_LOG=trace cargo run        # Maximum debug output with pattern matching details
+
+# Development debugging  
+cd codegen && cargo run -- --module Canon     # Process single module for debugging
+cd codegen && cargo run -- --help             # Show all available strategy options
+```
+
+### 📚 Legacy Generation (Historical)
+
+```bash
+# Legacy config-based commands (preserved for migration reference)
 make check-schemas       # Validate configuration files
+cd codegen && cargo run -- config/Canon_pm/simple_table.json    # Debug specific config
 ```
 
 ### Development
@@ -1203,6 +1410,60 @@ code.push_str(&format!("//! Timestamp: {}", source.extracted_at));
 - **Semantic Organization**: Tags grouped by logical categories (core, camera, GPS, etc.)
 - **Build Performance**: Smaller files improve IDE response and compilation speed
 - **Static Array Framework**: Direct array indexing for cryptographic operations with byte-perfect accuracy
+
+## Historical Config-Based Approach
+
+### Migration from Legacy System
+
+**If you encounter references to the old config-based system**, here's how it maps to the new unified approach:
+
+| Legacy Approach | Current Strategy System |
+|---|---|
+| **Manual Config Creation** | **❌ No longer needed** - automatic discovery |
+| `config/Canon_pm/simple_table.json` | **✅ Automatic** - `SimpleTableStrategy` finds tables |
+| `config/Exif_pm/tag_kit.json` | **✅ Automatic** - `TagKitStrategy` finds tag definitions |
+| `config/GPS_pm/boolean_set.json` | **✅ Automatic** - `BooleanSetStrategy` finds membership sets |
+| **Individual extractors** (tag_kit.pl, etc.) | **✅ Single extractor** - `field_extractor.pl` |
+| **Static extraction** (hardcoded patterns) | **✅ Dynamic processing** - pattern recognition |
+
+### Key Migration Benefits
+
+- **🔍 Complete Discovery**: Strategy system finds symbols you didn't know existed
+- **⚡ Zero Configuration**: No JSON configs to author, maintain, or debug
+- **🧪 Better Testing**: Each strategy can be unit tested for pattern recognition
+- **📈 Automatic Updates**: New ExifTool versions work immediately
+
+### For Legacy Maintainers
+
+**If you need to understand or migrate old config files:**
+
+1. **Find the pattern**: Look at the JSON config to understand what was being extracted
+2. **Identify the strategy**: Use the [strategy selection guide](#current-strategy-selection-guide) to find the equivalent
+3. **Verify automatic discovery**: Run `make codegen` and check if the code is generated automatically
+4. **Check strategy logs**: Review `strategy_selection.log` to see which strategy claimed each symbol
+
+**Example Migration:**
+
+```json
+// OLD: config/Canon_pm/simple_table.json
+{
+  "tables": [{"hash_name": "%canonWhiteBalance"}]
+}
+```
+
+**↓ Migrates to ↓**
+
+```bash
+# NEW: Automatic discovery
+make codegen  # SimpleTableStrategy automatically finds canonWhiteBalance
+```
+
+### Legacy Documentation
+
+The individual extractor documentation is preserved in [EXTRACTOR-GUIDE.md](../reference/EXTRACTOR-GUIDE.md) for:
+- Historical reference and understanding
+- Migration guidance from old to new system  
+- Troubleshooting legacy config issues
 
 ## Related Documentation
 
