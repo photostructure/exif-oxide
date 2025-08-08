@@ -278,6 +278,10 @@ mod tests {
             "canon/canon_white_balance.rs"
         );
         assert_eq!(
+            generate_module_path("Canon", "CameraInfo7D"),
+            "canon/camera_info7d.rs"
+        );
+        assert_eq!(
             generate_module_path("GPS", "coordConv"),
             "gps/coord_conv.rs"
         );
