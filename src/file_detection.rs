@@ -194,7 +194,7 @@ impl FileTypeDetector {
 
         // Resolve through fileTypeLookup with alias following
         // ExifTool.pm:258-404 %fileTypeLookup hash defines extension mappings
-        use crate::generated::file_types::resolve_file_type;
+        use crate::generated::file_types::file_type_lookup::resolve_file_type;
 
         // Check if this extension is known to ExifTool
         let is_known_extension = resolve_file_type(&normalized_ext).is_some();

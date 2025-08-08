@@ -308,84 +308,40 @@ pub fn lookup_tag_specific_printconv(
 }
 
 /// Look up PrintConv implementation by Perl expression
-/// Tries module-scoped lookup first, then unscoped
+/// Uses direct string matching without normalization
 pub fn lookup_printconv(expr: &str, module: &str) -> Option<(&'static str, &'static str)> {
-    use super::normalization::normalize_expression;
-
-    let lookup_start = std::time::Instant::now();
     trace!(
         "🔍 PrintConv lookup for expr: '{}' in module: '{}'",
         expr.chars().take(50).collect::<String>(),
         module
     );
 
-    // Normalize the expression for consistent lookup
-    let normalize_start = std::time::Instant::now();
-    let normalized_expr = normalize_expression(expr);
-    let normalize_time = normalize_start.elapsed();
-
-    if normalize_time.as_millis() > 50 {
-        warn!(
-            "🐌 SLOW normalization in PrintConv lookup: {:.2}ms",
-            normalize_time.as_millis()
-        );
-    }
-
     // Normalize module name (GPS_pm -> GPS)
     let normalized_module = module.replace("_pm", "");
 
-    // Try module-scoped first with normalized expression
-    let scoped_key = format!("{}::{}", normalized_module, normalized_expr);
+    // Try module-scoped first with exact expression
+    let scoped_key = format!("{normalized_module}::{expr}");
     if let Some(value) = PRINTCONV_REGISTRY.get(scoped_key.as_str()) {
-        let total_time = lookup_start.elapsed();
-        trace!(
-            "✅ Found scoped PrintConv: '{}' -> {:?} in {:.2}ms",
-            scoped_key,
-            value,
-            total_time.as_millis()
-        );
+        trace!("✅ Found scoped PrintConv: '{}' -> {:?}", scoped_key, value);
         return Some(*value);
     }
 
-    // Fall back to exact match with normalized expression
-    let result = PRINTCONV_REGISTRY.get(normalized_expr.as_str()).copied();
-    let total_time = lookup_start.elapsed();
+    // Fall back to exact match with expression as-is
+    let result = PRINTCONV_REGISTRY.get(expr).copied();
 
     if result.is_some() {
-        trace!(
-            "✅ Found global PrintConv: '{}' -> {:?} in {:.2}ms",
-            normalized_expr,
-            result,
-            total_time.as_millis()
-        );
+        trace!("✅ Found global PrintConv: '{}' -> {:?}", expr, result);
     } else {
-        trace!(
-            "❌ No PrintConv found for: '{}' in {:.2}ms",
-            normalized_expr,
-            total_time.as_millis()
-        );
+        trace!("❌ No PrintConv found for: '{}'", expr);
     }
 
     result
 }
 
-/// Look up PrintConv implementation by pre-normalized Perl expression (bypasses normalization)
-/// Used by batch processing to avoid redundant normalization calls
-pub fn lookup_printconv_direct(
-    normalized_expr: &str,
-    module: &str,
-) -> Option<(&'static str, &'static str)> {
-    // Normalize module name (GPS_pm -> GPS)
-    let normalized_module = module.replace("_pm", "");
-
-    // Try module-scoped first with pre-normalized expression
-    let scoped_key = format!("{}::{}", normalized_module, normalized_expr);
-    if let Some(value) = PRINTCONV_REGISTRY.get(scoped_key.as_str()) {
-        return Some(*value);
-    }
-
-    // Fall back to exact match with pre-normalized expression
-    PRINTCONV_REGISTRY.get(normalized_expr).copied()
+/// Alias for lookup_printconv (kept for backwards compatibility)
+/// Since we no longer normalize, this is identical to lookup_printconv
+pub fn lookup_printconv_direct(expr: &str, module: &str) -> Option<(&'static str, &'static str)> {
+    lookup_printconv(expr, module)
 }
 
 /// Get access to the PRINTCONV_REGISTRY for testing

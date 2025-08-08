@@ -1,6 +1,5 @@
 requires 'JSON', '4.00';
 requires 'FindBin';
-requires 'Perl::Tidy';
 
 on 'develop' => sub {
     requires 'Test::More', '0.96';

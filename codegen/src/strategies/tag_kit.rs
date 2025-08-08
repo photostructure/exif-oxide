@@ -288,36 +288,12 @@ impl ExtractionStrategy for TagKitStrategy {
         }
 
         info!(
-            "Processing {} TagTable symbols with global batch normalization",
+            "Processing {} TagTable symbols",
             self.processed_symbols.len()
         );
 
-        // STEP 1: Collect all PrintConv expressions for global batch normalization
-        let mut all_expressions = std::collections::HashSet::new();
-        for symbol in &self.processed_symbols {
-            if let Some(data) = symbol.symbol_data.as_object() {
-                for (_tag_key, tag_data) in data {
-                    if let Some(tag_obj) = tag_data.as_object() {
-                        if let Some(print_conv_expr) =
-                            tag_obj.get("PrintConv").and_then(|v| v.as_str())
-                        {
-                            all_expressions.insert(print_conv_expr.to_string());
-                        }
-                    }
-                }
-            }
-        }
-
-        // STEP 2: Single batch normalization call for ALL expressions
-        let expressions_vec: Vec<String> = all_expressions.into_iter().collect();
-        let _global_cache = if expressions_vec.is_empty() {
-            std::collections::HashMap::new()
-        } else {
-            crate::conv_registry::normalization::batch_normalize_expressions(&expressions_vec)
-                .unwrap_or_default()
-        };
-
-        for symbol in &self.processed_symbols {
+        let symbols = self.processed_symbols.clone();
+        for symbol in &symbols {
             match self.generate_tag_table_code(symbol) {
                 Ok(code) => {
                     if !code.trim().is_empty() {
