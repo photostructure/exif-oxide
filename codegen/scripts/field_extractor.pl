@@ -39,7 +39,8 @@ my @target_fields = @ARGV;         # Optional list of specific fields to extract
 my $module_name = basename($module_path);
 $module_name =~ s/\.pm$//;
 
-print STDERR "Universal extraction starting for $module_name:\n";
+# CAREFUL! The rust code **actually looks for this magic string**!
+print STDERR "Field extraction starting for $module_name:\n";
 
 # Load the module - handle special case for main ExifTool.pm
 my $package_name;
@@ -73,7 +74,7 @@ extract_symbols( $package_name, $module_name, \@target_fields,
 extract_lexical_arrays( $module_path, $module_name, \@target_fields );
 
 # Print summary
-print STDERR "Universal extraction complete for $module_name:\n";
+print STDERR "Field extraction complete for $module_name:\n";
 print STDERR "  Total symbols examined: $total_symbols\n";
 print STDERR "  Successfully extracted: $extracted_symbols\n";
 print STDERR "  Skipped (non-serializable): $skipped_symbols\n";
