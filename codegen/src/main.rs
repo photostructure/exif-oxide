@@ -9,33 +9,20 @@ use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
 use std::time::Instant;
-use tracing::{info, debug, warn};
+use tracing::{debug, info, warn};
 use tracing_subscriber::EnvFilter;
 
 mod common;
-mod config;
 mod conv_registry;
-mod discovery;
 mod expression_compiler;
-mod extraction;
-mod extractors;
 mod field_extractor;
 mod file_operations;
-mod generators;
 mod schemas;
 mod strategies;
-mod table_processor;
-mod validation;
 
-use config::load_extracted_tables_with_config;
-use discovery::{discover_and_process_modules, update_generated_mod_file};
-use extraction::{extract_all_simple_tables, extract_single_config};
-use table_processor::process_composite_tags_only;
-use file_operations::{create_directories, file_exists, write_file_atomic};
-use generators::generate_mod_file;
-use validation::validate_all_configs;
 use field_extractor::FieldExtractor;
-use strategies::{StrategyDispatcher, GeneratedFile};
+use file_operations::create_directories;
+use strategies::{GeneratedFile, StrategyDispatcher};
 
 #[derive(Debug, Deserialize, Serialize)]
 struct ExifToolModulesConfig {
@@ -50,17 +37,15 @@ struct ModuleGroups {
     format: Vec<String>,
 }
 
-
 fn main() -> Result<()> {
     // Initialize tracing with default level of INFO to keep output quiet by default
     // Set RUST_LOG=debug for verbose output
     tracing_subscriber::fmt()
         .with_env_filter(
-            EnvFilter::try_from_default_env()
-                .unwrap_or_else(|_| EnvFilter::new("info"))
+            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),
         )
         .init();
-    
+
     let matches = Command::new("exif-oxide-codegen")
         .version("0.1.0")
         .about("Generate Rust code from ExifTool extraction data")
@@ -83,9 +68,8 @@ fn main() -> Result<()> {
         )
         .get_matches();
 
-
     let output_dir = matches.get_one::<String>("output").unwrap();
-    
+
     // Extract specific modules if provided
     let selected_modules: Option<Vec<String>> = matches
         .get_many::<String>("modules")
@@ -99,14 +83,14 @@ fn main() -> Result<()> {
 
     info!("🔧 exif-oxide Code Generation");
     debug!("=============================");
-    
+
     // Universal symbol table extraction is now the default approach
     info!("🔄 Using universal symbol table extraction");
     run_universal_extraction(&current_dir, output_dir, selected_modules.as_ref())?;
 
     // DISABLED: Process modular tag tables (now handled by CompositeTagStrategy)
     // The strategy-based system with CompositeTagStrategy handles composite tag processing
-    // 
+    //
     // let extract_dir = current_dir.join("generated").join("extract");
     // debug!("📋 Processing composite tags...");
     // let start = Instant::now();
@@ -118,62 +102,10 @@ fn main() -> Result<()> {
     // The old extract.json processing has been removed.
     // All extraction is now handled by the new modular configuration system below.
 
-    // Generate file type detection code
-    debug!("📁 Generating file type detection code...");
-    let extract_dir = current_dir.join("generated").join("extract");
-    let start = Instant::now();
-    generators::file_detection::generate_file_detection_code(&extract_dir, output_dir)?;
-    info!("📁 File detection generation completed in {:.2}s", start.elapsed().as_secs_f64());
-
-    // Create or update file_types mod.rs to include generated modules
-    let file_types_mod_path = format!("{output_dir}/file_types/mod.rs");
-    debug!("📝 Creating/updating file_types mod.rs with generated modules...");
-    
-    // Create default content if file doesn't exist
-    let mut content = if file_exists(Path::new(&file_types_mod_path)) {
-        fs::read_to_string(&file_types_mod_path)?
-    } else {
-        // Create default mod.rs content
-        String::from(
-            "//! File type detection module\n\
-             //!\n\
-             //! This module contains generated code for file type detection.\n\n"
-        )
-    };
-
-    // Check if modules are already declared
-    let mut updated = false;
-
-    if !content.contains("pub mod file_type_lookup;") {
-        // Add module declarations
-        content.push_str("pub mod file_type_lookup;\n");
-        updated = true;
-    }
-
-    // Add re-exports if not present
-    if !content.contains("pub use file_type_lookup::") {
-        content.push_str("// Re-export commonly used items\n");
-        content.push_str("pub use file_type_lookup::{\n");
-        content.push_str("    extensions_for_format, get_primary_format, lookup_file_type_by_extension,\n");
-        content.push_str("    resolve_file_type, supports_format, FILE_TYPE_EXTENSIONS,\n");
-        content.push_str("};\n");
-        content.push('\n');
-        // Note: Regex patterns are used directly from ExifTool_pm::regex_patterns
-        // No re-export needed since all code uses the direct import path
-        updated = true;
-    }
-
-    if updated || !file_exists(Path::new(&file_types_mod_path)) {
-        write_file_atomic(Path::new(&file_types_mod_path), &content)?;
-        debug!("  ✓ Created/updated file_types mod.rs with file_type_lookup and regex_patterns re-exports");
-    } else {
-        debug!("  ✓ file_types mod.rs already contains all necessary declarations");
-    }
-
     // DISABLED: Config-based generation system (replaced by strategy-based system)
     // This legacy system was creating duplicate Canon_pm/ directories alongside the new canon/ directories
     // The strategy-based system in run_universal_extraction() now handles all code generation
-    // 
+    //
     // if selected_modules.is_none() {
     //     // NEW: Process using the new macro-based configuration system
     //     debug!("🔄 Processing new macro-based configuration...");
@@ -214,7 +146,7 @@ fn main() -> Result<()> {
 
     // DISABLED: Generate module file (now handled by strategy system)
     // The strategy-based system in StrategyDispatcher::update_main_mod_file() handles this
-    // 
+    //
     // let start = Instant::now();
     // generate_mod_file(output_dir)?;
     // debug!("  ✓ Generated module file in {:.2}s", start.elapsed().as_secs_f64());
@@ -227,103 +159,141 @@ fn main() -> Result<()> {
 /// Load default modules from exiftool_modules.json config
 fn load_default_modules(current_dir: &Path) -> Result<Vec<String>> {
     let config_path = current_dir.join("../config/exiftool_modules.json");
-    
+
     if !config_path.exists() {
-        warn!("⚠️  exiftool_modules.json not found at {}, using fallback modules", config_path.display());
-        return Ok(vec!["GPS.pm".to_string(), "DNG.pm".to_string(), "Canon.pm".to_string()]);
+        warn!(
+            "⚠️  exiftool_modules.json not found at {}, using fallback modules",
+            config_path.display()
+        );
+        return Ok(vec![
+            "GPS.pm".to_string(),
+            "DNG.pm".to_string(),
+            "Canon.pm".to_string(),
+        ]);
     }
-    
+
     let config_content = fs::read_to_string(&config_path)
         .with_context(|| format!("Failed to read config file: {}", config_path.display()))?;
-    
+
     let config: ExifToolModulesConfig = serde_json::from_str(&config_content)
         .with_context(|| format!("Failed to parse config file: {}", config_path.display()))?;
-    
+
     // Combine all module groups
     let mut all_modules = Vec::new();
     all_modules.extend(config.modules.core);
     all_modules.extend(config.modules.manufacturer);
     all_modules.extend(config.modules.format);
-    
-    info!("📋 Loaded {} modules from exiftool_modules.json", all_modules.len());
+
+    info!(
+        "📋 Loaded {} modules from exiftool_modules.json",
+        all_modules.len()
+    );
     debug!("  Modules: {:?}", all_modules);
-    
+
     Ok(all_modules)
 }
 
 /// Run field extraction with strategy-based processing
-fn run_universal_extraction(current_dir: &Path, output_dir: &str, selected_modules: Option<&Vec<String>>) -> Result<()> {
+fn run_universal_extraction(
+    current_dir: &Path,
+    output_dir: &str,
+    selected_modules: Option<&Vec<String>>,
+) -> Result<()> {
     let extractor = FieldExtractor::new();
     let mut dispatcher = StrategyDispatcher::new();
     let exiftool_base_dir = current_dir.join("../third-party/exiftool");
-    
+
     info!("🔍 Building ExifTool module paths from configuration");
-    
+
     // Load module paths from configuration
     let default_modules = load_default_modules(current_dir)?;
     let mut module_paths = Vec::new();
-    
+
     // Convert relative paths from JSON config to absolute paths
     for module_path_str in &default_modules {
         let full_path = exiftool_base_dir.join(module_path_str);
         if full_path.exists() {
             module_paths.push(full_path);
         } else {
-            warn!("⚠️  Module path not found: {} (resolved to {})", module_path_str, full_path.display());
+            warn!(
+                "⚠️  Module path not found: {} (resolved to {})",
+                module_path_str,
+                full_path.display()
+            );
         }
     }
-    
-    info!("📦 Found {} ExifTool modules to process", module_paths.len());
-    
+
+    info!(
+        "📦 Found {} ExifTool modules to process",
+        module_paths.len()
+    );
+
     // Select modules to process
     let selected_paths: Vec<&std::path::PathBuf> = if let Some(modules) = selected_modules {
         // User specified specific modules - resolve and validate them
         let mut resolved_paths = Vec::new();
-        
+
         for module_name in modules {
             // Find the module path by filename match
-            if let Some(module_path) = module_paths
-                .iter()
-                .find(|path| {
-                    path.file_name()
-                        .and_then(|name| name.to_str())
-                        .map(|name| name == module_name)
-                        .unwrap_or(false)
-                }) {
+            if let Some(module_path) = module_paths.iter().find(|path| {
+                path.file_name()
+                    .and_then(|name| name.to_str())
+                    .map(|name| name == module_name)
+                    .unwrap_or(false)
+            }) {
                 resolved_paths.push(module_path);
             } else {
-                return Err(anyhow::anyhow!("Module not found: {}. Available modules: {:?}", 
-                    module_name, 
-                    module_paths.iter()
+                return Err(anyhow::anyhow!(
+                    "Module not found: {}. Available modules: {:?}",
+                    module_name,
+                    module_paths
+                        .iter()
                         .filter_map(|p| p.file_name()?.to_str())
                         .collect::<Vec<_>>()
                 ));
             }
         }
-        
-        info!("🎯 Processing {} user-selected modules: {:?}", resolved_paths.len(), 
-              resolved_paths.iter().map(|p| p.file_name().unwrap().to_string_lossy()).collect::<Vec<_>>());
+
+        info!(
+            "🎯 Processing {} user-selected modules: {:?}",
+            resolved_paths.len(),
+            resolved_paths
+                .iter()
+                .map(|p| p.file_name().unwrap().to_string_lossy())
+                .collect::<Vec<_>>()
+        );
         resolved_paths
     } else {
         // Process all configured modules (paths already loaded and validated above)
         let all_paths: Vec<&std::path::PathBuf> = module_paths.iter().collect();
-        
-        info!("🏭 Processing {} configured modules: {:?}", all_paths.len(), 
-              all_paths.iter().map(|p| p.file_name().unwrap().to_string_lossy()).collect::<Vec<_>>());
+
+        info!(
+            "🏭 Processing {} configured modules: {:?}",
+            all_paths.len(),
+            all_paths
+                .iter()
+                .map(|p| p.file_name().unwrap().to_string_lossy())
+                .collect::<Vec<_>>()
+        );
         all_paths
     };
-    
+
     let start = Instant::now();
     let mut all_symbols = Vec::new();
-    
+
     // Extract symbols from selected modules
     for module_path in selected_paths {
         match extractor.extract_module(module_path) {
             Ok((symbols, stats)) => {
-                info!("✅ {}: {} symbols extracted from {} total", 
-                      stats.module_name, stats.extracted_symbols, stats.total_symbols);
-                
-                debug!("  📋 {} symbols ready for strategy processing", symbols.len());
+                info!(
+                    "✅ {}: {} symbols extracted from {} total",
+                    stats.module_name, stats.extracted_symbols, stats.total_symbols
+                );
+
+                debug!(
+                    "  📋 {} symbols ready for strategy processing",
+                    symbols.len()
+                );
                 all_symbols.extend(symbols);
             }
             Err(e) => {
@@ -331,28 +301,43 @@ fn run_universal_extraction(current_dir: &Path, output_dir: &str, selected_modul
             }
         }
     }
-    
+
     let extraction_time = start.elapsed();
-    info!("🔄 Field extraction completed in {:.2}s", extraction_time.as_secs_f64());
-    
+    info!(
+        "🔄 Field extraction completed in {:.2}s",
+        extraction_time.as_secs_f64()
+    );
+
     // Process extracted symbols through strategy system
     if !all_symbols.is_empty() {
         let strategy_start = Instant::now();
-        info!("🎯 Processing {} symbols through strategy system", all_symbols.len());
-        
+        info!(
+            "🎯 Processing {} symbols through strategy system",
+            all_symbols.len()
+        );
+
         match dispatcher.process_symbols(all_symbols, output_dir) {
             Ok(generated_files) => {
                 let strategy_time = strategy_start.elapsed();
-                info!("✅ Strategy processing completed in {:.2}s", strategy_time.as_secs_f64());
-                
+                info!(
+                    "✅ Strategy processing completed in {:.2}s",
+                    strategy_time.as_secs_f64()
+                );
+
                 // Write generated files to disk
                 let write_start = Instant::now();
                 write_generated_files(&generated_files, output_dir)?;
                 let write_time = write_start.elapsed();
-                
-                info!("📁 {} files written in {:.2}s", generated_files.len(), write_time.as_secs_f64());
-                info!("🏁 Total field extraction time: {:.2}s", 
-                      (extraction_time + strategy_time + write_time).as_secs_f64());
+
+                info!(
+                    "📁 {} files written in {:.2}s",
+                    generated_files.len(),
+                    write_time.as_secs_f64()
+                );
+                info!(
+                    "🏁 Total field extraction time: {:.2}s",
+                    (extraction_time + strategy_time + write_time).as_secs_f64()
+                );
             }
             Err(e) => {
                 warn!("❌ Strategy processing failed: {}", e);
@@ -362,30 +347,28 @@ fn run_universal_extraction(current_dir: &Path, output_dir: &str, selected_modul
     } else {
         warn!("⚠️  No symbols extracted for processing");
     }
-    
+
     Ok(())
 }
 
 /// Write generated files to disk with appropriate directory structure
 fn write_generated_files(files: &[GeneratedFile], base_output_dir: &str) -> Result<()> {
     use std::fs;
-    
+
     for file in files {
         let full_path = Path::new(base_output_dir).join(&file.path);
-        
+
         // Create parent directories if they don't exist
         if let Some(parent) = full_path.parent() {
             fs::create_dir_all(parent)?;
         }
-        
+
         // Write the file
         fs::write(&full_path, &file.content)
             .with_context(|| format!("Failed to write generated file: {}", full_path.display()))?;
-        
+
         debug!("📝 Written: {} ({} bytes)", file.path, file.content.len());
     }
-    
+
     Ok(())
 }
-
-

@@ -6,9 +6,9 @@
 
 use anyhow::Result;
 use serde_json::Value as JsonValue;
-use std::collections::{HashMap, BTreeSet};
+use std::collections::{BTreeSet, HashMap};
 use std::path::Path;
-use tracing::{debug, info, warn};
+use tracing::{debug, info, trace, warn};
 
 use crate::field_extractor::FieldSymbol;
 
@@ -16,17 +16,18 @@ use crate::field_extractor::FieldSymbol;
 pub trait ExtractionStrategy: Send + Sync {
     /// Name of the strategy for logging and debugging
     fn name(&self) -> &'static str;
-    
+
     /// Check if this strategy can handle the given symbol
     /// Uses duck-typing pattern recognition on symbol structure
     fn can_handle(&self, symbol: &FieldSymbol) -> bool;
-    
+
     /// Extract data from the symbol and generate appropriate code
-    fn extract(&mut self, symbol_data: &FieldSymbol, context: &mut ExtractionContext) -> Result<()>;
-    
+    fn extract(&mut self, symbol_data: &FieldSymbol, context: &mut ExtractionContext)
+        -> Result<()>;
+
     /// Finalize processing for a specific module
     fn finish_module(&mut self, module_name: &str) -> Result<()>;
-    
+
     /// Complete extraction and return generated files
     fn finish_extraction(&mut self) -> Result<Vec<GeneratedFile>>;
 }
@@ -36,13 +37,13 @@ pub trait ExtractionStrategy: Send + Sync {
 pub struct ExtractionContext {
     /// Output directory for generated code
     pub output_dir: String,
-    
+
     /// Current module being processed
     pub current_module: Option<String>,
-    
+
     /// Global symbol registry for cross-references
     pub symbol_registry: HashMap<String, FieldSymbol>,
-    
+
     /// Strategy selection log for debugging
     pub strategy_log: Vec<StrategySelection>,
 }
@@ -61,10 +62,10 @@ pub struct StrategySelection {
 pub struct GeneratedFile {
     /// Relative path from output directory
     pub path: String,
-    
+
     /// Generated Rust code content
     pub content: String,
-    
+
     /// Strategy that generated this file
     pub strategy: String,
 }
@@ -79,20 +80,28 @@ impl ExtractionContext {
             strategy_log: Vec::new(),
         }
     }
-    
+
     /// Log strategy selection decision
-    pub fn log_strategy_selection(&mut self, symbol: &FieldSymbol, strategy_name: &str, reasoning: &str) {
+    pub fn log_strategy_selection(
+        &mut self,
+        symbol: &FieldSymbol,
+        strategy_name: &str,
+        reasoning: &str,
+    ) {
         let selection = StrategySelection {
             symbol_name: symbol.name.clone(),
             module_name: symbol.module.clone(),
             strategy_name: strategy_name.to_string(),
             reasoning: reasoning.to_string(),
         };
-        
-        debug!("Strategy selection: {} -> {} ({})", symbol.name, strategy_name, reasoning);
+
+        debug!(
+            "Strategy selection: {} -> {} ({})",
+            symbol.name, strategy_name, reasoning
+        );
         self.strategy_log.push(selection);
     }
-    
+
     /// Register symbol for cross-references
     pub fn register_symbol(&mut self, symbol: FieldSymbol) {
         let key = format!("{}::{}", symbol.module, symbol.name);
@@ -112,91 +121,240 @@ impl StrategyDispatcher {
             strategies: all_strategies(),
         }
     }
-    
+
     /// Process a collection of symbols through the strategy system
     pub fn process_symbols(
-        &mut self, 
-        symbols: Vec<FieldSymbol>, 
-        output_dir: &str
+        &mut self,
+        symbols: Vec<FieldSymbol>,
+        output_dir: &str,
     ) -> Result<Vec<GeneratedFile>> {
         use std::collections::HashSet;
-        
+        use std::time::Instant;
+
         let mut context = ExtractionContext::new(output_dir.to_string());
         let mut generated_files = Vec::new();
-        
-        info!("🔄 Processing {} symbols through strategy system", symbols.len());
-        
+        let process_start = Instant::now();
+
+        info!(
+            "🔄 Processing {} symbols through strategy system",
+            symbols.len()
+        );
+        trace!("🚀 Strategy processing started");
+
         // Track which modules are being processed
         let mut processed_modules = HashSet::new();
-        
+
         // Register all symbols first for cross-references
+        let register_start = Instant::now();
+        trace!(
+            "📋 Registering {} symbols for cross-references",
+            symbols.len()
+        );
         for symbol in &symbols {
             context.register_symbol(symbol.clone());
             processed_modules.insert(symbol.module.clone());
         }
-        
-        info!("📦 Found {} unique modules to process: {:?}", 
-              processed_modules.len(), 
-              processed_modules.iter().collect::<Vec<_>>());
-        
+        let register_time = register_start.elapsed();
+        trace!(
+            "⏱️  Symbol registration completed in {:.2}ms",
+            register_time.as_millis()
+        );
+
+        info!(
+            "📦 Found {} unique modules to process: {:?}",
+            processed_modules.len(),
+            processed_modules.iter().collect::<Vec<_>>()
+        );
+
         // Process each symbol through strategies
+        let symbol_processing_start = Instant::now();
+        trace!("🚀 Starting individual symbol processing");
+        let mut processed_count = 0;
         for symbol in symbols {
             self.process_single_symbol(symbol, &mut context)?;
+            processed_count += 1;
+            if processed_count % 100 == 0 {
+                trace!("📊 Processed {} symbols so far", processed_count);
+            }
         }
-        
+        let symbol_processing_time = symbol_processing_start.elapsed();
+        trace!(
+            "⏱️  Symbol processing completed in {:.2}ms",
+            symbol_processing_time.as_millis()
+        );
+
         // Call finish_module() for each processed module
+        let finalize_start = Instant::now();
+        trace!("🔄 Finalizing {} modules", processed_modules.len());
         for module_name in &processed_modules {
             debug!("🔧 Finalizing module: {}", module_name);
+            let module_finalize_start = Instant::now();
             for strategy in &mut self.strategies {
                 strategy.finish_module(module_name)?;
             }
+            trace!(
+                "⏱️  Module {} finalized in {:.2}ms",
+                module_name,
+                module_finalize_start.elapsed().as_millis()
+            );
         }
-        
+        let finalize_time = finalize_start.elapsed();
+        trace!(
+            "⏱️  All modules finalized in {:.2}ms",
+            finalize_time.as_millis()
+        );
+
         // Finalize all strategies and collect generated files
+        let extraction_finalize_start = Instant::now();
+        trace!("🏁 Finalizing {} strategies", self.strategies.len());
         for strategy in &mut self.strategies {
+            let strategy_finalize_start = Instant::now();
             let mut files = strategy.finish_extraction()?;
+            let strategy_finalize_time = strategy_finalize_start.elapsed();
+            trace!(
+                "⏱️  Strategy '{}' finalized in {:.2}ms, generated {} files",
+                strategy.name(),
+                strategy_finalize_time.as_millis(),
+                files.len()
+            );
             generated_files.append(&mut files);
         }
-        
+        let extraction_finalize_time = extraction_finalize_start.elapsed();
+        trace!(
+            "⏱️  All strategies finalized in {:.2}ms",
+            extraction_finalize_time.as_millis()
+        );
+
         // Generate main mod.rs file to include all processed modules
+        let mod_update_start = Instant::now();
+        trace!("📄 Updating main mod.rs file");
         self.update_main_mod_file(output_dir, &processed_modules, &generated_files)?;
-        
+        let mod_update_time = mod_update_start.elapsed();
+        trace!(
+            "⏱️  Main mod.rs update completed in {:.2}ms",
+            mod_update_time.as_millis()
+        );
+
         // Write strategy selection log for debugging
+        let log_start = Instant::now();
+        trace!("📋 Writing strategy selection log");
         self.write_strategy_log(&context, output_dir)?;
-        
-        info!("✅ Strategy processing complete: {} files generated", generated_files.len());
+        let log_time = log_start.elapsed();
+        trace!("⏱️  Strategy log written in {:.2}ms", log_time.as_millis());
+
+        let total_process_time = process_start.elapsed();
+        info!(
+            "✅ Strategy processing complete: {} files generated in {:.2}ms",
+            generated_files.len(),
+            total_process_time.as_millis()
+        );
+
+        // Detailed timing breakdown
+        trace!("📊 Strategy processing time breakdown:");
+        trace!(
+            "  • Symbol registration: {:.1}ms ({:.1}%)",
+            register_time.as_millis(),
+            (register_time.as_millis() as f64 / total_process_time.as_millis() as f64) * 100.0
+        );
+        trace!(
+            "  • Symbol processing: {:.1}ms ({:.1}%)",
+            symbol_processing_time.as_millis(),
+            (symbol_processing_time.as_millis() as f64 / total_process_time.as_millis() as f64)
+                * 100.0
+        );
+        trace!(
+            "  • Module finalization: {:.1}ms ({:.1}%)",
+            finalize_time.as_millis(),
+            (finalize_time.as_millis() as f64 / total_process_time.as_millis() as f64) * 100.0
+        );
+        trace!(
+            "  • Strategy finalization: {:.1}ms ({:.1}%)",
+            extraction_finalize_time.as_millis(),
+            (extraction_finalize_time.as_millis() as f64 / total_process_time.as_millis() as f64)
+                * 100.0
+        );
+        trace!(
+            "  • Mod file update: {:.1}ms ({:.1}%)",
+            mod_update_time.as_millis(),
+            (mod_update_time.as_millis() as f64 / total_process_time.as_millis() as f64) * 100.0
+        );
+        trace!(
+            "  • Log writing: {:.1}ms ({:.1}%)",
+            log_time.as_millis(),
+            (log_time.as_millis() as f64 / total_process_time.as_millis() as f64) * 100.0
+        );
+
         Ok(generated_files)
     }
-    
+
     /// Process a single symbol through the first matching strategy
-    fn process_single_symbol(&mut self, symbol: FieldSymbol, context: &mut ExtractionContext) -> Result<()> {
+    fn process_single_symbol(
+        &mut self,
+        symbol: FieldSymbol,
+        context: &mut ExtractionContext,
+    ) -> Result<()> {
+        let single_symbol_start = std::time::Instant::now();
+        trace!(
+            "🔍 Processing symbol: {} ({})",
+            symbol.name,
+            symbol.symbol_type
+        );
+
         // Find the first matching strategy
         let mut matched_strategy_index = None;
         let mut reasoning = String::new();
-        
+        let strategy_match_start = std::time::Instant::now();
+
         for (index, strategy) in self.strategies.iter().enumerate() {
             if strategy.can_handle(&symbol) {
                 reasoning = format!("Pattern matched: {}", self.describe_pattern(&symbol.data));
                 matched_strategy_index = Some(index);
+                trace!(
+                    "✓ Strategy '{}' matched for symbol '{}'",
+                    strategy.name(),
+                    symbol.name
+                );
                 break;
             }
         }
-        
+        let strategy_match_time = strategy_match_start.elapsed();
+
         // Process with the matched strategy
         if let Some(index) = matched_strategy_index {
             let strategy = &mut self.strategies[index];
             context.log_strategy_selection(&symbol, strategy.name(), &reasoning);
-            strategy.extract(&symbol, context)
+
+            let extract_start = std::time::Instant::now();
+            let result = strategy.extract(&symbol, context);
+            let extract_time = extract_start.elapsed();
+
+            let total_time = single_symbol_start.elapsed();
+            trace!(
+                "⏱️  Symbol '{}' processed by '{}' in {:.2}ms (match: {:.2}ms, extract: {:.2}ms)",
+                symbol.name,
+                strategy.name(),
+                total_time.as_millis(),
+                strategy_match_time.as_millis(),
+                extract_time.as_millis()
+            );
+
+            result
         } else {
             // No strategy could handle this symbol
-            warn!("⚠️  No strategy found for symbol: {} (type: {}, module: {})", 
-                  symbol.name, symbol.symbol_type, symbol.module);
-            
+            let total_time = single_symbol_start.elapsed();
+            warn!(
+                "⚠️  No strategy found for symbol: {} (type: {}, module: {}) after {:.2}ms",
+                symbol.name,
+                symbol.symbol_type,
+                symbol.module,
+                total_time.as_millis()
+            );
+
             context.log_strategy_selection(&symbol, "none", "No matching pattern");
             Ok(())
         }
     }
-    
+
     /// Describe the pattern structure for logging
     fn describe_pattern(&self, value: &JsonValue) -> String {
         match value {
@@ -220,33 +378,33 @@ impl StrategyDispatcher {
             JsonValue::Null => "null".to_string(),
         }
     }
-    
+
     /// Write strategy selection log for debugging
     fn write_strategy_log(&self, context: &ExtractionContext, output_dir: &str) -> Result<()> {
         use std::fs;
-        
+
         let log_path = Path::new(output_dir).join("strategy_selection.log");
         let mut log_content = String::new();
-        
+
         log_content.push_str("# Strategy Selection Log\n");
         log_content.push_str("# Format: Symbol Module Strategy Reasoning\n\n");
-        
+
         for selection in &context.strategy_log {
             log_content.push_str(&format!(
                 "{} {} {} {}\n",
                 selection.symbol_name,
-                selection.module_name, 
+                selection.module_name,
                 selection.strategy_name,
                 selection.reasoning
             ));
         }
-        
+
         fs::write(log_path, log_content)?;
         debug!("📋 Strategy selection log written to strategy_selection.log");
-        
+
         Ok(())
     }
-    
+
     /// Update the main src/generated/mod.rs file to include all processed modules
     fn update_main_mod_file(
         &self,
@@ -254,17 +412,21 @@ impl StrategyDispatcher {
         _processed_modules: &std::collections::HashSet<String>,
         generated_files: &[GeneratedFile],
     ) -> Result<()> {
-        use std::fs;
         use std::collections::HashMap;
-        
+        use std::fs;
+
         // Group generated files by module to identify which modules have files
         let mut modules_with_files = HashMap::new();
         for file in generated_files {
             // Extract module name from file path (e.g., "canon/file.rs" -> "canon" or "canon_pm/file.rs" -> "canon_pm")
             if let Some(module_dir) = file.path.split('/').next() {
                 // Accept both old _pm suffixed and new snake_case modules
-                if module_dir.ends_with("_pm") || (!module_dir.contains('.') && !module_dir.eq("supported_tags")) {
-                    let files_list = modules_with_files.entry(module_dir.to_string()).or_insert_with(Vec::new);
+                if module_dir.ends_with("_pm")
+                    || (!module_dir.contains('.') && !module_dir.eq("supported_tags"))
+                {
+                    let files_list = modules_with_files
+                        .entry(module_dir.to_string())
+                        .or_insert_with(Vec::new);
                     // Extract filename without .rs extension
                     if let Some(filename) = file.path.split('/').last() {
                         if let Some(name) = filename.strip_suffix(".rs") {
@@ -274,20 +436,27 @@ impl StrategyDispatcher {
                 }
             }
         }
-        
-        info!("📝 Creating mod.rs files for {} modules", modules_with_files.len());
-        
+
+        info!(
+            "📝 Creating mod.rs files for {} modules",
+            modules_with_files.len()
+        );
+
         // Create mod.rs files for each module directory
         for (module_dir, file_list) in &modules_with_files {
             let module_dir_path = Path::new(output_dir).join(module_dir);
             let module_mod_path = module_dir_path.join("mod.rs");
-            
+
             // Ensure the module directory exists
             if let Err(e) = fs::create_dir_all(&module_dir_path) {
-                warn!("Failed to create directory {}: {}", module_dir_path.display(), e);
+                warn!(
+                    "Failed to create directory {}: {}",
+                    module_dir_path.display(),
+                    e
+                );
                 continue;
             }
-            
+
             let mut content = String::new();
             content.push_str(&format!(
                 "//! Generated module for {}\n",
@@ -295,21 +464,21 @@ impl StrategyDispatcher {
             ));
             content.push_str("//!\n");
             content.push_str("//! This file is auto-generated. Do not edit manually.\n\n");
-            
+
             // Sort files for consistent output
             let mut sorted_files = file_list.clone();
             sorted_files.sort();
-            
+
             // Generate pub mod declarations
             for filename in &sorted_files {
                 content.push_str(&format!("pub mod {};\n", filename));
             }
-            
+
             content.push('\n');
-            
+
             // Generate re-exports for commonly used items
             content.push_str("// Re-export commonly used items\n");
-            
+
             // Always re-export main_tags if it exists
             if sorted_files.iter().any(|f| f == "main_tags") {
                 // Read the actual constant name from the generated main_tags.rs file
@@ -321,36 +490,62 @@ impl StrategyDispatcher {
                         if let Some(colon_pos) = main_tags_content[start..].find(':') {
                             let constant_def = &main_tags_content[start..start + colon_pos];
                             if let Some(const_name) = constant_def.strip_prefix("pub static ") {
-                                debug!("Found MAIN_TAGS constant: {} in module {}", const_name, module_dir);
+                                // Trim any whitespace from the constant name
+                                let const_name = const_name.trim();
+                                debug!(
+                                    "Found MAIN_TAGS constant: '{}' in module {}",
+                                    const_name, module_dir
+                                );
                                 content.push_str(&format!("pub use main_tags::{};\n", const_name));
                             } else {
-                                debug!("Failed to parse constant name from: {} in module {}", constant_def, module_dir);
-                                // Fallback to generic name if parsing fails
-                                content.push_str("pub use main_tags::MAIN_TAGS;\n");
+                                debug!(
+                                    "Failed to parse constant name from: '{}' in module {}",
+                                    constant_def, module_dir
+                                );
+                                // Fallback: Use module-prefixed name based on module directory
+                                let module_upper = module_dir.to_uppercase().replace('-', "_");
+                                let expected_const = format!("{}_MAIN_TAGS", module_upper);
+                                debug!("Using fallback constant name: {}", expected_const);
+                                content
+                                    .push_str(&format!("pub use main_tags::{};\n", expected_const));
                             }
                         } else {
                             debug!("No colon found after 'pub static' in module {}", module_dir);
-                            content.push_str("pub use main_tags::MAIN_TAGS;\n");
+                            // Fallback: Use module-prefixed name
+                            let module_upper = module_dir.to_uppercase().replace('-', "_");
+                            let expected_const = format!("{}_MAIN_TAGS", module_upper);
+                            content.push_str(&format!("pub use main_tags::{};\n", expected_const));
                         }
                     } else {
-                        debug!("No 'pub static' found in main_tags.rs for module {}", module_dir);
-                        content.push_str("pub use main_tags::MAIN_TAGS;\n");
+                        debug!(
+                            "No 'pub static' found in main_tags.rs for module {}",
+                            module_dir
+                        );
+                        // Fallback: Use module-prefixed name
+                        let module_upper = module_dir.to_uppercase().replace('-', "_");
+                        let expected_const = format!("{}_MAIN_TAGS", module_upper);
+                        content.push_str(&format!("pub use main_tags::{};\n", expected_const));
                     }
                 } else {
                     debug!("Failed to read main_tags.rs for module {}", module_dir);
-                    // Fallback if file doesn't exist
-                    content.push_str("pub use main_tags::MAIN_TAGS;\n");
+                    // Fallback: Use module-prefixed name
+                    let module_upper = module_dir.to_uppercase().replace('-', "_");
+                    let expected_const = format!("{}_MAIN_TAGS", module_upper);
+                    content.push_str(&format!("pub use main_tags::{};\n", expected_const));
                 }
             }
-            
+
             // Re-export specific lookup functions and constants
             for filename in &sorted_files {
-                if filename.contains("white_balance") || filename.contains("lens") || 
-                   filename.contains("quality") || filename.contains("model") {
+                if filename.contains("white_balance")
+                    || filename.contains("lens")
+                    || filename.contains("quality")
+                    || filename.contains("model")
+                {
                     content.push_str(&format!("pub use {}::*;\n", filename));
                 }
             }
-            
+
             if let Err(e) = fs::write(&module_mod_path, content) {
                 return Err(anyhow::anyhow!(
                     "Failed to write mod.rs file for module '{}' at path '{}': {}",
@@ -359,13 +554,17 @@ impl StrategyDispatcher {
                     e
                 ));
             }
-            debug!("📄 Created mod.rs for {} with {} files", module_dir, file_list.len());
+            debug!(
+                "📄 Created mod.rs for {} with {} files",
+                module_dir,
+                file_list.len()
+            );
         }
-        
+
         // Completely regenerate main src/generated/mod.rs based purely on generated modules
         let main_mod_path = Path::new(output_dir).join("mod.rs");
         let mut main_content = String::new();
-        
+
         // Generate header from scratch - no manual edits allowed
         main_content.push_str("//! Generated code module\n");
         main_content.push_str("//!\n");
@@ -373,17 +572,21 @@ impl StrategyDispatcher {
         main_content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten.\n");
         main_content.push_str("//!\n");
         main_content.push_str("//! This module re-exports all generated code for easy access.\n\n");
-        
+
         // Collect all modules in a BTreeSet for deterministic, sorted output
         let mut all_modules = BTreeSet::new();
-        
+
         // Add all generated modules
         for module_dir in modules_with_files.keys() {
             all_modules.insert(module_dir.clone());
         }
-        
+
         // Add standalone files if they exist
-        if Path::new(output_dir).join("file_types").join("mod.rs").exists() {
+        if Path::new(output_dir)
+            .join("file_types")
+            .join("mod.rs")
+            .exists()
+        {
             all_modules.insert("file_types".to_string());
         }
         if Path::new(output_dir).join("composite_tags.rs").exists() {
@@ -392,7 +595,7 @@ impl StrategyDispatcher {
         if Path::new(output_dir).join("supported_tags.rs").exists() {
             all_modules.insert("supported_tags".to_string());
         }
-        
+
         // Generate module declarations in sorted order
         for module_dir in &all_modules {
             // Add special attribute for non-snake-case modules
@@ -401,9 +604,9 @@ impl StrategyDispatcher {
             }
             main_content.push_str(&format!("pub mod {};\n", module_dir));
         }
-        
+
         main_content.push('\n');
-        
+
         // Add standard re-exports (only if modules exist)
         main_content.push_str("// Re-export commonly used types and functions\n");
         if Path::new(output_dir).join("supported_tags.rs").exists() {
@@ -417,14 +620,16 @@ impl StrategyDispatcher {
             main_content.push_str("pub use composite_tags::{CompositeTagDef, COMPOSITE_TAGS, lookup_composite_tag, all_composite_tag_names, composite_tag_count};\n");
         }
         main_content.push_str("\n");
-        
+
         main_content.push_str("/// Initialize all lazy static data structures\n");
-        main_content.push_str("/// This can be called during startup to avoid lazy initialization costs later\n");
+        main_content.push_str(
+            "/// This can be called during startup to avoid lazy initialization costs later\n",
+        );
         main_content.push_str("pub fn initialize_all() {\n");
         main_content.push_str("}\n");
-        
+
         let modules_added = all_modules.len();
-        
+
         if let Err(e) = fs::write(&main_mod_path, main_content) {
             return Err(anyhow::anyhow!(
                 "Failed to write main mod.rs file at path '{}': {}",
@@ -433,7 +638,7 @@ impl StrategyDispatcher {
             ));
         }
         info!("📋 Updated main mod.rs with {} new modules", modules_added);
-        
+
         Ok(())
     }
 }
@@ -445,27 +650,29 @@ impl Default for StrategyDispatcher {
 }
 
 // Strategy implementations
-mod simple_table;
-mod tag_kit;
 mod binary_data;
 mod boolean_set;
 mod composite_tag;
 mod file_type_lookup;
 mod magic_number;
 mod mime_type;
+mod scalar_array;
+mod simple_table;
+mod tag_kit;
 
 // Output location utilities
 pub mod output_locations;
 
 // Re-export strategy implementations
-pub use simple_table::SimpleTableStrategy;
-pub use tag_kit::TagKitStrategy;
 pub use binary_data::BinaryDataStrategy;
 pub use boolean_set::BooleanSetStrategy;
 pub use composite_tag::CompositeTagStrategy;
 pub use file_type_lookup::FileTypeLookupStrategy;
 pub use magic_number::MagicNumberStrategy;
 pub use mime_type::MimeTypeStrategy;
+pub use scalar_array::ScalarArrayStrategy;
+pub use simple_table::SimpleTableStrategy;
+pub use tag_kit::TagKitStrategy;
 
 /// Registry of all available strategies
 /// Ordered by precedence - first-match-wins
@@ -473,18 +680,17 @@ pub fn all_strategies() -> Vec<Box<dyn ExtractionStrategy>> {
     vec![
         // Order matters: first-match wins
         Box::new(CompositeTagStrategy::new()), // Composite tag definitions (MUST be first)
-        
         // File type detection strategies (MUST be before TagKitStrategy)
         Box::new(FileTypeLookupStrategy::new()), // ExifTool %fileTypeLookup discriminated union
         Box::new(MagicNumberStrategy::new()),    // ExifTool %magicNumber regex patterns
         Box::new(MimeTypeStrategy::new()),       // ExifTool %mimeType simple mappings
-        
         // Simple lookup tables (MUST be before TagKitStrategy to claim mixed-key tables like canonLensTypes)
         Box::new(SimpleTableStrategy::new()), // Simple key-value lookups with mixed keys
-        
-        Box::new(TagKitStrategy::new()),      // Complex tag definitions (Main tables) - after specific patterns
-        Box::new(BinaryDataStrategy::new()),  // ProcessBinaryData tables (CameraInfo*, etc.)
-        Box::new(BooleanSetStrategy::new()),  // Membership sets (isDat*, isTxt*, etc.)
+        // Scalar arrays (MUST be before TagKitStrategy to handle arrays of primitives)
+        Box::new(ScalarArrayStrategy::new()), // Arrays of scalars (u8[], i32[], &str[])
+        Box::new(TagKitStrategy::new()), // Complex tag definitions (Main tables) - after specific patterns
+        Box::new(BinaryDataStrategy::new()), // ProcessBinaryData tables (CameraInfo*, etc.)
+        Box::new(BooleanSetStrategy::new()), // Membership sets (isDat*, isTxt*, etc.)
     ]
 }
 
@@ -492,17 +698,17 @@ pub fn all_strategies() -> Vec<Box<dyn ExtractionStrategy>> {
 mod tests {
     use super::*;
     use serde_json::json;
-    
+
     #[test]
     fn test_strategy_dispatcher_creation() {
         let dispatcher = StrategyDispatcher::new();
-        assert_eq!(dispatcher.strategies.len(), 7); // All 7 strategies registered
+        assert_eq!(dispatcher.strategies.len(), 9); // All 9 strategies registered
     }
-    
+
     #[test]
     fn test_extraction_context() {
         let mut context = ExtractionContext::new("output".to_string());
-        
+
         let symbol = FieldSymbol {
             symbol_type: "hash".to_string(),
             name: "test_symbol".to_string(),
@@ -513,23 +719,32 @@ mod tests {
                 is_composite_table: 0,
             },
         };
-        
+
         context.log_strategy_selection(&symbol, "TestStrategy", "test reasoning");
         assert_eq!(context.strategy_log.len(), 1);
-        
+
         context.register_symbol(symbol);
         assert_eq!(context.symbol_registry.len(), 1);
     }
-    
+
     #[test]
     fn test_pattern_description() {
         let dispatcher = StrategyDispatcher::new();
-        
+
         // Test different pattern types
         assert_eq!(dispatcher.describe_pattern(&json!({})), "empty object");
-        assert_eq!(dispatcher.describe_pattern(&json!({"a": "1", "b": "2"})), "string map (2 keys)");
-        assert_eq!(dispatcher.describe_pattern(&json!({"PrintConv": "test"})), "tag definition with conversions");
-        assert_eq!(dispatcher.describe_pattern(&json!([1, 2, 3])), "array (3 elements)");
+        assert_eq!(
+            dispatcher.describe_pattern(&json!({"a": "1", "b": "2"})),
+            "string map (2 keys)"
+        );
+        assert_eq!(
+            dispatcher.describe_pattern(&json!({"PrintConv": "test"})),
+            "tag definition with conversions"
+        );
+        assert_eq!(
+            dispatcher.describe_pattern(&json!([1, 2, 3])),
+            "array (3 elements)"
+        );
         assert_eq!(dispatcher.describe_pattern(&json!("test")), "string scalar");
     }
 }

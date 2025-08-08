@@ -19,7 +19,9 @@ my @skipped_list      = ();
 
 # JSON serializer - let JSON::XS handle complex structures automatically
 my $json =
-  JSON::XS->new->canonical(1)->allow_blessed(1)->convert_blessed(1)
+  JSON::XS->new->canonical(1)
+  ->allow_blessed(1)
+  ->convert_blessed(1)
   ->allow_nonref(1);
 
 if ( @ARGV < 1 ) {
@@ -63,9 +65,12 @@ my $has_composite_tags = 0;
     $has_composite_tags = 1 if ${"${package_name}::__hasCompositeTags"};
 }
 
-# Extract symbols
+# Extract symbols from symbol table
 extract_symbols( $package_name, $module_name, \@target_fields,
     $has_composite_tags );
+
+# Extract lexical arrays from source code
+extract_lexical_arrays( $module_path, $module_name, \@target_fields );
 
 # Print summary
 print STDERR "Universal extraction complete for $module_name:\n";
@@ -262,4 +267,156 @@ sub filter_code_refs {
         my $ref_type = reftype($data) || ref($data) || 'UNKNOWN';
         return "[Ref: $ref_type]";
     }
+}
+
+sub extract_lexical_arrays {
+    my ( $module_path, $module_name, $target_fields ) = @_;
+
+    # Read the source file
+    open my $fh, '<', $module_path or do {
+        print STDERR
+"Warning: Cannot open source file $module_path for array extraction: $!\n";
+        return;
+    };
+
+    my $source_code = do { local $/; <$fh> };
+    close $fh;
+
+    print STDERR "  Scanning source for lexical arrays...\n" if $ENV{DEBUG};
+
+    # Create a filter set if target fields are specified
+    my %field_filter;
+    if (@$target_fields) {
+        %field_filter = map { $_ => 1 } @$target_fields;
+    }
+
+    # Look for lexical array declarations
+    # Pattern: my @varname = (array_content);
+    while ( $source_code =~ /^my\s+\@(\w+)\s*=\s*\(\s*(.*?)\s*\);/gms ) {
+        my $array_name    = $1;
+        my $array_content = $2;
+
+        $total_symbols++;
+
+        # Skip if filtering and not in target list
+        if ( @$target_fields && !exists $field_filter{$array_name} ) {
+            print STDERR "  Skipping array (not in filter): $array_name\n"
+              if $ENV{DEBUG};
+            next;
+        }
+
+        print STDERR "  Found lexical array: \@$array_name\n" if $ENV{DEBUG};
+
+        # Parse the array content
+        my $parsed_array = parse_perl_array($array_content);
+
+        if ($parsed_array) {
+
+            # Create symbol data for the array
+            my $symbol_data = {
+                type     => 'array',
+                name     => $array_name,
+                data     => $parsed_array,
+                module   => $module_name,
+                metadata => {
+                    size               => scalar(@$parsed_array),
+                    is_composite_table => 0,
+                }
+            };
+
+            eval {
+                print $json->encode($symbol_data) . "\n";
+                $extracted_symbols++;
+                print STDERR "  Extracted array: $array_name (size: "
+                  . scalar(@$parsed_array) . ")\n"
+                  if $ENV{DEBUG};
+            };
+            if ($@) {
+                $skipped_symbols++;
+                push @skipped_list, "$module_name:$array_name (JSON error: $@)";
+                print STDERR
+                  "  Warning: Failed to serialize array $array_name: $@\n";
+            }
+        }
+        else {
+            print STDERR
+              "  Warning: Failed to parse array content for $array_name\n"
+              if $ENV{DEBUG};
+            $skipped_symbols++;
+            push @skipped_list, "$module_name:$array_name (parse error)";
+        }
+    }
+}
+
+sub parse_perl_array {
+    my ($array_content) = @_;
+
+    # Remove extra whitespace and normalize
+    $array_content =~ s/^\s+|\s+$//g;
+
+    # Handle nested arrays like [ [...], [...] ]
+    if ( $array_content =~ /^\s*\[\s*(.*?)\s*\]\s*,\s*\[\s*(.*?)\s*\]\s*$/s ) {
+        print STDERR "    Parsing nested array structure\n" if $ENV{DEBUG};
+        my @result = ();
+
+        # Split by '], [' to handle multiple sub-arrays
+        my @sub_arrays = split /\]\s*,\s*\[/, $array_content;
+
+        for my $sub_array (@sub_arrays) {
+
+            # Clean up brackets that might remain
+            $sub_array =~ s/^\s*\[?\s*|\s*\]?\s*$//g;
+
+            my $parsed_sub = parse_array_elements($sub_array);
+            push @result, $parsed_sub if $parsed_sub;
+        }
+
+        return \@result;
+    }
+
+    # Handle flat arrays
+    else {
+        return parse_array_elements($array_content);
+    }
+}
+
+sub parse_array_elements {
+    my ($elements_str) = @_;
+
+    my @elements = ();
+
+    # Split by comma, but be careful with nested structures
+    my @raw_elements = split /,/, $elements_str;
+
+    for my $element (@raw_elements) {
+        $element =~ s/^\s+|\s+$//g;    # Trim whitespace
+        next unless $element;          # Skip empty elements
+
+        # Convert hex to decimal
+        if ( $element =~ /^0x([0-9a-fA-F]+)$/ ) {
+            push @elements, hex($1);
+        }
+
+        # Handle decimal numbers
+        elsif ( $element =~ /^-?\d+(\.\d+)?$/ ) {
+            push @elements, $element + 0;    # Force numeric context
+        }
+
+        # Handle quoted strings
+        elsif ( $element =~ /^['"](.*)['"]$/ ) {
+            push @elements, $1;
+        }
+
+        # Handle unquoted strings (barewords)
+        elsif ( $element =~ /^[a-zA-Z_]\w*$/ ) {
+            push @elements, $element;
+        }
+        else {
+            print STDERR
+              "    Warning: Unrecognized element format: '$element'\n"
+              if $ENV{DEBUG};
+        }
+    }
+
+    return \@elements;
 }

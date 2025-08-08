@@ -4,26 +4,26 @@
 //! be processed by the shunting yard algorithm.
 
 use super::types::*;
-use std::str::Chars;
 use std::iter::Peekable;
+use std::str::Chars;
 
 /// Tokenize an expression string into parse tokens
 pub fn tokenize(expr: &str) -> Result<Vec<ParseToken>, String> {
     let mut tokens = Vec::new();
     let mut chars = expr.chars().peekable();
-    
+
     while let Some(ch) = chars.next() {
         match ch {
             ' ' | '\t' => continue, // Skip whitespace
-            
+
             '$' => {
                 tokens.push(parse_variable(&mut chars)?);
             }
-            
+
             '0'..='9' => {
                 tokens.push(parse_number(ch, &mut chars)?);
             }
-            
+
             'a'..='z' | 'A'..='Z' => {
                 // Special case for regex operations
                 if ch == 's' || ch == 't' {
@@ -36,62 +36,92 @@ pub fn tokenize(expr: &str) -> Result<Vec<ParseToken>, String> {
                     tokens.push(parse_identifier(ch, &mut chars)?);
                 }
             }
-            
+
             '"' => {
                 tokens.push(parse_string_literal(&mut chars)?);
             }
-            
+
             '+' => tokens.push(ParseToken::Operator(Operator::new(OpType::Add, 4, true))),
             '-' => {
                 // Check if this is unary minus based on context
                 let is_unary = match tokens.last() {
-                    None => true, // Start of expression
-                    Some(ParseToken::LeftParen) => true, // After opening parenthesis
-                    Some(ParseToken::Operator(_)) => true, // After another operator
+                    None => true,                            // Start of expression
+                    Some(ParseToken::LeftParen) => true,     // After opening parenthesis
+                    Some(ParseToken::Operator(_)) => true,   // After another operator
                     Some(ParseToken::Comparison(_)) => true, // After comparison operator
-                    Some(ParseToken::Question) => true, // After ? in ternary
-                    Some(ParseToken::Colon) => true, // After : in ternary
-                    Some(ParseToken::Comma) => true, // After comma in function call
+                    Some(ParseToken::Question) => true,      // After ? in ternary
+                    Some(ParseToken::Colon) => true,         // After : in ternary
+                    Some(ParseToken::Comma) => true,         // After comma in function call
                     _ => false, // After operand (number, variable, etc.)
                 };
-                
+
                 if is_unary {
                     tokens.push(ParseToken::UnaryMinus);
                 } else {
-                    tokens.push(ParseToken::Operator(Operator::new(OpType::Subtract, 4, true)));
+                    tokens.push(ParseToken::Operator(Operator::new(
+                        OpType::Subtract,
+                        4,
+                        true,
+                    )));
                 }
             }
             '*' => {
                 // Check for ** power operator
                 if chars.peek() == Some(&'*') {
                     chars.next(); // consume second '*'
-                    tokens.push(ParseToken::Operator(Operator::new(OpType::Power, 6, false))); // Right-associative, highest precedence
+                    tokens.push(ParseToken::Operator(Operator::new(OpType::Power, 6, false)));
+                // Right-associative, highest precedence
                 } else {
-                    tokens.push(ParseToken::Operator(Operator::new(OpType::Multiply, 5, true)));
+                    tokens.push(ParseToken::Operator(Operator::new(
+                        OpType::Multiply,
+                        5,
+                        true,
+                    )));
                 }
             }
             '/' => tokens.push(ParseToken::Operator(Operator::new(OpType::Divide, 5, true))),
-            '.' => tokens.push(ParseToken::Operator(Operator::new(OpType::Concatenate, 4, true))),
-            
+            '.' => tokens.push(ParseToken::Operator(Operator::new(
+                OpType::Concatenate,
+                4,
+                true,
+            ))),
+
             // Comparison operators and bitwise shifts
             '>' => {
                 if chars.peek() == Some(&'=') {
                     chars.next(); // consume '='
-                    tokens.push(ParseToken::Comparison(CompOperator::new(CompType::GreaterEq, 3)));
+                    tokens.push(ParseToken::Comparison(CompOperator::new(
+                        CompType::GreaterEq,
+                        3,
+                    )));
                 } else if chars.peek() == Some(&'>') {
                     chars.next(); // consume second '>'
-                    tokens.push(ParseToken::Operator(Operator::new(OpType::RightShift, 3, true))); // Between arithmetic and comparison
+                    tokens.push(ParseToken::Operator(Operator::new(
+                        OpType::RightShift,
+                        3,
+                        true,
+                    ))); // Between arithmetic and comparison
                 } else {
-                    tokens.push(ParseToken::Comparison(CompOperator::new(CompType::Greater, 3)));
+                    tokens.push(ParseToken::Comparison(CompOperator::new(
+                        CompType::Greater,
+                        3,
+                    )));
                 }
             }
             '<' => {
                 if chars.peek() == Some(&'=') {
                     chars.next(); // consume '='
-                    tokens.push(ParseToken::Comparison(CompOperator::new(CompType::LessEq, 3)));
+                    tokens.push(ParseToken::Comparison(CompOperator::new(
+                        CompType::LessEq,
+                        3,
+                    )));
                 } else if chars.peek() == Some(&'<') {
                     chars.next(); // consume second '<'
-                    tokens.push(ParseToken::Operator(Operator::new(OpType::LeftShift, 3, true))); // Between arithmetic and comparison
+                    tokens.push(ParseToken::Operator(Operator::new(
+                        OpType::LeftShift,
+                        3,
+                        true,
+                    ))); // Between arithmetic and comparison
                 } else {
                     tokens.push(ParseToken::Comparison(CompOperator::new(CompType::Less, 3)));
                 }
@@ -99,7 +129,10 @@ pub fn tokenize(expr: &str) -> Result<Vec<ParseToken>, String> {
             '=' => {
                 if chars.peek() == Some(&'=') {
                     chars.next(); // consume second '='
-                    tokens.push(ParseToken::Comparison(CompOperator::new(CompType::Equal, 3)));
+                    tokens.push(ParseToken::Comparison(CompOperator::new(
+                        CompType::Equal,
+                        3,
+                    )));
                 } else {
                     return Err("Single '=' not supported - use '==' for equality".to_string());
                 }
@@ -107,28 +140,39 @@ pub fn tokenize(expr: &str) -> Result<Vec<ParseToken>, String> {
             '!' => {
                 if chars.peek() == Some(&'=') {
                     chars.next(); // consume '='
-                    tokens.push(ParseToken::Comparison(CompOperator::new(CompType::NotEqual, 3)));
+                    tokens.push(ParseToken::Comparison(CompOperator::new(
+                        CompType::NotEqual,
+                        3,
+                    )));
                 } else {
                     return Err("Single '!' not supported - use '!=' for inequality".to_string());
                 }
             }
-            
+
             // Ternary operators
             '?' => tokens.push(ParseToken::Question),
             ':' => tokens.push(ParseToken::Colon),
-            
+
             // Bitwise operators
-            '&' => tokens.push(ParseToken::Operator(Operator::new(OpType::BitwiseAnd, 2, true))), // Lower precedence than shifts
-            '|' => tokens.push(ParseToken::Operator(Operator::new(OpType::BitwiseOr, 1, true))),  // Lowest precedence
-            
+            '&' => tokens.push(ParseToken::Operator(Operator::new(
+                OpType::BitwiseAnd,
+                2,
+                true,
+            ))), // Lower precedence than shifts
+            '|' => tokens.push(ParseToken::Operator(Operator::new(
+                OpType::BitwiseOr,
+                1,
+                true,
+            ))), // Lowest precedence
+
             '(' => tokens.push(ParseToken::LeftParen),
             ')' => tokens.push(ParseToken::RightParen),
             ',' => tokens.push(ParseToken::Comma), // For parsing argument lists
-            
+
             _ => return Err(format!("Unexpected character: '{}'", ch)),
         }
     }
-    
+
     Ok(tokens)
 }
 
@@ -140,7 +184,7 @@ fn parse_variable(chars: &mut Peekable<Chars>) -> Result<ParseToken, String> {
         // Check if this is indexed variable ($val[n])
         if chars.peek() == Some(&'[') {
             chars.next(); // consume '['
-            
+
             // Parse the index number
             let mut index_str = String::new();
             while let Some(&next_ch) = chars.peek() {
@@ -150,20 +194,21 @@ fn parse_variable(chars: &mut Peekable<Chars>) -> Result<ParseToken, String> {
                     break;
                 }
             }
-            
+
             if index_str.is_empty() {
                 return Err("Expected digit after '$val['".to_string());
             }
-            
+
             // Expect closing bracket
             if chars.next() != Some(']') {
                 return Err("Expected ']' after index in $val[n]".to_string());
             }
-            
+
             // Parse index as usize
-            let index: usize = index_str.parse()
+            let index: usize = index_str
+                .parse()
                 .map_err(|_| format!("Invalid index in $val[{}]", index_str))?;
-            
+
             Ok(ParseToken::ValIndex(index))
         } else {
             // Regular $val variable
@@ -178,11 +223,11 @@ fn parse_variable(chars: &mut Peekable<Chars>) -> Result<ParseToken, String> {
 fn parse_number(first_digit: char, chars: &mut Peekable<Chars>) -> Result<ParseToken, String> {
     let mut number_str = String::new();
     number_str.push(first_digit);
-    
+
     // Check for hex numbers (0x...)
     if first_digit == '0' && chars.peek() == Some(&'x') {
         number_str.push(chars.next().unwrap()); // consume 'x'
-        
+
         // Parse hex digits
         while let Some(&next_ch) = chars.peek() {
             if next_ch.is_ascii_hexdigit() {
@@ -191,14 +236,15 @@ fn parse_number(first_digit: char, chars: &mut Peekable<Chars>) -> Result<ParseT
                 break;
             }
         }
-        
+
         // Convert hex string to decimal
         let hex_part = &number_str[2..]; // Skip "0x"
         let number = i64::from_str_radix(hex_part, 16)
-            .map_err(|_| format!("Invalid hex number: {}", number_str))? as f64;
+            .map_err(|_| format!("Invalid hex number: {}", number_str))?
+            as f64;
         return Ok(ParseToken::Number(number));
     }
-    
+
     // Parse regular decimal numbers
     while let Some(&next_ch) = chars.peek() {
         if next_ch.is_ascii_digit() || next_ch == '.' {
@@ -207,8 +253,9 @@ fn parse_number(first_digit: char, chars: &mut Peekable<Chars>) -> Result<ParseT
             break;
         }
     }
-    
-    let number: f64 = number_str.parse()
+
+    let number: f64 = number_str
+        .parse()
         .map_err(|_| format!("Invalid number: {}", number_str))?;
     Ok(ParseToken::Number(number))
 }
@@ -216,8 +263,7 @@ fn parse_number(first_digit: char, chars: &mut Peekable<Chars>) -> Result<ParseT
 /// Parse string literal token
 fn parse_string_literal(chars: &mut Peekable<Chars>) -> Result<ParseToken, String> {
     let mut string_value = String::new();
-    let mut has_interpolation = false;
-    
+
     while let Some(ch) = chars.next() {
         match ch {
             '"' => {
@@ -226,7 +272,6 @@ fn parse_string_literal(chars: &mut Peekable<Chars>) -> Result<ParseToken, Strin
             }
             '$' => {
                 // Variable interpolation detected
-                has_interpolation = true;
                 string_value.push(ch);
             }
             '\\' => {
@@ -250,7 +295,7 @@ fn parse_string_literal(chars: &mut Peekable<Chars>) -> Result<ParseToken, Strin
             _ => string_value.push(ch),
         }
     }
-    
+
     Err("Unterminated string literal".to_string())
 }
 
@@ -258,7 +303,7 @@ fn parse_string_literal(chars: &mut Peekable<Chars>) -> Result<ParseToken, Strin
 fn parse_identifier(first_char: char, chars: &mut Peekable<Chars>) -> Result<ParseToken, String> {
     let mut identifier = String::new();
     identifier.push(first_char);
-    
+
     // Parse the full identifier including :: separators for ExifTool functions
     while let Some(&next_ch) = chars.peek() {
         if next_ch.is_ascii_alphabetic() || next_ch == ':' {
@@ -267,12 +312,12 @@ fn parse_identifier(first_char: char, chars: &mut Peekable<Chars>) -> Result<Par
             break;
         }
     }
-    
+
     // Check if it's the undef keyword
     if identifier == "undef" {
         return Ok(ParseToken::Undefined);
     }
-    
+
     // Check if it's a function (must be followed by opening parenthesis)
     if chars.peek() == Some(&'(') {
         match identifier.as_str() {
@@ -289,21 +334,28 @@ fn parse_identifier(first_char: char, chars: &mut Peekable<Chars>) -> Result<Par
             }
         };
     }
-    
+
     // If it's not undef or a function, it's an error for now
     Err(format!("Unknown identifier: '{}'", identifier))
 }
 
 /// Try to parse regex operations (s/// or tr///)
 /// Returns Some(token) if it's a valid regex, None if it should be parsed as identifier
-fn try_parse_regex(first_char: char, chars: &mut Peekable<Chars>) -> Result<Option<ParseToken>, String> {
+fn try_parse_regex(
+    first_char: char,
+    chars: &mut Peekable<Chars>,
+) -> Result<Option<ParseToken>, String> {
     match first_char {
         's' => {
             // Look for s/pattern/replacement/flags
             if chars.peek() == Some(&'/') {
                 chars.next(); // consume '/'
                 let (pattern, replacement, flags) = parse_substitution_parts(chars)?;
-                return Ok(Some(ParseToken::RegexSubstitution { pattern, replacement, flags }));
+                return Ok(Some(ParseToken::RegexSubstitution {
+                    pattern,
+                    replacement,
+                    flags,
+                }));
             }
         }
         't' => {
@@ -313,7 +365,11 @@ fn try_parse_regex(first_char: char, chars: &mut Peekable<Chars>) -> Result<Opti
                 if chars.peek() == Some(&'/') {
                     chars.next(); // consume '/'
                     let (search_list, replace_list, flags) = parse_transliteration_parts(chars)?;
-                    return Ok(Some(ParseToken::Transliteration { search_list, replace_list, flags }));
+                    return Ok(Some(ParseToken::Transliteration {
+                        search_list,
+                        replace_list,
+                        flags,
+                    }));
                 }
                 // If we consumed 'r' but it's not followed by '/', this is an error
                 // for now, but we could implement a more sophisticated backtracking
@@ -322,13 +378,15 @@ fn try_parse_regex(first_char: char, chars: &mut Peekable<Chars>) -> Result<Opti
         }
         _ => {}
     }
-    
+
     // Not a regex pattern, let identifier parser handle it
     Ok(None)
 }
 
 /// Parse s/pattern/replacement/flags parts
-fn parse_substitution_parts(chars: &mut Peekable<Chars>) -> Result<(String, String, String), String> {
+fn parse_substitution_parts(
+    chars: &mut Peekable<Chars>,
+) -> Result<(String, String, String), String> {
     let pattern = parse_regex_part(chars, '/')?;
     let replacement = parse_regex_part(chars, '/')?;
     let flags = parse_regex_flags(chars);
@@ -336,7 +394,9 @@ fn parse_substitution_parts(chars: &mut Peekable<Chars>) -> Result<(String, Stri
 }
 
 /// Parse tr/searchlist/replacelist/flags parts
-fn parse_transliteration_parts(chars: &mut Peekable<Chars>) -> Result<(String, String, String), String> {
+fn parse_transliteration_parts(
+    chars: &mut Peekable<Chars>,
+) -> Result<(String, String, String), String> {
     let search_list = parse_regex_part(chars, '/')?;
     let replace_list = parse_regex_part(chars, '/')?;
     let flags = parse_regex_flags(chars);
@@ -347,7 +407,7 @@ fn parse_transliteration_parts(chars: &mut Peekable<Chars>) -> Result<(String, S
 fn parse_regex_part(chars: &mut Peekable<Chars>, delimiter: char) -> Result<String, String> {
     let mut part = String::new();
     let mut escaped = false;
-    
+
     while let Some(&ch) = chars.peek() {
         if escaped {
             part.push('\\');
@@ -365,14 +425,14 @@ fn parse_regex_part(chars: &mut Peekable<Chars>, delimiter: char) -> Result<Stri
             chars.next();
         }
     }
-    
+
     Ok(part)
 }
 
 /// Parse regex flags after the final /
 fn parse_regex_flags(chars: &mut Peekable<Chars>) -> String {
     let mut flags = String::new();
-    
+
     while let Some(&ch) = chars.peek() {
         if ch.is_ascii_alphabetic() {
             flags.push(ch);
@@ -381,7 +441,7 @@ fn parse_regex_flags(chars: &mut Peekable<Chars>) -> String {
             break;
         }
     }
-    
+
     flags
 }
 
@@ -436,7 +496,7 @@ mod tests {
         assert!(matches!(tokens[0], ParseToken::Variable));
         assert!(matches!(tokens[1], ParseToken::Comparison(_)));
         assert!(matches!(tokens[2], ParseToken::Number(0.0)));
-        
+
         if let ParseToken::Comparison(comp_op) = &tokens[1] {
             assert_eq!(comp_op.comp_type, CompType::GreaterEq);
         }
@@ -458,7 +518,7 @@ mod tests {
         let tokens = tokenize("\"hello world\"").unwrap();
         assert_eq!(tokens.len(), 1);
         assert!(matches!(tokens[0], ParseToken::String(_)));
-        
+
         if let ParseToken::String(s) = &tokens[0] {
             assert_eq!(s, "hello world");
         }
@@ -469,7 +529,7 @@ mod tests {
         let tokens = tokenize("\"$val m\"").unwrap();
         assert_eq!(tokens.len(), 1);
         assert!(matches!(tokens[0], ParseToken::String(_)));
-        
+
         if let ParseToken::String(s) = &tokens[0] {
             assert_eq!(s, "$val m");
         }
@@ -505,12 +565,12 @@ mod tests {
         assert!(matches!(tokens[3], ParseToken::Comma));
         assert!(matches!(tokens[4], ParseToken::Variable));
         assert!(matches!(tokens[5], ParseToken::RightParen));
-        
+
         if let ParseToken::String(s) = &tokens[2] {
             assert_eq!(s, "%.1f mm");
         }
     }
-    
+
     #[test]
     fn test_exiftool_function_expression() {
         let tokens = tokenize("Image::ExifTool::Exif::PrintExposureTime($val)").unwrap();
@@ -519,25 +579,25 @@ mod tests {
         assert!(matches!(tokens[1], ParseToken::LeftParen));
         assert!(matches!(tokens[2], ParseToken::Variable));
         assert!(matches!(tokens[3], ParseToken::RightParen));
-        
+
         if let ParseToken::ExifToolFunction(func_name) = &tokens[0] {
             assert_eq!(func_name, "Image::ExifTool::Exif::PrintExposureTime");
         }
     }
-    
+
     #[test]
     fn test_various_exiftool_functions() {
         let test_cases = vec![
             "Image::ExifTool::Exif::PrintFNumber($val)",
-            "Image::ExifTool::GPS::ToDegrees($val)", 
+            "Image::ExifTool::GPS::ToDegrees($val)",
             "Image::ExifTool::Canon::LensType($val)",
         ];
-        
+
         for expr in test_cases {
             let tokens = tokenize(expr).unwrap();
             assert_eq!(tokens.len(), 4);
             assert!(matches!(tokens[0], ParseToken::ExifToolFunction(_)));
-            
+
             if let ParseToken::ExifToolFunction(func_name) = &tokens[0] {
                 assert!(func_name.starts_with("Image::ExifTool::"));
             }

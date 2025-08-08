@@ -5,4 +5,3 @@ pub mod output;
 pub mod tag_kit;
 
 pub use input::*;
-pub use output::*;

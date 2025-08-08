@@ -1,0 +1,610 @@
+//! ScalarArrayStrategy for processing array symbols with scalar values
+//!
+//! This strategy handles symbols that represent arrays of scalar types,
+//! such as the XLAT encryption arrays in Nikon.pm.
+
+use anyhow::Result;
+use serde_json::Value as JsonValue;
+use std::collections::HashMap;
+use tracing::{debug, info};
+
+use super::{output_locations, ExtractionContext, ExtractionStrategy, GeneratedFile};
+use crate::field_extractor::FieldSymbol;
+
+/// Strategy for processing scalar arrays
+///
+/// Recognizes patterns like:
+/// ```json
+/// {
+///   "type": "array",
+///   "data": [1, 2, 3],
+///   "metadata": {"size": 3}
+/// }
+/// ```
+///
+/// Or nested arrays:
+/// ```json
+/// {
+///   "type": "array",
+///   "data": [[193, 191, ...], [167, 188, ...]],
+///   "metadata": {"size": 2}
+/// }
+/// ```
+pub struct ScalarArrayStrategy {
+    /// Collected arrays by module
+    arrays: HashMap<String, Vec<ScalarArray>>,
+}
+
+/// A scalar array extracted from ExifTool symbol
+#[derive(Debug, Clone)]
+struct ScalarArray {
+    /// Symbol name from ExifTool (e.g., "xlat")
+    name: String,
+
+    /// Module name (e.g., "Nikon")
+    module: String,
+
+    /// Array data - either flat array or nested arrays
+    data: ArrayData,
+}
+
+#[derive(Debug, Clone)]
+enum ArrayData {
+    /// Flat array: [1, 2, 3]
+    Flat(Vec<ScalarValue>),
+    /// Nested array: [[1, 2], [3, 4]]
+    Nested(Vec<Vec<ScalarValue>>),
+}
+
+#[derive(Debug, Clone)]
+enum ScalarValue {
+    Integer(i64),
+    Float(f64),
+    String(String),
+}
+
+impl ScalarArrayStrategy {
+    /// Create new ScalarArrayStrategy
+    pub fn new() -> Self {
+        Self {
+            arrays: HashMap::new(),
+        }
+    }
+
+    /// Generate standardized output filename for an array using output_locations
+    fn output_filename(&self, module: &str, array_name: &str, index: Option<usize>) -> String {
+        let base_name = if let Some(idx) = index {
+            format!("{}_{}", array_name, idx)
+        } else {
+            array_name.to_string()
+        };
+        output_locations::generate_module_path(module, &base_name)
+    }
+
+    /// Generate Rust code for a scalar array
+    fn generate_array_code(&self, array: &ScalarArray) -> Vec<GeneratedFile> {
+        let mut files = Vec::new();
+
+        match &array.data {
+            ArrayData::Flat(values) => {
+                let content = self.generate_flat_array_code(array, values);
+                let filename = self.output_filename(&array.module, &array.name, None);
+                files.push(GeneratedFile {
+                    path: filename,
+                    content,
+                    strategy: self.name().to_string(),
+                });
+            }
+            ArrayData::Nested(nested_values) => {
+                for (index, values) in nested_values.iter().enumerate() {
+                    let content = self.generate_indexed_array_code(array, values, index);
+                    let filename = self.output_filename(&array.module, &array.name, Some(index));
+                    files.push(GeneratedFile {
+                        path: filename,
+                        content,
+                        strategy: self.name().to_string(),
+                    });
+                }
+            }
+        }
+
+        files
+    }
+
+    /// Generate code for a flat array
+    fn generate_flat_array_code(&self, array: &ScalarArray, values: &[ScalarValue]) -> String {
+        let const_name = self.constant_case(&array.name);
+        let element_type = self.infer_element_type(values);
+        let array_length = values.len();
+
+        let mut code = String::new();
+
+        // File header
+        code.push_str(&format!(
+            "//! Generated scalar array {} from ExifTool's {} module\n",
+            array.name, array.module
+        ));
+        code.push_str("//!\n");
+        code.push_str("//! This file is auto-generated. Do not edit manually.\n\n");
+
+        // Static array constant
+        code.push_str(&format!("/// {} array from ExifTool\n", array.name));
+        code.push_str(&format!(
+            "pub static {}: [{}; {}] = [\n",
+            const_name, element_type, array_length
+        ));
+
+        // Add array elements with proper formatting
+        self.format_array_elements(&mut code, values, &element_type);
+
+        code.push_str("];\n");
+
+        code
+    }
+
+    /// Generate code for an indexed array (part of nested structure)
+    fn generate_indexed_array_code(
+        &self,
+        array: &ScalarArray,
+        values: &[ScalarValue],
+        index: usize,
+    ) -> String {
+        let const_name = format!("{}_{}", self.constant_case(&array.name), index);
+        let element_type = self.infer_element_type(values);
+        let array_length = values.len();
+
+        let mut code = String::new();
+
+        // File header
+        code.push_str(&format!(
+            "//! Generated scalar array {}[{}] from ExifTool's {} module\n",
+            array.name, index, array.module
+        ));
+        code.push_str("//!\n");
+        code.push_str("//! This file is auto-generated. Do not edit manually.\n\n");
+
+        // Static array constant
+        code.push_str(&format!(
+            "/// {}[{}] array from ExifTool\n",
+            array.name, index
+        ));
+        code.push_str(&format!(
+            "pub static {}: [{}; {}] = [\n",
+            const_name, element_type, array_length
+        ));
+
+        // Add array elements with proper formatting
+        self.format_array_elements(&mut code, values, &element_type);
+
+        code.push_str("];\n");
+
+        code
+    }
+
+    /// Format array elements into Rust code
+    fn format_array_elements(
+        &self,
+        code: &mut String,
+        values: &[ScalarValue],
+        _element_type: &str,
+    ) {
+        const ELEMENTS_PER_LINE: usize = 16;
+
+        for (i, value) in values.iter().enumerate() {
+            if i % ELEMENTS_PER_LINE == 0 {
+                code.push_str("    ");
+            }
+
+            match value {
+                ScalarValue::Integer(n) => {
+                    code.push_str(&n.to_string());
+                }
+                ScalarValue::Float(f) => {
+                    code.push_str(&f.to_string());
+                }
+                ScalarValue::String(s) => {
+                    let escaped = s.replace('\\', "\\\\").replace('"', "\\\"");
+                    code.push_str(&format!("\"{}\"", escaped));
+                }
+            }
+
+            if i < values.len() - 1 {
+                code.push(',');
+                if (i + 1) % ELEMENTS_PER_LINE == 0 {
+                    code.push('\n');
+                } else {
+                    code.push(' ');
+                }
+            } else {
+                code.push('\n');
+            }
+        }
+    }
+
+    /// Convert to CONSTANT_CASE
+    fn constant_case(&self, name: &str) -> String {
+        output_locations::to_snake_case(name).to_uppercase()
+    }
+
+    /// Infer Rust element type from array values
+    fn infer_element_type(&self, values: &[ScalarValue]) -> &'static str {
+        if values.is_empty() {
+            return "()"; // Unit type for empty arrays
+        }
+
+        // Check if all values are integers and determine range
+        let all_integers = values.iter().all(|v| matches!(v, ScalarValue::Integer(_)));
+        if all_integers {
+            let max_value = values
+                .iter()
+                .filter_map(|v| match v {
+                    ScalarValue::Integer(n) => Some(*n),
+                    _ => None,
+                })
+                .max()
+                .unwrap_or(0);
+            let min_value = values
+                .iter()
+                .filter_map(|v| match v {
+                    ScalarValue::Integer(n) => Some(*n),
+                    _ => None,
+                })
+                .min()
+                .unwrap_or(0);
+
+            if min_value >= 0 {
+                // Unsigned integers
+                if max_value <= 255 {
+                    "u8"
+                } else if max_value <= 65535 {
+                    "u16"
+                } else if max_value <= 4294967295 {
+                    "u32"
+                } else {
+                    "u64"
+                }
+            } else {
+                // Signed integers
+                if min_value >= -128 && max_value <= 127 {
+                    "i8"
+                } else if min_value >= -32768 && max_value <= 32767 {
+                    "i16"
+                } else if min_value >= -2147483648 && max_value <= 2147483647 {
+                    "i32"
+                } else {
+                    "i64"
+                }
+            }
+        }
+        // Check if all values are floats
+        else if values.iter().all(|v| matches!(v, ScalarValue::Float(_))) {
+            "f64"
+        }
+        // Check if all values are strings
+        else if values.iter().all(|v| matches!(v, ScalarValue::String(_))) {
+            "&'static str"
+        }
+        // Mixed types - default to string representation
+        else {
+            "&'static str"
+        }
+    }
+
+    /// Parse JSON array data into ScalarValue
+    fn parse_json_array(&self, json_array: &JsonValue) -> Option<ArrayData> {
+        match json_array {
+            JsonValue::Array(elements) => {
+                // Check if this is a nested array (array of arrays)
+                if elements.iter().all(|e| e.is_array()) {
+                    let mut nested_arrays = Vec::new();
+                    for element in elements {
+                        if let JsonValue::Array(inner_array) = element {
+                            let scalar_values = self.parse_scalar_values(inner_array)?;
+                            nested_arrays.push(scalar_values);
+                        }
+                    }
+                    Some(ArrayData::Nested(nested_arrays))
+                } else {
+                    // Flat array
+                    let scalar_values = self.parse_scalar_values(elements)?;
+                    Some(ArrayData::Flat(scalar_values))
+                }
+            }
+            _ => None,
+        }
+    }
+
+    /// Parse JSON values into ScalarValue vector
+    fn parse_scalar_values(&self, json_values: &[JsonValue]) -> Option<Vec<ScalarValue>> {
+        let mut scalar_values = Vec::new();
+
+        for value in json_values {
+            match value {
+                JsonValue::Number(n) => {
+                    if let Some(i) = n.as_i64() {
+                        scalar_values.push(ScalarValue::Integer(i));
+                    } else if let Some(f) = n.as_f64() {
+                        scalar_values.push(ScalarValue::Float(f));
+                    } else {
+                        return None; // Invalid number
+                    }
+                }
+                JsonValue::String(s) => {
+                    scalar_values.push(ScalarValue::String(s.clone()));
+                }
+                JsonValue::Bool(b) => {
+                    // Convert boolean to integer (0/1)
+                    scalar_values.push(ScalarValue::Integer(if *b { 1 } else { 0 }));
+                }
+                _ => return None, // Non-scalar value
+            }
+        }
+
+        Some(scalar_values)
+    }
+}
+
+impl ExtractionStrategy for ScalarArrayStrategy {
+    fn name(&self) -> &'static str {
+        "ScalarArrayStrategy"
+    }
+
+    fn can_handle(&self, symbol: &FieldSymbol) -> bool {
+        // Only handle array symbols
+        if symbol.symbol_type != "array" {
+            return false;
+        }
+
+        // Check if data is an array containing scalar values
+        match &symbol.data {
+            JsonValue::Array(elements) => {
+                if elements.is_empty() {
+                    return false;
+                }
+
+                // Check if all elements are scalars or arrays of scalars
+                elements.iter().all(|element| match element {
+                    JsonValue::Number(_) | JsonValue::String(_) | JsonValue::Bool(_) => true,
+                    JsonValue::Array(inner_array) => inner_array.iter().all(|inner_element| {
+                        matches!(
+                            inner_element,
+                            JsonValue::Number(_) | JsonValue::String(_) | JsonValue::Bool(_)
+                        )
+                    }),
+                    _ => false,
+                })
+            }
+            _ => false,
+        }
+    }
+
+    fn extract(&mut self, symbol: &FieldSymbol, _context: &mut ExtractionContext) -> Result<()> {
+        // Parse the array data
+        if let Some(array_data) = self.parse_json_array(&symbol.data) {
+            let array = ScalarArray {
+                name: symbol.name.clone(),
+                module: symbol.module.clone(),
+                data: array_data,
+            };
+
+            let array_description = match &array.data {
+                ArrayData::Flat(values) => format!("flat array with {} elements", values.len()),
+                ArrayData::Nested(nested) => {
+                    format!("nested array with {} sub-arrays", nested.len())
+                }
+            };
+
+            debug!(
+                "📊 Extracted scalar array: {} ({})",
+                array.name, array_description
+            );
+
+            // Group by module
+            self.arrays
+                .entry(symbol.module.clone())
+                .or_insert_with(Vec::new)
+                .push(array);
+        }
+
+        Ok(())
+    }
+
+    fn finish_module(&mut self, _module_name: &str) -> Result<()> {
+        // No per-module finalization needed
+        Ok(())
+    }
+
+    fn finish_extraction(&mut self) -> Result<Vec<GeneratedFile>> {
+        let mut generated_files = Vec::new();
+
+        info!(
+            "🔧 Generating scalar array code for {} modules",
+            self.arrays.len()
+        );
+
+        for (_module_name, arrays) in &self.arrays {
+            for array in arrays {
+                let mut files = self.generate_array_code(array);
+
+                for file in &files {
+                    debug!("📄 Generated: {} ({} bytes)", file.path, file.content.len());
+                }
+
+                generated_files.append(&mut files);
+            }
+        }
+
+        info!(
+            "✅ ScalarArrayStrategy generated {} files",
+            generated_files.len()
+        );
+        Ok(generated_files)
+    }
+}
+
+impl Default for ScalarArrayStrategy {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::field_extractor::{FieldMetadata, FieldSymbol};
+    use serde_json::json;
+
+    #[test]
+    fn test_can_handle_flat_array() {
+        let strategy = ScalarArrayStrategy::new();
+
+        // Should handle flat numeric array
+        let flat_array = FieldSymbol {
+            symbol_type: "array".to_string(),
+            name: "testArray".to_string(),
+            data: json!([1, 2, 3, 4, 5]),
+            module: "Test".to_string(),
+            metadata: FieldMetadata {
+                size: 5,
+                is_composite_table: 0,
+            },
+        };
+        assert!(strategy.can_handle(&flat_array));
+
+        // Should handle flat string array
+        let string_array = FieldSymbol {
+            symbol_type: "array".to_string(),
+            name: "stringArray".to_string(),
+            data: json!(["auto", "manual", "scene"]),
+            module: "Test".to_string(),
+            metadata: FieldMetadata {
+                size: 3,
+                is_composite_table: 0,
+            },
+        };
+        assert!(strategy.can_handle(&string_array));
+
+        // Should reject empty array
+        let empty_array = FieldSymbol {
+            symbol_type: "array".to_string(),
+            name: "emptyArray".to_string(),
+            data: json!([]),
+            module: "Test".to_string(),
+            metadata: FieldMetadata {
+                size: 0,
+                is_composite_table: 0,
+            },
+        };
+        assert!(!strategy.can_handle(&empty_array));
+    }
+
+    #[test]
+    fn test_can_handle_nested_array() {
+        let strategy = ScalarArrayStrategy::new();
+
+        // Should handle nested numeric arrays (like XLAT)
+        let nested_array = FieldSymbol {
+            symbol_type: "array".to_string(),
+            name: "xlat".to_string(),
+            data: json!([[193, 191, 109], [167, 188, 201]]),
+            module: "Nikon".to_string(),
+            metadata: FieldMetadata {
+                size: 2,
+                is_composite_table: 0,
+            },
+        };
+        assert!(strategy.can_handle(&nested_array));
+
+        // Should reject array with non-scalar elements
+        let mixed_array = FieldSymbol {
+            symbol_type: "array".to_string(),
+            name: "mixedArray".to_string(),
+            data: json!([1, {"key": "value"}, 3]),
+            module: "Test".to_string(),
+            metadata: FieldMetadata {
+                size: 3,
+                is_composite_table: 0,
+            },
+        };
+        assert!(!strategy.can_handle(&mixed_array));
+
+        // Should reject non-array symbols
+        let hash_symbol = FieldSymbol {
+            symbol_type: "hash".to_string(),
+            name: "hashTable".to_string(),
+            data: json!({"0": "Auto", "1": "Manual"}),
+            module: "Test".to_string(),
+            metadata: FieldMetadata {
+                size: 2,
+                is_composite_table: 0,
+            },
+        };
+        assert!(!strategy.can_handle(&hash_symbol));
+    }
+
+    #[test]
+    fn test_type_inference() {
+        let strategy = ScalarArrayStrategy::new();
+
+        // Test u8 inference (values 0-255)
+        let u8_values = vec![
+            ScalarValue::Integer(0),
+            ScalarValue::Integer(255),
+            ScalarValue::Integer(193),
+        ];
+        assert_eq!(strategy.infer_element_type(&u8_values), "u8");
+
+        // Test i8 inference (negative values within i8 range)
+        let i8_values = vec![ScalarValue::Integer(-100), ScalarValue::Integer(100)];
+        assert_eq!(strategy.infer_element_type(&i8_values), "i8");
+
+        // Test i32 inference (negative values outside i16 range)
+        let i32_values = vec![ScalarValue::Integer(-40000), ScalarValue::Integer(40000)];
+        assert_eq!(strategy.infer_element_type(&i32_values), "i32");
+
+        // Test string inference
+        let string_values = vec![
+            ScalarValue::String("auto".to_string()),
+            ScalarValue::String("manual".to_string()),
+        ];
+        assert_eq!(strategy.infer_element_type(&string_values), "&'static str");
+
+        // Test float inference
+        let float_values = vec![ScalarValue::Float(1.5), ScalarValue::Float(2.7)];
+        assert_eq!(strategy.infer_element_type(&float_values), "f64");
+    }
+
+    #[test]
+    fn test_parse_json_array() {
+        let strategy = ScalarArrayStrategy::new();
+
+        // Test flat array parsing
+        let flat_json = json!([1, 2, 3]);
+        let flat_result = strategy.parse_json_array(&flat_json).unwrap();
+        match flat_result {
+            ArrayData::Flat(values) => assert_eq!(values.len(), 3),
+            _ => panic!("Expected flat array"),
+        }
+
+        // Test nested array parsing
+        let nested_json = json!([[1, 2], [3, 4]]);
+        let nested_result = strategy.parse_json_array(&nested_json).unwrap();
+        match nested_result {
+            ArrayData::Nested(arrays) => {
+                assert_eq!(arrays.len(), 2);
+                assert_eq!(arrays[0].len(), 2);
+                assert_eq!(arrays[1].len(), 2);
+            }
+            _ => panic!("Expected nested array"),
+        }
+    }
+
+    #[test]
+    fn test_constant_naming() {
+        let strategy = ScalarArrayStrategy::new();
+
+        assert_eq!(strategy.constant_case("xlat"), "XLAT");
+        assert_eq!(strategy.constant_case("afPoints231"), "AF_POINTS231");
+        assert_eq!(strategy.constant_case("myTestArray"), "MY_TEST_ARRAY");
+    }
+}

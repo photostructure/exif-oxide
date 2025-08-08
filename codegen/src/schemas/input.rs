@@ -178,13 +178,13 @@ pub struct TableEntry {
     pub key: Option<String>,
     #[serde(default)]
     pub value: Option<Value>,
-    
+
     // Regex pattern fields
     #[serde(default)]
     pub rust_compatible: Option<bool>,
     #[serde(default)]
     pub compatibility_notes: Option<String>,
-    
+
     // File type lookup specific fields
     #[serde(default)]
     pub extension: Option<String>,
@@ -247,7 +247,7 @@ pub struct ProcessBinaryDataStructure {
 #[allow(dead_code)]
 pub struct RuntimeTagDefinition {
     pub name: String,
-    pub offset: String,  // Can be numeric or fractional like "1.5"
+    pub offset: String, // Can be numeric or fractional like "1.5"
     pub format: Option<FormatSpec>,
     pub condition: Option<ConditionSpec>,
     pub print_conv: Option<PrintConvSpec>,
@@ -260,8 +260,8 @@ pub struct RuntimeTagDefinition {
 #[derive(Debug, Clone, Deserialize)]
 #[allow(dead_code)]
 pub struct FormatSpec {
-    pub base_type: String,  // int16u, int8s, string, etc.
-    pub array_size: Option<String>,  // "$val{0}", "int(($val{0}+15)/16)"
+    pub base_type: String,          // int16u, int8s, string, etc.
+    pub array_size: Option<String>, // "$val{0}", "int(($val{0}+15)/16)"
     pub is_variable: bool,
 }
 
@@ -269,7 +269,7 @@ pub struct FormatSpec {
 #[derive(Debug, Clone, Deserialize)]
 #[allow(dead_code)]
 pub struct ConditionSpec {
-    pub expression: String,  // "$$self{Model} =~ /EOS/"
+    pub expression: String, // "$$self{Model} =~ /EOS/"
     pub condition_type: ConditionType,
 }
 
@@ -277,7 +277,7 @@ pub struct ConditionSpec {
 #[serde(rename_all = "snake_case")]
 pub enum ConditionType {
     ModelRegex,
-    ModelExact, 
+    ModelExact,
     ValueComparison,
     Expression,
 }
@@ -287,16 +287,16 @@ pub enum ConditionType {
 #[allow(dead_code)]
 pub struct PrintConvSpec {
     pub conversion_type: PrintConvType,
-    pub data: Value,  // Can be hash table, expression string, or function reference
+    pub data: Value, // Can be hash table, expression string, or function reference
 }
 
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum PrintConvType {
-    SimpleHash,        // { 0 => "Off", 1 => "On" }
-    PerlExpression,    // q{ return ... }
-    FunctionRef,       // \&SomeFunction
-    BitwiseOperation,  // Complex bitwise formatting
+    SimpleHash,       // { 0 => "Off", 1 => "On" }
+    PerlExpression,   // q{ return ... }
+    FunctionRef,      // \&SomeFunction
+    BitwiseOperation, // Complex bitwise formatting
 }
 
 /// ValueConv specification for value conversion
@@ -310,8 +310,8 @@ pub struct ValueConvSpec {
 #[derive(Debug, Clone, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ValueConvType {
-    Mathematical,  // exp($val/32*log(2))*100
-    Division,      // $val / ($$self{FocalUnits} || 1)
-    FunctionCall,  // Image::ExifTool::Canon::CameraISO($val)
-    Conditional,   // $val == 0x7fff ? undef : $val
+    Mathematical, // exp($val/32*log(2))*100
+    Division,     // $val / ($$self{FocalUnits} || 1)
+    FunctionCall, // Image::ExifTool::Canon::CameraISO($val)
+    Conditional,  // $val == 0x7fff ? undef : $val
 }
