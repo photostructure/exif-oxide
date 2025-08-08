@@ -25,73 +25,90 @@ pub enum AstNode {
     /// Numeric literal
     Number(Number),
     /// String literal with optional variable interpolation
-    String { value: String, has_interpolation: bool },
+    String {
+        value: String,
+        has_interpolation: bool,
+    },
     /// ExifTool's undef value
     Undefined,
     /// Binary arithmetic operation
-    BinaryOp { op: OpType, left: Box<AstNode>, right: Box<AstNode> },
+    BinaryOp {
+        op: OpType,
+        left: Box<AstNode>,
+        right: Box<AstNode>,
+    },
     /// Comparison operation  
-    ComparisonOp { op: CompType, left: Box<AstNode>, right: Box<AstNode> },
+    ComparisonOp {
+        op: CompType,
+        left: Box<AstNode>,
+        right: Box<AstNode>,
+    },
     /// Ternary conditional expression
-    TernaryOp { condition: Box<AstNode>, true_expr: Box<AstNode>, false_expr: Box<AstNode> },
+    TernaryOp {
+        condition: Box<AstNode>,
+        true_expr: Box<AstNode>,
+        false_expr: Box<AstNode>,
+    },
     /// Function call
     FunctionCall { func: FuncType, arg: Box<AstNode> },
     /// ExifTool function call (Image::ExifTool::Module::Function)
     ExifToolFunction { name: String, arg: Box<AstNode> },
     /// Sprintf function call with format string and arguments
-    Sprintf { format_string: String, args: Vec<Box<AstNode>> },
+    Sprintf {
+        format_string: String,
+        args: Vec<Box<AstNode>>,
+    },
     /// Unary minus operation
     UnaryMinus { operand: Box<AstNode> },
     /// Regex substitution operation (s/pattern/replacement/flags)
-    RegexSubstitution { 
-        target: Box<AstNode>, 
-        pattern: String, 
-        replacement: String, 
-        flags: String 
+    RegexSubstitution {
+        target: Box<AstNode>,
+        pattern: String,
+        replacement: String,
+        flags: String,
     },
     /// Transliteration operation (tr/searchlist/replacelist/flags)
-    Transliteration { 
-        target: Box<AstNode>, 
-        search_list: String, 
-        replace_list: String, 
-        flags: String 
+    Transliteration {
+        target: Box<AstNode>,
+        search_list: String,
+        replace_list: String,
+        flags: String,
     },
 }
-
 
 /// Arithmetic operator types
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum OpType {
     Add,
-    Subtract, 
+    Subtract,
     Multiply,
     Divide,
     Power,       // Power operation (Perl's ** operator)
     Concatenate, // String concatenation (Perl's . operator)
     // Bitwise operations
-    BitwiseAnd,  // & (bitwise AND)
-    BitwiseOr,   // | (bitwise OR)
-    LeftShift,   // << (left shift)
-    RightShift,  // >> (right shift)
+    BitwiseAnd, // & (bitwise AND)
+    BitwiseOr,  // | (bitwise OR)
+    LeftShift,  // << (left shift)
+    RightShift, // >> (right shift)
 }
 
 /// Comparison operator types for ternary conditions
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum CompType {
-    GreaterEq,    // >=
-    Greater,      // >
-    LessEq,       // <=
-    Less,         // <
-    Equal,        // ==
-    NotEqual,     // !=
+    GreaterEq, // >=
+    Greater,   // >
+    LessEq,    // <=
+    Less,      // <
+    Equal,     // ==
+    NotEqual,  // !=
 }
 
 /// Math function types
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum FuncType {
-    Int,  // int() - truncate to integer
-    Exp,  // exp() - e^x
-    Log,  // log() - natural logarithm
+    Int, // int() - truncate to integer
+    Exp, // exp() - e^x
+    Log, // log() - natural logarithm
 }
 
 /// Internal token used during parsing
@@ -108,16 +125,24 @@ pub enum ParseToken {
     Function(FuncType),
     LeftParen,
     RightParen,
-    Question,     // ?
-    Colon,        // :
-    Sprintf,      // sprintf function call
+    Question,                 // ?
+    Colon,                    // :
+    Sprintf,                  // sprintf function call
     ExifToolFunction(String), // Image::ExifTool::Module::Function
-    Comma,        // , (internal parsing token, not exposed in AST)
-    UnaryMinus,   // - (unary minus operator)
+    Comma,                    // , (internal parsing token, not exposed in AST)
+    UnaryMinus,               // - (unary minus operator)
     /// Regex substitution s/pattern/replacement/flags
-    RegexSubstitution { pattern: String, replacement: String, flags: String },
+    RegexSubstitution {
+        pattern: String,
+        replacement: String,
+        flags: String,
+    },
     /// Transliteration tr/searchlist/replacelist/flags
-    Transliteration { search_list: String, replace_list: String, flags: String },
+    Transliteration {
+        search_list: String,
+        replace_list: String,
+        flags: String,
+    },
 }
 
 /// Comparison operator with precedence
@@ -137,16 +162,22 @@ pub struct Operator {
 
 impl Operator {
     pub fn new(op_type: OpType, precedence: u8, is_left_associative: bool) -> Self {
-        Self { op_type, precedence, is_left_associative }
+        Self {
+            op_type,
+            precedence,
+            is_left_associative,
+        }
     }
 }
 
 impl CompOperator {
     pub fn new(comp_type: CompType, precedence: u8) -> Self {
-        Self { comp_type, precedence }
+        Self {
+            comp_type,
+            precedence,
+        }
     }
 }
-
 
 impl fmt::Display for OpType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
