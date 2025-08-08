@@ -2,6 +2,7 @@
   "cSpell.words": [
     "Aspherical",
     "autofocus",
+    "bokeh",
     "byteorder",
     "chrono",
     "clippy",
@@ -9,8 +10,10 @@
     "complexifier",
     "conv",
     "Cosina",
+    "defringe",
     "Distagon",
     "dtolnay",
+    "evaluable",
     "exiftool",
     "exposuretime",
     "fgrep",
@@ -36,6 +39,7 @@
     "lensinfo",
     "localtime",
     "lumix",
+    "makernote",
     "Makro",
     "Milvus",
     "MIMETYPES",
@@ -48,12 +52,14 @@
     "RGGB",
     "Rokinon",
     "Samyang",
+    "Sanyo",
     "serde",
     "shunsuke",
     "Skopar",
     "SLII",
     "Sonnar",
     "sprintf",
+    "subselector",
     "Tamron",
     "thiserror",
     "Tokina",
@@ -62,6 +68,9 @@
     "VALUECONV",
     "Voigtlander",
     "whitebalance",
-    "Yongnuo"
+    "XLAT",
+    "xposition",
+    "Yongnuo",
+    "yposition"
   ]
 }
