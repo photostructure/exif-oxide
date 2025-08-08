@@ -61,7 +61,10 @@ impl FieldExtractor {
     /// Create new field extractor instance
     pub fn new() -> Self {
         Self {
-            script_path: "scripts/field_extractor.pl".to_string(),
+            script_path: Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("scripts/field_extractor.pl")
+                .to_string_lossy()
+                .into_owned(),
         }
     }
 
