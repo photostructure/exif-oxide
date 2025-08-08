@@ -14,7 +14,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with ex
 
 ## 🚨 CRITICAL: stderr redirects are broken in the Bash tool 🚨
 
-**You can't use `2>&1` in your bash commands** -- your Bash tool will mangle the stderr redirect and pass a "2" as an arg, and you wont' see stderr. Ask the user to do the command instead. See https://github.com/anthropics/claude-code/issues/4711 for details.
+**You can't use `2>&1` in your bash commands** -- your Bash tool will mangle the stderr redirect and pass a "2" as an arg, and you wont' see stderr.
+
+**Workarounds**:
+
+- Use `./scripts/with_stderr.sh command args` to capture both stdout and stderr in the terminal
+- Use `./scripts/capture.sh command args` to redirect output to temp files (useful for large outputs) - it will echo the file paths you can then grep/rg/awk through if the stream was non-trivial.
+- Don't use either of these tools if you don't care about stderr and/or the output is expected to be 100 lines or less.
+
+See https://github.com/anthropics/claude-code/issues/4711 for details.
 
 ## Project Overview
 
@@ -49,9 +57,13 @@ Almost every task will involve studying some part of the ExifTool codebase and v
 
 There are several other engineers working _on the same copy of the source tree_ at the same time you are. If you ever encounter a build error that you are positive is not a side-effect from code that you've edited, **STOP** and tell the user the issue. The user will fix the build nd tell you when you can resume your work.
 
-## Essential Documentation
+## ⚠️ CRITICAL: Always start by reading
 
 This project has many non-intuitive aspects. Before starting any task, **READ THE RELEVANT DOCUMENTATION**.
+
+Unraveling missteps can be much more costly than doing thorough research upfront.
+
+Always study relevant code and documentation for the task at hand -- **never assume APIs or behavior**.
 
 If you skip this step, your work will likely be spurious, wrong, and rejected.
 
@@ -91,15 +103,13 @@ If you skip this step, your work will likely be spurious, wrong, and rejected.
 - [PRINT_CONV.md](third-party/exiftool/doc/concepts/PRINT_CONV.md) - Human-readable output conversions
 - [PATTERNS.md](third-party/exiftool/doc/concepts/PATTERNS.md) - Common patterns across modules
 
-## Critical Development Principles
-
-### 0. Ask clarifying questions
+## ⚠️ CRITICAL: Ask clarifying questions
 
 If you have any clarifying questions for any aspects that are odd, nebulous, confusing, inadequately specific, or otherwise unclear, **please ask the user**.
 
 The user assumes every task will need at least a couple clarifying questions before starting work!
 
-### 1. Trust ExifTool
+## ⚠️ CRITICAL: Trust ExifTool
 
 READ [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md)
 
@@ -109,13 +119,13 @@ Whenever possible, our rust code should include a comment pointing back to the E
 
 Or better: use CODEGEN!
 
-### 2. Only `perl` can parse `perl`
+## Only `perl` can parse `perl`
 
 WE CANNOT INTERPRET PERL CODE IN RUST.
 
 The perl interpreter is the only competent perl parser! There are too many gotchas and surprising perl-isms--any perl parser we make in rust needs to be super conservative and strict with its allowed inputs.
 
-### 3. Incremental improvements with a focus on common, mainstream tags
+## Incremental improvements with a focus on common, mainstream tags
 
 To maintain a manageable scope:
 
@@ -123,33 +133,11 @@ To maintain a manageable scope:
 - This reduces scope from ExifTool's 15,000+ tags to approximately 500-1000
 - See [TagMetadata.json](docs/tag-metadata.json) for tag popularity data
 
-### 4. Look for codegen opportunities
+## Fix technical debt
 
-ExifTool releases new versions monthly. The more our code can be generated automatically from ExifTool source, the better.
+If you ever see opportunities for simplification, code deduplication: **suggest the improvement**
 
-**CRITICAL**: If you ever see any manually-ported static maps or sets in our non-`src/generated/**/*.rs` code, **immediately look for where that came from in the ExifTool source, and ask the user to rewrite it with the codegen infrastructure**. See [CODEGEN.md](docs/CODEGEN.md) "Simple Table Extraction Framework" for details.
-
-#### What to Look For
-
-- **HashMap/match statements** with >5 static entries
-- **Lens identification databases** (should use simple table framework)
-- **Camera model mappings** (should be generated)
-- **Mode/setting lookup tables** (white balance, picture styles, etc.)
-- **Any hardcoded string constants** that map values to names
-
-#### How to Address
-
-1. **Find the ExifTool source** - Usually a `%hashName = (...)` pattern
-2. **Check if primitive** - Only numbers/strings, no Perl expressions
-3. **Add to module config** - Add to appropriate `codegen/config/$ModuleName_pm/simple_table.json`
-4. **Regenerate codegen** - `make codegen`
-5. **Replace manual code** - Use generated lookup functions
-
-See [CODEGEN.md](docs/CODEGEN.md) for more details.
-
-#### Red Flags
-
-If you see ANY of these, immediately suggest codegen extraction:
+If you see ANY of these that isn't in `src/generated/**/*.rs` code, immediately suggest codegen extraction:
 
 - Files with hundreds of manual constant definitions
 - Match statements mapping numbers to camera/lens names
@@ -159,31 +147,21 @@ If you see ANY of these, immediately suggest codegen extraction:
 
 **Remember**: Manually translated lookup tables are a minefield of bugs -- they're difficult to compare with the source material, frequently contain subtle translation mistakes, and are a substantial maintenance burden that grows with each ExifTool release. The codegen system automates hundreds of perl-encoded tables with zero ongoing maintenance costs.
 
-### 5. DO NOT EDIT THE FILES THAT SAY DO NOT EDIT
+## ⚠️ CRITICAL: DO NOT EDIT THE FILES THAT SAY DO NOT EDIT
 
-Everything in `src/generated` **is generated code** -- if you edit the file directly, the next time `make codegen` is run, your edit will be deleted. Fix the generating code in `codegen/src` instead.
+Everything in `src/generated` **is generated code** and rewritten by our `codegen` module. Fix the generating code in `codegen/src` instead.
 
-YOU WILL BE DISMISSED AND ALL YOUR WORK REVERTED IF YOU IGNORE THIS WARNING, as you've obviously not read this manual, and all of your other work will be circumspect.
+### If MultiEdit doesn't work, try rg|sd
 
-### MultiEdit can be buggy: use rg|sd
+`rg -l 'old-pattern' directory | xargs sd 'old-pattern' 'new-pattern'`
 
-Use `rg`|`sd` pipelines instead of the default MultiEdit tool: `rg -l 'old-pattern' directory | xargs sd 'old-pattern' 'new-pattern'`
+### Trace, Don't Assume
 
-### Choosing the Right Extractor
+When making claims about the codebase, **trace the actual data flow from source to destination**. We're using the `tracing` crate for logging -- feel free to add trace and debug logs. For any architectural conclusions, cite specific file paths and line numbers that prove the requirement exists. Pattern matching ("I see X") is insufficient - if you can't point to exact code that needs your proposed solution, reconsider the conclusion.
 
-When working with the codegen system, use the right extractor for each task:
+### ⚠️ CRITICAL: Bug Fixing
 
-1. **Extracting tags with PrintConvs?** → Use `tag_kit.pl` (the unified tag extraction system)
-2. **Extracting standalone lookups?** → Use `simple_table.pl` (for manufacturer lookup tables)
-3. **Extracting binary data tables?** → Use `process_binary_data.pl` or `runtime_table.pl`
-
-**Important**: We're migrating to the tag kit system for all tag-related extraction. If you see configs for `inline_printconv.pl`, `tag_tables.pl`, or `tag_definitions.pl`, suggest converting them to tag kit instead.
-
-See [EXTRACTOR-GUIDE.md](docs/reference/EXTRACTOR-GUIDE.md) for detailed extractor comparisons and [CODEGEN.md](docs/CODEGEN.md) for the complete extractor selection guide.
-
-### Bug Fixing
-
-**MANDATORY**: When a bug is discovered, follow the test-driven debugging workflow documented in [TDD.md](docs/TDD.md):
+When a bug is discovered, follow the test-driven debugging workflow documented in [TDD.md](docs/TDD.md):
 
 1. **Create a breaking test** that reproduces the issue with minimal test data
 2. **Validate test explodes** - confirm it fails for the exact expected reason
@@ -207,23 +185,6 @@ project be as idiomatic rust as possible, so please web search and examine the
 rust language documentation to validate structures, setup, naming conventions,
 module interactions, and any other aspects that the rust community has adopted
 as a best practice, and explain those aspects to the user as we embrace them.
-
-### Task prioritization and naming
-
-When creating Technical Project Plans (TPPs) or TODO documents, use the priority naming convention defined in [TPP.md](docs/TPP.md):
-
-- `P00-P09` - Critical blockers
-- `P10-P19` - Maximum required tag impact (JPEG + Video ecosystem, binary extraction)
-- `P20-P29` - Technical debt
-- `P30-P39` - Architecture improvements
-- `P40-P49` - Video format support (if not required tag related)
-- `P50-P59` - RAW format support (low required tag impact)
-- `P60+` - Long-term/speculative work
-
-Add letter suffixes (a, b, c) only for strong prerequisites.
-When moving to `docs/done/`, prefix with completion date: `YYYYMMDD-P10a-description.md`
-
-**Priority Rationale**: Focus on extracting all required tags from docs/tag-metadata.json. P10-P19 covers ~97% of required tags (JPEG ecosystem + video). RAW formats (P50s) only add 3 required tags but become useful once binary extraction (P16) enables preview/thumbnail extraction.
 
 ## Development guidance
 
@@ -249,16 +210,6 @@ The `third-party/exiftool` directory is a **git submodule**. This means:
 - The codegen process may temporarily patch ExifTool files, but these changes should be reverted automatically
 - If you need to update or modify anything in the ExifTool directory, coordinate with the user first
 
-### Watch for manually-ported hashes that could use codegen
-
-Be vigilant for manually-maintained lookup tables and hash mappings that could be automatically generated. If you encounter any static mappings, immediately:
-
-1. Check if it came from ExifTool source (usually a `%hashName = (...)` pattern)
-2. Suggest converting it to use the codegen infrastructure
-3. See [CODEGEN.md](docs/CODEGEN.md) for the ExifTool code extraction framework
-
-This is critical for maintainability as ExifTool releases monthly updates.
-
 ### Refactor large source files
 
 When working with source files that exceed 500 lines:
@@ -275,16 +226,11 @@ When working with source files that exceed 500 lines:
 
 While reviewing or editing code, if there are components that feel like a temporary hack or otherwise have a bad "code smell", add a TODO comment into the code that tersely describes why it smells, along with either a link to a MILESTONES.md stage when it will be fixed, or a terse description of how it should be fixed in the future.
 
-### Safety rules
+### ⚠️ CRITICAL: Safety rules
 
 - **NEVER use `rm -rf` in scripts** - it's too dangerous and can accidentally delete important files. Use specific file patterns with `rm -f` instead (e.g., `rm -f "$DIR/*.json"`)
 - Always prefer targeted cleanup over recursive deletion
 - **Use existing dependencies** - prefer already-imported crates (like `std::sync::LazyLock`) instead of adding new external dependencies unless really necessary
-
-### Wondering what's going on?
-
-Check the debug logging -- and if a component is missing debug logging, feel free to add it.
-We use `tracing`, and there's lots of examples in `src/main.rs`.
 
 ### Comparing with ExifTool
 
@@ -314,23 +260,6 @@ This tool:
 - Shows only actual differences, not formatting variations
 - Groups differences into: tags only in ExifTool, tags only in exif-oxide, and tags with different values
 - Handles ExifTool's inconsistent formatting across different modules
-
-#### 2. Shell script (simple diff)
-
-The `scripts/compare-with-exiftool.sh` script provides a basic JSON diff:
-
-```bash
-# Compare all tags
-./scripts/compare-with-exiftool.sh image.jpg
-
-# Compare only specific group tags
-./scripts/compare-with-exiftool.sh image.jpg File:
-```
-
-Environment variables:
-
-- `DEBUG=1` - Keep the raw outputs for debugging
-- `DIFF_CONTEXT=3` - Show more context lines in diff (default is 0 for minimal diff)
 
 ### Git commit messages
 
