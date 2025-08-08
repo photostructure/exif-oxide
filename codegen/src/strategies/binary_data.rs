@@ -280,7 +280,7 @@ impl ExtractionStrategy for BinaryDataStrategy {
                         if !code.trim().is_empty() {
                             let path = generate_module_path(
                                 &extraction.module_name,
-                                &format!("{}_binary_data", extraction.table_name.to_lowercase()),
+                                &format!("{}_binary_data", extraction.table_name),
                             );
 
                             files.push(GeneratedFile {

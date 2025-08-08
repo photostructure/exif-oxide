@@ -237,7 +237,7 @@ impl ExtractionStrategy for BooleanSetStrategy {
         for (module_name, sets) in &self.boolean_sets {
             for boolean_set in sets {
                 let code = Self::generate_boolean_set_code(boolean_set);
-                let path = generate_module_path(module_name, &boolean_set.name.to_lowercase());
+                let path = generate_module_path(module_name, &boolean_set.name);
 
                 files.push(GeneratedFile {
                     path,

@@ -323,7 +323,7 @@ impl ExtractionStrategy for TagKitStrategy {
                     if !code.trim().is_empty() {
                         let path = generate_module_path(
                             &symbol.module_name,
-                            &format!("{}_tags", symbol.table_name.to_lowercase()),
+                            &format!("{}_tags", symbol.table_name),
                         );
 
                         files.push(GeneratedFile {
