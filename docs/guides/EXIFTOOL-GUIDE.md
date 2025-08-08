@@ -74,10 +74,11 @@ absolute_position = base + data_pos + relative_offset
 
 But each manufacturer interprets this differently. Canon might use the TIFF header as base, Nikon might use the MakerNote start, Sony might use something else entirely.
 
-For deep understanding of offsets, see:
+For deep understanding of offsets, see [OFFSET_BASE_MANAGEMENT.md](../../third-party/exiftool/doc/concepts/OFFSET_BASE_MANAGEMENT.md)
 
-- [CORE-ARCHITECTURE.md](CORE-ARCHITECTURE.md) - Our offset management strategy
+- [ARCHITECTURE.md](../ARCHITECTURE.md) - Our offset management strategy (Core Runtime Architecture section)
 - [READING_AND_PARSING.md](../../third-party/exiftool/doc/concepts/READING_AND_PARSING.md) - ExifTool's approach
+- [CODEGEN.md](../CODEGEN.md) for complete strategy system documentation.
 
 ## Section 2: Reading ExifTool Source Code
 

@@ -44,6 +44,24 @@ pub fn fnumber_print_conv(val: &TagValue) -> TagValue {
 
 ## Architecture Overview
 
+### Integration with Unified Strategy Pattern
+
+**How Expression Processing Fits with Code Generation:**
+
+The PrintConv/ValueConv system is **generated automatically** by the unified strategy pattern, then **executed at runtime**:
+
+1. **Generation Phase** (`make codegen`):
+   - `TagKitStrategy` discovers tag definitions from ExifTool modules
+   - Expression compiler analyzes PrintConv/ValueConv expressions  
+   - Generates code with either **inline compiled expressions** or **function references**
+
+2. **Runtime Phase** (file processing):
+   - Generated tag definitions reference appropriate conversion functions
+   - Expression evaluator executes conversions for composite tags
+   - Registry system handles complex expressions not compilable at generation time
+
+**Key Insight**: The expression compiler runs **during codegen** to generate optimized code, while the registry system handles **runtime fallbacks** for expressions too complex to compile.
+
 ### Expression Compiler + Fallback Registry System
 
 **🎉 NEW (P17)**: Most expressions are now **compiled automatically** by the expression compiler, eliminating the need for manual registry entries.

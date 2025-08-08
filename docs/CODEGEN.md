@@ -213,12 +213,51 @@ impl ExtractionStrategy for SimpleTableStrategy {
 ```
 
 **Strategy Priority Order** (first-match wins):
-1. `CompositeTagStrategy` - Composite tag definitions (highest priority)
-2. `FileTypeLookupStrategy` - ExifTool file type discrimination 
-3. `SimpleTableStrategy` - Key-value lookup tables
-4. `TagKitStrategy` - Complex tag definitions with PrintConv
-5. `BinaryDataStrategy` - ProcessBinaryData structures
-6. `BooleanSetStrategy` - Membership testing sets
+
+1. **`CompositeTagStrategy`** - Composite tag definitions (highest priority)
+   - **Pattern**: `is_composite_table: 1` metadata flag from field extractor
+   - **Example**: GPS coordinates calculated from latitude/longitude components
+   - **Why First**: Most specific pattern - must be claimed before TagKitStrategy
+
+2. **`FileTypeLookupStrategy`** - ExifTool file type discrimination  
+   - **Pattern**: Objects with `Description` + `Format` fields, plus string aliases
+   - **Example**: `JPEG => { Description => 'JPEG image', Format => 'JPEG' }, JPG => 'JPEG'`
+   - **Why High Priority**: Complex discriminated union pattern needs precedence
+
+3. **`MagicNumberStrategy`** - Binary signature patterns
+   - **Pattern**: Keys containing binary escape sequences like `\xff\xd8\xff`
+   - **Example**: `JPEG => '\xff\xd8\xff', PNG => '\x89PNG\r\n\x1a\n'`
+   - **Why High Priority**: Binary patterns are highly specific
+
+4. **`MimeTypeStrategy`** - MIME type mappings
+   - **Pattern**: Simple string-to-string mappings for known MIME types
+   - **Example**: `jpg => 'image/jpeg', png => 'image/png'`
+   - **Why Before Simple**: Specialized string mapping pattern
+
+5. **`SimpleTableStrategy`** - Key-value lookup tables  
+   - **Pattern**: Hash with all string values, no PrintConv/tag markers
+   - **Example**: `canonWhiteBalance: {"0": "Auto", "1": "Daylight", "2": "Cloudy"}`
+   - **Why Middle Priority**: Claims mixed-key tables like `canonLensTypes` before TagKit
+
+6. **`ScalarArrayStrategy`** - Arrays of primitive values
+   - **Pattern**: Arrays containing only numbers, strings, or simple data types
+   - **Example**: `xlat: [0x01, 0x02, 0x03, ...]` (Nikon encryption arrays)
+   - **Why Before TagKit**: Simple arrays should be claimed before complex processing
+
+7. **`TagKitStrategy`** - Complex tag definitions with PrintConv
+   - **Pattern**: Tables with `WRITABLE`, `GROUPS`, or tag fields like `Name`, `Format`
+   - **Example**: `Main: {0x01: {Name: "ImageWidth", Format: "int32u", PrintConv: "sprintf"}}`
+   - **Why Lower Priority**: Broad pattern - processes what other strategies don't claim
+
+8. **`BinaryDataStrategy`** - ProcessBinaryData structures
+   - **Pattern**: Tables with binary data attributes and processing metadata
+   - **Example**: Camera settings binary blocks with offset processing
+   - **Why Late**: Specialized pattern for binary processing tables
+
+9. **`BooleanSetStrategy`** - Membership testing sets (lowest priority)
+   - **Pattern**: Hash where all values equal `1` (membership sets)
+   - **Example**: `isDatChunk: {"IHDR": 1, "PLTE": 1, "IDAT": 1}`
+   - **Why Last**: Fallback pattern for simple membership testing
 
 ### Phase 3: Code Generation
 
@@ -242,6 +281,169 @@ pub fn lookup_white_balance(key: u8) -> Option<&'static str> {
 - **⚡ Zero Configuration**: New modules work immediately without manual setup
 - **🧪 Testable**: Each strategy can be unit tested independently
 - **📈 Extensible**: Add new pattern types without modifying extraction layer
+
+### Strategy Pattern Debugging
+
+The unified system provides comprehensive debugging through strategy selection logs:
+
+**Debug Commands:**
+```bash
+# Debug strategy selection decisions
+cd codegen && RUST_LOG=debug cargo run
+
+# Trace-level pattern matching details  
+cd codegen && RUST_LOG=trace cargo run
+
+# Strategy selection log analysis
+cat codegen/generated/strategy_selection.log | head -20
+```
+
+**Strategy Selection Log Format:**
+```
+# Strategy Selection Log
+# Format: Symbol Module Strategy Reasoning
+
+canonWhiteBalance Canon SimpleTableStrategy Pattern matched: string map (3 keys)
+Main Canon TagKitStrategy Pattern matched: tag definition with conversions
+isCompressedRAW Sony BooleanSetStrategy Pattern matched: membership set (8 keys)
+magicNumber ExifTool MagicNumberStrategy Pattern matched: binary patterns with escape sequences
+```
+
+**Debugging Strategy Conflicts:**
+
+If a symbol isn't processed as expected, check the strategy log:
+
+1. **Symbol Not Found**: Symbol might be filtered out during extraction
+2. **Wrong Strategy**: Check strategy priority order - first match wins
+3. **Pattern Mismatch**: Strategy's `can_handle()` logic might need adjustment
+
+**Adding Debug Output to Strategies:**
+
+```rust
+fn can_handle(&self, symbol: &FieldSymbol) -> bool {
+    let result = // ... pattern recognition logic
+    debug!("MyStrategy::can_handle({}) -> {} (reason: {})", symbol.name, result, reason);
+    result
+}
+```
+
+### Strategy Development Guide
+
+**Creating New Strategies** for unrecognized patterns:
+
+1. **Identify the Pattern**: Check `strategy_selection.log` for unmatched symbols
+2. **Create Strategy**: Implement `ExtractionStrategy` trait
+3. **Pattern Recognition**: Define precise `can_handle()` logic using duck typing
+4. **Code Generation**: Generate appropriate Rust code for the pattern
+5. **Priority Placement**: Insert at correct priority level in `all_strategies()`
+
+**Example New Strategy Implementation:**
+
+```rust
+// src/strategies/my_new_pattern.rs
+use super::{ExtractionContext, ExtractionStrategy, GeneratedFile};
+use crate::field_extractor::FieldSymbol;
+
+pub struct MyNewPatternStrategy {
+    recognized_symbols: Vec<FieldSymbol>,
+}
+
+impl ExtractionStrategy for MyNewPatternStrategy {
+    fn name(&self) -> &'static str {
+        "MyNewPatternStrategy"
+    }
+
+    fn can_handle(&self, symbol: &FieldSymbol) -> bool {
+        // Duck-typing pattern recognition
+        if let JsonValue::Object(map) = &symbol.data {
+            // Example: recognize pattern where all keys are hex numbers
+            let all_hex_keys = map.keys().all(|k| k.starts_with("0x"));
+            let has_special_marker = map.contains_key("special_field");
+            
+            all_hex_keys && has_special_marker
+        } else {
+            false
+        }
+    }
+
+    fn extract(&mut self, symbol: &FieldSymbol, context: &mut ExtractionContext) -> Result<()> {
+        context.log_strategy_selection(
+            symbol,
+            self.name(),
+            "Detected hex key pattern with special marker"
+        );
+        
+        self.recognized_symbols.push(symbol.clone());
+        Ok(())
+    }
+
+    fn finish_module(&mut self, _module_name: &str) -> Result<()> {
+        Ok(())
+    }
+
+    fn finish_extraction(&mut self) -> Result<Vec<GeneratedFile>> {
+        let mut files = Vec::new();
+        
+        for symbol in &self.recognized_symbols {
+            let code = self.generate_rust_code(symbol)?;
+            files.push(GeneratedFile {
+                path: format!("{}/special_pattern.rs", symbol.module.to_lowercase()),
+                content: code,
+                strategy: self.name().to_string(),
+            });
+        }
+        
+        self.recognized_symbols.clear();
+        Ok(files)
+    }
+}
+
+impl MyNewPatternStrategy {
+    fn generate_rust_code(&self, symbol: &FieldSymbol) -> Result<String> {
+        // Generate appropriate Rust code for this pattern type
+        Ok(format!("// Generated code for {}", symbol.name))
+    }
+}
+```
+
+**Register New Strategy** (priority matters - first match wins):
+
+```rust
+// In strategies/mod.rs all_strategies() function
+pub fn all_strategies() -> Vec<Box<dyn ExtractionStrategy>> {
+    vec![
+        Box::new(CompositeTagStrategy::new()),     // Highest priority
+        Box::new(FileTypeLookupStrategy::new()),
+        Box::new(MyNewPatternStrategy::new()),     // <- Add at appropriate priority
+        Box::new(SimpleTableStrategy::new()),
+        // ... rest of strategies
+    ]
+}
+```
+
+**Testing Your Strategy:**
+
+```rust
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test] 
+    fn test_hex_key_pattern_recognition() {
+        let strategy = MyNewPatternStrategy::new();
+        
+        let hex_pattern = FieldSymbol {
+            name: "testPattern".to_string(),
+            data: json!({"0x01": "value1", "0x02": "value2", "special_field": "marker"}),
+            module: "Test".to_string(),
+            // ... metadata
+        };
+        
+        assert!(strategy.can_handle(&hex_pattern));
+    }
+}
+```
 
 ## Strategy Philosophy vs Legacy Config Approach
 
@@ -1460,10 +1662,53 @@ make codegen  # SimpleTableStrategy automatically finds canonWhiteBalance
 
 ### Legacy Documentation
 
-The individual extractor documentation is preserved in [EXTRACTOR-GUIDE.md](../reference/EXTRACTOR-GUIDE.md) for:
-- Historical reference and understanding
-- Migration guidance from old to new system  
-- Troubleshooting legacy config issues
+**📚 For Complete Historical Context and Migration Details**: See [EXTRACTOR-GUIDE.md](../reference/EXTRACTOR-GUIDE.md) for comprehensive documentation covering:
+
+- **Detailed strategy vs extractor mapping** with specific examples
+- **Complete legacy extractor descriptions** (tag_kit.pl, simple_table.pl, etc.)
+- **Migration examples** showing old configs → new automatic discovery
+- **Legacy troubleshooting** for understanding historical configs  
+- **Development workflow evolution** from manual config to automatic pattern recognition
+
+## Historical Context Summary
+
+### Key Architectural Evolution
+
+**📚 LEGACY (Pre-2025)**: Config-Driven Individual Extractors
+```json
+// Required manual configuration for each extraction
+{
+  "extractor": "simple_table.pl",
+  "tables": [{"hash_name": "%canonWhiteBalance"}]
+}
+```
+
+**🎯 CURRENT (2025)**: Unified Strategy Pattern
+```bash
+# Zero configuration - automatic discovery and processing
+make codegen
+```
+
+### Migration Quick Reference
+
+| Legacy Extractor | Current Strategy | Migration Action |
+|---|---|---|
+| **simple_table.pl** | `SimpleTableStrategy` | ❌ **Delete configs** - automatic discovery |
+| **tag_kit.pl** | `TagKitStrategy` | ❌ **Delete configs** - automatic discovery |
+| **boolean_set.pl** | `BooleanSetStrategy` | ❌ **Delete configs** - automatic discovery |
+| **file_type_lookup.pl** | `FileTypeLookupStrategy` | ❌ **Delete configs** - automatic discovery |
+| **composite_tags.pl** | `CompositeTagStrategy` | ❌ **Delete configs** - automatic discovery |
+| **process_binary_data.pl** | `BinaryDataStrategy` | ❌ **Delete configs** - automatic discovery |
+| **runtime_table.pl** | `BinaryDataStrategy` | ❌ **Delete configs** - automatic discovery |
+| **simple_array.pl** ⭐ | *(Still used)* | ✅ **Keep configs** - specialized for arrays |
+
+### Key Benefits of Migration
+
+- **🔍 Complete Discovery**: Strategy system finds symbols you didn't know existed
+- **⚡ Zero Configuration**: No JSON configs to author, maintain, or debug
+- **🧪 Better Testing**: Each strategy can be unit tested for pattern recognition
+- **📈 Automatic Updates**: New ExifTool versions work immediately
+- **🚨 Bug Elimination**: No more config maintenance or extraction selection errors
 
 ## Related Documentation
 
