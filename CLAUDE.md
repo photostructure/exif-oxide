@@ -12,6 +12,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with ex
 2. Use absolute paths: `cd /home/mrm/src/exif-oxide` or `cd /home/mrm/src/exif-oxide/codegen`
 3. When in doubt, ask the user to confirm the intended directory
 
+## 🚨 CRITICAL: stderr redirects are broken in the Bash tool 🚨
+
+**You can't use `2>&1` in your bash commands** -- your Bash tool will mangle the stderr redirect and pass a "2" as an arg, and you wont' see stderr. Ask the user to do the command instead. See https://github.com/anthropics/claude-code/issues/4711 for details.
+
 ## Project Overview
 
 As much as possible, exif-oxide is a _translation_ of [ExifTool](https://exiftool.org/) from perl to Rust.
@@ -63,6 +67,8 @@ If you skip this step, your work will likely be spurious, wrong, and rejected.
 - [API-DESIGN.md](docs/design/API-DESIGN.md) - Public API structure and TagEntry design
 - [CODEGEN.md](docs/CODEGEN.md) - Unified code generation and implementation guide
 - [PRINTCONV-VALUECONV-GUIDE.md](docs/guides/PRINTCONV-VALUECONV-GUIDE.md) - PrintConv/ValueConv implementation guide and design decisions
+- [TDD.md](docs/TDD.md) - **TL;DR**: Mandatory bug-fixing workflow: (1) write breaking test, (2) validate it fails, (3) fix bug following Trust ExifTool, (4) validate test passes + no regressions
+- [SIMPLE-DESIGN.md](docs/SIMPLE-DESIGN.md) - **TL;DR**: Kent Beck's Four Rules of Simple Design in priority order: (1) passes tests, (2) reveals intention, (3) no duplication, (4) fewest elements
 
 #### Guides
 
@@ -177,12 +183,14 @@ See [EXTRACTOR-GUIDE.md](docs/reference/EXTRACTOR-GUIDE.md) for detailed extract
 
 ### Bug Fixing
 
-**MANDATORY**: When a bug is discovered, follow the test-driven debugging workflow in [TDD.md](docs/TDD.md):
+**MANDATORY**: When a bug is discovered, follow the test-driven debugging workflow documented in [TDD.md](docs/TDD.md):
 
-1. Create a breaking test that reproduces the issue
-2. Validate that the test fails for the expected reason
-3. Fix the bug following "Trust ExifTool" principles
-4. Validate that the test now passes and no regressions occur
+1. **Create a breaking test** that reproduces the issue with minimal test data
+2. **Validate test explodes** - confirm it fails for the exact expected reason
+3. **Address the bug** following "Trust ExifTool" principles (check ExifTool's implementation)
+4. **Validate test passes** and run full test suite (`cargo t`) for regressions
+
+This workflow ensures bugs are properly isolated, fixed at root cause, and protected against future regressions. See [TDD.md](docs/TDD.md) for complete details, examples, and test organization best practices.
 
 ### When a task is complete
 
