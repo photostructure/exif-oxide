@@ -88,69 +88,6 @@ fn main() -> Result<()> {
     info!("🔄 Using universal symbol table extraction");
     run_universal_extraction(&current_dir, output_dir, selected_modules.as_ref())?;
 
-    // DISABLED: Process modular tag tables (now handled by CompositeTagStrategy)
-    // The strategy-based system with CompositeTagStrategy handles composite tag processing
-    //
-    // let extract_dir = current_dir.join("generated").join("extract");
-    // debug!("📋 Processing composite tags...");
-    // let start = Instant::now();
-    // process_composite_tags_only(&extract_dir, output_dir)?;
-    // info!("📋 Composite tags phase completed in {:.2}s", start.elapsed().as_secs_f64());
-
-    // Tag kit processing is now integrated into the module-based system
-
-    // The old extract.json processing has been removed.
-    // All extraction is now handled by the new modular configuration system below.
-
-    // DISABLED: Config-based generation system (replaced by strategy-based system)
-    // This legacy system was creating duplicate Canon_pm/ directories alongside the new canon/ directories
-    // The strategy-based system in run_universal_extraction() now handles all code generation
-    //
-    // if selected_modules.is_none() {
-    //     // NEW: Process using the new macro-based configuration system
-    //     debug!("🔄 Processing new macro-based configuration...");
-
-    //     let config_dir = current_dir.join("config");
-    //     let schemas_dir = current_dir.join("schemas");
-
-    //     // Validate all configurations first
-    //     if config_dir.exists() && schemas_dir.exists() {
-    //         let start = Instant::now();
-    //         validate_all_configs(&config_dir, &schemas_dir)?;
-    //         debug!("  ✓ Config validation completed in {:.2}s", start.elapsed().as_secs_f64());
-
-    //         // Load all extracted tables with their configurations
-    //         let extract_dir = current_dir.join("generated/extract");
-    //         let start = Instant::now();
-    //         let all_extracted_tables = load_extracted_tables_with_config(&extract_dir, &config_dir)?;
-    //         debug!("  ✓ Loaded {} extracted tables in {:.2}s", all_extracted_tables.len(), start.elapsed().as_secs_f64());
-
-    //         // Auto-discover and process each module directory
-    //         let start = Instant::now();
-    //         discover_and_process_modules(&config_dir, &all_extracted_tables, output_dir)?;
-    //         info!("🔄 Module processing phase completed in {:.2}s", start.elapsed().as_secs_f64());
-
-    //         // No macros.rs needed - using direct code generation
-
-    //         // Update the main mod.rs to include new modules
-    //         let start = Instant::now();
-    //         update_generated_mod_file(output_dir)?;
-    //         debug!("  ✓ Updated generated mod.rs in {:.2}s", start.elapsed().as_secs_f64());
-    //     } else {
-    //         debug!("  ⚠️  New config directory structure not found, using legacy generation only");
-    //     }
-    // } else {
-    //     debug!("🎯 Skipping config-based generation - processing specific modules only");
-    // }
-    debug!("🎯 Config-based generation disabled - using strategy-based system only");
-
-    // DISABLED: Generate module file (now handled by strategy system)
-    // The strategy-based system in StrategyDispatcher::update_main_mod_file() handles this
-    //
-    // let start = Instant::now();
-    // generate_mod_file(output_dir)?;
-    // debug!("  ✓ Generated module file in {:.2}s", start.elapsed().as_secs_f64());
-
     info!("✅ Code generation complete!");
 
     Ok(())
@@ -158,20 +95,7 @@ fn main() -> Result<()> {
 
 /// Load default modules from exiftool_modules.json config
 fn load_default_modules(current_dir: &Path) -> Result<Vec<String>> {
-    let config_path = current_dir.join("../config/exiftool_modules.json");
-
-    if !config_path.exists() {
-        warn!(
-            "⚠️  exiftool_modules.json not found at {}, using fallback modules",
-            config_path.display()
-        );
-        return Ok(vec![
-            "GPS.pm".to_string(),
-            "DNG.pm".to_string(),
-            "Canon.pm".to_string(),
-        ]);
-    }
-
+    let config_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../config/exiftool_modules.json");
     let config_content = fs::read_to_string(&config_path)
         .with_context(|| format!("Failed to read config file: {}", config_path.display()))?;
 
@@ -201,7 +125,8 @@ fn run_universal_extraction(
 ) -> Result<()> {
     let extractor = FieldExtractor::new();
     let mut dispatcher = StrategyDispatcher::new();
-    let exiftool_base_dir = current_dir.join("../third-party/exiftool");
+    let exiftool_base_dir = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../third-party/exiftool");
 
     info!("🔍 Building ExifTool module paths from configuration");
 
