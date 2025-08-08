@@ -26,7 +26,7 @@
 //! # Examples
 //!
 //! ```rust
-//! use expression_compiler::CompiledExpression;
+//! use codegen::expression_compiler::CompiledExpression;
 //!
 //! // Simple arithmetic
 //! let expr = CompiledExpression::compile("$val / 8").unwrap();
@@ -45,45 +45,47 @@
 //! let code = expr.generate_rust_code();
 //! ```
 
-pub mod types;
-pub mod tokenizer;
-pub mod parser;
 pub mod codegen;
+pub mod parser;
+pub mod tokenizer;
+pub mod types;
 
 #[cfg(test)]
 pub mod tests;
 
 // Re-export the main API
-pub use types::{CompiledExpression, AstNode, OpType, CompType, FuncType};
 use tokenizer::tokenize;
+pub use types::{AstNode, CompType, CompiledExpression, FuncType, OpType};
 // Remove the conflicting use statement - we'll call parser functions directly
 
 impl CompiledExpression {
     /// Parse an ExifTool expression into AST form
-    /// 
+    ///
     /// Supports: $val, numbers, +, -, *, /, comparisons, ternary (?:), int(), exp(), log()
     /// Examples: "$val / 8", "$val >= 0 ? $val : undef", "int($val * 1000 / 25.4 + 0.5)"
     pub fn compile(expr: &str) -> Result<Self, String> {
         let tokens = tokenize(expr)?;
         let ast = crate::expression_compiler::parser::parse_expression(tokens)?;
-        
+
         Ok(CompiledExpression {
             original_expr: expr.to_string(),
             ast: Box::new(ast),
         })
     }
-    
+
     /// Check if this expression can be compiled (supports all implemented features)
     pub fn is_compilable(expr: &str) -> bool {
-        // Quick checks for obviously non-compilable expressions  
-        if expr.contains("abs") || 
-           expr.contains("IsFloat") || expr.contains("=~") {
+        // Quick checks for obviously non-compilable expressions
+        if expr.contains("abs") || expr.contains("IsFloat") || expr.contains("=~") {
             return false;
         }
-        
+
+        // Note: Bitwise operations (&, |, ^) and shift operations (<<, >>) are now supported
+        // by the expression compiler and should be allowed through to compilation
+
         // Array indexing patterns like $val[0], $val[1] are now supported
         // for composite tag ValueConv expressions
-        
+
         // Check for simple ExifTool function calls (single argument)
         if expr.contains("Image::ExifTool::") {
             // Allow simple function calls like Image::ExifTool::Exif::PrintExposureTime($val)
@@ -91,31 +93,32 @@ impl CompiledExpression {
             if expr.matches(',').count() > 0 || expr.contains("$self") {
                 return false; // Complex patterns not supported
             }
-            
+
             // Try to compile - registry delegation is handled at higher level in classify_valueconv_expression
             return Self::compile(expr).is_ok();
         }
-        
+
         // Check for supported sprintf patterns
         if expr.contains("sprintf(") {
             // sprintf patterns are compilable
             return Self::compile(expr).is_ok();
         }
-        
+
         // Check for string concatenation patterns
         if expr.contains(" . ") {
             // String concatenation is compilable
             return Self::compile(expr).is_ok();
         }
-        
+
         // Try to compile - if it works, it's compilable
         Self::compile(expr).is_ok()
     }
-    
+
     /// Test helper to check multiple expressions at once
     #[cfg(test)]
     pub fn test_multiple_is_compilable(expressions: &[&str]) -> Vec<(String, bool)> {
-        expressions.iter()
+        expressions
+            .iter()
             .map(|expr| (expr.to_string(), Self::is_compilable(expr)))
             .collect()
     }

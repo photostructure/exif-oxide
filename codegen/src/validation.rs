@@ -16,11 +16,7 @@ pub fn validate_config(config_path: &Path, schema_path: &Path) -> Result<()> {
     let schema_content = match fs::read_to_string(schema_path) {
         Ok(data) => data,
         Err(err) => {
-            warn!(
-                "UTF-8 error reading {}: {}",
-                schema_path.display(),
-                err
-            );
+            warn!("UTF-8 error reading {}: {}", schema_path.display(), err);
             let bytes = fs::read(schema_path)
                 .with_context(|| format!("Failed to read bytes from {}", schema_path.display()))?;
             String::from_utf8_lossy(&bytes).into_owned()
@@ -39,11 +35,7 @@ pub fn validate_config(config_path: &Path, schema_path: &Path) -> Result<()> {
     let instance_content = match fs::read_to_string(config_path) {
         Ok(data) => data,
         Err(err) => {
-            warn!(
-                "UTF-8 error reading {}: {}",
-                config_path.display(),
-                err
-            );
+            warn!("UTF-8 error reading {}: {}", config_path.display(), err);
             let bytes = fs::read(config_path)
                 .with_context(|| format!("Failed to read bytes from {}", config_path.display()))?;
             String::from_utf8_lossy(&bytes).into_owned()
