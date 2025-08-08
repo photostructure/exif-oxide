@@ -239,32 +239,22 @@ static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
     });
 
 /// Look up ValueConv implementation by Perl expression
+/// Uses direct string matching without normalization
 pub fn lookup_valueconv(expr: &str, module: &str) -> Option<(&'static str, &'static str)> {
-    use super::normalization::normalize_expression;
-
-    // First try exact match (more efficient and avoids normalization issues)
+    // First try exact match
     if let Some(value) = VALUECONV_REGISTRY.get(expr) {
         return Some(*value);
     }
 
     // Try module-scoped exact match
     let normalized_module = module.replace("_pm", "");
-    let scoped_key = format!("{}::{}", normalized_module, expr);
+    let scoped_key = format!("{normalized_module}::{expr}");
     if let Some(value) = VALUECONV_REGISTRY.get(scoped_key.as_str()) {
         return Some(*value);
     }
 
-    // Fall back to normalization for complex expressions
-    let normalized_expr = normalize_expression(expr);
-
-    // Try normalized module-scoped lookup
-    let normalized_scoped_key = format!("{}::{}", normalized_module, normalized_expr);
-    if let Some(value) = VALUECONV_REGISTRY.get(normalized_scoped_key.as_str()) {
-        return Some(*value);
-    }
-
-    // Try normalized global lookup
-    VALUECONV_REGISTRY.get(normalized_expr.as_str()).copied()
+    // No match found
+    None
 }
 
 /// Classify a ValueConv expression for code generation
