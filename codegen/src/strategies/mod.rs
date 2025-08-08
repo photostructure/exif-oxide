@@ -599,9 +599,6 @@ impl StrategyDispatcher {
         // Generate module declarations in sorted order
         for module_dir in &all_modules {
             // Add special attribute for non-snake-case modules
-            if module_dir.ends_with("_pm") {
-                main_content.push_str("#[allow(non_snake_case)]\n");
-            }
             main_content.push_str(&format!("pub mod {};\n", module_dir));
         }
 
