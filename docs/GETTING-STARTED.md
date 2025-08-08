@@ -12,13 +12,13 @@ Welcome to exif-oxide! This guide gets you productive quickly by focusing on the
 
 **Key takeaway:** We translate ExifTool exactly - we don't "improve" or "simplify" its parsing logic.
 
-**What is ExifTool?** ExifTool is a 25-year-old Perl library that reads/writes metadata from image, audio, and video files. It's the de facto standard because it handles thousands of proprietary formats and manufacturer quirks that have accumulated over decades of digital photography. Every line of ExifTool code exists for a reason - usually to work around a specific camera's bug or non-standard behavior.
+**What is ExifTool?** ExifTool is a 25-year-old Perl library that reads/writes metadata from image, audio, and video files. It's the de facto standard because it handles hundreds of proprietary formats and manufacturer quirks that have accumulated over decades of digital photography. Every line of ExifTool code exists for a reason - usually to work around a specific camera's bug or non-standard behavior.
 
 Then skim [ARCHITECTURE.md](ARCHITECTURE.md) for the system overview. Focus on:
 
-- The extract → generate → implement cycle
-- Manual excellence over code generation for complex logic
-- Runtime fallback system (never panics)
+- **Zero-configuration workflow**: `make codegen` automatically discovers and processes everything
+- **Unified strategy pattern**: Automatic pattern recognition replaces manual configuration
+- **Runtime fallback system**: Never panic on missing implementations
 
 ### 2. Understanding ExifTool (5 minutes)
 
@@ -30,25 +30,10 @@ Read [guides/EXIFTOOL-GUIDE.md](guides/EXIFTOOL-GUIDE.md) sections 1-3:
 
 **Key takeaway:** ExifTool's complexity exists for good reasons - every quirk handles a specific camera's bug.
 
-### 3. Development Setup (5 minutes)
+### 3. Development Setup
 
-Follow the TPP-driven development workflow:
-
-- **Create TPPs:** Write Technical Project Plans for coherent feature sets using [TPP.md](TPP.md)
-- **Use `--show-missing`:** Let it guide your implementation priorities
-
-Then run your first test:
-
-```bash
-# Build the project
-make precommit
-
-# Test on a real image
-cargo run -- test-images/Canon/Canon_T3i.jpg --show-missing
-
-# See what ExifTool extracts for comparison
-exiftool -j test-images/Canon/Canon_T3i.jpg
-```
+- `make check-deps` verifies that all linting, compiling, and codegen tooling is installed
+- All non-trivial development should start by creating a Technical Project Plan using our [TPP.md](TPP.md) style guide
 
 ## Choose Your Learning Path
 
@@ -61,8 +46,8 @@ After the 15-minute foundation, pick your path based on your task:
 
 ### 🏗️ **I'm working on core architecture**
 
-→ Read [guides/CORE-ARCHITECTURE.md](guides/CORE-ARCHITECTURE.md) (state management & offset calculations)
-→ Study [CODEGEN.md](CODEGEN.md) (code generation system)
+→ Read [ARCHITECTURE.md](ARCHITECTURE.md) Core Runtime Architecture section (state management & offset calculations)
+→ Study [CODEGEN.md](CODEGEN.md) (unified strategy pattern system)
 
 ### 📷 **I'm adding manufacturer support**
 
@@ -88,8 +73,9 @@ Keep these in mind throughout development:
 3. **Document everything** - Include ExifTool source references (file:line)
 4. **Ask clarifying questions** - The user expects this for complex tasks
 5. **Use runtime fallback** - Missing implementations return raw values, never panic
-6. **Watch for codegen opportunities** - Manually-maintained lookup tables should use the simple table extraction framework
-7. **Keep files focused** - Files >500 lines should be refactored into smaller, focused modules
+6. **Zero-configuration first** - Run `make codegen` - the strategy system automatically discovers everything
+7. **Strategy development** - For new ExifTool patterns, create strategies rather than manual extraction
+8. **Keep files focused** - Files >500 lines should be refactored into smaller, focused modules
 
 ## Quick Reference Links
 
@@ -109,7 +95,7 @@ Keep these in mind throughout development:
 
 - [guides/EXIFTOOL-GUIDE.md](guides/EXIFTOOL-GUIDE.md) - Complete ExifTool reference
 - [TPP.md](TPP.md) - Technical Project Plan template for feature development
-- [guides/CORE-ARCHITECTURE.md](guides/CORE-ARCHITECTURE.md) - State management & offset calculations
+- [ARCHITECTURE.md](ARCHITECTURE.md) - Complete system architecture including state management & offset calculations
 
 ### Reference Materials
 
@@ -117,14 +103,28 @@ Keep these in mind throughout development:
 - [reference/MANUFACTURER-FACTS.md](reference/MANUFACTURER-FACTS.md) - Manufacturer-specific quirks
 - [reference/TROUBLESHOOTING.md](reference/TROUBLESHOOTING.md) - Debugging guide
 
-## Generated Code Policy
+## Zero-Configuration Code Generation
 
-**Generated Rust code is committed to git** while intermediate files are ignored:
+**The unified strategy system generates all code automatically:**
 
-- **Commit**: Final Rust code in `src/generated/` (tags.rs, conversion_refs.rs, etc.)
-- **Ignore**: Intermediate files in `codegen/generated/` (tag_tables.json, etc.)
+```bash
+# That's it! Automatically discovers and generates ALL code
+make clean-all codegen
+```
 
-**When to regenerate**: After modifying extraction scripts, updating ExifTool, or adding new configurations. Run `make codegen` then commit the updated `src/generated/` files.
+**What happens automatically:**
+
+- **Universal discovery**: Finds ALL symbols in ALL ExifTool modules
+- **Pattern recognition**: Strategies compete to claim symbols using duck-typing
+- **Code generation**: Generates appropriate Rust structures automatically
+- **No configuration**: No JSON configs to write, maintain, or debug
+
+**Generated files are committed to git:**
+
+- **Commit**: Generated Rust code in `src/generated/`
+- **Ignore**: Temporary extraction files
+
+**When to regenerate**: After editing codegen/src/**/*.rs or new ExifTool releases. The system handles all discovery and processing automatically.
 
 ## Getting Help
 
@@ -139,7 +139,7 @@ Keep these in mind throughout development:
 Once you've completed the 15-minute foundation:
 
 1. **Pick your learning path** based on your current task
-2. **Try the extract-generate-implement cycle** on a simple tag
+2. **Try the zero-configuration workflow**: Run `make codegen` and explore the generated code
 3. **Read ExifTool source code** for your specific area
 4. **Ask the user** for clarification on any confusing aspects
 
