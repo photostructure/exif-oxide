@@ -55,7 +55,7 @@ pub fn apply_composite_conversions(
     );
 
     // Apply PrintConv if present to get human-readable string (except for GPS coordinates)
-    let print = if let Some(print_conv_ref) = composite_def.print_conv_ref {
+    let print = if let Some(print_conv_ref) = composite_def.print_conv {
         if is_gps_coordinate {
             // Return decimal value for GPS coordinates per project requirements
             value.clone()
@@ -78,7 +78,8 @@ pub fn resolve_and_compute_composites(
 
     let mut composite_tags = HashMap::new();
     let mut built_composites = HashSet::new();
-    let mut pending_composites: Vec<&CompositeTagDef> = COMPOSITE_TAGS.iter().collect();
+    let mut pending_composites: Vec<&CompositeTagDef> =
+        COMPOSITE_TAGS.iter().map(|(_, def)| *def).collect();
 
     debug!(
         "Starting multi-pass composite building with {} pending composites",
