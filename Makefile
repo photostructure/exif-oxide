@@ -44,6 +44,10 @@ test:
 t: test
 
 # Run codegen tests
+codegen-check:
+	$(MAKE) -C codegen -f Makefile.modular check
+
+# Run codegen tests
 codegen-test:
 	$(MAKE) -C codegen -f Makefile.modular test
 
@@ -137,9 +141,15 @@ audit: check-deps
 # All tests including unit, integration, codegen, and compatibility tests
 tests: test codegen-test compat-full
 
-# Pre-commit checks: do everything: update deps, codegen, fix code, lint, test, audit, and build
-precommit: update audit perl-deps codegen fix check tests build 
+# Pre-commit checks: codegen, fix code, lint, test, audit, and build. We don't
+# clean-all because that leaves the tree temporarily broken, and we don't
+# upgrade because changes to Cargo.toml can cause the rust analyzer to OOM (!!)
+precommit: audit perl-deps codegen fix check tests build 
 	@echo "✅ precommit successful 🥳"
+
+# This should
+prerelease: clean-all upgrade precommit
+	@echo "✅ prerelease successful 🥳"
 
 # Generate ExifTool JSON reference data for compatibility testing (only missing files)
 compat-gen:
