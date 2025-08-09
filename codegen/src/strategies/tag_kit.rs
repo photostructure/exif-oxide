@@ -108,6 +108,9 @@ impl TagKitStrategy {
             return Ok(String::new());
         }
 
+        // Clear imports for this specific symbol to avoid cross-contamination
+        self.imports.clear();
+
         let mut code = String::new();
         code.push_str(&format!(
             "//! Generated tag table definitions from {}::{}\n",
@@ -120,7 +123,23 @@ impl TagKitStrategy {
         code.push_str("use std::collections::HashMap;\n");
         code.push_str("use crate::types::{TagInfo, PrintConv, ValueConv};\n");
 
-        // Add imports for conversion functions
+        // First collect all valid tag entries with their tag IDs for sorting
+        // This will populate self.imports through register_import calls
+        let mut tag_entries = Vec::new();
+        for (tag_key, tag_data) in table_data {
+            if let Some(tag_obj) = tag_data.as_object() {
+                if let Some((tag_id, entry)) =
+                    self.build_tag_entry(tag_key, tag_obj, &symbol.module_name)?
+                {
+                    tag_entries.push((tag_id, entry));
+                }
+            }
+        }
+
+        // Sort entries by tag ID for deterministic output
+        tag_entries.sort_by_key(|(tag_id, _)| *tag_id);
+
+        // Add imports for conversion functions (after processing tags)
         if !self.imports.is_empty() {
             code.push('\n');
             code.push_str("// Generated imports for conversion functions\n");
@@ -161,21 +180,6 @@ impl TagKitStrategy {
         code.push_str(&format!(
             "pub static {constant_name}: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {{\n"
         ));
-
-        // First collect all valid tag entries with their tag IDs for sorting
-        let mut tag_entries = Vec::new();
-        for (tag_key, tag_data) in table_data {
-            if let Some(tag_obj) = tag_data.as_object() {
-                if let Some((tag_id, entry)) =
-                    self.build_tag_entry(tag_key, tag_obj, &symbol.module_name)?
-                {
-                    tag_entries.push((tag_id, entry));
-                }
-            }
-        }
-
-        // Sort entries by tag ID for deterministic output
-        tag_entries.sort_by_key(|(tag_id, _)| *tag_id);
 
         // Generate HashMap construction based on whether we have entries
         if tag_entries.is_empty() {

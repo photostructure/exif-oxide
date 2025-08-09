@@ -130,9 +130,51 @@ sub extract_symbols {
                   if $ENV{DEBUG};
             }
         }
-        else {
-            print STDERR "    No hash found for $symbol_name\n" if $ENV{DEBUG};
+
+        # Also try to extract array symbols
+        elsif ( my $array_ref = *$glob{ARRAY} ) {
+            if (@$array_ref) {    # Skip empty arrays
+                my $array_size = scalar(@$array_ref);
+                print STDERR "    Array found with $array_size elements\n"
+                  if $ENV{DEBUG};
+                extract_array_symbol( $symbol_name, $array_ref, $module_name );
+                print STDERR "    Array extraction completed for $symbol_name\n"
+                  if $ENV{DEBUG};
+            }
         }
+        else {
+            print STDERR "    No hash or array found for $symbol_name\n"
+              if $ENV{DEBUG};
+        }
+    }
+}
+
+sub extract_array_symbol {
+    my ( $symbol_name, $array_ref, $module_name ) = @_;
+
+    print STDERR "    Starting array extraction for: $symbol_name\n"
+      if $ENV{DEBUG};
+
+ # Filter out function references if any (though arrays usually don't have them)
+    my $filtered_data = filter_code_refs($array_ref);
+
+    # Package the data with metadata
+    my $extracted = {
+        name   => $symbol_name,
+        module => $module_name,
+        type   => 'array',
+        data   => $filtered_data
+    };
+
+    # Output the extracted array as JSON
+    eval {
+        my $json_data = encode_json($extracted);
+        print "$json_data\n";
+        print STDERR "    Successfully extracted array: $symbol_name\n"
+          if $ENV{DEBUG};
+    };
+    if ($@) {
+        print STDERR "    Failed to encode array $symbol_name: $@\n";
     }
 }
 
