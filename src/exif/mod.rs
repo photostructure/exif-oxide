@@ -702,7 +702,10 @@ impl ExifReader {
             let name = tag_name.strip_prefix("Composite:").unwrap_or(tag_name);
 
             // Find the composite definition
-            let composite_def = COMPOSITE_TAGS.iter().find(|def| def.name == name);
+            let composite_def = COMPOSITE_TAGS
+                .iter()
+                .find(|(_, def)| def.name == name)
+                .map(|(_, def)| *def);
 
             if let Some(def) = composite_def {
                 let (value, print) =
