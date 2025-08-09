@@ -160,10 +160,14 @@ sub extract_array_symbol {
 
     # Package the data with metadata
     my $extracted = {
-        name   => $symbol_name,
-        module => $module_name,
-        type   => 'array',
-        data   => $filtered_data
+        name     => $symbol_name,
+        module   => $module_name,
+        type     => 'array',
+        data     => $filtered_data,
+        metadata => {
+            size               => scalar(@$filtered_data),
+            is_composite_table => 0,    # Arrays are never composite tables
+        }
     };
 
     # Output the extracted array as JSON
