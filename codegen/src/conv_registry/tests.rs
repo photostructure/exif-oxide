@@ -1,7 +1,7 @@
 //! Tests for the conversion registry modules
 
 use super::printconv_registry::{get_printconv_registry, get_tag_specific_printconv};
-use super::valueconv_registry::get_valueconv_registry;
+use super::valueconv_registry::{get_valueconv_registry, lookup_valueconv};
 use super::*;
 
 #[test]
@@ -89,4 +89,45 @@ fn test_module_name_normalization() {
 
     // Both should resolve to the same thing (or both be None)
     assert_eq!(result, result2);
+}
+
+#[test]
+fn test_classify_valueconv_prioritizes_registry_over_compilation() {
+    use super::types::ValueConvType;
+    use super::valueconv_registry::classify_valueconv_expression;
+
+    // GPS functions should prioritize registry over compilation
+    let gps_expr = "Image::ExifTool::GPS::ToDegrees($val)";
+    match classify_valueconv_expression(gps_expr, "GPS_pm") {
+        ValueConvType::CustomFunction(module_path, func_name) => {
+            assert_eq!(module_path, "crate::implementations::value_conv");
+            assert_eq!(func_name, "gps_coordinate_value_conv");
+        }
+        ValueConvType::CompiledExpression(_) => {
+            panic!("GPS functions should use registry, not compilation!");
+        }
+    }
+
+    // Simple arithmetic should use compilation
+    let arithmetic_expr = "$val * 100";
+    match classify_valueconv_expression(arithmetic_expr, "Exif_pm") {
+        ValueConvType::CompiledExpression(_) => {
+            // This is expected for simple arithmetic
+        }
+        ValueConvType::CustomFunction(_, _) => {
+            // This is also valid if there's a registry entry
+        }
+    }
+
+    // Power operations should use registry (not compilable)
+    let power_expr = "2**(-$val / 3)";
+    match classify_valueconv_expression(power_expr, "Sony_pm") {
+        ValueConvType::CustomFunction(module_path, func_name) => {
+            assert_eq!(module_path, "crate::implementations::value_conv");
+            assert_eq!(func_name, "power_neg_div_3_value_conv");
+        }
+        ValueConvType::CompiledExpression(_) => {
+            panic!("Power operations should use registry, not compilation!");
+        }
+    }
 }

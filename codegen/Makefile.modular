@@ -15,7 +15,7 @@ codegen-flocked:
 	@echo "🔧 Applying universal ExifTool patching..." ; \
 	./scripts/patch_all_modules.sh ; \
 	echo "🚀 Running Rust codegen..." ; \
-	RUST_LOG=warn cargo run ; ret=$$? ; \
+	RUST_LOG=info cargo run ; ret=$$? ; \
 	../scripts/undo-exiftool-patches.sh ; \
 	if [ $$ret -eq 0 ]; then \
 		cd .. && cargo fmt -- src/generated/**/*.rs 2>/dev/null ; \

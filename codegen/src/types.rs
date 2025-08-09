@@ -64,11 +64,8 @@ pub enum PrintConv {
     /// Simple lookup table
     Simple(HashMap<String, &'static str>),
 
-    /// Expression to evaluate
+    /// Expression to evaluate (including function references like "module::function")
     Expression(String),
-
-    /// Manual function reference (module_path, function_name)
-    Manual(&'static str, &'static str),
 
     /// Complex conversion requiring custom logic
     Complex,
@@ -83,11 +80,8 @@ pub enum ValueConv {
     /// Simple numeric conversion
     Numeric(f64),
 
-    /// Expression to evaluate
+    /// Expression to evaluate (including function references like "module::function")
     Expression(String),
-
-    /// Manual function reference (module_path, function_name)
-    Manual(&'static str, &'static str),
 
     /// Complex conversion requiring custom logic
     Complex,

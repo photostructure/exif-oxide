@@ -4,13 +4,34 @@
 //! extracted from ExifTool modules, replacing the config-driven extraction
 //! system with duck-typing pattern recognition.
 
-use anyhow::Result;
+use anyhow::{Context, Result};
 use serde_json::Value as JsonValue;
-use std::collections::{BTreeSet, HashMap};
+use std::collections::HashMap;
 use std::path::Path;
 use tracing::{debug, info, trace, warn};
 
 use crate::field_extractor::FieldSymbol;
+
+/// Utility function for strategies to write generated files directly to disk
+pub fn write_generated_file(output_dir: &str, relative_path: &str, content: &str) -> Result<()> {
+    use std::fs;
+    use std::path::Path;
+
+    let full_path = Path::new(output_dir).join(relative_path);
+
+    // Ensure parent directory exists
+    if let Some(parent) = full_path.parent() {
+        fs::create_dir_all(parent)
+            .with_context(|| format!("Failed to create directory: {}", parent.display()))?;
+    }
+
+    // Write the file
+    fs::write(&full_path, content)
+        .with_context(|| format!("Failed to write generated file: {}", full_path.display()))?;
+
+    debug!("📝 Written: {} ({} bytes)", relative_path, content.len());
+    Ok(())
+}
 
 /// Core trait that all extraction strategies implement
 pub trait ExtractionStrategy: Send + Sync {
@@ -39,6 +60,7 @@ pub struct ExtractionContext {
     pub output_dir: String,
 
     /// Current module being processed
+    #[allow(dead_code)]
     pub current_module: Option<String>,
 
     /// Global symbol registry for cross-references
@@ -67,6 +89,7 @@ pub struct GeneratedFile {
     pub content: String,
 
     /// Strategy that generated this file
+    #[allow(dead_code)]
     pub strategy: String,
 }
 
@@ -114,6 +137,12 @@ pub struct StrategyDispatcher {
     strategies: Vec<Box<dyn ExtractionStrategy>>,
 }
 
+impl Default for StrategyDispatcher {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl StrategyDispatcher {
     /// Create new dispatcher with all available strategies
     pub fn new() -> Self {
@@ -132,7 +161,6 @@ impl StrategyDispatcher {
         use std::time::Instant;
 
         let mut context = ExtractionContext::new(output_dir.to_string());
-        let mut generated_files = Vec::new();
         let process_start = Instant::now();
 
         info!(
@@ -207,9 +235,10 @@ impl StrategyDispatcher {
         // Finalize all strategies and collect generated files
         let extraction_finalize_start = Instant::now();
         trace!("🏁 Finalizing {} strategies", self.strategies.len());
+        let mut generated_files = Vec::new();
         for strategy in &mut self.strategies {
             let strategy_finalize_start = Instant::now();
-            let mut files = strategy.finish_extraction()?;
+            let files = strategy.finish_extraction()?;
             let strategy_finalize_time = strategy_finalize_start.elapsed();
             trace!(
                 "⏱️  Strategy '{}' finalized in {:.2}ms, generated {} files",
@@ -217,7 +246,13 @@ impl StrategyDispatcher {
                 strategy_finalize_time.as_millis(),
                 files.len()
             );
-            generated_files.append(&mut files);
+
+            // Write files immediately as they're generated
+            for file in &files {
+                write_generated_file(output_dir, &file.path, &file.content)?;
+            }
+
+            generated_files.extend(files);
         }
         let extraction_finalize_time = extraction_finalize_start.elapsed();
         trace!(
@@ -225,15 +260,7 @@ impl StrategyDispatcher {
             extraction_finalize_time.as_millis()
         );
 
-        // Generate main mod.rs file to include all processed modules
-        let mod_update_start = Instant::now();
-        trace!("📄 Updating main mod.rs file");
-        self.update_main_mod_file(output_dir, &processed_modules, &generated_files)?;
-        let mod_update_time = mod_update_start.elapsed();
-        trace!(
-            "⏱️  Main mod.rs update completed in {:.2}ms",
-            mod_update_time.as_millis()
-        );
+        // Note: mod.rs generation moved to main.rs after file writing
 
         // Write strategy selection log for debugging
         let log_start = Instant::now();
@@ -273,11 +300,7 @@ impl StrategyDispatcher {
             (extraction_finalize_time.as_millis() as f64 / total_process_time.as_millis() as f64)
                 * 100.0
         );
-        trace!(
-            "  • Mod file update: {:.1}ms ({:.1}%)",
-            mod_update_time.as_millis(),
-            (mod_update_time.as_millis() as f64 / total_process_time.as_millis() as f64) * 100.0
-        );
+        // Mod file update timing moved to main.rs
         trace!(
             "  • Log writing: {:.1}ms ({:.1}%)",
             log_time.as_millis(),
@@ -406,44 +429,58 @@ impl StrategyDispatcher {
     }
 
     /// Update the main src/generated/mod.rs file to include all processed modules
-    fn update_main_mod_file(
-        &self,
-        output_dir: &str,
-        _processed_modules: &std::collections::HashSet<String>,
-        generated_files: &[GeneratedFile],
-    ) -> Result<()> {
-        use std::collections::HashMap;
+    #[allow(dead_code)]
+    fn update_main_mod_file(&self, output_dir: &str) -> Result<()> {
+        use std::collections::BTreeSet;
         use std::fs;
 
-        // Group generated files by module to identify which modules have files
-        let mut modules_with_files = HashMap::new();
-        for file in generated_files {
-            // Extract module name from file path (e.g., "canon/file.rs" -> "canon" or "canon_pm/file.rs" -> "canon_pm")
-            if let Some(module_dir) = file.path.split('/').next() {
-                // Accept both old _pm suffixed and new snake_case modules
-                if module_dir.ends_with("_pm")
-                    || (!module_dir.contains('.') && !module_dir.eq("supported_tags"))
-                {
-                    let files_list = modules_with_files
-                        .entry(module_dir.to_string())
-                        .or_insert_with(Vec::new);
-                    // Extract filename without .rs extension
-                    if let Some(filename) = file.path.split('/').last() {
-                        if let Some(name) = filename.strip_suffix(".rs") {
-                            files_list.push(name.to_string());
+        // Scan filesystem directly to find all module directories and their .rs files
+        let mut modules_with_files = std::collections::HashMap::new();
+
+        // Read all entries in the output directory
+        for entry in fs::read_dir(output_dir)? {
+            let entry = entry?;
+            let path = entry.path();
+
+            // Only process directories (skip files like composite_tags.rs)
+            if path.is_dir() {
+                let module_name = path.file_name().unwrap().to_string_lossy().to_string();
+
+                // Skip non-module directories
+                if module_name == "file_types" && !path.join("mod.rs").exists() {
+                    continue;
+                }
+
+                // Find all .rs files in this module directory
+                let mut file_set = BTreeSet::new();
+                for module_file in fs::read_dir(&path)? {
+                    let module_file = module_file?;
+                    let file_path = module_file.path();
+
+                    // Only include .rs files, excluding mod.rs itself
+                    if file_path.extension().is_some_and(|ext| ext == "rs") {
+                        if let Some(filename) = file_path.file_stem() {
+                            let filename_str = filename.to_string_lossy().to_string();
+                            if filename_str != "mod" {
+                                file_set.insert(filename_str);
+                            }
                         }
                     }
+                }
+
+                if !file_set.is_empty() {
+                    modules_with_files.insert(module_name, file_set);
                 }
             }
         }
 
         info!(
-            "📝 Creating mod.rs files for {} modules",
+            "📝 Creating mod.rs files for {} modules (filesystem scan)",
             modules_with_files.len()
         );
 
         // Create mod.rs files for each module directory
-        for (module_dir, file_list) in &modules_with_files {
+        for (module_dir, file_set) in &modules_with_files {
             let module_dir_path = Path::new(output_dir).join(module_dir);
             let module_mod_path = module_dir_path.join("mod.rs");
 
@@ -463,15 +500,12 @@ impl StrategyDispatcher {
                 module_dir.strip_suffix("_pm").unwrap_or(module_dir)
             ));
             content.push_str("//!\n");
-            content.push_str("//! This file is auto-generated. Do not edit manually.\n\n");
+            content.push_str("//! This file is auto-generated by codegen/src/strategies/mod.rs. Do not edit manually.\n\n");
 
-            // Sort files for consistent output
-            let mut sorted_files = file_list.clone();
-            sorted_files.sort();
-
+            // Files are already deduplicated and sorted from BTreeSet
             // Generate pub mod declarations
-            for filename in &sorted_files {
-                content.push_str(&format!("pub mod {};\n", filename));
+            for filename in file_set {
+                content.push_str(&format!("pub mod {filename};\n"));
             }
 
             content.push('\n');
@@ -480,7 +514,7 @@ impl StrategyDispatcher {
             content.push_str("// Re-export commonly used items\n");
 
             // Always re-export main_tags if it exists
-            if sorted_files.iter().any(|f| f == "main_tags") {
+            if file_set.contains("main_tags") {
                 // Read the actual constant name from the generated main_tags.rs file
                 let main_tags_path = module_dir_path.join("main_tags.rs");
                 if let Ok(main_tags_content) = fs::read_to_string(&main_tags_path) {
@@ -496,7 +530,7 @@ impl StrategyDispatcher {
                                     "Found MAIN_TAGS constant: '{}' in module {}",
                                     const_name, module_dir
                                 );
-                                content.push_str(&format!("pub use main_tags::{};\n", const_name));
+                                content.push_str(&format!("pub use main_tags::{const_name};\n"));
                             } else {
                                 debug!(
                                     "Failed to parse constant name from: '{}' in module {}",
@@ -504,17 +538,17 @@ impl StrategyDispatcher {
                                 );
                                 // Fallback: Use module-prefixed name based on module directory
                                 let module_upper = module_dir.to_uppercase().replace('-', "_");
-                                let expected_const = format!("{}_MAIN_TAGS", module_upper);
+                                let expected_const = format!("{module_upper}_MAIN_TAGS");
                                 debug!("Using fallback constant name: {}", expected_const);
                                 content
-                                    .push_str(&format!("pub use main_tags::{};\n", expected_const));
+                                    .push_str(&format!("pub use main_tags::{expected_const};\n"));
                             }
                         } else {
                             debug!("No colon found after 'pub static' in module {}", module_dir);
                             // Fallback: Use module-prefixed name
                             let module_upper = module_dir.to_uppercase().replace('-', "_");
-                            let expected_const = format!("{}_MAIN_TAGS", module_upper);
-                            content.push_str(&format!("pub use main_tags::{};\n", expected_const));
+                            let expected_const = format!("{module_upper}_MAIN_TAGS");
+                            content.push_str(&format!("pub use main_tags::{expected_const};\n"));
                         }
                     } else {
                         debug!(
@@ -523,26 +557,15 @@ impl StrategyDispatcher {
                         );
                         // Fallback: Use module-prefixed name
                         let module_upper = module_dir.to_uppercase().replace('-', "_");
-                        let expected_const = format!("{}_MAIN_TAGS", module_upper);
-                        content.push_str(&format!("pub use main_tags::{};\n", expected_const));
+                        let expected_const = format!("{module_upper}_MAIN_TAGS");
+                        content.push_str(&format!("pub use main_tags::{expected_const};\n"));
                     }
                 } else {
                     debug!("Failed to read main_tags.rs for module {}", module_dir);
                     // Fallback: Use module-prefixed name
                     let module_upper = module_dir.to_uppercase().replace('-', "_");
-                    let expected_const = format!("{}_MAIN_TAGS", module_upper);
-                    content.push_str(&format!("pub use main_tags::{};\n", expected_const));
-                }
-            }
-
-            // Re-export specific lookup functions and constants
-            for filename in &sorted_files {
-                if filename.contains("white_balance")
-                    || filename.contains("lens")
-                    || filename.contains("quality")
-                    || filename.contains("model")
-                {
-                    content.push_str(&format!("pub use {}::*;\n", filename));
+                    let expected_const = format!("{module_upper}_MAIN_TAGS");
+                    content.push_str(&format!("pub use main_tags::{expected_const};\n"));
                 }
             }
 
@@ -557,7 +580,7 @@ impl StrategyDispatcher {
             debug!(
                 "📄 Created mod.rs for {} with {} files",
                 module_dir,
-                file_list.len()
+                file_set.len()
             );
         }
 
@@ -568,8 +591,7 @@ impl StrategyDispatcher {
         // Generate header from scratch - no manual edits allowed
         main_content.push_str("//! Generated code module\n");
         main_content.push_str("//!\n");
-        main_content.push_str("//! This file is automatically generated by codegen.\n");
-        main_content.push_str("//! DO NOT EDIT MANUALLY - changes will be overwritten.\n");
+        main_content.push_str("//! This file is auto-generated by codegen/src/strategies/mod.rs. Do not edit manually.\n");
         main_content.push_str("//!\n");
         main_content.push_str("//! This module re-exports all generated code for easy access.\n\n");
 
@@ -599,7 +621,7 @@ impl StrategyDispatcher {
         // Generate module declarations in sorted order
         for module_dir in &all_modules {
             // Add special attribute for non-snake-case modules
-            main_content.push_str(&format!("pub mod {};\n", module_dir));
+            main_content.push_str(&format!("pub mod {module_dir};\n"));
         }
 
         main_content.push('\n');
@@ -616,7 +638,7 @@ impl StrategyDispatcher {
         if Path::new(output_dir).join("composite_tags.rs").exists() {
             main_content.push_str("pub use composite_tags::{CompositeTagDef, COMPOSITE_TAGS, lookup_composite_tag, all_composite_tag_names, composite_tag_count};\n");
         }
-        main_content.push_str("\n");
+        main_content.push('\n');
 
         main_content.push_str("/// Initialize all lazy static data structures\n");
         main_content.push_str(
@@ -640,18 +662,14 @@ impl StrategyDispatcher {
     }
 }
 
-impl Default for StrategyDispatcher {
-    fn default() -> Self {
-        Self::new()
-    }
-}
+// StrategyDispatcher no longer implements Default since it requires output_dir
 
 // Strategy implementations
 mod binary_data;
 mod boolean_set;
 mod composite_tag;
 mod file_type_lookup;
-mod magic_number;
+mod magic_numbers;
 mod mime_type;
 mod scalar_array;
 mod simple_table;
@@ -665,7 +683,7 @@ pub use binary_data::BinaryDataStrategy;
 pub use boolean_set::BooleanSetStrategy;
 pub use composite_tag::CompositeTagStrategy;
 pub use file_type_lookup::FileTypeLookupStrategy;
-pub use magic_number::MagicNumberStrategy;
+pub use magic_numbers::MagicNumberStrategy;
 pub use mime_type::MimeTypeStrategy;
 pub use scalar_array::ScalarArrayStrategy;
 pub use simple_table::SimpleTableStrategy;

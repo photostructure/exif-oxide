@@ -6,10 +6,9 @@
 use anyhow::{Context, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::Value as JsonValue;
-use std::collections::HashMap;
 use std::path::Path;
 use std::process::{Command, Stdio};
-use tracing::{debug, info, trace, warn};
+use tracing::{info, trace, warn};
 
 /// Symbol extracted from ExifTool module via field symbol table introspection
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -47,6 +46,7 @@ pub struct FieldMetadata {
 pub struct FieldExtractionStats {
     pub total_symbols: u32,
     pub extracted_symbols: u32,
+    #[allow(dead_code)]
     pub skipped_symbols: u32,
     pub module_name: String,
 }
@@ -165,24 +165,6 @@ impl FieldExtractor {
 
         Ok((symbols, stats))
     }
-
-    /// Extract symbols from multiple modules in parallel
-    pub fn extract_modules(
-        &self,
-        module_paths: &[&Path],
-    ) -> Result<HashMap<String, (Vec<FieldSymbol>, FieldExtractionStats)>> {
-        use rayon::prelude::*;
-
-        let results: Result<Vec<_>> = module_paths
-            .par_iter()
-            .map(|path| {
-                let (symbols, stats) = self.extract_module(path)?;
-                Ok((stats.module_name.clone(), (symbols, stats)))
-            })
-            .collect();
-
-        results.map(|pairs| pairs.into_iter().collect())
-    }
 }
 
 impl Default for FieldExtractor {
@@ -231,8 +213,7 @@ fn parse_extraction_stats(stderr: &str) -> Result<FieldExtractionStats> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::io::Write;
-    use tempfile::NamedTempFile;
+    // Removed unused imports
 
     #[test]
     fn test_parse_field_symbol_json() {

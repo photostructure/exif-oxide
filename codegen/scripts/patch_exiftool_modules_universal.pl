@@ -51,23 +51,47 @@ sub convert_all_my_to_package_variables {
     close($fh);
 
     my $modified = 0;
-    my @conversions;
+    my @converted_vars;
 
-    # Pattern to match top-level 'my %var' or 'my @var' declarations
-    # This avoids converting variables inside subroutines
-    while ( $content =~ /^(\s*)my(\s+[%@]\w+\s*=)/gm ) {
-        my $indent   = $1;
-        my $var_part = $2;
-
-        # Extract variable name for reporting
-        if ( $var_part =~ /\s+([%@]\w+)/ ) {
-            push @conversions, $1;
-        }
+    # Find all top-level 'my %var' or 'my @var' declarations first
+    # (before we start modifying the content)
+    while ( $content =~ /^(\s*)my\s+([%@])(\w+)\s*=/gm ) {
+        my $sigil = $2;
+        my $name = $3;
+        push @converted_vars, [$sigil, $name];  # Store [sigil, name] as array ref
     }
 
-    # Perform the conversions
-    if ( $content =~ s/^(\s*)my(\s+[%@]\w+\s*=)/$1our$2/gm ) {
+    # Now perform the conversions
+    if (@converted_vars) {
+        # Convert all my to our
+        $content =~ s/^(\s*)my(\s+[%@]\w+\s*=)/$1our$2/gm;
         $modified = 1;
+        
+        # Add symbol table aliases at the end of the package
+        # Find where to insert (before the final "1;" or at end)
+        my $insert_point = rindex($content, "\n1;");
+        
+        my $aliases = "\n# Ensure the field_extractor can see our exported fields:\n";
+        foreach my $var (@converted_vars) {
+            # Ensure we have an array ref
+            if (ref($var) ne 'ARRAY') {
+                die "Expected array ref but got: " . (ref($var) || "scalar value '$var'") . "\n";
+            }
+            my ($sigil, $name) = @$var;
+            if ($sigil eq '%') {
+                $aliases .= "*$name = \\%$name;\n";
+            } elsif ($sigil eq '@') {
+                $aliases .= "*$name = \\@$name;\n";
+            }
+        }
+        
+        if ($insert_point > -1) {
+            # Insert before the "1;"
+            substr($content, $insert_point, 0, $aliases);
+        } else {
+            # No "1;" found, append at end
+            $content .= $aliases;
+        }
     }
 
    # Add marker for AddCompositeTags calls

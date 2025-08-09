@@ -11,7 +11,9 @@ pub type Number = f64;
 /// A compiled expression that can generate Rust code using AST representation
 #[derive(Debug, Clone)]
 pub struct CompiledExpression {
+    #[allow(dead_code)]
     pub original_expr: String,
+    #[allow(dead_code)]
     pub ast: Box<AstNode>,
 }
 
