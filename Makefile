@@ -74,11 +74,13 @@ clean:
 
 # Clean generated code (use with caution - requires regeneration)
 clean-generated:
-	rm -rf src/generated/*
-	rm -rf codegen/generated/*
+	rm -rf src/generated
+	rm -rf codegen/generated
 
 # Deep clean - removes all build artifacts and generated code
 clean-all: clean clean-generated
+	rm -rf target
+	rm -rf codegen/target
 
 # Extract EXIF tags from ExifTool and regenerate Rust code
 codegen:
@@ -144,7 +146,8 @@ tests: test codegen-test compat-full
 # Pre-commit checks: codegen, fix code, lint, test, audit, and build. We don't
 # clean-all because that leaves the tree temporarily broken, and we don't
 # upgrade because changes to Cargo.toml can cause the rust analyzer to OOM (!!)
-precommit: audit perl-deps codegen fix check tests build 
+# IMPORTANT: codegen must run BEFORE any cargo commands to ensure generated files exist
+precommit: perl-deps codegen audit fix check tests build 
 	@echo "✅ precommit successful 🥳"
 
 # This should

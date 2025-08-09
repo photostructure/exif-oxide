@@ -53,11 +53,25 @@
       "Bash(yamllint:*)",
       "WebFetch(domain:doc.rust-lang.org)",
       "WebFetch(domain:docs.anthropic.com)",
-      "WebFetch(domain:exiftool.org)"
+      "WebFetch(domain:exiftool.org)",
+      "Bash(./scripts/capture.sh cargo check:*)",
+      "Bash(./scripts/capture.sh rg:*)",
+      "Bash(./scripts/capture.sh wc:*)",
+      "Bash(export RUST_LOG=trace)",
+      "Bash(./scripts/capture.sh awk:*)",
+      "Bash(./scripts/capture.sh:*)",
+      "Bash(scripts/capture.sh:*)",
+      "Bash(./scripts/capture.sh grep -o 'error\\[E[0-9]*\\]' /tmp/stderr_20250808_110758_994744.txt)",
+      "Bash(RUST_LOG=debug make codegen)",
+      "Bash(export RUST_LOG=debug)",
+      "Bash(DEBUG=1 codegen/scripts/field_extractor.pl third-party/exiftool/lib/Image/ExifTool.pm magicNumber)",
+      "WebFetch(domain:docs.rs)",
+      "Bash(RUST_LOG=debug cargo run --package codegen)"
     ],
     "deny": [],
     "additionalDirectories": [
-      "/home/mrm/src/test-images/"
+      "/home/mrm/src/test-images/",
+      "/tmp/"
     ]
   }
 }

@@ -22,6 +22,9 @@ Thumbs.db
 *.out
 *.log
 
+# Temporary files
+.tmp/
+
 # Sync outputs
 .cache/
 
