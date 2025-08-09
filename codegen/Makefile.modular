@@ -24,6 +24,7 @@ codegen-flocked:
 
 clean:
 	cargo clean
+	../scripts/undo-exiftool-patches.sh
 
 check:
 	cargo check -p codegen
