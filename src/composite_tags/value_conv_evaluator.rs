@@ -55,6 +55,25 @@ pub trait CompositeTagDefLike {
     fn value_conv(&self) -> Option<&str>;
 }
 
+/// Implementation of CompositeTagDefLike for CompositeTagDef
+impl CompositeTagDefLike for CompositeTagDef {
+    fn name(&self) -> &str {
+        self.name
+    }
+
+    fn require(&self) -> &[&str] {
+        self.require
+    }
+
+    fn desire(&self) -> &[&str] {
+        self.desire
+    }
+
+    fn value_conv(&self) -> Option<&str> {
+        self.value_conv
+    }
+}
+
 /// Execution strategy classification for ValueConv expressions
 #[derive(Debug, Clone, PartialEq)]
 pub enum ExecutionStrategy {
@@ -83,9 +102,9 @@ impl ValueConvEvaluator {
     ///
     /// This is the main entry point that determines execution strategy
     /// and delegates to the appropriate evaluator.
-    pub fn evaluate_composite<T: CompositeTagDefLike>(
+    pub fn evaluate_composite(
         &mut self,
-        composite_def: &T,
+        composite_def: &CompositeTagDef,
         resolved_dependencies: &HashMap<String, TagValue>,
     ) -> Option<TagValue> {
         let strategy = self.classify_valueconv_expression(composite_def.value_conv()?);
@@ -201,9 +220,9 @@ impl ValueConvEvaluator {
     }
 
     /// Evaluate expression using enhanced expression compiler
-    fn evaluate_dynamic_expression<T: CompositeTagDefLike>(
+    fn evaluate_dynamic_expression(
         &self,
-        composite_def: &T,
+        composite_def: &CompositeTagDef,
         resolved_dependencies: &HashMap<String, TagValue>,
     ) -> Option<TagValue> {
         let value_conv = composite_def.value_conv()?;
@@ -222,9 +241,9 @@ impl ValueConvEvaluator {
     }
 
     /// Evaluate expression using conv_registry fallback
-    fn evaluate_registry_expression<T: CompositeTagDefLike>(
+    fn evaluate_registry_expression(
         &self,
-        composite_def: &T,
+        composite_def: &CompositeTagDef,
         resolved_dependencies: &HashMap<String, TagValue>,
     ) -> Option<TagValue> {
         let value_conv = composite_def.value_conv()?;
@@ -237,9 +256,9 @@ impl ValueConvEvaluator {
     }
 
     /// Evaluate using manual implementation fallback
-    fn evaluate_manual_implementation<T: CompositeTagDefLike>(
+    fn evaluate_manual_implementation(
         &self,
-        composite_def: &T,
+        composite_def: &CompositeTagDef,
         resolved_dependencies: &HashMap<String, TagValue>,
     ) -> Option<TagValue> {
         debug!("Using manual implementation for: {}", composite_def.name());
