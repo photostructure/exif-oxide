@@ -44,7 +44,7 @@ fn apply_panasonic_raw_print_conv(
                 debug!("Complex PrintConv for tag {}, using registry", tag_id);
                 // For complex conversions, try the registry
                 let func_name = format!("panasonic_raw_{}", tag_info.name.to_lowercase());
-                crate::registry::get_global_registry()
+                crate::processor_registry::get_global_registry()
                     .write()
                     .unwrap()
                     .apply_print_conv(&func_name, value)
