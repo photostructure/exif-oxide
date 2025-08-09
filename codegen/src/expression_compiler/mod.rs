@@ -55,7 +55,7 @@ pub mod tests;
 
 // Re-export the main API
 use tokenizer::tokenize;
-pub use types::{AstNode, CompType, CompiledExpression, FuncType, OpType};
+pub use types::CompiledExpression;
 // Remove the conflicting use statement - we'll call parser functions directly
 
 impl CompiledExpression {
@@ -74,6 +74,7 @@ impl CompiledExpression {
     }
 
     /// Check if this expression can be compiled (supports all implemented features)
+    #[allow(dead_code)]
     pub fn is_compilable(expr: &str) -> bool {
         // Quick checks for obviously non-compilable expressions
         if expr.contains("abs") || expr.contains("IsFloat") || expr.contains("=~") {

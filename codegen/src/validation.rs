@@ -4,7 +4,6 @@
 //! used in the new modular codegen system.
 
 use anyhow::{Context, Result};
-use jsonschema::{Draft, JSONSchema};
 use serde_json::Value;
 use std::fs;
 use std::path::Path;
@@ -25,10 +24,8 @@ pub fn validate_config(config_path: &Path, schema_path: &Path) -> Result<()> {
     let schema: Value = serde_json::from_str(&schema_content)
         .with_context(|| format!("Failed to parse schema: {}", schema_path.display()))?;
 
-    // Compile the schema
-    let compiled = JSONSchema::options()
-        .with_draft(Draft::Draft7)
-        .compile(&schema)
+    // Create the validator
+    let validator = jsonschema::validator_for(&schema)
         .map_err(|e| anyhow::anyhow!("Failed to compile schema: {}", e))?;
 
     // Read the instance
@@ -44,11 +41,12 @@ pub fn validate_config(config_path: &Path, schema_path: &Path) -> Result<()> {
     let instance: Value = serde_json::from_str(&instance_content)
         .with_context(|| format!("Failed to parse config: {}", config_path.display()))?;
 
-    // Validate
-    let result = compiled.validate(&instance);
+    // Validate and collect all errors
+    let errors: Vec<_> = validator.iter_errors(&instance).collect();
 
-    if let Err(errors) = result {
+    if !errors.is_empty() {
         let error_messages: Vec<String> = errors
+            .iter()
             .map(|error| format!("  - {}: {}", error.instance_path, error))
             .collect();
 

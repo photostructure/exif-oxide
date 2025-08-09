@@ -6,6 +6,7 @@
 #[cfg(test)]
 mod integration_tests {
     use super::super::*;
+    use crate::expression_compiler::types::{AstNode, CompType, FuncType, OpType};
 
     #[test]
     fn test_simple_division() {
@@ -1486,7 +1487,7 @@ mod integration_tests {
 
         // Verify AST structure
         match expr.ast.as_ref() {
-            AstNode::BinaryOp { op, left, right } => {
+            AstNode::BinaryOp { op, left, right: _ } => {
                 assert_eq!(*op, OpType::BitwiseAnd);
                 assert!(matches!(left.as_ref(), AstNode::Variable));
                 // Right side should be a hex number (parsed as decimal for now)

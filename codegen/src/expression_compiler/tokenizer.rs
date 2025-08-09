@@ -169,7 +169,7 @@ pub fn tokenize(expr: &str) -> Result<Vec<ParseToken>, String> {
             ')' => tokens.push(ParseToken::RightParen),
             ',' => tokens.push(ParseToken::Comma), // For parsing argument lists
 
-            _ => return Err(format!("Unexpected character: '{}'", ch)),
+            _ => return Err(format!("Unexpected character: '{ch}'")),
         }
     }
 
@@ -207,7 +207,7 @@ fn parse_variable(chars: &mut Peekable<Chars>) -> Result<ParseToken, String> {
             // Parse index as usize
             let index: usize = index_str
                 .parse()
-                .map_err(|_| format!("Invalid index in $val[{}]", index_str))?;
+                .map_err(|_| format!("Invalid index in $val[{index_str}]"))?;
 
             Ok(ParseToken::ValIndex(index))
         } else {
@@ -215,7 +215,7 @@ fn parse_variable(chars: &mut Peekable<Chars>) -> Result<ParseToken, String> {
             Ok(ParseToken::Variable)
         }
     } else {
-        Err(format!("Expected 'val' after '$', found '{}'", val_chars))
+        Err(format!("Expected 'val' after '$', found '{val_chars}'"))
     }
 }
 
@@ -240,8 +240,7 @@ fn parse_number(first_digit: char, chars: &mut Peekable<Chars>) -> Result<ParseT
         // Convert hex string to decimal
         let hex_part = &number_str[2..]; // Skip "0x"
         let number = i64::from_str_radix(hex_part, 16)
-            .map_err(|_| format!("Invalid hex number: {}", number_str))?
-            as f64;
+            .map_err(|_| format!("Invalid hex number: {number_str}"))? as f64;
         return Ok(ParseToken::Number(number));
     }
 
@@ -256,7 +255,7 @@ fn parse_number(first_digit: char, chars: &mut Peekable<Chars>) -> Result<ParseT
 
     let number: f64 = number_str
         .parse()
-        .map_err(|_| format!("Invalid number: {}", number_str))?;
+        .map_err(|_| format!("Invalid number: {number_str}"))?;
     Ok(ParseToken::Number(number))
 }
 
@@ -330,13 +329,13 @@ fn parse_identifier(first_char: char, chars: &mut Peekable<Chars>) -> Result<Par
                 if identifier.starts_with("Image::ExifTool::") {
                     return Ok(ParseToken::ExifToolFunction(identifier));
                 }
-                return Err(format!("Unknown function: '{}'", identifier));
+                return Err(format!("Unknown function: '{identifier}'"));
             }
         };
     }
 
     // If it's not undef or a function, it's an error for now
-    Err(format!("Unknown identifier: '{}'", identifier))
+    Err(format!("Unknown identifier: '{identifier}'"))
 }
 
 /// Try to parse regex operations (s/// or tr///)

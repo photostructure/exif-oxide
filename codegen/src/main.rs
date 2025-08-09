@@ -22,7 +22,7 @@ mod strategies;
 
 use field_extractor::FieldExtractor;
 use file_operations::create_directories;
-use strategies::{GeneratedFile, StrategyDispatcher};
+use strategies::StrategyDispatcher;
 
 #[derive(Debug, Deserialize, Serialize)]
 struct ExifToolModulesConfig {
@@ -94,7 +94,7 @@ fn main() -> Result<()> {
 }
 
 /// Load default modules from exiftool_modules.json config
-fn load_default_modules(current_dir: &Path) -> Result<Vec<String>> {
+fn load_default_modules(_current_dir: &Path) -> Result<Vec<String>> {
     let config_path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../config/exiftool_modules.json");
     let config_content = fs::read_to_string(&config_path)
         .with_context(|| format!("Failed to read config file: {}", config_path.display()))?;
@@ -125,8 +125,7 @@ fn run_universal_extraction(
 ) -> Result<()> {
     let extractor = FieldExtractor::new();
     let mut dispatcher = StrategyDispatcher::new();
-    let exiftool_base_dir = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../third-party/exiftool");
+    let exiftool_base_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../third-party/exiftool");
 
     info!("🔍 Building ExifTool module paths from configuration");
 
@@ -245,23 +244,24 @@ fn run_universal_extraction(
             Ok(generated_files) => {
                 let strategy_time = strategy_start.elapsed();
                 info!(
-                    "✅ Strategy processing completed in {:.2}s",
-                    strategy_time.as_secs_f64()
+                    "✅ Strategy processing completed in {:.2}s ({} files generated)",
+                    strategy_time.as_secs_f64(),
+                    generated_files.len()
                 );
 
-                // Write generated files to disk
-                let write_start = Instant::now();
-                write_generated_files(&generated_files, output_dir)?;
-                let write_time = write_start.elapsed();
+                // Generate mod.rs files after files are written to disk
+                let mod_update_start = Instant::now();
+                info!("📄 Updating mod.rs files after file generation");
+                update_mod_files(output_dir)?;
+                let mod_update_time = mod_update_start.elapsed();
 
                 info!(
-                    "📁 {} files written in {:.2}s",
-                    generated_files.len(),
-                    write_time.as_secs_f64()
+                    "📝 mod.rs files updated in {:.2}s",
+                    mod_update_time.as_secs_f64()
                 );
                 info!(
                     "🏁 Total field extraction time: {:.2}s",
-                    (extraction_time + strategy_time + write_time).as_secs_f64()
+                    (extraction_time + strategy_time + mod_update_time).as_secs_f64()
                 );
             }
             Err(e) => {
@@ -276,24 +276,229 @@ fn run_universal_extraction(
     Ok(())
 }
 
-/// Write generated files to disk with appropriate directory structure
-fn write_generated_files(files: &[GeneratedFile], base_output_dir: &str) -> Result<()> {
+/// Update all mod.rs files by scanning the filesystem after files are written
+fn update_mod_files(output_dir: &str) -> Result<()> {
+    use std::collections::{BTreeSet, HashMap};
     use std::fs;
+    use std::path::Path;
 
-    for file in files {
-        let full_path = Path::new(base_output_dir).join(&file.path);
+    // Scan filesystem directly to find all module directories and their .rs files
+    let mut modules_with_files = HashMap::new();
 
-        // Create parent directories if they don't exist
-        if let Some(parent) = full_path.parent() {
-            fs::create_dir_all(parent)?;
+    // Read all entries in the output directory
+    for entry in fs::read_dir(output_dir)? {
+        let entry = entry?;
+        let path = entry.path();
+
+        // Only process directories (skip files like composite_tags.rs)
+        if path.is_dir() {
+            let module_name = path.file_name().unwrap().to_string_lossy().to_string();
+
+            // Skip non-module directories, but allow file_types even without mod.rs
+            // (we'll create it below)
+
+            // Find all .rs files in this module directory
+            let mut file_set = BTreeSet::new();
+            for module_file in fs::read_dir(&path)? {
+                let module_file = module_file?;
+                let file_path = module_file.path();
+
+                // Only include .rs files, excluding mod.rs itself
+                if file_path.extension().map_or(false, |ext| ext == "rs") {
+                    if let Some(filename) = file_path.file_stem() {
+                        let filename_str = filename.to_string_lossy().to_string();
+                        if filename_str != "mod" {
+                            file_set.insert(filename_str);
+                        }
+                    }
+                }
+            }
+
+            if !file_set.is_empty() {
+                modules_with_files.insert(module_name, file_set);
+            }
+        }
+    }
+
+    info!(
+        "📝 Creating mod.rs files for {} modules (filesystem scan)",
+        modules_with_files.len()
+    );
+
+    // Create mod.rs files for each module directory
+    for (module_dir, file_set) in &modules_with_files {
+        let module_dir_path = Path::new(output_dir).join(module_dir);
+        let module_mod_path = module_dir_path.join("mod.rs");
+
+        // Ensure the module directory exists
+        if let Err(e) = fs::create_dir_all(&module_dir_path) {
+            warn!(
+                "Failed to create directory {}: {}",
+                module_dir_path.display(),
+                e
+            );
+            continue;
         }
 
-        // Write the file
-        fs::write(&full_path, &file.content)
-            .with_context(|| format!("Failed to write generated file: {}", full_path.display()))?;
+        let mut content = String::new();
+        content.push_str(&format!(
+            "//! Generated module for {}\n",
+            module_dir.strip_suffix("_pm").unwrap_or(module_dir)
+        ));
+        content.push_str("//!\n");
+        content.push_str(
+            "//! This file is auto-generated by codegen/src/main.rs. Do not edit manually.\n\n",
+        );
 
-        debug!("📝 Written: {} ({} bytes)", file.path, file.content.len());
+        // Files are already deduplicated and sorted from BTreeSet
+        // Generate pub mod declarations
+        for filename in file_set {
+            content.push_str(&format!("pub mod {};\n", filename));
+        }
+
+        content.push('\n');
+
+        // Generate re-exports for commonly used items
+        content.push_str("// Re-export commonly used items\n");
+
+        // Always re-export main_tags if it exists
+        if file_set.contains("main_tags") {
+            // Read the actual constant name from the generated main_tags.rs file
+            let main_tags_path = module_dir_path.join("main_tags.rs");
+            if let Ok(main_tags_content) = fs::read_to_string(&main_tags_path) {
+                // Look for the pattern "pub static CONSTANT_NAME: LazyLock"
+                if let Some(start) = main_tags_content.find("pub static ") {
+                    // Find the colon after the constant name (more robust pattern matching)
+                    if let Some(colon_pos) = main_tags_content[start..].find(':') {
+                        let constant_def = &main_tags_content[start..start + colon_pos];
+                        if let Some(const_name) = constant_def.strip_prefix("pub static ") {
+                            // Trim any whitespace from the constant name
+                            let const_name = const_name.trim();
+                            debug!(
+                                "Found MAIN_TAGS constant: '{}' in module {}",
+                                const_name, module_dir
+                            );
+                            content.push_str(&format!("pub use main_tags::{};\n", const_name));
+                        } else {
+                            debug!(
+                                "Failed to parse constant name from: '{}' in module {}",
+                                constant_def, module_dir
+                            );
+                            // Fallback: Use module-prefixed name based on module directory
+                            let module_upper = module_dir.to_uppercase().replace('-', "_");
+                            let expected_const = format!("{}_MAIN_TAGS", module_upper);
+                            debug!("Using fallback constant name: {}", expected_const);
+                            content.push_str(&format!("pub use main_tags::{};\n", expected_const));
+                        }
+                    } else {
+                        debug!("No colon found after 'pub static' in module {}", module_dir);
+                        // Fallback: Use module-prefixed name
+                        let module_upper = module_dir.to_uppercase().replace('-', "_");
+                        let expected_const = format!("{}_MAIN_TAGS", module_upper);
+                        content.push_str(&format!("pub use main_tags::{};\n", expected_const));
+                    }
+                } else {
+                    debug!(
+                        "No 'pub static' found in main_tags.rs for module {}",
+                        module_dir
+                    );
+                    // Fallback: Use module-prefixed name
+                    let module_upper = module_dir.to_uppercase().replace('-', "_");
+                    let expected_const = format!("{}_MAIN_TAGS", module_upper);
+                    content.push_str(&format!("pub use main_tags::{};\n", expected_const));
+                }
+            } else {
+                debug!("Failed to read main_tags.rs for module {}", module_dir);
+                // Fallback: Use module-prefixed name
+                let module_upper = module_dir.to_uppercase().replace('-', "_");
+                let expected_const = format!("{}_MAIN_TAGS", module_upper);
+                content.push_str(&format!("pub use main_tags::{};\n", expected_const));
+            }
+        }
+
+        if let Err(e) = fs::write(&module_mod_path, content) {
+            return Err(anyhow::anyhow!(
+                "Failed to write mod.rs file for module '{}' at path '{}': {}",
+                module_dir,
+                module_mod_path.display(),
+                e
+            ));
+        }
+        debug!(
+            "📄 Created mod.rs for {} with {} files",
+            module_dir,
+            file_set.len()
+        );
     }
+
+    // Completely regenerate main src/generated/mod.rs based purely on generated modules
+    let main_mod_path = Path::new(output_dir).join("mod.rs");
+    let mut main_content = String::new();
+
+    // Generate header from scratch - no manual edits allowed
+    main_content.push_str("//! Generated code module\n");
+    main_content.push_str("//!\n");
+    main_content.push_str(
+        "//! This file is auto-generated by codegen/src/main.rs. Do not edit manually.\n",
+    );
+    main_content.push_str("//!\n");
+    main_content.push_str("//! This module re-exports all generated code for easy access.\n\n");
+
+    // Collect all modules in a BTreeSet for deterministic, sorted output
+    let mut all_modules = BTreeSet::new();
+
+    // Add all generated modules
+    for module_dir in modules_with_files.keys() {
+        all_modules.insert(module_dir.clone());
+    }
+    if Path::new(output_dir).join("composite_tags.rs").exists() {
+        all_modules.insert("composite_tags".to_string());
+    }
+    if Path::new(output_dir).join("supported_tags.rs").exists() {
+        all_modules.insert("supported_tags".to_string());
+    }
+
+    // Generate module declarations in sorted order
+    for module_dir in &all_modules {
+        // Add special attribute for non-snake-case modules
+        main_content.push_str(&format!("pub mod {};\n", module_dir));
+    }
+
+    main_content.push('\n');
+
+    // Add standard re-exports (only if modules exist)
+    main_content.push_str("// Re-export commonly used types and functions\n");
+    if Path::new(output_dir).join("supported_tags.rs").exists() {
+        main_content.push_str("pub use supported_tags::{\n");
+        main_content.push_str(
+            "    SUPPORTED_TAG_COUNT, SUPPORTED_COMPOSITE_TAG_COUNT, TOTAL_SUPPORTED_TAG_COUNT,\n",
+        );
+        main_content.push_str("    SUPPORTED_TAG_NAMES, SUPPORTED_COMPOSITE_TAG_NAMES,\n");
+        main_content.push_str("    tag_counts_by_group, supported_tag_summary\n");
+        main_content.push_str("};\n");
+    }
+    if Path::new(output_dir).join("composite_tags.rs").exists() {
+        main_content.push_str("pub use composite_tags::{CompositeTagDef, COMPOSITE_TAGS, lookup_composite_tag, all_composite_tag_names, composite_tag_count};\n");
+    }
+    main_content.push_str("\n");
+
+    main_content.push_str("/// Initialize all lazy static data structures\n");
+    main_content.push_str(
+        "/// This can be called during startup to avoid lazy initialization costs later\n",
+    );
+    main_content.push_str("pub fn initialize_all() {\n");
+    main_content.push_str("}\n");
+
+    let modules_added = all_modules.len();
+
+    if let Err(e) = fs::write(&main_mod_path, main_content) {
+        return Err(anyhow::anyhow!(
+            "Failed to write main mod.rs file at path '{}': {}",
+            main_mod_path.display(),
+            e
+        ));
+    }
+    info!("📋 Updated main mod.rs with {} new modules", modules_added);
 
     Ok(())
 }

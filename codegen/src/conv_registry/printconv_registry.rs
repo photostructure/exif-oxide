@@ -2,10 +2,40 @@
 //!
 //! This module provides lookup tables for PrintConv expressions, including both
 //! general expressions and tag-specific mappings.
+//!
+//! ## Design: Direct String Matching Without Normalization
+//!
+//! The registry uses **exact string matching** without any normalization.
+//! This means we may have multiple entries for different formatting variations
+//! of the same logical expression:
+//!
+//! ```rust
+//! use std::collections::HashMap;
+//! let mut m: HashMap<&str, (&str, &str)> = HashMap::new();
+//! // Both entries map to the same function
+//! m.insert("sprintf(\"%.1f mm\",$val)", ("module", "func"));
+//! m.insert("sprintf(\"%.1f mm\", $val)", ("module", "func"));  // Note space after comma
+//! ```
+//!
+//! ### Why This Approach?
+//!
+//! See `normalization.rs` for the full rationale. In brief:
+//! - **Performance**: No Perl subprocess calls (was 80,000+ calls)
+//! - **Simplicity**: Direct string equality, no complex parsing
+//! - **Predictability**: What you see in ExifTool is what goes in the registry
+//!
+//! ### Adding New Entries
+//!
+//! When you encounter a PrintConv expression that's not in the registry:
+//! 1. Copy it EXACTLY as it appears in ExifTool source
+//! 2. Add it to the appropriate registry (general or tag-specific)
+//! 3. If you later find a formatting variation, add that too
+//!
+//! The slight duplication is worth the massive performance gain.
 
 use std::collections::HashMap;
 use std::sync::LazyLock;
-use tracing::{debug, trace, warn};
+use tracing::trace;
 
 // Registry maps Perl expressions to (module_path, function_name)
 static PRINTCONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'static str)>> =
@@ -298,7 +328,7 @@ pub fn lookup_tag_specific_printconv(
     tag_name: &str,
 ) -> Option<(&'static str, &'static str)> {
     // First try module-specific lookup
-    let module_key = format!("{}::{}", module, tag_name);
+    let module_key = format!("{module}::{tag_name}");
     if let Some(result) = TAG_SPECIFIC_PRINTCONV.get(module_key.as_str()).copied() {
         return Some(result);
     }
@@ -340,6 +370,15 @@ pub fn lookup_printconv(expr: &str, module: &str) -> Option<(&'static str, &'sta
 
 /// Alias for lookup_printconv (kept for backwards compatibility)
 /// Since we no longer normalize, this is identical to lookup_printconv
+///
+/// # Deprecated
+/// This function is redundant and will be removed in a future version.
+/// Use `lookup_printconv` directly instead.
+#[deprecated(
+    since = "0.1.0",
+    note = "Use lookup_printconv directly. This alias is redundant and will be removed."
+)]
+#[allow(dead_code)]
 pub fn lookup_printconv_direct(expr: &str, module: &str) -> Option<(&'static str, &'static str)> {
     lookup_printconv(expr, module)
 }
