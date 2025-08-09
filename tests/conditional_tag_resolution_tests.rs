@@ -10,7 +10,7 @@
 
 use exif_oxide::expressions::{parse_expression, ExpressionEvaluator};
 // TODO: Re-enable when conditional tags are generated
-// use exif_oxide::generated::canon::main_conditional_tags::{
+// use exif_oxide::generated::Canon_pm::main_conditional_tags::{
 //     CanonConditionalTags, ConditionalContext,
 // };
 use exif_oxide::processor_registry::ProcessorContext;
