@@ -4,14 +4,10 @@ version = "0.1.0"
 edition = "2021"
 authors = ["exif-oxide@photostructure.com"]
 description = "Code generation tool for exif-oxide"
-default-run = "generate_rust"
-
-[lib]
-name = "codegen"
-path = "src/lib.rs"
+default-run = "codegen"
 
 [[bin]]
-name = "generate_rust"
+name = "codegen"
 path = "src/main.rs"
 
 [dependencies]

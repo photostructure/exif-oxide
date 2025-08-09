@@ -1,3 +1,7 @@
+[workspace]
+members = [".", "codegen"]
+resolver = "2"
+
 [package]
 name = "exif-oxide"
 version = "0.2.0-dev"
