@@ -305,7 +305,7 @@ pub fn get_canon_tag_name(_tag_id: u16) -> Option<&'static str> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::generated::canon::main_tags::CANON_MAIN_TAGS;
+    use crate::generated::Canon_pm::main_tags::CANON_MAIN_TAGS;
 
     #[test]
     fn test_canon_format_names() {

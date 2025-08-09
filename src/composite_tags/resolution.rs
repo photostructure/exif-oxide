@@ -7,8 +7,8 @@
 use std::collections::{HashMap, HashSet};
 use tracing::{debug, trace};
 
-use crate::generated::exif::main_tags::EXIF_MAIN_TAGS;
-use crate::generated::gps::main_tags::GPS_MAIN_TAGS;
+use crate::generated::Exif_pm::main_tags::EXIF_MAIN_TAGS;
+use crate::generated::GPS_pm::main_tags::GPS_MAIN_TAGS;
 use crate::types::TagValue;
 
 /// Build the initial available tags map from extracted tags with group prefixes

@@ -30,7 +30,7 @@ pub fn prd_bayer_pattern_print_conv(val: &TagValue) -> TagValue {
 /// Using MinoltaRaw tag kit system: ProgramMode has tag ID 5
 pub fn rif_program_mode_print_conv(val: &TagValue) -> TagValue {
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::minolta_raw::main_tags;
+    use crate::generated::MinoltaRaw_pm::main_tags;
 
     let mut evaluator = ExpressionEvaluator::new();
     let mut errors = Vec::new();
@@ -45,7 +45,7 @@ pub fn rif_program_mode_print_conv(val: &TagValue) -> TagValue {
 /// Using MinoltaRaw tag kit system: ZoneMatching has tag ID 58
 pub fn rif_zone_matching_print_conv(val: &TagValue) -> TagValue {
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::minolta_raw::main_tags;
+    use crate::generated::MinoltaRaw_pm::main_tags;
 
     let mut evaluator = ExpressionEvaluator::new();
     let mut errors = Vec::new();
@@ -60,7 +60,7 @@ pub fn rif_zone_matching_print_conv(val: &TagValue) -> TagValue {
 /// Using MinoltaRaw tag kit system: ZoneMatching74 has tag ID 74
 pub fn rif_zone_matching_74_print_conv(val: &TagValue) -> TagValue {
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::minolta_raw::main_tags;
+    use crate::generated::MinoltaRaw_pm::main_tags;
 
     let mut evaluator = ExpressionEvaluator::new();
     let mut errors = Vec::new();

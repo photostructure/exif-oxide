@@ -7,7 +7,7 @@
 //!
 //! lib/Image/ExifTool/Olympus.pm - Equipment section, CameraSettings, FocusInfo, etc.
 
-use crate::generated::olympus::{
+use crate::generated::Olympus_pm::{
     olympus_camera_types::lookup_olympus_camera_types,
     olympus_lens_types::lookup_olympus_lens_types,
 };

@@ -18,7 +18,7 @@ pub fn get_candidates_from_extension(path: &Path) -> Result<Vec<String>, FileDet
 
     // Resolve through fileTypeLookup with alias following
     // ExifTool.pm:258-404 %fileTypeLookup hash defines extension mappings
-    use crate::generated::exif_tool::file_type_lookup::resolve_file_type;
+    use crate::generated::ExifTool_pm::file_type_lookup::resolve_file_type;
 
     // Check if this extension is known to ExifTool
     let is_known_extension = resolve_file_type(&normalized_ext).is_some();
@@ -71,7 +71,7 @@ pub fn has_processing_module(file_type: &str) -> bool {
     // In ExifTool, having a module means it can be processed even without magic match
     // Notable examples include JXL -> Jpeg2000 module
     // We check if the file type has a defined format/processing path
-    use crate::generated::exif_tool::file_type_lookup::resolve_file_type;
+    use crate::generated::ExifTool_pm::file_type_lookup::resolve_file_type;
 
     // If resolve_file_type returns Some, it means ExifTool knows how to process this type
     resolve_file_type(file_type).is_some()
