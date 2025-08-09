@@ -556,7 +556,9 @@ impl BinaryDataProcessor for SonyCameraSettingsProcessor {
         // ExifTool: Sony.pm line 4184
         if let Some(wb_setting) = read_u16(0x05) {
             if let Some(wb_desc) =
-                sony::whitebalancesetting::lookup_sony_white_balance_setting(wb_setting)
+                crate::generated::sony::white_balance_setting::lookup_white_balance_setting(
+                    wb_setting as u8,
+                )
             {
                 result.extracted_tags.insert(
                     "WhiteBalanceSetting".to_string(),

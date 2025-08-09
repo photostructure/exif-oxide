@@ -252,7 +252,7 @@ impl ExifReader {
         if let Some(source) = source_info {
             if source.ifd_name == "GPS" {
                 // For GPS IFD tags, check GPS tag kit first
-                if let Some(tag_def) = GPS_PM_TAG_KITS.get(&(tag_id as u32)) {
+                if let Some(tag_def) = GPS_PM_TAG_KITS.get(&tag_id) {
                     return tag_def.name.to_string();
                 }
             }
@@ -261,7 +261,7 @@ impl ExifReader {
             // Sony tags may have namespace "Sony" or "MakerNotes" depending on extraction path
             if source.namespace == "Sony" || source.namespace == "MakerNotes" {
                 // For Sony or MakerNotes tags, check Sony tag kit first
-                if let Some(tag_def) = SONY_PM_TAG_KITS.get(&(tag_id as u32)) {
+                if let Some(tag_def) = SONY_PM_TAG_KITS.get(&tag_id) {
                     tracing::debug!("Found Sony tag name for 0x{:x}: {}", tag_id, tag_def.name);
                     return tag_def.name.to_string();
                 } else {
@@ -276,11 +276,11 @@ impl ExifReader {
 
         // For all other IFDs, check EXIF tag kit first, then GPS as fallback
         EXIF_PM_TAG_KITS
-            .get(&(tag_id as u32))
+            .get(&tag_id)
             .map(|tag_def| tag_def.name.to_string())
             .or_else(|| {
                 GPS_PM_TAG_KITS
-                    .get(&(tag_id as u32))
+                    .get(&tag_id)
                     .map(|tag_def| tag_def.name.to_string())
             })
             .unwrap_or_else(|| Self::generate_tag_prefix_name(tag_id, source_info))
@@ -353,11 +353,11 @@ impl ExifReader {
                         } else {
                             // Fall through to standard lookup if not a known Panasonic tag
                             EXIF_PM_TAG_KITS
-                                .get(&(tag_id as u32))
+                                .get(&tag_id)
                                 .map(|tag_def| tag_def.name.to_string())
                                 .or_else(|| {
                                     GPS_PM_TAG_KITS
-                                        .get(&(tag_id as u32))
+                                        .get(&tag_id)
                                         .map(|tag_def| tag_def.name.to_string())
                                 })
                                 .unwrap_or_else(|| {
@@ -542,11 +542,11 @@ impl ExifReader {
                                 // (e.g., tag 0x0002 is GPSLatitude in GPS IFD, InteropVersion in InteropIFD)
                                 ("GPS", _) => {
                                     let name = GPS_PM_TAG_KITS
-                                        .get(&(tag_id as u32))
+                                        .get(&tag_id)
                                         .map(|def| def.name.to_string())
                                         .or_else(|| {
                                             EXIF_PM_TAG_KITS
-                                                .get(&(tag_id as u32))
+                                                .get(&tag_id)
                                                 .map(|def| def.name.to_string())
                                         })
                                         .unwrap_or_else(|| {
@@ -558,11 +558,11 @@ impl ExifReader {
                                 // All other contexts use global lookup
                                 _ => {
                                     let name = EXIF_PM_TAG_KITS
-                                        .get(&(tag_id as u32))
+                                        .get(&tag_id)
                                         .map(|def| def.name.to_string())
                                         .or_else(|| {
                                             GPS_PM_TAG_KITS
-                                                .get(&(tag_id as u32))
+                                                .get(&tag_id)
                                                 .map(|def| def.name.to_string())
                                         })
                                         .unwrap_or_else(|| {
@@ -809,22 +809,10 @@ impl ExifReader {
         count: Option<u32>,
         format: Option<String>,
         binary_data: Option<Vec<u8>>,
-    ) -> crate::generated::canon::main_conditional_tags::ConditionalContext {
-        let make = self
-            .get_tag_across_namespaces(0x010F)
-            .and_then(|v| v.as_string())
-            .map(|s| s.to_string());
-        let model = self
-            .get_tag_across_namespaces(0x0110)
-            .and_then(|v| v.as_string())
-            .map(|s| s.to_string());
-        crate::generated::canon::main_conditional_tags::ConditionalContext {
-            make,
-            model,
-            count,
-            format,
-            binary_data,
-        }
+    ) -> () {
+        // TODO P07: Generate main_conditional_tags
+        // TODO P07: Implement conditional context when main_conditional_tags is generated
+        ()
     }
 
     /// Create ConditionalContext for FujiFilm conditional tag resolution
@@ -832,21 +820,10 @@ impl ExifReader {
         &self,
         count: Option<u32>,
         format: Option<String>,
-    ) -> crate::generated::fuji_film::main_model_detection::ConditionalContext {
-        let make = self
-            .get_tag_across_namespaces(0x010F)
-            .and_then(|v| v.as_string())
-            .map(|s| s.to_string());
-        let model = self
-            .get_tag_across_namespaces(0x0110)
-            .and_then(|v| v.as_string())
-            .map(|s| s.to_string());
-        crate::generated::fuji_film::main_model_detection::ConditionalContext {
-            make,
-            model,
-            count,
-            format,
-        }
+    ) -> () {
+        // TODO P07: Generate main_model_detection
+        // TODO P07: Implement FujiFilm conditional context when main_model_detection is generated
+        ()
     }
 
     /// Resolve conditional tag name using manufacturer-specific logic
@@ -858,47 +835,48 @@ impl ExifReader {
         format: Option<String>,
         binary_data: Option<Vec<u8>>,
     ) -> Option<String> {
+        // TODO P07: Conditional resolution disabled until main_conditional_tags and main_model_detection are generated
         // Only perform conditional resolution for Canon tags when we have Canon context
-        if let Some(make) = self
-            .get_tag_across_namespaces(0x010F)
-            .and_then(|v| v.as_string())
-        {
-            if make.contains("Canon") {
-                let context = self.create_conditional_context(count, format, binary_data);
-                let canon_resolver =
-                    crate::generated::canon::main_conditional_tags::CanonConditionalTags::new();
-
-                if let Some(resolved) = canon_resolver.resolve_tag(&tag_id.to_string(), &context) {
-                    trace!(
-                        "Conditional tag resolution: 0x{:04x} -> {} (subdirectory: {}, writable: {})",
-                        tag_id, resolved.name, resolved.subdirectory, resolved.writable
-                    );
-                    return Some(resolved.name);
-                }
-            } else if make.contains("FUJIFILM") {
-                let context = self.create_fujifilm_conditional_context(count, format);
-                let model = self
-                    .get_tag_across_namespaces(0x0110) // Model tag
-                    .and_then(|v| v.as_string())
-                    .unwrap_or("")
-                    .to_string();
-                let fujifilm_resolver =
-                    crate::generated::fuji_film::main_model_detection::FujiFilmModelDetection::new(
-                        model,
-                    );
-
-                if let Some(resolved_name) =
-                    fujifilm_resolver.resolve_conditional_tag(&tag_id.to_string(), &context)
-                {
-                    trace!(
-                        "FujiFilm conditional tag resolution: 0x{:04x} -> {}",
-                        tag_id,
-                        resolved_name
-                    );
-                    return Some(resolved_name.to_string());
-                }
-            }
-        }
+        // if let Some(make) = self
+        //     .get_tag_across_namespaces(0x010F)
+        //     .and_then(|v| v.as_string())
+        // {
+        //     if make.contains("Canon") {
+        //         let context = self.create_conditional_context(count, format, binary_data);
+        //         let canon_resolver =
+        //             crate::generated::canon::main_conditional_tags::CanonConditionalTags::new();
+        //
+        //         if let Some(resolved) = canon_resolver.resolve_tag(&tag_id.to_string(), &context) {
+        //             trace!(
+        //                 "Conditional tag resolution: 0x{:04x} -> {} (subdirectory: {}, writable: {})",
+        //                 tag_id, resolved.name, resolved.subdirectory, resolved.writable
+        //             );
+        //             return Some(resolved.name);
+        //         }
+        //     } else if make.contains("FUJIFILM") {
+        //         let context = self.create_fujifilm_conditional_context(count, format);
+        //         let model = self
+        //             .get_tag_across_namespaces(0x0110) // Model tag
+        //             .and_then(|v| v.as_string())
+        //             .unwrap_or("")
+        //             .to_string();
+        //         let fujifilm_resolver =
+        //             crate::generated::fuji_film::main_model_detection::FujiFilmModelDetection::new(
+        //                 model,
+        //             );
+        //
+        //         if let Some(resolved_name) =
+        //             fujifilm_resolver.resolve_conditional_tag(&tag_id.to_string(), &context)
+        //         {
+        //             trace!(
+        //                 "FujiFilm conditional tag resolution: 0x{:04x} -> {}",
+        //                 tag_id,
+        //                 resolved_name
+        //             );
+        //             return Some(resolved_name.to_string());
+        //         }
+        //     }
+        // }
 
         None
     }
