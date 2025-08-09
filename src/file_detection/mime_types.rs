@@ -3,7 +3,7 @@
 //! Provides MIME type lookup with fallback strategies.
 
 use super::{FileDetectionError, FileTypeDetectionResult};
-use crate::generated::exif_tool::mime_type::lookup_mime_types;
+use crate::generated::ExifTool_pm::mime_type::lookup_mime_types;
 use std::path::Path;
 
 /// Build final detection result from file type
@@ -12,7 +12,7 @@ pub fn build_result(
     path: &Path,
 ) -> Result<FileTypeDetectionResult, FileDetectionError> {
     // Get primary format for processing
-    use crate::generated::exif_tool::file_type_lookup::resolve_file_type;
+    use crate::generated::ExifTool_pm::file_type_lookup::resolve_file_type;
     let (format, description) = if let Some((formats, desc)) = resolve_file_type(file_type) {
         (formats[0].to_string(), desc.to_string())
     } else {

@@ -96,7 +96,7 @@ pub fn is_olympus_makernote(make: &str) -> bool {
 /// Find Olympus tag ID by name from the tag kit system
 /// Used for applying PrintConv to subdirectory-extracted tags
 fn find_olympus_tag_id_by_name(tag_name: &str) -> Option<u32> {
-    use crate::generated::olympus::OLYMPUS_MAIN_TAGS;
+    use crate::generated::Olympus_pm::OLYMPUS_MAIN_TAGS;
 
     // Search through all Olympus main tags entries to find matching name
     for (&tag_id, tag_def) in OLYMPUS_MAIN_TAGS.iter() {
@@ -387,7 +387,7 @@ pub fn process_olympus_subdirectory_tags(
 ) -> crate::types::Result<()> {
     use crate::exif::subdirectory_processing::process_subdirectories_with_printconv;
     // TODO: Task E - Replace tag_kit functions with manufacturer-specific implementations
-    // use crate::generated::olympus::tag_kit;
+    // use crate::generated::Olympus_pm::tag_kit;
     use crate::tiff_types::ByteOrder;
     use crate::types::TagValue;
     use tracing::debug;

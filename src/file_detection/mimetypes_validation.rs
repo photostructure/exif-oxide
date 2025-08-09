@@ -9,10 +9,7 @@ use std::io::Cursor;
 /// Generate test formats from our codegen'd data rather than hardcoding
 /// This ensures we test exactly what we support and stays in sync with ExifTool updates
 fn get_test_formats() -> Vec<(String, String)> {
-    // Import directly since file_types module isn't declared in generated::mod
-    #[path = "../../generated/file_types/file_type_lookup.rs"]
-    mod file_type_lookup;
-    use file_type_lookup::FILE_TYPE_EXTENSIONS;
+    use crate::generated::ExifTool_pm::file_type_lookup::FILE_TYPE_EXTENSIONS;
 
     let mut formats = Vec::new();
     let detector = super::FileTypeDetector::new();
@@ -232,7 +229,7 @@ fn test_raw_format_coverage() {
 
         // Verify we have MIME type mapping
         let file_type = &candidates[0];
-        let mime_type = crate::generated::exif_tool::mime_type::lookup_mime_types(file_type);
+        let mime_type = crate::generated::ExifTool_pm::mime_type::lookup_mime_types(file_type);
         assert!(
             mime_type.is_some(),
             "No MIME type mapping for RAW format: {ext} (file type: {file_type})"

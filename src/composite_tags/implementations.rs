@@ -1366,17 +1366,13 @@ pub fn compute_lens_id(available_tags: &HashMap<String, TagValue>) -> Option<Tag
         if let Some(lens_model) = available_tags.get("EXIF:LensModel") {
             if let Some(lens_string) = lens_model.as_string() {
                 // Try to find a match in the olympusLensTypes table for the EXIF lens model
-                use crate::generated::olympus::olympus_lens_types::lookup_olympus_lens_types;
+                use crate::generated::Olympus_pm::olympus_lens_types::lookup_olympus_lens_types;
 
                 // Extract focal length range from EXIF:LensModel (e.g., "14-42mm")
                 if lens_string.contains("14-42") {
                     // Look for 14-42mm lenses in the lookup table
                     for key in ["0 21 10", "0 01 10", "0 05 10", "0 09 10", "0 13 10"] {
-                        if let Some(lens_name) =
-                            lookup_olympus_lens_types(
-                                key,
-                            )
-                        {
+                        if let Some(lens_name) = lookup_olympus_lens_types(key) {
                             if lens_name.contains("14-42") {
                                 trace!(
                                     "Found Olympus lens match: key '{}' -> '{}'",
@@ -1405,7 +1401,7 @@ pub fn compute_lens_id(available_tags: &HashMap<String, TagValue>) -> Option<Tag
             // that should be converted to hex key format: sprintf("%x %.2x %.2x", @a[0,2,3])
             // For now, check if we can find the lens name in the olympusLensTypes table
 
-            use crate::generated::olympus::olympus_lens_types::lookup_olympus_lens_types;
+            use crate::generated::Olympus_pm::olympus_lens_types::lookup_olympus_lens_types;
 
             if let Some(lens_string) = lens_type.as_string() {
                 // Current approach: try to match the full lens name
@@ -1417,7 +1413,7 @@ pub fn compute_lens_id(available_tags: &HashMap<String, TagValue>) -> Option<Tag
                     "0 21 10", "0 01 10", "0 05 10", "0 03 10", "0 04 10", "0 06 10",
                 ] {
                     if let Some(lens_name) =
-                        crate::generated::olympus::olympus_lens_types::lookup_olympus_lens_types(
+                        crate::generated::Olympus_pm::olympus_lens_types::lookup_olympus_lens_types(
                             key,
                         )
                     {

@@ -2,7 +2,7 @@
 // Implements ExifTool's signature-based manufacturer detection
 // Based on third-party/exiftool/lib/Image/ExifTool/MakerNotes.pm
 
-use crate::generated::fuji_film::main_tags::FUJI_FILM_MAIN_TAGS;
+use crate::generated::FujiFilm_pm::main_tags::FUJI_FILM_MAIN_TAGS;
 use crate::tiff_types::ByteOrder;
 use crate::types::{Result, TagValue};
 use tracing::{debug, trace};

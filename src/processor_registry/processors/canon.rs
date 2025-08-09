@@ -330,7 +330,7 @@ impl BinaryDataProcessor for CanonMainProcessor {
             context.data_offset,
             byte_order,
             "Canon",
-            crate::generated::canon::process_subdirectory,
+            crate::generated::Canon_pm::process_subdirectory,
         );
 
         match extracted_tags {
@@ -386,7 +386,7 @@ impl BinaryDataProcessor for CanonMainProcessor {
 /// ```rust,ignore
 /// let tags = extract_makernotes_via_tag_kit(
 ///     data, offset, byte_order, "Canon",
-///     crate::generated::canon::process_subdirectory
+///     crate::generated::Canon_pm::process_subdirectory
 /// )?;
 /// ```
 fn extract_makernotes_via_tag_kit(
@@ -499,7 +499,7 @@ fn extract_makernotes_via_tag_kit(
                     let mut errors = Vec::new();
                     let mut warnings = Vec::new();
 
-                    let print_value = crate::generated::canon::apply_print_conv(
+                    let print_value = crate::generated::Canon_pm::apply_print_conv(
                         entry.tag_id as u32,
                         &tag_value,
                         &mut evaluator,

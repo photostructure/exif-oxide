@@ -11,7 +11,7 @@
 //! - ExifTool's ProcessBinaryData with FORMAT => 'int16s', FIRST_ENTRY => 1
 
 use crate::expressions::ExpressionEvaluator;
-use crate::generated::canon::main_tags::CANON_MAIN_TAGS;
+use crate::generated::Canon_pm::main_tags::CANON_MAIN_TAGS;
 use crate::tiff_types::ByteOrder;
 use crate::types::{
     BinaryDataFormat, BinaryDataTable, BinaryDataTag, ExifError, PrintConv, Result, TagValue,
@@ -345,7 +345,7 @@ pub fn extract_focal_length(
 
     // Use Canon tag kit system for PrintConv lookups
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::canon;
+    use crate::generated::Canon_pm;
 
     // Extract FocalType (index 0)
     // ExifTool: Canon.pm:2643 Name => 'FocalType'
@@ -455,7 +455,7 @@ pub fn extract_shot_info(
 
     // Use Canon tag kit system for PrintConv lookups
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::canon;
+    use crate::generated::Canon_pm;
 
     // Extract AutoISO (index 1)
     // ExifTool: Canon.pm:2724 Name => 'AutoISO'
@@ -684,7 +684,7 @@ pub fn extract_panorama(
 
     // Use Canon tag kit system for PrintConv lookups
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::canon;
+    use crate::generated::Canon_pm;
 
     // Canon Panorama format: int16s (signed 16-bit), starting at index 0
     // ExifTool: Canon.pm:3001 FORMAT => 'int16s', FIRST_ENTRY => 0
@@ -751,7 +751,7 @@ pub fn extract_my_colors(
 
     // Use Canon tag kit system for PrintConv lookups
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::canon;
+    use crate::generated::Canon_pm;
 
     // Canon MyColors format: int16u (unsigned 16-bit), starting at index 0
     // ExifTool: Canon.pm:3133 FORMAT => 'int16u', FIRST_ENTRY => 0
@@ -1884,7 +1884,7 @@ mod tests {
 
         // For debugging: also test with tag ID directly
         use crate::expressions::ExpressionEvaluator;
-        use crate::generated::canon;
+        use crate::generated::Canon_pm;
         let mut evaluator = ExpressionEvaluator::new();
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
@@ -1898,7 +1898,7 @@ mod tests {
         println!("Warnings: {:?}", warnings);
 
         // Check if tag ID 1 is in CANON_MAIN_TAGS
-        use crate::generated::canon::main_tags::CANON_MAIN_TAGS;
+        use crate::generated::Canon_pm::main_tags::CANON_MAIN_TAGS;
         if let Some(tag_def) = CANON_MAIN_TAGS.get(&1) {
             println!(
                 "Tag ID 1 found in CANON_MAIN_TAGS: name={}, print_conv={:?}",

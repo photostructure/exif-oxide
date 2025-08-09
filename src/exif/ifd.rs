@@ -843,8 +843,8 @@ impl ExifReader {
     /// Get tag name from tag kits
     /// ExifTool: Uses format-specific tag tables with conditional logic
     fn get_tag_name(&self, tag_id: u16, ifd_name: &str) -> String {
-        use crate::generated::exif::main_tags;
-        use crate::generated::gps::main_tags as gps_tag_kit;
+        use crate::generated::Exif_pm::main_tags;
+        use crate::generated::GPS_pm::main_tags as gps_tag_kit;
 
         // For GPS IFD, check GPS tag kit first to avoid conflicts
         // (e.g., tag 0x0002 is GPSLatitude in GPS IFD, InteropVersion in InteropIFD)

@@ -155,7 +155,7 @@ impl FileTypeDetector {
             // Special handling for MOV format to determine specific subtype
             // ExifTool QuickTime.pm:9868-9877 - ftyp brand determines actual file type
             // CRITICAL: Check against the format, not the file type
-            use crate::generated::exif_tool::file_type_lookup::resolve_file_type;
+            use crate::generated::ExifTool_pm::file_type_lookup::resolve_file_type;
             let format = if let Some((formats, _)) = resolve_file_type(&file_type) {
                 formats[0]
             } else {
@@ -208,7 +208,7 @@ impl FileTypeDetector {
 
         // If no direct match, check if this file type has a format that has magic patterns
         // ExifTool uses the format (MOV, TIFF, etc.) for magic pattern matching
-        use crate::generated::exif_tool::file_type_lookup::resolve_file_type;
+        use crate::generated::ExifTool_pm::file_type_lookup::resolve_file_type;
         if let Some((formats, _desc)) = resolve_file_type(file_type) {
             // Try magic pattern for the primary format
             if matches_magic_number(formats[0], buffer) {

@@ -8,7 +8,7 @@
 //! Generated tags: src/generated/panasonic_raw/main_tags.rs
 
 use crate::expressions::ExpressionEvaluator;
-use crate::generated::panasonic_raw::main_tags::PANASONIC_RAW_MAIN_TAGS;
+use crate::generated::PanasonicRaw_pm::main_tags::PANASONIC_RAW_MAIN_TAGS;
 use crate::types::{PrintConv, TagValue};
 use tracing::debug;
 

@@ -12,7 +12,7 @@ use crate::types::TagValue;
 /// ExifTool: lib/Image/ExifTool/Exif.pm:281-290 (%orientation hash)
 /// Generated table: src/generated/exif_pm/mod.rs
 pub fn orientation_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::exif::orientation::lookup_orientation;
+    use crate::generated::Exif_pm::orientation::lookup_orientation;
 
     // Handle both u8 and u16 types - orientation values are 1-8 so fit in u8
     let orientation_val = match val {
@@ -225,7 +225,7 @@ fn gps_coordinate_to_dms_with_direction(val: &TagValue, is_latitude: bool) -> Ta
 /// Generated lookup: src/generated/exif_pm/flash.rs
 /// NOTE: This is NOT a bitmask conversion - ExifTool uses direct hash lookup for specific combined values
 pub fn flash_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::exif::flash::lookup_flash;
+    use crate::generated::Exif_pm::flash::lookup_flash;
 
     match val.as_u16() {
         Some(flash_val) => {

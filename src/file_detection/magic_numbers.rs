@@ -3,7 +3,7 @@
 //! Handles the two-HashMap magic number system with fast literal matching
 //! and regex fallback for complex patterns.
 
-use crate::generated::exif_tool::magic_numbers::{LITERAL_MAGIC_NUMBERS, REGEX_MAGIC_NUMBERS};
+use crate::generated::ExifTool_pm::magic_numbers::{LITERAL_MAGIC_NUMBERS, REGEX_MAGIC_NUMBERS};
 
 /// Match magic number patterns using the two-HashMap system
 /// First tries literal patterns (fast), then falls back to regex patterns (slower)
