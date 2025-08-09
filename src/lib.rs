@@ -47,7 +47,8 @@ pub use generated::*;
 pub use registry::Registry;
 pub use types::{ExifData, ExifError, FilterOptions, TagValue};
 
-pub use generated::COMPOSITE_TAG_LOOKUP as COMPOSITE_TAG_BY_NAME;
+// P07: COMPOSITE_TAG_LOOKUP doesn't exist yet, using lookup_composite_tag function instead
+// pub use generated::COMPOSITE_TAG_LOOKUP as COMPOSITE_TAG_BY_NAME;
 
 // Initialize all conversion implementations when library is loaded
 use std::sync::LazyLock;

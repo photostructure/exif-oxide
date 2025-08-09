@@ -16,7 +16,7 @@ use crate::types::{DirectoryInfo, Result, TagValue};
 use tracing;
 
 // Use generated Olympus tag structure enum
-// use crate::generated::olympus_pm::tag_structure::OlympusDataType; // Not generated yet
+// use crate::generated::olympus::tag_structure::OlympusDataType; // Not generated yet
 
 /// Olympus RAW format handler
 /// ExifTool: lib/Image/ExifTool/Olympus.pm - TIFF-based with dual processing modes

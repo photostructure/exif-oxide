@@ -101,7 +101,7 @@ fn find_olympus_tag_id_by_name(tag_name: &str) -> Option<u32> {
     // Search through all Olympus main tags entries to find matching name
     for (&tag_id, tag_def) in OLYMPUS_MAIN_TAGS.iter() {
         if tag_def.name == tag_name {
-            return Some(tag_id);
+            return Some(tag_id.into());
         }
     }
     None

@@ -112,12 +112,12 @@ pub fn process_nikon_makernotes(reader: &mut ExifReader, offset: usize) -> Resul
 /// Find Nikon tag ID by name from the tag kit system
 /// Used for applying PrintConv to subdirectory-extracted tags
 fn find_nikon_tag_id_by_name(tag_name: &str) -> Option<u32> {
-    use crate::generated::nikon_pm::tag_kit::NIKON_PM_TAG_KITS;
+    use crate::generated::nikon::main_tags::NIKON_MAIN_TAGS;
 
     // Search through all Nikon tag kit entries to find matching name
-    for (&tag_id, tag_def) in NIKON_PM_TAG_KITS.iter() {
+    for (&tag_id, tag_def) in NIKON_MAIN_TAGS.iter() {
         if tag_def.name == tag_name {
-            return Some(tag_id);
+            return Some(tag_id.into());
         }
     }
     None
@@ -127,21 +127,22 @@ fn find_nikon_tag_id_by_name(tag_name: &str) -> Option<u32> {
 /// ExifTool: Nikon.pm SubDirectory processing for binary data expansion
 pub fn process_nikon_subdirectory_tags(exif_reader: &mut ExifReader) -> Result<()> {
     use crate::exif::subdirectory_processing::process_subdirectories_with_printconv;
-    use crate::generated::nikon_pm::tag_kit;
+    use crate::generated::nikon::tag_kit;
 
     debug!("Processing Nikon subdirectory tags using generic system");
 
     // Use the generic subdirectory processing with Nikon-specific functions
     // Fix Group1 assignment: Use "Nikon" as namespace for group1="Nikon" instead of "MakerNotes"
-    process_subdirectories_with_printconv(
-        exif_reader,
-        "Nikon",
-        "Nikon",
-        tag_kit::has_subdirectory,
-        tag_kit::process_subdirectory,
-        tag_kit::apply_print_conv,
-        find_nikon_tag_id_by_name,
-    )?;
+    // TODO: P07 Task E - Replace tag_kit functions with manufacturer-specific implementations
+    // process_subdirectories_with_printconv(
+    //     exif_reader,
+    //     "Nikon",
+    //     "Nikon",
+    //     tag_kit::has_subdirectory,
+    //     tag_kit::process_subdirectory,
+    //     tag_kit::apply_print_conv,
+    //     find_nikon_tag_id_by_name,
+    // )?;
 
     debug!("Nikon subdirectory processing completed");
     Ok(())

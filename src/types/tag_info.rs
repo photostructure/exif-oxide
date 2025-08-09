@@ -15,6 +15,9 @@ pub struct TagInfo {
 
     /// PrintConv conversion logic (if any)
     pub print_conv: Option<PrintConv>,
+
+    /// ValueConv conversion logic (if any)
+    pub value_conv: Option<ValueConv>,
 }
 
 /// Binary data entry from ProcessBinaryData tables
@@ -64,6 +67,9 @@ pub enum PrintConv {
     /// Expression to evaluate
     Expression(String),
 
+    /// Direct function call (zero-overhead)
+    Function(fn(&crate::types::TagValue) -> crate::types::TagValue),
+
     /// Complex conversion requiring custom logic
     Complex,
 }
@@ -79,6 +85,11 @@ pub enum ValueConv {
 
     /// Expression to evaluate
     Expression(String),
+
+    /// Direct function call (zero-overhead)
+    Function(
+        fn(&crate::types::TagValue) -> Result<crate::types::TagValue, crate::types::ExifError>,
+    ),
 
     /// Complex conversion requiring custom logic
     Complex,

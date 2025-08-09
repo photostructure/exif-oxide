@@ -155,7 +155,7 @@ pub fn nikon_sharpness_conv(value: &crate::types::TagValue) -> Result<String, St
 /// ExifTool: Nikon.pm lines 1004-1009 %focusModeZ7
 /// Generated lookup: src/generated/nikon_pm/focusmodez7.rs
 pub fn nikon_focus_mode_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    use crate::generated::nikon::lookup_focus_mode_z7;
+    use crate::generated::nikon::focus_mode_z7::lookup_focus_mode_z7;
 
     // Handle string values first (some cameras store focus mode as strings)
     if let crate::types::TagValue::String(s) = value {
@@ -319,7 +319,7 @@ pub fn nikon_scene_mode_conv(value: &crate::types::TagValue) -> Result<String, S
 /// ExifTool: Nikon.pm %nefCompression hash
 /// Generated lookup: src/generated/nikon_pm/nefcompression.rs
 pub fn nikon_nef_compression_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    use crate::generated::nikon::lookup_nef_compression;
+    use crate::generated::nikon::nef_compression::lookup_nef_compression;
 
     // Handle string values first
     if let crate::types::TagValue::String(s) = value {

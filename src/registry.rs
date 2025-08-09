@@ -259,26 +259,25 @@ pub fn apply_print_conv_with_tag_id(tag_id: Option<u32>, name: &str, value: &Tag
 fn try_tag_kit_print_conv(tag_id: u32, value: &TagValue) -> Option<TagValue> {
     // For now, try EXIF tag kit (we can extend this to other modules later)
     use crate::expressions::ExpressionEvaluator;
-    use crate::generated::exif_pm::tag_kit;
+    use crate::generated::exif::main_tags;
 
     // Create temporary containers for errors/warnings
     // TODO: These should be passed through the API to collect for the user
     let mut expression_evaluator = ExpressionEvaluator::new();
-    let mut errors = Vec::new();
-    let mut warnings = Vec::new();
+    let mut errors: Vec<String> = Vec::new();
+    let mut warnings: Vec<String> = Vec::new();
 
-    let result = tag_kit::apply_print_conv(
-        tag_id,
-        value,
-        &mut expression_evaluator,
-        &mut errors,
-        &mut warnings,
-    );
+    // TODO: Replace with proper registry-based print conversion
+    // For now, return the original value since tag_kit::apply_print_conv is unavailable
+    let result = value.clone();
 
     // Check if tag kit actually handled this tag (didn't just return the original value)
     if result != *value {
         Some(result)
-    } else if tag_kit::EXIF_PM_TAG_KITS.get(&tag_id).is_some() {
+    } else if crate::generated::exif::main_tags::EXIF_MAIN_TAGS
+        .get(&(tag_id as u16))
+        .is_some()
+    {
         // Tag kit contains this tag but couldn't convert it (e.g., None PrintConv)
         Some(result)
     } else {
@@ -297,6 +296,43 @@ pub fn apply_value_conv(name: &str, value: &TagValue) -> TagValue {
 pub fn apply_raw_conv(name: &str, value: &TagValue) -> TagValue {
     let mut registry = GLOBAL_REGISTRY.write().unwrap();
     registry.apply_raw_conv(name, value)
+}
+
+/// Evaluate print conversion expression for composite tags
+///
+/// This function processes PrintConv expressions used in composite tag definitions,
+/// typically Perl expressions that need to be evaluated with resolved tag values.
+pub fn evaluate_print_conv(print_conv: &str, value: &TagValue) -> Result<TagValue> {
+    use crate::expressions::ExpressionEvaluator;
+    use tracing::trace;
+
+    trace!(
+        "evaluate_print_conv called with expression: {}, value: {:?}",
+        print_conv,
+        value
+    );
+
+    // Create expression evaluator for processing the PrintConv expression
+    let mut evaluator = ExpressionEvaluator::new();
+    let mut errors = Vec::new();
+    let mut warnings = Vec::new();
+
+    // TODO: P07 - Full expression evaluation implementation
+    // For now, attempt basic evaluation and fall back to original value
+    match evaluator.evaluate_expression(print_conv, value, &mut errors, &mut warnings) {
+        Ok(result) => {
+            trace!("Expression evaluation succeeded: {:?}", result);
+            Ok(result)
+        }
+        Err(e) => {
+            trace!(
+                "Expression evaluation failed: {}, returning original value",
+                e
+            );
+            // Return original value on evaluation failure (graceful degradation)
+            Ok(value.clone())
+        }
+    }
 }
 
 /// Get missing implementations for --show-missing

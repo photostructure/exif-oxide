@@ -1372,7 +1372,11 @@ pub fn compute_lens_id(available_tags: &HashMap<String, TagValue>) -> Option<Tag
                 if lens_string.contains("14-42") {
                     // Look for 14-42mm lenses in the lookup table
                     for key in ["0 21 10", "0 01 10", "0 05 10", "0 09 10", "0 13 10"] {
-                        if let Some(lens_name) = lookup_olympus_lens_types(key) {
+                        if let Some(lens_name) =
+                            lookup_olympus_lens_types(
+                                key,
+                            )
+                        {
                             if lens_name.contains("14-42") {
                                 trace!(
                                     "Found Olympus lens match: key '{}' -> '{}'",
@@ -1412,7 +1416,11 @@ pub fn compute_lens_id(available_tags: &HashMap<String, TagValue>) -> Option<Tag
                 for key in [
                     "0 21 10", "0 01 10", "0 05 10", "0 03 10", "0 04 10", "0 06 10",
                 ] {
-                    if let Some(lens_name) = lookup_olympus_lens_types(key) {
+                    if let Some(lens_name) =
+                        crate::generated::olympus::olympus_lens_types::lookup_olympus_lens_types(
+                            key,
+                        )
+                    {
                         if lens_string.contains("14-42") && lens_name.contains("14-42") {
                             // Found a 14-42mm lens match
                             return Some(TagValue::string(lens_name));

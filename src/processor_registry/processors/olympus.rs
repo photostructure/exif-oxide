@@ -7,7 +7,10 @@
 //!
 //! lib/Image/ExifTool/Olympus.pm - Equipment section, CameraSettings, FocusInfo, etc.
 
-use crate::generated::olympus::{lookup_olympus_camera_types, lookup_olympus_lens_types};
+use crate::generated::olympus::{
+    olympus_camera_types::lookup_olympus_camera_types,
+    olympus_lens_types::lookup_olympus_lens_types,
+};
 use crate::processor_registry::{
     BinaryDataProcessor, ProcessorCapability, ProcessorContext, ProcessorMetadata, ProcessorResult,
 };
@@ -131,7 +134,9 @@ impl BinaryDataProcessor for OlympusEquipmentProcessor {
 
             if !camera_str.is_empty() {
                 // Look up camera name using generated table
-                if let Some(camera_name) = lookup_olympus_camera_types(&camera_str) {
+                if let Some(camera_name) =
+                    olympus_camera_types::lookup_olympus_camera_types(&camera_str)
+                {
                     result.extracted_tags.insert(
                         "CameraType2".to_string(),
                         TagValue::String(camera_name.to_string()),
@@ -154,7 +159,7 @@ impl BinaryDataProcessor for OlympusEquipmentProcessor {
                 );
 
                 // Look up lens name using generated table
-                if let Some(lens_name) = lookup_olympus_lens_types(&lens_code) {
+                if let Some(lens_name) = olympus_lens_types::lookup_olympus_lens_types(&lens_code) {
                     result.extracted_tags.insert(
                         "LensType".to_string(),
                         TagValue::String(lens_name.to_string()),

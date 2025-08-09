@@ -24,14 +24,15 @@ use tracing::debug;
 /// ## ExifTool Reference
 ///
 /// FujiFilm.pm FFMV ProcessBinaryData table
+/// TODO P07: Disabled until ffmv_binary_data is generated
 pub struct FujiFilmFFMVProcessor {
-    table: crate::generated::fuji_film::ffmv_binary_data::FujiFilmFFMVTable,
+    // table: crate::generated::fuji_film::ffmv_binary_data::FujiFilmFFMVTable,
 }
 
 impl FujiFilmFFMVProcessor {
     pub fn new() -> Self {
         Self {
-            table: crate::generated::fuji_film::ffmv_binary_data::FujiFilmFFMVTable::new(),
+            // table: crate::generated::fuji_film::ffmv_binary_data::FujiFilmFFMVTable::new(),
         }
     }
 }
@@ -63,27 +64,27 @@ impl BinaryDataProcessor for FujiFilmFFMVProcessor {
 
         let mut result = ProcessorResult::new();
 
-        // Use generated table to process binary data instead of hardcoded logic
+        // TODO P07: Use generated table to process binary data when ffmv_binary_data is available
         // This demonstrates the new table-driven approach from ProcessBinaryData extraction
-        let _first_entry = self.table.first_entry as usize;
+        // let _first_entry = self.table.first_entry as usize;
 
         // Process data using generated table offsets and formats
         for offset in 0..data.len() {
             let table_offset = offset as u16;
 
-            // Look up tag name and format from generated table
-            if let Some(tag_name) = self.table.get_tag_name(table_offset) {
-                if let Some(format) = self.table.get_format(table_offset) {
-                    // Extract value based on format specification
-                    if let Some(tag_value) = extract_value_by_format(data, offset, format) {
-                        result.add_tag(tag_name.to_string(), tag_value);
-                        debug!(
-                            "Extracted tag {} at offset {} with format {}",
-                            tag_name, offset, format
-                        );
-                    }
-                }
-            }
+            // TODO P07: Look up tag name and format from generated table when ffmv_binary_data is available
+            // if let Some(tag_name) = self.table.get_tag_name(table_offset) {
+            //     if let Some(format) = self.table.get_format(table_offset) {
+            //         // Extract value based on format specification
+            //         if let Some(tag_value) = extract_value_by_format(data, offset, format) {
+            //             result.add_tag(tag_name.to_string(), tag_value);
+            //             debug!(
+            //                 "Extracted tag {} at offset {} with format {}",
+            //                 tag_name, offset, format
+            //             );
+            //         }
+            //     }
+            // }
         }
 
         if result.extracted_tags.is_empty() {

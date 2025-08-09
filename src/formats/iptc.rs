@@ -13,8 +13,8 @@
 //!
 //! Reference: ExifTool lib/Image/ExifTool/IPTC.pm ProcessIPTC function (lines 1050-1200)
 
-use crate::generated::iptc_pm::tag_kit::{datetime, interop, other, TagKitDef};
-use crate::types::{ExifError, Result, TagValue};
+use crate::generated::iptc::main_tags::IPTC_MAIN_TAGS;
+use crate::types::{ExifError, Result, TagInfo, TagValue};
 use std::collections::HashMap;
 use tracing::{debug, warn};
 
@@ -32,8 +32,8 @@ struct IptcDataSet {
 /// IPTC parser state
 #[derive(Debug)]
 struct IptcParser {
-    /// Tag definitions by (record, dataset) -> TagKitDef
-    tag_definitions: HashMap<(u8, u8), TagKitDef>,
+    /// Tag definitions by (record, dataset) -> TagInfo
+    tag_definitions: HashMap<(u8, u8), TagInfo>,
     /// Character encoding for text fields (default Latin-1)
     #[allow(dead_code)] // Used in Phase 5 for full CodedCharacterSet support
     character_encoding: String,
@@ -45,26 +45,26 @@ impl IptcParser {
     fn new() -> Self {
         let mut tag_definitions = HashMap::new();
 
-        // Load ApplicationRecord (Record 2) tags
-        for (id, tag_def) in other::get_other_tags() {
-            if id <= 255 {
-                tag_definitions.insert((2, id as u8), tag_def);
-            }
-        }
+        // TODO P07: Load ApplicationRecord (Record 2) tags when other module is generated
+        // for (id, tag_def) in other::get_other_tags() {
+        //     if id <= 255 {
+        //         tag_definitions.insert((2, id as u8), tag_def);
+        //     }
+        // }
 
-        // Load EnvelopeRecord (Record 1) tags
-        for (id, tag_def) in interop::get_interop_tags() {
-            if id <= 255 {
-                tag_definitions.insert((1, id as u8), tag_def);
-            }
-        }
+        // TODO P07: Load EnvelopeRecord (Record 1) tags when interop module is generated
+        // for (id, tag_def) in interop::get_interop_tags() {
+        //     if id <= 255 {
+        //         tag_definitions.insert((1, id as u8), tag_def);
+        //     }
+        // }
 
-        // Load datetime tags
-        for (id, tag_def) in datetime::get_datetime_tags() {
-            if id <= 255 {
-                tag_definitions.insert((2, id as u8), tag_def); // Assume Record 2 for datetime
-            }
-        }
+        // TODO P07: Load datetime tags when datetime module is generated
+        // for (id, tag_def) in datetime::get_datetime_tags() {
+        //     if id <= 255 {
+        //         tag_definitions.insert((2, id as u8), tag_def); // Assume Record 2 for datetime
+        //     }
+        // }
 
         Self {
             tag_definitions,
@@ -158,7 +158,7 @@ impl IptcParser {
 
     /// Convert raw tag data to TagValue based on format
     /// ExifTool: Format-specific conversion and string handling
-    fn convert_tag_value(&self, data: &[u8], tag_def: &TagKitDef) -> Result<TagValue> {
+    fn convert_tag_value(&self, data: &[u8], tag_def: &TagInfo) -> Result<TagValue> {
         match tag_def.format {
             format if format.starts_with("string") => {
                 // Convert bytes to string with proper encoding
@@ -332,7 +332,7 @@ pub fn parse_iptc_from_app13(app13_data: &[u8]) -> Result<HashMap<String, TagVal
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::generated::iptc_pm::tag_kit::PrintConvType;
+    // use crate::generated::iptc::tag_kit::PrintConvType;
 
     #[test]
     fn test_iptc_dataset_parsing() {
@@ -597,16 +597,11 @@ mod tests {
         let parser = IptcParser::new();
 
         // Create a tag definition for int16u format (like ApplicationRecordVersion)
-        let tag_def = TagKitDef {
-            id: 0,
+        let tag_def = TagInfo {
             name: "ApplicationRecordVersion",
             format: "int16u",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
+            print_conv: None,
             value_conv: None,
-            subdirectory: None,
         };
 
         let data = [0x00, 0x02]; // Big-endian 16-bit value: 2
@@ -625,16 +620,11 @@ mod tests {
         // Test digits format conversion
         let parser = IptcParser::new();
 
-        let tag_def = TagKitDef {
-            id: 50,
+        let tag_def = TagInfo {
             name: "ReferenceNumber",
             format: "digits[8]",
-            groups: HashMap::new(),
-            writable: false,
-            notes: None,
-            print_conv: PrintConvType::None,
+            print_conv: None,
             value_conv: None,
-            subdirectory: None,
         };
 
         let data = b"12345678";

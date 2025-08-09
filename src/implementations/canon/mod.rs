@@ -720,7 +720,7 @@ fn process_other_canon_binary_tags(
 /// Apply Canon-specific PrintConv processing to main Canon table tags
 /// ExifTool: Canon.pm Main table PrintConv entries for human-readable output
 fn apply_canon_main_table_print_conv(exif_reader: &mut crate::exif::ExifReader) -> Result<()> {
-    use crate::generated::canon::canonmodelid::lookup_canon_model_id;
+    use crate::generated::canon::canon_model_id::lookup_canon_model_id;
     use crate::types::TagValue;
 
     debug!("Applying Canon main table PrintConv processing");
@@ -837,7 +837,7 @@ fn find_canon_tag_id_by_name(tag_name: &str) -> Option<u32> {
     // Search through all Canon tag kit entries to find matching name
     for (&tag_id, tag_def) in CANON_MAIN_TAGS.iter() {
         if tag_def.name == tag_name {
-            return Some(tag_id);
+            return Some(tag_id.into());
         }
     }
     None
@@ -941,8 +941,8 @@ pub fn apply_camera_settings_print_conv(
         debug!("Found tag kit ID {} for tag {}", tag_id, tag_name);
         // Use unified tag kit system for PrintConv
         let mut evaluator = ExpressionEvaluator::new();
-        let mut errors = Vec::new();
-        let mut warnings = Vec::new();
+        let mut errors: Vec<String> = Vec::new();
+        let mut warnings: Vec<String> = Vec::new();
 
         // TODO: Task E - Replace tag_kit::apply_print_conv with Canon-specific implementation
         // let result = tag_kit::apply_print_conv(

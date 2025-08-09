@@ -11,7 +11,8 @@ use quick_xml::reader::NsReader;
 use std::collections::HashMap;
 
 // Import generated namespace tables
-use crate::generated::xmp::NAMESPACE_URIS;
+// P07: Use the actual generated name NS_URI instead of NAMESPACE_URIS
+use crate::generated::xmp::ns_uri::NS_URI as NAMESPACE_URIS;
 
 /// XMP processor for structured metadata extraction
 pub struct XmpProcessor {

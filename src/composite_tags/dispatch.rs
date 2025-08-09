@@ -6,11 +6,12 @@
 use std::collections::HashMap;
 use tracing::trace;
 
-use crate::generated::CompositeTagDef;
+use crate::generated::composite_tags::CompositeTagDef;
 use crate::types::TagValue;
 
 use super::implementations::*;
 use super::resolution::resolve_tag_dependency;
+use super::value_conv_evaluator::ValueConvEvaluator;
 
 /// Compute a single composite tag value based on its dependencies using ExifTool's resolution
 /// ExifTool: lib/Image/ExifTool.pm composite tag evaluation with dynamic dependency resolution
@@ -112,7 +113,25 @@ pub fn compute_composite_tag(
         // Enhanced ScaleFactor35efl (keep existing simple version for compatibility)
         // "ScaleFactor35efl" => compute_scale_factor_35efl_enhanced(available_tags),
         _ => {
-            // For other composite tags, log what dependencies are available vs missing
+            // Try dynamic ValueConv evaluation for generated composite definitions
+            if composite_def.value_conv.is_some() {
+                trace!(
+                    "Attempting dynamic evaluation for composite: {}",
+                    composite_def.name
+                );
+
+                let mut evaluator = ValueConvEvaluator::new();
+                if let Some(result) =
+                    evaluator.evaluate_composite(composite_def, &resolved_dependencies)
+                {
+                    trace!("Dynamic evaluation succeeded for: {}", composite_def.name);
+                    return Some(result);
+                }
+
+                trace!("Dynamic evaluation failed for: {}", composite_def.name);
+            }
+
+            // Log available vs missing dependencies for debugging
             let mut available_deps = Vec::new();
             let mut missing_deps = Vec::new();
 
@@ -129,7 +148,7 @@ pub fn compute_composite_tag(
             }
 
             trace!(
-                "Composite tag {} not yet implemented. Available deps: {:?}, Missing deps: {:?}",
+                "Composite tag {} not implemented (no ValueConv or evaluation failed). Available deps: {:?}, Missing deps: {:?}",
                 composite_def.name,
                 available_deps,
                 missing_deps

@@ -8,7 +8,7 @@
 //! Generated tags: src/generated/panasonic_raw/main_tags.rs
 
 use crate::expressions::ExpressionEvaluator;
-use crate::generated::panasonic_raw::main_tags::PANASONICRAW_MAIN_TAGS;
+use crate::generated::panasonic_raw::main_tags::PANASONIC_RAW_MAIN_TAGS;
 use crate::types::{PrintConv, TagValue};
 use tracing::debug;
 
@@ -22,14 +22,14 @@ fn apply_panasonic_raw_print_conv(
     warnings: &mut Vec<String>,
 ) -> TagValue {
     // Look up the tag in PanasonicRaw main tags table
-    if let Some(tag_info) = PANASONICRAW_MAIN_TAGS.get(&(tag_id as u16)) {
+    if let Some(tag_info) = PANASONIC_RAW_MAIN_TAGS.get(&(tag_id as u16)) {
         debug!("Found PanasonicRaw tag {}: {}", tag_id, tag_info.name);
 
         match &tag_info.print_conv {
             Some(PrintConv::Expression(expr)) => {
                 debug!("Using PrintConv expression: {}", expr);
                 // Use the expression evaluator for complex Perl expressions
-                match evaluator.evaluate_expression(expr, value) {
+                match evaluator.evaluate_expression(&expr, value) {
                     Ok(result) => result,
                     Err(e) => {
                         warnings.push(format!(

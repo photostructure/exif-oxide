@@ -481,6 +481,14 @@ impl ExpressionEvaluator {
     ) {
         self.tag_evaluators.insert(name, Box::new(evaluator));
     }
+
+    /// Evaluate expression against a TagValue
+    /// TODO P07: Implement proper expression evaluation for PrintConv
+    pub fn evaluate_expression(&mut self, _expr: &str, value: &TagValue) -> Result<TagValue> {
+        // For now, just return the original value since this is needed for compilation
+        // This should be implemented when we need proper PrintConv expression evaluation
+        Ok(value.clone())
+    }
 }
 
 impl Default for ExpressionEvaluator {
