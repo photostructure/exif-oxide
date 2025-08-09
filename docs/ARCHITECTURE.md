@@ -285,7 +285,7 @@ The strategy system implements sophisticated pattern recognition to automaticall
 
 #### Strategy Competition Flow
 
-1. **Universal Extraction**: `field_extractor.pl` uses Perl symbol table introspection to extract ALL hash symbols from ExifTool modules
+1. **Universal Extraction**: `field_extractor.pl` uses Perl symbol table introspection to extract ALL symbols (hashes and arrays) from ExifTool modules
 2. **Strategy Dispatch**: 9 strategies compete using `can_handle()` duck-typing methods  
 3. **Pattern Recognition**: First-match-wins with carefully ordered strategy priority
 4. **Code Generation**: Winning strategies generate appropriate Rust structures
