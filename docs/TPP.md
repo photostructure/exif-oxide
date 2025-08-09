@@ -15,32 +15,6 @@ The remainder of this document provides some consistent structure, but omit irre
 
 ---
 
-## Required Boilerplate
-
-Add this verbatim after Project Overview:
-
-```md
----
-
-## ⚠️ CRITICAL REMINDERS
-
-If you read this document, you **MUST** read and follow [CLAUDE.md](../CLAUDE.md) as well as [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md):
-
-- **Trust ExifTool** (Translate and cite references, but using codegen is preferred)
-- **Ask clarifying questions** (Maximize "velocity made good")
-- **Assume Concurrent Edits** (STOP if you find a compilation error that isn't related to your work)
-- **DO NOT DIRECTLY EDIT ANYTHING IN `src/generated/**/*.rs`** (Read [CODEGEN.md](CODEGEN.md) -- fix the generator or strategy in codegen/src instead!)
-- **Keep documentation current** (so update this TPP with status updates, and any novel context that will be helpful to future engineers that are tasked with completing this TPP. Do not use hyperbolic "DRAMATIC IMPROVEMENT"/"GROUNDBREAKING PROGRESS" styled updates -- that causes confusion and partially-completed low-quality work)
-
-**NOTE**: These rules prevent build breaks, data corruption, and wasted effort across the team. 
-
-If you are found violating any topics in these sections, **your work will be immediately halted, reverted, and you will be dismissed from the team.**
-
-Honest. RTFM.
-
----
-```
-
 ## Project Overview
 
 - **Goal**: [What success looks like in 1-4 sentences]
@@ -99,13 +73,15 @@ Example:
 ### Task 0: Integration Test (conditional)
 
 **Required for**:
+
 - Feature development (new capabilities, functionality)
 - Bug fixes (behavior corrections)
 - System behavior changes (different outputs/processing)
 
 **Optional/Skip for**:
+
 - **Pure research**: Analyzing ExifTool algorithms, studying manufacturer formats
-- **Documentation**: Writing guides, updating docs, creating reference materials  
+- **Documentation**: Writing guides, updating docs, creating reference materials
 - **Architecture/Design**: Planning module structure, designing interfaces
 - **Pure refactoring**: Code reorganization with identical behavior (existing tests should suffice)
 - **Infrastructure/Tooling**: CI setup, build improvements, development tools
@@ -115,6 +91,7 @@ Example:
 **Purpose**: Ensure the TPP solves a real, measurable problem with verifiable success criteria.
 
 **Success Criteria**:
+
 - [ ] **Test exists**: `tests/integration_p[XX]_[goal_description].rs:test_function_name`
 - [ ] **Test fails**: `cargo t test_name` fails with specific error demonstrating the problem
 - [ ] **Integration focus**: Test validates end-to-end behavior change, not just unit functionality
@@ -122,8 +99,9 @@ Example:
 - [ ] **Measurable outcome**: Test clearly shows what "success" looks like when implementation completes
 
 **Requirements**:
+
 - Must test the overall goal described in Project Overview
-- Should fail for the exact reason this TPP was created  
+- Should fail for the exact reason this TPP was created
 - Must demonstrate the problem is solved when all tasks complete
 - Include error message linking back to this TPP: `"// Fails until P[XX] complete - requires [specific_capability]"`
 
@@ -134,13 +112,15 @@ Example:
 **If Task 0 doesn't apply**, clearly state why and define measurable success criteria:
 
 **Example for Research TPP**:
+
 ```md
 **Task 0**: Not applicable - pure research with no behavior changes
 **Success Criteria**: Research document `docs/research/gps-analysis.md` exists with function signatures and implementation recommendations
 ```
 
 **Example for Refactoring TPP**:
-```md  
+
+```md
 **Task 0**: Not applicable - refactoring with identical behavior
 **Success Criteria**: All existing tests continue passing, module structure improved, no functionality changes
 ```
@@ -156,8 +136,9 @@ Example:
 ### Task A: [Specific, actionable name]
 
 **Success Criteria**:
+
 - [ ] **Implementation**: [Technical detail] → `src/path/file.rs:123-145` implements feature
-- [ ] **Integration**: [How wired into production] → `src/main.rs:67` calls new function  
+- [ ] **Integration**: [How wired into production] → `src/main.rs:67` calls new function
 - [ ] **Task 0 passes**: `cargo t test_integration_p[XX]_[goal]` now succeeds (if Task 0 exists)
 - [ ] **Unit tests**: `cargo t test_specific_feature` or `tests/unit_test.rs:test_name`
 - [ ] **Manual validation**: `cargo run -- test_case` produces expected output change
@@ -170,6 +151,7 @@ Example:
 **Dependencies**: [What must be done first - reference other tasks by ID like "Task B complete"]
 
 **Success Patterns**:
+
 - ✅ [What good implementation looks like with specific proof]
 - ✅ [Key indicator of correctness with measurement command]
 - ✅ [How to verify integration works end-to-end]
@@ -189,7 +171,7 @@ Example:
 ### Required Evidence Types
 
 - **Code references**: `file.rs:line_range` where implementation exists
-- **Passing commands**: `cargo t test_name` or `make command` that succeeds  
+- **Passing commands**: `cargo t test_name` or `make command` that succeeds
 - **Integration proof**: `grep -r "new_function" src/` shows production usage
 - **Removal evidence**: Commit link or `grep` returning empty for removed code
 - **Output changes**: Before/after examples showing behavior differences
@@ -197,16 +179,19 @@ Example:
 ### ❌ Common Incomplete Patterns
 
 **Implementation without Integration**:
+
 - "Module implemented but `main.rs` unchanged" → Missing integration proof
 - "Feature works when called directly but no production usage" → Not wired into system
 - "`grep -r new_feature src/` only shows test files" → No production consumption
 
 **Testing without Validation**:
+
 - "`cargo t` passes but new test was commented out" → Invalid test proof
 - "Unit tests pass but integration test still fails" → Incomplete implementation
 - "Test exists but doesn't validate end-to-end behavior" → Wrong test scope
 
 **Cleanup Avoidance**:
+
 - "Generated code updated but old workaround still active" → Incomplete cleanup
 - "New feature works but legacy code path unchanged" → No obsolete code removal
 - "Documentation says 'TODO: update this section'" → Invalid documentation proof
@@ -214,7 +199,7 @@ Example:
 ### ✅ Valid Completion Examples
 
 - [ ] **Integration**: Parser uses new extraction method → `src/parser.rs:234` calls `extract_gps_coords()`
-- [ ] **Testing**: Regression prevented → `cargo t test_gps_coordinate_parsing` passes  
+- [ ] **Testing**: Regression prevented → `cargo t test_gps_coordinate_parsing` passes
 - [ ] **Cleanup**: Dead code removed → `git show abc123f` removed `legacy_gps_parser()`
 - [ ] **Documentation**: Guide updated → `docs/GPS-PARSING.md:45-67` documents new behavior
 - [ ] **Validation**: Behavior changed → `cargo run image.jpg` now shows decimal GPS coordinates
@@ -238,6 +223,7 @@ Include this section if there are specific techniques, patterns, or consideratio
 ### Mandatory Integration Proof
 
 Every feature must include specific evidence of integration:
+
 - [ ] **Activation**: Feature is enabled/used by default → `src/main.rs:line` shows automatic usage
 - [ ] **Consumption**: Existing code paths actively use new capability → `grep -r "new_function" src/` shows production calls
 - [ ] **Measurement**: Can prove feature works via output changes → `cargo run test_case` shows different behavior
@@ -246,11 +232,13 @@ Every feature must include specific evidence of integration:
 ### Integration Verification Commands
 
 **Production Usage Proof**:
+
 - `grep -r "new_feature" src/` → Should show non-test usage in main execution paths
 - `git log --oneline -5` → Should show commits that wire new functionality into existing flows
 - `cargo run representative_test_case` → Should demonstrate behavior change from previous baseline
 
 **Integration vs Implementation Test**:
+
 - ❌ **Implementation only**: "Feature works when I call `new_function()` directly"
 - ✅ **Integrated**: "Feature works when I run normal workflow - `cargo run image.jpg` uses new logic automatically"
 
@@ -258,16 +246,17 @@ Every feature must include specific evidence of integration:
 
 ## Working Definition of "Complete"
 
-*Use these criteria to evaluate your own work - adapt to your specific context:*
+_Use these criteria to evaluate your own work - adapt to your specific context:_
 
 A feature is complete when:
-- ✅ **System behavior changes** - something works differently/better than before
-- ✅ **Default usage** - new capability is used automatically, not opt-in  
-- ✅ **Old path removed** - previous workarounds/hacks are eliminated
-- ❌ Code exists but isn't used *(example: "parser implemented but codegen still uses old logic")*
-- ❌ Feature works "if you call it directly" *(example: "new API exists but nothing calls it")*
 
-*Note: These are evaluation guidelines, not literal requirements for every task.*
+- ✅ **System behavior changes** - something works differently/better than before
+- ✅ **Default usage** - new capability is used automatically, not opt-in
+- ✅ **Old path removed** - previous workarounds/hacks are eliminated
+- ❌ Code exists but isn't used _(example: "parser implemented but codegen still uses old logic")_
+- ❌ Feature works "if you call it directly" _(example: "new API exists but nothing calls it")_
+
+_Note: These are evaluation guidelines, not literal requirements for every task._
 
 ## Prerequisites
 
@@ -359,6 +348,7 @@ Before submitting, verify your TPP includes:
 ### Task A: Implement Canon WhiteBalance PrintConv with conditional logic
 
 **Success Criteria**:
+
 - [ ] **Implementation**: Conditional logic extracted → `src/generated/Canon_pm/white_balance.rs:23-67`
 - [ ] **Integration**: PrintConv generator uses logic → `codegen/src/tag_kit.rs:145` calls `generate_conditional_printconv()`
 - [ ] **Task 0 passes**: `cargo t test_integration_p10_canon_wb` now succeeds
@@ -373,8 +363,9 @@ Before submitting, verify your TPP includes:
 **Dependencies**: None
 
 **Success Patterns**:
+
 - ✅ All ExifTool WhiteBalance values match our output exactly
-- ✅ "Unknown (15)" format used for unmapped values  
+- ✅ "Unknown (15)" format used for unmapped values
 - ✅ Generated code handles both hash lookups AND conditional expressions
 ```
 
@@ -383,30 +374,37 @@ Before submitting, verify your TPP includes:
 ### ❌ Poor Completion Examples
 
 **Implementation without Integration**:
+
 ```md
 - [x] **Implementation**: GPS parser written → `src/gps.rs:45-120` implements parsing
 - [x] **Integration**: Added to main system → "It compiles when imported"
 - [x] **Testing**: Unit tests pass → `cargo t test_gps_unit`
 ```
-*Problem*: No proof that main system actually uses GPS parser, no integration test, vague integration claim.
+
+_Problem_: No proof that main system actually uses GPS parser, no integration test, vague integration claim.
 
 **Testing without Validation**:
+
 ```md
 - [x] **Testing**: All tests pass → `cargo t` succeeds
 - [x] **Manual validation**: Tested manually → "I ran it and it worked"
 ```
-*Problem*: Could be passing because test was commented out, no specific validation command.
+
+_Problem_: Could be passing because test was commented out, no specific validation command.
 
 **Cleanup Avoidance**:
+
 ```md
 - [x] **Cleanup**: Old code removed → "Not needed anymore"
 - [x] **Documentation**: Updated → "Fixed the docs"
 ```
-*Problem*: No evidence of actual removal or specific documentation changes.
+
+_Problem_: No evidence of actual removal or specific documentation changes.
 
 ### ✅ Good Completion Examples
 
 **Complete Implementation with Integration (Task C example)**:
+
 ```md
 - [x] **Implementation**: GPS coordinate parser → `src/gps.rs:45-120` implements `parse_coordinates()`
 - [x] **Integration**: Main parser uses GPS logic → `src/parser.rs:234` calls `parse_coordinates()` for GPS tags
@@ -416,15 +414,18 @@ Before submitting, verify your TPP includes:
 - [x] **Cleanup**: Removed string fallback → `git show abc123f` deleted `gps_string_fallback()`
 - [x] **Documentation**: Updated GPS guide → `docs/GPS-PARSING.md:23-45` documents coordinate format
 ```
-*Why good*: Every checkbox has specific, verifiable evidence that another engineer can independently check.
+
+_Why good_: Every checkbox has specific, verifiable evidence that another engineer can independently check.
 
 **Proper Research Documentation (Task A example)**:
+
 ```md
 - [x] **Research complete**: Canon lens database analyzed → `docs/research/canon-lens-analysis.md` with 47 lens entries
-- [x] **Implementation plan**: Strategy documented → Same file, lines 89-102 outline extraction approach  
+- [x] **Implementation plan**: Strategy documented → Same file, lines 89-102 outline extraction approach
 - [x] **ExifTool verification**: Confirmed behavior → `./exiftool -LensModel test-images/canon/*.jpg` output matches analysis
 ```
-*Why good*: Research creates concrete deliverables that inform later tasks (Task B, Task C, etc.).
+
+_Why good_: Research creates concrete deliverables that inform later tasks (Task B, Task C, etc.).
 
 **Accountability Principle**: Each checkbox creates a verifiable claim. If you can't provide specific evidence, the task isn't complete.
 

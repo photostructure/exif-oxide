@@ -43,6 +43,162 @@ cargo run -- image.jpg --show-missing
 
 This tells you exactly what needs to be implemented.
 
+## Strategy System Debugging (Zero-Configuration Issues)
+
+### Issue: Symbol Not Processed by Any Strategy
+
+**Symptoms:**
+- Expected generated code is missing
+- `strategy_selection.log` shows unrecognized symbols
+- Tags that exist in ExifTool aren't extracted
+
+**Debug Steps:**
+
+1. **Check strategy selection log:**
+   ```bash
+   cd codegen && RUST_LOG=debug cargo run
+   grep "symbol_name" strategy_selection.log
+   ```
+
+2. **Analyze symbol structure:**
+   ```bash
+   # Extract the specific symbol to see its JSON structure
+   cd codegen && RUST_LOG=trace cargo run -- --module ModuleName 2>&1 | grep -A10 "symbol_name"
+   ```
+
+3. **Test pattern recognition:**
+   ```rust
+   // Add debug output to strategy can_handle() methods
+   fn can_handle(&self, symbol: &FieldSymbol) -> bool {
+       let result = // ... pattern logic
+       debug!("MyStrategy::can_handle({}) -> {} (reason: {})", 
+              symbol.name, result, reason);
+       result
+   }
+   ```
+
+**Common Causes:**
+- Symbol pattern doesn't match any strategy's `can_handle()` logic
+- Strategy priority order prevents correct strategy from claiming symbol  
+- Symbol structure changed in newer ExifTool version
+
+**Solutions:**
+- **Create new strategy** for unrecognized pattern type
+- **Improve existing strategy** pattern recognition logic
+- **Check strategy order** - more specific strategies need higher priority
+
+### Issue: Wrong Strategy Claims Symbol
+
+**Symptoms:**
+- Generated code has wrong format (HashMap instead of tag definition)
+- Runtime errors due to incorrect generated code structure
+- Strategy log shows unexpected strategy selection
+
+**Debug Steps:**
+
+1. **Trace strategy competition:**
+   ```bash
+   cd codegen && RUST_LOG=trace cargo run -- --module ModuleName 2>&1 | grep "strategy_competition"
+   ```
+
+2. **Check first-match-wins behavior:**
+   - Look at strategy order in `strategies/mod.rs:all_strategies()`
+   - Verify earlier strategies aren't incorrectly claiming the symbol
+
+3. **Test pattern boundaries:**
+   ```rust
+   // Verify the claiming strategy's pattern is actually correct
+   let test_symbol = /* ... create test symbol ... */;
+   assert!(!incorrect_strategy.can_handle(&test_symbol));
+   assert!(correct_strategy.can_handle(&test_symbol));
+   ```
+
+**Common Solutions:**
+- **Improve pattern specificity** - Make strategy patterns more precise
+- **Reorder strategies** - Move more specific strategies before general ones
+- **Add exclusion logic** - Prevent incorrect strategies from claiming symbols
+
+### Issue: Missing ExifTool Module Content
+
+**Symptoms:**
+- `field_extractor.pl` doesn't find expected symbols
+- Module appears empty in strategy logs
+- Known ExifTool tables aren't discovered
+
+**Debug Steps:**
+
+1. **Check module loading:**
+   ```bash
+   # Test if ExifTool module loads correctly
+   perl -I third-party/exiftool/lib -e "use Image::ExifTool::ModuleName; print 'OK\n'"
+   ```
+
+2. **Check patching system:**
+   ```bash
+   # Verify make-everything-public patching works
+   cd codegen && perl scripts/patch_exiftool_modules_universal.pl
+   grep "our %" ../third-party/exiftool/lib/Image/ExifTool/ModuleName.pm
+   ```
+
+3. **Debug symbol extraction:**
+   ```bash
+   # Run field_extractor.pl directly on the module
+   cd codegen && perl scripts/field_extractor.pl ../third-party/exiftool/lib/Image/ExifTool/ModuleName.pm
+   ```
+
+**Common Causes:**
+- ExifTool module has compilation errors
+- Patching system didn't make hash variables accessible
+- Module uses complex Perl constructs that aren't extracted
+
+**Solutions:**
+- **Fix ExifTool compilation** errors in the module
+- **Improve patching system** for complex variable declarations  
+- **Manual extraction** for symbols that can't be auto-discovered
+
+### Zero-Configuration Debugging Tips
+
+**Strategy Selection Analysis:**
+```bash
+# See complete strategy selection decisions
+cd codegen && RUST_LOG=debug cargo run | tee strategy_debug.log
+
+# Count symbols by strategy
+grep "Strategy:" strategy_selection.log | sort | uniq -c
+
+# Find unhandled symbols
+grep -E "(no strategy claimed|unrecognized pattern)" strategy_selection.log
+```
+
+**Pattern Recognition Testing:**
+```rust
+// Unit test strategy pattern recognition
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn test_my_pattern_recognition() {
+        let strategy = MyStrategy::new();
+        
+        // Test positive cases
+        let should_match = create_test_symbol(/* pattern that should match */);
+        assert!(strategy.can_handle(&should_match));
+        
+        // Test negative cases  
+        let should_not_match = create_test_symbol(/* pattern that shouldn't match */);
+        assert!(!strategy.can_handle(&should_not_match));
+    }
+}
+```
+
+**Generated Code Verification:**
+```bash
+# Compare generated files before/after strategy changes
+diff -u src/generated/module/old_file.rs src/generated/module/new_file.rs
+
+# Check that expected symbols generated correctly
+grep -r "expected_symbol_name" src/generated/
+```
+
 ## Common Issues and Solutions
 
 ### Issue: Tag Values Don't Match ExifTool

@@ -24,9 +24,9 @@ That sounds great. This is critical infrastructure for this project, so let's do
 
 ✏️ is a technical project plan: but it needs more due diligence research, analysis, and planning. Re-analyze and re-plan the TPP using the @docs/TPP.md style guide. Read and study **all** referenced documentation and source code before making any changes. This is critical infrastructure for this project, so we have a large time budget for research, planning, analysis, and validation for this work. As @CLAUDE.md states, ask clarifying questions for anything odd, confusing, nebulous, or to help decide between alternative strategies. Ultrathink.
 
-# Work on a TPP
+# Work on a TPP 
 
-✏️ is a technical project plan: we're going to work on the remaining incomplete tasks. This is critical work for our project, and requires extensive and exhaustive prerequisite research. Read every referenced source and doc, carefully validate and re-analyze the current situation, problem, and solution before starting. In this planning phase, run relevant tooling and tests and study existing source to validate current code state. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. Ultrathink.
+✏️ is a technical project plan: we're going to work on the remaining incomplete tasks. This represents is critical work for our project, and requires comprehensive prerequisite research to be done by you before you start work. Read every referenced source and doc, and carefully validate the current situation, problem, and that the currently planned solution is still the best way forward. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. Ultrathink.
 
 # Validating a TPP
 
@@ -38,6 +38,21 @@ Remember: do not invent heuristics! @docs/TRUST-EXIFTOOL.md !
 
 **Use rg|sd instead of the default MultiEdit tool**: This is extremely quick and efficient: `rg -l 'old-pattern' src/ | xargs sd 'old-pattern' 'new-pattern'`
 
+Remember: do not edit, add, or delete files in @src/generated/** -- the `codegen` system completely overwrites all files in that directory. If you need any edits made, fix the generator.
+
+# /compact
+
+/compact your ONLY goal is next engineer success on incomplete tasks.
+
+**Required elements:**
+1. **TPP status** - Iff a TPP is being worked on, require the next engineer to read `docs/todo/PXX-*.md`, and include supplemental task progress, and any pending updates that should be made to the TPP 
+2. **Critical files** - Must-read paths with rationale
+3. **Progress state** - What was tried, current status, remaining work
+4. **Failed attempts** - What failed and why (prevent repetition)
+5. **Key insights** - Important codebase/ExifTool discoveries
+6. **Next steps** - Concrete actions with locations, TPP task references
+
+Format as structured handoff enabling immediate progress continuation. Include 👍 in compact message to confirm compliance.
 
 # Fix a test or bug
 
