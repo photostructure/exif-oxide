@@ -19,8 +19,7 @@ pub fn parse_expression(tokens: Vec<ParseToken>) -> Result<AstNode, String> {
     if !parser.is_at_end() {
         if let Some(remaining_token) = parser.current_token() {
             return Err(format!(
-                "Unexpected token after expression: {:?}",
-                remaining_token
+                "Unexpected token after expression: {remaining_token:?}"
             ));
         }
     }
@@ -271,7 +270,7 @@ impl Parser {
                 self.advance(); // consume ')'
                 Ok(expr)
             }
-            Some(token) => Err(format!("Unexpected token: {:?}", token)),
+            Some(token) => Err(format!("Unexpected token: {token:?}")),
             None => Err("Unexpected end of input".to_string()),
         }
     }

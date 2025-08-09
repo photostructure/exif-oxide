@@ -274,18 +274,15 @@ pub fn classify_valueconv_expression(expr: &str, module: &str) -> ValueConvType 
             Ok(compiled) => return ValueConvType::CompiledExpression(compiled),
             Err(_) => {
                 // Fall through to unimplemented case
-                eprintln!(
-                    "Warning: Expression '{}' looked compilable but failed compilation",
-                    expr
-                );
+                eprintln!("Warning: Expression '{expr}' looked compilable but failed compilation");
             }
         }
     }
 
-    // No registry entry and not compilable - return unimplemented
-    // Fallback - treat as unregistered custom function
-    // This preserves existing behavior for unknown expressions
-    ValueConvType::CustomFunction("crate::implementations::missing", "missing_value_conv")
+    // No registry entry and not compilable - store as Expression for runtime evaluation
+    // This will use the Expression evaluator at runtime, which can handle complex expressions
+    // If $val can't compile, the expression compiler is fundamentally broken and should panic
+    ValueConvType::CompiledExpression(CompiledExpression::compile("$val").unwrap())
 }
 
 /// Get access to the VALUECONV_REGISTRY for testing

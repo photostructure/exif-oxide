@@ -56,7 +56,7 @@ impl MagicNumberStrategy {
         // Imports
         code.push_str("use std::collections::HashMap;\n");
         code.push_str("use std::sync::LazyLock;\n");
-        code.push_str("use regex::bytes::Regex;\n\n");
+        code.push_str("use regex::bytes::{Regex, RegexBuilder};\n\n");
 
         // Generate literal patterns HashMap for fast byte matching
         code.push_str("/// Literal magic number patterns as byte slices for fast comparison\n");
@@ -108,11 +108,11 @@ impl MagicNumberStrategy {
 
             code.push_str(&format!("    // Pattern: {display_pattern}\n"));
             code.push_str(&format!(
-                "    if let Ok(regex) = Regex::new({raw_pattern}) {{\n"
+                "    if let Ok(regex) = RegexBuilder::new({raw_pattern})\n"
             ));
-            code.push_str(&format!(
-                "        map.insert(\"{file_type}\", regex.unicode(false));\n"
-            ));
+            code.push_str("        .unicode(false)\n");
+            code.push_str("        .build() {\n");
+            code.push_str(&format!("        map.insert(\"{file_type}\", regex);\n"));
             code.push_str("    }\n\n");
         }
 

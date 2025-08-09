@@ -9,11 +9,13 @@ impl CompiledExpression {
     /// Generate Rust code that evaluates this expression using AST
     ///
     /// Returns code like: `match value.as_f64() { Some(val) => Ok(TagValue::F64(val / 8.0)), None => Ok(value.clone()) }`
+    #[allow(dead_code)]
     pub fn generate_rust_code(&self) -> String {
         self.generate_ast_code(&self.ast)
     }
 
     /// Generate Rust code from AST node
+    #[allow(dead_code)]
     fn generate_ast_code(&self, node: &AstNode) -> String {
         format!(
             "match value.as_f64() {{\n        Some(val) => Ok({}),\n        None => Ok(value.clone()),\n    }}",
@@ -22,13 +24,13 @@ impl CompiledExpression {
     }
 
     /// Generate the expression part of AST node
+    #[allow(dead_code)]
     fn generate_ast_expression(&self, node: &AstNode) -> String {
         match node {
             AstNode::Variable => "TagValue::F64(val)".to_string(),
-            AstNode::ValIndex(index) => format!(
-                "resolved_dependencies.get({}).unwrap_or(&TagValue::Empty).clone()",
-                index
-            ),
+            AstNode::ValIndex(index) => {
+                format!("resolved_dependencies.get({index}).unwrap_or(&TagValue::Empty).clone()")
+            }
             AstNode::Number(n) => format!("TagValue::F64({})", format_number(*n)),
             AstNode::String {
                 value,
@@ -37,10 +39,10 @@ impl CompiledExpression {
                 if *has_interpolation {
                     // Handle variable interpolation using format! macro
                     let formatted_value = value.replace("$val", "{}");
-                    format!("TagValue::String(format!(\"{}\", val))", formatted_value)
+                    format!("TagValue::String(format!(\"{formatted_value}\", val))")
                 } else {
                     // Simple string literal
-                    format!("TagValue::String(\"{}\".to_string())", value)
+                    format!("TagValue::String(\"{value}\".to_string())")
                 }
             }
             AstNode::Undefined => "value.clone()".to_string(), // ExifTool undef - return original value
@@ -48,15 +50,15 @@ impl CompiledExpression {
                 let left_expr = self.generate_value_expression(left);
                 let right_expr = self.generate_value_expression(right);
                 match op {
-                    OpType::Add => format!("TagValue::F64({} + {})", left_expr, right_expr),
-                    OpType::Subtract => format!("TagValue::F64({} - {})", left_expr, right_expr),
-                    OpType::Multiply => format!("TagValue::F64({} * {})", left_expr, right_expr),
-                    OpType::Divide => format!("TagValue::F64({} / {})", left_expr, right_expr),
+                    OpType::Add => format!("TagValue::F64({left_expr} + {right_expr})"),
+                    OpType::Subtract => format!("TagValue::F64({left_expr} - {right_expr})"),
+                    OpType::Multiply => format!("TagValue::F64({left_expr} * {right_expr})"),
+                    OpType::Divide => format!("TagValue::F64({left_expr} / {right_expr})"),
                     OpType::Power => {
                         // For powf, we don't need extra parentheses around the argument
                         let clean_right =
                             self.generate_value_expression_without_outer_parens(right);
-                        format!("TagValue::F64({}.powf({}))", left_expr, clean_right)
+                        format!("TagValue::F64({left_expr}.powf({clean_right}))")
                     }
                     OpType::Concatenate => {
                         // Use concatenation chain to avoid nested format! calls
@@ -70,7 +72,7 @@ impl CompiledExpression {
                             self.generate_concatenation_format(&chain, false);
                         if arguments.is_empty() {
                             // All string literals
-                            format!("TagValue::String(\"{}\".to_string())", format_string)
+                            format!("TagValue::String(\"{format_string}\".to_string())")
                         } else {
                             format!(
                                 "TagValue::String(format!(\"{}\", {}))",
@@ -81,20 +83,16 @@ impl CompiledExpression {
                     }
                     // Bitwise operations - convert to integers first, then back to F64
                     OpType::BitwiseAnd => format!(
-                        "TagValue::F64((({} as i64) & ({} as i64)) as f64)",
-                        left_expr, right_expr
+                        "TagValue::F64((({left_expr} as i64) & ({right_expr} as i64)) as f64)"
                     ),
                     OpType::BitwiseOr => format!(
-                        "TagValue::F64((({} as i64) | ({} as i64)) as f64)",
-                        left_expr, right_expr
+                        "TagValue::F64((({left_expr} as i64) | ({right_expr} as i64)) as f64)"
                     ),
                     OpType::LeftShift => format!(
-                        "TagValue::F64((({} as i64) << ({} as i64)) as f64)",
-                        left_expr, right_expr
+                        "TagValue::F64((({left_expr} as i64) << ({right_expr} as i64)) as f64)"
                     ),
                     OpType::RightShift => format!(
-                        "TagValue::F64((({} as i64) >> ({} as i64)) as f64)",
-                        left_expr, right_expr
+                        "TagValue::F64((({left_expr} as i64) >> ({right_expr} as i64)) as f64)"
                     ),
                 }
             }
@@ -102,14 +100,14 @@ impl CompiledExpression {
                 let left_expr = self.generate_value_expression(left);
                 let right_expr = self.generate_value_expression(right);
                 let rust_op = match op {
-                    CompType::GreaterEq => format!("{} >= {}", left_expr, right_expr),
-                    CompType::Greater => format!("{} > {}", left_expr, right_expr),
-                    CompType::LessEq => format!("{} <= {}", left_expr, right_expr),
-                    CompType::Less => format!("{} < {}", left_expr, right_expr),
-                    CompType::Equal => format!("{} == {}", left_expr, right_expr),
-                    CompType::NotEqual => format!("{} != {}", left_expr, right_expr),
+                    CompType::GreaterEq => format!("{left_expr} >= {right_expr}"),
+                    CompType::Greater => format!("{left_expr} > {right_expr}"),
+                    CompType::LessEq => format!("{left_expr} <= {right_expr}"),
+                    CompType::Less => format!("{left_expr} < {right_expr}"),
+                    CompType::Equal => format!("{left_expr} == {right_expr}"),
+                    CompType::NotEqual => format!("{left_expr} != {right_expr}"),
                 };
-                format!("TagValue::U8(if {} {{ 1 }} else {{ 0 }})", rust_op)
+                format!("TagValue::U8(if {rust_op} {{ 1 }} else {{ 0 }})")
             }
             AstNode::TernaryOp {
                 condition,
@@ -122,12 +120,12 @@ impl CompiledExpression {
                         let left_expr = self.generate_value_expression(left);
                         let right_expr = self.generate_value_expression(right);
                         let condition_code = match op {
-                            CompType::GreaterEq => format!("{} >= {}", left_expr, right_expr),
-                            CompType::Greater => format!("{} > {}", left_expr, right_expr),
-                            CompType::LessEq => format!("{} <= {}", left_expr, right_expr),
-                            CompType::Less => format!("{} < {}", left_expr, right_expr),
-                            CompType::Equal => format!("{} == {}", left_expr, right_expr),
-                            CompType::NotEqual => format!("{} != {}", left_expr, right_expr),
+                            CompType::GreaterEq => format!("{left_expr} >= {right_expr}"),
+                            CompType::Greater => format!("{left_expr} > {right_expr}"),
+                            CompType::LessEq => format!("{left_expr} <= {right_expr}"),
+                            CompType::Less => format!("{left_expr} < {right_expr}"),
+                            CompType::Equal => format!("{left_expr} == {right_expr}"),
+                            CompType::NotEqual => format!("{left_expr} != {right_expr}"),
                         };
 
                         let true_branch = self.generate_ast_expression(true_expr);
@@ -138,14 +136,10 @@ impl CompiledExpression {
                             && false_branch.contains(" { ")
                             && false_branch.contains(" } else { ")
                         {
-                            format!(
-                                "if {} {{ {} }} else {}",
-                                condition_code, true_branch, false_branch
-                            )
+                            format!("if {condition_code} {{ {true_branch} }} else {false_branch}")
                         } else {
                             format!(
-                                "if {} {{ {} }} else {{ {} }}",
-                                condition_code, true_branch, false_branch
+                                "if {condition_code} {{ {true_branch} }} else {{ {false_branch} }}"
                             )
                         }
                     }
@@ -161,13 +155,11 @@ impl CompiledExpression {
                             && false_branch.contains(" } else { ")
                         {
                             format!(
-                                "if {} != 0.0 {{ {} }} else {}",
-                                condition_expr, true_branch, false_branch
+                                "if {condition_expr} != 0.0 {{ {true_branch} }} else {false_branch}"
                             )
                         } else {
                             format!(
-                                "if {} != 0.0 {{ {} }} else {{ {} }}",
-                                condition_expr, true_branch, false_branch
+                                "if {condition_expr} != 0.0 {{ {true_branch} }} else {{ {false_branch} }}"
                             )
                         }
                     }
@@ -176,11 +168,11 @@ impl CompiledExpression {
             AstNode::FunctionCall { func, arg } => {
                 let arg_expr = self.generate_value_expression(arg);
                 let rust_func = match func {
-                    FuncType::Int => format!("{}.trunc()", arg_expr),
-                    FuncType::Exp => format!("{}.exp()", arg_expr),
-                    FuncType::Log => format!("{}.ln()", arg_expr),
+                    FuncType::Int => format!("{arg_expr}.trunc()"),
+                    FuncType::Exp => format!("{arg_expr}.exp()"),
+                    FuncType::Log => format!("{arg_expr}.ln()"),
                 };
-                format!("TagValue::F64({})", rust_func)
+                format!("TagValue::F64({rust_func})")
             }
             AstNode::ExifToolFunction { name, arg } => {
                 // Generate ExifTool function call with conv_registry lookup
@@ -204,7 +196,7 @@ impl CompiledExpression {
             }
             AstNode::UnaryMinus { operand } => {
                 let operand_expr = self.generate_value_expression(operand);
-                format!("TagValue::F64(-{})", operand_expr)
+                format!("TagValue::F64(-{operand_expr})")
             }
             AstNode::RegexSubstitution {
                 target,
@@ -228,26 +220,26 @@ impl CompiledExpression {
     }
 
     /// Generate a numeric value expression without outer parentheses for function arguments
+    #[allow(dead_code)]
     fn generate_value_expression_without_outer_parens(&self, node: &AstNode) -> String {
         match node {
             AstNode::Variable => "val".to_string(),
             AstNode::ValIndex(index) => format!(
-                "resolved_dependencies.get({}).unwrap_or(&TagValue::Empty).as_f64().unwrap_or(0.0)",
-                index
+                "resolved_dependencies.get({index}).unwrap_or(&TagValue::Empty).as_f64().unwrap_or(0.0)"
             ),
             AstNode::Number(n) => format_number(*n),
             AstNode::BinaryOp { op, left, right } => {
                 let left_expr = self.generate_value_expression_without_outer_parens(left);
                 let right_expr = self.generate_value_expression_without_outer_parens(right);
                 match op {
-                    OpType::Add => format!("{} + {}", left_expr, right_expr),
-                    OpType::Subtract => format!("{} - {}", left_expr, right_expr),
-                    OpType::Multiply => format!("{} * {}", left_expr, right_expr),
-                    OpType::Divide => format!("{} / {}", left_expr, right_expr),
+                    OpType::Add => format!("{left_expr} + {right_expr}"),
+                    OpType::Subtract => format!("{left_expr} - {right_expr}"),
+                    OpType::Multiply => format!("{left_expr} * {right_expr}"),
+                    OpType::Divide => format!("{left_expr} / {right_expr}"),
                     OpType::Power => {
                         let clean_right =
                             self.generate_value_expression_without_outer_parens(right);
-                        format!("{}.powf({})", left_expr, clean_right)
+                        format!("{left_expr}.powf({clean_right})")
                     }
                     _ => self.generate_value_expression(node), // Fallback to regular generation
                 }
@@ -257,27 +249,27 @@ impl CompiledExpression {
     }
 
     /// Generate a numeric value expression (not wrapped in TagValue)
+    #[allow(dead_code)]
     fn generate_value_expression(&self, node: &AstNode) -> String {
         match node {
             AstNode::Variable => "val".to_string(),
             AstNode::ValIndex(index) => format!(
-                "resolved_dependencies.get({}).unwrap_or(&TagValue::Empty).as_f64().unwrap_or(0.0)",
-                index
+                "resolved_dependencies.get({index}).unwrap_or(&TagValue::Empty).as_f64().unwrap_or(0.0)"
             ),
             AstNode::Number(n) => format_number(*n),
             AstNode::BinaryOp { op, left, right } => {
                 let left_expr = self.generate_value_expression(left);
                 let right_expr = self.generate_value_expression(right);
                 match op {
-                    OpType::Add => format!("({} + {})", left_expr, right_expr),
-                    OpType::Subtract => format!("({} - {})", left_expr, right_expr),
-                    OpType::Multiply => format!("({} * {})", left_expr, right_expr),
-                    OpType::Divide => format!("({} / {})", left_expr, right_expr),
+                    OpType::Add => format!("({left_expr} + {right_expr})"),
+                    OpType::Subtract => format!("({left_expr} - {right_expr})"),
+                    OpType::Multiply => format!("({left_expr} * {right_expr})"),
+                    OpType::Divide => format!("({left_expr} / {right_expr})"),
                     OpType::Power => {
                         // For powf, we don't need extra parentheses around the argument
                         let clean_right =
                             self.generate_value_expression_without_outer_parens(right);
-                        format!("{}.powf({})", left_expr, clean_right)
+                        format!("{left_expr}.powf({clean_right})")
                     }
                     OpType::Concatenate => {
                         // Use concatenation chain to avoid nested format! calls
@@ -291,32 +283,32 @@ impl CompiledExpression {
                             self.generate_concatenation_format(&chain, true);
                         if arguments.is_empty() {
                             // All string literals
-                            format!("\"{}\"", format_string)
+                            format!("\"{format_string}\"")
                         } else {
-                            format!("format!(\"{}\", {})", format_string, arguments.join(", "))
+                            format!("format!(\"{format_string}\", {})", arguments.join(", "))
                         }
                     }
                     // Bitwise operations - convert to integers, operate, then back to f64
                     OpType::BitwiseAnd => {
-                        format!("(({} as i64) & ({} as i64)) as f64", left_expr, right_expr)
+                        format!("(({left_expr} as i64) & ({right_expr} as i64)) as f64")
                     }
                     OpType::BitwiseOr => {
-                        format!("(({} as i64) | ({} as i64)) as f64", left_expr, right_expr)
+                        format!("(({left_expr} as i64) | ({right_expr} as i64)) as f64")
                     }
                     OpType::LeftShift => {
-                        format!("(({} as i64) << ({} as i64)) as f64", left_expr, right_expr)
+                        format!("(({left_expr} as i64) << ({right_expr} as i64)) as f64")
                     }
                     OpType::RightShift => {
-                        format!("(({} as i64) >> ({} as i64)) as f64", left_expr, right_expr)
+                        format!("(({left_expr} as i64) >> ({right_expr} as i64)) as f64")
                     }
                 }
             }
             AstNode::FunctionCall { func, arg } => {
                 let arg_expr = self.generate_value_expression(arg);
                 match func {
-                    FuncType::Int => format!("{}.trunc()", arg_expr),
-                    FuncType::Exp => format!("{}.exp()", arg_expr),
-                    FuncType::Log => format!("{}.ln()", arg_expr),
+                    FuncType::Int => format!("{arg_expr}.trunc()"),
+                    FuncType::Exp => format!("{arg_expr}.exp()"),
+                    FuncType::Log => format!("{arg_expr}.ln()")
                 }
             }
             AstNode::ExifToolFunction { .. } => {
@@ -345,14 +337,14 @@ impl CompiledExpression {
                 let left_expr = self.generate_value_expression(left);
                 let right_expr = self.generate_value_expression(right);
                 let comparison = match op {
-                    CompType::GreaterEq => format!("{} >= {}", left_expr, right_expr),
-                    CompType::Greater => format!("{} > {}", left_expr, right_expr),
-                    CompType::LessEq => format!("{} <= {}", left_expr, right_expr),
-                    CompType::Less => format!("{} < {}", left_expr, right_expr),
-                    CompType::Equal => format!("{} == {}", left_expr, right_expr),
-                    CompType::NotEqual => format!("{} != {}", left_expr, right_expr),
+                    CompType::GreaterEq => format!("{left_expr} >= {right_expr}"),
+                    CompType::Greater => format!("{left_expr} > {right_expr}"),
+                    CompType::LessEq => format!("{left_expr} <= {right_expr}"),
+                    CompType::Less => format!("{left_expr} < {right_expr}"),
+                    CompType::Equal => format!("{left_expr} == {right_expr}"),
+                    CompType::NotEqual => format!("{left_expr} != {right_expr}"),
                 };
-                format!("if {} {{ 1.0 }} else {{ 0.0 }}", comparison)
+                format!("if {comparison} {{ 1.0 }} else {{ 0.0 }}")
             }
             AstNode::TernaryOp {
                 condition,
@@ -365,17 +357,17 @@ impl CompiledExpression {
                         let left_expr = self.generate_value_expression(left);
                         let right_expr = self.generate_value_expression(right);
                         match op {
-                            CompType::GreaterEq => format!("{} >= {}", left_expr, right_expr),
-                            CompType::Greater => format!("{} > {}", left_expr, right_expr),
-                            CompType::LessEq => format!("{} <= {}", left_expr, right_expr),
-                            CompType::Less => format!("{} < {}", left_expr, right_expr),
-                            CompType::Equal => format!("{} == {}", left_expr, right_expr),
-                            CompType::NotEqual => format!("{} != {}", left_expr, right_expr),
+                            CompType::GreaterEq => format!("{left_expr} >= {right_expr}"),
+                            CompType::Greater => format!("{left_expr} > {right_expr}"),
+                            CompType::LessEq => format!("{left_expr} <= {right_expr}"),
+                            CompType::Less => format!("{left_expr} < {right_expr}"),
+                            CompType::Equal => format!("{left_expr} == {right_expr}"),
+                            CompType::NotEqual => format!("{left_expr} != {right_expr}"),
                         }
                     }
                     _ => {
                         let cond_val = self.generate_value_expression(condition);
-                        format!("{} != 0.0", cond_val)
+                        format!("{cond_val} != 0.0")
                     }
                 };
 
@@ -388,13 +380,11 @@ impl CompiledExpression {
                     && false_val.contains(" } else { ")
                 {
                     format!(
-                        "if {} {{ {} }} else {}",
-                        condition_expr, true_val, false_val
+                        "if {condition_expr} {{ {true_val} }} else {false_val}"
                     )
                 } else {
                     format!(
-                        "if {} {{ {} }} else {{ {} }}",
-                        condition_expr, true_val, false_val
+                        "if {condition_expr} {{ {true_val} }} else {{ {false_val} }}"
                     )
                 }
             }
@@ -402,7 +392,7 @@ impl CompiledExpression {
             AstNode::Sprintf { .. } => "0.0".to_string(), // sprintf produces strings, not numbers
             AstNode::UnaryMinus { operand } => {
                 let operand_expr = self.generate_value_expression_without_outer_parens(operand);
-                format!("-{}", operand_expr)
+                format!("-{operand_expr}")
             }
             AstNode::RegexSubstitution { .. } => {
                 // RegexSubstitution produces strings, not numeric values
@@ -418,29 +408,28 @@ impl CompiledExpression {
     }
 
     /// Generate ExifTool function call with conv_registry lookup
+    #[allow(dead_code)]
     fn generate_exiftool_function_call(&self, name: &str, arg: &AstNode) -> String {
         // Try to look up the function in conv_registry
         // For now, we'll generate a lookup call - this will be enhanced with actual conv_registry integration
-        let function_expr = format!("{}($val)", name);
+        let function_expr = format!("{name}($val)");
 
         // Check if this is a known function pattern in conv_registry
         match name {
             "Image::ExifTool::Exif::PrintExposureTime" => {
                 let clean_arg = self.generate_value_expression_without_outer_parens(arg);
-                format!("crate::implementations::print_conv::exposuretime_print_conv(&TagValue::F64({}))", clean_arg)
+                format!("crate::implementations::print_conv::exposuretime_print_conv(&TagValue::F64({clean_arg}))")
             }
             "Image::ExifTool::Exif::PrintFNumber" => {
                 let clean_arg = self.generate_value_expression_without_outer_parens(arg);
                 format!(
-                    "crate::implementations::print_conv::fnumber_print_conv(&TagValue::F64({}))",
-                    clean_arg
+                    "crate::implementations::print_conv::fnumber_print_conv(&TagValue::F64({clean_arg}))"
                 )
             }
             "Image::ExifTool::Exif::PrintFraction" => {
                 let clean_arg = self.generate_value_expression_without_outer_parens(arg);
                 format!(
-                    "crate::implementations::print_conv::print_fraction(&TagValue::F64({}))",
-                    clean_arg
+                    "crate::implementations::print_conv::print_fraction(&TagValue::F64({clean_arg}))"
                 )
             }
             _ => {
@@ -449,14 +438,14 @@ impl CompiledExpression {
                 let clean_arg = self.generate_value_expression_without_outer_parens(arg);
                 format!(
                     "crate::implementations::missing::missing_print_conv(\
-                        0, \"{}\", \"Expression\", \"{}\", &TagValue::F64({}))",
-                    name, function_expr, clean_arg
+                        0, \"{name}\", \"Expression\", \"{function_expr}\", &TagValue::F64({clean_arg}))"
                 )
             }
         }
     }
 
     /// Generate regex substitution code
+    #[allow(dead_code)]
     fn generate_regex_substitution(
         &self,
         target_expr: &str,
@@ -482,9 +471,15 @@ impl CompiledExpression {
                     TagValue::String(re.replace_all(&target_str, \"{}\").to_string())
                 }}",
                 if case_insensitive {
-                    format!("r\"(?i){}\"", escape_regex_pattern(pattern))
+                    {
+                        let escaped = escape_regex_pattern(pattern);
+                        format!("r\"(?i){escaped}\"")
+                    }
                 } else {
-                    format!("r\"{}\"", escape_regex_pattern(pattern))
+                    {
+                        let escaped = escape_regex_pattern(pattern);
+                        format!("r\"{escaped}\"")
+                    }
                 },
                 target_expr,
                 escape_replacement_string(replacement)
@@ -502,9 +497,15 @@ impl CompiledExpression {
                     TagValue::String(re.replace(&target_str, \"{}\").to_string())
                 }}",
                 if case_insensitive {
-                    format!("r\"(?i){}\"", escape_regex_pattern(pattern))
+                    {
+                        let escaped = escape_regex_pattern(pattern);
+                        format!("r\"(?i){escaped}\"")
+                    }
                 } else {
-                    format!("r\"{}\"", escape_regex_pattern(pattern))
+                    {
+                        let escaped = escape_regex_pattern(pattern);
+                        format!("r\"{escaped}\"")
+                    }
                 },
                 target_expr,
                 escape_replacement_string(replacement)
@@ -514,6 +515,8 @@ impl CompiledExpression {
 
     /// Collect a chain of concatenations into a flat list
     /// This converts nested BinaryOp(Concatenate) into a single list to avoid nested format! calls
+    #[allow(clippy::only_used_in_recursion)]
+    #[allow(dead_code)]
     fn collect_concatenation_chain<'a>(&self, node: &'a AstNode) -> Vec<&'a AstNode> {
         match node {
             AstNode::BinaryOp {
@@ -531,9 +534,10 @@ impl CompiledExpression {
 
     /// Generate a format string and arguments for concatenation chain
     /// Returns (format_string, arguments)
-    fn generate_concatenation_format<'a>(
+    #[allow(dead_code)]
+    fn generate_concatenation_format(
         &self,
-        chain: &[&'a AstNode],
+        chain: &[&AstNode],
         for_value_context: bool,
     ) -> (String, Vec<String>) {
         let mut format_string = String::new();
@@ -573,6 +577,7 @@ impl CompiledExpression {
     }
 
     /// Generate transliteration code
+    #[allow(dead_code)]
     fn generate_transliteration(
         &self,
         target_expr: &str,
@@ -650,16 +655,18 @@ impl CompiledExpression {
 }
 
 /// Format number as floating-point literal to ensure proper f64 arithmetic
+#[allow(dead_code)]
 fn format_number(n: Number) -> String {
     if n.fract() == 0.0 {
-        format!("{:.1}_f64", n) // Add _f64 to integers like 8 -> 8.0_f64
+        format!("{n:.1}_f64") // Add _f64 to integers like 8 -> 8.0_f64
     } else {
-        format!("{}_f64", n) // Add _f64 to decimals like 25.4 -> 25.4_f64
+        format!("{n}_f64") // Add _f64 to decimals like 25.4 -> 25.4_f64
     }
 }
 
 /// Convert Perl sprintf format string to Rust format! syntax
 /// Examples: "%.1f mm" -> "{:.1} mm", "%d" -> "{}", "%.2f" -> "{:.2}"
+#[allow(dead_code)]
 fn convert_perl_sprintf_to_rust(perl_format: &str) -> String {
     let mut result = String::new();
     let mut chars = perl_format.chars().peekable();
@@ -745,17 +752,20 @@ fn convert_perl_sprintf_to_rust(perl_format: &str) -> String {
 }
 
 /// Escape regex pattern for use in Rust regex::Regex
+#[allow(dead_code)]
 fn escape_regex_pattern(pattern: &str) -> String {
     // Basic escaping - in full implementation would need comprehensive Perl->Rust regex translation
     pattern.replace("\\", "\\\\").replace("\"", "\\\"")
 }
 
 /// Escape replacement string for use in regex replacement
+#[allow(dead_code)]
 fn escape_replacement_string(replacement: &str) -> String {
     replacement.replace("\\", "\\\\").replace("\"", "\\\"")
 }
 
 /// Escape character class for use in transliteration
+#[allow(dead_code)]
 fn escape_char_class(chars: &str) -> String {
     // Handle character ranges like a-z, A-Z, 0-9
     // For now, just basic escaping - full implementation would expand ranges
