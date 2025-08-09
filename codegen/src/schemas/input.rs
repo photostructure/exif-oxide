@@ -40,7 +40,9 @@ pub struct TagGroups {
 /// Conversion references extracted from tag definitions
 #[derive(Debug, Deserialize)]
 pub struct ConversionRefs {
+    #[allow(dead_code)]
     pub print_conv: Vec<String>,
+    #[allow(dead_code)]
     pub value_conv: Vec<String>,
 }
 
@@ -106,8 +108,11 @@ pub struct SimpleTablesData {
 /// Extracted table data from simple_table.pl
 #[derive(Debug, Clone, Deserialize)]
 pub struct ExtractedTable {
+    #[allow(dead_code)]
     pub source: TableSource,
+    #[allow(dead_code)]
     pub metadata: TableMetadata,
+    #[allow(dead_code)]
     pub entries: Vec<TableEntry>,
 }
 
