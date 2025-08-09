@@ -97,7 +97,7 @@ codegen/
 │   ├── conv_registry.rs       # PrintConv/ValueConv function registry
 │   └── common.rs              # Shared utilities
 ├── scripts/                   # Perl extraction scripts
-│   ├── field_extractor.pl     # ⭐ UNIVERSAL EXTRACTOR - extracts all symbols
+│   ├── field_extractor.pl     # ⭐ UNIVERSAL EXTRACTOR - extracts all symbols (hashes AND arrays)
 │   └── patch_all_modules.sh   # ExifTool patching utilities
 ├── extractors/               # 📚 LEGACY - Individual extractors (historical)
 │   ├── tag_kit.pl            # Legacy tag extraction
@@ -178,18 +178,27 @@ The unified strategy system operates in three phases:
 ### Phase 1: Universal Extraction
 
 ```bash
-# field_extractor.pl extracts ALL hash symbols from any ExifTool module
+# field_extractor.pl extracts ALL symbols (hashes AND arrays) from any ExifTool module
 field_extractor.pl third-party/exiftool/lib/Image/ExifTool/Canon.pm
 ```
 
 **Output**: Stream of JSON symbols with structure information:
 ```json
+// Hash example
 {
   "type": "hash",
   "name": "canonWhiteBalance", 
   "data": {"0": "Auto", "1": "Daylight", "2": "Cloudy"},
   "module": "Canon",
   "metadata": {"size": 3, "is_composite_table": 0}
+}
+
+// Array example (NEW as of 2025-08-09)
+{
+  "type": "array",
+  "name": "xlat",
+  "data": [[193,191,109...], [167,188,201...]],
+  "module": "Nikon"
 }
 ```
 
