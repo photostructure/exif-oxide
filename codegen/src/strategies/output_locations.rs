@@ -161,8 +161,6 @@ mod tests {
         );
     }
 
-    // Removed test for obsolete old-architecture function generate_pattern_path
-
     #[test]
     fn test_module_name_to_directory() {
         // All names get _pm suffix for ExifTool traceability
@@ -265,10 +263,4 @@ mod tests {
         // Empty string
         assert_eq!(to_snake_case(""), "");
     }
-
-    // Removed test for obsolete old-architecture function extract_directory_path
-
-    // Removed test for obsolete old-architecture function is_valid_path
-
-    // Removed test for obsolete old-architecture function is_snake_case
 }

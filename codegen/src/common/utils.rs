@@ -255,6 +255,4 @@ mod tests {
             PatternClassification::Literal(vec![103, 105, 109, 112, 32, 120, 99, 102, 32])
         );
     }
-
-    // Removed test for obsolete old-architecture function is_simple_literal_pattern
 }
