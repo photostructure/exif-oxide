@@ -78,6 +78,7 @@ Honest. RTFM.
 - ✅ **Critical codegen naming bug identified and partially fixed** → `canonModelID` → `canon_model_id` conversion fixed in `codegen/src/strategies/output_locations.rs:123-151` with improved acronym detection
 - ✅ **Codegen compilation errors resolved** → Fixed `FieldMetadata` struct usage in test cases and type mismatches in `codegen/src/strategies/simple_table.rs:271-328`
 - ✅ **Error reduction** → Reduced compilation errors from ~240 to current state focused on specific module name mismatches and missing functions
+- ✅ **Module naming reverted to ExifTool-faithful format** → Changed from snake_case (`panasonic_raw`) back to ExifTool names with `_pm` suffix (`PanasonicRaw_pm`) for clear traceability to ExifTool source files. Updated `codegen/src/strategies/output_locations.rs:35-57` and created `scripts/update_generated_imports.sh` to systematically update all imports throughout codebase
 
 ## TDD Foundation Requirement
 
