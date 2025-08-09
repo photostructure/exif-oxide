@@ -14,20 +14,20 @@ fn test_canon_lens_lookup_functionality() {
 
     // Try to access the canon lens lookup function
     // This will fail compilation if the module/function isn't properly generated and exported
-    let result = exif_oxide::generated::canon::canon_lens_types::lookup_canon_lens_types("2.1");
+    let result = exif_oxide::generated::Canon_pm::canon_lens_types::lookup_canon_lens_types("2.1");
 
     // Validate the expected result from the TPP
     assert_eq!(result, Some("Sigma 24mm f/2.8 Super Wide II"));
 
     // Test a few more entries to ensure the lookup table is properly populated
     assert_eq!(
-        exif_oxide::generated::canon::canon_lens_types::lookup_canon_lens_types("2"),
+        exif_oxide::generated::Canon_pm::canon_lens_types::lookup_canon_lens_types("2"),
         Some("Canon EF 28mm f/2.8 or 28mm f/2.8 IS USM")
     );
 
     // Test that unknown keys return None
     assert_eq!(
-        exif_oxide::generated::canon::canon_lens_types::lookup_canon_lens_types("999.999"),
+        exif_oxide::generated::Canon_pm::canon_lens_types::lookup_canon_lens_types("999.999"),
         None
     );
 }
@@ -37,7 +37,7 @@ fn test_canon_lens_types_module_accessible() {
     // Test that the module structure is properly set up
     // This ensures the module declarations were correctly generated
 
-    use exif_oxide::generated::canon::canon_lens_types;
+    use exif_oxide::generated::Canon_pm::canon_lens_types;
 
     // Test that we can call the lookup function at all
     let _result = canon_lens_types::lookup_canon_lens_types("1");
@@ -51,7 +51,7 @@ fn test_canon_lens_types_populated() {
     // Test that the canonical lens types table has reasonable number of entries
     // TPP mentioned 526+ entries expected
 
-    use exif_oxide::generated::canon::canon_lens_types;
+    use exif_oxide::generated::Canon_pm::canon_lens_types;
 
     // Test some known entries to ensure table is populated
     let test_keys = vec!["1", "2", "3", "4", "5", "2.1", "4.1"];

@@ -7,7 +7,7 @@ fn test_canon_lens_lookup() {
     // and can handle mixed numeric/string keys like "2.1"
 
     // This should fail until SimpleTableStrategy is fixed to handle mixed keys
-    use exif_oxide::generated::canon::canon_lens_types::lookup_canon_lens_types;
+    use exif_oxide::generated::Canon_pm::canon_lens_types::lookup_canon_lens_types;
 
     // Test numeric key
     assert_eq!(lookup_canon_lens_types("1"), Some("Canon EF 50mm f/1.8"));
