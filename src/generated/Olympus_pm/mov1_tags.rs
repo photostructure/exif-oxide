@@ -8,14 +8,9 @@ use std::sync::LazyLock;
 
 // Generated imports for conversion functions
 use crate::implementations::print_conv::{
-    exposuretime_print_conv, fnumber_print_conv, gpsaltitude_print_conv, lensinfo_print_conv,
-    print_fraction,
+    exposuretime_print_conv, fnumber_print_conv, print_fraction,
 };
-use crate::implementations::value_conv::{
-    exif_date_value_conv, gps_coordinate_value_conv, gpstimestamp_value_conv,
-    reciprocal_10_value_conv, reference_long_string_value_conv,
-    reference_very_long_string_value_conv,
-};
+use crate::implementations::value_conv::reciprocal_10_value_conv;
 
 /// Tag definitions for Olympus::MOV1 table
 pub static OLYMPUS_MOV1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {

@@ -6,6 +6,14 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::implementations::print_conv::{
+    exposuretime_print_conv, fnumber_print_conv, lensinfo_print_conv, print_fraction,
+};
+use crate::implementations::value_conv::{
+    reference_long_string_value_conv, reference_very_long_string_value_conv,
+};
+
 /// Tag definitions for Exif::Main table
 pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
