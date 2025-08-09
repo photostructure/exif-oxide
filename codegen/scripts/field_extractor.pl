@@ -169,10 +169,19 @@ sub extract_hash_symbol {
         return;
     }
 
+    # Special processing for magic number patterns
+    my $processed_data = $filtered_data;
+    if ( $symbol_name eq 'magicNumber' ) {
+        print STDERR "    Processing magic number patterns...\n" if $ENV{DEBUG};
+        $processed_data = convert_magic_number_patterns($filtered_data);
+        print STDERR "    Magic number pattern processing completed\n"
+          if $ENV{DEBUG};
+    }
+
     my $symbol_data = {
         type     => 'hash',
         name     => $symbol_name,
-        data     => $filtered_data,
+        data     => $processed_data,
         module   => $module_name,
         metadata => {
             size               => $size,
@@ -418,4 +427,36 @@ sub parse_array_elements {
     }
 
     return \@elements;
+}
+
+#------------------------------------------------------------------------------
+# Convert magic number patterns to raw byte arrays Input: Hash of file_type =>
+# pattern Output: Hash of file_type => {raw_bytes => [byte, byte, ...]}
+#
+# CRITICAL: This MUST be done in Perl to avoid UTF-8 string escaping issues.
+# ExifTool patterns contain raw bytes (0x00-0xFF) that become corrupted when
+# passed through JSON->Rust string conversion. Instead of trying to parse
+# patterns in Perl, we convert ALL patterns to raw byte arrays and let Rust
+# handle the classification and optimization.
+#
+# _UNFORTUNATELY_: this means rust will see the raw byte arrays _including_ hex
+# encoding and backslashes -- so rust has to un-do that nonsense on their side.
+#------------------------------------------------------------------------------
+sub convert_magic_number_patterns {
+    my ($patterns_hash) = @_;
+    my %converted;
+
+    for my $file_type ( keys %$patterns_hash ) {
+        my $pattern = $patterns_hash->{$file_type};
+
+        # Convert pattern string to raw byte array
+        my @raw_bytes;
+        for my $i ( 0 .. length($pattern) - 1 ) {
+            push @raw_bytes, ord( substr( $pattern, $i, 1 ) );
+        }
+
+        $converted{$file_type} = { raw_bytes => \@raw_bytes };
+    }
+
+    return \%converted;
 }
