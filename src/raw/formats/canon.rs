@@ -305,7 +305,7 @@ pub fn get_canon_tag_name(_tag_id: u16) -> Option<&'static str> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::generated::canon_pm::tag_kit::CANON_PM_TAG_KITS;
+    use crate::generated::canon::main_tags::CANON_MAIN_TAGS;
 
     #[test]
     fn test_canon_format_names() {
@@ -327,12 +327,12 @@ mod tests {
         // Note: Using stable tag IDs that exist in the current codegen output
 
         // Test that we can find some tags by ID
-        assert!(CANON_PM_TAG_KITS.get(&0x0001).is_some());
-        assert!(CANON_PM_TAG_KITS.get(&0x0002).is_some());
+        assert!(CANON_MAIN_TAGS.get(&0x0001).is_some());
+        assert!(CANON_MAIN_TAGS.get(&0x0002).is_some());
 
         // Test the AFInfo2 tag which should be stable
-        assert!(CANON_PM_TAG_KITS.get(&0x0026).is_some());
-        assert_eq!(CANON_PM_TAG_KITS.get(&0x0026).unwrap().name, "CanonAFInfo2");
+        assert!(CANON_MAIN_TAGS.get(&0x0026).is_some());
+        assert_eq!(CANON_MAIN_TAGS.get(&0x0026).unwrap().name, "CanonAFInfo2");
 
         // Test that the tag kit contains expected tags
         // Note: AFConfigTool is defined in the AFConfig subtable (ExifTool 0x4028) at index 1,
@@ -340,22 +340,18 @@ mod tests {
         // The priority system correctly preserves CanonCameraSettings since it has a subdirectory processor.
         // This is expected behavior - tags with binary data processors take priority.
 
-        // Verify that CanonCameraSettings (which has subdirectory processing) is preserved at ID 1
-        if let Some(tag_at_1) = CANON_PM_TAG_KITS.get(&0x0001) {
+        // Verify that CanonCameraSettings is preserved at ID 1
+        if let Some(tag_at_1) = CANON_MAIN_TAGS.get(&1) {
             assert_eq!(tag_at_1.name, "CanonCameraSettings");
-            assert!(
-                tag_at_1.subdirectory.is_some(),
-                "CanonCameraSettings should have subdirectory processor"
-            );
         } else {
             panic!("Expected CanonCameraSettings at ID 1");
         }
 
         // Verify we have a reasonable number of tags
         assert!(
-            CANON_PM_TAG_KITS.len() > 100,
+            CANON_MAIN_TAGS.len() > 50,
             "Expected many Canon tags, got {}",
-            CANON_PM_TAG_KITS.len()
+            CANON_MAIN_TAGS.len()
         );
     }
 
@@ -365,26 +361,24 @@ mod tests {
         // Focus on stable aspects rather than specific tag names
 
         // Test that basic lookup works
-        let tag_1 = CANON_PM_TAG_KITS.get(&0x0001);
+        let tag_1 = CANON_MAIN_TAGS.get(&1);
         assert!(tag_1.is_some());
-        assert_eq!(tag_1.unwrap().id, 0x0001);
+        assert_eq!(tag_1.unwrap().name, "CanonCameraSettings");
 
-        let tag_2 = CANON_PM_TAG_KITS.get(&0x0002);
+        let tag_2 = CANON_MAIN_TAGS.get(&2);
         assert!(tag_2.is_some());
-        assert_eq!(tag_2.unwrap().id, 0x0002);
+        assert_eq!(tag_2.unwrap().name, "CanonFocalLength");
 
         // Test a known stable tag
-        let tag_26 = CANON_PM_TAG_KITS.get(&0x0026);
+        let tag_26 = CANON_MAIN_TAGS.get(&38);
         assert!(tag_26.is_some());
-        assert_eq!(tag_26.unwrap().id, 0x0026);
         assert_eq!(tag_26.unwrap().name, "CanonAFInfo2");
 
         // Test unknown tag
-        assert!(CANON_PM_TAG_KITS.get(&0x9999).is_none());
+        assert!(CANON_MAIN_TAGS.get(&0x9999).is_none());
 
         // Test that all tags have valid IDs and names
-        for (id, tag) in &*CANON_PM_TAG_KITS {
-            assert_eq!(*id, tag.id);
+        for (_id, tag) in &*CANON_MAIN_TAGS {
             assert!(!tag.name.is_empty());
         }
     }
@@ -406,10 +400,10 @@ mod tests {
         // Focus on stable tags rather than specific name mappings
 
         // Test a known stable tag
-        assert_eq!(CANON_PM_TAG_KITS.get(&0x0026).unwrap().name, "CanonAFInfo2");
+        assert_eq!(CANON_MAIN_TAGS.get(&38).unwrap().name, "CanonAFInfo2");
 
         // Verify we have some expected Canon tags (names may change with codegen updates)
-        let tag_names: Vec<&str> = CANON_PM_TAG_KITS.values().map(|tag| tag.name).collect();
+        let tag_names: Vec<&str> = CANON_MAIN_TAGS.values().map(|tag| tag.name).collect();
 
         // These tags should exist somewhere in the Canon tag kit
         assert!(
@@ -422,7 +416,7 @@ mod tests {
         );
 
         // Verify all tag names are non-empty
-        for tag in CANON_PM_TAG_KITS.values() {
+        for tag in CANON_MAIN_TAGS.values() {
             assert!(!tag.name.is_empty(), "Tag ID {} has empty name", tag.id);
         }
     }

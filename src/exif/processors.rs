@@ -777,12 +777,12 @@ impl ExifReader {
         // 6. Handle ExifTool-style group names (e.g., "MakerNotes:SelfTimer" -> "SelfTimer", "EXIF:Make" -> "Make")
         if tag_name.contains(':') {
             let simple_name = tag_name.split(':').next_back().unwrap_or(tag_name);
-            for (tag_id, tag_def) in EXIF_PM_TAG_KITS.iter() {
+            for (tag_id, tag_def) in crate::generated::exif::main_tags::EXIF_MAIN_TAGS.iter() {
                 if tag_def.name == simple_name {
                     return Some(*tag_id as u16);
                 }
             }
-            for (tag_id, tag_def) in GPS_PM_TAG_KITS.iter() {
+            for (tag_id, tag_def) in crate::generated::gps::main_tags::GPS_MAIN_TAGS.iter() {
                 if tag_def.name == simple_name {
                     return Some(*tag_id as u16);
                 }

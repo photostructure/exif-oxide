@@ -10,6 +10,7 @@ mod dispatch;
 mod implementations;
 mod orchestration;
 mod resolution;
+mod value_conv_evaluator;
 
 // Re-export the main public API
 pub use orchestration::{apply_composite_conversions, resolve_and_compute_composites};
@@ -18,3 +19,4 @@ pub use resolution::{build_available_tags_map, can_build_composite, is_dependenc
 // Re-export for testing and internal use
 pub use dispatch::compute_composite_tag;
 pub use orchestration::handle_unresolved_composites;
+pub use value_conv_evaluator::{ExecutionStrategy, ValueConvEvaluator};

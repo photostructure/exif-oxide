@@ -22,7 +22,7 @@ fn find_sony_tag_id_by_name(tag_name: &str) -> Option<u32> {
     // Search through all Sony tag kit entries to find matching name
     for (&tag_id, tag_def) in SONY_PM_TAG_KITS.iter() {
         if tag_def.name == tag_name {
-            return Some(tag_id);
+            return Some(tag_id.into());
         }
     }
     None

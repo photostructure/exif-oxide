@@ -258,7 +258,7 @@ pub fn extract_metadata(
     // Raw value: uppercase, PrintConv: lowercase (PrintConv => 'lc $val')
     if filter_opts.should_extract_tag("FileTypeExtension", "File") {
         let (file_type_ext_raw, file_type_ext_print) = {
-            use crate::generated::file_types::file_type_lookup::lookup_file_type_by_extension;
+            use crate::generated::exif_tool::file_type_lookup::lookup_file_type_by_extension;
 
             // First check ExifTool's %fileTypeExt mapping for special cases
             let norm_ext = lookup_file_type_by_extension(&detection_result.file_type)
@@ -1631,7 +1631,7 @@ fn extract_file_tags_only(
         }
 
         if filter_opts.should_extract_tag("FileTypeExtension", "File") {
-            use crate::generated::file_types::file_type_lookup::lookup_file_type_by_extension;
+            use crate::generated::exif_tool::file_type_lookup::lookup_file_type_by_extension;
             let norm_ext = lookup_file_type_by_extension(&detection_result.file_type)
                 .unwrap_or(detection_result.file_type.clone());
             let raw_value = norm_ext.to_uppercase();
