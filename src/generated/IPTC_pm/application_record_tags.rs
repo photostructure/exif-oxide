@@ -7,14 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::implementations::print_conv::{
-    exposuretime_print_conv, fnumber_print_conv, gpsaltitude_print_conv, lensinfo_print_conv,
-    print_fraction,
-};
-use crate::implementations::value_conv::{
-    exif_date_value_conv, gps_coordinate_value_conv, gpstimestamp_value_conv,
-    reference_long_string_value_conv, reference_very_long_string_value_conv,
-};
+use crate::implementations::value_conv::exif_date_value_conv;
 
 /// Tag definitions for IPTC::ApplicationRecord table
 pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {

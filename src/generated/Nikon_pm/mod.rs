@@ -16,7 +16,10 @@ pub mod af_info_tags;
 pub mod af_points105;
 pub mod af_points135;
 pub mod af_points153;
+pub mod af_points231;
+pub mod af_points299;
 pub mod af_points39;
+pub mod af_points405;
 pub mod af_points51;
 pub mod af_points81;
 pub mod af_tune_tags;
@@ -200,6 +203,8 @@ pub mod v_rmode_z9;
 pub mod vignette_info_tags;
 pub mod vr_info_tags;
 pub mod world_time_tags;
+pub mod xlat_0;
+pub mod xlat_1;
 
 // Re-export commonly used items
 pub use main_tags::NIKON_MAIN_TAGS;

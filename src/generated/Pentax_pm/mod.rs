@@ -28,6 +28,7 @@ pub mod flash_info;
 pub mod flash_info_unknown_tags;
 pub mod junk2_tags;
 pub mod junk_tags;
+pub mod k3iii_af;
 pub mod kelvin_wb_tags;
 pub mod lens_corr_tags;
 pub mod lens_data;
