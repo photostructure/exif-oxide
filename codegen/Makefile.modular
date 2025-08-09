@@ -1,17 +1,17 @@
 # Modular Codegen Makefile
 # Simplified build system - Rust now handles extraction orchestration internally
 
-.PHONY: all clean generate-rust codegen test
+.PHONY: all clean codegen-flocked codegen test
 
 # Default target
 all: codegen
 
 # Main codegen pipeline (Rust now handles everything including patch cleanup)
 codegen:
-	@flock --exclusive --timeout=30 .make.flock $(MAKE) --no-print-directory -f Makefile.modular generate-rust
+	@flock --exclusive --timeout=30 .make.flock $(MAKE) --no-print-directory -f Makefile.modular codegen-flocked
 
 # We can't have codegen-flocked depend on `clean`, as that breaks concurrent builds. 
-generate-rust:
+codegen-flocked:
 	@echo "🔧 Applying universal ExifTool patching..." ; \
 	./scripts/patch_all_modules.sh ; \
 	echo "🚀 Running Rust codegen..." ; \
@@ -25,6 +25,8 @@ generate-rust:
 clean:
 	cargo clean
 
-# Run codegen tests
+check:
+	cargo check -p codegen
+
 test:
-	cargo test --all
+	cargo test -p codegen
