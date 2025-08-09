@@ -104,8 +104,8 @@ fn test_xlat_arrays_can_be_imported() {
     // This test actually imports the generated constants to verify they work
     // It requires the test-helpers feature to access the generated modules
 
-    use exif_oxide::generated::nikon::xlat_0::XLAT_0;
-    use exif_oxide::generated::nikon::xlat_1::XLAT_1;
+    use exif_oxide::generated::Nikon_pm::xlat_0::XLAT_0;
+    use exif_oxide::generated::Nikon_pm::xlat_1::XLAT_1;
 
     // Basic sanity checks on the arrays
     assert_eq!(XLAT_0.len(), 256, "XLAT_0 should have 256 elements");
