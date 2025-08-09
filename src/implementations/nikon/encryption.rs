@@ -14,8 +14,8 @@
 //! Phase 3+ Implementation: Actual decryption algorithms (future milestone)
 
 use crate::exif::ExifReader;
-use crate::generated::nikon::xlat_0::XLAT_0;
-use crate::generated::nikon::xlat_1::XLAT_1;
+use crate::generated::Nikon_pm::xlat_0::XLAT_0;
+use crate::generated::Nikon_pm::xlat_1::XLAT_1;
 use crate::tiff_types::{ByteOrder, IfdEntry};
 use crate::types::{Result, TagValue};
 use tracing::{debug, trace, warn};

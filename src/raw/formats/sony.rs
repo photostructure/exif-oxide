@@ -29,16 +29,16 @@ use crate::types::{Result, TagValue};
 use tracing::debug;
 
 // Import Sony lookup functions
-use crate::generated::sony::{
+use crate::generated::Sony_pm::{
     sony_exposure_program::lookup_sony_exposure_program,
     white_balance_setting::lookup_white_balance_setting,
     // Note: sony_iso_setting_2010 function doesn't exist - need to generate it
 };
 
 // Import generated Sony lookup tables and ProcessBinaryData processors
-use crate::generated::sony;
+use crate::generated::Sony_pm;
 // TODO: Uncomment when Sony tag structure is generated
-// pub use crate::generated::sony::tag_structure::SonyDataType;
+// pub use crate::generated::Sony_pm::tag_structure::SonyDataType;
 
 /// Sony RAW format variants  
 /// ExifTool: Sony.pm handles multiple format types with version detection
@@ -217,7 +217,7 @@ pub enum IDCCorruption {
 }
 
 // TODO: Use generated Sony tag structure from codegen when available
-// pub use crate::generated::sony::tag_structure::SonyDataType;
+// pub use crate::generated::Sony_pm::tag_structure::SonyDataType;
 
 /// Sony RAW Handler - main processor for Sony RAW formats
 /// ExifTool: Sony.pm ProcessSony() main entry point  
@@ -705,7 +705,7 @@ impl SonyRawHandler {
     ) -> Result<u64> {
         // Import generated offset patterns - will be used when full implementation is added
         // TODO: Generate Sony offset patterns
-        // use crate::generated::sony::offset_patterns::{
+        // use crate::generated::Sony_pm::offset_patterns::{
         //     OFFSET_CALCULATION_TYPES, OFFSET_EXAMPLES,
         // };
         // let _ = (OFFSET_CALCULATION_TYPES.len(), OFFSET_EXAMPLES.len()); // Suppress unused warnings for now
