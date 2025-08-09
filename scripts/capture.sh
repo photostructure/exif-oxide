@@ -12,26 +12,26 @@ STDOUT_FILE="${TEMP_DIR}/stdout_${TIMESTAMP}_$$.txt"
 STDERR_FILE="${TEMP_DIR}/stderr_${TIMESTAMP}_$$.txt"
 
 # Run the command with timing, redirecting outputs
-time "$@" > "$STDOUT_FILE" 2> "$STDERR_FILE";
+time "$@" >"$STDOUT_FILE" 2>"$STDERR_FILE"
 EXIT_CODE=$?
 
 # Function to handle output display
 handle_output() {
-    local stream_name=$1
-    local file_path=$2
-    local line_count=$(wc -l < "$file_path")
-    
-    if [ "$line_count" -le 20 ]; then
-        if [ "$line_count" -gt 0 ]; then
-            echo "=== $stream_name ($line_count lines) ==="
-            cat "$file_path"
-        else
-            echo "=== $stream_name (empty) ==="
-        fi
-        rm -f "$file_path"
+  local stream_name=$1
+  local file_path=$2
+  local line_count=$(wc -l <"$file_path")
+
+  if [ "$line_count" -le 20 ]; then
+    if [ "$line_count" -gt 0 ]; then
+      echo "=== $stream_name ($line_count lines) ==="
+      cat "$file_path"
     else
-        echo "$stream_name: $file_path ($line_count lines)"
+      echo "=== $stream_name (empty) ==="
     fi
+    rm -f "$file_path"
+  else
+    echo "$stream_name: $file_path ($line_count lines)"
+  fi
 }
 
 echo "EXIT_CODE: $EXIT_CODE"
