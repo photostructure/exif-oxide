@@ -15,6 +15,7 @@ pub mod priority_settings;
 pub mod raf_data_tags;
 pub mod raf_header_tags;
 pub mod raf_tags;
+pub mod tested_raf;
 
 // Re-export commonly used items
 pub use main_tags::FUJI_FILM_MAIN_TAGS;

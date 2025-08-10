@@ -7,8 +7,14 @@ pub mod color_spec_tags;
 pub mod display_resolution_tags;
 pub mod file_type_tags;
 pub mod image_header_tags;
+pub mod is_image_data;
+pub mod j2c_marker;
+pub mod jp2map;
 pub mod jumd_tags;
+pub mod jxl_map;
 pub mod main_tags;
+pub mod resolution_unit;
+pub mod uuid;
 
 // Re-export commonly used items
 pub use main_tags::JPEG2000_MAIN_TAGS;
