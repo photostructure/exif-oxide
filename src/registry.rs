@@ -314,12 +314,10 @@ pub fn evaluate_print_conv(print_conv: &str, value: &TagValue) -> Result<TagValu
 
     // Create expression evaluator for processing the PrintConv expression
     let mut evaluator = ExpressionEvaluator::new();
-    let mut errors = Vec::new();
-    let mut warnings = Vec::new();
 
     // TODO: P07 - Full expression evaluation implementation
     // For now, attempt basic evaluation and fall back to original value
-    match evaluator.evaluate_expression(print_conv, value, &mut errors, &mut warnings) {
+    match evaluator.evaluate_expression(print_conv, value) {
         Ok(result) => {
             trace!("Expression evaluation succeeded: {:?}", result);
             Ok(result)
