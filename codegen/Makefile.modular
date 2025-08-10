@@ -13,18 +13,18 @@ codegen:
 # We can't have codegen-flocked depend on `clean`, as that breaks concurrent builds. 
 codegen-flocked:
 	@echo "🔧 Applying universal ExifTool patching..." ; \
-	./scripts/patch_all_modules.sh ; \
+	./scripts/exiftool-patcher.sh ; \
 	echo "🚀 Running Rust codegen..." ; \
 	RUST_LOG=info cargo run ; ret=$$? ; \
-	../scripts/undo-exiftool-patches.sh ; \
 	if [ $$ret -eq 0 ]; then \
+		echo "🔧 Reformatting generated Rust code..." ; \
 		cd .. && cargo fmt -- src/generated/**/*.rs 2>/dev/null ; \
 	fi ; \
 	exit $$ret
 
 clean:
 	cargo clean
-	../scripts/undo-exiftool-patches.sh
+	./scripts/exiftool-patcher-undo.sh
 
 check:
 	cargo check -p codegen

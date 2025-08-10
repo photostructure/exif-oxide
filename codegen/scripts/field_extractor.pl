@@ -19,7 +19,9 @@ my @skipped_list      = ();
 
 # JSON serializer - let JSON::XS handle complex structures automatically
 my $json =
-  JSON::XS->new->canonical(1)->allow_blessed(1)->convert_blessed(1)
+  JSON::XS->new->canonical(1)
+  ->allow_blessed(1)
+  ->convert_blessed(1)
   ->allow_nonref(1);
 
 if ( @ARGV < 1 ) {

@@ -76,6 +76,7 @@ clean:
 clean-generated:
 	rm -rf src/generated
 	rm -rf codegen/generated
+	codegen/scripts/exiftool-patcher-undo.sh
 
 # Deep clean - removes all build artifacts and generated code
 clean-all: clean clean-generated

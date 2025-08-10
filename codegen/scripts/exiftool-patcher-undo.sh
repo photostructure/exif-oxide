@@ -11,7 +11,7 @@ if ! command -v git >/dev/null 2>&1; then
   exit 0
 fi
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. >/dev/null 2>&1 && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")"/../.. >/dev/null 2>&1 && pwd)"
 cd "$ROOT"
 
 # Note! We don't just revert all of third-party/exiftool because the

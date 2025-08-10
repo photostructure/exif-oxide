@@ -17,6 +17,7 @@
 
 use strict;
 use warnings;
+use File::Basename;
 
 # Check arguments
 if ( @ARGV != 1 ) {
@@ -57,30 +58,17 @@ sub convert_all_my_to_package_variables {
     my @vars_to_export;
 
     # Split content into lines for analysis
-    my @lines       = split /\n/, $content;
-    my $in_sub      = 0;
-    my $brace_count = 0;
+    my @lines = split /\n/, $content;
 
     for ( my $i = 0 ; $i < @lines ; $i++ ) {
         my $line = $lines[$i];
 
-        # Track whether we're inside a subroutine
-        if ( $line =~ /^\s*sub\s+\w+/ ) {
-            $in_sub      = 1;
-            $brace_count = 0;
-        }
-
-        # Count braces to track when we exit a sub
-        if ($in_sub) {
-            $brace_count += ( $line =~ tr/{/{/ ) - ( $line =~ tr/}/}/ );
-            if ( $brace_count <= 0 && $line =~ /}/ ) {
-                $in_sub = 0;
-            }
-        }
-
-        # Only collect variables declared at package level (not in subs)
-        # Must start at beginning of line with no indentation
-        if ( !$in_sub && $line =~ /^my\s+([%@])(\w+)\s*=/ ) {
+        # Only collect variables declared at package level
+        # Must start at beginning of line with no indentation (^my, not ^\s+my)
+        if ( $line =~ /^my\s+([%@])(\w+)\s*=/ ) {
+            print STDERR
+              "DEBUG: Found package-level variable at line $i: $1$2\n"
+              if $ENV{DEBUG};
             push @vars_to_export,
               {
                 sigil    => $1,
@@ -152,8 +140,6 @@ s/^(Image::ExifTool::AddCompositeTags\('Image::ExifTool::\w+'\);)$/our \$__hasCo
         # Add a marker comment to track conversion
         open( my $append_fh, '>>', $module_path )
           or die "Cannot append to $module_path: $!";
-        print $append_fh
-          "\n# EXIF-OXIDE: converted ALL my variables to package variables\n";
         close($append_fh);
     }
 
@@ -165,8 +151,13 @@ sub main {
 
     # Check if already converted
     if ( has_been_converted($module_path) ) {
+        print STDERR "DEBUG: Skipping $module_path (already converted)\n"
+          if $ENV{DEBUG};
         return;
     }
+
+    # Format with perltidy first (before patching)
+    format_file_with_perltidy($module_path);
 
     # Convert the variables
     my $modified = convert_all_my_to_package_variables($module_path);
