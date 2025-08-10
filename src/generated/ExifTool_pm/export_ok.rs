@@ -4,6 +4,9 @@
 
 /// EXPORT_OK array from ExifTool
 pub static EXPORT_OK: [&'static str; 45] = [
+    "%allTables",
+    "@tableOrder",
+    "@fileTypes",
     "ImageInfo",
     "AvailableOptions",
     "GetTagName",
@@ -46,7 +49,4 @@ pub static EXPORT_OK: [&'static str; 45] = [
     "Set32u",
     "Set64u",
     "Set64s",
-    "%allTables",
-    "@tableOrder",
-    "@fileTypes",
 ];
