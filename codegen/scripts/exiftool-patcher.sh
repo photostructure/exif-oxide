@@ -23,7 +23,7 @@ MARKER="# EXIF-OXIDE PATCHED"
 eval $(perl -I "$HOME/perl5/lib/perl5/" -Mlocal::lib)
 
 EXIFTOOL_BASE="$(cd ../third-party/exiftool && pwd)"
-PATCHER="./scripts/patch_exiftool_modules_universal.pl"
+PATCHER="./scripts/exiftool-patcher.pl"
 CONFIG_FILE="../config/exiftool_modules.json"
 
 if [ ! -f "$PATCHER" ]; then
@@ -83,8 +83,7 @@ fi
 # Third pass: run the patcher on the formatted files (without perltidy)
 echo "🔧 Applying variable conversion to ${#MODULES_TO_PATCH[@]} modules..."
 
-printf '%s\n' "${MODULES_TO_PATCH[@]}" | xargs -P $NPROC -I {} perl scripts/exiftool-patcher.pl {}
-
+printf '%s\n' "${MODULES_TO_PATCH[@]}" | xargs -P $NPROC -n 1 $PATCHER
 for module_path in "${MODULES_TO_PATCH[@]}"; do
   # Add the marker comment to indicate patching
   echo -e "\n$MARKER" >>"$module_path"
