@@ -65,15 +65,13 @@ sub convert_all_my_to_package_variables {
         }
 
         # Add conversion marker and exports before the final __END__ or 1; line
-        if ( $content =~
-s/^(1;\s*#.*end.*|__END__)$/$exports\n\n$1/im
-          )
-        {
+        if ( $content =~ s/^(1;\s*#.*end.*|__END__)$/$exports\n\n$1/im ) {
+
             # Marker added before __END__ or "1; #end"
         }
         else {
             # Fallback: add at very end
-            $content .= $exports ;
+            $content .= $exports;
         }
     }
 
