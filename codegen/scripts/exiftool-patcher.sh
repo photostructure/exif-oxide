@@ -87,7 +87,7 @@ printf '%s\n' "${MODULES_TO_PATCH[@]}" | xargs -P $NPROC -I {} perl scripts/exif
 
 for module_path in "${MODULES_TO_PATCH[@]}"; do
   # Add the marker comment to indicate patching
-  echo -e "\n$MARKER" >> "$module_path"
+  echo -e "\n$MARKER" >>"$module_path"
 done
 
 echo "✅ Completed processing ${#MODULES_TO_PATCH[@]} modules"
