@@ -5,6 +5,7 @@
 pub mod main_tags;
 pub mod red1_tags;
 pub mod red2_tags;
+pub mod red_format;
 
 // Re-export commonly used items
 pub use main_tags::RED_MAIN_TAGS;

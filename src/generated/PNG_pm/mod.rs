@@ -5,8 +5,10 @@
 pub mod animation_control_tags;
 pub mod ci_code_points_tags;
 pub mod image_header_tags;
+pub mod is_txt_chunk;
 pub mod main_tags;
 pub mod physical_pixel_tags;
+pub mod png_map;
 pub mod primary_chromaticities_tags;
 pub mod std_case;
 pub mod stereo_image_tags;

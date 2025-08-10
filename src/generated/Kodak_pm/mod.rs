@@ -4,6 +4,7 @@
 
 pub mod borders_tags;
 pub mod camera_info_tags;
+pub mod composite_tags;
 pub mod dc_em_tags;
 pub mod dc_md_tags;
 pub mod dc_me_tags;

@@ -47,6 +47,7 @@ pub mod color_balance_b_tags;
 pub mod color_balance_c_tags;
 pub mod color_balance_unknown2_tags;
 pub mod color_balance_unknown_tags;
+pub mod composite_tags;
 pub mod crop_hi_speed;
 pub mod custom_settings_d500_tags;
 pub mod dials_frame_advance_zoom_position_z9;

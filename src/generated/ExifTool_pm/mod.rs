@@ -32,5 +32,6 @@ pub mod unpack_rev;
 pub mod unpack_std;
 pub mod user_param_tags;
 pub mod weak_magic;
+pub mod write_types;
 
 // Re-export commonly used items

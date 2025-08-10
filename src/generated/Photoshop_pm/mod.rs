@@ -12,6 +12,7 @@ pub mod main_tags;
 pub mod pixel_info_tags;
 pub mod print_flags;
 pub mod print_scale_info_tags;
+pub mod psd_map;
 pub mod resolution_tags;
 pub mod slice_info_tags;
 pub mod unknown_tags;

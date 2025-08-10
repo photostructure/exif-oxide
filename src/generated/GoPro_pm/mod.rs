@@ -4,10 +4,12 @@
 
 pub mod fdsc_tags;
 pub mod glpi_tags;
+pub mod go_pro_fmt;
 pub mod gpmf_tags;
 pub mod gpri_tags;
 pub mod gps5_tags;
 pub mod gps9_tags;
 pub mod kbat_tags;
+pub mod no_yes;
 
 // Re-export commonly used items
