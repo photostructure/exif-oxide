@@ -1,4 +1,4 @@
-.PHONY: all check check-fmt check-json fmt lint yamllint unit-test test t codegen-test fix build install doc clean clean-generated clean-all check-deps check-perl codegen sync subdirectory-coverage check-subdirectory-coverage perl-setup perl-deps update upgrade-gha upgrade audit tests precommit compat-gen compat-gen-force compat-test test-mime-compat binary-compat-test cmp compat compat-force compat-full help
+.PHONY: all ast-check ast-test check check-fmt check-json fmt lint yamllint unit-test test t codegen-test fix build install doc clean clean-generated clean-all check-deps check-perl codegen sync subdirectory-coverage check-subdirectory-coverage perl-setup perl-deps update upgrade-gha upgrade audit tests precommit compat-gen compat-gen-force compat-test test-mime-compat binary-compat-test cmp compat compat-force compat-full help
 
 # Default target: build the project
 all: build
@@ -42,6 +42,12 @@ test:
 	cargo test --all --features test-helpers,integration-tests
 
 t: test
+
+ast-check:
+	cargo check --package ast
+
+ast-test:
+	cargo test --package ast
 
 # Run codegen tests
 codegen-check:
