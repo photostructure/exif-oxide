@@ -943,7 +943,7 @@ mod integration_tests {
 
     #[test]
     fn test_failing_registry_patterns() {
-        // Test patterns from the failing conv_registry test
+        // Test patterns from the failing impl_registry test
         let failing_patterns = vec![
             "$val ? exp(($val/8-6)*log(2))*100 : $val", // Complex ternary with exp/log - should be compilable!
             "2 ** (($val/8 - 1) / 2)",                  // Power operations not supported
@@ -1001,7 +1001,7 @@ mod integration_tests {
 
     #[test]
     fn test_registry_patterns_obsolescence() {
-        // Test patterns that should be compilable and thus obsolete in conv_registry
+        // Test patterns that should be compilable and thus obsolete in impl_registry
         let registry_patterns = vec![
             // sprintf patterns that should be compilable
             ("sprintf(\"%.1f mm\", $val)", true),

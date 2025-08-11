@@ -80,13 +80,13 @@ impl PpiConverter {
             // Variable-only expressions: just $val
             self.generate_variable_only_expression(ast_info)
         } else {
-            // Everything else should be handled by conv_registry
+            // Everything else should be handled by impl_registry
             Err(ConversionError::RequiresManualImplementation {
                 reason: format!(
                     "Expression with flags - functions: {}, self_refs: {}, complex patterns",
                     ast_info.has_functions, ast_info.has_self_refs
                 ),
-                fallback_suggestion: "Use conv_registry for functions and $$self patterns"
+                fallback_suggestion: "Use impl_registry for functions and $$self patterns"
                     .to_string(),
             })
         }
