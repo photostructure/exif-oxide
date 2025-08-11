@@ -5,7 +5,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 for file in $(jq -r '.modules | to_entries | map(.value[]) | .[]' config/exiftool_modules.json); do
   module_name=$(echo "$file" | sed 's|.*/||' | sed 's|\.pm$||')
-  
+
   # CAREFUL! We're truncating objects and arrays here just so the output is not
   # quite as overwhelming. It's still gigantic: 22k lines of JSON!
 
