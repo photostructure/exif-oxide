@@ -175,7 +175,7 @@ impl CompiledExpression {
                 format!("TagValue::F64({rust_func})")
             }
             AstNode::ExifToolFunction { name, arg } => {
-                // Generate ExifTool function call with conv_registry lookup
+                // Generate ExifTool function call with impl_registry lookup
                 self.generate_exiftool_function_call(name, arg)
             }
             AstNode::Sprintf {
@@ -407,14 +407,14 @@ impl CompiledExpression {
         }
     }
 
-    /// Generate ExifTool function call with conv_registry lookup
+    /// Generate ExifTool function call with impl_registry lookup
     #[allow(dead_code)]
     fn generate_exiftool_function_call(&self, name: &str, arg: &AstNode) -> String {
-        // Try to look up the function in conv_registry
-        // For now, we'll generate a lookup call - this will be enhanced with actual conv_registry integration
+        // Try to look up the function in impl_registry
+        // For now, we'll generate a lookup call - this will be enhanced with actual impl_registry integration
         let function_expr = format!("{name}($val)");
 
-        // Check if this is a known function pattern in conv_registry
+        // Check if this is a known function pattern in impl_registry
         match name {
             "Image::ExifTool::Exif::PrintExposureTime" => {
                 let clean_arg = self.generate_value_expression_without_outer_parens(arg);

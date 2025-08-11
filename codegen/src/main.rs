@@ -13,10 +13,10 @@ use tracing::{debug, info, warn};
 use tracing_subscriber::EnvFilter;
 
 mod common;
-mod conv_registry;
 mod expression_compiler;
 mod field_extractor;
 mod file_operations;
+mod impl_registry;
 mod schemas;
 mod strategies;
 

@@ -9,10 +9,10 @@ use tracing::{debug, info, warn};
 
 use super::{ExtractionContext, ExtractionStrategy, GeneratedFile};
 use crate::common::utils::escape_string;
-use crate::conv_registry::{
+use crate::field_extractor::FieldSymbol;
+use crate::impl_registry::{
     classify_valueconv_expression, lookup_printconv, lookup_tag_specific_printconv, ValueConvType,
 };
-use crate::field_extractor::FieldSymbol;
 use crate::strategies::output_locations::generate_module_path;
 
 /// Strategy for processing tag table definitions (Main, Composite, etc.)
@@ -308,7 +308,7 @@ impl TagKitStrategy {
         Ok(Some((tag_id, entry)))
     }
 
-    /// Process PrintConv field using the existing conv_registry system
+    /// Process PrintConv field using the existing impl_registry system
     fn process_print_conv(
         &mut self,
         tag_data: &serde_json::Map<String, JsonValue>,
@@ -359,7 +359,7 @@ impl TagKitStrategy {
         Ok("None".to_string())
     }
 
-    /// Process ValueConv field using the existing conv_registry system
+    /// Process ValueConv field using the existing impl_registry system
     fn process_value_conv(
         &mut self,
         tag_data: &serde_json::Map<String, JsonValue>,
