@@ -118,6 +118,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e16d2d3311acee920a9eb8d33b8cbc1787ce4a264e85f964c2404b969bdcd487"
 
 [[package]]
+name = "ast"
+version = "0.2.0"
+dependencies = [
+ "regex",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tracing",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -303,6 +314,7 @@ name = "codegen"
 version = "0.2.0"
 dependencies = [
  "anyhow",
+ "ast",
  "base64",
  "clap",
  "glob",
@@ -446,6 +458,7 @@ name = "exif-oxide"
 version = "0.2.0-dev"
 dependencies = [
  "anyhow",
+ "ast",
  "byteorder",
  "chrono",
  "clap",

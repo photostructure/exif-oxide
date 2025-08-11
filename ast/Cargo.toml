@@ -1,0 +1,13 @@
+[package]
+name = "ast"
+version = "0.2.0"
+edition = "2021"
+authors = ["exif-oxide@photostructure.com"]
+description = "Shared AST types and infrastructure for exif-oxide P07/P08"
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "2.0"
+regex = "1.11"
+tracing = "0.1"

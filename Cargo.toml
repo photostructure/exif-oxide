@@ -1,5 +1,5 @@
 [workspace]
-members = [".", "codegen"]
+members = [".", "codegen", "ast"]
 resolver = "2"
 
 [package]
@@ -54,6 +54,7 @@ chrono = { version = "0.4", features = [
 indexmap = { version = "2.10", features = [
     "serde",
 ] } # Preserves insertion order for tag output
+ast = { path = "ast" } # Shared AST types and infrastructure for P07/P08
 
 [dev-dependencies]
 criterion = "0.7" # Benchmarking
