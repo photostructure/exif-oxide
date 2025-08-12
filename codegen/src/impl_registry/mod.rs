@@ -1,8 +1,15 @@
-//! Codegen-time registry for PrintConv/ValueConv mappings
+//! Codegen-time implementation registry for ExifTool patterns
 //!
-//! This module provides compile-time lookup of Perl expressions to Rust function paths.
+//! This module provides compile-time lookup of ExifTool patterns (PrintConv/ValueConv
+//! expressions, function calls, complex scripts) to Rust implementation paths.
 //! The registry is used during code generation to emit direct function calls,
 //! eliminating runtime lookup overhead.
+//!
+//! ## Registries
+//!
+//! - **PrintConv/ValueConv**: Conversion expressions and lookup tables
+//! - **Functions**: Complex ExifTool function calls and Perl builtins
+//! - **Custom Scripts**: Multi-line conditional logic and complex patterns
 //!
 //! ## Design: No Expression Normalization
 //!
@@ -11,6 +18,7 @@
 //! In brief: we add multiple registry entries for formatting variations
 //! rather than normalizing expressions, eliminating 80,000+ subprocess calls.
 
+pub mod function_registry;
 pub mod printconv_registry;
 pub mod types;
 pub mod valueconv_registry;
@@ -19,6 +27,10 @@ pub mod valueconv_registry;
 mod tests;
 
 // Re-export key types and functions
+pub use function_registry::{
+    get_function_details, lookup_function, needs_function_registry_lookup, FunctionCategory,
+    FunctionDetails, FunctionImplementation,
+};
 pub use printconv_registry::{lookup_printconv, lookup_tag_specific_printconv};
 pub use types::ValueConvType;
 pub use valueconv_registry::classify_valueconv_expression;
