@@ -1,6 +1,8 @@
-//! Types for the conversion registry system
+//! Types for the implementation registry system
 //!
-//! This module defines the core types used throughout the conversion registry.
+//! This module defines the core types used throughout the implementation registry,
+//! primarily for PrintConv/ValueConv classification. Function registry types are
+//! defined in the function_registry module.
 
 use crate::expression_compiler::CompiledExpression;
 

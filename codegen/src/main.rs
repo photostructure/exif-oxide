@@ -17,6 +17,7 @@ mod expression_compiler;
 mod field_extractor;
 mod file_operations;
 mod impl_registry;
+mod ppi; // PPI JSON parsing for codegen-time AST processing
 mod schemas;
 mod strategies;
 

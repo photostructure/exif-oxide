@@ -13,6 +13,7 @@ use crate::field_extractor::FieldSymbol;
 use crate::impl_registry::{
     classify_valueconv_expression, lookup_printconv, lookup_tag_specific_printconv, ValueConvType,
 };
+use crate::ppi::{parse_ppi_json, ExpressionType, RustGenerator};
 use crate::strategies::output_locations::generate_module_path;
 
 /// Strategy for processing tag table definitions (Main, Composite, etc.)
@@ -308,14 +309,34 @@ impl TagKitStrategy {
         Ok(Some((tag_id, entry)))
     }
 
-    /// Process PrintConv field using the existing impl_registry system
+    /// Process PrintConv field using PPI AST when available, falling back to existing impl_registry
     fn process_print_conv(
         &mut self,
         tag_data: &serde_json::Map<String, JsonValue>,
         module: &str,
         tag_name: &str,
     ) -> Result<String> {
-        // Check for PrintConv field
+        // **NEW: PPI AST field handling** - check for optional *_ast fields first
+        if let Some(ast_value) = tag_data.get("PrintConv_ast") {
+            if let Some(print_conv_str) = tag_data.get("PrintConv").and_then(|v| v.as_str()) {
+                // We have both original expression and AST - try to generate from AST
+                match self.try_generate_from_ppi_ast(
+                    ast_value,
+                    ExpressionType::PrintConv,
+                    print_conv_str,
+                    module,
+                    tag_name,
+                ) {
+                    Ok(generated_code) => return Ok(generated_code),
+                    Err(e) => {
+                        debug!("PPI generation failed for PrintConv '{}': {}, falling back to registry", print_conv_str, e);
+                        // Continue to registry fallback below
+                    }
+                }
+            }
+        }
+
+        // **EXISTING: Check for PrintConv field using registry system**
         if let Some(print_conv_value) = tag_data.get("PrintConv") {
             if let Some(print_conv_str) = print_conv_value.as_str() {
                 // First try tag-specific lookup
@@ -359,14 +380,34 @@ impl TagKitStrategy {
         Ok("None".to_string())
     }
 
-    /// Process ValueConv field using the existing impl_registry system
+    /// Process ValueConv field using PPI AST when available, falling back to existing impl_registry
     fn process_value_conv(
         &mut self,
         tag_data: &serde_json::Map<String, JsonValue>,
         module: &str,
-        _tag_name: &str,
+        tag_name: &str,
     ) -> Result<String> {
-        // Check for ValueConv field
+        // **NEW: PPI AST field handling** - check for optional *_ast fields first
+        if let Some(ast_value) = tag_data.get("ValueConv_ast") {
+            if let Some(value_conv_str) = tag_data.get("ValueConv").and_then(|v| v.as_str()) {
+                // We have both original expression and AST - try to generate from AST
+                match self.try_generate_from_ppi_ast(
+                    ast_value,
+                    ExpressionType::ValueConv,
+                    value_conv_str,
+                    module,
+                    tag_name,
+                ) {
+                    Ok(generated_code) => return Ok(generated_code),
+                    Err(e) => {
+                        debug!("PPI generation failed for ValueConv '{}': {}, falling back to registry", value_conv_str, e);
+                        // Continue to registry fallback below
+                    }
+                }
+            }
+        }
+
+        // **EXISTING: Check for ValueConv field using registry system**
         if let Some(value_conv_value) = tag_data.get("ValueConv") {
             if let Some(value_conv_str) = value_conv_value.as_str() {
                 // Use the orchestration layer for proper priority handling
@@ -392,6 +433,57 @@ impl TagKitStrategy {
 
         // No ValueConv found
         Ok("None".to_string())
+    }
+
+    /// Try to generate code from PPI AST, fall back to registry on failure
+    fn try_generate_from_ppi_ast(
+        &mut self,
+        ast_value: &JsonValue,
+        expression_type: ExpressionType,
+        original_expression: &str,
+        module: &str,
+        tag_name: &str,
+    ) -> Result<String> {
+        // Parse the PPI JSON AST
+        let ppi_ast =
+            parse_ppi_json(ast_value).map_err(|e| anyhow::anyhow!("PPI parsing failed: {}", e))?;
+
+        // Generate function name from module, tag name, and expression type
+        let function_name = format!(
+            "{}_{}_{}",
+            crate::strategies::output_locations::to_snake_case(module),
+            crate::strategies::output_locations::to_snake_case(tag_name),
+            match expression_type {
+                ExpressionType::PrintConv => "print_ast",
+                ExpressionType::ValueConv => "value_ast",
+                ExpressionType::Condition => "condition_ast",
+            }
+        );
+
+        // Create Rust code generator
+        let generator = RustGenerator::new(
+            expression_type,
+            function_name.clone(),
+            original_expression.to_string(),
+        );
+
+        // Generate the Rust function code
+        let generated_function = generator
+            .generate_function(&ppi_ast)
+            .map_err(|e| anyhow::anyhow!("Code generation failed: {}", e))?;
+
+        // Return the appropriate wrapper based on expression type
+        match expression_type {
+            ExpressionType::PrintConv => {
+                Ok(format!("Some(PrintConv::Function({}))", function_name))
+            }
+            ExpressionType::ValueConv => {
+                Ok(format!("Some(ValueConv::Function({}))", function_name))
+            }
+            ExpressionType::Condition => {
+                Ok(format!("Some(Condition::Function({}))", function_name))
+            }
+        }
     }
 }
 
