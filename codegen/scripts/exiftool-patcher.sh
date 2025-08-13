@@ -70,15 +70,15 @@ echo "📝 Processing ${#MODULES_TO_PATCH[@]} modules that need conversion..."
 
 NPROC=12
 
-# Second pass: run perltidy on files that need patching (like fmt-perl.sh)
-if command -v perltidy >/dev/null 2>&1; then
-  echo "🎨 Running perltidy on ${#MODULES_TO_PATCH[@]} modules..."
-  printf '%s\n' "${MODULES_TO_PATCH[@]}" | xargs -P $NPROC -n 3 perltidy -b
-  # Clean up perltidy backup files
-  find "$EXIFTOOL_BASE" -name '*.bak' -delete
-else
-  echo "⚠️  perltidy not found, skipping formatting"
-fi
+# Second pass: run perltidy on files that need patching (disabled)
+# if command -v perltidy >/dev/null 2>&1; then
+#   echo "🎨 Running perltidy on ${#MODULES_TO_PATCH[@]} modules..."
+#   printf '%s\n' "${MODULES_TO_PATCH[@]}" | xargs -P $NPROC -n 3 perltidy -b
+#   # Clean up perltidy backup files
+#   find "$EXIFTOOL_BASE" -name '*.bak' -delete
+# else
+#   echo "⚠️  perltidy not found, skipping formatting"
+# fi
 
 # Third pass: run the patcher on the formatted files (without perltidy)
 echo "🔧 Applying variable conversion to ${#MODULES_TO_PATCH[@]} modules..."
