@@ -12,7 +12,7 @@ ExifTool's MakerNotes processing represents one of the most sophisticated metada
 
 ### 1. Central Dispatch System
 
-**File:** `/home/mrm/src/exif-oxide/third-party/exiftool/lib/Image/ExifTool/MakerNotes.pm`  
+**File:** `third-party/exiftool/lib/Image/ExifTool/MakerNotes.pm`  
 **Lines:** 34-1102  
 **Key Data Structure:** `@Image::ExifTool::MakerNotes::Main`
 
