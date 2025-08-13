@@ -83,7 +83,6 @@ $node->prune('PPI::Token::Whitespace');
 **Key Methods**:
 - `label()` - Returns statement label if present
 - `stable()` - Tests if statement remains legal after modification
-
 **ExifTool Context**: Statement parsing is essential for understanding complex conditional logic in tag definitions.
 
 ## PPI::Structure - Braced Structures

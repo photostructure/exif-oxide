@@ -30,7 +30,7 @@ That sounds great. This is critical infrastructure for this project, so let's do
 
 # Validating a TPP
 
-✏️ is a technical project plan: we're going to carefull validate every task to see if it is actually complete. Prior engineers may have incorrectly stated that tasks were complete when they are not, so verify everything carefully. This is critical work for our project, and requires extensive and exhaustive prerequisite research. Read every referenced source and doc. Run relevant tooling and tests and study existing source to validate current code state. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. If all tasks are complete, revise the TPP with updated status and move it to `docs/done/$(TZ=America/Los_Angeles date +%Y%m%d)-$(basename $TPP_FILE_NAME)`. Ultrathink.
+✏️ is a technical project plan: we're going to carefully validate every task to see if it is actually complete. Prior engineers may have incorrectly stated that tasks were complete when they are not, so verify everything carefully. This is critical work for our project, and requires extensive and exhaustive prerequisite research. Read every referenced source and doc. Run relevant tooling and tests and study existing source to validate current code state. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. If all tasks are complete, revise the TPP with updated status and move it to `docs/done/$(TZ=America/Los_Angeles date +%Y%m%d)-$(basename $TPP_FILE_NAME)`. Ultrathink.
 
 # When the robots need a reminder
 
@@ -42,7 +42,7 @@ Remember: do not edit, add, or delete files in @src/generated/** -- the `codegen
 
 # /compact
 
-/compact your ONLY goal is next engineer success on incomplete tasks.
+/compact your ONLY goal is to ensure the next engineer succeeds with your incomplete tasks.
 
 **Required elements:**
 1. **TPP status** - Iff a TPP is being worked on, require the next engineer to read `docs/todo/PXX-*.md`, and include supplemental task progress, and any pending updates that should be made to the TPP 
@@ -52,7 +52,7 @@ Remember: do not edit, add, or delete files in @src/generated/** -- the `codegen
 5. **Key insights** - Important codebase/ExifTool discoveries
 6. **Next steps** - Concrete actions with locations, TPP task references
 
-Format as structured handoff enabling immediate progress continuation. Include 👍 in compact message to confirm compliance.
+Format as structured handoff enabling immediate progress continuation.
 
 # Fix a test or bug
 
