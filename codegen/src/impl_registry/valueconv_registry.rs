@@ -4,7 +4,7 @@
 //! logic for determining whether expressions can be compiled or need custom functions.
 
 use super::types::ValueConvType;
-use crate::expression_compiler::CompiledExpression;
+// PPI AST handles all Perl interpretation at build time - no runtime compilation
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
@@ -268,21 +268,18 @@ pub fn classify_valueconv_expression(expr: &str, module: &str) -> ValueConvType 
         return ValueConvType::CustomFunction(module_path, func_name);
     }
 
-    // Only try compilation if no registry entry exists
-    if CompiledExpression::is_compilable(expr) {
-        match CompiledExpression::compile(expr) {
-            Ok(compiled) => return ValueConvType::CompiledExpression(compiled),
-            Err(_) => {
-                // Fall through to unimplemented case
-                eprintln!("Warning: Expression '{expr}' looked compilable but failed compilation");
-            }
-        }
-    }
+    // PPI AST will handle this at build time when it has the AST data
+    // For now, return a placeholder that indicates PPI should process this
+    // The actual classification happens in TagKit when it checks for *_ast fields
 
-    // No registry entry and not compilable - store as Expression for runtime evaluation
-    // This will use the Expression evaluator at runtime, which can handle complex expressions
-    // If $val can't compile, the expression compiler is fundamentally broken and should panic
-    ValueConvType::CompiledExpression(CompiledExpression::compile("$val").unwrap())
+    // Check if expression needs context (has $$self references)
+    if expr.contains("$$self") {
+        ValueConvType::PpiGeneratedWithContext(format!("// PPI will generate: {}", expr))
+    } else if expr.contains("$val[") {
+        ValueConvType::PpiGeneratedComposite(format!("// PPI will generate composite: {}", expr))
+    } else {
+        ValueConvType::PpiGeneratedSimple(format!("// PPI will generate: {}", expr))
+    }
 }
 
 /// Get access to the VALUECONV_REGISTRY for testing
