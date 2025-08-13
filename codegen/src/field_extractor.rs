@@ -41,16 +41,6 @@ pub struct FieldMetadata {
     pub is_composite_table: u8,
 }
 
-/// Statistics from field extraction process
-#[derive(Debug, Clone)]
-pub struct FieldExtractionStats {
-    pub total_symbols: u32,
-    pub extracted_symbols: u32,
-    #[allow(dead_code)]
-    pub skipped_symbols: u32,
-    pub module_name: String,
-}
-
 /// Field extractor runner and parser
 pub struct FieldExtractor {
     /// Path to the field_extractor.pl script
@@ -69,10 +59,7 @@ impl FieldExtractor {
     }
 
     /// Extract all symbols from a module and return parsed results
-    pub fn extract_module(
-        &self,
-        module_path: &Path,
-    ) -> Result<(Vec<FieldSymbol>, FieldExtractionStats)> {
+    pub fn extract_module(&self, module_path: &Path) -> Result<Vec<FieldSymbol>> {
         let extract_start = std::time::Instant::now();
         info!("Extracting symbols from module: {}", module_path.display());
         trace!(
@@ -147,14 +134,12 @@ impl FieldExtractor {
             parse_time.as_millis()
         );
 
-        // Parse extraction statistics from stderr
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        let stats = parse_extraction_stats(&stderr)?;
-
         let total_time = extract_start.elapsed();
+        let symbol_count = symbols.len();
+
         info!(
-            "Field extraction completed: {} symbols extracted from {} total in {:.2}ms (perl: {:.1}ms, parse: {:.1}ms)",
-            stats.extracted_symbols, stats.total_symbols,
+            "Field extraction completed: {} symbols extracted in {:.2}ms (perl: {:.1}ms, parse: {:.1}ms)",
+            symbol_count,
             total_time.as_millis(), perl_time.as_millis(), parse_time.as_millis()
         );
         trace!(
@@ -163,7 +148,7 @@ impl FieldExtractor {
             (parse_time.as_millis() as f64 / total_time.as_millis() as f64) * 100.0
         );
 
-        Ok((symbols, stats))
+        Ok(symbols)
     }
 }
 
@@ -171,43 +156,6 @@ impl Default for FieldExtractor {
     fn default() -> Self {
         Self::new()
     }
-}
-
-/// Parse extraction statistics from stderr output
-fn parse_extraction_stats(stderr: &str) -> Result<FieldExtractionStats> {
-    let mut total_symbols = 0;
-    let mut extracted_symbols = 0;
-    let mut skipped_symbols = 0;
-    let mut module_name = "unknown".to_string();
-
-    for line in stderr.lines() {
-        if line.starts_with("Field extraction complete for ") {
-            module_name = line
-                .strip_prefix("Field extraction complete for ")
-                .unwrap_or("unknown")
-                .trim_end_matches(':')
-                .to_string();
-        } else if line.contains("Total symbols examined:") {
-            if let Some(num_str) = line.split(':').nth(1) {
-                total_symbols = num_str.trim().parse()?;
-            }
-        } else if line.contains("Successfully extracted:") {
-            if let Some(num_str) = line.split(':').nth(1) {
-                extracted_symbols = num_str.trim().parse()?;
-            }
-        } else if line.contains("Skipped (non-serializable):") {
-            if let Some(num_str) = line.split(':').nth(1) {
-                skipped_symbols = num_str.trim().parse()?;
-            }
-        }
-    }
-
-    Ok(FieldExtractionStats {
-        total_symbols,
-        extracted_symbols,
-        skipped_symbols,
-        module_name,
-    })
 }
 
 #[cfg(test)]
@@ -234,22 +182,6 @@ mod tests {
         } else {
             panic!("Expected object data");
         }
-    }
-
-    #[test]
-    fn test_parse_extraction_stats() {
-        let stderr = r#"Field extraction complete for Canon:
-  Total symbols examined: 1500
-  Successfully extracted: 873
-  Skipped (non-serializable): 627
-  Non-serializable entries logged to: generated/extract/non_serializable.log"#;
-
-        let stats = parse_extraction_stats(stderr).unwrap();
-
-        assert_eq!(stats.module_name, "Canon");
-        assert_eq!(stats.total_symbols, 1500);
-        assert_eq!(stats.extracted_symbols, 873);
-        assert_eq!(stats.skipped_symbols, 627);
     }
 
     #[test]
