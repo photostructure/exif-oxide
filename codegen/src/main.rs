@@ -13,7 +13,6 @@ use tracing::{debug, info, warn};
 use tracing_subscriber::EnvFilter;
 
 mod common;
-mod expression_compiler;
 mod field_extractor;
 mod file_operations;
 mod impl_registry;
@@ -69,7 +68,19 @@ fn main() -> Result<()> {
         )
         .get_matches();
 
-    let output_dir = matches.get_one::<String>("output").unwrap();
+    let output_dir_raw = matches.get_one::<String>("output").unwrap();
+
+    // Resolve output directory to absolute path to avoid nested directory issues
+    let output_dir = std::fs::canonicalize(Path::new(output_dir_raw))
+        .or_else(|_| {
+            // If canonicalize fails (e.g., directory doesn't exist), create it first
+            create_directories(Path::new(output_dir_raw))
+                .map_err(|e| std::io::Error::new(std::io::ErrorKind::Other, e))?;
+            std::fs::canonicalize(Path::new(output_dir_raw))
+        })
+        .with_context(|| format!("Failed to resolve output directory: {}", output_dir_raw))?
+        .to_string_lossy()
+        .to_string();
 
     // Extract specific modules if provided
     let selected_modules: Option<Vec<String>> = matches
@@ -79,15 +90,15 @@ fn main() -> Result<()> {
     // We're running from the codegen directory
     let current_dir = std::env::current_dir()?;
 
-    // Create output directory
-    create_directories(Path::new(output_dir))?;
+    // Output directory should already exist from canonicalize above
+    create_directories(Path::new(&output_dir))?;
 
     info!("🔧 exif-oxide Code Generation");
     debug!("=============================");
 
     // Universal symbol table extraction is now the default approach
     info!("🔄 Using universal symbol table extraction");
-    run_universal_extraction(&current_dir, output_dir, selected_modules.as_ref())?;
+    run_universal_extraction(&current_dir, &output_dir, selected_modules.as_ref())?;
 
     info!("✅ Code generation complete!");
 
@@ -209,11 +220,20 @@ fn run_universal_extraction(
     // Extract symbols from selected modules
     for module_path in selected_paths {
         match extractor.extract_module(module_path) {
-            Ok((symbols, stats)) => {
-                info!(
-                    "✅ {}: {} symbols extracted from {} total",
-                    stats.module_name, stats.extracted_symbols, stats.total_symbols
-                );
+            Ok(symbols) => {
+                let module_name = module_path
+                    .file_stem()
+                    .and_then(|name| name.to_str())
+                    .unwrap_or("unknown")
+                    .strip_suffix(".pm")
+                    .unwrap_or_else(|| {
+                        module_path
+                            .file_stem()
+                            .and_then(|name| name.to_str())
+                            .unwrap_or("unknown")
+                    });
+
+                info!("✅ {}: {} symbols extracted", module_name, symbols.len());
 
                 debug!(
                     "  📋 {} symbols ready for strategy processing",
@@ -457,6 +477,9 @@ fn update_mod_files(output_dir: &str) -> Result<()> {
     }
     if Path::new(output_dir).join("supported_tags.rs").exists() {
         all_modules.insert("supported_tags".to_string());
+    }
+    if Path::new(output_dir).join("functions").is_dir() {
+        all_modules.insert("functions".to_string());
     }
 
     // Generate module declarations in sorted order
