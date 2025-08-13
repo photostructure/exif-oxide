@@ -196,69 +196,64 @@ impl TagKitStrategy {
         code.push_str("});\n\n");
 
         // Generate apply_value_conv function: TODO: can this be DRY'ed up and moved into src/ proper, not shoved into every generated file?
-        code.push_str("/// Apply ValueConv transformation for tags in this table\n");
-        code.push_str("pub fn apply_value_conv(\n");
-        code.push_str("    tag_id: u32,\n");
-        code.push_str("    value: &crate::types::TagValue,\n");
-        code.push_str("    _errors: &mut Vec<String>,\n");
-        code.push_str(") -> Result<crate::types::TagValue, String> {\n");
-        code.push_str("    let tag_id_u16 = tag_id as u16;\n");
-        code.push_str(&format!(
-            "    if let Some(tag_def) = {constant_name}.get(&tag_id_u16) {{\n"
-        ));
-        code.push_str("        if let Some(ref value_conv) = tag_def.value_conv {\n");
-        code.push_str("            match value_conv {\n");
-        code.push_str("                ValueConv::None => Ok(value.clone()),\n");
-        code.push_str("                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),\n");
-        code.push_str("                ValueConv::Expression(expr) => {\n");
-        code.push_str(
-            "                    // Use runtime expression evaluator for dynamic evaluation\n",
-        );
-        code.push_str("                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();\n");
-        code.push_str("                    evaluator.evaluate_expression(expr, value).map_err(|e| e.to_string())\n");
-        code.push_str("                }\n");
-        code.push_str("                _ => Ok(value.clone()),\n");
-        code.push_str("            }\n");
-        code.push_str("        } else {\n");
-        code.push_str("            Ok(value.clone())\n");
-        code.push_str("        }\n");
-        code.push_str("    } else {\n");
-        code.push_str("        Err(format!(\"Tag 0x{:04x} not found in table\", tag_id))\n");
-        code.push_str("    }\n");
-        code.push_str("}\n\n");
+        code.push_str(&formatdoc!(r#"
+            /// Apply ValueConv transformation for tags in this table
+            pub fn apply_value_conv(
+                tag_id: u32,
+                value: &crate::types::TagValue,
+                _errors: &mut Vec<String>,
+            ) -> Result<crate::types::TagValue, crate::types::ExifError> {{
+                let tag_id_u16 = tag_id as u16;
+                if let Some(tag_def) = {constant_name}.get(&tag_id_u16) {{
+                    if let Some(ref value_conv) = tag_def.value_conv {{
+                        match value_conv {{
+                            ValueConv::None => Ok(value.clone()),
+                            ValueConv::Function(func) => func(value),
+                            ValueConv::Expression(_expr) => {{
+                                // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                                Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
+                            }}
+                            _ => Ok(value.clone()),
+                        }}
+                    }} else {{
+                        Ok(value.clone())
+                    }}
+                }} else {{
+                    Err(crate::types::ExifError::ParseError(format!("Tag 0x{{:04x}} not found in table", tag_id)))
+                }}
+            }}
+            
+        "#));
 
         // Generate apply_print_conv function
-        code.push_str("/// Apply PrintConv transformation for tags in this table\n");
-        code.push_str("pub fn apply_print_conv(\n");
-        code.push_str("    tag_id: u32,\n");
-        code.push_str("    value: &crate::types::TagValue,\n");
-        code.push_str("    _evaluator: &mut crate::expressions::ExpressionEvaluator,\n");
-        code.push_str("    _errors: &mut Vec<String>,\n");
-        code.push_str("    _warnings: &mut Vec<String>,\n");
-        code.push_str(") -> crate::types::TagValue {\n");
-        code.push_str("    let tag_id_u16 = tag_id as u16;\n");
-        code.push_str(&format!(
-            "    if let Some(tag_def) = {constant_name}.get(&tag_id_u16) {{\n"
-        ));
-        code.push_str("        if let Some(ref print_conv) = tag_def.print_conv {\n");
-        code.push_str("            match print_conv {\n");
-        code.push_str("                PrintConv::None => value.clone(),\n");
-        code.push_str("                PrintConv::Function(func) => func(value),\n");
-        code.push_str("                PrintConv::Expression(expr) => {\n");
-        code.push_str(
-            "                    // Use runtime expression evaluator for dynamic evaluation\n",
-        );
-        code.push_str("                    _evaluator.evaluate_expression(expr, value).unwrap_or_else(|_| value.clone())\n");
-        code.push_str("                }\n");
-        code.push_str("                _ => value.clone(),\n");
-        code.push_str("            }\n");
-        code.push_str("        } else {\n");
-        code.push_str("            value.clone()\n");
-        code.push_str("        }\n");
-        code.push_str("    } else {\n");
-        code.push_str("        value.clone()\n");
-        code.push_str("    }\n");
-        code.push_str("}\n");
+        code.push_str(&formatdoc!(r#"
+            /// Apply PrintConv transformation for tags in this table
+            pub fn apply_print_conv(
+                tag_id: u32,
+                value: &crate::types::TagValue,
+                _errors: &mut Vec<String>,
+                _warnings: &mut Vec<String>,
+            ) -> crate::types::TagValue {{
+                let tag_id_u16 = tag_id as u16;
+                if let Some(tag_def) = {constant_name}.get(&tag_id_u16) {{
+                    if let Some(ref print_conv) = tag_def.print_conv {{
+                        match print_conv {{
+                            PrintConv::None => value.clone(),
+                            PrintConv::Function(func) => func(value),
+                            PrintConv::Expression(_expr) => {{
+                                // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                                value.clone() // Fallback to original value when expression not handled by PPI
+                            }}
+                            _ => value.clone(),
+                        }}
+                    }} else {{
+                        value.clone()
+                    }}
+                }} else {{
+                    value.clone()
+                }}
+            }}
+        "#));
 
         Ok(code)
     }

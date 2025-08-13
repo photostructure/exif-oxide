@@ -24,4 +24,5 @@ tempfile = "3.20"
 base64 = "0.22"
 glob = "0.3"
 rayon = "1.10"
+indoc = "2.0"
 ast = { path = "../ast" }
