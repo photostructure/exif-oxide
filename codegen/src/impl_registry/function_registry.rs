@@ -302,11 +302,20 @@ pub fn lookup_functions_by_category(
 ) -> Vec<(&'static str, &'static FunctionImplementation)> {
     FUNCTION_CALL_REGISTRY
         .iter()
-        .filter(|(_, implementation)| match (category, implementation) {
-            (FunctionCategory::Builtin, FunctionImplementation::Builtin(_)) => true,
-            (FunctionCategory::ExifToolModule, FunctionImplementation::ExifToolModule(_)) => true,
-            (FunctionCategory::CustomScript, FunctionImplementation::CustomScript(_)) => true,
-            _ => false,
+        .filter(|(_, implementation)| {
+            matches!(
+                (category, implementation),
+                (
+                    FunctionCategory::Builtin,
+                    FunctionImplementation::Builtin(_)
+                ) | (
+                    FunctionCategory::ExifToolModule,
+                    FunctionImplementation::ExifToolModule(_)
+                ) | (
+                    FunctionCategory::CustomScript,
+                    FunctionImplementation::CustomScript(_)
+                )
+            )
         })
         .map(|(name, implementation)| (*name, implementation))
         .collect()

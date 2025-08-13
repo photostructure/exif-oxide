@@ -107,31 +107,40 @@ fn test_classify_valueconv_prioritizes_registry_over_compilation() {
             assert_eq!(module_path, "crate::implementations::value_conv");
             assert_eq!(func_name, "gps_coordinate_value_conv");
         }
-        ValueConvType::CompiledExpression(_) => {
-            panic!("GPS functions should use registry, not compilation!");
+        ValueConvType::PpiGeneratedSimple(_)
+        | ValueConvType::PpiGeneratedWithContext(_)
+        | ValueConvType::PpiGeneratedComposite(_) => {
+            panic!("GPS functions should use registry, not PPI generation!");
         }
     }
 
     // Simple arithmetic should use compilation
     let arithmetic_expr = "$val * 100";
     match classify_valueconv_expression(arithmetic_expr, "Exif_pm") {
-        ValueConvType::CompiledExpression(_) => {
-            // This is expected for simple arithmetic
+        ValueConvType::PpiGeneratedSimple(_) => {
+            // This is expected for simple arithmetic - PPI will generate it
+        }
+        ValueConvType::PpiGeneratedWithContext(_) | ValueConvType::PpiGeneratedComposite(_) => {
+            // Also valid if it needs context
         }
         ValueConvType::CustomFunction(_, _) => {
             // This is also valid if there's a registry entry
         }
     }
 
-    // Power operations should use registry (not compilable)
+    // Power operations should use PPI generation (PPI handles ** operator)
     let power_expr = "2**(-$val / 3)";
     match classify_valueconv_expression(power_expr, "Sony_pm") {
+        ValueConvType::PpiGeneratedSimple(_) => {
+            // This is expected - PPI can generate power operations
+        }
         ValueConvType::CustomFunction(module_path, func_name) => {
+            // Also valid if there's a specific registry override for optimization
             assert_eq!(module_path, "crate::implementations::value_conv");
             assert_eq!(func_name, "power_neg_div_3_value_conv");
         }
-        ValueConvType::CompiledExpression(_) => {
-            panic!("Power operations should use registry, not compilation!");
+        ValueConvType::PpiGeneratedWithContext(_) | ValueConvType::PpiGeneratedComposite(_) => {
+            panic!("Power operations shouldn't need context!");
         }
     }
 }
