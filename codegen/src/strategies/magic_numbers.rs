@@ -103,7 +103,7 @@ impl MagicNumberStrategy {
                 format!("r#\"{}\"#", pattern_str.replace("\\", "\\\\"))
             } else {
                 // Simple raw string works fine
-                format!("r\"{}\"", pattern_str)
+                format!("r\"{pattern_str}\"")
             };
 
             code.push_str(&format!("    // Pattern: {display_pattern}\n"));
@@ -230,7 +230,10 @@ impl ExtractionStrategy for MagicNumberStrategy {
         Ok(())
     }
 
-    fn finish_extraction(&mut self) -> Result<Vec<GeneratedFile>> {
+    fn finish_extraction(
+        &mut self,
+        _context: &mut ExtractionContext,
+    ) -> Result<Vec<GeneratedFile>> {
         let mut files = Vec::new();
 
         for data in self.magic_data.values() {

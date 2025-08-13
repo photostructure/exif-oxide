@@ -237,7 +237,10 @@ impl ExtractionStrategy for BooleanSetStrategy {
         Ok(())
     }
 
-    fn finish_extraction(&mut self) -> Result<Vec<GeneratedFile>> {
+    fn finish_extraction(
+        &mut self,
+        _context: &mut ExtractionContext,
+    ) -> Result<Vec<GeneratedFile>> {
         let mut files = Vec::new();
 
         for (module_name, sets) in &self.boolean_sets {

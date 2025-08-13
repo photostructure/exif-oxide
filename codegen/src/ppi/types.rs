@@ -188,6 +188,33 @@ impl PpiNode {
             .iter()
             .any(|child| child.has_self_references())
     }
+
+    // Task A: Helper methods for critical foundation tokens
+
+    /// Check if this is a cast token ($$self, $$valPt, etc.)
+    pub fn is_cast(&self) -> bool {
+        self.class == "PPI::Token::Cast"
+    }
+
+    /// Check if this is a subscript structure ($val[0], $$self{Model})
+    pub fn is_subscript(&self) -> bool {
+        self.class == "PPI::Structure::Subscript"
+    }
+
+    /// Check if this is a regex match pattern (/Canon/, m/EOS/)
+    pub fn is_regexp_match(&self) -> bool {
+        self.class == "PPI::Token::Regexp::Match"
+    }
+
+    /// Check if this is an expression statement (complex expressions)
+    pub fn is_expression(&self) -> bool {
+        self.class == "PPI::Statement::Expression"
+    }
+
+    /// Check if this is a hex number (0xFF, 0x123)
+    pub fn is_hex_number(&self) -> bool {
+        self.class == "PPI::Token::Number::Hex"
+    }
 }
 
 /// Error types for PPI parsing

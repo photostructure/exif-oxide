@@ -278,11 +278,7 @@ impl ScalarArrayStrategy {
         else if values.iter().all(|v| matches!(v, ScalarValue::Float(_))) {
             "f64"
         }
-        // Check if all values are strings
-        else if values.iter().all(|v| matches!(v, ScalarValue::String(_))) {
-            "&'static str"
-        }
-        // Mixed types - default to string representation
+        // All other cases default to string representation
         else {
             "&'static str"
         }
@@ -412,7 +408,10 @@ impl ExtractionStrategy for ScalarArrayStrategy {
         Ok(())
     }
 
-    fn finish_extraction(&mut self) -> Result<Vec<GeneratedFile>> {
+    fn finish_extraction(
+        &mut self,
+        _context: &mut ExtractionContext,
+    ) -> Result<Vec<GeneratedFile>> {
         let mut generated_files = Vec::new();
 
         info!(
