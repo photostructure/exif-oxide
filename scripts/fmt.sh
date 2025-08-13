@@ -5,6 +5,9 @@
 
 set -e
 
+# Make sure our working directory is the project root:
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
 # Run all formatting tasks in parallel
 cargo fmt --all &
 find . -name "*.sh" -not -path "./third-party/*" -type f -print0 | xargs -0 shfmt -w -i 2 &
