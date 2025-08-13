@@ -4,7 +4,7 @@
 //! ExifTool Perl modules to Rust code.
 
 pub mod common;
-pub mod expression_compiler;
+// pub mod expression_compiler; // DELETED: PPI AST handles all Perl interpretation at build time
 pub mod field_extractor;
 pub mod file_operations;
 pub mod impl_registry;
@@ -14,4 +14,4 @@ pub mod types;
 pub mod validation;
 
 // Re-export commonly used types
-pub use field_extractor::{FieldExtractionStats, FieldExtractor, FieldMetadata, FieldSymbol};
+pub use field_extractor::{FieldExtractor, FieldMetadata, FieldSymbol};

@@ -11,6 +11,7 @@ use std::path::Path;
 use tracing::{debug, info, trace, warn};
 
 use crate::field_extractor::FieldSymbol;
+use crate::ppi::PpiFunctionRegistry;
 
 /// Utility function for strategies to write generated files directly to disk
 pub fn write_generated_file(output_dir: &str, relative_path: &str, content: &str) -> Result<()> {
@@ -50,7 +51,7 @@ pub trait ExtractionStrategy: Send + Sync {
     fn finish_module(&mut self, module_name: &str) -> Result<()>;
 
     /// Complete extraction and return generated files
-    fn finish_extraction(&mut self) -> Result<Vec<GeneratedFile>>;
+    fn finish_extraction(&mut self, context: &mut ExtractionContext) -> Result<Vec<GeneratedFile>>;
 }
 
 /// Context passed to strategies during extraction
@@ -68,6 +69,9 @@ pub struct ExtractionContext {
 
     /// Strategy selection log for debugging
     pub strategy_log: Vec<StrategySelection>,
+
+    /// PPI function registry for deduplication
+    pub ppi_registry: PpiFunctionRegistry,
 }
 
 /// Record of strategy selection decisions for debugging
@@ -101,6 +105,7 @@ impl ExtractionContext {
             current_module: None,
             symbol_registry: HashMap::new(),
             strategy_log: Vec::new(),
+            ppi_registry: PpiFunctionRegistry::new(),
         }
     }
 
@@ -238,7 +243,7 @@ impl StrategyDispatcher {
         let mut generated_files = Vec::new();
         for strategy in &mut self.strategies {
             let strategy_finalize_start = Instant::now();
-            let files = strategy.finish_extraction()?;
+            let files = strategy.finish_extraction(&mut context)?;
             let strategy_finalize_time = strategy_finalize_start.elapsed();
             trace!(
                 "⏱️  Strategy '{}' finalized in {:.2}ms, generated {} files",
@@ -254,6 +259,24 @@ impl StrategyDispatcher {
 
             generated_files.extend(files);
         }
+
+        // Generate AST function files after all strategies complete
+        let ast_generation_start = Instant::now();
+        trace!("🔧 Generating AST function files");
+        let ast_files = context.ppi_registry.generate_function_files()?;
+        let ast_generation_time = ast_generation_start.elapsed();
+        trace!(
+            "⏱️  AST function generation completed in {:.2}ms, generated {} files",
+            ast_generation_time.as_millis(),
+            ast_files.len()
+        );
+
+        // Write AST function files
+        for file in &ast_files {
+            write_generated_file(output_dir, &file.path, &file.content)?;
+        }
+        generated_files.extend(ast_files);
+
         let extraction_finalize_time = extraction_finalize_start.elapsed();
         trace!(
             "⏱️  All strategies finalized in {:.2}ms",

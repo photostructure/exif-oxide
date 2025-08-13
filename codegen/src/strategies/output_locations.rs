@@ -53,7 +53,7 @@ pub fn generate_module_path(module_name: &str, symbol_name: &str) -> String {
 /// ```
 pub fn module_name_to_directory(module_name: &str) -> String {
     // Simply append _pm to maintain ExifTool module name visibility
-    format!("{}_pm", module_name)
+    format!("{module_name}_pm")
 }
 
 /// Convert string to snake_case following Rust naming conventions
@@ -83,18 +83,30 @@ static SNAKE_CASE_PATTERN: LazyLock<Regex> = LazyLock::new(|| {
     Regex::new(r"([a-z])([A-Z])|([A-Z])([A-Z][a-z])").expect("Snake case regex pattern is valid")
 });
 
+static SANITIZE_PATTERN: LazyLock<Regex> = LazyLock::new(|| {
+    // Replace any sequence of non-alphanumeric characters with underscore
+    Regex::new(r"[^a-zA-Z0-9]+").expect("Sanitize regex pattern is valid")
+});
+
 pub fn to_snake_case(name: &str) -> String {
     if name.is_empty() {
         return String::new();
     }
 
+    // First, replace any non-alphanumeric characters with underscores
+    let sanitized = SANITIZE_PATTERN.replace_all(name, "_");
+
     // Simple case: all-uppercase becomes lowercase
-    if name.len() > 1 && name.chars().all(|c| c.is_uppercase() || c.is_ascii_digit()) {
-        return name.to_lowercase();
+    if sanitized.len() > 1
+        && sanitized
+            .chars()
+            .all(|c| c.is_uppercase() || c.is_ascii_digit() || c == '_')
+    {
+        return sanitized.to_lowercase();
     }
 
     // Insert underscores at word boundaries
-    let result = SNAKE_CASE_PATTERN.replace_all(name, |caps: &regex::Captures| {
+    let result = SNAKE_CASE_PATTERN.replace_all(&sanitized, |caps: &regex::Captures| {
         if let Some(m1) = caps.get(1) {
             if let Some(m2) = caps.get(2) {
                 // camelCase transition: lower followed by upper
@@ -114,7 +126,10 @@ pub fn to_snake_case(name: &str) -> String {
         }
     });
 
-    result.to_lowercase()
+    // Convert to lowercase and clean up any multiple underscores
+    let cleaned = result.to_lowercase();
+    let parts: Vec<&str> = cleaned.split('_').filter(|s| !s.is_empty()).collect();
+    parts.join("_")
 }
 
 #[cfg(test)]
@@ -212,6 +227,23 @@ mod tests {
 
         // Test word boundary detection
         assert_eq!(to_snake_case("AFInfo2"), "af_info2");
+
+        // Test special characters that need sanitization (hyphens, etc.)
+        // Note: After replacing hyphen with underscore, the case conversion treats each part separately
+        assert_eq!(to_snake_case("AF-SPriority"), "af_s_priority");
+        assert_eq!(to_snake_case("AF-CPriority"), "af_c_priority");
+        assert_eq!(to_snake_case("AF-CSetting"), "af_c_setting");
+        assert_eq!(to_snake_case("IPTC-NAA"), "iptc_naa");
+        assert_eq!(to_snake_case("HTTP-equiv"), "http_equiv");
+        assert_eq!(to_snake_case("By-line"), "by_line");
+        assert_eq!(to_snake_case("By-lineTitle"), "by_line_title");
+        assert_eq!(to_snake_case("Sub-location"), "sub_location");
+        assert_eq!(to_snake_case("Province-State"), "province_state");
+        assert_eq!(to_snake_case("TIFF-EPStandardID"), "tiff_ep_standard_id");
+        assert_eq!(
+            to_snake_case("Opto-ElectricConvFactor"),
+            "opto_electric_conv_factor"
+        );
         assert_eq!(to_snake_case("GPSLatitude"), "gps_latitude");
         assert_eq!(to_snake_case("ISOSpeed"), "iso_speed");
         assert_eq!(to_snake_case("FNumber"), "f_number");
