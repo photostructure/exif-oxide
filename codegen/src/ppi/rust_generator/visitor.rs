@@ -288,21 +288,10 @@ pub trait PpiVisitor {
                 .replace("\\0", "\\x00") // Null bytes
                 .replace("\\xff", "\\xFF"); // Hex escapes
 
-            // Generate regex matching code
-            match self.expression_type() {
-                ExpressionType::Condition => {
-                    Ok(format!(
-                        "regex::Regex::new(r\"{}\").unwrap().is_match(&val.to_string())",
-                        rust_pattern
-                    ))
-                }
-                _ => {
-                    Ok(format!(
-                        "TagValue::from(regex::Regex::new(r\"{}\").unwrap().is_match(&val.to_string()))",
-                        rust_pattern
-                    ))
-                }
-            }
+            // When this is just a regex pattern (not part of =~ or !~),
+            // we just return the pattern itself for later combination
+            // The actual matching will be handled when combined with =~ or !~
+            Ok(format!("/{}/", rust_pattern))
         } else {
             Err(CodeGenError::UnsupportedStructure(format!(
                 "Invalid regex pattern: {}",
@@ -430,12 +419,12 @@ pub trait PpiVisitor {
             // Simple string replacement
             if is_global {
                 Ok(format!(
-                    "val.to_string().replace(\"{}\", \"{}\")",
+                    "TagValue::String(val.to_string().replace(\"{}\", \"{}\"))",
                     pattern, replacement
                 ))
             } else {
                 Ok(format!(
-                    "val.to_string().replacen(\"{}\", \"{}\", 1)",
+                    "TagValue::String(val.to_string().replacen(\"{}\", \"{}\", 1))",
                     pattern, replacement
                 ))
             }
@@ -443,12 +432,12 @@ pub trait PpiVisitor {
             // Regex replacement
             if is_global {
                 Ok(format!(
-                    "regex::Regex::new(r\"{}\").unwrap().replace_all(&val.to_string(), \"{}\")",
+                    "TagValue::String(regex::Regex::new(r\"{}\").unwrap().replace_all(&val.to_string(), \"{}\").to_string())",
                     pattern, replacement
                 ))
             } else {
                 Ok(format!(
-                    "regex::Regex::new(r\"{}\").unwrap().replace(&val.to_string(), \"{}\")",
+                    "TagValue::String(regex::Regex::new(r\"{}\").unwrap().replace(&val.to_string(), \"{}\").to_string())",
                     pattern, replacement
                 ))
             }
@@ -467,9 +456,10 @@ pub trait PpiVisitor {
 
         match content.as_str() {
             "$_" => {
-                // $_ is the default variable - in our context it's often the current value
+                // $_ is the default variable - in our context it's the current value being processed
                 // Example: $_=$val,s/(\d+)(\d{4})/$1-$2/,$_
-                Ok("current_val".to_string())
+                // In ExifTool expressions, $_ typically refers to val
+                Ok("val".to_string())
             }
             "$@" => {
                 // $@ is the error variable in Perl
