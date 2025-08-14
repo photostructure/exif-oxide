@@ -93,6 +93,129 @@ mod tests {
         assert!(signature.contains("-> bool"));
     }
 
+    // Task B: Tests for Numeric & String Operations (Phase 2)
+
+    #[test]
+    fn test_hex_number_generation() {
+        let ast_json = json!({
+            "children": [{
+                "children": [{
+                    "class": "PPI::Token::Number::Hex",
+                    "content": "0x100",
+                }],
+                "class": "PPI::Statement"
+            }],
+            "class": "PPI::Document"
+        });
+
+        let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
+
+        let generator = RustGenerator::new(
+            ExpressionType::ValueConv,
+            "test_hex".to_string(),
+            "0x100".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Should preserve hex literal format
+        assert!(result.contains("0x100"));
+        assert!(result.contains("pub fn test_hex"));
+    }
+
+    #[test]
+    fn test_variable_declaration_generation() {
+        let ast_json = json!({
+            "children": [{
+                "class": "PPI::Statement::Variable",
+                "children": [{
+                    "class": "PPI::Token::Word",
+                    "content": "my"
+                }, {
+                    "class": "PPI::Token::Symbol",
+                    "content": "$temp"
+                }, {
+                    "class": "PPI::Token::Operator",
+                    "content": "="
+                }, {
+                    "class": "PPI::Token::Symbol",
+                    "content": "$val"
+                }],
+            }],
+            "class": "PPI::Document"
+        });
+
+        let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
+
+        let generator = RustGenerator::new(
+            ExpressionType::ValueConv,
+            "test_variable".to_string(),
+            "my $temp = $val".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Should generate Rust variable binding
+        assert!(result.contains("let temp = val"));
+    }
+
+    #[test]
+    fn test_regexp_substitute_generation() {
+        let ast_json = json!({
+            "children": [{
+                "children": [{
+                    "class": "PPI::Token::Regexp::Substitute",
+                    "content": "s/test/replacement/g",
+                }],
+                "class": "PPI::Statement"
+            }],
+            "class": "PPI::Document"
+        });
+
+        let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
+
+        let generator = RustGenerator::new(
+            ExpressionType::PrintConv,
+            "test_substitute".to_string(),
+            "s/test/replacement/g".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Should generate string replacement
+        assert!(result.contains("replace"));
+        assert!(result.contains("test"));
+        assert!(result.contains("replacement"));
+    }
+
+    #[test]
+    fn test_enhanced_float_generation() {
+        let ast_json = json!({
+            "children": [{
+                "children": [{
+                    "class": "PPI::Token::Number",
+                    "content": "25.4",
+                    "numeric_value": 25.4
+                }],
+                "class": "PPI::Statement"
+            }],
+            "class": "PPI::Document"
+        });
+
+        let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
+
+        let generator = RustGenerator::new(
+            ExpressionType::ValueConv,
+            "test_float".to_string(),
+            "25.4".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Should preserve float format
+        assert!(result.contains("25.4"));
+    }
+
     #[test]
     fn test_recursive_visitor_arithmetic() {
         let ast_json = json!({
@@ -135,6 +258,7 @@ mod tests {
     #[test]
     fn test_sprintf_concatenation_ternary() {
         // Test the complex expression: sprintf("%.2f s",$val) . ($val > 254.5/60 ? " or longer" : "")
+        // This AST matches what PPI actually generates
         let ast_json = json!({
             "children": [{
                 "children": [{
@@ -143,16 +267,19 @@ mod tests {
                 }, {
                     "class": "PPI::Structure::List",
                     "children": [{
-                        "class": "PPI::Token::Quote::Double",
-                        "content": "\"%.2f s\"",
-                        "string_value": "%.2f s"
-                    }, {
-                        "class": "PPI::Token::Operator",
-                        "content": ","
-                    }, {
-                        "class": "PPI::Token::Symbol",
-                        "content": "$val",
-                        "symbol_type": "scalar"
+                        "class": "PPI::Statement::Expression",
+                        "children": [{
+                            "class": "PPI::Token::Quote::Double",
+                            "content": "\"%.2f s\"",
+                            "string_value": "%.2f s"
+                        }, {
+                            "class": "PPI::Token::Operator",
+                            "content": ","
+                        }, {
+                            "class": "PPI::Token::Symbol",
+                            "content": "$val",
+                            "symbol_type": "scalar"
+                        }]
                     }]
                 }, {
                     "class": "PPI::Token::Operator",
@@ -160,37 +287,40 @@ mod tests {
                 }, {
                     "class": "PPI::Structure::List",
                     "children": [{
-                        "class": "PPI::Token::Symbol",
-                        "content": "$val",
-                        "symbol_type": "scalar"
-                    }, {
-                        "class": "PPI::Token::Operator",
-                        "content": ">"
-                    }, {
-                        "class": "PPI::Token::Number",
-                        "content": "254.5",
-                        "numeric_value": 254.5
-                    }, {
-                        "class": "PPI::Token::Operator",
-                        "content": "/"
-                    }, {
-                        "class": "PPI::Token::Number",
-                        "content": "60",
-                        "numeric_value": 60
-                    }, {
-                        "class": "PPI::Token::Operator",
-                        "content": "?"
-                    }, {
-                        "class": "PPI::Token::Quote::Double",
-                        "content": "\" or longer\"",
-                        "string_value": " or longer"
-                    }, {
-                        "class": "PPI::Token::Operator",
-                        "content": ":"
-                    }, {
-                        "class": "PPI::Token::Quote::Double",
-                        "content": "\"\"",
-                        "string_value": ""
+                        "class": "PPI::Statement::Expression",
+                        "children": [{
+                            "class": "PPI::Token::Symbol",
+                            "content": "$val",
+                            "symbol_type": "scalar"
+                        }, {
+                            "class": "PPI::Token::Operator",
+                            "content": ">"
+                        }, {
+                            "class": "PPI::Token::Number::Float",
+                            "content": "254.5",
+                            "numeric_value": 254.5
+                        }, {
+                            "class": "PPI::Token::Operator",
+                            "content": "/"
+                        }, {
+                            "class": "PPI::Token::Number",
+                            "content": "60",
+                            "numeric_value": 60
+                        }, {
+                            "class": "PPI::Token::Operator",
+                            "content": "?"
+                        }, {
+                            "class": "PPI::Token::Quote::Double",
+                            "content": "\" or longer\"",
+                            "string_value": " or longer"
+                        }, {
+                            "class": "PPI::Token::Operator",
+                            "content": ":"
+                        }, {
+                            "class": "PPI::Token::Quote::Double",
+                            "content": "\"\"",
+                            "string_value": ""
+                        }]
                     }]
                 }],
                 "class": "PPI::Statement"
@@ -207,13 +337,13 @@ mod tests {
         );
 
         let result = generator.generate_function(&ast);
-        
+
         // Debug output
         match &result {
             Ok(code) => println!("Generated sprintf test code:\n{}", code),
             Err(e) => println!("ERROR generating sprintf test: {:?}", e),
         }
-        
+
         let result = result.unwrap();
 
         // Should generate function with sprintf, concatenation, and ternary

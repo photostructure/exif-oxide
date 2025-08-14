@@ -27,6 +27,11 @@ pub trait ExpressionCombiner {
 
         // Look for common patterns and handle them intelligently
 
+        // Pattern: expr . expr (concatenation) - check this FIRST before function patterns
+        if let Some(concat_pos) = parts.iter().position(|p| p == ".") {
+            return self.generate_concatenation_from_parts(parts, concat_pos);
+        }
+
         // Pattern: function_name ( args )
         if parts.len() >= 2 && children.len() >= 2 {
             if children[0].is_word() && children[1].class.contains("Structure") {
@@ -86,11 +91,6 @@ pub trait ExpressionCombiner {
                     return self.generate_function_call_without_parens(function_name, &parts[1]);
                 }
             }
-        }
-
-        // Pattern: expr . expr (concatenation)
-        if let Some(concat_pos) = parts.iter().position(|p| p == ".") {
-            return self.generate_concatenation_from_parts(parts, concat_pos);
         }
 
         // Pattern: condition ? true_expr : false_expr (ternary)

@@ -189,7 +189,6 @@ pub trait FunctionGenerator {
         // Extract format string and arguments from (format, arg1, arg2, ...) pattern
         let args_inner = args.trim_start_matches('(').trim_end_matches(')');
 
-
         // Check if we have a nested function call like split
         if args_inner.contains("crate::types::split_tagvalue") {
             // This is the result from our improved visitor - handle it properly
@@ -206,29 +205,17 @@ pub trait FunctionGenerator {
                 let format_str = &args_inner[format_start + 1..format_end];
                 let rust_format = self.convert_perl_format_to_rust(format_str)?;
 
-                // Extract the split call (make sure to get the complete function call)
-                let split_start = args_inner.find("crate::types::split_tagvalue").unwrap_or(0);
-                // Find the closing parenthesis for the split call
-                let split_end = if split_start > 0 {
-                    // Find matching closing paren
-                    let mut paren_count = 0;
-                    let mut end_idx = split_start;
-                    for (i, ch) in args_inner[split_start..].chars().enumerate() {
-                        if ch == '(' {
-                            paren_count += 1;
-                        } else if ch == ')' {
-                            paren_count -= 1;
-                            if paren_count == 0 {
-                                end_idx = split_start + i + 1;
-                                break;
-                            }
-                        }
-                    }
-                    end_idx
+                // Find where the split call starts (after the format string and comma)
+                let split_start = if let Some(comma_pos) = args_inner[format_end..].find(',') {
+                    format_end + comma_pos + 1
                 } else {
-                    args_inner.len()
+                    return Err(CodeGenError::UnsupportedFunction(
+                        "sprintf missing arguments".to_string(),
+                    ));
                 };
-                let split_call = &args_inner[split_start..split_end];
+
+                // Get everything after the comma as the split call
+                let split_call = args_inner[split_start..].trim();
 
                 // Generate code that unpacks the split result and formats it
                 return match self.expression_type() {
@@ -298,10 +285,7 @@ pub trait FunctionGenerator {
                     "TagValue::String(format!(\"{}\", {}))",
                     rust_format, arg
                 )),
-                _ => Ok(format!(
-                    "format!(\"{}\", {})",
-                    rust_format, arg
-                )),
+                _ => Ok(format!("format!(\"{}\", {})", rust_format, arg)),
             }
         } else {
             Err(CodeGenError::UnsupportedFunction(
@@ -337,28 +321,54 @@ pub trait FunctionGenerator {
         let mut rust_format = perl_format.to_string();
 
         // Handle formats with precision/padding - must process these before generic patterns
+
+        // Hex with padding: %.8x -> {:08x}, %.4X -> {:04X}
+        for width in (1..=10).rev() {
+            let perl_pattern_lower = format!("%.{}x", width);
+            let rust_pattern_lower = format!("{{:0{}x}}", width);
+            rust_format = rust_format.replace(&perl_pattern_lower, &rust_pattern_lower);
+
+            let perl_pattern_upper = format!("%.{}X", width);
+            let rust_pattern_upper = format!("{{:0{}X}}", width);
+            rust_format = rust_format.replace(&perl_pattern_upper, &rust_pattern_upper);
+        }
+
         // Integer padding: %.3d -> {:03}, %.5d -> {:05}
-        // Use a simple loop approach to avoid regex dependency
-        for width in (1..=10).rev() {  // Process longer widths first
+        for width in (1..=10).rev() {
             let perl_pattern = format!("%.{}d", width);
             let rust_pattern = format!("{{:0{}}}", width);
             rust_format = rust_format.replace(&perl_pattern, &rust_pattern);
         }
-        
-        // Float precision: %.3f -> {:.3}, %.2f -> {:.2}
-        for precision in (1..=10).rev() {  // Process longer precisions first
+
+        // Float precision: %.3f -> {:.3}, %.2f -> {:.2}, %.0f -> {:.0}
+        for precision in (0..=10).rev() {
+            // Include 0 for %.0f
             let perl_pattern = format!("%.{}f", precision);
             let rust_pattern = format!("{{:.{}}}", precision);
             rust_format = rust_format.replace(&perl_pattern, &rust_pattern);
         }
-        
+
+        // Width without padding: %6d -> {:6}, %10s -> {:10}
+        for width in (1..=20).rev() {
+            let perl_pattern_d = format!("%{}d", width);
+            let rust_pattern_d = format!("{{:{}}}", width);
+            rust_format = rust_format.replace(&perl_pattern_d, &rust_pattern_d);
+
+            let perl_pattern_s = format!("%{}s", width);
+            let rust_pattern_s = format!("{{:{}}}", width);
+            rust_format = rust_format.replace(&perl_pattern_s, &rust_pattern_s);
+        }
+
         // Handle generic formats (no precision/padding)
         rust_format = rust_format.replace("%d", "{}");
         rust_format = rust_format.replace("%s", "{}");
         rust_format = rust_format.replace("%f", "{}");
-        rust_format = rust_format.replace("%x", "{:x}");  // lowercase hex
-        rust_format = rust_format.replace("%X", "{:X}");  // uppercase hex
-        rust_format = rust_format.replace("%o", "{:o}");  // octal
+        rust_format = rust_format.replace("%x", "{:x}"); // lowercase hex
+        rust_format = rust_format.replace("%X", "{:X}"); // uppercase hex
+        rust_format = rust_format.replace("%o", "{:o}"); // octal
+
+        // Handle escaped percent: %% -> %
+        rust_format = rust_format.replace("%%", "%");
 
         Ok(rust_format)
     }
