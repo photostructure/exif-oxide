@@ -3,6 +3,8 @@
 # Make sure our working directory is the project root:
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
+./codegen/scripts/exiftool-patcher.sh
+
 for file in $(jq -r '.modules | to_entries | map(.value[]) | .[]' config/exiftool_modules.json); do
   module_name=$(echo "$file" | sed 's|.*/||' | sed 's|\.pm$||')
 
