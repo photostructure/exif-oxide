@@ -1,6 +1,6 @@
 //! PPI AST Node Types for Codegen
 //!
-//! Rust representations of PPI JSON structures from field_extractor_with_ast.pl
+//! Rust representations of PPI JSON structures from field_extractor.pl
 //! These types match the actual JSON output format we observed from the Perl script.
 //!
 //! Trust ExifTool: These structures preserve the exact PPI token hierarchy.

@@ -49,7 +49,7 @@ ExifTool Perl Expressions
 
 #### Phase 1: Enhanced Binary Detection in Perl
 
-Extend `codegen/scripts/field_extractor_with_ast.pl` to detect and convert binary patterns:
+Extend `codegen/scripts/field_extractor.pl` to detect and convert binary patterns:
 
 ```perl
 sub extract_binary_patterns {
@@ -167,7 +167,7 @@ Comprehensive testing shows Option A is robust:
 ## Migration Plan
 
 ### Step 1: Extend Field Extractor (Week 1)
-- [ ] Add binary pattern detection to `field_extractor_with_ast.pl`
+- [ ] Add binary pattern detection to `field_extractor.pl`
 - [ ] Convert binary sequences to byte arrays before JSON serialization
 - [ ] Test with Samsung.pm, QuickTime.pm, MakerNotes.pm patterns
 
