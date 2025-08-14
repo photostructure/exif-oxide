@@ -141,7 +141,7 @@ impl RustGenerator {
 
         #[cfg(test)]
         eprintln!("DEBUG process_node_sequence: {} children", children.len());
-        
+
         // Look for patterns in the sequence
         let mut processed = Vec::new();
         let mut i = 0;
@@ -181,46 +181,27 @@ impl RustGenerator {
     ) -> Result<String, CodeGenError> {
         let func_name = self.visit_word(name_node)?;
 
-        // Recursively process the arguments
+        // Recursively process the arguments - this will handle nested function calls
         let args = if !args_node.children.is_empty() {
             // Check if there's a single Expression child (common PPI pattern)
             if args_node.children.len() == 1
                 && args_node.children[0].class == "PPI::Statement::Expression"
             {
                 // Arguments are wrapped in an expression - process that expression
-                self.process_node_sequence(&args_node.children[0].children)?
+                // This will recursively handle any nested function calls
+                let processed = self.process_node_sequence(&args_node.children[0].children)?;
+                format!("({})", processed)
             } else {
                 // Direct children in the list - process them as arguments
-                // Preserve exact formatting for function argument parsing
-                let mut result = String::new();
-                let mut need_space = false;
-
-                for child in &args_node.children {
-                    if child.class == "PPI::Token::Operator"
-                        && child.content.as_ref().map_or(false, |c| c == ",")
-                    {
-                        result.push_str(", ");
-                        need_space = false;
-                    } else {
-                        if need_space {
-                            result.push(' ');
-                        }
-                        result.push_str(&self.visit_node(child)?);
-                        need_space = true;
-                    }
-                }
-                result
+                // Visit the list node which will handle the parentheses
+                self.visit_list(args_node)?
             }
         } else {
             "()".to_string()
         };
 
-        // Generate the function call using the FunctionGenerator trait method
-        FunctionGenerator::generate_function_call_from_parts(
-            self,
-            &func_name,
-            &format!("({})", args),
-        )
+        // Generate the function call - args already have parentheses
+        FunctionGenerator::generate_function_call_from_parts(self, &func_name, &args)
     }
 
     /// Combine processed parts into final code
