@@ -25,6 +25,11 @@ pub trait PpiVisitor {
             "PPI::Token::Number::Float" => self.visit_number(node), // Handle float the same as number
             "PPI::Statement::Variable" => self.visit_variable(node),
             "PPI::Token::Regexp::Substitute" => self.visit_regexp_substitute(node),
+            // Task D: Control Flow & Advanced Features (Phase 3)
+            "PPI::Token::Magic" => self.visit_magic(node),
+            "PPI::Statement::Break" => self.visit_break(node),
+            "PPI::Token::Regexp::Transliterate" => self.visit_transliterate(node),
+            "PPI::Structure::Block" => self.visit_block(node),
             // Existing supported tokens
             "PPI::Token::Symbol" => self.visit_symbol(node),
             "PPI::Token::Operator" => self.visit_operator(node),
@@ -447,6 +452,249 @@ pub trait PpiVisitor {
                     pattern, replacement
                 ))
             }
+        }
+    }
+
+    // Task D: Control Flow & Advanced Features (Phase 3) - P07: PPI Enhancement
+
+    /// Visit magic variable node - handles special variables like $_ and $@
+    /// PPI::Token::Magic (174 occurrences) - Used in string manipulation patterns
+    fn visit_magic(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        let content = node
+            .content
+            .as_ref()
+            .ok_or(CodeGenError::MissingContent("magic variable".to_string()))?;
+
+        match content.as_str() {
+            "$_" => {
+                // $_ is the default variable - in our context it's often the current value
+                // Example: $_=$val,s/(\d+)(\d{4})/$1-$2/,$_
+                Ok("current_val".to_string())
+            }
+            "$@" => {
+                // $@ is the error variable in Perl
+                Ok("error_val".to_string())
+            }
+            "$!" => {
+                // $! is the system error
+                Ok("sys_error".to_string())
+            }
+            "$?" => {
+                // $? is the exit status
+                Ok("exit_status".to_string())
+            }
+            _ => {
+                // Other magic variables - generate a placeholder
+                Ok(format!("magic_var_{}", content.trim_start_matches('$')))
+            }
+        }
+    }
+
+    /// Visit break statement node - handles return, last, next control flow
+    /// PPI::Statement::Break (145 occurrences) - Critical for early returns
+    fn visit_break(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        // Break statements typically have structure: [Word(return/last/next), Expression]
+        if node.children.is_empty() {
+            return Err(CodeGenError::UnsupportedStructure(
+                "Empty break statement".to_string(),
+            ));
+        }
+
+        let keyword = if node.children[0].class == "PPI::Token::Word" {
+            node.children[0]
+                .content
+                .as_ref()
+                .ok_or(CodeGenError::MissingContent("break keyword".to_string()))?
+        } else {
+            return Err(CodeGenError::UnsupportedStructure(
+                "Invalid break statement structure".to_string(),
+            ));
+        };
+
+        // Process the value/expression after the keyword
+        let value = if node.children.len() > 1 {
+            // Skip whitespace and process the rest
+            let mut expr_parts = Vec::new();
+            for i in 1..node.children.len() {
+                if node.children[i].class != "PPI::Token::Whitespace" {
+                    expr_parts.push(self.visit_node(&node.children[i])?);
+                }
+            }
+            if expr_parts.is_empty() {
+                "".to_string()
+            } else {
+                expr_parts.join(" ")
+            }
+        } else {
+            "".to_string()
+        };
+
+        // Generate appropriate Rust control flow
+        match keyword.as_str() {
+            "return" => {
+                // return $val => return val
+                if value.is_empty() {
+                    Ok("return".to_string())
+                } else {
+                    // Wrap in appropriate type based on expression type
+                    match self.expression_type() {
+                        ExpressionType::ValueConv => Ok(format!("return Ok({})", value)),
+                        ExpressionType::PrintConv => Ok(format!("return {}", value)),
+                        ExpressionType::Condition => Ok(format!("return {}", value)),
+                    }
+                }
+            }
+            "last" => {
+                // Perl's "last" is Rust's "break"
+                Ok("break".to_string())
+            }
+            "next" => {
+                // Perl's "next" is Rust's "continue"
+                Ok("continue".to_string())
+            }
+            _ => Err(CodeGenError::UnsupportedStructure(format!(
+                "Unknown break keyword: {}",
+                keyword
+            ))),
+        }
+    }
+
+    /// Visit transliterate node - handles tr/// character replacement operations
+    /// PPI::Token::Regexp::Transliterate (likely <100 occurrences) - String character mapping
+    fn visit_transliterate(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        let content = node.content.as_ref().ok_or(CodeGenError::MissingContent(
+            "transliterate pattern".to_string(),
+        ))?;
+
+        // Parse tr/pattern/replacement/flags or tr#pattern#replacement#flags
+        if !content.starts_with("tr/") && !content.starts_with("tr#") {
+            return Err(CodeGenError::UnsupportedStructure(format!(
+                "Invalid transliterate pattern: {}",
+                content
+            )));
+        }
+
+        // Determine delimiter
+        let delimiter = if content.starts_with("tr/") { '/' } else { '#' };
+        let parts: Vec<&str> = content[3..].split(delimiter).collect();
+
+        if parts.len() < 2 {
+            return Err(CodeGenError::UnsupportedStructure(format!(
+                "Invalid transliterate format: {}",
+                content
+            )));
+        }
+
+        let search_chars = parts[0];
+        let replace_chars = if parts.len() > 1 { parts[1] } else { "" };
+        let flags = if parts.len() > 2 { parts[2] } else { "" };
+
+        // Check for delete flag (d) and complement flag (c)
+        let is_delete = flags.contains('d');
+        let is_complement = flags.contains('c');
+
+        if is_delete && !is_complement {
+            // tr/chars//d - delete specified characters
+            // Example: tr/()K//d removes parentheses and K
+            let chars_to_remove: Vec<String> =
+                search_chars.chars().map(|c| format!("'{}'", c)).collect();
+            Ok(format!(
+                "val.to_string().chars().filter(|c| ![{}].contains(c)).collect::<String>()",
+                chars_to_remove.join(", ")
+            ))
+        } else if is_delete && is_complement {
+            // tr/chars//dc - delete all EXCEPT specified characters
+            // Example: tr/a-fA-F0-9//dc keeps only hex digits
+            if search_chars.contains('-') {
+                // Handle character ranges like a-f, A-F, 0-9
+                let mut keep_chars = Vec::new();
+                let chars: Vec<char> = search_chars.chars().collect();
+                let mut i = 0;
+                while i < chars.len() {
+                    if i + 2 < chars.len() && chars[i + 1] == '-' {
+                        // Character range
+                        let start = chars[i] as u8;
+                        let end = chars[i + 2] as u8;
+                        for c in start..=end {
+                            keep_chars.push(c as char);
+                        }
+                        i += 3;
+                    } else if chars[i] != '-' {
+                        // Single character
+                        keep_chars.push(chars[i]);
+                        i += 1;
+                    } else {
+                        i += 1;
+                    }
+                }
+                let keep_list: Vec<String> =
+                    keep_chars.iter().map(|c| format!("'{}'", c)).collect();
+                Ok(format!(
+                    "val.to_string().chars().filter(|c| [{}].contains(c)).collect::<String>()",
+                    keep_list.join(", ")
+                ))
+            } else {
+                // Simple character list
+                let keep_chars: Vec<String> =
+                    search_chars.chars().map(|c| format!("'{}'", c)).collect();
+                Ok(format!(
+                    "val.to_string().chars().filter(|c| [{}].contains(c)).collect::<String>()",
+                    keep_chars.join(", ")
+                ))
+            }
+        } else {
+            // Character-by-character replacement
+            // Build a replacement map
+            let search_vec: Vec<char> = search_chars.chars().collect();
+            let replace_vec: Vec<char> = replace_chars.chars().collect();
+
+            if search_vec.len() != replace_vec.len() {
+                return Err(CodeGenError::UnsupportedStructure(format!(
+                    "Transliterate pattern length mismatch: {} vs {}",
+                    search_chars, replace_chars
+                )));
+            }
+
+            // Generate character mapping code
+            let mut mappings = Vec::new();
+            for (s, r) in search_vec.iter().zip(replace_vec.iter()) {
+                mappings.push(format!("'{}' => '{}'", s, r));
+            }
+
+            Ok(format!(
+                "val.to_string().chars().map(|c| match c {{ {} , _ => c }}).collect::<String>()",
+                mappings.join(", ")
+            ))
+        }
+    }
+
+    /// Visit block node - handles closures and anonymous blocks
+    /// PPI::Structure::Block (103 occurrences) - Used in map/grep operations
+    fn visit_block(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        // Blocks contain statements that form closures
+        // Example: map { $_ * 2 } @array
+
+        if node.children.is_empty() {
+            // Empty block
+            return Ok("{ }".to_string());
+        }
+
+        // Process the block contents
+        let mut block_parts = Vec::new();
+        for child in &node.children {
+            if child.class != "PPI::Token::Whitespace" {
+                block_parts.push(self.visit_node(child)?);
+            }
+        }
+
+        // Generate closure-like code
+        // For now, generate a simple block - can be enhanced based on context
+        if block_parts.len() == 1 {
+            // Single expression block
+            Ok(format!("|item| {}", block_parts[0]))
+        } else {
+            // Multi-statement block
+            Ok(format!("|item| {{ {} }}", block_parts.join("; ")))
         }
     }
 

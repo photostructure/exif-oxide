@@ -187,7 +187,12 @@ pub trait FunctionGenerator {
     /// Generate sprintf function call with proper format handling
     fn generate_sprintf_call(&self, args: &str) -> Result<String, CodeGenError> {
         // Extract format string and arguments from (format, arg1, arg2, ...) pattern
-        let args_inner = args.trim_start_matches('(').trim_end_matches(')');
+        // Only remove the outer parentheses, not nested ones
+        let args_inner = if args.starts_with('(') && args.ends_with(')') {
+            &args[1..args.len()-1]
+        } else {
+            args
+        };
 
         // Check if we have a nested function call like split
         if args_inner.contains("crate::types::split_tagvalue") {
@@ -203,7 +208,6 @@ pub trait FunctionGenerator {
 
             if format_start < format_end {
                 let format_str = &args_inner[format_start + 1..format_end];
-                let rust_format = self.convert_perl_format_to_rust(format_str)?;
 
                 // Find where the split call starts (after the format string and comma)
                 let split_start = if let Some(comma_pos) = args_inner[format_end..].find(',') {
@@ -217,51 +221,21 @@ pub trait FunctionGenerator {
                 // Get everything after the comma as the split call
                 let split_call = args_inner[split_start..].trim();
 
-                // Generate code that unpacks the split result and formats it
+                // Use our new helper function for cleaner code generation
                 return match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::String({{
-                            let values = {};
-                            let strings: Vec<String> = values.iter()
-                                .take({})
-                                .map(|v| match v {{
-                                    TagValue::F64(f) => format!(\"{{:.3}}\", f),
-                                    TagValue::I32(i) => i.to_string(),
-                                    TagValue::String(s) => s.clone(),
-                                    _ => v.to_string(),
-                                }})
-                                .collect();
-                            match strings.len() {{
-                                0 => \"\".to_string(),
-                                1 => format!(\"{}\", strings[0]),
-                                _ => {{
-                                    let mut args = strings.iter();
-                                    format!(\"{}\", {})
-                                }}
-                            }}
-                        }})",
-                        split_call,
-                        rust_format.matches("{}").count(),
-                        rust_format,
-                        rust_format,
-                        (0..rust_format.matches("{}").count())
-                            .map(|_| "args.next().unwrap()")
-                            .collect::<Vec<_>>()
-                            .join(", ")
+                        "{{
+    let values = {};
+    TagValue::String(crate::fmt::sprintf_split_values(\"{}\", &values))
+}}",
+                        split_call, format_str
                     )),
                     _ => Ok(format!(
                         "{{
-                            let values = {};
-                            let strings: Vec<String> = values.iter()
-                                .take({})
-                                .map(|v| v.to_string())
-                                .collect();
-                            format!(\"{}\", {})
-                        }}",
-                        split_call,
-                        rust_format.matches("{}").count(),
-                        rust_format,
-                        "strings.join(\", \")"
+    let values = {};
+    crate::fmt::sprintf_split_values(\"{}\", &values)
+}}",
+                        split_call, format_str
                     )),
                 };
             }

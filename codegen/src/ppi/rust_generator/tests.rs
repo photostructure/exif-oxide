@@ -580,4 +580,317 @@ mod tests {
         // For now, basic join functionality is sufficient
         // Full nested function parsing will be refined later
     }
+
+    // Task D: Tests for Control Flow & Advanced Features (Phase 3)
+
+    #[test]
+    fn test_magic_variable_underscore() {
+        // Test the expression: $_
+        let ast_json = json!({
+            "children": [{
+                "children": [{
+                    "class": "PPI::Token::Magic",
+                    "content": "$_"
+                }],
+                "class": "PPI::Statement"
+            }],
+            "class": "PPI::Document"
+        });
+
+        let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
+
+        let generator = RustGenerator::new(
+            ExpressionType::PrintConv,
+            "test_magic_underscore".to_string(),
+            "$_".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Should generate reference to current_val
+        assert!(result.contains("current_val"));
+        assert!(result.contains("pub fn test_magic_underscore"));
+    }
+
+    #[test]
+    fn test_magic_variable_at() {
+        // Test the expression: $@
+        let ast_json = json!({
+            "children": [{
+                "children": [{
+                    "class": "PPI::Token::Magic",
+                    "content": "$@"
+                }],
+                "class": "PPI::Statement"
+            }],
+            "class": "PPI::Document"
+        });
+
+        let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
+
+        let generator = RustGenerator::new(
+            ExpressionType::PrintConv,
+            "test_magic_at".to_string(),
+            "$@".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Should generate reference to error_val
+        assert!(result.contains("error_val"));
+        assert!(result.contains("pub fn test_magic_at"));
+    }
+
+    #[test]
+    fn test_return_statement() {
+        // Test the expression: return $val
+        let ast_json = json!({
+            "children": [{
+                "children": [{
+                    "class": "PPI::Token::Word",
+                    "content": "return"
+                }, {
+                    "class": "PPI::Token::Symbol",
+                    "content": "$val",
+                    "symbol_type": "scalar"
+                }],
+                "class": "PPI::Statement::Break"
+            }],
+            "class": "PPI::Document"
+        });
+
+        let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
+
+        let generator = RustGenerator::new(
+            ExpressionType::ValueConv,
+            "test_return".to_string(),
+            "return $val".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Should generate proper return statement for ValueConv
+        assert!(result.contains("return Ok(val)"));
+        assert!(result.contains("pub fn test_return"));
+    }
+
+    #[test]
+    fn test_last_statement() {
+        // Test the expression: last
+        let ast_json = json!({
+            "children": [{
+                "children": [{
+                    "class": "PPI::Token::Word",
+                    "content": "last"
+                }],
+                "class": "PPI::Statement::Break"
+            }],
+            "class": "PPI::Document"
+        });
+
+        let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
+
+        let generator = RustGenerator::new(
+            ExpressionType::PrintConv,
+            "test_last".to_string(),
+            "last".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Should generate break statement
+        assert!(result.contains("break"));
+        assert!(result.contains("pub fn test_last"));
+    }
+
+    #[test]
+    fn test_next_statement() {
+        // Test the expression: next
+        let ast_json = json!({
+            "children": [{
+                "children": [{
+                    "class": "PPI::Token::Word",
+                    "content": "next"
+                }],
+                "class": "PPI::Statement::Break"
+            }],
+            "class": "PPI::Document"
+        });
+
+        let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
+
+        let generator = RustGenerator::new(
+            ExpressionType::PrintConv,
+            "test_next".to_string(),
+            "next".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Should generate continue statement
+        assert!(result.contains("continue"));
+        assert!(result.contains("pub fn test_next"));
+    }
+
+    #[test]
+    fn test_transliterate_delete() {
+        // Test the expression: tr/()K//d (remove parentheses and K)
+        let ast_json = json!({
+            "children": [{
+                "children": [{
+                    "class": "PPI::Token::Regexp::Transliterate",
+                    "content": "tr/()K//d"
+                }],
+                "class": "PPI::Statement"
+            }],
+            "class": "PPI::Document"
+        });
+
+        let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
+
+        let generator = RustGenerator::new(
+            ExpressionType::PrintConv,
+            "test_tr_delete".to_string(),
+            "tr/()K//d".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Should generate character filter
+        assert!(result.contains("filter"));
+        assert!(result.contains("'('"));
+        assert!(result.contains("')'"));
+        assert!(result.contains("'K'"));
+        assert!(result.contains("pub fn test_tr_delete"));
+    }
+
+    #[test]
+    fn test_transliterate_keep_only() {
+        // Test the expression: tr/a-fA-F0-9//dc (keep only hex digits)
+        let ast_json = json!({
+            "children": [{
+                "children": [{
+                    "class": "PPI::Token::Regexp::Transliterate",
+                    "content": "tr/a-fA-F0-9//dc"
+                }],
+                "class": "PPI::Statement"
+            }],
+            "class": "PPI::Document"
+        });
+
+        let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
+
+        let generator = RustGenerator::new(
+            ExpressionType::PrintConv,
+            "test_tr_keep_hex".to_string(),
+            "tr/a-fA-F0-9//dc".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Should generate character filter to keep only hex chars
+        assert!(result.contains("filter"));
+        assert!(result.contains("contains"));
+        // Should handle character ranges
+        assert!(result.contains("pub fn test_tr_keep_hex"));
+    }
+
+    #[test]
+    fn test_transliterate_replace() {
+        // Test the expression: tr/abc/xyz/ (replace a->x, b->y, c->z)
+        let ast_json = json!({
+            "children": [{
+                "children": [{
+                    "class": "PPI::Token::Regexp::Transliterate",
+                    "content": "tr/abc/xyz/"
+                }],
+                "class": "PPI::Statement"
+            }],
+            "class": "PPI::Document"
+        });
+
+        let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
+
+        let generator = RustGenerator::new(
+            ExpressionType::PrintConv,
+            "test_tr_replace".to_string(),
+            "tr/abc/xyz/".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Should generate character mapping
+        assert!(result.contains("match"));
+        assert!(result.contains("'a' => 'x'"));
+        assert!(result.contains("'b' => 'y'"));
+        assert!(result.contains("'c' => 'z'"));
+        assert!(result.contains("pub fn test_tr_replace"));
+    }
+
+    #[test]
+    fn test_block_closure() {
+        // Test the expression: { $_ * 2 }
+        let ast_json = json!({
+            "children": [{
+                "children": [{
+                    "class": "PPI::Token::Magic",
+                    "content": "$_"
+                }, {
+                    "class": "PPI::Token::Operator",
+                    "content": "*"
+                }, {
+                    "class": "PPI::Token::Number",
+                    "content": "2",
+                    "numeric_value": 2
+                }],
+                "class": "PPI::Structure::Block"
+            }],
+            "class": "PPI::Document"
+        });
+
+        let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
+
+        let generator = RustGenerator::new(
+            ExpressionType::PrintConv,
+            "test_block".to_string(),
+            "{ $_ * 2 }".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Debug output to see what's generated
+        println!("Generated block code:\n{}", result);
+
+        // Should generate closure-like code
+        assert!(result.contains("|item|"));
+        // The magic variable generates current_val, and we have multiplication
+        assert!(result.contains("current_val") && result.contains("* 2"));
+        assert!(result.contains("pub fn test_block"));
+    }
+
+    #[test]
+    fn test_empty_block() {
+        // Test the expression: { }
+        let ast_json = json!({
+            "children": [{
+                "children": [],
+                "class": "PPI::Structure::Block"
+            }],
+            "class": "PPI::Document"
+        });
+
+        let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
+
+        let generator = RustGenerator::new(
+            ExpressionType::PrintConv,
+            "test_empty_block".to_string(),
+            "{ }".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Should generate empty block
+        assert!(result.contains("{ }"));
+        assert!(result.contains("pub fn test_empty_block"));
+    }
 }
