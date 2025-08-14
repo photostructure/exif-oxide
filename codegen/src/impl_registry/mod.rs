@@ -26,11 +26,7 @@ pub mod valueconv_registry;
 #[cfg(test)]
 mod tests;
 
-// Re-export key types and functions
-pub use function_registry::{
-    get_function_details, lookup_function, needs_function_registry_lookup, FunctionCategory,
-    FunctionDetails, FunctionImplementation,
-};
+// Re-export key types and functions for external use
 pub use printconv_registry::{lookup_printconv, lookup_tag_specific_printconv};
 pub use types::ValueConvType;
 pub use valueconv_registry::classify_valueconv_expression;
