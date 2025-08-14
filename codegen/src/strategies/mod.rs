@@ -60,10 +60,6 @@ pub struct ExtractionContext {
     /// Output directory for generated code
     pub output_dir: String,
 
-    /// Current module being processed
-    #[allow(dead_code)]
-    pub current_module: Option<String>,
-
     /// Global symbol registry for cross-references
     pub symbol_registry: HashMap<String, FieldSymbol>,
 
@@ -91,10 +87,6 @@ pub struct GeneratedFile {
 
     /// Generated Rust code content
     pub content: String,
-
-    /// Strategy that generated this file
-    #[allow(dead_code)]
-    pub strategy: String,
 }
 
 impl ExtractionContext {

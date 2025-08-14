@@ -61,6 +61,7 @@ pub enum ExpressionType {
 
 impl ExpressionType {
     /// Determine expression type from field name context
+    #[allow(dead_code)]
     pub fn from_field_name(field_name: &str) -> Self {
         if field_name.contains("Condition") {
             ExpressionType::Condition
@@ -84,6 +85,7 @@ impl ExpressionType {
     }
 
     /// Get imports needed for this expression type
+    #[allow(dead_code)]
     pub fn required_imports(&self) -> Vec<&'static str> {
         match self {
             ExpressionType::Condition => vec!["crate::TagValue"],
@@ -96,6 +98,7 @@ impl ExpressionType {
 /// Helper methods for PPI node analysis
 impl PpiNode {
     /// Check if this is a variable reference ($val, $$self{Field})
+    #[allow(dead_code)]
     pub fn is_variable(&self) -> bool {
         self.class == "PPI::Token::Symbol"
             && self
@@ -136,16 +139,19 @@ impl PpiNode {
     }
 
     /// Check if this is an operator token
+    #[allow(dead_code)]
     pub fn is_operator(&self) -> bool {
         self.class == "PPI::Token::Operator"
     }
 
     /// Check if this is a number literal
+    #[allow(dead_code)]
     pub fn is_number(&self) -> bool {
         self.class == "PPI::Token::Number"
     }
 
     /// Check if this is a string literal
+    #[allow(dead_code)]
     pub fn is_string(&self) -> bool {
         self.class.starts_with("PPI::Token::Quote::")
     }
@@ -156,6 +162,7 @@ impl PpiNode {
     }
 
     /// Get the operator text if this is an operator
+    #[allow(dead_code)]
     pub fn operator_text(&self) -> Option<&str> {
         if self.is_operator() {
             self.content.as_deref()
@@ -172,12 +179,15 @@ pub enum PpiParseError {
     Json(#[from] serde_json::Error),
 
     #[error("Invalid PPI structure: {0}")]
+    #[allow(dead_code)]
     InvalidStructure(String),
 
     #[error("Missing required field: {0}")]
+    #[allow(dead_code)]
     MissingField(String),
 
     #[error("Unsupported PPI token type: {0}")]
+    #[allow(dead_code)]
     UnsupportedToken(String),
 }
 

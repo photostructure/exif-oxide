@@ -371,17 +371,6 @@ pub fn lookup_printconv(expr: &str, module: &str) -> Option<(&'static str, &'sta
 /// Alias for lookup_printconv (kept for backwards compatibility)
 /// Since we no longer normalize, this is identical to lookup_printconv
 ///
-/// # Deprecated
-/// This function is redundant and will be removed in a future version.
-/// Use `lookup_printconv` directly instead.
-#[deprecated(
-    since = "0.1.0",
-    note = "Use lookup_printconv directly. This alias is redundant and will be removed."
-)]
-#[allow(dead_code)]
-pub fn lookup_printconv_direct(expr: &str, module: &str) -> Option<(&'static str, &'static str)> {
-    lookup_printconv(expr, module)
-}
 
 /// Get access to the PRINTCONV_REGISTRY for testing
 #[cfg(test)]

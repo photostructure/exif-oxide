@@ -7,12 +7,14 @@ pub enum CodeGenError {
     UnsupportedStructure(String),
 
     #[error("Unsupported operator: {0}")]
+    #[allow(dead_code)]
     UnsupportedOperator(String),
 
     #[error("Unsupported function: {0}")]
     UnsupportedFunction(String),
 
     #[error("Unsupported context: {0}")]
+    #[allow(dead_code)]
     UnsupportedContext(String),
 
     #[error("Unsupported token type: {0}")]
