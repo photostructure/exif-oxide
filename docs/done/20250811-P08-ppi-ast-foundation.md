@@ -11,7 +11,7 @@
 
 ### System Overview
 
-- **field_extractor_with_ast.pl**: Enhanced Perl script using PPI to parse expressions into JSON AST structures
+- **field_extractor.pl**: Enhanced Perl script using PPI to parse expressions into JSON AST structures
 - **PPI JSON Format**: Real output uses `class` field (not `node_type`), includes children arrays, optional metadata fields
 - **Codegen vs Runtime**: codegen/src/ppi/ converts JSON at build time, ast/ module provides runtime utilities called by generated code
 - **Optional AST Fields**: `PrintConv_ast`, `ValueConv_ast`, `Condition_ast` are optional - graceful fallback to registry required
@@ -268,7 +268,7 @@ fn generate_context_access(field: &str) -> String {
 - [x] **Pipeline Integration**: Strategy dispatcher routes AST-enabled symbols → AST strategy registered as high-priority in `all_strategies()`
 - [x] **Code Generation**: AST converter produces Rust functions → `PpiConverter` generates complete function bodies with signatures
 - [x] **Shared Infrastructure**: AST crate extraction → `ast/` workspace member enables both P08 and P07 to consume same AST types
-- [ ] **Consumption**: Generated code uses AST output → `grep -r "ast_generated" src/generated/` shows AST-generated functions - PENDING (requires field_extractor_with_ast.pl usage)
+- [ ] **Consumption**: Generated code uses AST output → `grep -r "ast_generated" src/generated/` shows AST-generated functions - PENDING (requires field_extractor.pl usage)
 - [ ] **Measurement**: Behavior validation → `cargo run compare-with-exiftool test.jpg` shows identical output for AST-generated expressions - BLOCKED (broader build issues)
 - [x] **P07 Foundation**: Shared AST infrastructure → P07 unified expression system can now implement runtime evaluators using same AST foundation
 
@@ -291,7 +291,7 @@ fn generate_context_access(field: &str) -> String {
 - [x] **Shared Infrastructure**: AST crate enables P07 unified expression system development
 - [ ] `cargo t test_ppi_expression_generation` passes - BLOCKED (broader build issues, not P08-specific)
 - [ ] `make precommit` clean - BLOCKED (broader build issues, not P08-specific)  
-- [ ] AST handles 70%+ of expressions from corpus analysis - PENDING (requires resolved build + field_extractor_with_ast.pl usage)
+- [ ] AST handles 70%+ of expressions from corpus analysis - PENDING (requires resolved build + field_extractor.pl usage)
 - [x] **P07 Enablement**: AST types accessible to main module for unified expression evaluation
 - [x] **Architecture**: Clean dependency structure with no circular dependencies between ast/codegen/main
 
@@ -315,7 +315,7 @@ The PPI AST foundation is **complete and production-ready**. Key achievements:
 
 ## 🔄 Next Steps for Future Engineers
 
-1. **Usage**: Use field_extractor_with_ast.pl to generate JSON with PPI AST data
+1. **Usage**: Use field_extractor.pl to generate JSON with PPI AST data
 2. **Coverage**: AST currently handles simple arithmetic and string interpolation
 3. **Extension**: Add support for more PPI node types as needed (functions, conditionals)
 4. **P07 Integration**: ast/ crate available for P07 unified expression system if needed

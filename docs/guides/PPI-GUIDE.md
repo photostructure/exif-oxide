@@ -184,7 +184,7 @@ my $fragment = PPI::Document::Fragment->new(\'$val > 0');
 
 ### Our Implementation Pattern
 
-1. **Expression Extraction**: `field_extractor_with_ast.pl` extracts Perl expressions from ExifTool modules
+1. **Expression Extraction**: `field_extractor.pl` extracts Perl expressions from ExifTool modules
 2. **PPI Parsing**: Each expression is parsed into PPI AST structure
 3. **JSON Serialization**: AST data is serialized for Rust consumption
 4. **Rust Conversion**: `ast/src/ppi_converter.rs` transforms PPI nodes into Rust code

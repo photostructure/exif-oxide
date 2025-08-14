@@ -100,18 +100,18 @@ Field extraction with AST complete for ExifTool
 
 ### 1. Script Invocation
 
-**Command:** `./codegen/scripts/field_extractor_with_ast.pl <module_path> [field1] [field2]...`
+**Command:** `./codegen/scripts/field_extractor.pl <module_path> [field1] [field2]...`
 
 **Examples:**
 ```bash
 # Extract all symbols from ExifTool.pm
-./codegen/scripts/field_extractor_with_ast.pl third-party/exiftool/lib/Image/ExifTool.pm
+./codegen/scripts/field_extractor.pl third-party/exiftool/lib/Image/ExifTool.pm
 
 # Extract only specific symbols
-./codegen/scripts/field_extractor_with_ast.pl third-party/exiftool/lib/Image/ExifTool/Canon.pm tagTable Composite
+./codegen/scripts/field_extractor.pl third-party/exiftool/lib/Image/ExifTool/Canon.pm tagTable Composite
 
 # Extract magic number patterns  
-./codegen/scripts/field_extractor_with_ast.pl third-party/exiftool/lib/Image/ExifTool.pm magicNumber
+./codegen/scripts/field_extractor.pl third-party/exiftool/lib/Image/ExifTool.pm magicNumber
 ```
 
 ### 2. Output Format
@@ -205,7 +205,7 @@ my $ppi_converter = PPI::Simple->new(
 codegen/scripts/
 ├── PPI/
 │   └── Simple.pm                    # Clean PPI-to-JSON converter
-└── field_extractor_with_ast.pl     # Main extraction script (405 lines)
+└── field_extractor.pl     # Main extraction script (405 lines)
 ```
 
 ## Testing Performed
@@ -213,7 +213,7 @@ codegen/scripts/
 ### Basic Functionality
 ```bash
 # Magic number extraction (proven working)
-./codegen/scripts/field_extractor_with_ast.pl third-party/exiftool/lib/Image/ExifTool.pm magicNumber
+./codegen/scripts/field_extractor.pl third-party/exiftool/lib/Image/ExifTool.pm magicNumber
 
 # No errors, clean JSON output:
 {"data":{"AA":{"raw_bytes":[...]},...},"name":"magicNumber","type":"hash"}
@@ -245,7 +245,7 @@ for my $expr_type (qw(PrintConv ValueConv RawConv Condition WriteConv)) {
 
 Use `DEBUG=1` environment variable for verbose output:
 ```bash
-DEBUG=1 ./codegen/scripts/field_extractor_with_ast.pl <args>
+DEBUG=1 ./codegen/scripts/field_extractor.pl <args>
 ```
 
 ### Performance Tuning

@@ -1,6 +1,6 @@
 //! PPI JSON Parser
 //!
-//! Parses PPI JSON structures from field_extractor_with_ast.pl output.
+//! Parses PPI JSON structures from field_extractor.pl output.
 //! Handles the inline AST fields (PrintConv_ast, ValueConv_ast, Condition_ast).
 
 use super::types::*;
