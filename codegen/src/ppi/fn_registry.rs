@@ -21,6 +21,7 @@ pub struct FunctionSpec {
     /// Import path for use in tag modules (e.g., "crate::generated::fn::a1")
     pub module_path: String,
     /// Two-character hash prefix for file organization
+    #[allow(dead_code)]
     pub hash_prefix: String,
     /// Type of expression (ValueConv, PrintConv, Condition)
     pub expression_type: ExpressionType,
@@ -98,15 +99,18 @@ impl PpiFunctionRegistry {
                 .push(function_code.clone());
         }
 
-        // Generate one file per prefix
-        for (prefix, function_codes) in &functions_by_prefix {
+        // Generate one file per prefix (sorted for deterministic output)
+        let mut prefixes: Vec<_> = functions_by_prefix.keys().collect();
+        prefixes.sort();
+        
+        for prefix in prefixes {
+            let function_codes = functions_by_prefix.get(prefix).unwrap();
             let file_content = self.generate_function_file_content(prefix, function_codes);
             let file_path = format!("functions/hash_{}.rs", prefix);
 
             files.push(GeneratedFile {
                 path: file_path,
                 content: file_content,
-                strategy: "PpiFunctionRegistry".to_string(),
             });
         }
 
@@ -190,9 +194,13 @@ impl PpiFunctionRegistry {
         content.push_str("use crate::types::{TagValue, ExifError};\n");
         content.push('\n');
 
+        // Sort function codes for deterministic output
+        let mut sorted_function_codes = function_codes.to_vec();
+        sorted_function_codes.sort();
+
         // Add all functions for this prefix
-        for function_code in function_codes {
-            content.push_str(function_code);
+        for function_code in sorted_function_codes {
+            content.push_str(&function_code);
             content.push_str("\n\n");
         }
 
@@ -226,11 +234,11 @@ impl PpiFunctionRegistry {
         Ok(GeneratedFile {
             path: "functions/mod.rs".to_string(),
             content,
-            strategy: "PpiFunctionRegistry".to_string(),
         })
     }
 
     /// Get registry statistics for debugging
+    #[allow(dead_code)]
     pub fn stats(&self) -> RegistryStats {
         RegistryStats {
             total_functions: self.generated_functions.len(),
@@ -241,6 +249,7 @@ impl PpiFunctionRegistry {
 
 /// Statistics about the registry state
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct RegistryStats {
     pub total_functions: usize,
     pub unique_asts: usize,
