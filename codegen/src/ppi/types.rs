@@ -155,11 +155,6 @@ impl PpiNode {
         self.class == "PPI::Token::Word"
     }
 
-    /// Check if this is a statement container
-    pub fn is_statement(&self) -> bool {
-        self.class.starts_with("PPI::Statement")
-    }
-
     /// Get the operator text if this is an operator
     pub fn operator_text(&self) -> Option<&str> {
         if self.is_operator() {
@@ -167,53 +162,6 @@ impl PpiNode {
         } else {
             None
         }
-    }
-
-    /// Check if this expression contains function calls
-    pub fn has_function_calls(&self) -> bool {
-        if self.is_word() {
-            return true;
-        }
-
-        self.children.iter().any(|child| child.has_function_calls())
-    }
-
-    /// Check if this expression contains self-references
-    pub fn has_self_references(&self) -> bool {
-        if self.is_self_reference() {
-            return true;
-        }
-
-        self.children
-            .iter()
-            .any(|child| child.has_self_references())
-    }
-
-    // Task A: Helper methods for critical foundation tokens
-
-    /// Check if this is a cast token ($$self, $$valPt, etc.)
-    pub fn is_cast(&self) -> bool {
-        self.class == "PPI::Token::Cast"
-    }
-
-    /// Check if this is a subscript structure ($val[0], $$self{Model})
-    pub fn is_subscript(&self) -> bool {
-        self.class == "PPI::Structure::Subscript"
-    }
-
-    /// Check if this is a regex match pattern (/Canon/, m/EOS/)
-    pub fn is_regexp_match(&self) -> bool {
-        self.class == "PPI::Token::Regexp::Match"
-    }
-
-    /// Check if this is an expression statement (complex expressions)
-    pub fn is_expression(&self) -> bool {
-        self.class == "PPI::Statement::Expression"
-    }
-
-    /// Check if this is a hex number (0xFF, 0x123)
-    pub fn is_hex_number(&self) -> bool {
-        self.class == "PPI::Token::Number::Hex"
     }
 }
 
