@@ -104,6 +104,43 @@ pub trait ExpressionCombiner {
             }
         }
 
+        // Pattern: $val ? 1 / $val : 0 (safe reciprocal)
+        // This is a common ExifTool pattern for safe division
+        if let (Some(question_pos), Some(colon_pos)) = (
+            parts.iter().position(|p| p == "?"),
+            parts.iter().position(|p| p == ":"),
+        ) {
+            if question_pos < colon_pos && parts.len() >= 7 {
+                let condition_parts = &parts[..question_pos];
+                let true_branch_parts = &parts[question_pos + 1..colon_pos];
+                let false_branch_parts = &parts[colon_pos + 1..];
+
+                // Check for the specific pattern: $var ? constant / $var : 0
+                if condition_parts.len() == 1
+                    && true_branch_parts.len() == 3
+                    && false_branch_parts.len() == 1
+                    && true_branch_parts[1] == "/"
+                    && true_branch_parts[2] == condition_parts[0]
+                    && false_branch_parts[0] == "0"
+                {
+                    let numerator = &true_branch_parts[0];
+                    let variable = &condition_parts[0];
+                    
+                    // If numerator is 1, use safe_reciprocal
+                    if numerator == "1" {
+                        return Ok(format!("crate::fmt::safe_reciprocal(&{})", variable));
+                    } 
+                    // If numerator is a constant, multiply by safe_reciprocal
+                    else if numerator.parse::<f64>().is_ok() {
+                        return Ok(format!(
+                            "if bool::from(&{}) {{ TagValue::F64({}.0 * crate::fmt::safe_reciprocal(&{}).as_f64().unwrap_or(0.0)) }} else {{ TagValue::F64(0.0) }}",
+                            variable, numerator, variable
+                        ));
+                    }
+                }
+            }
+        }
+
         // Pattern: condition ? true_expr : false_expr (ternary)
         if let (Some(question_pos), Some(colon_pos)) = (
             parts.iter().position(|p| p == "?"),
