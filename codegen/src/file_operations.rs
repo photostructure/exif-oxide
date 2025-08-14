@@ -17,14 +17,6 @@ pub fn create_directories(path: &Path) -> Result<()> {
     Ok(())
 }
 
-/// Skip empty JSON files during processing
-///
-/// Returns true if the file should be skipped (is empty or contains only whitespace)
-#[allow(dead_code)]
-pub fn should_skip_empty_json(json_content: &str) -> bool {
-    json_content.trim().is_empty()
-}
-
 // Removed obsolete tests for old-architecture functions:
 // - test_read_utf8_with_fallback (read_utf8_with_fallback function removed)
 // - test_write_file_atomic (write_file_atomic function removed)

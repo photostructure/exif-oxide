@@ -83,7 +83,6 @@ pub fn process_canon_makernotes(
 
 /// Find specific Canon tag data with proper offset handling
 /// ExifTool: Canon.pm handles maker note offsets properly
-#[allow(dead_code)]
 fn find_canon_tag_data_with_full_access<'a>(
     full_data: &'a [u8],
     maker_note_data: &'a [u8],

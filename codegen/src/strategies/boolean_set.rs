@@ -21,8 +21,6 @@ pub struct BooleanSetStrategy {
 #[derive(Debug, Clone)]
 struct BooleanSet {
     name: String,
-    #[allow(dead_code)]
-    module_name: String,
     keys: Vec<String>,
 }
 
