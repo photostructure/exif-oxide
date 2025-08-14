@@ -4,7 +4,7 @@ This document explains how to process PPI (Perl Parsing Interface) tokens from o
 
 ## Overview
 
-Our simplified `field_extractor_with_ast.pl` uses `PPI::Simple` to parse Perl expressions from ExifTool modules into structured JSON. These JSON structures represent the Abstract Syntax Tree (AST) of Perl expressions, which we then convert to equivalent Rust code.
+Our simplified `field_extractor.pl` uses `PPI::Simple` to parse Perl expressions from ExifTool modules into structured JSON. These JSON structures represent the Abstract Syntax Tree (AST) of Perl expressions, which we then convert to equivalent Rust code.
 
 ## JSON Structure
 

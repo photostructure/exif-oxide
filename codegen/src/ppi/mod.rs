@@ -1,7 +1,7 @@
 //! PPI JSON Parser for ExifTool Expression Processing
 //!
 //! This module parses PPI (Perl Parsing Interface) JSON structures output by
-//! our Perl field extractor (field_extractor_with_ast.pl) and converts them
+//! our Perl field extractor (field_extractor.pl) and converts them
 //! into Rust source code during the codegen phase.
 //!
 //! Architecture:

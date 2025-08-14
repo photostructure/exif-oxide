@@ -11,7 +11,7 @@
 ### System Overview
 
 - **PPI Pipeline**: Perl expressions → PPI AST JSON → Rust code generation → Runtime execution
-- **Field Extractor**: `field_extractor_with_ast.pl` parses ExifTool modules and extracts `PrintConv`, `ValueConv`, and `Condition` expressions as PPI AST structures
+- **Field Extractor**: `field_extractor.pl` parses ExifTool modules and extracts `PrintConv`, `ValueConv`, and `Condition` expressions as PPI AST structures
 - **Rust Generator**: `rust_generator.rs` converts PPI AST nodes to Rust functions that call runtime support libraries 
 - **Function Registry**: `fn_registry.rs` deduplicates identical AST structures across modules to prevent code bloat
 - **Tag Kit Integration**: Generated functions are wired into tag processing pipeline for automatic execution
