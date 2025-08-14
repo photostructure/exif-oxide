@@ -172,53 +172,6 @@ fn gps_coordinate_to_dms(val: &TagValue, _include_cardinal: bool) -> TagValue {
     }
 }
 
-/// GPS coordinate to DMS with directional indicators (N/S/E/W)
-/// ExifTool: lib/Image/ExifTool/GPS.pm:495-574 ToDMS function with doPrintConv=1
-/// For composite GPS coordinates: includes direction based on coordinate sign
-/// Note: Currently unused - kept for potential future Composite GPS tag implementation
-#[allow(dead_code)]
-fn gps_coordinate_to_dms_with_direction(val: &TagValue, is_latitude: bool) -> TagValue {
-    match val.as_f64() {
-        Some(decimal_degrees) => {
-            let is_negative = decimal_degrees < 0.0;
-            let abs_degrees = decimal_degrees.abs();
-
-            // Extract degrees (integer part)
-            let degrees = abs_degrees.floor() as i32;
-            // Extract minutes
-            let minutes_float = (abs_degrees - degrees as f64) * 60.0;
-            let minutes = minutes_float.floor() as i32;
-            // Extract seconds with round-off error handling
-            let seconds_float = (minutes_float - minutes as f64) * 60.0;
-            let mut seconds = seconds_float;
-
-            // ExifTool round-off error handling: prevent seconds >= 60
-            if seconds >= 59.995 {
-                seconds = 0.0;
-                // Note: ExifTool also handles minute/degree rollover
-            }
-
-            // Determine direction indicator based on sign and coordinate type
-            let direction = if is_latitude {
-                if is_negative {
-                    "S"
-                } else {
-                    "N"
-                }
-            } else if is_negative {
-                "W"
-            } else {
-                "E"
-            };
-
-            // ExifTool format with direction: "%d deg %d' %.2f\" %s"
-            TagValue::string(format!(
-                "{degrees} deg {minutes}' {seconds:.2}\" {direction}"
-            ))
-        }
-        None => TagValue::string(format!("Unknown ({val})")),
-    }
-}
 
 /// EXIF Flash PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:164-197, %flash hash

@@ -15,6 +15,7 @@ pub fn parse_ppi_json(json: &JsonValue) -> Result<PpiNode, PpiParseError> {
 ///
 /// Looks for fields like "PrintConv_ast", "ValueConv_ast", "Condition_ast"
 /// in the tag JSON structure.
+#[allow(dead_code)]
 pub fn extract_inline_ast_fields(tag_data: &JsonValue) -> Vec<(String, PpiNode, ExpressionType)> {
     let mut ast_fields = Vec::new();
 
@@ -34,6 +35,7 @@ pub fn extract_inline_ast_fields(tag_data: &JsonValue) -> Vec<(String, PpiNode, 
 }
 
 /// Check if a tag has any inline AST fields  
+#[allow(dead_code)]
 pub fn has_inline_ast(tag_data: &JsonValue) -> bool {
     if let JsonValue::Object(map) = tag_data {
         map.keys().any(|key| key.ends_with("_ast"))
@@ -45,6 +47,7 @@ pub fn has_inline_ast(tag_data: &JsonValue) -> bool {
 /// Extract the original Perl expression corresponding to an AST field
 ///
 /// For "PrintConv_ast", looks for "PrintConv" field with the original expression.
+#[allow(dead_code)]
 pub fn get_original_expression(tag_data: &JsonValue, ast_field: &str) -> Option<String> {
     if let JsonValue::Object(map) = tag_data {
         // Convert "PrintConv_ast" -> "PrintConv"
