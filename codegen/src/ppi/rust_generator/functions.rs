@@ -22,9 +22,39 @@ pub trait FunctionGenerator {
                 if args.len() >= 2 {
                     let separator = args[0].trim_matches('"').trim_matches('\'');
 
-                    // Process the array expression - might be another function call
-                    let array_expr = if args[1].starts_with("unpack") {
-                        // Handle nested unpack call
+                    // Check for multi-argument unpack pattern: join " ", unpack "H2H2", $val
+                    let array_expr = if args.len() >= 3 && args[1].starts_with("unpack") {
+                        // Handle multi-argument unpack call: args[1]="unpack \"H2H2\"", args[2]="val"
+                        // Parse the unpack call from args[1]
+                        let unpack_parts: Vec<&str> = args[1].split_whitespace().collect();
+                        if unpack_parts.len() >= 2 && unpack_parts[0] == "unpack" {
+                            let format = unpack_parts[1].trim_matches('"').trim_matches('\'');
+                            let data = &args[2];
+
+                            match format {
+                                "H2H2" => {
+                                    format!(
+                                        "{{
+    let bytes = {}.as_binary_data();
+    if bytes.len() >= 2 {{
+        vec![format!(\"{{:02x}}\", bytes[0]), format!(\"{{:02x}}\", bytes[1])]
+    }} else {{
+        vec![\"00\".to_string(), \"00\".to_string()]
+    }}
+}}",
+                                        data
+                                    )
+                                }
+                                _ => {
+                                    // Use generic unpack function for other formats
+                                    format!("crate::fmt::unpack_binary(\"{}\", {})?", format, data)
+                                }
+                            }
+                        } else {
+                            args[1].clone()
+                        }
+                    } else if args[1].starts_with("unpack") {
+                        // Handle nested unpack call (legacy support)
                         let unpack_parts: Vec<&str> = args[1].split_whitespace().collect();
                         if unpack_parts.len() >= 3 && unpack_parts[0] == "unpack" {
                             let format = unpack_parts[1].trim_matches('"').trim_matches('\'');
@@ -189,7 +219,7 @@ pub trait FunctionGenerator {
         // Extract format string and arguments from (format, arg1, arg2, ...) pattern
         // Only remove the outer parentheses, not nested ones
         let args_inner = if args.starts_with('(') && args.ends_with(')') {
-            &args[1..args.len()-1]
+            &args[1..args.len() - 1]
         } else {
             args
         };
@@ -221,23 +251,71 @@ pub trait FunctionGenerator {
                 // Get everything after the comma as the split call
                 let split_call = args_inner[split_start..].trim();
 
-                // Use our new helper function for cleaner code generation
+                // Use our new sprintf_perl function for cleaner code generation
                 return match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
                         "{{
     let values = {};
-    TagValue::String(crate::fmt::sprintf_split_values(\"{}\", &values))
+    TagValue::String(crate::fmt::sprintf_perl(\"{}\", &values))
 }}",
                         split_call, format_str
                     )),
                     _ => Ok(format!(
                         "{{
     let values = {};
-    crate::fmt::sprintf_split_values(\"{}\", &values)
+    crate::fmt::sprintf_perl(\"{}\", &values)
 }}",
                         split_call, format_str
                     )),
                 };
+            }
+        }
+
+        // Check if we have unpack in the arguments
+        if args_inner.contains("unpack") {
+            // Handle sprintf with unpack: sprintf("%s:%s:%s", unpack "H4H2H2", $val)
+            // Extract format string
+            let format_start = args_inner.find('"').unwrap_or(0);
+            let format_end = args_inner[format_start + 1..]
+                .find('"')
+                .map(|i| i + format_start + 1)
+                .unwrap_or(args_inner.len());
+
+            if format_start < format_end {
+                let format_str = &args_inner[format_start + 1..format_end];
+
+                // Find the unpack part
+                if let Some(unpack_pos) = args_inner.find("unpack") {
+                    let unpack_part = &args_inner[unpack_pos..];
+
+                    // Extract unpack format (e.g., "H4H2H2H2H2H2H2")
+                    if let Some(quote_start) = unpack_part.find('"') {
+                        if let Some(quote_end) = unpack_part[quote_start + 1..].find('"') {
+                            let unpack_format =
+                                &unpack_part[quote_start + 1..quote_start + 1 + quote_end];
+
+                            // Generate proper code
+                            return match self.expression_type() {
+                                ExpressionType::PrintConv | ExpressionType::ValueConv => {
+                                    Ok(format!(
+                                        "{{
+    let unpacked = crate::fmt::unpack_binary(\"{}\", val)?;
+    Ok(TagValue::String(crate::fmt::sprintf_perl(\"{}\", &unpacked)))
+}}",
+                                        unpack_format, format_str
+                                    ))
+                                }
+                                _ => Ok(format!(
+                                    "{{
+    let unpacked = crate::fmt::unpack_binary(\"{}\", val)?;
+    crate::fmt::sprintf_perl(\"{}\", &unpacked)
+}}",
+                                    unpack_format, format_str
+                                )),
+                            };
+                        }
+                    }
+                }
             }
         }
 
@@ -247,19 +325,28 @@ pub trait FunctionGenerator {
             let format_str = parts[0].trim_matches('"');
             let arg = parts[1];
 
-            // Convert Perl format to Rust format
-            let rust_format = self.convert_perl_format_to_rust(format_str)?;
-
-            match self.expression_type() {
-                ExpressionType::PrintConv => Ok(format!(
-                    "TagValue::String(format!(\"{}\", {}))",
-                    rust_format, arg
-                )),
-                ExpressionType::ValueConv => Ok(format!(
-                    "TagValue::String(format!(\"{}\", {}))",
-                    rust_format, arg
-                )),
-                _ => Ok(format!("format!(\"{}\", {})", rust_format, arg)),
+            // Try to convert to native Rust formatting for simple cases
+            if let Ok(rust_format) = self.convert_perl_format_to_rust(format_str) {
+                // Use native Rust format! for simple patterns
+                match self.expression_type() {
+                    ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
+                        "TagValue::String(format!(\"{}\", {}))",
+                        rust_format, arg
+                    )),
+                    _ => Ok(format!("format!(\"{}\", {})", rust_format, arg)),
+                }
+            } else {
+                // Fallback to sprintf_perl for complex patterns
+                match self.expression_type() {
+                    ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
+                        "TagValue::String(crate::fmt::sprintf_perl(\"{}\", &[{}]))",
+                        format_str, arg
+                    )),
+                    _ => Ok(format!(
+                        "crate::fmt::sprintf_perl(\"{}\", &[{}])",
+                        format_str, arg
+                    )),
+                }
             }
         } else {
             Err(CodeGenError::UnsupportedFunction(

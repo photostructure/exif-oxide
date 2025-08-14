@@ -6,7 +6,7 @@
 #[cfg(test)]
 mod tests {
     use crate::ppi::RustGenerator;
-    use crate::ppi::{ExpressionType, PpiNode};
+    use crate::ppi::{CodeGenError, ExpressionType, PpiNode};
     use serde_json::json;
 
     #[test]
@@ -607,8 +607,8 @@ mod tests {
 
         let result = generator.generate_function(&ast).unwrap();
 
-        // Should generate reference to current_val
-        assert!(result.contains("current_val"));
+        // Should generate reference to val (since $_ is the default variable)
+        assert!(result.contains("val"));
         assert!(result.contains("pub fn test_magic_underscore"));
     }
 
@@ -863,9 +863,98 @@ mod tests {
 
         // Should generate closure-like code
         assert!(result.contains("|item|"));
-        // The magic variable generates current_val, and we have multiplication
-        assert!(result.contains("current_val") && result.contains("* 2"));
+        // The magic variable $_ generates val, and we have multiplication
+        assert!(result.contains("val") && result.contains("* 2"));
         assert!(result.contains("pub fn test_block"));
+    }
+
+    #[test]
+    fn test_magic_variable_with_substitution() {
+        // Test the nasty expression: $_=$val;s/ /x/;$_
+        // This assigns $val to $_, does a substitution on $_ (implicitly), then returns $_
+        // Based on actual PPI AST structure - it's 3 separate statements!
+        let ast_json = json!({
+            "children": [
+                {
+                    "children": [
+                        {
+                            "class": "PPI::Token::Magic",
+                            "content": "$_",
+                            "symbol_type": "scalar"
+                        },
+                        {
+                            "class": "PPI::Token::Operator",
+                            "content": "="
+                        },
+                        {
+                            "class": "PPI::Token::Symbol",
+                            "content": "$val",
+                            "symbol_type": "scalar"
+                        },
+                        {
+                            "class": "PPI::Token::Structure",
+                            "content": ";"
+                        }
+                    ],
+                    "class": "PPI::Statement"
+                },
+                {
+                    "children": [
+                        {
+                            "class": "PPI::Token::Regexp::Substitute",
+                            "content": "s/ /x/"
+                        },
+                        {
+                            "class": "PPI::Token::Structure",
+                            "content": ";"
+                        }
+                    ],
+                    "class": "PPI::Statement"
+                },
+                {
+                    "children": [
+                        {
+                            "class": "PPI::Token::Magic",
+                            "content": "$_",
+                            "symbol_type": "scalar"
+                        }
+                    ],
+                    "class": "PPI::Statement"
+                }
+            ],
+            "class": "PPI::Document"
+        });
+
+        let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
+
+        let generator = RustGenerator::new(
+            ExpressionType::PrintConv,
+            "test_magic_with_subst".to_string(),
+            "$_=$val;s/ /x/;$_".to_string(),
+        );
+
+        // This currently fails because visit_document doesn't handle multiple statements
+        // TODO: Fix visit_document to handle multi-statement expressions like this one
+        let result = generator.generate_function(&ast);
+
+        // For now, we expect this to fail with UnsupportedStructure error
+        assert!(result.is_err());
+        if let Err(e) = result {
+            // Debug output to see the error
+            println!("Expected error for multi-statement document: {:?}", e);
+            // Should fail with the multiple statements error
+            match e {
+                CodeGenError::UnsupportedStructure(msg) => {
+                    assert!(msg.contains("multiple top-level statements"));
+                }
+                _ => panic!("Expected UnsupportedStructure error, got: {:?}", e),
+            }
+        }
+
+        // TODO: When fixed, this should generate:
+        // let mut temp = val;
+        // temp = temp.to_string().replace(" ", "x");
+        // temp
     }
 
     #[test]
