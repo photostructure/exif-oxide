@@ -24,6 +24,9 @@ pub enum CodeGenError {
     #[error("Invalid self-reference: {0}")]
     InvalidSelfReference(String),
 
+    #[error("Invalid number format: {0}")]
+    InvalidNumber(String),
+
     #[error("Formatting error: {0}")]
     Format(#[from] std::fmt::Error),
 }
