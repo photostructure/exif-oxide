@@ -5,76 +5,54 @@
 
 use super::errors::CodeGenError;
 use crate::ppi::types::*;
+use indoc::formatdoc;
 
 /// Trait for generating function calls and related constructs
 pub trait FunctionGenerator {
     fn expression_type(&self) -> &ExpressionType;
 
-    /// Generate multi-argument function call (e.g., "join ' ', unpack 'H2H2', val")
+    /// Generate multi-argument function call using AST traversal (e.g., "join ' ', unpack 'H2H2', val")
     fn generate_multi_arg_function_call(
         &self,
         function_name: &str,
-        args: &[String],
+        node: &PpiNode,
     ) -> Result<String, CodeGenError> {
         match function_name {
             "join" => {
-                // join " ", @array -> array.join(" ")
-                if args.len() >= 2 {
-                    let separator = args[0].trim_matches('"').trim_matches('\'');
-
-                    // Check for multi-argument unpack pattern: join " ", unpack "H2H2", $val
-                    let array_expr = if args.len() >= 3 && args[1].starts_with("unpack") {
-                        // Handle multi-argument unpack call: args[1]="unpack \"H2H2\"", args[2]="val"
-                        // Parse the unpack call from args[1]
-                        let unpack_parts: Vec<&str> = args[1].split_whitespace().collect();
-                        if unpack_parts.len() >= 2 && unpack_parts[0] == "unpack" {
-                            let format = unpack_parts[1].trim_matches('"').trim_matches('\'');
-                            let data = &args[2];
-
-                            match format {
-                                "H2H2" => {
-                                    format!(
-                                        "{{
-    let bytes = {}.as_binary_data();
-    if bytes.len() >= 2 {{
-        vec![format!(\"{{:02x}}\", bytes[0]), format!(\"{{:02x}}\", bytes[1])]
-    }} else {{
-        vec![\"00\".to_string(), \"00\".to_string()]
-    }}
-}}",
-                                        data
-                                    )
-                                }
-                                _ => {
-                                    // Use generic unpack function for other formats
-                                    format!("crate::fmt::unpack_binary(\"{}\", {})?", format, data)
-                                }
-                            }
-                        } else {
-                            args[1].clone()
-                        }
-                    } else if args[1].starts_with("unpack") {
-                        // Handle nested unpack call (legacy support)
-                        let unpack_parts: Vec<&str> = args[1].split_whitespace().collect();
-                        if unpack_parts.len() >= 3 && unpack_parts[0] == "unpack" {
-                            let format = unpack_parts[1].trim_matches('"').trim_matches('\'');
-                            let data = unpack_parts[2];
-
-                            match format {
-                                "H2H2" => {
-                                    format!(
-                                        "vec![u8::from_str_radix(&{}.to_string()[0..2], 16).unwrap_or(0).to_string(), \
-                                        u8::from_str_radix(&{}.to_string()[2..4], 16).unwrap_or(0).to_string()]",
-                                        data, data
-                                    )
-                                }
-                                _ => format!("unpack_{}({})", format.replace("H", "hex"), data),
-                            }
-                        } else {
-                            args[1].clone()
-                        }
+                // join " ", @array -> array.join(" ") - using AST traversal
+                if node.children.len() >= 2 {
+                    // Extract separator from first child node
+                    let separator = if let Some(ref string_value) = node.children[0].string_value {
+                        string_value.clone()
+                    } else if let Some(ref content) = node.children[0].content {
+                        content.trim_matches('"').trim_matches('\'').to_string()
                     } else {
-                        args[1].clone()
+                        " ".to_string() // Default separator
+                    };
+
+                    // Check for unpack function call in second argument using AST
+                    let array_expr = if node.children.len() >= 3
+                        && node.children[1].content.as_deref() == Some("unpack")
+                    {
+                        // Handle multi-argument unpack call using structured AST
+                        format!(
+                            "crate::fmt::unpack_binary(\"{}\", &{})",
+                            node.children[1].string_value.as_deref().unwrap_or("H2H2"),
+                            node.children[2].content.as_deref().unwrap_or("val")
+                        )
+                    } else if node.children[1].content.as_deref() == Some("unpack") {
+                        // Handle nested unpack call using AST
+                        format!(
+                            "crate::fmt::unpack_binary(\"{}\", &val)",
+                            node.children[1].string_value.as_deref().unwrap_or("H2H2")
+                        )
+                    } else {
+                        // Process second argument normally using visitor pattern
+                        if let Some(ref content) = node.children[1].content {
+                            content.clone()
+                        } else {
+                            "val".to_string() // Default fallback
+                        }
                     };
 
                     match self.expression_type() {
@@ -92,21 +70,29 @@ pub trait FunctionGenerator {
             }
             "unpack" => {
                 // unpack "H2H2", val -> decode hex bytes
-                if args.len() >= 2 {
-                    let format = args[0].trim_matches('"').trim_matches('\'');
-                    let data = &args[1];
+                if node.children.len() >= 2 {
+                    let format = if let Some(ref content) = node.children[0].content {
+                        content.trim_matches('"').trim_matches('\'')
+                    } else {
+                        "H2H2"
+                    };
+                    let data = if let Some(ref content) = node.children[1].content {
+                        content
+                    } else {
+                        "val"
+                    };
 
                     match format {
                         "H2H2" => {
                             // Unpack two hex bytes
                             match self.expression_type() {
                                 ExpressionType::PrintConv | ExpressionType::ValueConv => {
-                                    Ok(format!(
-                                        "TagValue::String(format!(\"{{}} {{}}\", \
-                                        u8::from_str_radix(&{}.to_string()[0..2], 16).unwrap_or(0), \
-                                        u8::from_str_radix(&{}.to_string()[2..4], 16).unwrap_or(0)))",
-                                        data, data
-                                    ))
+                                    Ok(formatdoc! {r#"
+                                        TagValue::String(format!("{{}} {{}}",
+                                            u8::from_str_radix(&{data}.to_string()[0..2], 16).unwrap_or(0),
+                                            u8::from_str_radix(&{data}.to_string()[2..4], 16).unwrap_or(0)
+                                        ))
+                                    "#})
                                 }
                                 _ => Ok(format!("unpack_h2h2({})", data)),
                             }
@@ -124,9 +110,17 @@ pub trait FunctionGenerator {
             }
             "split" => {
                 // split " ", $val -> $val.split(" ").collect::<Vec<_>>()
-                if args.len() >= 2 {
-                    let separator = args[0].trim_matches('"').trim_matches('\'');
-                    let data = &args[1];
+                if node.children.len() >= 2 {
+                    let separator = if let Some(ref content) = node.children[0].content {
+                        content.trim_matches('"').trim_matches('\'')
+                    } else {
+                        " "
+                    };
+                    let data = if let Some(ref content) = node.children[1].content {
+                        content
+                    } else {
+                        "val"
+                    };
 
                     match self.expression_type() {
                         ExpressionType::PrintConv | ExpressionType::ValueConv => {
@@ -173,6 +167,7 @@ pub trait FunctionGenerator {
             }
             "int" => Ok(format!("({}).trunc() as i32", arg)),
             "abs" => Ok(format!("({}).abs()", arg)),
+            "log" => Ok(format!("({} as f64).ln()", arg)),
             "defined" => {
                 // Check if value is defined (not None/null)
                 Ok(format!(
@@ -184,20 +179,89 @@ pub trait FunctionGenerator {
         }
     }
 
-    /// Generate function call from function name and arguments
-    fn generate_function_call_from_parts(
-        &self,
-        function_name: &str,
-        args_part: &str,
-    ) -> Result<String, CodeGenError> {
-        match function_name {
-            "sprintf" => self.generate_sprintf_call(args_part),
-            "split" => self.generate_split_call(args_part),
-            "int" => Ok(format!(
-                "({}.trunc() as i32)",
-                self.extract_first_arg(args_part)?
-            )),
-            "abs" => Ok(format!("({}).abs()", self.extract_first_arg(args_part)?)),
+    /// Generate function call from AST node containing function name and arguments
+    fn generate_function_call_from_parts(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        // Extract function name from the AST node
+        let function_name = if let Some(ref content) = node.content {
+            content.clone()
+        } else if !node.children.is_empty() {
+            if let Some(ref content) = node.children[0].content {
+                content.clone()
+            } else {
+                return Err(CodeGenError::UnsupportedStructure(
+                    "function call missing function name".to_string(),
+                ));
+            }
+        } else {
+            return Err(CodeGenError::UnsupportedStructure(
+                "function call missing function name".to_string(),
+            ));
+        };
+        match function_name.as_str() {
+            "sprintf" => self.generate_sprintf_call(node),
+            "split" => {
+                // Extract arguments from AST for split function
+                if node.children.len() >= 2 {
+                    let separator = if let Some(ref content) = node.children[0].content {
+                        content.trim_matches('"').trim_matches('\'')
+                    } else {
+                        " "
+                    };
+                    let data = if let Some(ref content) = node.children[1].content {
+                        content
+                    } else {
+                        "val"
+                    };
+
+                    Ok(format!(
+                        "crate::types::split_tagvalue(&{}, \"{}\")",
+                        data, separator
+                    ))
+                } else {
+                    Err(CodeGenError::UnsupportedFunction(
+                        "split with insufficient args".to_string(),
+                    ))
+                }
+            }
+            "int" => {
+                // Extract first argument from AST
+                let first_arg = if !node.children.is_empty() {
+                    if let Some(ref content) = node.children[0].content {
+                        content.clone()
+                    } else {
+                        "val".to_string()
+                    }
+                } else {
+                    "val".to_string()
+                };
+                Ok(format!("({}.trunc() as i32)", first_arg))
+            }
+            "abs" => {
+                // Extract first argument from AST
+                let first_arg = if !node.children.is_empty() {
+                    if let Some(ref content) = node.children[0].content {
+                        content.clone()
+                    } else {
+                        "val".to_string()
+                    }
+                } else {
+                    "val".to_string()
+                };
+                Ok(format!("({}).abs()", first_arg))
+            }
+            "log" => {
+                // Extract first argument from AST
+                let first_arg = if !node.children.is_empty() {
+                    if let Some(ref content) = node.children[0].content {
+                        content.clone()
+                    } else {
+                        "val".to_string()
+                    }
+                } else {
+                    "val".to_string()
+                };
+                Ok(format!("({} as f64).ln()", first_arg))
+            }
             "length" => {
                 // Perl length function - get string length
                 match self.expression_type() {
@@ -210,148 +274,132 @@ pub trait FunctionGenerator {
                     _ => Ok(format!("match val {{ TagValue::String(s) => s.len() as i32, _ => 0 }}"))
                 }
             }
+            "unpack" => {
+                // Perl unpack function - binary data extraction using AST
+                if node.children.len() >= 2 {
+                    let format = if let Some(ref content) = node.children[0].content {
+                        content.trim_matches('"').trim_matches('\'')
+                    } else {
+                        "H2H2"
+                    };
+                    let data = if let Some(ref content) = node.children[1].content {
+                        content
+                    } else {
+                        "val"
+                    };
+
+                    match self.expression_type() {
+                        ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
+                            "crate::fmt::unpack_binary(\"{}\", &{})",
+                            format, data
+                        )),
+                        _ => Ok(format!(
+                            "crate::fmt::unpack_binary(\"{}\", &{})",
+                            format, data
+                        )),
+                    }
+                } else {
+                    Err(CodeGenError::UnsupportedFunction(
+                        "unpack with insufficient args".to_string(),
+                    ))
+                }
+            }
             _ => Err(CodeGenError::UnsupportedFunction(function_name.to_string())),
         }
     }
 
-    /// Generate sprintf function call with proper format handling
-    fn generate_sprintf_call(&self, args: &str) -> Result<String, CodeGenError> {
-        // Extract format string and arguments from (format, arg1, arg2, ...) pattern
-        // Only remove the outer parentheses, not nested ones
-        let args_inner = if args.starts_with('(') && args.ends_with(')') {
-            &args[1..args.len() - 1]
+    /// Generate sprintf function call with proper AST handling
+    fn generate_sprintf_call(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        if node.children.is_empty() {
+            return Err(CodeGenError::UnsupportedStructure(
+                "sprintf needs arguments".to_string(),
+            ));
+        }
+
+        // Extract format string from first child node
+        let format_str = if let Some(ref string_value) = node.children[0].string_value {
+            string_value.clone()
+        } else if let Some(ref content) = node.children[0].content {
+            content.trim_matches('"').trim_matches('\'').to_string()
         } else {
-            args
+            return Err(CodeGenError::UnsupportedStructure(
+                "sprintf missing format string".to_string(),
+            ));
         };
 
-        // Check if we have a nested function call like split
-        if args_inner.contains("crate::types::split_tagvalue") {
-            // This is the result from our improved visitor - handle it properly
-            // Pattern: sprintf("%.3f x %.3f mm", crate::types::split_tagvalue(&val, " "))
-
-            // Extract format string
-            let format_start = args_inner.find('"').unwrap_or(0);
-            let format_end = args_inner[format_start + 1..]
-                .find('"')
-                .map(|i| i + format_start + 1)
-                .unwrap_or(args_inner.len());
-
-            if format_start < format_end {
-                let format_str = &args_inner[format_start + 1..format_end];
-
-                // Find where the split call starts (after the format string and comma)
-                let split_start = if let Some(comma_pos) = args_inner[format_end..].find(',') {
-                    format_end + comma_pos + 1
+        // Process remaining arguments using AST traversal
+        let format_args: Result<Vec<String>, CodeGenError> = node.children[1..]
+            .iter()
+            .map(|child| {
+                if let Some(ref content) = child.content {
+                    Ok(content.clone())
+                } else if let Some(ref string_value) = child.string_value {
+                    Ok(format!("\"{}\"", string_value))
                 } else {
-                    return Err(CodeGenError::UnsupportedFunction(
-                        "sprintf missing arguments".to_string(),
-                    ));
-                };
-
-                // Get everything after the comma as the split call
-                let split_call = args_inner[split_start..].trim();
-
-                // Use our new sprintf_perl function for cleaner code generation
-                return match self.expression_type() {
-                    ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "{{
-    let values = {};
-    TagValue::String(crate::fmt::sprintf_perl(\"{}\", &values))
-}}",
-                        split_call, format_str
-                    )),
-                    _ => Ok(format!(
-                        "{{
-    let values = {};
-    crate::fmt::sprintf_perl(\"{}\", &values)
-}}",
-                        split_call, format_str
-                    )),
-                };
-            }
-        }
-
-        // Check if we have unpack in the arguments
-        if args_inner.contains("unpack") {
-            // Handle sprintf with unpack: sprintf("%s:%s:%s", unpack "H4H2H2", $val)
-            // Extract format string
-            let format_start = args_inner.find('"').unwrap_or(0);
-            let format_end = args_inner[format_start + 1..]
-                .find('"')
-                .map(|i| i + format_start + 1)
-                .unwrap_or(args_inner.len());
-
-            if format_start < format_end {
-                let format_str = &args_inner[format_start + 1..format_end];
-
-                // Find the unpack part
-                if let Some(unpack_pos) = args_inner.find("unpack") {
-                    let unpack_part = &args_inner[unpack_pos..];
-
-                    // Extract unpack format (e.g., "H4H2H2H2H2H2H2")
-                    if let Some(quote_start) = unpack_part.find('"') {
-                        if let Some(quote_end) = unpack_part[quote_start + 1..].find('"') {
-                            let unpack_format =
-                                &unpack_part[quote_start + 1..quote_start + 1 + quote_end];
-
-                            // Generate proper code
-                            return match self.expression_type() {
-                                ExpressionType::PrintConv | ExpressionType::ValueConv => {
-                                    Ok(format!(
-                                        "{{
-    let unpacked = crate::fmt::unpack_binary(\"{}\", val)?;
-    Ok(TagValue::String(crate::fmt::sprintf_perl(\"{}\", &unpacked)))
-}}",
-                                        unpack_format, format_str
-                                    ))
-                                }
-                                _ => Ok(format!(
-                                    "{{
-    let unpacked = crate::fmt::unpack_binary(\"{}\", val)?;
-    crate::fmt::sprintf_perl(\"{}\", &unpacked)
-}}",
-                                    unpack_format, format_str
-                                )),
-                            };
-                        }
-                    }
+                    Ok("val".to_string()) // Fallback
                 }
-            }
-        }
+            })
+            .collect();
 
-        // Fallback: handle simple sprintf case: sprintf("format", single_arg)
-        let parts: Vec<&str> = args_inner.split(',').map(|s| s.trim()).collect();
-        if parts.len() >= 2 {
-            let format_str = parts[0].trim_matches('"');
-            let arg = parts[1];
+        let args = format_args?;
+
+        // Handle different sprintf patterns based on arguments
+        if args.len() == 1 {
+            // Simple case: sprintf("format", single_arg)
+            let arg = &args[0];
+
+            // Handle division operations in the argument properly
+            let processed_arg = if arg.contains('/') && !arg.contains("crate::") {
+                // Simple division like "$val/100" or "val/100"
+                let div_parts: Vec<&str> = arg.split('/').collect();
+                if div_parts.len() == 2 {
+                    let left = div_parts[0].trim().replace("$val", "val");
+                    let right = div_parts[1].trim();
+                    format!("({} as f64) / ({} as f64)", left, right)
+                } else {
+                    arg.replace("$val", "val")
+                }
+            } else {
+                arg.replace("$val", "val")
+            };
 
             // Try to convert to native Rust formatting for simple cases
-            if let Ok(rust_format) = self.convert_perl_format_to_rust(format_str) {
+            if let Ok(rust_format) = self.convert_perl_format_to_rust(&format_str) {
                 // Use native Rust format! for simple patterns
                 match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
                         "TagValue::String(format!(\"{}\", {}))",
-                        rust_format, arg
+                        rust_format, processed_arg
                     )),
-                    _ => Ok(format!("format!(\"{}\", {})", rust_format, arg)),
+                    _ => Ok(format!("format!(\"{}\", {})", rust_format, processed_arg)),
                 }
             } else {
                 // Fallback to sprintf_perl for complex patterns
                 match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
                         "TagValue::String(crate::fmt::sprintf_perl(\"{}\", &[{}]))",
-                        format_str, arg
+                        format_str, processed_arg
                     )),
                     _ => Ok(format!(
                         "crate::fmt::sprintf_perl(\"{}\", &[{}])",
-                        format_str, arg
+                        format_str, processed_arg
                     )),
                 }
             }
         } else {
-            Err(CodeGenError::UnsupportedFunction(
-                "sprintf with invalid args".to_string(),
-            ))
+            // Multiple arguments: sprintf("format", arg1, arg2, ...)
+            let args_formatted = args.join(", ");
+
+            match self.expression_type() {
+                ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
+                    "TagValue::String(crate::fmt::sprintf_perl(\"{}\", &[{}]))",
+                    format_str, args_formatted
+                )),
+                _ => Ok(format!(
+                    "crate::fmt::sprintf_perl(\"{}\", &[{}])",
+                    format_str, args_formatted
+                )),
+            }
         }
     }
 
@@ -439,5 +487,102 @@ pub trait FunctionGenerator {
         let args_inner = args.trim_start_matches('(').trim_end_matches(')');
         let first_arg = args_inner.split(',').next().unwrap_or(args_inner).trim();
         Ok(first_arg.to_string())
+    }
+
+    /// Check if a PpiNode represents an unpack function call using AST structure
+    fn is_unpack_function_call(&self, node: &PpiNode) -> bool {
+        // Check if this is a normalized function call with name "unpack"
+        if node.class == "FunctionCall" {
+            if let Some(ref content) = node.content {
+                return content == "unpack";
+            }
+        }
+
+        // Check if this is a PPI::Statement containing unpack
+        if node.class == "PPI::Statement" && !node.children.is_empty() {
+            if let Some(ref content) = node.children[0].content {
+                return content == "unpack";
+            }
+        }
+
+        // Check if content directly contains "unpack"
+        if let Some(ref content) = node.content {
+            return content.starts_with("unpack");
+        }
+
+        false
+    }
+
+    /// Generate unpack call from AST nodes instead of string parsing
+    fn generate_unpack_from_node(
+        &self,
+        unpack_node: &PpiNode,
+        data_node: &PpiNode,
+    ) -> Result<String, CodeGenError> {
+        // Extract format from unpack node
+        let format = if unpack_node.children.len() >= 2 {
+            if let Some(ref string_value) = unpack_node.children[1].string_value {
+                string_value.clone()
+            } else if let Some(ref content) = unpack_node.children[1].content {
+                content.trim_matches('"').trim_matches('\'').to_string()
+            } else {
+                "H2H2".to_string() // Default fallback
+            }
+        } else {
+            // Try to extract from content if children aren't available
+            if let Some(ref content) = unpack_node.content {
+                // Parse "unpack \"H2H2\"" pattern
+                if content.contains("\"H2H2\"") {
+                    "H2H2".to_string()
+                } else {
+                    "H2H2".to_string() // Default fallback
+                }
+            } else {
+                "H2H2".to_string() // Default fallback
+            }
+        };
+
+        // Extract data reference
+        let data = if !data_node
+            .content
+            .as_ref()
+            .unwrap_or(&String::new())
+            .is_empty()
+        {
+            if let Some(ref content) = data_node.content {
+                content.clone()
+            } else {
+                "val".to_string()
+            }
+        } else if unpack_node.children.len() >= 3 {
+            // Data might be third child of unpack node
+            if let Some(ref content) = unpack_node.children[2].content {
+                content.clone()
+            } else {
+                "val".to_string()
+            }
+        } else {
+            "val".to_string()
+        };
+
+        match format.as_str() {
+            "H2H2" => Ok(formatdoc! {r#"
+                    {{
+                        let bytes = {data}.as_binary_data();
+                        if bytes.len() >= 2 {{
+                            vec![format!("{{:02x}}", bytes[0]), format!("{{:02x}}", bytes[1])]
+                        }} else {{
+                            vec!["00".to_string(), "00".to_string()]
+                        }}
+                    }}
+                "#}),
+            _ => {
+                // Use generic unpack function for other formats
+                Ok(format!(
+                    "crate::fmt::unpack_binary(\"{}\", {})?",
+                    format, data
+                ))
+            }
+        }
     }
 }

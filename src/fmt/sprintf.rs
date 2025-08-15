@@ -190,7 +190,7 @@ fn tagvalue_to_i64(val: &TagValue) -> i64 {
         TagValue::U16(u) => *u as i64,
         TagValue::U8(u) => *u as i64,
         TagValue::F64(f) => *f as i64,
-        TagValue::F32(f) => *f as i64,
+        // F32 doesn't exist in TagValue enum - already handled by F64 above
         TagValue::String(s) => s.parse::<i64>().unwrap_or(0),
         _ => 0,
     }
@@ -200,7 +200,7 @@ fn tagvalue_to_i64(val: &TagValue) -> i64 {
 fn tagvalue_to_f64(val: &TagValue) -> f64 {
     match val {
         TagValue::F64(f) => *f,
-        TagValue::F32(f) => *f as f64,
+        // F32 doesn't exist in TagValue enum - already handled by F64 above
         TagValue::I32(i) => *i as f64,
         TagValue::U32(u) => *u as f64,
         TagValue::U16(u) => *u as f64,

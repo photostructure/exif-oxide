@@ -18,6 +18,32 @@ exif-oxide is a Rust translation of [ExifTool](https://exiftool.org/), focusing 
 6. **Mainstream Focus**: Only implement tags with >80% frequency or marked mainstream
 7. **Streaming First**: All binary data handled via streaming to minimize memory usage
 
+## 🚨 ARCHITECTURAL PROTECTION RULES
+
+**CRITICAL**: Before modifying PPI system, expression generation, or codegen infrastructure:
+
+### 🚨 AST Processing Rules
+
+- **NEVER parse strings that were AST nodes** - Use visitor pattern and structured traversal
+- **NEVER delete ExifTool pattern recognition** - Patterns handle specific camera quirks
+- **NEVER disable working infrastructure** - Fix integration issues, don't disable systems
+- **ALWAYS use PpiNode structure** - Fight string parsing, embrace AST traversal
+- **ALWAYS reference ExifTool source** - Include exact line numbers for patterns
+
+### 🚨 Emergency Indicators
+
+If you see these patterns, the architecture has been damaged:
+
+```rust
+// 🚨 VANDALISM INDICATORS - RESTORE IMMEDIATELY
+args[1].split_whitespace()           // String parsing of AST
+parts.contains(&"unpack")            // String matching on AST data  
+// let normalized_ast = normalize()  // DISABLED  // Disabled infrastructure
+expressions.rs: <400 lines          // Deleted pattern recognition
+```
+
+**RECOVERY**: See `docs/todo/P07c-emergency-ppi-recovery.md` for systematic restoration procedure.
+
 ## Key Insights from ExifTool Analysis
 
 ### PROCESS_PROC Complexity
@@ -478,6 +504,36 @@ Binary data uses streaming references:
 3. **Use --show-missing** - Let it guide your implementation priority
 4. **Ask clarifying questions** - The codebase is complex by necessity
 
+## Architectural Integrity Enforcement
+
+### Code Review Requirements
+
+**ALL PPI/CODEGEN PRs MUST**:
+
+1. **No AST String Parsing** - Reject any `split_whitespace()` on AST data
+2. **Pattern Recognition Intact** - Verify `expressions.rs` maintains ExifTool patterns  
+3. **Infrastructure Enabled** - Check normalizer and other systems are active
+4. **ExifTool References** - Require source line numbers for all patterns
+5. **Regression Testing** - Generated code must match previous output exactly
+
+### Detection Commands
+
+```bash
+# Pre-PR validation  
+rg "split_whitespace|args\[.*\]\.starts_with" codegen/src/ppi/  # Must be empty
+wc -l codegen/src/ppi/rust_generator/expressions.rs            # Must be >400
+grep "DISABLED\|TODO" codegen/src/ppi/rust_generator/mod.rs    # Must be empty
+```
+
+### Architectural Recovery
+
+If architectural damage is detected:
+
+1. **STOP** - Do not merge damaged code
+2. **ASSESS** - Check `docs/todo/P07c-emergency-ppi-recovery.md`
+3. **RESTORE** - Use systematic recovery procedures
+4. **VALIDATE** - Ensure generated code matches ExifTool exactly
+
 ## Conclusion
 
 This architecture embraces the reality of ExifTool's complexity. Rather than trying to automatically handle Perl's flexibility, we:
@@ -486,6 +542,7 @@ This architecture embraces the reality of ExifTool's complexity. Rather than try
 2. Manually port complex logic with full traceability
 3. Build an implementation palette that grows over time
 4. Maintain ExifTool compatibility through careful porting
+5. **Protect architectural integrity from vandalism**
 
 This approach is more labor-intensive but results in:
 
@@ -493,5 +550,6 @@ This approach is more labor-intensive but results in:
 - Predictable performance
 - Maintainable code
 - Clear progress tracking
+- **Architectural consistency over time**
 
-The key insight: ExifTool's value isn't in its Perl code, but in the accumulated knowledge of metadata formats. We preserve this knowledge through careful manual translation, not automatic parsing.
+The key insight: ExifTool's value isn't in its Perl code, but in the accumulated knowledge of metadata formats. We preserve this knowledge through careful manual translation, not automatic parsing. **We protect this knowledge from architectural regression through clear enforcement guidelines.**
