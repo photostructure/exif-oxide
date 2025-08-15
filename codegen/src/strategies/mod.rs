@@ -11,7 +11,7 @@ use std::path::Path;
 use tracing::{debug, info, trace, warn};
 
 use crate::field_extractor::FieldSymbol;
-use crate::ppi::PpiFunctionRegistry;
+use crate::ppi::{ExpressionType, PpiFunctionRegistry};
 
 /// Utility function for strategies to write generated files directly to disk
 pub fn write_generated_file(output_dir: &str, relative_path: &str, content: &str) -> Result<()> {
@@ -94,7 +94,6 @@ impl ExtractionContext {
     pub fn new(output_dir: String) -> Self {
         Self {
             output_dir,
-            current_module: None,
             symbol_registry: HashMap::new(),
             strategy_log: Vec::new(),
             ppi_registry: PpiFunctionRegistry::new(),
@@ -434,6 +433,58 @@ impl StrategyDispatcher {
                 selection.module_name,
                 selection.strategy_name,
                 selection.reasoning
+            ));
+        }
+
+        // Add PPI processing statistics at the end
+        log_content.push_str("\n# PPI Processing Statistics\n");
+        log_content.push_str(
+            "# Shows how many conversions were successfully processed by PPI vs other methods\n\n",
+        );
+
+        let registry_stats = context.ppi_registry.stats();
+        let conversion_stats = &registry_stats.conversion_stats;
+
+        // PrintConv statistics
+        let print_conv_rate = conversion_stats.success_rate(ExpressionType::PrintConv);
+        log_content.push_str(&format!(
+            "PrintConv: {:.1}% ({}/{}) processed by PPI\n",
+            print_conv_rate,
+            conversion_stats.print_conv_successes,
+            conversion_stats.print_conv_attempts
+        ));
+
+        // ValueConv statistics
+        let value_conv_rate = conversion_stats.success_rate(ExpressionType::ValueConv);
+        log_content.push_str(&format!(
+            "ValueConv: {:.1}% ({}/{}) processed by PPI\n",
+            value_conv_rate,
+            conversion_stats.value_conv_successes,
+            conversion_stats.value_conv_attempts
+        ));
+
+        // Condition statistics
+        let condition_rate = conversion_stats.success_rate(ExpressionType::Condition);
+        log_content.push_str(&format!(
+            "Condition: {:.1}% ({}/{}) processed by PPI\n",
+            condition_rate,
+            conversion_stats.condition_successes,
+            conversion_stats.condition_attempts
+        ));
+
+        // Overall summary
+        let total_attempts = conversion_stats.print_conv_attempts
+            + conversion_stats.value_conv_attempts
+            + conversion_stats.condition_attempts;
+        let total_successes = conversion_stats.print_conv_successes
+            + conversion_stats.value_conv_successes
+            + conversion_stats.condition_successes;
+
+        if total_attempts > 0 {
+            let overall_rate = (total_successes as f64 / total_attempts as f64) * 100.0;
+            log_content.push_str(&format!(
+                "\nOverall: {:.1}% ({}/{}) conversions processed by PPI\n",
+                overall_rate, total_successes, total_attempts
             ));
         }
 
