@@ -292,7 +292,6 @@ impl ExtractionStrategy for BinaryDataStrategy {
                             files.push(GeneratedFile {
                                 path,
                                 content: code,
-                                strategy: self.name().to_string(),
                             });
 
                             debug!(

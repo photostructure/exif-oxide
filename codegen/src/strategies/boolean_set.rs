@@ -211,7 +211,6 @@ impl ExtractionStrategy for BooleanSetStrategy {
 
         let boolean_set = BooleanSet {
             name: symbol_data.name.clone(),
-            module_name: symbol_data.module.clone(),
             keys,
         };
 
@@ -249,7 +248,6 @@ impl ExtractionStrategy for BooleanSetStrategy {
                 files.push(GeneratedFile {
                     path,
                     content: code,
-                    strategy: self.name().to_string(),
                 });
 
                 debug!(
