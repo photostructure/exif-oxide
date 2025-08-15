@@ -330,6 +330,11 @@ impl TagKitStrategy {
         // **NEW: Check for PPI AST field and process during finish_extraction**
         if let Some(ast_value) = tag_data.get("PrintConv_ast") {
             if let Some(print_conv_str) = tag_data.get("PrintConv").and_then(|v| v.as_str()) {
+                // Record that we found a PrintConv that could potentially be processed by PPI
+                context
+                    .ppi_registry
+                    .record_conversion_attempt(ExpressionType::PrintConv);
+
                 match self.process_ast_expression(
                     ast_value,
                     ExpressionType::PrintConv,
@@ -406,6 +411,11 @@ impl TagKitStrategy {
         // **NEW: Check for PPI AST field and process during finish_extraction**
         if let Some(ast_value) = tag_data.get("ValueConv_ast") {
             if let Some(value_conv_str) = tag_data.get("ValueConv").and_then(|v| v.as_str()) {
+                // Record that we found a ValueConv that could potentially be processed by PPI
+                context
+                    .ppi_registry
+                    .record_conversion_attempt(ExpressionType::ValueConv);
+
                 match self.process_ast_expression(
                     ast_value,
                     ExpressionType::ValueConv,
@@ -464,20 +474,29 @@ impl TagKitStrategy {
         ast_value: &JsonValue,
         expression_type: ExpressionType,
         original_expression: &str,
-        _module: &str,
-        _tag_name: &str,
-        _table_name: &str,
+        module: &str,
+        tag_name: &str,
+        table_name: &str,
         context: &mut ExtractionContext,
     ) -> Result<String> {
         // Parse the PPI JSON AST
         let ppi_ast =
             parse_ppi_json(ast_value).map_err(|e| anyhow::anyhow!("PPI parsing failed: {}", e))?;
 
+        // Create usage context
+        let usage_context = Some(crate::ppi::fn_registry::UsageContext {
+            module: module.to_string(),
+            table: table_name.to_string(),
+            tag: tag_name.to_string(),
+        });
+
         // Register with the global PPI function registry
-        let function_spec =
-            context
-                .ppi_registry
-                .register_ast(&ppi_ast, expression_type, original_expression)?;
+        let function_spec = context.ppi_registry.register_ast(
+            &ppi_ast,
+            expression_type,
+            original_expression,
+            usage_context,
+        )?;
 
         // Register the import for this file
         self.register_import(&function_spec.module_path, &function_spec.function_name);
@@ -555,7 +574,6 @@ impl ExtractionStrategy for TagKitStrategy {
                         files.push(GeneratedFile {
                             path,
                             content: code,
-                            strategy: self.name().to_string(),
                         });
 
                         debug!(
