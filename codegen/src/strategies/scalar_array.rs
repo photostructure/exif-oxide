@@ -92,7 +92,6 @@ impl ScalarArrayStrategy {
                 files.push(GeneratedFile {
                     path: filename,
                     content,
-                    strategy: self.name().to_string(),
                 });
             }
             ArrayData::Nested(nested_values) => {
@@ -102,7 +101,6 @@ impl ScalarArrayStrategy {
                     files.push(GeneratedFile {
                         path: filename,
                         content,
-                        strategy: self.name().to_string(),
                     });
                 }
             }
