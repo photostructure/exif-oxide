@@ -11,6 +11,7 @@ pub use sprintf::sprintf_perl;
 pub use unpack::unpack_binary;
 
 use crate::types::TagValue;
+use std::str::FromStr;
 
 /// Format values from a split operation using a sprintf-style format string
 /// 
@@ -229,6 +230,164 @@ pub fn safe_reciprocal(val: &TagValue) -> TagValue {
     safe_division(1.0, val)
 }
 
+/// Join unpacked binary data with a separator
+/// 
+/// Implements: join "separator", unpack "format", data
+/// This unpacks binary data according to the format specification,
+/// then joins the results with the given separator.
+/// 
+/// # Arguments
+/// * `separator` - String to join results with (e.g., " ", "-")
+/// * `format` - Unpack format specification (e.g., "H2H2", "C*")
+/// * `val` - The TagValue containing binary data to unpack
+/// 
+/// # Example
+/// ```rust
+/// # use exif_oxide::fmt::join_unpack_binary;
+/// # use exif_oxide::types::TagValue;
+/// // Equivalent to: join " ", unpack "H2H2", val
+/// let result = join_unpack_binary(" ", "H2H2", &TagValue::Binary(vec![0xAB, 0xCD]));
+/// // Returns: TagValue::String("ab cd")
+/// ```
+pub fn join_unpack_binary(separator: &str, format: &str, val: &TagValue) -> TagValue {
+    let unpacked = unpack_binary(format, val);
+    
+    // Convert unpacked values to strings
+    let strings: Vec<String> = unpacked.iter()
+        .map(|v| match v {
+            TagValue::String(s) => s.clone(),
+            TagValue::U8(n) => format!("{:02x}", n),
+            TagValue::U16(n) => format!("{:04x}", n),
+            TagValue::U32(n) => format!("{:08x}", n),
+            TagValue::I32(n) => format!("{:02x}", *n as u8),
+            _ => v.to_string(),
+        })
+        .collect();
+    
+    TagValue::String(strings.join(separator))
+}
+
+/// Simple regex replace function (wrapper around regex_substitute_perl)
+/// 
+/// This is a convenience function for simple regex replacements.
+/// For full Perl semantics use regex_substitute_perl which returns success status.
+/// 
+/// # Arguments
+/// * `pattern` - The regex pattern to match
+/// * `input` - The input string to operate on
+/// * `replacement` - The replacement string
+/// 
+/// # Returns
+/// String with all matches replaced, or original string if pattern is invalid
+pub fn regex_replace(pattern: &str, input: &str, replacement: &str) -> String {
+    let (_, result) = regex_substitute_perl(pattern, replacement, &TagValue::String(input.to_string()));
+    result.to_string()
+}
+
+/// Regex substitution with Perl semantics: $val =~ s/pattern/replacement/
+/// 
+/// In Perl, this operation both modifies the variable AND returns a boolean.
+/// This function returns (success: bool, modified_value: TagValue) to capture both semantics.
+/// 
+/// # Arguments
+/// * `pattern` - The regex pattern to match
+/// * `replacement` - The replacement string  
+/// * `val` - The TagValue to operate on
+/// 
+/// # Returns
+/// * `(true, modified_val)` if substitution occurred
+/// * `(false, original_val)` if no match found
+/// 
+/// # Example
+/// ```rust
+/// # use exif_oxide::fmt::regex_substitute_perl;
+/// # use exif_oxide::types::TagValue;
+/// let (success, result) = regex_substitute_perl(r" 1$", "", &TagValue::String("123 1".to_string()));
+/// assert_eq!(success, true);
+/// assert_eq!(result, TagValue::String("123".to_string()));
+/// ```
+pub fn regex_substitute_perl(pattern: &str, replacement: &str, val: &TagValue) -> (bool, TagValue) {
+    let input = val.to_string();
+    
+    // Create regex - if pattern is invalid, no substitution occurs
+    let regex = match regex::Regex::new(pattern) {
+        Ok(r) => r,
+        Err(_) => return (false, val.clone()),
+    };
+    
+    // Check if pattern matches
+    if regex.is_match(&input) {
+        // Substitution occurred - return modified value
+        let modified = regex.replace(&input, replacement).to_string();
+        (true, TagValue::String(modified))
+    } else {
+        // No match - return original value unchanged
+        (false, val.clone())
+    }
+}
+
+/// Conservative fallback for complex Perl expressions that can't be parsed
+/// 
+/// When pattern recognition fails, this provides a safe fallback that
+/// preserves the original value while generating valid Rust code.
+/// 
+/// # Arguments
+/// * `original_expression` - The original Perl expression for documentation
+/// * `val` - The TagValue to pass through unchanged
+/// 
+/// # Returns
+/// The original value with a warning comment in debug builds
+pub fn conservative_fallback(original_expression: &str, val: &TagValue) -> TagValue {
+    #[cfg(debug_assertions)]
+    eprintln!("FALLBACK: Complex expression not fully parsed: {}", original_expression);
+    
+    // Conservative approach: return the original value unchanged
+    val.clone()
+}
+
+/// Safe generic binary operation with fallback to string concatenation
+/// 
+/// When operator semantics are unclear, this provides a conservative
+/// approach that handles most common cases while avoiding crashes.
+/// 
+/// # Arguments
+/// * `left` - Left operand
+/// * `operator` - The operator as a string
+/// * `right` - Right operand
+/// 
+/// # Returns
+/// Result of the operation, or string concatenation as fallback
+pub fn safe_binary_operation(left: &TagValue, operator: &str, right: &TagValue) -> TagValue {
+    match operator {
+        "+" | "-" | "*" | "/" => {
+            // Try numeric operation first
+            if let (Ok(l), Ok(r)) = (left.as_f64(), right.as_f64()) {
+                let result = match operator {
+                    "+" => l + r,
+                    "-" => l - r,
+                    "*" => l * r,
+                    "/" => if r != 0.0 { l / r } else { 0.0 },
+                    _ => 0.0,
+                };
+                return TagValue::F64(result);
+            }
+            // Fallback to string concatenation for +
+            if operator == "+" {
+                return TagValue::String(format!("{}{}", left.to_string(), right.to_string()));
+            }
+            // For other operations, return left operand
+            left.clone()
+        }
+        "eq" | "==" => TagValue::U8(if left.to_string() == right.to_string() { 1 } else { 0 }),
+        "ne" | "!=" => TagValue::U8(if left.to_string() != right.to_string() { 1 } else { 0 }),
+        "." => TagValue::String(format!("{}{}", left.to_string(), right.to_string())),
+        _ => {
+            // Unknown operator - conservative fallback to string representation
+            TagValue::String(format!("{} {} {}", left.to_string(), operator, right.to_string()))
+        }
+    }
+}
+
 /// Pack "C*" with bit extraction pattern
 /// 
 /// Implements: pack "C*", map { (($val>>$_)&mask)+offset } shifts...
@@ -356,5 +515,120 @@ mod basic_tests {
         assert_eq!(safe_reciprocal(&TagValue::Rational(8, 2)), TagValue::F64(0.25)); // 1/(8/2) = 1/4
         assert_eq!(safe_reciprocal(&TagValue::Rational(0, 1)), TagValue::F64(0.0)); // 0 numerator
         assert_eq!(safe_reciprocal(&TagValue::SRational(6, 3)), TagValue::F64(0.5)); // 1/(6/3) = 1/2
+    }
+
+    #[test]
+    fn test_join_unpack_binary() {
+        // Test basic hex unpacking with join
+        let binary_data = TagValue::Binary(vec![0xAB, 0xCD, 0xEF]);
+        let result = join_unpack_binary(" ", "H2H2H2", &binary_data);
+        assert_eq!(result, TagValue::String("ab cd ef".to_string()));
+
+        // Test with different separator
+        let result = join_unpack_binary("-", "H2H2", &TagValue::Binary(vec![0x12, 0x34]));
+        assert_eq!(result, TagValue::String("12-34".to_string()));
+
+        // Test with unsigned chars
+        let result = join_unpack_binary(" ", "C3", &TagValue::Binary(vec![0x10, 0x20, 0x30]));
+        assert_eq!(result, TagValue::String("10 20 30".to_string()));
+
+        // Test empty separator
+        let result = join_unpack_binary("", "H2H2", &TagValue::Binary(vec![0xAB, 0xCD]));
+        assert_eq!(result, TagValue::String("abcd".to_string()));
+
+        // Test single value
+        let result = join_unpack_binary(" ", "H2", &TagValue::Binary(vec![0xFF]));
+        assert_eq!(result, TagValue::String("ff".to_string()));
+    }
+
+    #[test]
+    fn test_safe_division() {
+        // Normal cases: numerator/val
+        assert_eq!(safe_division(10.0, &TagValue::I32(2)), TagValue::F64(5.0)); // 10/2 = 5
+        assert_eq!(safe_division(3.0, &TagValue::F64(1.5)), TagValue::F64(2.0)); // 3/1.5 = 2
+        assert_eq!(safe_division(100.0, &TagValue::U16(10)), TagValue::F64(10.0)); // 100/10 = 10
+
+        // Zero cases: should return 0, not infinity
+        assert_eq!(safe_division(10.0, &TagValue::I32(0)), TagValue::F64(0.0));
+        assert_eq!(safe_division(5.0, &TagValue::F64(0.0)), TagValue::F64(0.0));
+        assert_eq!(safe_division(1.0, &TagValue::String("0".to_string())), TagValue::F64(0.0));
+
+        // Empty/falsy cases: should return 0
+        assert_eq!(safe_division(10.0, &TagValue::String("".to_string())), TagValue::F64(0.0));
+        assert_eq!(safe_division(100.0, &TagValue::Empty), TagValue::F64(0.0));
+
+        // String numeric conversion
+        assert_eq!(safe_division(10.0, &TagValue::String("2.5".to_string())), TagValue::F64(4.0)); // 10/2.5 = 4
+        assert_eq!(safe_division(1.0, &TagValue::String("non-numeric".to_string())), TagValue::F64(0.0));
+
+        // Rational cases
+        assert_eq!(safe_division(2.0, &TagValue::Rational(8, 2)), TagValue::F64(0.5)); // 2/(8/2) = 2/4 = 0.5
+        assert_eq!(safe_division(10.0, &TagValue::Rational(0, 1)), TagValue::F64(0.0)); // 0 numerator
+        assert_eq!(safe_division(6.0, &TagValue::SRational(6, 3)), TagValue::F64(3.0)); // 6/(6/3) = 6/2 = 3
+
+        // Verify safe_reciprocal is equivalent to safe_division(1.0, ...)
+        assert_eq!(safe_reciprocal(&TagValue::I32(5)), safe_division(1.0, &TagValue::I32(5)));
+        assert_eq!(safe_reciprocal(&TagValue::F64(2.5)), safe_division(1.0, &TagValue::F64(2.5)));
+    }
+    
+    #[test]
+    fn test_conservative_fallback() {
+        // Test that fallback preserves original values
+        let original = TagValue::String("test".to_string());
+        let result = conservative_fallback("complex perl expression", &original);
+        assert_eq!(result, original);
+        
+        let numeric = TagValue::I32(42);
+        let result = conservative_fallback("$complex =~ s/foo/bar/g", &numeric);
+        assert_eq!(result, numeric);
+    }
+    
+    #[test]
+    fn test_safe_binary_operation() {
+        // Test numeric operations
+        assert_eq!(
+            safe_binary_operation(&TagValue::I32(10), "+", &TagValue::I32(5)),
+            TagValue::F64(15.0)
+        );
+        
+        assert_eq!(
+            safe_binary_operation(&TagValue::F64(10.0), "/", &TagValue::F64(2.0)),
+            TagValue::F64(5.0)
+        );
+        
+        // Test division by zero safety
+        assert_eq!(
+            safe_binary_operation(&TagValue::I32(10), "/", &TagValue::I32(0)),
+            TagValue::F64(0.0)
+        );
+        
+        // Test string concatenation fallback for +
+        assert_eq!(
+            safe_binary_operation(&TagValue::String("hello".to_string()), "+", &TagValue::String("world".to_string())),
+            TagValue::String("helloworld".to_string())
+        );
+        
+        // Test string concatenation with .
+        assert_eq!(
+            safe_binary_operation(&TagValue::String("hello".to_string()), ".", &TagValue::String("world".to_string())),
+            TagValue::String("helloworld".to_string())
+        );
+        
+        // Test comparison operations
+        assert_eq!(
+            safe_binary_operation(&TagValue::String("abc".to_string()), "eq", &TagValue::String("abc".to_string())),
+            TagValue::U8(1)
+        );
+        
+        assert_eq!(
+            safe_binary_operation(&TagValue::String("abc".to_string()), "ne", &TagValue::String("def".to_string())),
+            TagValue::U8(1)
+        );
+        
+        // Test unknown operator fallback
+        assert_eq!(
+            safe_binary_operation(&TagValue::String("left".to_string()), "???", &TagValue::String("right".to_string())),
+            TagValue::String("left ??? right".to_string())
+        );
     }
 }
