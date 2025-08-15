@@ -1528,7 +1528,81 @@ make check-perl         # Check Perl script syntax
 - **Incremental Updates**: Only regenerate changed components
 - **Fast Iteration**: Simple table changes rebuild in seconds
 
-## Anti-Patterns: What NOT to Do
+## 🚨 CRITICAL: Architectural Vandalism Prevention
+
+**READ THIS BEFORE TOUCHING PPI SYSTEM OR EXPRESSION GENERATION**
+
+### 🚨 NEVER Fight the AST - Use Visitor Pattern
+
+**BANNED APPROACH**: Taking structured AST nodes and converting to strings for re-parsing
+
+```rust
+// ❌ ARCHITECTURAL VANDALISM - WILL BE REJECTED
+let unpack_parts: Vec<&str> = args[1].split_whitespace().collect();
+if unpack_parts.len() >= 2 && unpack_parts[0] == "unpack" {
+    // String parsing of already-parsed AST - FORBIDDEN
+}
+```
+
+**WHY THIS IS VANDALISM**: PPI provides structured AST data. Re-parsing it as strings destroys type safety, creates brittle code, and violates the visitor pattern.
+
+**REQUIRED APPROACH**: Use AST traversal
+
+```rust
+// ✅ CORRECT - Use structured AST data
+if let Some(unpack_node) = node.children.iter().find(|c| c.is_function_call("unpack")) {
+    let format = unpack_node.children[0].string_value.as_ref()?;
+    // Process using AST structure, not string parsing
+}
+```
+
+**ENFORCEMENT**: Any PR containing `split_whitespace()`, `starts_with()` matching on stringified AST, or string parsing of PPI data will be **REJECTED**.
+
+### 🚨 NEVER Delete ExifTool Pattern Recognition Without Understanding
+
+**CRITICAL MISTAKE**: Deleting sophisticated ExifTool patterns because they "look complex"
+
+```rust
+// ❌ DELETED PATTERN - Real bug introduced
+// Pack/map bit extraction for $val ? 1/$val : 0 patterns were removed
+// This BROKE several manufacturer modules
+
+// ✅ REQUIRED - Restore proven patterns
+if parts.len() >= 8 && parts[0] == "pack" && parts.contains(&"map".to_string()) {
+    if let Some((mask, offset, shifts)) = self.extract_pack_map_pattern(parts, children)? {
+        return Ok(format!("crate::fmt::pack_c_star_bit_extract(val, &{:?}, {}, {})", shifts, mask, offset));
+    }
+}
+```
+
+**WHY PATTERNS EXIST**: Every ExifTool pattern handles specific camera quirks. Deleting them breaks real-world files.
+
+**RESTORATION REQUIRED**: If you deleted pattern recognition logic, it MUST be restored from `expressions_original.rs.bak`.
+
+### 🚨 NEVER Disable Working Infrastructure Without Integration Plan
+
+**VANDALISM EXAMPLE**: Disabling AST normalizer without fixing integration
+
+```rust
+// ❌ DISABLED WORKING CODE - Found at rust_generator/mod.rs:102-105
+// let normalized_ast = self.normalizer.normalize(ast)?;  // DISABLED
+let normalized_ast = ast; // Fallback that breaks expectations
+```
+
+**WHY THIS IS WRONG**: Disabling working systems without proper integration creates technical debt and broken expectations.
+
+**REQUIRED APPROACH**: Fix integration, don't disable infrastructure
+
+```rust
+// ✅ CORRECT - Enable with proper error handling
+let normalized_ast = match self.normalizer.normalize(ast) {
+    Ok(normalized) => normalized,
+    Err(e) => {
+        warn!("Normalization failed: {}, using original AST", e);
+        ast // Graceful fallback with logging
+    }
+};
+```
 
 ### 🚨 NEVER Manual Port ExifTool Data
 
@@ -1572,7 +1646,31 @@ if let Some(wb_name) = lookup_canon_white_balance(wb_value) {
 }
 ```
 
-**Enforcement**: All PRs containing manually transcribed ExifTool data will be **REJECTED**. Use codegen instead.
+**ENFORCEMENT**: All PRs containing manually transcribed ExifTool data will be **REJECTED**. Use codegen instead.
+
+### 🚨 PPI System Architecture Rules
+
+**MANDATORY FOR ALL PPI/EXPRESSION WORK**:
+
+1. **AST Nodes Before Strings**: Always use `PpiNode` structure, never stringify then re-parse
+2. **Visitor Pattern Required**: Traverse AST children properly, don't fight the pattern
+3. **Pattern Recognition Sacred**: ExifTool patterns exist for camera quirks - understand before deleting
+4. **Normalizer Integration**: Enable infrastructure, don't disable it
+5. **Trust ExifTool**: Follow `docs/TRUST-EXIFTOOL.md` - port exactly, never "improve"
+
+**VERIFICATION COMMANDS**:
+```bash
+# Check for string parsing anti-patterns
+rg "split_whitespace|\.join.*split" codegen/src/ppi/
+
+# Verify AST normalizer is enabled  
+grep -A5 -B5 "normalizer.*normalize" codegen/src/ppi/rust_generator/mod.rs
+
+# Check pattern recognition completeness
+wc -l codegen/src/ppi/rust_generator/expressions.rs  # Should be >400 lines
+```
+
+**EMERGENCY RECOVERY**: If PPI system is broken, see `docs/todo/P07c-emergency-ppi-recovery.md`
 
 ### ⚠️ NEVER Add Extraction Timestamps
 

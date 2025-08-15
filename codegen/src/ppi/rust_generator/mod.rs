@@ -5,6 +5,7 @@
 //!
 //! Trust ExifTool: Generated code preserves exact Perl evaluation semantics.
 
+use indoc::formatdoc;
 use std::fmt::Write;
 
 // Module exports
@@ -50,9 +51,13 @@ impl RustGenerator {
         let mut code = String::new();
 
         // Function header with documentation
-        writeln!(code, "/// Generated from PPI AST")?;
-        writeln!(code, "/// Original: {}", self.original_expression)?;
-        writeln!(code, "/// ExifTool AST parsing")?;
+        let doc_comment = formatdoc! {r#"
+            /// Original perl expression:
+            /// ``` perl
+            /// {}
+            /// ```
+        "#, self.original_expression};
+        code.push_str(&doc_comment);
 
         // Function signature
         let signature = self.generate_signature();
@@ -97,7 +102,9 @@ impl RustGenerator {
 
     /// Generate function body from AST using recursive visitor pattern
     fn generate_body(&self, ast: &PpiNode) -> Result<String, CodeGenError> {
-        let code = self.visit_node(ast)?;
+        // Enable normalizer to fix string concatenation
+        let normalized_ast = crate::ppi::normalizer::normalize(ast.clone());
+        let code = self.visit_node(&normalized_ast)?;
 
         // Wrap the generated expression based on expression type
         match self.expression_type {
@@ -116,31 +123,68 @@ impl PpiVisitor for RustGenerator {
 
     /// Visit document node - handle multi-statement patterns like operation ; return var
     fn visit_document(&self, node: &PpiNode) -> Result<String, CodeGenError> {
-        if node.children.len() == 1 {
-            // Single statement - use default behavior
-            self.visit_node(&node.children[0])
-        } else if node.children.len() == 2 {
-            // Check for operation ; return pattern
-            let first_stmt = &node.children[0];
-            let second_stmt = &node.children[1];
+        if node.children.is_empty() {
+            return Ok("".to_string());
+        }
 
-            // Pattern: $var =~ s/pattern// ; return $var
-            // Pattern: $var =~ s/pattern// ; $var
-            if self.is_operation_return_pattern(first_stmt, second_stmt)? {
-                // Just return the result of the first statement (the operation)
-                // The second statement is just returning the modified variable
-                return self.visit_node(first_stmt);
+        if node.children.len() == 1 {
+            // Simple case: single statement
+            return self.visit_node(&node.children[0]);
+        }
+
+        // For multi-statement documents, check if they contain complex constructs
+        // that we cannot reliably translate to Rust
+        for child in &node.children {
+            if let Err(_) = self.check_node_complexity(child) {
+                return Err(CodeGenError::UnsupportedStructure(
+                    "Multi-statement block contains complex Perl constructs that cannot be translated".to_string()
+                ));
+            }
+        }
+
+        // Handle multiple statements (e.g., "$val=~tr/ /./; $val")
+        // For ExifTool compatibility, we need to process all statements
+        // and return the result of the last one (Perl's behavior)
+        let mut results = Vec::new();
+        let mut last_result = String::new();
+
+        for (i, child) in node.children.iter().enumerate() {
+            // Skip whitespace and comments that PPI might include
+            if child.class == "PPI::Token::Whitespace" || child.class == "PPI::Token::Comment" {
+                continue;
             }
 
-            // Fall back to error for unsupported multi-statement patterns
-            Err(CodeGenError::UnsupportedStructure(
-                "Document with multiple unsupported statements".to_string(),
-            ))
+            let result = self.visit_node(child)?;
+
+            // Skip empty results
+            if result.trim().is_empty() {
+                continue;
+            }
+
+            // For multiple statements, we need to handle them as a sequence
+            if i == node.children.len() - 1 {
+                // Last statement becomes the return value
+                last_result = result;
+            } else {
+                // Earlier statements are executed for side effects
+                results.push(result);
+            }
+        }
+
+        if results.is_empty() {
+            // Only one meaningful statement
+            Ok(last_result)
         } else {
-            // More than 2 statements - not supported
-            Err(CodeGenError::UnsupportedStructure(
-                "Document with multiple top-level statements".to_string(),
-            ))
+            // Multiple statements: combine them in a block expression
+            results.push(last_result);
+            let statements = results[..results.len() - 1].join(";\n    ");
+            let final_result = &results[results.len() - 1];
+            Ok(formatdoc! {r#"
+                {{
+                    {statements};
+                    {final_result}
+                }}
+            "#})
         }
     }
 
@@ -158,6 +202,179 @@ impl PpiVisitor for RustGenerator {
 
 // Helper methods for RustGenerator
 impl RustGenerator {
+    /// Check if a node tree contains constructs that are too complex to translate reliably
+    fn check_node_complexity(&self, node: &PpiNode) -> Result<(), CodeGenError> {
+        // Check this node for problematic patterns
+        match node.class.as_str() {
+            // Variable declarations in multi-statement blocks are complex
+            "PPI::Statement::Variable" => {
+                return Err(CodeGenError::UnsupportedStructure(
+                    "Variable declarations in multi-statement blocks not supported".to_string(),
+                ));
+            }
+            // Complex regex patterns with flags
+            "PPI::Token::Regexp::Match" => {
+                if let Some(content) = &node.content {
+                    // Reject regex patterns with global flags or complex modifiers
+                    if content.contains("/g") || content.contains("/m") || content.contains("/s") {
+                        return Err(CodeGenError::UnsupportedStructure(
+                            "Regex patterns with global or multiline flags not supported"
+                                .to_string(),
+                        ));
+                    }
+                }
+            }
+            // Perl references (backslash syntax) are not translatable
+            _ => {
+                if let Some(content) = &node.content {
+                    // Check for Perl reference syntax
+                    if content.contains("\\%") || content.contains("\\@") || content.contains("\\$")
+                    {
+                        return Err(CodeGenError::UnsupportedStructure(
+                            "Perl reference syntax (\\%) not supported".to_string(),
+                        ));
+                    }
+                    // Check for foreach with special variables
+                    if content.contains("foreach") && content.contains("$_") {
+                        return Err(CodeGenError::UnsupportedStructure(
+                            "Foreach loops with special variables not supported".to_string(),
+                        ));
+                    }
+                    // Check for complex array operations
+                    if content.contains("reverse @") {
+                        return Err(CodeGenError::UnsupportedStructure(
+                            "Complex array operations (reverse @) not supported".to_string(),
+                        ));
+                    }
+                }
+            }
+        }
+
+        // Recursively check children
+        for child in &node.children {
+            self.check_node_complexity(child)?;
+        }
+
+        Ok(())
+    }
+    /// Extract pack/map pattern for bit extraction operations  
+    /// From ExifTool Canon.pm line 1847: pack "C*", map { (($_>>$_)&0x1f)+0x60 } 10, 5, 0
+    /// Returns: Some((mask, offset, shifts)) if pattern matches, None if not recognized
+    fn extract_pack_map_pattern(
+        &self,
+        parts: &[String],
+        _children: &[PpiNode],
+    ) -> Result<Option<(i32, i32, Vec<i32>)>, CodeGenError> {
+        // Conservative approach: look for mask and offset hex values in the parts
+        // Pattern: pack "C*", map { ... } followed by numbers
+        // Find mask (typically 0x1f, 0x0f, 0x3f etc. - small hex values used as bitmasks)
+        let mut mask = None;
+        let mut offset = None;
+        let mut shifts = Vec::new();
+
+        // Look through parts for hex patterns that could be mask/offset
+        for part in parts.iter() {
+            if part.starts_with("0x") || part.starts_with("0X") {
+                if let Ok(hex_val) = i32::from_str_radix(&part[2..], 16) {
+                    // Small hex values (< 64) are likely masks
+                    // Larger values (like 0x60 = 96) are likely offsets
+                    if hex_val < 64 && mask.is_none() {
+                        mask = Some(hex_val);
+                    } else if hex_val >= 48 && offset.is_none() {
+                        // Lowered threshold to catch 0x30 = 48
+                        offset = Some(hex_val);
+                    }
+                }
+            } else if let Ok(num) = part.parse::<i32>() {
+                // Numbers that aren't hex are likely shift values
+                // Only collect reasonable shift values (0-32 for bit operations)
+                if num >= 0 && num <= 32 {
+                    shifts.push(num);
+                }
+            }
+        }
+
+        // Need at least mask and some shifts to be valid
+        if let Some(mask_val) = mask {
+            let offset_val = offset.unwrap_or(0); // Default offset if not found
+            if !shifts.is_empty() {
+                return Ok(Some((mask_val, offset_val, shifts)));
+            }
+        }
+
+        // If we can't find a clear pattern, return None for fallback handling
+        Ok(None)
+    }
+
+    /// Process regex assignment for regex substitution operations
+    /// Generates the right-hand side without TagValue wrapper for assignment context
+    fn process_regex_assignment(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        let content = node.content.as_ref().ok_or(CodeGenError::MissingContent(
+            "regexp substitute".to_string(),
+        ))?;
+
+        // Parse s/pattern/replacement/flags
+        if !content.starts_with("s/") && !content.starts_with("s#") {
+            return Err(CodeGenError::UnsupportedStructure(format!(
+                "Invalid substitution pattern: {}",
+                content
+            )));
+        }
+
+        // Determine delimiter
+        let delimiter = if content.starts_with("s/") { '/' } else { '#' };
+        let parts: Vec<&str> = content[2..].split(delimiter).collect();
+
+        if parts.len() < 2 {
+            return Err(CodeGenError::UnsupportedStructure(format!(
+                "Invalid substitution format: {}",
+                content
+            )));
+        }
+
+        let pattern = parts[0];
+        let replacement = if parts.len() > 1 { parts[1] } else { "" };
+        let flags = if parts.len() > 2 { parts[2] } else { "" };
+
+        // Check for global flag
+        let is_global = flags.contains('g');
+
+        // Generate the call without TagValue wrapper since this is for assignment
+        if pattern
+            .chars()
+            .all(|c| c.is_alphanumeric() || c.is_whitespace())
+        {
+            // Simple string replacement
+            if is_global {
+                Ok(format!(
+                    "TagValue::String(val.to_string().replace(\"{}\", \"{}\"))",
+                    pattern, replacement
+                ))
+            } else {
+                Ok(format!(
+                    "TagValue::String(val.to_string().replacen(\"{}\", \"{}\", 1))",
+                    pattern, replacement
+                ))
+            }
+        } else {
+            // Regex replacement - use bytes regex to handle non-UTF8 patterns like ExifTool
+            let safe_pattern = self.make_pattern_safe_for_rust(pattern);
+            let escaped_replacement = self.escape_replacement_string(replacement);
+
+            if is_global {
+                Ok(format!(
+                    "TagValue::String(crate::fmt::regex_replace_all(\"{}\", &val.to_string(), \"{}\"))",
+                    safe_pattern, escaped_replacement
+                ))
+            } else {
+                Ok(format!(
+                    "TagValue::String(crate::fmt::regex_replace(\"{}\", &val.to_string(), \"{}\"))",
+                    safe_pattern, escaped_replacement
+                ))
+            }
+        }
+    }
+
     /// Process a sequence of nodes recursively, recognizing patterns
     fn process_node_sequence(&self, children: &[PpiNode]) -> Result<String, CodeGenError> {
         if children.is_empty() {
@@ -191,6 +408,21 @@ impl RustGenerator {
                 let func_result = self.process_function_call(&children[i], &children[i + 1])?;
                 processed.push(func_result);
                 i += 2;
+                continue;
+            }
+
+            // Pattern: regex assignment (Symbol + =~ + Regexp::Substitute)
+            if children[i].class == "PPI::Token::Symbol"
+                && i + 2 < children.len()
+                && children[i + 1].class == "PPI::Token::Operator"
+                && children[i + 1].content.as_ref() == Some(&"=~".to_string())
+                && children[i + 2].class == "PPI::Token::Regexp::Substitute"
+            {
+                let var = self.visit_symbol(&children[i])?;
+                let regex_result = self.process_regex_assignment(&children[i + 2])?;
+                let assignment = format!("{} = {}", var, regex_result);
+                processed.push(assignment);
+                i += 3;
                 continue;
             }
 
@@ -269,27 +501,14 @@ impl RustGenerator {
             }
         }
 
-        // Recursively process the arguments - this will handle nested function calls
-        let args = if !args_node.children.is_empty() {
-            // Check if there's a single Expression child (common PPI pattern)
-            if args_node.children.len() == 1
-                && args_node.children[0].class == "PPI::Statement::Expression"
-            {
-                // Arguments are wrapped in an expression - process that expression
-                // This will recursively handle any nested function calls
-                let processed = self.process_node_sequence(&args_node.children[0].children)?;
-                format!("({})", processed)
-            } else {
-                // Direct children in the list - process them as arguments
-                // Visit the list node which will handle the parentheses
-                self.visit_list(args_node)?
-            }
-        } else {
-            "()".to_string()
-        };
+        // Note: args were processed but are now handled directly by AST traversal
+        // The arguments processing is now done inside the function generators using AST nodes
 
-        // Generate the function call - args already have parentheses
-        FunctionGenerator::generate_function_call_from_parts(self, &func_name, &args)
+        // Generate the function call using AST node
+        // Create a temporary node structure for the function call
+        let mut function_node = name_node.clone();
+        function_node.children = args_node.children.clone();
+        FunctionGenerator::generate_function_call_from_parts(self, &function_node)
     }
 
     /// Try to process sprintf with string concatenation and repetition operations
@@ -433,22 +652,18 @@ impl ExpressionCombiner for RustGenerator {
         &self.expression_type
     }
 
-    fn generate_function_call_from_parts(
-        &self,
-        function_name: &str,
-        args_part: &str,
-    ) -> Result<String, CodeGenError> {
+    fn generate_function_call_from_parts(&self, node: &PpiNode) -> Result<String, CodeGenError> {
         // Delegate to FunctionGenerator trait
-        FunctionGenerator::generate_function_call_from_parts(self, function_name, args_part)
+        FunctionGenerator::generate_function_call_from_parts(self, node)
     }
 
     fn generate_multi_arg_function_call(
         &self,
         function_name: &str,
-        args: &[String],
+        node: &PpiNode,
     ) -> Result<String, CodeGenError> {
         // Delegate to FunctionGenerator trait
-        FunctionGenerator::generate_multi_arg_function_call(self, function_name, args)
+        FunctionGenerator::generate_multi_arg_function_call(self, function_name, node)
     }
 
     fn generate_function_call_without_parens(

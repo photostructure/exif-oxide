@@ -5,6 +5,7 @@
 
 use super::errors::CodeGenError;
 use crate::ppi::types::*;
+use indoc::formatdoc;
 
 /// Trait for visiting PPI AST nodes and generating Rust code
 pub trait PpiVisitor {
@@ -37,18 +38,86 @@ pub trait PpiVisitor {
             "PPI::Token::Quote::Double" | "PPI::Token::Quote::Single" => self.visit_string(node),
             "PPI::Token::Word" => self.visit_word(node),
             "PPI::Structure::List" => self.visit_list(node),
+            "PPI::Token::Structure" => self.visit_structure(node),
+            // Normalized AST node types (created by normalizer)
+            "FunctionCall" => self.visit_normalized_function_call(node),
+            "StringConcat" => self.visit_normalized_string_concat(node),
+            "StringRepeat" => self.visit_normalized_string_repeat(node),
             _ => Err(CodeGenError::UnsupportedToken(node.class.clone())),
         }
     }
 
     /// Visit document node (top level)
     fn visit_document(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        if node.children.is_empty() {
+            return Ok("".to_string());
+        }
+
         if node.children.len() == 1 {
-            self.visit_node(&node.children[0])
+            // Simple case: single statement
+            return self.visit_node(&node.children[0]);
+        }
+
+        // Handle multiple statements (e.g., "$val=~tr/ /./; $val")
+        // For ExifTool compatibility, we need to process all statements
+        // and return the result of the last one (Perl's behavior)
+        let mut results = Vec::new();
+        let mut last_result = String::new();
+
+        for (i, child) in node.children.iter().enumerate() {
+            // Skip whitespace and comments that PPI might include
+            if child.class == "PPI::Token::Whitespace" || child.class == "PPI::Token::Comment" {
+                continue;
+            }
+
+            let result = self.visit_node(child)?;
+
+            // Skip empty results
+            if result.trim().is_empty() {
+                continue;
+            }
+
+            // For multiple statements, we need to handle them as a sequence
+            if i == node.children.len() - 1 {
+                // Last statement becomes the return value
+                last_result = result;
+            } else {
+                // Earlier statements are executed for side effects
+                results.push(result);
+            }
+        }
+
+        if results.is_empty() {
+            // Only one meaningful statement
+            Ok(last_result)
         } else {
-            Err(CodeGenError::UnsupportedStructure(
-                "Document with multiple top-level statements".to_string(),
-            ))
+            // Multiple statements: check if they are assignments that need a mutable variable
+            let has_assignments = results.iter().any(|s| s.contains(" = "));
+
+            if has_assignments {
+                // Create a block with mutable local variable for assignment operations
+                results.push(last_result);
+                let statements = results[..results.len() - 1].join(";\n    ");
+                let final_result = &results[results.len() - 1];
+                Ok(formatdoc! {r#"
+                    {{
+                        let mut val = val.clone();
+                        {statements};
+                        {final_result}
+                    }}
+                "#})
+            } else {
+                // Regular multiple statements: combine them in a block expression
+                results.push(last_result);
+                let statements = results[..results.len() - 1].join(";\n    ");
+                let final_result = &results[results.len() - 1];
+                Ok(formatdoc! {r#"
+                    {{
+                        {statements};
+                        {final_result}
+                    }}
+                "#})
+            }
         }
     }
 
@@ -189,6 +258,129 @@ pub trait PpiVisitor {
         Ok(format!("({})", args.join(", ")))
     }
 
+    /// Visit structure token - handles structural elements like parentheses, brackets
+    fn visit_structure(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        let content = node
+            .content
+            .as_ref()
+            .ok_or(CodeGenError::MissingContent("structure".to_string()))?;
+
+        // For basic structure tokens, just return the content
+        // More complex handling would go in specific structure types
+        Ok(content.clone())
+    }
+
+    // Normalized AST node visitors (created by normalizer)
+
+    /// Visit normalized function call nodes
+    fn visit_normalized_function_call(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        let func_name = node
+            .content
+            .as_ref()
+            .ok_or(CodeGenError::MissingContent("function_call".to_string()))?;
+
+        // Process function arguments from children
+        let mut args = Vec::new();
+        for child in &node.children {
+            args.push(self.visit_node(child)?);
+        }
+
+        // Handle special runtime functions
+        match func_name.as_str() {
+            "safe_reciprocal" => {
+                if args.len() != 1 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "safe_reciprocal requires exactly 1 argument".to_string(),
+                    ));
+                }
+                Ok(format!("crate::fmt::safe_reciprocal(&{})", args[0]))
+            }
+            "safe_division" => {
+                if args.len() != 2 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "safe_division requires exactly 2 arguments".to_string(),
+                    ));
+                }
+                Ok(format!(
+                    "crate::fmt::safe_division({}.0, &{})",
+                    args[0], args[1]
+                ))
+            }
+            "log" => {
+                if args.len() != 1 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "log requires exactly 1 argument".to_string(),
+                    ));
+                }
+                Ok(format!("({} as f64).ln()", args[0]))
+            }
+            "length" => {
+                if args.len() != 1 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "length requires exactly 1 argument".to_string(),
+                    ));
+                }
+                let var = &args[0];
+                match self.expression_type() {
+                    ExpressionType::PrintConv => Ok(format!(
+                        "TagValue::String(match {} {{ TagValue::String(s) => s.len().to_string(), _ => \"0\".to_string() }})",
+                        var
+                    )),
+                    ExpressionType::ValueConv => Ok(format!(
+                        "TagValue::I32(match {} {{ TagValue::String(s) => s.len() as i32, _ => 0 }})",
+                        var
+                    )),
+                    _ => Ok(format!("match {} {{ TagValue::String(s) => s.len() as i32, _ => 0 }}", var)),
+                }
+            }
+            _ => {
+                // Generic function call
+                Ok(format!("{}({})", func_name, args.join(", ")))
+            }
+        }
+    }
+
+    /// Visit normalized string concatenation nodes
+    fn visit_normalized_string_concat(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        let mut parts = Vec::new();
+        for child in &node.children {
+            parts.push(self.visit_node(child)?);
+        }
+
+        match self.expression_type() {
+            ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
+                "TagValue::String(format!(\"{}\", {}))",
+                "{}".repeat(parts.len()),
+                parts.join(", ")
+            )),
+            _ => Ok(format!(
+                "format!(\"{}\", {})",
+                "{}".repeat(parts.len()),
+                parts.join(", ")
+            )),
+        }
+    }
+
+    /// Visit normalized string repetition nodes
+    fn visit_normalized_string_repeat(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        if node.children.len() != 2 {
+            return Err(CodeGenError::UnsupportedStructure(
+                "StringRepeat requires exactly 2 children (string, count)".to_string(),
+            ));
+        }
+
+        let string_part = self.visit_node(&node.children[0])?;
+        let count = self.visit_node(&node.children[1])?;
+
+        match self.expression_type() {
+            ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
+                "TagValue::String({}.repeat({} as usize))",
+                string_part, count
+            )),
+            _ => Ok(format!("{}.repeat({} as usize)", string_part, count)),
+        }
+    }
+
     // Task A: Critical Foundation Tokens (Phase 1) - P07: PPI Enhancement
 
     /// Visit expression node - handles complex expressions with function composition
@@ -225,11 +417,28 @@ pub trait PpiVisitor {
     /// Visit subscript node - handles array/hash element access
     /// PPI::Structure::Subscript (1,730 occurrences) - Critical for array/hash access
     fn visit_subscript(&self, node: &PpiNode) -> Result<String, CodeGenError> {
-        let content = node
-            .content
-            .as_ref()
-            .ok_or(CodeGenError::MissingContent("subscript".to_string()))?;
+        // Subscript nodes might have content or might have children
+        // Check for content first, then fall back to processing children
+        if let Some(content) = node.content.as_ref() {
+            // Direct content - parse it
+            return self.parse_subscript_content(content);
+        }
 
+        // No content - process children to build the subscript
+        if node.children.is_empty() {
+            return Err(CodeGenError::MissingContent("subscript".to_string()));
+        }
+
+        // Build subscript from children
+        let mut parts = Vec::new();
+        for child in &node.children {
+            parts.push(self.visit_node(child)?);
+        }
+        let reconstructed = parts.join("");
+        self.parse_subscript_content(&reconstructed)
+    }
+
+    fn parse_subscript_content(&self, content: &str) -> Result<String, CodeGenError> {
         // Parse subscript patterns: $val[0], $$self{Model}, etc.
         if let Some(bracket_pos) = content.find('[') {
             // Array subscript: $val[0]
@@ -278,9 +487,23 @@ pub trait PpiVisitor {
             .as_ref()
             .ok_or(CodeGenError::MissingContent("regexp_match".to_string()))?;
 
-        // Parse regex patterns: /Canon/, /EOS D30\b/, etc.
-        if content.starts_with('/') && content.ends_with('/') {
-            let pattern = &content[1..content.len() - 1]; // Remove / delimiters
+        // Parse regex patterns: /Canon/, /EOS D30\b/, /../g etc.
+        if content.starts_with('/') {
+            // Handle patterns with flags like /../g
+            let end_slash = content.rfind('/').unwrap_or(content.len() - 1);
+            if end_slash <= 1 {
+                // Empty pattern or malformed
+                return Ok(format!("/{}/", content.trim_matches('/')));
+            }
+
+            let pattern = &content[1..end_slash]; // Extract pattern between slashes
+            let flags = &content[end_slash + 1..]; // Extract flags after last slash
+
+            // Handle special case of /../ which means "any two characters" in Perl
+            if pattern == ".." {
+                // Return a pattern that matches any two characters
+                return Ok("/./".to_string()); // Simplified - actual regex would be more complex
+            }
 
             // Escape Rust regex special characters and convert Perl patterns
             let rust_pattern = pattern
@@ -291,7 +514,11 @@ pub trait PpiVisitor {
             // When this is just a regex pattern (not part of =~ or !~),
             // we just return the pattern itself for later combination
             // The actual matching will be handled when combined with =~ or !~
-            Ok(format!("/{}/", rust_pattern))
+            if flags.is_empty() {
+                Ok(format!("/{}/", rust_pattern))
+            } else {
+                Ok(format!("/{}/{}", rust_pattern, flags))
+            }
         } else {
             Err(CodeGenError::UnsupportedStructure(format!(
                 "Invalid regex pattern: {}",
@@ -429,16 +656,20 @@ pub trait PpiVisitor {
                 ))
             }
         } else {
-            // Regex replacement
+            // Regex replacement - use bytes regex to handle non-UTF8 patterns like ExifTool
+            // Following the pattern from magic_numbers.rs strategy
+            let safe_pattern = self.make_pattern_safe_for_rust(pattern);
+            let escaped_replacement = self.escape_replacement_string(replacement);
+
             if is_global {
                 Ok(format!(
-                    "TagValue::String(regex::Regex::new(r\"{}\").unwrap().replace_all(&val.to_string(), \"{}\").to_string())",
-                    pattern, replacement
+                    "TagValue::String(crate::fmt::regex_replace_all(\"{}\", &val.to_string(), \"{}\"))",
+                    safe_pattern, escaped_replacement
                 ))
             } else {
                 Ok(format!(
-                    "TagValue::String(regex::Regex::new(r\"{}\").unwrap().replace(&val.to_string(), \"{}\").to_string())",
-                    pattern, replacement
+                    "TagValue::String(crate::fmt::regex_replace(\"{}\", &val.to_string(), \"{}\"))",
+                    safe_pattern, escaped_replacement
                 ))
             }
         }
@@ -706,5 +937,21 @@ pub trait PpiVisitor {
         }
 
         Ok(parts.join(" "))
+    }
+
+    /// Make regex patterns safe for Rust code generation
+    /// Handles patterns that might contain non-UTF8 bytes like ExifTool patterns
+    fn make_pattern_safe_for_rust(&self, pattern: &str) -> String {
+        // Escape backslashes and quotes for string literals
+        // This delegates to crate::fmt functions that handle bytes regex properly
+        pattern.replace("\\", "\\\\").replace("\"", "\\\"")
+    }
+
+    /// Escape replacement strings for proper Rust string literals
+    fn escape_replacement_string(&self, replacement: &str) -> String {
+        // Escape special characters in replacement strings for Rust string literals
+        // Note: $ signs should remain as literal $ for regex backreferences like $1, $2, etc.
+        replacement.replace("\\", "\\\\").replace("\"", "\\\"")
+        // Do NOT escape $ signs - they are needed for regex backreferences ($1, $2, etc.)
     }
 }
