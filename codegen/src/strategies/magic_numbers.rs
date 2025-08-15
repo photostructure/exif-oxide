@@ -242,7 +242,6 @@ impl ExtractionStrategy for MagicNumberStrategy {
             files.push(GeneratedFile {
                 path: generate_module_path("ExifTool", "magic_numbers"),
                 content,
-                strategy: self.name().to_string(),
             });
 
             info!(

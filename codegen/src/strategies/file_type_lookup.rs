@@ -315,11 +315,7 @@ impl ExtractionStrategy for FileTypeLookupStrategy {
             // Use standard output location - goes in exif_tool module since it's from ExifTool.pm
             let path = generate_module_path("ExifTool", "file_type_lookup");
 
-            files.push(GeneratedFile {
-                path,
-                content,
-                strategy: self.name().to_string(),
-            });
+            files.push(GeneratedFile { path, content });
 
             info!(
                 "📁 Generated file_type_lookup.rs with {} aliases and {} definitions",

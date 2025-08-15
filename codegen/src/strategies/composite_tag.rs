@@ -585,7 +585,6 @@ impl ExtractionStrategy for CompositeTagStrategy {
             files.push(GeneratedFile {
                 path: "composite_tags.rs".to_string(),
                 content: composite_code,
-                strategy: self.name().to_string(),
             });
 
             info!(

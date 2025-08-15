@@ -187,7 +187,6 @@ impl ExtractionStrategy for MimeTypeStrategy {
             files.push(GeneratedFile {
                 path: generate_module_path("ExifTool", "mimeType"),
                 content,
-                strategy: self.name().to_string(),
             });
 
             info!(
