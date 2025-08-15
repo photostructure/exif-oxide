@@ -310,7 +310,6 @@ impl ExtractionStrategy for SimpleTableStrategy {
                 generated_files.push(GeneratedFile {
                     path: filename,
                     content,
-                    strategy: self.name().to_string(),
                 });
             }
         }
