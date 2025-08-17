@@ -7,7 +7,14 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::implementations::print_conv::exposuretime_print_conv;
+use crate::generated::functions::hash_1a::ast_print_1ade125dab246be4;
+use crate::generated::functions::hash_6d::ast_value_6d6b19c587a83655;
+use crate::generated::functions::hash_84::{
+    ast_print_8470e30e1e5b4729, ast_value_849772b1a5139524,
+};
+use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_da::ast_value_da79bd1c8902b829;
+use crate::generated::functions::hash_f0::ast_print_f0406a5cf107f00d;
 
 /// Tag definitions for Pentax::AEInfo3 table
 pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,10 +24,8 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AEExposureTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(exposuretime_print_conv)),
-                value_conv: Some(ValueConv::Expression(
-                    "24*exp(-($val-32)*log(2)/8)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
+                value_conv: Some(ValueConv::Function(ast_value_da79bd1c8902b829)),
             },
         ),
         (
@@ -28,10 +33,8 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AEAperture",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("sprintf(\"%.1f\",$val)".to_string())),
-                value_conv: Some(ValueConv::Expression(
-                    "exp(($val-68)*log(2)/16)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                value_conv: Some(ValueConv::Function(ast_value_849772b1a5139524)),
             },
         ),
         (
@@ -39,10 +42,8 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AE_ISO",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("int($val + 0.5)".to_string())),
-                value_conv: Some(ValueConv::Expression(
-                    "100*exp(($val-32)*log(2)/8)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_f0406a5cf107f00d)),
+                value_conv: Some(ValueConv::Function(ast_value_6d6b19c587a83655)),
             },
         ),
         (
@@ -50,10 +51,8 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AEMaxAperture",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("sprintf(\"%.1f\",$val)".to_string())),
-                value_conv: Some(ValueConv::Expression(
-                    "exp(($val-68)*log(2)/16)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                value_conv: Some(ValueConv::Function(ast_value_849772b1a5139524)),
             },
         ),
         (
@@ -61,10 +60,8 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AEMaxAperture2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("sprintf(\"%.1f\",$val)".to_string())),
-                value_conv: Some(ValueConv::Expression(
-                    "exp(($val-68)*log(2)/16)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                value_conv: Some(ValueConv::Function(ast_value_849772b1a5139524)),
             },
         ),
         (
@@ -72,10 +69,8 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AEMinAperture",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("sprintf(\"%.0f\",$val)".to_string())),
-                value_conv: Some(ValueConv::Expression(
-                    "exp(($val-68)*log(2)/16)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_1ade125dab246be4)),
+                value_conv: Some(ValueConv::Function(ast_value_849772b1a5139524)),
             },
         ),
         (
@@ -83,10 +78,8 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AEMinExposureTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(exposuretime_print_conv)),
-                value_conv: Some(ValueConv::Expression(
-                    "24*exp(-($val-32)*log(2)/8)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
+                value_conv: Some(ValueConv::Function(ast_value_da79bd1c8902b829)),
             },
         ),
     ])
@@ -97,19 +90,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = PENTAX_AEINFO3_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -117,7 +107,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -125,7 +118,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -135,11 +127,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

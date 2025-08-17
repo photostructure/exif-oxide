@@ -83,10 +83,8 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
         if data.len() >= 0x20 {
             let af_point_raw = u16::from_le_bytes([data[0x1e], data[0x1f]]);
 
-            use crate::expressions::ExpressionEvaluator;
             use crate::generated::Sony_pm::main_tags;
 
-            let mut evaluator = ExpressionEvaluator::new();
             let mut errors = Vec::new();
             let mut warnings = Vec::new();
 
@@ -94,7 +92,6 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
             let af_point_desc = sony_main_tags::apply_print_conv(
                 20,
                 &TagValue::U8(af_point_raw as u8),
-                &mut evaluator,
                 &mut errors,
                 &mut warnings,
             );
@@ -114,10 +111,8 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
         if data.len() >= 0x22 {
             let focus_mode_raw = u16::from_le_bytes([data[0x20], data[0x21]]);
 
-            use crate::expressions::ExpressionEvaluator;
             use crate::generated::Sony_pm::main_tags;
 
-            let mut evaluator = ExpressionEvaluator::new();
             let mut errors = Vec::new();
             let mut warnings = Vec::new();
 
@@ -125,7 +120,6 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
             let focus_mode_desc = sony_main_tags::apply_print_conv(
                 21,
                 &TagValue::U8(focus_mode_raw as u8),
-                &mut evaluator,
                 &mut errors,
                 &mut warnings,
             );
@@ -142,10 +136,8 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
         if data.len() >= 0x24 {
             let focus_status_raw = u16::from_le_bytes([data[0x22], data[0x23]]);
 
-            use crate::expressions::ExpressionEvaluator;
             use crate::generated::Sony_pm::main_tags;
 
-            let mut evaluator = ExpressionEvaluator::new();
             let mut errors = Vec::new();
             let mut warnings = Vec::new();
 
@@ -153,7 +145,6 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
             let focus_status_desc = sony_main_tags::apply_print_conv(
                 25,
                 &TagValue::U8(focus_status_raw as u8),
-                &mut evaluator,
                 &mut errors,
                 &mut warnings,
             );

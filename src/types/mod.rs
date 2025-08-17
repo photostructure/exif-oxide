@@ -3,7 +3,7 @@
 //! This module provides a unified interface to all type definitions
 //! used throughout the library.
 
-mod binary_data;
+pub mod binary_data;
 mod errors;
 mod metadata;
 mod tag_info;

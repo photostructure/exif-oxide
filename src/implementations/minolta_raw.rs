@@ -29,45 +29,39 @@ pub fn prd_bayer_pattern_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm RIF hash (ProgramMode)
 /// Using MinoltaRaw tag kit system: ProgramMode has tag ID 5
 pub fn rif_program_mode_print_conv(val: &TagValue) -> TagValue {
-    use crate::expressions::ExpressionEvaluator;
     use crate::generated::MinoltaRaw_pm::main_tags;
 
-    let mut evaluator = ExpressionEvaluator::new();
     let mut errors = Vec::new();
     let mut warnings = Vec::new();
 
     // ProgramMode tag ID 5 from MinoltaRaw main tags
-    main_tags::apply_print_conv(5, val, &mut evaluator, &mut errors, &mut warnings)
+    main_tags::apply_print_conv(5, val, &mut errors, &mut warnings)
 }
 
 /// Minolta RIF ZoneMatching PrintConv
 /// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm RIF hash (ZoneMatching)
 /// Using MinoltaRaw tag kit system: ZoneMatching has tag ID 58
 pub fn rif_zone_matching_print_conv(val: &TagValue) -> TagValue {
-    use crate::expressions::ExpressionEvaluator;
     use crate::generated::MinoltaRaw_pm::main_tags;
 
-    let mut evaluator = ExpressionEvaluator::new();
     let mut errors = Vec::new();
     let mut warnings = Vec::new();
 
     // ZoneMatching tag ID 58 from MinoltaRaw main tags
-    main_tags::apply_print_conv(58, val, &mut evaluator, &mut errors, &mut warnings)
+    main_tags::apply_print_conv(58, val, &mut errors, &mut warnings)
 }
 
 /// Minolta RIF ZoneMatching74 PrintConv (for tag offset 74)
 /// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm RIF hash (ZoneMatching at offset 74)
 /// Using MinoltaRaw tag kit system: ZoneMatching74 has tag ID 74
 pub fn rif_zone_matching_74_print_conv(val: &TagValue) -> TagValue {
-    use crate::expressions::ExpressionEvaluator;
     use crate::generated::MinoltaRaw_pm::main_tags;
 
-    let mut evaluator = ExpressionEvaluator::new();
     let mut errors = Vec::new();
     let mut warnings = Vec::new();
 
     // ZoneMatching74 tag ID 74 from MinoltaRaw main tags
-    main_tags::apply_print_conv(74, val, &mut evaluator, &mut errors, &mut warnings)
+    main_tags::apply_print_conv(74, val, &mut errors, &mut warnings)
 }
 
 /// Apply PrintConv to Minolta PRD block tags

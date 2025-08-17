@@ -6,123 +6,186 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_2e::ast_print_2e926c6f528517f0;
+use crate::generated::functions::hash_56::ast_value_564016ad7399b16a;
+use crate::generated::functions::hash_6d::ast_print_6de6ff12d32c1902;
+use crate::generated::functions::hash_d7::ast_print_d7861faba23a3afc;
+
 /// Tag definitions for Olympus::FocusInfo table
 pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (0, TagInfo {
-            name: "FocusInfoVersion",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (521, TagInfo {
-            name: "AutoFocus",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (528, TagInfo {
-            name: "SceneDetect",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (529, TagInfo {
-            name: "SceneArea",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (530, TagInfo {
-            name: "SceneDetectData",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (768, TagInfo {
-            name: "ZoomStepCount",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (769, TagInfo {
-            name: "FocusStepCount",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (771, TagInfo {
-            name: "FocusStepInfinity",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (772, TagInfo {
-            name: "FocusStepNear",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (773, TagInfo {
-            name: "FocusDistance",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("$val ? \"$val m\" : \"inf\"".to_string())),
-            value_conv: Some(ValueConv::Expression("\n            my ($a,$b) = split ' ',$val;\n            return 0 if $a == 0xffffffff;\n            return $a / 1000;\n        ".to_string())),
-        }),
-        (808, TagInfo {
-            name: "AFInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4609, TagInfo {
-            name: "ExternalFlash",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4611, TagInfo {
-            name: "ExternalFlashGuideNumber",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4612, TagInfo {
-            name: "ExternalFlashBounce",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4613, TagInfo {
-            name: "ExternalFlashZoom",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4616, TagInfo {
-            name: "InternalFlash",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4617, TagInfo {
-            name: "ManualFlash",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("\n            my ($a,$b) = split ' ',$val;\n            return 'Off' unless $a;\n            $b = ($b == 1) ? 'Full' : \"1/$b\";\n            return \"On ($b strength)\";\n        ".to_string())),
-            value_conv: None,
-        }),
-        (4618, TagInfo {
-            name: "MacroLED",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (5632, TagInfo {
-            name: "ImageStabilization",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("\n            $val =~ /^\\0{4}/ ? 'Off' : 'On, ' .\n            (unpack('x44C',$val) & 0x01 ? 'Mode 1' : 'Mode 2')\n        ".to_string())),
-            value_conv: None,
-        }),
+        (
+            0,
+            TagInfo {
+                name: "FocusInfoVersion",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            521,
+            TagInfo {
+                name: "AutoFocus",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            528,
+            TagInfo {
+                name: "SceneDetect",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            529,
+            TagInfo {
+                name: "SceneArea",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            530,
+            TagInfo {
+                name: "SceneDetectData",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            768,
+            TagInfo {
+                name: "ZoomStepCount",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            769,
+            TagInfo {
+                name: "FocusStepCount",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            771,
+            TagInfo {
+                name: "FocusStepInfinity",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            772,
+            TagInfo {
+                name: "FocusStepNear",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            773,
+            TagInfo {
+                name: "FocusDistance",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_2e926c6f528517f0)),
+                value_conv: Some(ValueConv::Function(ast_value_564016ad7399b16a)),
+            },
+        ),
+        (
+            808,
+            TagInfo {
+                name: "AFInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4609,
+            TagInfo {
+                name: "ExternalFlash",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4611,
+            TagInfo {
+                name: "ExternalFlashGuideNumber",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4612,
+            TagInfo {
+                name: "ExternalFlashBounce",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4613,
+            TagInfo {
+                name: "ExternalFlashZoom",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4616,
+            TagInfo {
+                name: "InternalFlash",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4617,
+            TagInfo {
+                name: "ManualFlash",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_d7861faba23a3afc)),
+                value_conv: None,
+            },
+        ),
+        (
+            4618,
+            TagInfo {
+                name: "MacroLED",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            5632,
+            TagInfo {
+                name: "ImageStabilization",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_6de6ff12d32c1902)),
+                value_conv: None,
+            },
+        ),
     ])
 });
 
@@ -131,19 +194,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = OLYMPUS_FOCUSINFO_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -151,7 +211,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -159,7 +222,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -169,11 +231,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

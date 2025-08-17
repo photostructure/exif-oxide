@@ -24,9 +24,9 @@ pub mod compat;
 pub mod composite_tags;
 pub mod examples;
 pub mod exif;
-pub mod expressions;
 pub mod file_detection;
 pub mod file_types;
+pub mod fmt;
 pub mod formats;
 pub mod generated;
 

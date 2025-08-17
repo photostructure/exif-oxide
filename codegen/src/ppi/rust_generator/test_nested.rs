@@ -2,7 +2,7 @@
 
 #[cfg(test)]
 mod tests {
-    use super::super::*;
+    use crate::ppi::rust_generator::*;
     use crate::ppi::types::*;
     use serde_json;
     use std::fs;

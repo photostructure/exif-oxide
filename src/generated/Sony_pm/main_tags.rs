@@ -6,573 +6,885 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_15::ast_print_15baaa80ffdd285a;
+use crate::generated::functions::hash_16::ast_print_16125fb69d4cbb0;
+use crate::generated::functions::hash_4e::ast_print_4e5e992f9b388e54;
+use crate::generated::functions::hash_5a::ast_print_5a37abc3eeb8dead;
+use crate::generated::functions::hash_88::ast_value_88257fa51227f8f;
+use crate::generated::functions::hash_8f::ast_print_8f2104934719cb29;
+use crate::generated::functions::hash_91::ast_value_91a40741d32c33dc;
+use crate::generated::functions::hash_b7::ast_print_b75f5f46a9f320cf;
+use crate::generated::functions::hash_b9::ast_print_b93bf01b5173ce30;
+use crate::generated::functions::hash_c0::ast_value_c0dee9b600d6a90b;
+
 /// Tag definitions for Sony::Main table
 pub static SONY_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (258, TagInfo {
-            name: "Quality",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (260, TagInfo {
-            name: "FlashExposureComp",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (261, TagInfo {
-            name: "Teleconverter",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (274, TagInfo {
-            name: "WhiteBalanceFineTune",
-            format: "int32s",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (277, TagInfo {
-            name: "WhiteBalance",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (3584, TagInfo {
-            name: "PrintIM",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4096, TagInfo {
-            name: "MultiBurstMode",
-            format: "int8u",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4097, TagInfo {
-            name: "MultiBurstImageWidth",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4098, TagInfo {
-            name: "MultiBurstImageHeight",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4099, TagInfo {
-            name: "Panorama",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (8193, TagInfo {
-            name: "PreviewImage",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (8194, TagInfo {
-            name: "Rating",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (8196, TagInfo {
-            name: "Contrast",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val > 0 ? \"+$val\" : $val".to_string())),
-            value_conv: None,
-        }),
-        (8197, TagInfo {
-            name: "Saturation",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val > 0 ? \"+$val\" : $val".to_string())),
-            value_conv: None,
-        }),
-        (8198, TagInfo {
-            name: "Sharpness",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val > 0 ? \"+$val\" : $val".to_string())),
-            value_conv: None,
-        }),
-        (8199, TagInfo {
-            name: "Brightness",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val > 0 ? \"+$val\" : $val".to_string())),
-            value_conv: None,
-        }),
-        (8200, TagInfo {
-            name: "LongExposureNoiseReduction",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8201, TagInfo {
-            name: "HighISONoiseReduction",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8202, TagInfo {
-            name: "HDR",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (8203, TagInfo {
-            name: "MultiFrameNoiseReduction",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8206, TagInfo {
-            name: "PictureEffect",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8207, TagInfo {
-            name: "SoftSkinEffect",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8209, TagInfo {
-            name: "VignettingCorrection",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8210, TagInfo {
-            name: "LateralChromaticAberration",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8211, TagInfo {
-            name: "DistortionCorrectionSetting",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8212, TagInfo {
-            name: "WBShiftAB_GM",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (8214, TagInfo {
-            name: "AutoPortraitFramed",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8215, TagInfo {
-            name: "FlashAction",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8218, TagInfo {
-            name: "ElectronicFrontCurtainShutter",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8219, TagInfo {
-            name: "FocusMode",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8221, TagInfo {
-            name: "FlexibleSpotPosition",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (8225, TagInfo {
-            name: "AFTracking",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8227, TagInfo {
-            name: "MultiFrameNREffect",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8230, TagInfo {
-            name: "WBShiftAB_GM_Precise",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("my @v=split(\" \",$val); $_/=1000 foreach @v; sprintf(\"%.2f %.2f\",$v[0],$v[1])".to_string())),
-            value_conv: None,
-        }),
-        (8231, TagInfo {
-            name: "FocusLocation",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (8232, TagInfo {
-            name: "VariableLowPassFilter",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8233, TagInfo {
-            name: "RAWFileType",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8234, TagInfo {
-            name: "Tag202a",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (8235, TagInfo {
-            name: "PrioritySetInAWB",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8236, TagInfo {
-            name: "MeteringMode2",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8237, TagInfo {
-            name: "ExposureStandardAdjustment",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val ? sprintf(\"%+.1f\",$val) : 0".to_string())),
-            value_conv: None,
-        }),
-        (8238, TagInfo {
-            name: "Quality",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8239, TagInfo {
-            name: "PixelShiftInfo",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8241, TagInfo {
-            name: "SerialNumber",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("sprintf(\"%.8d\",$val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val=~s/(\\d{2})(\\d{2})(\\d{2})(\\d{2})/$4$3$2$1/; $val=~s/^0//; $val".to_string())),
-        }),
-        (8242, TagInfo {
-            name: "Shadows",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val > 0 ? \"+$val\" : $val".to_string())),
-            value_conv: None,
-        }),
-        (8243, TagInfo {
-            name: "Highlights",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val > 0 ? \"+$val\" : $val".to_string())),
-            value_conv: None,
-        }),
-        (8244, TagInfo {
-            name: "Fade",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val > 0 ? \"+$val\" : $val".to_string())),
-            value_conv: None,
-        }),
-        (8245, TagInfo {
-            name: "SharpnessRange",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val > 0 ? \"+$val\" : $val".to_string())),
-            value_conv: None,
-        }),
-        (8246, TagInfo {
-            name: "Clarity",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val > 0 ? \"+$val\" : $val".to_string())),
-            value_conv: None,
-        }),
-        (8247, TagInfo {
-            name: "FocusFrameSize",
-            format: "int16u",
-            print_conv: Some(PrintConv::Expression("\n            my @a = split ' ', $val;\n            return $a[2] ? sprintf('%3dx%3d', $a[0], $a[1]) : 'n/a';\n        ".to_string())),
-            value_conv: None,
-        }),
-        (8249, TagInfo {
-            name: "JPEG-HEIFSwitch",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8260, TagInfo {
-            name: "HiddenInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (8266, TagInfo {
-            name: "FocusLocation2",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (12288, TagInfo {
-            name: "ShotInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (36875, TagInfo {
-            name: "Tag900b",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (37889, TagInfo {
-            name: "Tag9401",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (37891, TagInfo {
-            name: "Tag9403",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (37895, TagInfo {
-            name: "Sony_0x9407",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
-            value_conv: Some(ValueConv::Expression("PrintHex($val)".to_string())),
-        }),
-        (37896, TagInfo {
-            name: "Sony_0x9408",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
-            value_conv: Some(ValueConv::Expression("PrintHex($val)".to_string())),
-        }),
-        (37897, TagInfo {
-            name: "Sony_0x9409",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
-            value_conv: Some(ValueConv::Expression("PrintHex($val)".to_string())),
-        }),
-        (37899, TagInfo {
-            name: "Sony_0x940b",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
-            value_conv: Some(ValueConv::Expression("PrintHex($val)".to_string())),
-        }),
-        (37901, TagInfo {
-            name: "Sony_0x940d",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
-            value_conv: Some(ValueConv::Expression("PrintHex($val)".to_string())),
-        }),
-        (37903, TagInfo {
-            name: "Sony_0x940f",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
-            value_conv: Some(ValueConv::Expression("PrintHex($val)".to_string())),
-        }),
-        (37905, TagInfo {
-            name: "Sony_0x9411",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
-            value_conv: Some(ValueConv::Expression("PrintHex($val)".to_string())),
-        }),
-        (37910, TagInfo {
-            name: "Sony_0x9416",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (45056, TagInfo {
-            name: "FileFormat",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45057, TagInfo {
-            name: "SonyModelID",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45088, TagInfo {
-            name: "CreativeStyle",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45089, TagInfo {
-            name: "ColorTemperature",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val ? ($val==0xffffffff ? \"n/a\" : $val) : \"Auto\"".to_string())),
-            value_conv: None,
-        }),
-        (45090, TagInfo {
-            name: "ColorCompensationFilter",
-            format: "int32s",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (45091, TagInfo {
-            name: "SceneMode",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45092, TagInfo {
-            name: "ZoneMatching",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45093, TagInfo {
-            name: "DynamicRangeOptimizer",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45094, TagInfo {
-            name: "ImageStabilization",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45095, TagInfo {
-            name: "LensType",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45096, TagInfo {
-            name: "MinoltaMakerNote",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (45097, TagInfo {
-            name: "ColorMode",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45098, TagInfo {
-            name: "LensSpec",
-            format: "undef",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Sony::PrintLensSpec]".to_string())),
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Sony::ConvLensSpec]".to_string())),
-        }),
-        (45099, TagInfo {
-            name: "FullImageSize",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val =~ tr/ /x/; $val".to_string())),
-            value_conv: Some(ValueConv::Expression("join(\" \", reverse split(\" \", $val))".to_string())),
-        }),
-        (45100, TagInfo {
-            name: "PreviewImageSize",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val =~ tr/ /x/; $val".to_string())),
-            value_conv: Some(ValueConv::Expression("join(\" \", reverse split(\" \", $val))".to_string())),
-        }),
-        (45120, TagInfo {
-            name: "Macro",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45121, TagInfo {
-            name: "ExposureMode",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45122, TagInfo {
-            name: "FocusMode",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45124, TagInfo {
-            name: "AFIlluminator",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45127, TagInfo {
-            name: "JPEGQuality",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45128, TagInfo {
-            name: "FlashLevel",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45129, TagInfo {
-            name: "ReleaseMode",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45130, TagInfo {
-            name: "SequenceNumber",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45131, TagInfo {
-            name: "Anti-Blur",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45134, TagInfo {
-            name: "FocusMode",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45135, TagInfo {
-            name: "DynamicRangeOptimizer",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45136, TagInfo {
-            name: "HighISONoiseReduction2",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45138, TagInfo {
-            name: "IntelligentAuto",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (45140, TagInfo {
-            name: "WhiteBalance",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
+        (
+            258,
+            TagInfo {
+                name: "Quality",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            260,
+            TagInfo {
+                name: "FlashExposureComp",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            261,
+            TagInfo {
+                name: "Teleconverter",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            274,
+            TagInfo {
+                name: "WhiteBalanceFineTune",
+                format: "int32s",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            277,
+            TagInfo {
+                name: "WhiteBalance",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            3584,
+            TagInfo {
+                name: "PrintIM",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4096,
+            TagInfo {
+                name: "MultiBurstMode",
+                format: "int8u",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4097,
+            TagInfo {
+                name: "MultiBurstImageWidth",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4098,
+            TagInfo {
+                name: "MultiBurstImageHeight",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4099,
+            TagInfo {
+                name: "Panorama",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            8193,
+            TagInfo {
+                name: "PreviewImage",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            8194,
+            TagInfo {
+                name: "Rating",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            8196,
+            TagInfo {
+                name: "Contrast",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                value_conv: None,
+            },
+        ),
+        (
+            8197,
+            TagInfo {
+                name: "Saturation",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                value_conv: None,
+            },
+        ),
+        (
+            8198,
+            TagInfo {
+                name: "Sharpness",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                value_conv: None,
+            },
+        ),
+        (
+            8199,
+            TagInfo {
+                name: "Brightness",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                value_conv: None,
+            },
+        ),
+        (
+            8200,
+            TagInfo {
+                name: "LongExposureNoiseReduction",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8201,
+            TagInfo {
+                name: "HighISONoiseReduction",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8202,
+            TagInfo {
+                name: "HDR",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            8203,
+            TagInfo {
+                name: "MultiFrameNoiseReduction",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8206,
+            TagInfo {
+                name: "PictureEffect",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8207,
+            TagInfo {
+                name: "SoftSkinEffect",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8209,
+            TagInfo {
+                name: "VignettingCorrection",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8210,
+            TagInfo {
+                name: "LateralChromaticAberration",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8211,
+            TagInfo {
+                name: "DistortionCorrectionSetting",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8212,
+            TagInfo {
+                name: "WBShiftAB_GM",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            8214,
+            TagInfo {
+                name: "AutoPortraitFramed",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8215,
+            TagInfo {
+                name: "FlashAction",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8218,
+            TagInfo {
+                name: "ElectronicFrontCurtainShutter",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8219,
+            TagInfo {
+                name: "FocusMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8221,
+            TagInfo {
+                name: "FlexibleSpotPosition",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            8225,
+            TagInfo {
+                name: "AFTracking",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8227,
+            TagInfo {
+                name: "MultiFrameNREffect",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8230,
+            TagInfo {
+                name: "WBShiftAB_GM_Precise",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_16125fb69d4cbb0)),
+                value_conv: None,
+            },
+        ),
+        (
+            8231,
+            TagInfo {
+                name: "FocusLocation",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            8232,
+            TagInfo {
+                name: "VariableLowPassFilter",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8233,
+            TagInfo {
+                name: "RAWFileType",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8234,
+            TagInfo {
+                name: "Tag202a",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            8235,
+            TagInfo {
+                name: "PrioritySetInAWB",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8236,
+            TagInfo {
+                name: "MeteringMode2",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8237,
+            TagInfo {
+                name: "ExposureStandardAdjustment",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
+                value_conv: None,
+            },
+        ),
+        (
+            8238,
+            TagInfo {
+                name: "Quality",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8239,
+            TagInfo {
+                name: "PixelShiftInfo",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8241,
+            TagInfo {
+                name: "SerialNumber",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_8f2104934719cb29)),
+                value_conv: Some(ValueConv::Function(ast_value_88257fa51227f8f)),
+            },
+        ),
+        (
+            8242,
+            TagInfo {
+                name: "Shadows",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                value_conv: None,
+            },
+        ),
+        (
+            8243,
+            TagInfo {
+                name: "Highlights",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                value_conv: None,
+            },
+        ),
+        (
+            8244,
+            TagInfo {
+                name: "Fade",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                value_conv: None,
+            },
+        ),
+        (
+            8245,
+            TagInfo {
+                name: "SharpnessRange",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                value_conv: None,
+            },
+        ),
+        (
+            8246,
+            TagInfo {
+                name: "Clarity",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                value_conv: None,
+            },
+        ),
+        (
+            8247,
+            TagInfo {
+                name: "FocusFrameSize",
+                format: "int16u",
+                print_conv: Some(PrintConv::Function(ast_print_15baaa80ffdd285a)),
+                value_conv: None,
+            },
+        ),
+        (
+            8249,
+            TagInfo {
+                name: "JPEG-HEIFSwitch",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8260,
+            TagInfo {
+                name: "HiddenInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            8266,
+            TagInfo {
+                name: "FocusLocation2",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            12288,
+            TagInfo {
+                name: "ShotInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            36875,
+            TagInfo {
+                name: "Tag900b",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            37889,
+            TagInfo {
+                name: "Tag9401",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            37891,
+            TagInfo {
+                name: "Tag9403",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            37895,
+            TagInfo {
+                name: "Sony_0x9407",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::LimitLongValues]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_91a40741d32c33dc)),
+            },
+        ),
+        (
+            37896,
+            TagInfo {
+                name: "Sony_0x9408",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::LimitLongValues]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_91a40741d32c33dc)),
+            },
+        ),
+        (
+            37897,
+            TagInfo {
+                name: "Sony_0x9409",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::LimitLongValues]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_91a40741d32c33dc)),
+            },
+        ),
+        (
+            37899,
+            TagInfo {
+                name: "Sony_0x940b",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::LimitLongValues]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_91a40741d32c33dc)),
+            },
+        ),
+        (
+            37901,
+            TagInfo {
+                name: "Sony_0x940d",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::LimitLongValues]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_91a40741d32c33dc)),
+            },
+        ),
+        (
+            37903,
+            TagInfo {
+                name: "Sony_0x940f",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::LimitLongValues]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_91a40741d32c33dc)),
+            },
+        ),
+        (
+            37905,
+            TagInfo {
+                name: "Sony_0x9411",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::LimitLongValues]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_91a40741d32c33dc)),
+            },
+        ),
+        (
+            37910,
+            TagInfo {
+                name: "Sony_0x9416",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            45056,
+            TagInfo {
+                name: "FileFormat",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45057,
+            TagInfo {
+                name: "SonyModelID",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45088,
+            TagInfo {
+                name: "CreativeStyle",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45089,
+            TagInfo {
+                name: "ColorTemperature",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_5a37abc3eeb8dead)),
+                value_conv: None,
+            },
+        ),
+        (
+            45090,
+            TagInfo {
+                name: "ColorCompensationFilter",
+                format: "int32s",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            45091,
+            TagInfo {
+                name: "SceneMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45092,
+            TagInfo {
+                name: "ZoneMatching",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45093,
+            TagInfo {
+                name: "DynamicRangeOptimizer",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45094,
+            TagInfo {
+                name: "ImageStabilization",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45095,
+            TagInfo {
+                name: "LensType",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45096,
+            TagInfo {
+                name: "MinoltaMakerNote",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            45097,
+            TagInfo {
+                name: "ColorMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45098,
+            TagInfo {
+                name: "LensSpec",
+                format: "undef",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Sony::PrintLensSpec]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Sony::ConvLensSpec]".to_string(),
+                )),
+            },
+        ),
+        (
+            45099,
+            TagInfo {
+                name: "FullImageSize",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_4e5e992f9b388e54)),
+                value_conv: Some(ValueConv::Function(ast_value_c0dee9b600d6a90b)),
+            },
+        ),
+        (
+            45100,
+            TagInfo {
+                name: "PreviewImageSize",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_4e5e992f9b388e54)),
+                value_conv: Some(ValueConv::Function(ast_value_c0dee9b600d6a90b)),
+            },
+        ),
+        (
+            45120,
+            TagInfo {
+                name: "Macro",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45121,
+            TagInfo {
+                name: "ExposureMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45122,
+            TagInfo {
+                name: "FocusMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45124,
+            TagInfo {
+                name: "AFIlluminator",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45127,
+            TagInfo {
+                name: "JPEGQuality",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45128,
+            TagInfo {
+                name: "FlashLevel",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45129,
+            TagInfo {
+                name: "ReleaseMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45130,
+            TagInfo {
+                name: "SequenceNumber",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45131,
+            TagInfo {
+                name: "Anti-Blur",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45134,
+            TagInfo {
+                name: "FocusMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45135,
+            TagInfo {
+                name: "DynamicRangeOptimizer",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45136,
+            TagInfo {
+                name: "HighISONoiseReduction2",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45138,
+            TagInfo {
+                name: "IntelligentAuto",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            45140,
+            TagInfo {
+                name: "WhiteBalance",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
     ])
 });
 
@@ -581,19 +893,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = SONY_MAIN_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -601,7 +910,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -609,7 +921,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -619,11 +930,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

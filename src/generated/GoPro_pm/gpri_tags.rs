@@ -6,6 +6,12 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_44::ast_print_44f685eba6f9412f;
+use crate::generated::functions::hash_6c::ast_print_6cee0408ed0783c7;
+use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
+use crate::generated::functions::hash_e1::ast_print_e1b9c18c6fb887af;
+
 /// Tag definitions for GoPro::GPRI table
 pub static GO_PRO_GPRI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
@@ -14,9 +20,7 @@ pub static GO_PRO_GPRI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSDateTimeRaw",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "$self->ConvertDateTime($val)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::GoPro::ConvertSystemTime]".to_string(),
                 )),
@@ -27,9 +31,7 @@ pub static GO_PRO_GPRI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSLatitudeRaw",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_44f685eba6f9412f)),
                 value_conv: None,
             },
         ),
@@ -38,9 +40,7 @@ pub static GO_PRO_GPRI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSLongitudeRaw",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_6cee0408ed0783c7)),
                 value_conv: None,
             },
         ),
@@ -49,7 +49,7 @@ pub static GO_PRO_GPRI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSAltitudeRaw",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val m\"".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_e1b9c18c6fb887af)),
                 value_conv: None,
             },
         ),
@@ -58,7 +58,7 @@ pub static GO_PRO_GPRI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPRI_Unknown4",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val m\"".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_e1b9c18c6fb887af)),
                 value_conv: None,
             },
         ),
@@ -67,7 +67,7 @@ pub static GO_PRO_GPRI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPRI_Unknown5",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val m\"".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_e1b9c18c6fb887af)),
                 value_conv: None,
             },
         ),
@@ -97,19 +97,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = GO_PRO_GPRI_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -117,7 +114,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -125,7 +125,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -135,11 +134,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

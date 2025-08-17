@@ -6,6 +6,23 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_10::ast_print_103361d26a5af32d;
+use crate::generated::functions::hash_25::ast_print_252e55dbb07a94df;
+use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
+use crate::generated::functions::hash_33::ast_value_33118cafe9fb1cc3;
+use crate::generated::functions::hash_5d::ast_value_5d1e153d8debf27a;
+use crate::generated::functions::hash_70::ast_print_70620f00a1c89dd5;
+use crate::generated::functions::hash_71::ast_print_71d89be5ccb75efd;
+use crate::generated::functions::hash_79::ast_print_79289c26a24e6f78;
+use crate::generated::functions::hash_b0::ast_print_b0ad9908708bcb9f;
+use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
+use crate::generated::functions::hash_d3::ast_print_d3695e9544e1c996;
+use crate::generated::functions::hash_ed::ast_print_ed1555c62079876e;
+use crate::generated::functions::hash_f1::{
+    ast_value_f10df04f24c6ec2c, ast_value_f1277e290c2a7107,
+};
+
 /// Tag definitions for Olympus::CameraSettings table
 pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
@@ -90,14 +107,14 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (772, TagInfo {
             name: "AFAreas",
             format: "unknown",
-            print_conv: Some(PrintConv::Expression("Image::ExifTool::Olympus::PrintAFAreas($val)".to_string())),
+            print_conv: Some(PrintConv::Function(ast_print_252e55dbb07a94df)),
             value_conv: None,
         }),
         (773, TagInfo {
             name: "AFPointSelected",
             format: "unknown",
-            print_conv: Some(PrintConv::Expression("\n            return 'n/a' if $val =~ /undef/;\n            sprintf(\"(%d%%,%d%%) (%d%%,%d%%)\", map {$_ * 100} split(\" \",$val));\n        ".to_string())),
-            value_conv: Some(ValueConv::Expression("$val =~ s/\\S* //; $val".to_string())),
+            print_conv: Some(PrintConv::Function(ast_print_71d89be5ccb75efd)),
+            value_conv: Some(ValueConv::Function(ast_value_f10df04f24c6ec2c)),
         }),
         (774, TagInfo {
             name: "AFFineTune",
@@ -180,7 +197,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1281, TagInfo {
             name: "WhiteBalanceTemperature",
             format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val ? $val : \"Auto\"".to_string())),
+            print_conv: Some(PrintConv::Function(ast_print_d3695e9544e1c996)),
             value_conv: None,
         }),
         (1282, TagInfo {
@@ -192,7 +209,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1283, TagInfo {
             name: "CustomSaturation",
             format: "unknown",
-            print_conv: Some(PrintConv::Expression("\n            my ($a,$b,$c)=split ' ',$val;\n            if ($self->{Model} =~ /^E-1\\b/) {\n                $a-=$b; $c-=$b;\n                return \"CS$a (min CS0, max CS$c)\";\n            } else {\n                return \"$a (min $b, max $c)\";\n            }\n        ".to_string())),
+            print_conv: Some(PrintConv::Function(ast_print_103361d26a5af32d)),
             value_conv: None,
         }),
         (1284, TagInfo {
@@ -204,13 +221,13 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1285, TagInfo {
             name: "ContrastSetting",
             format: "unknown",
-            print_conv: Some(PrintConv::Expression("my @v=split \" \",$val; \"$v[0] (min $v[1], max $v[2])\"".to_string())),
+            print_conv: Some(PrintConv::Function(ast_print_79289c26a24e6f78)),
             value_conv: None,
         }),
         (1286, TagInfo {
             name: "SharpnessSetting",
             format: "unknown",
-            print_conv: Some(PrintConv::Expression("my @v=split \" \",$val; \"$v[0] (min $v[1], max $v[2])\"".to_string())),
+            print_conv: Some(PrintConv::Function(ast_print_79289c26a24e6f78)),
             value_conv: None,
         }),
         (1287, TagInfo {
@@ -264,7 +281,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1313, TagInfo {
             name: "PictureModeSaturation",
             format: "unknown",
-            print_conv: Some(PrintConv::Expression("my @v=split \" \",$val; \"$v[0] (min $v[1], max $v[2])\"".to_string())),
+            print_conv: Some(PrintConv::Function(ast_print_79289c26a24e6f78)),
             value_conv: None,
         }),
         (1314, TagInfo {
@@ -276,13 +293,13 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1315, TagInfo {
             name: "PictureModeContrast",
             format: "unknown",
-            print_conv: Some(PrintConv::Expression("my @v=split \" \",$val; \"$v[0] (min $v[1], max $v[2])\"".to_string())),
+            print_conv: Some(PrintConv::Function(ast_print_79289c26a24e6f78)),
             value_conv: None,
         }),
         (1316, TagInfo {
             name: "PictureModeSharpness",
             format: "unknown",
-            print_conv: Some(PrintConv::Expression("my @v=split \" \",$val; \"$v[0] (min $v[1], max $v[2])\"".to_string())),
+            print_conv: Some(PrintConv::Function(ast_print_79289c26a24e6f78)),
             value_conv: None,
         }),
         (1317, TagInfo {
@@ -378,7 +395,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1537, TagInfo {
             name: "PanoramaMode",
             format: "unknown",
-            print_conv: Some(PrintConv::Expression("\n            my ($a,$b) = split ' ',$val;\n            return 'Off' unless $a;\n            my %a = (\n                1 => 'Left to Right',\n                2 => 'Right to Left',\n                3 => 'Bottom to Top',\n                4 => 'Top to Bottom',\n            );\n            return(($a{$a} || \"Unknown ($a)\") . ', Shot ' . $b);\n        ".to_string())),
+            print_conv: Some(PrintConv::Function(ast_print_70620f00a1c89dd5)),
             value_conv: None,
         }),
         (1539, TagInfo {
@@ -408,14 +425,14 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (2304, TagInfo {
             name: "ManometerPressure",
             format: "unknown",
-            print_conv: Some(PrintConv::Expression("\"$val kPa\"".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 10".to_string())),
+            print_conv: Some(PrintConv::Function(ast_print_b0ad9908708bcb9f)),
+            value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
         }),
         (2305, TagInfo {
             name: "ManometerReading",
             format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val=~s/(\\S+) (\\S+)/$1 m, $2 ft/; $val".to_string())),
-            value_conv: Some(ValueConv::Expression("my @a=split(\" \",$val); $_ /= 10 foreach @a; \"@a\"".to_string())),
+            print_conv: Some(PrintConv::Function(ast_print_ed1555c62079876e)),
+            value_conv: Some(ValueConv::Function(ast_value_f1277e290c2a7107)),
         }),
         (2306, TagInfo {
             name: "ExtendedWBDetect",
@@ -427,18 +444,18 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             name: "RollAngle",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Expression("$val=~s/ 1$// ? -$val/10 : \"n/a\"".to_string())),
+            value_conv: Some(ValueConv::Function(ast_value_5d1e153d8debf27a)),
         }),
         (2308, TagInfo {
             name: "PitchAngle",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Expression("$val =~ s/ 1$// ? $val / 10 : \"n/a\"".to_string())),
+            value_conv: Some(ValueConv::Function(ast_value_33118cafe9fb1cc3)),
         }),
         (2312, TagInfo {
             name: "DateTimeUTC",
             format: "unknown",
-            print_conv: Some(PrintConv::Expression("$self->ConvertDateTime($val)".to_string())),
+            print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
             value_conv: None,
         }),
     ])
@@ -449,19 +466,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = OLYMPUS_CAMERASETTINGS_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -469,7 +483,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -477,7 +494,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -487,11 +503,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

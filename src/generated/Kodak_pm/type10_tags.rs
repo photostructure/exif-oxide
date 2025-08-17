@@ -7,7 +7,14 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::implementations::print_conv::exposuretime_print_conv;
+use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
+use crate::generated::functions::hash_4e::ast_print_4e5e992f9b388e54;
+use crate::generated::functions::hash_50::ast_value_505555435997e294;
+use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
+use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_d2::ast_value_d257a2f28a742d8d;
+use crate::generated::functions::hash_ee::ast_value_ee9b0901d11400f9;
+use crate::generated::functions::hash_f0::ast_print_f0406a5cf107f00d;
 
 /// Tag definitions for Kodak::Type10 table
 pub static KODAK_TYPE10_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +24,7 @@ pub static KODAK_TYPE10_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "PreviewImageSize",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("$val =~ tr/ /x/; $val".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_4e5e992f9b388e54)),
                 value_conv: None,
             },
         ),
@@ -26,8 +33,8 @@ pub static KODAK_TYPE10_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "ExposureTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(exposuretime_print_conv)),
-                value_conv: Some(ValueConv::Expression("$val / 1e5".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
+                value_conv: Some(ValueConv::Function(ast_value_d257a2f28a742d8d)),
             },
         ),
         (
@@ -36,7 +43,7 @@ pub static KODAK_TYPE10_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 name: "FNumber",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Expression("$val / 10".to_string())),
+                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
             },
         ),
         (
@@ -44,8 +51,8 @@ pub static KODAK_TYPE10_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "ISO",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("int($val + 0.5)".to_string())),
-                value_conv: Some(ValueConv::Expression("exp($val/3*log(2))*25".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_f0406a5cf107f00d)),
+                value_conv: Some(ValueConv::Function(ast_value_505555435997e294)),
             },
         ),
         (
@@ -53,8 +60,8 @@ pub static KODAK_TYPE10_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "FocalLength",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val mm\"".to_string())),
-                value_conv: Some(ValueConv::Expression("$val / 100".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
+                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
             },
         ),
     ])
@@ -65,19 +72,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = KODAK_TYPE10_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -85,7 +89,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -93,7 +100,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -103,11 +109,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

@@ -3,29 +3,31 @@
 //! This module provides the central dispatcher that routes composite tag
 //! computation requests to the appropriate implementation functions.
 
-use std::collections::HashMap;
-use tracing::trace;
+// use std::collections::HashMap;
+// use tracing::trace;
 
-use crate::generated::composite_tags::CompositeTagDef;
-use crate::types::TagValue;
+// use crate::generated::composite_tags::CompositeTagDef;
+// use crate::types::TagValue;
 
-use super::implementations::*;
-use super::resolution::resolve_tag_dependency;
-use super::value_conv_evaluator::ValueConvEvaluator;
+// use super::implementations::*;
+// use super::resolution::resolve_tag_dependency;
+// use super::value_conv_evaluator::ValueConvEvaluator;
 
+// TODO: Re-enable when CompositeTagDef is generated
+/*
 /// Compute a single composite tag value based on its dependencies using ExifTool's resolution
 /// ExifTool: lib/Image/ExifTool.pm composite tag evaluation with dynamic dependency resolution
 pub fn compute_composite_tag(
     composite_def: &CompositeTagDef,
     available_tags: &HashMap<String, TagValue>,
-    built_composites: &std::collections::HashSet<&str>,
+    built_composites: &std::collections::HashSet<String>,
 ) -> Option<TagValue> {
     // Create a resolved dependency map for the composite computation
     // This maps dependency names to their resolved values using ExifTool's dynamic lookup
     let mut resolved_dependencies = HashMap::new();
 
     // Resolve all require dependencies
-    for tag_name in composite_def.require {
+    for tag_name in &composite_def.require {
         if let Some(resolved_value) =
             resolve_tag_dependency(tag_name, available_tags, built_composites)
         {
@@ -41,7 +43,7 @@ pub fn compute_composite_tag(
     }
 
     // Resolve all desire dependencies (optional)
-    for tag_name in composite_def.desire {
+    for tag_name in &composite_def.desire {
         if let Some(resolved_value) =
             resolve_tag_dependency(tag_name, available_tags, built_composites)
         {
@@ -59,7 +61,7 @@ pub fn compute_composite_tag(
 
     // Dispatch to specific composite tag implementations
     // Each implementation translates ExifTool's Perl ValueConv expression
-    match composite_def.name {
+    match composite_def.name.as_str() {
         // Existing implementations
         "ImageSize" => compute_image_size(&resolved_dependencies),
         "GPSAltitude" => compute_gps_altitude(&resolved_dependencies),
@@ -140,10 +142,10 @@ pub fn compute_composite_tag(
                 .iter()
                 .chain(composite_def.desire.iter())
             {
-                if available_tags.contains_key(*tag_name) {
-                    available_deps.push(*tag_name);
+                if available_tags.contains_key(tag_name) {
+                    available_deps.push(tag_name);
                 } else {
-                    missing_deps.push(*tag_name);
+                    missing_deps.push(tag_name);
                 }
             }
 
@@ -157,3 +159,4 @@ pub fn compute_composite_tag(
         }
     }
 }
+*/

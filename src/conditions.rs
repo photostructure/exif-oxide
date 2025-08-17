@@ -9,7 +9,6 @@
 //! - `$count == 368` - Count-based conditions
 //! - `$format eq "undef"` - Format-based conditions
 
-use crate::expressions::ExpressionEvaluator;
 use crate::processor_registry::ProcessorContext;
 use crate::types::{ExifError, Result, TagValue};
 use regex::Regex;
@@ -93,7 +92,6 @@ impl Condition {
     /// ExifTool: Runtime condition evaluation in processor dispatch
     pub fn evaluate(&self, context: &EvalContext) -> bool {
         // Use unified expression system for all evaluations
-        let mut evaluator = ExpressionEvaluator::new();
         
         // Build ProcessorContext from EvalContext
         let mut processor_context = ProcessorContext::default();

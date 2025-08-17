@@ -52,9 +52,11 @@ pub mod SonyIDC_pm;
 pub mod Sony_pm;
 pub mod Vorbis_pm;
 pub mod XMP_pm;
+pub mod functions;
 
 // Re-export commonly used types and functions
 
 /// Initialize all lazy static data structures
 /// This can be called during startup to avoid lazy initialization costs later
-pub fn initialize_all() {}
+pub fn initialize_all() {
+}

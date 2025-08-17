@@ -1,3 +1,4 @@
+use exif_oxide::exif::ExifReader;
 use exif_oxide::*;
 
 #[test]

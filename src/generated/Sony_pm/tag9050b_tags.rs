@@ -6,201 +6,316 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_1a::ast_print_1ade125dab246be4;
+use crate::generated::functions::hash_53::ast_value_53ef12641c6719f5;
+use crate::generated::functions::hash_70::ast_print_70245c821020ee75;
+use crate::generated::functions::hash_75::ast_value_75fc706b92c8c4f7;
+use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
+use crate::generated::functions::hash_bb::ast_print_bb36ed62e5a52a4;
+use crate::generated::functions::hash_c1::ast_value_c1d0defaf7444144;
+use crate::generated::functions::hash_da::ast_value_da76e49d05066f83;
+use crate::generated::functions::hash_e0::ast_value_e0b36f169462770c;
+
 /// Tag definitions for Sony::Tag9050b table
 pub static SONY_TAG9050B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (0, TagInfo {
-            name: "SonyMaxAperture",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("sprintf(\"%.1f\",$val)".to_string())),
-            value_conv: Some(ValueConv::Expression("2 ** (($val/8 - 1.06) / 2)".to_string())),
-        }),
-        (1, TagInfo {
-            name: "SonyMinAperture",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("sprintf(\"%.0f\",$val)".to_string())),
-            value_conv: Some(ValueConv::Expression("2 ** (($val/8 - 1.06) / 2)".to_string())),
-        }),
-        (38, TagInfo {
-            name: "Shutter",
-            format: "int16u[3]",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (57, TagInfo {
-            name: "FlashStatus",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (58, TagInfo {
-            name: "ShutterCount",
-            format: "int32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (70, TagInfo {
-            name: "SonyExposureTime",
-            format: "int16u",
-            print_conv: Some(PrintConv::Expression("$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\"".to_string())),
-            value_conv: Some(ValueConv::Expression("$val ? 2 ** (16 - $val/256) : 0".to_string())),
-        }),
-        (72, TagInfo {
-            name: "SonyFNumber",
-            format: "int16u",
-            print_conv: Some(PrintConv::Expression("sprintf(\"%.1f\",$val)".to_string())),
-            value_conv: Some(ValueConv::Expression("2 ** (($val/256 - 16) / 2)".to_string())),
-        }),
-        (75, TagInfo {
-            name: "ReleaseMode2",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (80, TagInfo {
-            name: "ShutterCount2",
-            format: "int32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (82, TagInfo {
-            name: "ShutterCount2",
-            format: "int32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (88, TagInfo {
-            name: "ShutterCount2",
-            format: "int32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (97, TagInfo {
-            name: "SonyTimeMinSec",
-            format: "undef[2]",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("\n            my @v = unpack('C*', $val);\n            return sprintf(\"%.2d:%.2d\", @v)\n        ".to_string())),
-        }),
-        (107, TagInfo {
-            name: "ReleaseMode2",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (109, TagInfo {
-            name: "ReleaseMode2",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (115, TagInfo {
-            name: "ReleaseMode2",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (136, TagInfo {
-            name: "InternalSerialNumber",
-            format: "int8u[6]",
-            print_conv: Some(PrintConv::Expression("unpack \"H*\", pack \"C*\", split \" \", $val".to_string())),
-            value_conv: None,
-        }),
-        (261, TagInfo {
-            name: "LensMount",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (262, TagInfo {
-            name: "LensFormat",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (263, TagInfo {
-            name: "LensType2",
-            format: "int16u",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (265, TagInfo {
-            name: "LensType",
-            format: "int16u",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (267, TagInfo {
-            name: "DistortionCorrParamsPresent",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (276, TagInfo {
-            name: "APS-CSizeCapture",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (278, TagInfo {
-            name: "LensSpecFeatures",
-            format: "undef[2]",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Sony::PrintLensSpec]".to_string())),
-            value_conv: Some(ValueConv::Expression("join \" \", unpack \"H2H2\", $val".to_string())),
-        }),
-        (415, TagInfo {
-            name: "ShutterCount3",
-            format: "int32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (459, TagInfo {
-            name: "ShutterCount3",
-            format: "int32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (461, TagInfo {
-            name: "ShutterCount3",
-            format: "int32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (491, TagInfo {
-            name: "APS-CSizeCapture",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (493, TagInfo {
-            name: "LensSpecFeatures",
-            format: "undef[2]",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Sony::PrintLensSpec]".to_string())),
-            value_conv: Some(ValueConv::Expression("join \" \", unpack \"H2H2\", $val".to_string())),
-        }),
-        (494, TagInfo {
-            name: "APS-CSizeCapture",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (496, TagInfo {
-            name: "LensSpecFeatures",
-            format: "undef[2]",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Sony::PrintLensSpec]".to_string())),
-            value_conv: Some(ValueConv::Expression("join \" \", unpack \"H2H2\", $val".to_string())),
-        }),
-        (538, TagInfo {
-            name: "APS-CSizeCapture",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (542, TagInfo {
-            name: "LensSpecFeatures",
-            format: "undef[2]",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Sony::PrintLensSpec]".to_string())),
-            value_conv: Some(ValueConv::Expression("join \" \", unpack \"H2H2\", $val".to_string())),
-        }),
+        (
+            0,
+            TagInfo {
+                name: "SonyMaxAperture",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                value_conv: Some(ValueConv::Function(ast_value_c1d0defaf7444144)),
+            },
+        ),
+        (
+            1,
+            TagInfo {
+                name: "SonyMinAperture",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_1ade125dab246be4)),
+                value_conv: Some(ValueConv::Function(ast_value_c1d0defaf7444144)),
+            },
+        ),
+        (
+            38,
+            TagInfo {
+                name: "Shutter",
+                format: "int16u[3]",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            57,
+            TagInfo {
+                name: "FlashStatus",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            58,
+            TagInfo {
+                name: "ShutterCount",
+                format: "int32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            70,
+            TagInfo {
+                name: "SonyExposureTime",
+                format: "int16u",
+                print_conv: Some(PrintConv::Function(ast_print_bb36ed62e5a52a4)),
+                value_conv: Some(ValueConv::Function(ast_value_53ef12641c6719f5)),
+            },
+        ),
+        (
+            72,
+            TagInfo {
+                name: "SonyFNumber",
+                format: "int16u",
+                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                value_conv: Some(ValueConv::Function(ast_value_e0b36f169462770c)),
+            },
+        ),
+        (
+            75,
+            TagInfo {
+                name: "ReleaseMode2",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            80,
+            TagInfo {
+                name: "ShutterCount2",
+                format: "int32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            82,
+            TagInfo {
+                name: "ShutterCount2",
+                format: "int32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            88,
+            TagInfo {
+                name: "ShutterCount2",
+                format: "int32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            97,
+            TagInfo {
+                name: "SonyTimeMinSec",
+                format: "undef[2]",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_da76e49d05066f83)),
+            },
+        ),
+        (
+            107,
+            TagInfo {
+                name: "ReleaseMode2",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            109,
+            TagInfo {
+                name: "ReleaseMode2",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            115,
+            TagInfo {
+                name: "ReleaseMode2",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            136,
+            TagInfo {
+                name: "InternalSerialNumber",
+                format: "int8u[6]",
+                print_conv: Some(PrintConv::Function(ast_print_70245c821020ee75)),
+                value_conv: None,
+            },
+        ),
+        (
+            261,
+            TagInfo {
+                name: "LensMount",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            262,
+            TagInfo {
+                name: "LensFormat",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            263,
+            TagInfo {
+                name: "LensType2",
+                format: "int16u",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            265,
+            TagInfo {
+                name: "LensType",
+                format: "int16u",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            267,
+            TagInfo {
+                name: "DistortionCorrParamsPresent",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            276,
+            TagInfo {
+                name: "APS-CSizeCapture",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            278,
+            TagInfo {
+                name: "LensSpecFeatures",
+                format: "undef[2]",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Sony::PrintLensSpec]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_75fc706b92c8c4f7)),
+            },
+        ),
+        (
+            415,
+            TagInfo {
+                name: "ShutterCount3",
+                format: "int32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            459,
+            TagInfo {
+                name: "ShutterCount3",
+                format: "int32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            461,
+            TagInfo {
+                name: "ShutterCount3",
+                format: "int32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            491,
+            TagInfo {
+                name: "APS-CSizeCapture",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            493,
+            TagInfo {
+                name: "LensSpecFeatures",
+                format: "undef[2]",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Sony::PrintLensSpec]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_75fc706b92c8c4f7)),
+            },
+        ),
+        (
+            494,
+            TagInfo {
+                name: "APS-CSizeCapture",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            496,
+            TagInfo {
+                name: "LensSpecFeatures",
+                format: "undef[2]",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Sony::PrintLensSpec]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_75fc706b92c8c4f7)),
+            },
+        ),
+        (
+            538,
+            TagInfo {
+                name: "APS-CSizeCapture",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            542,
+            TagInfo {
+                name: "LensSpecFeatures",
+                format: "undef[2]",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Sony::PrintLensSpec]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_75fc706b92c8c4f7)),
+            },
+        ),
     ])
 });
 
@@ -209,19 +324,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = SONY_TAG9050B_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -229,7 +341,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -237,7 +352,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -247,11 +361,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

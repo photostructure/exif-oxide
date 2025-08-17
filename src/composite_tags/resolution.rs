@@ -5,8 +5,9 @@
 //! tag references.
 
 use std::collections::{HashMap, HashSet};
-use tracing::{debug, trace};
+use tracing::trace;
 
+// use crate::types::CompositeTagInfo;
 use crate::generated::Exif_pm::main_tags::EXIF_MAIN_TAGS;
 use crate::generated::GPS_pm::main_tags::GPS_MAIN_TAGS;
 use crate::types::TagValue;
@@ -66,12 +67,23 @@ pub fn build_available_tags_map(
     available_tags
 }
 
+/// Stub implementation while composite tags are not generated
+pub fn can_build_composite(
+    _composite_def: &str,
+    _available_tags: &HashMap<String, TagValue>,
+    _built_composites: &HashSet<String>,
+) -> bool {
+    false
+}
+
+// TODO: Re-enable when CompositeTagDef is generated
+/*
 /// Check if a composite tag can be built (all required dependencies available)
 /// This is the core dependency resolution logic for multi-pass building
 pub fn can_build_composite(
     composite_def: &CompositeTagDef,
     available_tags: &HashMap<String, TagValue>,
-    built_composites: &HashSet<&str>,
+    built_composites: &HashSet<String>,
 ) -> bool {
     // Special case for ImageSize: ExifTool can build it with just desired dependencies
     // because the ValueConv has fallback logic
@@ -101,7 +113,7 @@ pub fn can_build_composite(
     // Special case: if there are no required dependencies, check if we have any desired ones
     if composite_def.require.is_empty() && !composite_def.desire.is_empty() {
         // Need at least one desired dependency
-        for tag_name in composite_def.desire {
+        for tag_name in &composite_def.desire {
             if is_dependency_available(tag_name, available_tags, built_composites) {
                 return true; // At least one desired dependency available
             }
@@ -115,7 +127,7 @@ pub fn can_build_composite(
     }
 
     // Check all required dependencies
-    for tag_name in composite_def.require {
+    for tag_name in &composite_def.require {
         if !is_dependency_available(tag_name, available_tags, built_composites) {
             trace!(
                 "Missing required dependency for {}: {}",
@@ -129,6 +141,7 @@ pub fn can_build_composite(
     // All required dependencies are available
     true
 }
+*/
 
 /// Check if a specific dependency (tag name) is available using ExifTool's dynamic resolution
 /// ExifTool: lib/Image/ExifTool.pm:3977-4005 BuildCompositeTags dependency resolution
@@ -136,7 +149,7 @@ pub fn can_build_composite(
 pub fn is_dependency_available(
     tag_name: &str,
     available_tags: &HashMap<String, TagValue>,
-    built_composites: &HashSet<&str>,
+    built_composites: &HashSet<String>,
 ) -> bool {
     resolve_tag_dependency(tag_name, available_tags, built_composites).is_some()
 }
@@ -148,7 +161,7 @@ pub fn is_dependency_available(
 pub fn resolve_tag_dependency(
     tag_name: &str,
     available_tags: &HashMap<String, TagValue>,
-    built_composites: &HashSet<&str>,
+    built_composites: &HashSet<String>,
 ) -> Option<TagValue> {
     // Step 1: Check if the tag is a composite that has already been built
     // ExifTool: lib/Image/ExifTool.pm:3977-3983 composite dependency handling

@@ -6,6 +6,13 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_15::ast_print_15d3bbdbc77bdb90;
+use crate::generated::functions::hash_3b::ast_print_3b2373f5e3819dad;
+use crate::generated::functions::hash_c1::ast_print_c12c7e50f55cf298;
+use crate::generated::functions::hash_eb::ast_print_ebe0a6b7251033b3;
+use crate::generated::functions::hash_f7::ast_value_f7873b2dff9e970c;
+
 /// Tag definitions for Sony::ExtraInfo table
 pub static SONY_EXTRAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
@@ -14,10 +21,8 @@ pub static SONY_EXTRAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "BatteryTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "sprintf(\"%.1f C\",$val)".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("($val - 32) / 1.8".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_ebe0a6b7251033b3)),
+                value_conv: Some(ValueConv::Function(ast_value_f7873b2dff9e970c)),
             },
         ),
         (
@@ -36,9 +41,7 @@ pub static SONY_EXTRAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "BatteryVoltage",
                 format: "undef[4]",
-                print_conv: Some(PrintConv::Expression(
-                    "sprintf(\"%.2f V\",$val)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_3b2373f5e3819dad)),
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::__ANON__]".to_string(),
                 )),
@@ -58,7 +61,7 @@ pub static SONY_EXTRAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "BatteryLevel",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val%\"".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_15d3bbdbc77bdb90)),
                 value_conv: None,
             },
         ),
@@ -67,7 +70,7 @@ pub static SONY_EXTRAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ExtraInfoVersion",
                 format: "int8u[4]",
-                print_conv: Some(PrintConv::Expression("$val=~tr/ /./; $val".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
                 value_conv: None,
             },
         ),
@@ -79,19 +82,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = SONY_EXTRAINFO_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -99,7 +99,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -107,7 +110,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -117,11 +119,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

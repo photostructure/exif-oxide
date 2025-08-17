@@ -26,7 +26,7 @@ That sounds great. This is critical infrastructure for this project, so let's do
 
 # Work on a TPP 
 
-✏️ is a technical project plan: we're going to work on the remaining incomplete tasks. This represents is critical work for our project, and requires comprehensive prerequisite research to be done by you before you start work. Read every referenced source and doc, and carefully validate the current situation, problem, and that the currently planned solution is still the best way forward. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. Ultrathink.
+✏️ is a technical project plan: we're going to work on the remaining incomplete tasks. This represents critical work for our project, and requires comprehensive prerequisite research to be done by you before you start work. Read every referenced source and doc, and carefully validate the current situation, problem, and that the currently planned solution is still the best way forward. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. Ultrathink.
 
 # Validating a TPP
 

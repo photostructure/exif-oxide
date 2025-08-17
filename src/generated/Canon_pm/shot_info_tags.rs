@@ -7,7 +7,27 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::implementations::print_conv::{exposuretime_print_conv, print_fraction};
+use crate::generated::functions::hash_1a::ast_print_1ade125dab246be4;
+use crate::generated::functions::hash_23::ast_value_23ca0ed710a7de23;
+use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
+use crate::generated::functions::hash_65::ast_value_658535e4cd23f2ff;
+use crate::generated::functions::hash_6f::ast_value_6fe12080b1303132;
+use crate::generated::functions::hash_7d::ast_value_7d55a3546017f4c7;
+use crate::generated::functions::hash_83::ast_print_8388b1ca19272fc5;
+use crate::generated::functions::hash_85::ast_value_854f4e7992c70b08;
+use crate::generated::functions::hash_a9::ast_value_a9420a73315951ac;
+use crate::generated::functions::hash_b7::ast_value_b74a49b788fbe61c;
+use crate::generated::functions::hash_b8::ast_value_b88e4cfe5671f7ac;
+use crate::generated::functions::hash_bb::{
+    ast_print_bb744a13f82c4cd2, ast_print_bba76882980e1e1a,
+};
+use crate::generated::functions::hash_bc::ast_print_bc983315d45d48a3;
+use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_d3::ast_print_d3baecf4975cff4c;
+use crate::generated::functions::hash_da::{
+    ast_print_dad6b5d4251a08c7, ast_value_da95df81681cbeeb,
+};
+use crate::generated::functions::hash_ee::ast_value_ee9b0901d11400f9;
 
 /// Tag definitions for Canon::ShotInfo table
 pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,8 +37,8 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AutoISO",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("sprintf(\"%.0f\",$val)".to_string())),
-                value_conv: Some(ValueConv::Expression("exp($val/32*log(2))*100".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_1ade125dab246be4)),
+                value_conv: Some(ValueConv::Function(ast_value_a9420a73315951ac)),
             },
         ),
         (
@@ -26,10 +46,8 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "BaseISO",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("sprintf(\"%.0f\",$val)".to_string())),
-                value_conv: Some(ValueConv::Expression(
-                    "exp($val/32*log(2))*100/32".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_1ade125dab246be4)),
+                value_conv: Some(ValueConv::Function(ast_value_b74a49b788fbe61c)),
             },
         ),
         (
@@ -37,8 +55,8 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "MeasuredEV",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("sprintf(\"%.2f\",$val)".to_string())),
-                value_conv: Some(ValueConv::Expression("$val / 32 + 5".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_bb744a13f82c4cd2)),
+                value_conv: Some(ValueConv::Function(ast_value_854f4e7992c70b08)),
             },
         ),
         (
@@ -46,10 +64,8 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "TargetAperture",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("sprintf(\"%.2g\",$val)".to_string())),
-                value_conv: Some(ValueConv::Expression(
-                    "exp(Image::ExifTool::Canon::CanonEv($val)*log(2)/2)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_bc983315d45d48a3)),
+                value_conv: Some(ValueConv::Function(ast_value_23ca0ed710a7de23)),
             },
         ),
         (
@@ -57,10 +73,8 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "TargetExposureTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(exposuretime_print_conv)),
-                value_conv: Some(ValueConv::Expression(
-                    "exp(-Image::ExifTool::Canon::CanonEv($val)*log(2))".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
+                value_conv: Some(ValueConv::Function(ast_value_b88e4cfe5671f7ac)),
             },
         ),
         (
@@ -68,10 +82,8 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ExposureCompensation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(print_fraction)),
-                value_conv: Some(ValueConv::Expression(
-                    "Image::ExifTool::Canon::CanonEv($val)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
+                value_conv: Some(ValueConv::Function(ast_value_658535e4cd23f2ff)),
             },
         ),
         (
@@ -106,9 +118,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "OpticalZoomCode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "$val == 8 ? \"n/a\" : $val".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_8388b1ca19272fc5)),
                 value_conv: None,
             },
         ),
@@ -117,8 +127,8 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "CameraTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val C\"".to_string())),
-                value_conv: Some(ValueConv::Expression("$val - 128".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
+                value_conv: Some(ValueConv::Function(ast_value_7d55a3546017f4c7)),
             },
         ),
         (
@@ -127,7 +137,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "FlashGuideNumber",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Expression("$val / 32".to_string())),
+                value_conv: Some(ValueConv::Function(ast_value_6fe12080b1303132)),
             },
         ),
         (
@@ -144,10 +154,8 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FlashExposureComp",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(print_fraction)),
-                value_conv: Some(ValueConv::Expression(
-                    "Image::ExifTool::Canon::CanonEv($val)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
+                value_conv: Some(ValueConv::Function(ast_value_658535e4cd23f2ff)),
             },
         ),
         (
@@ -164,10 +172,8 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AEBBracketValue",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(print_fraction)),
-                value_conv: Some(ValueConv::Expression(
-                    "Image::ExifTool::Canon::CanonEv($val)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
+                value_conv: Some(ValueConv::Function(ast_value_658535e4cd23f2ff)),
             },
         ),
         (
@@ -184,10 +190,8 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FocusDistanceUpper",
                 format: "int16u",
-                print_conv: Some(PrintConv::Expression(
-                    "$val > 655.345 ? \"inf\" : \"$val m\"".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("$val / 100".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_dad6b5d4251a08c7)),
+                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
             },
         ),
         (
@@ -195,10 +199,8 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FocusDistanceLower",
                 format: "int16u",
-                print_conv: Some(PrintConv::Expression(
-                    "$val > 655.345 ? \"inf\" : \"$val m\"".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("$val / 100".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_dad6b5d4251a08c7)),
+                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
             },
         ),
         (
@@ -206,10 +208,8 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("sprintf(\"%.2g\",$val)".to_string())),
-                value_conv: Some(ValueConv::Expression(
-                    "exp(Image::ExifTool::Canon::CanonEv($val)*log(2)/2)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_bc983315d45d48a3)),
+                value_conv: Some(ValueConv::Function(ast_value_23ca0ed710a7de23)),
             },
         ),
         (
@@ -218,7 +218,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "MeasuredEV2",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Expression("$val / 8 - 6".to_string())),
+                value_conv: Some(ValueConv::Function(ast_value_da95df81681cbeeb)),
             },
         ),
         (
@@ -227,7 +227,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "BulbDuration",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Expression("$val / 10".to_string())),
+                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
             },
         ),
         (
@@ -263,7 +263,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "SelfTimer2",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Expression("$val / 10".to_string())),
+                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
             },
         ),
         (
@@ -283,19 +283,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = CANON_SHOTINFO_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -303,7 +300,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -311,7 +311,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -321,11 +320,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

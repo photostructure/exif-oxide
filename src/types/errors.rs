@@ -27,6 +27,9 @@ pub enum ExifError {
 
     #[error("File detection error: {0}")]
     FileDetection(#[from] FileDetectionError),
+
+    #[error("Not implemented: {0}")]
+    NotImplemented(String),
 }
 
 /// Result type alias for convenience

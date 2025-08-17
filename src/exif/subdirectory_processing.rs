@@ -48,7 +48,6 @@ where
     A: Fn(
         u32,
         &TagValue,
-        &mut crate::expressions::ExpressionEvaluator,
         &mut Vec<String>,
         &mut Vec<String>,
     ) -> TagValue,
@@ -166,8 +165,7 @@ where
                                 manufacturer, kit_tag_id, tag_name
                             );
 
-                            // Create ExpressionEvaluator and error tracking
-                            let mut evaluator = crate::expressions::ExpressionEvaluator::new();
+                            // Create error tracking
                             let mut errors = Vec::new();
                             let mut warnings = Vec::new();
 
@@ -175,7 +173,6 @@ where
                             let result = apply_print_conv_fn(
                                 kit_tag_id,
                                 &value,
-                                &mut evaluator,
                                 &mut errors,
                                 &mut warnings,
                             );

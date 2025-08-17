@@ -7,10 +7,14 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::implementations::print_conv::gpsaltitude_print_conv;
-use crate::implementations::value_conv::{
-    exif_date_value_conv, gps_coordinate_value_conv, gpstimestamp_value_conv,
-};
+use crate::generated::functions::hash_44::ast_print_449352809d0c73f5;
+use crate::generated::functions::hash_4d::ast_value_4dd64ad8b929982b;
+use crate::generated::functions::hash_67::ast_value_67653a3c31f6d232;
+use crate::generated::functions::hash_87::ast_print_8764401e4e5a97bf;
+use crate::generated::functions::hash_c1::ast_print_c12c7e50f55cf298;
+use crate::generated::functions::hash_db::ast_value_db6d300cf2bc94e2;
+use crate::generated::functions::hash_e1::ast_print_e1b9c18c6fb887af;
+use crate::generated::functions::hash_ec::ast_print_ec01a8049c79f988;
 
 /// Tag definitions for GPS::Main table
 pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -20,7 +24,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSVersionID",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("$val =~ tr/ /./; $val".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
                 value_conv: None,
             },
         ),
@@ -38,10 +42,8 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSLatitude",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "Image::ExifTool::GPS::ToDMS($self, $val, 1)".to_string(),
-                )),
-                value_conv: Some(ValueConv::Function(gps_coordinate_value_conv)),
+                print_conv: Some(PrintConv::Function(ast_print_ec01a8049c79f988)),
+                value_conv: Some(ValueConv::Function(ast_value_4dd64ad8b929982b)),
             },
         ),
         (
@@ -58,10 +60,8 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSLongitude",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "Image::ExifTool::GPS::ToDMS($self, $val, 1)".to_string(),
-                )),
-                value_conv: Some(ValueConv::Function(gps_coordinate_value_conv)),
+                print_conv: Some(PrintConv::Function(ast_print_ec01a8049c79f988)),
+                value_conv: Some(ValueConv::Function(ast_value_4dd64ad8b929982b)),
             },
         ),
         (
@@ -78,7 +78,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSAltitude",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(gpsaltitude_print_conv)),
+                print_conv: Some(PrintConv::Function(ast_print_8764401e4e5a97bf)),
                 value_conv: None,
             },
         ),
@@ -87,10 +87,8 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSTimeStamp",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "Image::ExifTool::GPS::PrintTimeStamp($val)".to_string(),
-                )),
-                value_conv: Some(ValueConv::Function(gpstimestamp_value_conv)),
+                print_conv: Some(PrintConv::Function(ast_print_449352809d0c73f5)),
+                value_conv: Some(ValueConv::Function(ast_value_67653a3c31f6d232)),
             },
         ),
         (
@@ -206,10 +204,8 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSDestLatitude",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "Image::ExifTool::GPS::ToDMS($self, $val, 1)".to_string(),
-                )),
-                value_conv: Some(ValueConv::Function(gps_coordinate_value_conv)),
+                print_conv: Some(PrintConv::Function(ast_print_ec01a8049c79f988)),
+                value_conv: Some(ValueConv::Function(ast_value_4dd64ad8b929982b)),
             },
         ),
         (
@@ -226,10 +222,8 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSDestLongitude",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "Image::ExifTool::GPS::ToDMS($self, $val, 1)".to_string(),
-                )),
-                value_conv: Some(ValueConv::Function(gps_coordinate_value_conv)),
+                print_conv: Some(PrintConv::Function(ast_print_ec01a8049c79f988)),
+                value_conv: Some(ValueConv::Function(ast_value_4dd64ad8b929982b)),
             },
         ),
         (
@@ -292,7 +286,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "GPSDateStamp",
                 format: "undef",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(exif_date_value_conv)),
+                value_conv: Some(ValueConv::Function(ast_value_db6d300cf2bc94e2)),
             },
         ),
         (
@@ -309,7 +303,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSHPositioningError",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val m\"".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_e1b9c18c6fb887af)),
                 value_conv: None,
             },
         ),
@@ -321,19 +315,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = GPS_MAIN_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -341,7 +332,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -349,7 +343,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -359,11 +352,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

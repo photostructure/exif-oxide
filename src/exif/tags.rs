@@ -136,7 +136,6 @@ impl ExifReader {
         ifd_name: &str,
         source_info: Option<&TagSourceInfo>,
     ) -> (TagValue, TagValue) {
-        use crate::expressions::ExpressionEvaluator;
         use crate::generated::Exif_pm::main_tags;
         use crate::generated::GPS_pm::main_tags as gps_tag_kit;
         use crate::generated::Sony_pm::main_tags as sony_tag_kit;
@@ -228,14 +227,12 @@ impl ExifReader {
                     }
                     _ => {
                         // Use the generic tag kit apply_print_conv for other GPS tags
-                        let mut evaluator = ExpressionEvaluator::new();
                         let mut errors = Vec::new();
                         let mut warnings = Vec::new();
 
                         let result = gps_tag_kit::apply_print_conv(
                             tag_id as u32,
                             &value,
-                            &mut evaluator,
                             &mut errors,
                             &mut warnings,
                         );
@@ -297,14 +294,12 @@ impl ExifReader {
                 }
 
                 // Apply PrintConv second (if present) to get display value
-                let mut evaluator = ExpressionEvaluator::new();
                 let mut errors = Vec::new();
                 let mut warnings = Vec::new();
 
                 let print = sony_tag_kit::apply_print_conv(
                     tag_id as u32,
                     &value,
-                    &mut evaluator,
                     &mut errors,
                     &mut warnings,
                 );
@@ -354,7 +349,6 @@ impl ExifReader {
                 }
 
                 // Apply PrintConv second (if present) to get display value
-                let mut evaluator = ExpressionEvaluator::new();
                 let mut errors = Vec::new();
                 let mut warnings = Vec::new();
 
@@ -375,7 +369,6 @@ impl ExifReader {
                         main_tags::apply_print_conv(
                             tag_id as u32,
                             &value,
-                            &mut evaluator,
                             &mut errors,
                             &mut warnings,
                         )

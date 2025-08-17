@@ -6,6 +6,16 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_52::ast_value_52696782fcca735b;
+use crate::generated::functions::hash_60::ast_value_6024bbf5fa17668a;
+use crate::generated::functions::hash_6c::ast_print_6c62520a706b493;
+use crate::generated::functions::hash_72::ast_value_72cc5ff262c4a455;
+use crate::generated::functions::hash_83::ast_value_8390ff1421e71f53;
+use crate::generated::functions::hash_ab::ast_print_ab0e6c517653bb46;
+use crate::generated::functions::hash_ad::ast_value_ada28829e28f9303;
+use crate::generated::functions::hash_b7::ast_print_b75f5f46a9f320cf;
+
 /// Tag definitions for Nikon::MenuSettingsZ9v3 table
 pub static NIKON_MENUSETTINGSZ9V3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
@@ -77,9 +87,7 @@ pub static NIKON_MENUSETTINGSZ9V3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "FocusShiftInterval",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "$val == 1? \"1 Second\" : sprintf(\"%.0f Seconds\",$val)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_ab0e6c517653bb46)),
                 value_conv: None,
             },
         ),
@@ -134,7 +142,7 @@ pub static NIKON_MENUSETTINGSZ9V3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 name: "ISOAutoHiLimit",
                 format: "int16u",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Expression("($val-104)/8".to_string())),
+                value_conv: Some(ValueConv::Function(ast_value_8390ff1421e71f53)),
             },
         ),
         (
@@ -143,7 +151,7 @@ pub static NIKON_MENUSETTINGSZ9V3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 name: "ISOAutoFlashLimit",
                 format: "int16u",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Expression("($val-104)/8".to_string())),
+                value_conv: Some(ValueConv::Function(ast_value_8390ff1421e71f53)),
             },
         ),
         (
@@ -152,7 +160,7 @@ pub static NIKON_MENUSETTINGSZ9V3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 name: "ISOAutoShutterTime",
                 format: "int16s",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Expression("$val / 8".to_string())),
+                value_conv: Some(ValueConv::Function(ast_value_6024bbf5fa17668a)),
             },
         ),
         (
@@ -196,10 +204,8 @@ pub static NIKON_MENUSETTINGSZ9V3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "FlashMasterCompensation",
                 format: "int8s",
-                print_conv: Some(PrintConv::Expression(
-                    "$val ? sprintf(\"%+.1f\",$val) : 0".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("$val/6".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
+                value_conv: Some(ValueConv::Function(ast_value_ada28829e28f9303)),
             },
         ),
         (
@@ -208,7 +214,7 @@ pub static NIKON_MENUSETTINGSZ9V3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 name: "FlashGNDistance",
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Expression("$val + 3".to_string())),
+                value_conv: Some(ValueConv::Function(ast_value_72cc5ff262c4a455)),
             },
         ),
         (
@@ -216,10 +222,8 @@ pub static NIKON_MENUSETTINGSZ9V3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "FlashOutput",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "$val>0.99 ? \"Full\" : sprintf(\"%.1f%%\",$val*100)".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("2 ** (-$val/3)".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_6c62520a706b493)),
+                value_conv: Some(ValueConv::Function(ast_value_52696782fcca735b)),
             },
         ),
         (
@@ -336,7 +340,7 @@ pub static NIKON_MENUSETTINGSZ9V3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 name: "MovieISOAutoHiLimit",
                 format: "int16u",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Expression("($val-104)/8".to_string())),
+                value_conv: Some(ValueConv::Function(ast_value_8390ff1421e71f53)),
             },
         ),
         (
@@ -354,7 +358,7 @@ pub static NIKON_MENUSETTINGSZ9V3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 name: "MovieISOAutoManualMode",
                 format: "int16u",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Expression("($val-104)/8".to_string())),
+                value_conv: Some(ValueConv::Function(ast_value_8390ff1421e71f53)),
             },
         ),
         (
@@ -689,19 +693,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = NIKON_MENUSETTINGSZ9V3_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -709,7 +710,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -717,7 +721,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -727,11 +730,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

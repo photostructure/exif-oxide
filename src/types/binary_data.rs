@@ -3,7 +3,6 @@
 //! This module defines the types used for ExifTool's ProcessBinaryData
 //! functionality, including format definitions and table structures.
 
-use crate::expressions::ExpressionEvaluator as UnifiedExpressionEvaluator;
 use crate::processor_registry::ProcessorContext;
 use crate::types::{DataMemberValue, ExifError, TagValue};
 use regex::Regex;
@@ -222,7 +221,7 @@ impl<'a> ExpressionEvaluator<'a> {
     /// Evaluate expression using unified expression system
     /// Attempts to use the unified ExpressionEvaluator before falling back to specialized logic
     fn evaluate_with_unified_system(&self, expr: &str) -> std::result::Result<usize, ExifError> {
-        let mut evaluator = UnifiedExpressionEvaluator::new();
+        let mut evaluator = ExpressionEvaluator::new(HashMap::new(), &HashMap::new());
         let mut processor_context = ProcessorContext::default();
 
         // Add val_hash values to processor context
@@ -665,10 +664,9 @@ impl BinaryDataTag {
 /// Evaluate a condition string against processor context
 /// ExifTool: Condition evaluation like '$self{Model} =~ /\b(20D|350D)\b/'
 fn evaluate_condition(condition: &str, context: &ProcessorContext) -> bool {
-    use crate::expressions::ExpressionEvaluator;
 
     // Create expression evaluator
-    let mut evaluator = ExpressionEvaluator::new();
+    let mut evaluator = ExpressionEvaluator::new(HashMap::new(), &HashMap::new());
 
     // Try to evaluate as boolean condition
     match evaluator.evaluate_context_condition(context, condition) {

@@ -6,525 +6,796 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_40::ast_print_4015a70c144b402;
+use crate::generated::functions::hash_45::ast_value_45f64f13ca77f48e;
+use crate::generated::functions::hash_79::ast_value_79412c758cdfcf8d;
+use crate::generated::functions::hash_7e::ast_value_7eadc2f4518c667e;
+use crate::generated::functions::hash_ba::ast_value_ba39cdf4578ace46;
+use crate::generated::functions::hash_e1::ast_value_e143a6a9ab8400ee;
+use crate::generated::functions::hash_e7::ast_value_e76f84b1ea03c377;
+
 /// Tag definitions for Photoshop::Main table
 pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (1000, TagInfo {
-            name: "Photoshop2Info",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1001, TagInfo {
-            name: "MacintoshPrintInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1002, TagInfo {
-            name: "XMLData",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1003, TagInfo {
-            name: "Photoshop2ColorTable",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1005, TagInfo {
-            name: "ResolutionInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1006, TagInfo {
-            name: "AlphaChannelsNames",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("Image::ExifTool::Photoshop::ConvertPascalString($self,$val)".to_string())),
-        }),
-        (1007, TagInfo {
-            name: "DisplayInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1008, TagInfo {
-            name: "PStringCaption",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1009, TagInfo {
-            name: "BorderInformation",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1010, TagInfo {
-            name: "BackgroundColor",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1011, TagInfo {
-            name: "PrintFlags",
-            format: "int8u",
-            print_conv: Some(PrintConv::Expression("\n            my $byte = 0;\n            my @bits = $val =~ /\\d+/g;\n            $byte = ($byte << 1) | ($_ ? 1 : 0) foreach reverse @bits;\n            return DecodeBits($byte, \\%Image::ExifTool::Photoshop::printFlags);\n        ".to_string())),
-            value_conv: None,
-        }),
-        (1012, TagInfo {
-            name: "BW_HalftoningInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1013, TagInfo {
-            name: "ColorHalftoningInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1014, TagInfo {
-            name: "DuotoneHalftoningInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1015, TagInfo {
-            name: "BW_TransferFunc",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1016, TagInfo {
-            name: "ColorTransferFuncs",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1017, TagInfo {
-            name: "DuotoneTransferFuncs",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1018, TagInfo {
-            name: "DuotoneImageInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1019, TagInfo {
-            name: "EffectiveBW",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1020, TagInfo {
-            name: "ObsoletePhotoshopTag1",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1021, TagInfo {
-            name: "EPSOptions",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1022, TagInfo {
-            name: "QuickMaskInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1023, TagInfo {
-            name: "ObsoletePhotoshopTag2",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1024, TagInfo {
-            name: "TargetLayerID",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1025, TagInfo {
-            name: "WorkingPath",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1026, TagInfo {
-            name: "LayersGroupInfo",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1027, TagInfo {
-            name: "ObsoletePhotoshopTag3",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1028, TagInfo {
-            name: "IPTCData",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1029, TagInfo {
-            name: "RawImageMode",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1030, TagInfo {
-            name: "JPEG_Quality",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1032, TagInfo {
-            name: "GridGuidesInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1033, TagInfo {
-            name: "PhotoshopBGRThumbnail",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1034, TagInfo {
-            name: "CopyrightFlag",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: Some(ValueConv::Expression("join(\" \",unpack(\"C*\", $val))".to_string())),
-        }),
-        (1035, TagInfo {
-            name: "URL",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1036, TagInfo {
-            name: "PhotoshopThumbnail",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1037, TagInfo {
-            name: "GlobalAngle",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"N\",$val)".to_string())),
-        }),
-        (1038, TagInfo {
-            name: "ColorSamplersResource",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1039, TagInfo {
-            name: "ICC_Profile",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1040, TagInfo {
-            name: "Watermark",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1041, TagInfo {
-            name: "ICC_Untagged",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1042, TagInfo {
-            name: "EffectsVisible",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1043, TagInfo {
-            name: "SpotHalftone",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1044, TagInfo {
-            name: "IDsBaseValue",
-            format: "int32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1045, TagInfo {
-            name: "UnicodeAlphaNames",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1046, TagInfo {
-            name: "IndexedColorTableCount",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1047, TagInfo {
-            name: "TransparentIndex",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1049, TagInfo {
-            name: "GlobalAltitude",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"N\",$val)".to_string())),
-        }),
-        (1050, TagInfo {
-            name: "SliceInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1051, TagInfo {
-            name: "WorkflowURL",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Photoshop::__ANON__]".to_string())),
-        }),
-        (1052, TagInfo {
-            name: "JumpToXPEP",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1053, TagInfo {
-            name: "AlphaIdentifiers",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1054, TagInfo {
-            name: "URL_List",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Photoshop::__ANON__]".to_string())),
-        }),
-        (1057, TagInfo {
-            name: "VersionInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1058, TagInfo {
-            name: "EXIFInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1059, TagInfo {
-            name: "ExifInfo2",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1060, TagInfo {
-            name: "XMP",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1061, TagInfo {
-            name: "IPTCDigest",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"H*\", $val)".to_string())),
-        }),
-        (1062, TagInfo {
-            name: "PrintScaleInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1064, TagInfo {
-            name: "PixelInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1065, TagInfo {
-            name: "LayerComps",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1066, TagInfo {
-            name: "AlternateDuotoneColors",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1067, TagInfo {
-            name: "AlternateSpotColors",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1069, TagInfo {
-            name: "LayerSelectionIDs",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("\n            my ($n, @a) = unpack(\"nN*\",$val);\n            $#a = $n - 1 if $n > @a;\n            return join(' ', @a);\n        ".to_string())),
-        }),
-        (1070, TagInfo {
-            name: "HDRToningInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1071, TagInfo {
-            name: "PrintInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1072, TagInfo {
-            name: "LayerGroupsEnabledID",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1073, TagInfo {
-            name: "ColorSamplersResource2",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1074, TagInfo {
-            name: "MeasurementScale",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1075, TagInfo {
-            name: "TimelineInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1076, TagInfo {
-            name: "SheetDisclosure",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1077, TagInfo {
-            name: "ChannelOptions",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1078, TagInfo {
-            name: "OnionSkins",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1080, TagInfo {
-            name: "CountInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1082, TagInfo {
-            name: "PrintInfo2",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1083, TagInfo {
-            name: "PrintStyle",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1084, TagInfo {
-            name: "MacintoshNSPrintInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1085, TagInfo {
-            name: "WindowsDEVMODE",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1086, TagInfo {
-            name: "AutoSaveFilePath",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1087, TagInfo {
-            name: "AutoSaveFormat",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1088, TagInfo {
-            name: "PathSelectionState",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (2999, TagInfo {
-            name: "ClippingPathName",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("\n            my $len = ord($val);\n            $val = substr($val, 0, $len+1) if $len < length($val);\n            return Image::ExifTool::Photoshop::ConvertPascalString($self,$val);\n        ".to_string())),
-        }),
-        (3000, TagInfo {
-            name: "OriginPathInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (7000, TagInfo {
-            name: "ImageReadyVariables",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (7001, TagInfo {
-            name: "ImageReadyDataSets",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (8000, TagInfo {
-            name: "LightroomWorkflow",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (10000, TagInfo {
-            name: "PrintFlagsInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
+        (
+            1000,
+            TagInfo {
+                name: "Photoshop2Info",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1001,
+            TagInfo {
+                name: "MacintoshPrintInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1002,
+            TagInfo {
+                name: "XMLData",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1003,
+            TagInfo {
+                name: "Photoshop2ColorTable",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1005,
+            TagInfo {
+                name: "ResolutionInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1006,
+            TagInfo {
+                name: "AlphaChannelsNames",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_ba39cdf4578ace46)),
+            },
+        ),
+        (
+            1007,
+            TagInfo {
+                name: "DisplayInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1008,
+            TagInfo {
+                name: "PStringCaption",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1009,
+            TagInfo {
+                name: "BorderInformation",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1010,
+            TagInfo {
+                name: "BackgroundColor",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1011,
+            TagInfo {
+                name: "PrintFlags",
+                format: "int8u",
+                print_conv: Some(PrintConv::Function(ast_print_4015a70c144b402)),
+                value_conv: None,
+            },
+        ),
+        (
+            1012,
+            TagInfo {
+                name: "BW_HalftoningInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1013,
+            TagInfo {
+                name: "ColorHalftoningInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1014,
+            TagInfo {
+                name: "DuotoneHalftoningInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1015,
+            TagInfo {
+                name: "BW_TransferFunc",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1016,
+            TagInfo {
+                name: "ColorTransferFuncs",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1017,
+            TagInfo {
+                name: "DuotoneTransferFuncs",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1018,
+            TagInfo {
+                name: "DuotoneImageInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1019,
+            TagInfo {
+                name: "EffectiveBW",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1020,
+            TagInfo {
+                name: "ObsoletePhotoshopTag1",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1021,
+            TagInfo {
+                name: "EPSOptions",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1022,
+            TagInfo {
+                name: "QuickMaskInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1023,
+            TagInfo {
+                name: "ObsoletePhotoshopTag2",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1024,
+            TagInfo {
+                name: "TargetLayerID",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1025,
+            TagInfo {
+                name: "WorkingPath",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1026,
+            TagInfo {
+                name: "LayersGroupInfo",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1027,
+            TagInfo {
+                name: "ObsoletePhotoshopTag3",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1028,
+            TagInfo {
+                name: "IPTCData",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1029,
+            TagInfo {
+                name: "RawImageMode",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1030,
+            TagInfo {
+                name: "JPEG_Quality",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1032,
+            TagInfo {
+                name: "GridGuidesInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1033,
+            TagInfo {
+                name: "PhotoshopBGRThumbnail",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1034,
+            TagInfo {
+                name: "CopyrightFlag",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: Some(ValueConv::Function(ast_value_e76f84b1ea03c377)),
+            },
+        ),
+        (
+            1035,
+            TagInfo {
+                name: "URL",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1036,
+            TagInfo {
+                name: "PhotoshopThumbnail",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1037,
+            TagInfo {
+                name: "GlobalAngle",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_e143a6a9ab8400ee)),
+            },
+        ),
+        (
+            1038,
+            TagInfo {
+                name: "ColorSamplersResource",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1039,
+            TagInfo {
+                name: "ICC_Profile",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1040,
+            TagInfo {
+                name: "Watermark",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1041,
+            TagInfo {
+                name: "ICC_Untagged",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1042,
+            TagInfo {
+                name: "EffectsVisible",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1043,
+            TagInfo {
+                name: "SpotHalftone",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1044,
+            TagInfo {
+                name: "IDsBaseValue",
+                format: "int32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1045,
+            TagInfo {
+                name: "UnicodeAlphaNames",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1046,
+            TagInfo {
+                name: "IndexedColorTableCount",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1047,
+            TagInfo {
+                name: "TransparentIndex",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1049,
+            TagInfo {
+                name: "GlobalAltitude",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_e143a6a9ab8400ee)),
+            },
+        ),
+        (
+            1050,
+            TagInfo {
+                name: "SliceInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1051,
+            TagInfo {
+                name: "WorkflowURL",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Photoshop::__ANON__]".to_string(),
+                )),
+            },
+        ),
+        (
+            1052,
+            TagInfo {
+                name: "JumpToXPEP",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1053,
+            TagInfo {
+                name: "AlphaIdentifiers",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1054,
+            TagInfo {
+                name: "URL_List",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Photoshop::__ANON__]".to_string(),
+                )),
+            },
+        ),
+        (
+            1057,
+            TagInfo {
+                name: "VersionInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1058,
+            TagInfo {
+                name: "EXIFInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1059,
+            TagInfo {
+                name: "ExifInfo2",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1060,
+            TagInfo {
+                name: "XMP",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1061,
+            TagInfo {
+                name: "IPTCDigest",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            },
+        ),
+        (
+            1062,
+            TagInfo {
+                name: "PrintScaleInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1064,
+            TagInfo {
+                name: "PixelInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1065,
+            TagInfo {
+                name: "LayerComps",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1066,
+            TagInfo {
+                name: "AlternateDuotoneColors",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1067,
+            TagInfo {
+                name: "AlternateSpotColors",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1069,
+            TagInfo {
+                name: "LayerSelectionIDs",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_45f64f13ca77f48e)),
+            },
+        ),
+        (
+            1070,
+            TagInfo {
+                name: "HDRToningInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1071,
+            TagInfo {
+                name: "PrintInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1072,
+            TagInfo {
+                name: "LayerGroupsEnabledID",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1073,
+            TagInfo {
+                name: "ColorSamplersResource2",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1074,
+            TagInfo {
+                name: "MeasurementScale",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1075,
+            TagInfo {
+                name: "TimelineInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1076,
+            TagInfo {
+                name: "SheetDisclosure",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1077,
+            TagInfo {
+                name: "ChannelOptions",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1078,
+            TagInfo {
+                name: "OnionSkins",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1080,
+            TagInfo {
+                name: "CountInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1082,
+            TagInfo {
+                name: "PrintInfo2",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1083,
+            TagInfo {
+                name: "PrintStyle",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1084,
+            TagInfo {
+                name: "MacintoshNSPrintInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1085,
+            TagInfo {
+                name: "WindowsDEVMODE",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1086,
+            TagInfo {
+                name: "AutoSaveFilePath",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1087,
+            TagInfo {
+                name: "AutoSaveFormat",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1088,
+            TagInfo {
+                name: "PathSelectionState",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            2999,
+            TagInfo {
+                name: "ClippingPathName",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_79412c758cdfcf8d)),
+            },
+        ),
+        (
+            3000,
+            TagInfo {
+                name: "OriginPathInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            7000,
+            TagInfo {
+                name: "ImageReadyVariables",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            7001,
+            TagInfo {
+                name: "ImageReadyDataSets",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            8000,
+            TagInfo {
+                name: "LightroomWorkflow",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            10000,
+            TagInfo {
+                name: "PrintFlagsInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
     ])
 });
 
@@ -533,19 +804,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = PHOTOSHOP_MAIN_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -553,7 +821,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -561,7 +832,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -571,11 +841,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

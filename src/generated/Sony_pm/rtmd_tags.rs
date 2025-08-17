@@ -7,264 +7,401 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::implementations::print_conv::{exposuretime_print_conv, fnumber_print_conv};
-use crate::implementations::value_conv::exif_date_value_conv;
+use crate::generated::functions::hash_14::ast_print_14c647eac637612a;
+use crate::generated::functions::hash_1a::ast_value_1a943147cffc80a4;
+use crate::generated::functions::hash_1b::ast_value_1b787d9ee3f14dc1;
+use crate::generated::functions::hash_44::ast_print_449352809d0c73f5;
+use crate::generated::functions::hash_63::ast_print_634937674bb4dcf3;
+use crate::generated::functions::hash_7f::ast_value_7f6a670980e83698;
+use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
+use crate::generated::functions::hash_c1::ast_print_c12c7e50f55cf298;
+use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_db::ast_value_db6d300cf2bc94e2;
+use crate::generated::functions::hash_ec::ast_print_ec01a8049c79f988;
+use crate::generated::functions::hash_ee::ast_value_ee9b0901d11400f9;
+use crate::generated::functions::hash_fc::ast_value_fc24b94dc60f8d29;
 
 /// Tag definitions for Sony::rtmd table
 pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (1550, TagInfo {
-            name: "Sony_rtmd_0x060e",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (12816, TagInfo {
-            name: "Sony_rtmd_0x3210",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (12825, TagInfo {
-            name: "Sony_rtmd_0x3219",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (12826, TagInfo {
-            name: "Sony_rtmd_0x321a",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (32768, TagInfo {
-            name: "FNumber",
-            format: "int16u",
-            print_conv: Some(PrintConv::Function(fnumber_print_conv)),
-            value_conv: Some(ValueConv::Expression("2 ** (8-$val/8192)".to_string())),
-        }),
-        (32769, TagInfo {
-            name: "Sony_rtmd_0x8001",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (32772, TagInfo {
-            name: "Sony_rtmd_0x8004",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (32773, TagInfo {
-            name: "Sony_rtmd_0x8005",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (32778, TagInfo {
-            name: "Sony_rtmd_0x800a",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (32779, TagInfo {
-            name: "Sony_rtmd_0x800b",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (33024, TagInfo {
-            name: "Sony_rtmd_0x8100",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (33025, TagInfo {
-            name: "Sony_rtmd_0x8101",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (33028, TagInfo {
-            name: "Sony_rtmd_0x8104",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (33029, TagInfo {
-            name: "Sony_rtmd_0x8105",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (33030, TagInfo {
-            name: "Sony_rtmd_0x8106",
-            format: "int32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (33033, TagInfo {
-            name: "ExposureTime",
-            format: "rational64u",
-            print_conv: Some(PrintConv::Function(exposuretime_print_conv)),
-            value_conv: None,
-        }),
-        (33034, TagInfo {
-            name: "MasterGainAdjustment",
-            format: "int16u",
-            print_conv: Some(PrintConv::Expression("sprintf(\"%.2f dB\", $val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 100".to_string())),
-        }),
-        (33035, TagInfo {
-            name: "ISO",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (33036, TagInfo {
-            name: "ElectricalExtenderMagnification",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (33037, TagInfo {
-            name: "Sony_rtmd_0x810d",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (33045, TagInfo {
-            name: "Sony_rtmd_0x8115",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (34048, TagInfo {
-            name: "GPSVersionID",
-            format: "int8u",
-            print_conv: Some(PrintConv::Expression("$val =~ tr/ /./; $val".to_string())),
-            value_conv: None,
-        }),
-        (34049, TagInfo {
-            name: "GPSLatitudeRef",
-            format: "string",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (34050, TagInfo {
-            name: "GPSLatitude",
-            format: "rational64u",
-            print_conv: Some(PrintConv::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1)".to_string())),
-            value_conv: Some(ValueConv::Expression("require Image::ExifTool::GPS;Image::ExifTool::GPS::ToDegrees($val)".to_string())),
-        }),
-        (34051, TagInfo {
-            name: "GPSLongitudeRef",
-            format: "string",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (34052, TagInfo {
-            name: "GPSLongitude",
-            format: "rational64u",
-            print_conv: Some(PrintConv::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1)".to_string())),
-            value_conv: Some(ValueConv::Expression("require Image::ExifTool::GPS;Image::ExifTool::GPS::ToDegrees($val)".to_string())),
-        }),
-        (34055, TagInfo {
-            name: "GPSTimeStamp",
-            format: "rational64u",
-            print_conv: Some(PrintConv::Expression("Image::ExifTool::GPS::PrintTimeStamp($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("require Image::ExifTool::GPS;Image::ExifTool::GPS::ConvertTimeStamp($val)".to_string())),
-        }),
-        (34057, TagInfo {
-            name: "GPSStatus",
-            format: "string",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (34058, TagInfo {
-            name: "GPSMeasureMode",
-            format: "string",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (34066, TagInfo {
-            name: "GPSMapDatum",
-            format: "string",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (34077, TagInfo {
-            name: "GPSDateStamp",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Function(exif_date_value_conv)),
-        }),
-        (57344, TagInfo {
-            name: "Sony_rtmd_0xe000",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (58112, TagInfo {
-            name: "Sony_rtmd_0xe300",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (58113, TagInfo {
-            name: "Sony_rtmd_0xe301",
-            format: "int32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (58114, TagInfo {
-            name: "Sony_rtmd_0xe302",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (58115, TagInfo {
-            name: "WhiteBalance",
-            format: "int8u",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (58116, TagInfo {
-            name: "DateTime",
-            format: "undef",
-            print_conv: Some(PrintConv::Expression("$self->ConvertDateTime($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("my @a=unpack(\"x1H4H2H2H2H2H2\",$val); \"$a[0]:$a[1]:$a[2] $a[3]:$a[4]:$a[5]\"".to_string())),
-        }),
-        (58421, TagInfo {
-            name: "Sony_rtmd_0xe435",
-            format: "int32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (58423, TagInfo {
-            name: "Sony_rtmd_0xe437",
-            format: "int32s",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (58427, TagInfo {
-            name: "PitchRollYaw",
-            format: "int16s",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (58437, TagInfo {
-            name: "Sony_rtmd_0xe445",
-            format: "int32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (58443, TagInfo {
-            name: "Accelerometer",
-            format: "int16s",
-            print_conv: None,
-            value_conv: None,
-        }),
+        (
+            1550,
+            TagInfo {
+                name: "Sony_rtmd_0x060e",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            12816,
+            TagInfo {
+                name: "Sony_rtmd_0x3210",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            12825,
+            TagInfo {
+                name: "Sony_rtmd_0x3219",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            12826,
+            TagInfo {
+                name: "Sony_rtmd_0x321a",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            32768,
+            TagInfo {
+                name: "FNumber",
+                format: "int16u",
+                print_conv: Some(PrintConv::Function(ast_print_634937674bb4dcf3)),
+                value_conv: Some(ValueConv::Function(ast_value_1a943147cffc80a4)),
+            },
+        ),
+        (
+            32769,
+            TagInfo {
+                name: "Sony_rtmd_0x8001",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            32772,
+            TagInfo {
+                name: "Sony_rtmd_0x8004",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            32773,
+            TagInfo {
+                name: "Sony_rtmd_0x8005",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            32778,
+            TagInfo {
+                name: "Sony_rtmd_0x800a",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            32779,
+            TagInfo {
+                name: "Sony_rtmd_0x800b",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            33024,
+            TagInfo {
+                name: "Sony_rtmd_0x8100",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            33025,
+            TagInfo {
+                name: "Sony_rtmd_0x8101",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            33028,
+            TagInfo {
+                name: "Sony_rtmd_0x8104",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            33029,
+            TagInfo {
+                name: "Sony_rtmd_0x8105",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            33030,
+            TagInfo {
+                name: "Sony_rtmd_0x8106",
+                format: "int32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            33033,
+            TagInfo {
+                name: "ExposureTime",
+                format: "rational64u",
+                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
+                value_conv: None,
+            },
+        ),
+        (
+            33034,
+            TagInfo {
+                name: "MasterGainAdjustment",
+                format: "int16u",
+                print_conv: Some(PrintConv::Function(ast_print_14c647eac637612a)),
+                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+            },
+        ),
+        (
+            33035,
+            TagInfo {
+                name: "ISO",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            33036,
+            TagInfo {
+                name: "ElectricalExtenderMagnification",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            33037,
+            TagInfo {
+                name: "Sony_rtmd_0x810d",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            33045,
+            TagInfo {
+                name: "Sony_rtmd_0x8115",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            34048,
+            TagInfo {
+                name: "GPSVersionID",
+                format: "int8u",
+                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+                value_conv: None,
+            },
+        ),
+        (
+            34049,
+            TagInfo {
+                name: "GPSLatitudeRef",
+                format: "string",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            34050,
+            TagInfo {
+                name: "GPSLatitude",
+                format: "rational64u",
+                print_conv: Some(PrintConv::Function(ast_print_ec01a8049c79f988)),
+                value_conv: Some(ValueConv::Function(ast_value_fc24b94dc60f8d29)),
+            },
+        ),
+        (
+            34051,
+            TagInfo {
+                name: "GPSLongitudeRef",
+                format: "string",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            34052,
+            TagInfo {
+                name: "GPSLongitude",
+                format: "rational64u",
+                print_conv: Some(PrintConv::Function(ast_print_ec01a8049c79f988)),
+                value_conv: Some(ValueConv::Function(ast_value_fc24b94dc60f8d29)),
+            },
+        ),
+        (
+            34055,
+            TagInfo {
+                name: "GPSTimeStamp",
+                format: "rational64u",
+                print_conv: Some(PrintConv::Function(ast_print_449352809d0c73f5)),
+                value_conv: Some(ValueConv::Function(ast_value_1b787d9ee3f14dc1)),
+            },
+        ),
+        (
+            34057,
+            TagInfo {
+                name: "GPSStatus",
+                format: "string",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            34058,
+            TagInfo {
+                name: "GPSMeasureMode",
+                format: "string",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            34066,
+            TagInfo {
+                name: "GPSMapDatum",
+                format: "string",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            34077,
+            TagInfo {
+                name: "GPSDateStamp",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_db6d300cf2bc94e2)),
+            },
+        ),
+        (
+            57344,
+            TagInfo {
+                name: "Sony_rtmd_0xe000",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            58112,
+            TagInfo {
+                name: "Sony_rtmd_0xe300",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            58113,
+            TagInfo {
+                name: "Sony_rtmd_0xe301",
+                format: "int32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            58114,
+            TagInfo {
+                name: "Sony_rtmd_0xe302",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            58115,
+            TagInfo {
+                name: "WhiteBalance",
+                format: "int8u",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            58116,
+            TagInfo {
+                name: "DateTime",
+                format: "undef",
+                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                value_conv: Some(ValueConv::Function(ast_value_7f6a670980e83698)),
+            },
+        ),
+        (
+            58421,
+            TagInfo {
+                name: "Sony_rtmd_0xe435",
+                format: "int32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            58423,
+            TagInfo {
+                name: "Sony_rtmd_0xe437",
+                format: "int32s",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            58427,
+            TagInfo {
+                name: "PitchRollYaw",
+                format: "int16s",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            58437,
+            TagInfo {
+                name: "Sony_rtmd_0xe445",
+                format: "int32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            58443,
+            TagInfo {
+                name: "Accelerometer",
+                format: "int16s",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
     ])
 });
 
@@ -273,19 +410,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = SONY_RTMD_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -293,7 +427,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -301,7 +438,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -311,11 +447,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }
