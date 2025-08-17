@@ -6,141 +6,215 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_2a::ast_value_2a663a50a009bfa;
+use crate::generated::functions::hash_48::ast_print_487657613095a4c6;
+use crate::generated::functions::hash_5b::ast_value_5b2c41e400f339d0;
+use crate::generated::functions::hash_86::ast_print_86d069131c594edd;
+use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
+use crate::generated::functions::hash_ea::ast_value_eaa9c283f27f62e3;
+
 /// Tag definitions for Olympus::WAV table
 pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (12, TagInfo {
-            name: "Model",
-            format: "string[16]",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (28, TagInfo {
-            name: "FileNumber",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("sprintf(\"%.4d\", $val)".to_string())),
-            value_conv: None,
-        }),
-        (38, TagInfo {
-            name: "DateTimeOriginal",
-            format: "undef[12]",
-            print_conv: Some(PrintConv::Expression("$self->ConvertDateTime($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("\n            return undef unless $val =~ /^(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})$/;\n            my $y = $1 < 70 ? \"20$1\" : \"19$1\";\n            return \"$y:$2:$3 $4:$5:$6\";\n        ".to_string())),
-        }),
-        (50, TagInfo {
-            name: "DateTimeEnd",
-            format: "undef[12]",
-            print_conv: Some(PrintConv::Expression("$self->ConvertDateTime($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("\n            return undef unless $val =~ /^(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})$/;\n            my $y = $1 < 70 ? \"20$1\" : \"19$1\";\n            return \"$y:$2:$3 $4:$5:$6\";\n        ".to_string())),
-        }),
-        (62, TagInfo {
-            name: "RecordingTime",
-            format: "undef[6]",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("$val =~ s/^(\\d{2})(\\d{2})/$1:$2:/; $val".to_string())),
-        }),
-        (512, TagInfo {
-            name: "Duration",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (522, TagInfo {
-            name: "Index01",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (532, TagInfo {
-            name: "Index02",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (542, TagInfo {
-            name: "Index03",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (552, TagInfo {
-            name: "Index04",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (562, TagInfo {
-            name: "Index05",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (572, TagInfo {
-            name: "Index06",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (582, TagInfo {
-            name: "Index07",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (592, TagInfo {
-            name: "Index08",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (602, TagInfo {
-            name: "Index09",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (612, TagInfo {
-            name: "Index10",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (622, TagInfo {
-            name: "Index11",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (632, TagInfo {
-            name: "Index12",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (642, TagInfo {
-            name: "Index13",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (652, TagInfo {
-            name: "Index14",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (662, TagInfo {
-            name: "Index15",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
-        (672, TagInfo {
-            name: "Index16",
-            format: "int32u",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1000".to_string())),
-        }),
+        (
+            12,
+            TagInfo {
+                name: "Model",
+                format: "string[16]",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            28,
+            TagInfo {
+                name: "FileNumber",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_86d069131c594edd)),
+                value_conv: None,
+            },
+        ),
+        (
+            38,
+            TagInfo {
+                name: "DateTimeOriginal",
+                format: "undef[12]",
+                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                value_conv: Some(ValueConv::Function(ast_value_2a663a50a009bfa)),
+            },
+        ),
+        (
+            50,
+            TagInfo {
+                name: "DateTimeEnd",
+                format: "undef[12]",
+                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                value_conv: Some(ValueConv::Function(ast_value_2a663a50a009bfa)),
+            },
+        ),
+        (
+            62,
+            TagInfo {
+                name: "RecordingTime",
+                format: "undef[6]",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_eaa9c283f27f62e3)),
+            },
+        ),
+        (
+            512,
+            TagInfo {
+                name: "Duration",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            522,
+            TagInfo {
+                name: "Index01",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            532,
+            TagInfo {
+                name: "Index02",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            542,
+            TagInfo {
+                name: "Index03",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            552,
+            TagInfo {
+                name: "Index04",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            562,
+            TagInfo {
+                name: "Index05",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            572,
+            TagInfo {
+                name: "Index06",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            582,
+            TagInfo {
+                name: "Index07",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            592,
+            TagInfo {
+                name: "Index08",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            602,
+            TagInfo {
+                name: "Index09",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            612,
+            TagInfo {
+                name: "Index10",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            622,
+            TagInfo {
+                name: "Index11",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            632,
+            TagInfo {
+                name: "Index12",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            642,
+            TagInfo {
+                name: "Index13",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            652,
+            TagInfo {
+                name: "Index14",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            662,
+            TagInfo {
+                name: "Index15",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
+        (
+            672,
+            TagInfo {
+                name: "Index16",
+                format: "int32u",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            },
+        ),
     ])
 });
 
@@ -149,19 +223,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = OLYMPUS_WAV_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -169,7 +240,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -177,7 +251,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -187,11 +260,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

@@ -7,6 +7,8 @@ use super::errors::CodeGenError;
 use crate::ppi::types::*;
 use indoc::formatdoc;
 
+use crate::ppi::rust_generator::visitor_tokens::*;
+
 /// Trait for visiting PPI AST nodes and generating Rust code
 pub trait PpiVisitor {
     fn expression_type(&self) -> &ExpressionType;
@@ -40,9 +42,16 @@ pub trait PpiVisitor {
             "PPI::Structure::List" => self.visit_list(node),
             "PPI::Token::Structure" => self.visit_structure(node),
             // Normalized AST node types (created by normalizer)
+            "ConditionalBlock" => self.visit_normalized_conditional_block(node),
             "FunctionCall" => self.visit_normalized_function_call(node),
+            "IfStatement" => self.visit_normalized_if_statement(node),
             "StringConcat" => self.visit_normalized_string_concat(node),
             "StringRepeat" => self.visit_normalized_string_repeat(node),
+            "TernaryOp" => self.visit_normalized_ternary_op(node),
+            // Normalized component nodes (parts of larger structures)
+            "Condition" | "Assignment" | "TrueBranch" | "FalseBranch" => {
+                self.visit_normalized_component(node)
+            }
             _ => Err(CodeGenError::UnsupportedToken(node.class.clone())),
         }
     }
@@ -126,36 +135,12 @@ pub trait PpiVisitor {
 
     /// Visit symbol node (variables like $val, $$self{Field})
     fn visit_symbol(&self, node: &PpiNode) -> Result<String, CodeGenError> {
-        let content = node
-            .content
-            .as_ref()
-            .ok_or(CodeGenError::MissingContent("symbol".to_string()))?;
-
-        if node.is_self_reference() {
-            if let Some(field) = node.extract_self_field() {
-                Ok(format!("ctx.get(\"{field}\").unwrap_or_default()"))
-            } else {
-                Err(CodeGenError::InvalidSelfReference(content.clone()))
-            }
-        } else if content == "$val" {
-            Ok("val".to_string())
-        } else if content == "$valPt" {
-            Ok("val_pt".to_string())
-        } else {
-            // Generic variable
-            Ok(content.trim_start_matches('$').to_string())
-        }
+        process_symbol(node)
     }
 
     /// Visit operator node
     fn visit_operator(&self, node: &PpiNode) -> Result<String, CodeGenError> {
-        let op = node
-            .content
-            .as_ref()
-            .ok_or(CodeGenError::MissingContent("operator".to_string()))?;
-
-        // Return the operator - parent will decide how to use it
-        Ok(op.clone())
+        process_operator(node)
     }
 
     /// Visit number node - enhanced for better float and scientific notation handling
@@ -333,6 +318,41 @@ pub trait PpiVisitor {
                     _ => Ok(format!("match {} {{ TagValue::String(s) => s.len() as i32, _ => 0 }}", var)),
                 }
             }
+            "join" => {
+                if args.len() != 2 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "join requires exactly 2 arguments (separator, list)".to_string(),
+                    ));
+                }
+                let separator = &args[0];
+                let list = &args[1];
+                match self.expression_type() {
+                    ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
+                        "TagValue::String(crate::fmt::join_binary({}, &{}))",
+                        separator, list
+                    )),
+                    _ => Ok(format!("crate::fmt::join_binary({}, &{})", separator, list)),
+                }
+            }
+            "unpack" => {
+                if args.len() != 2 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "unpack requires exactly 2 arguments (format, data)".to_string(),
+                    ));
+                }
+                let format_str = &args[0];
+                let data = &args[1];
+                match self.expression_type() {
+                    ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
+                        "TagValue::String(crate::fmt::unpack_binary({}, &{}))",
+                        format_str, data
+                    )),
+                    _ => Ok(format!(
+                        "crate::fmt::unpack_binary({}, &{})",
+                        format_str, data
+                    )),
+                }
+            }
             _ => {
                 // Generic function call
                 Ok(format!("{}({})", func_name, args.join(", ")))
@@ -474,8 +494,11 @@ pub trait PpiVisitor {
                 ))
             }
         } else {
-            // Fallback for complex subscript patterns
-            Ok(format!("subscript_access({})", content))
+            // Return error for complex subscript patterns that cannot be reliably translated
+            Err(CodeGenError::UnsupportedStructure(format!(
+                "Complex subscript pattern cannot be translated: {}",
+                content
+            )))
         }
     }
 
@@ -953,5 +976,73 @@ pub trait PpiVisitor {
         // Note: $ signs should remain as literal $ for regex backreferences like $1, $2, etc.
         replacement.replace("\\", "\\\\").replace("\"", "\\\"")
         // Do NOT escape $ signs - they are needed for regex backreferences ($1, $2, etc.)
+    }
+
+    /// Visit normalized ConditionalBlock nodes (created by normalizer)
+    fn visit_normalized_conditional_block(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        if node.children.len() != 3 {
+            return Err(CodeGenError::UnsupportedStructure(
+                "ConditionalBlock requires exactly 3 children (condition, assignment, return_expr)"
+                    .to_string(),
+            ));
+        }
+
+        let condition = self.visit_node(&node.children[0])?;
+        let assignment = self.visit_node(&node.children[1])?;
+        let return_expr = self.visit_node(&node.children[2])?;
+
+        // Generate Rust if-block with assignment and return expression
+        // Trust ExifTool: Preserve exact Perl semantics where conditional assignment affects final result
+        Ok(format!(
+            "{{ if {} {{ {} }} {} }}",
+            condition, assignment, return_expr
+        ))
+    }
+
+    /// Visit normalized TernaryOp nodes (created by normalizer)
+    fn visit_normalized_ternary_op(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        if node.children.len() != 3 {
+            return Err(CodeGenError::UnsupportedStructure(
+                "TernaryOp requires exactly 3 children (condition, true_branch, false_branch)"
+                    .to_string(),
+            ));
+        }
+
+        // Process each part of the ternary expression
+        let condition = self.visit_node(&node.children[0])?;
+        let true_branch = self.visit_node(&node.children[1])?;
+        let false_branch = self.visit_node(&node.children[2])?;
+
+        Ok(format!(
+            "if {} {{ {} }} else {{ {} }}",
+            condition, true_branch, false_branch
+        ))
+    }
+
+    /// Visit normalized IfStatement nodes (created by PostfixConditionalNormalizer)
+    fn visit_normalized_if_statement(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        if node.children.len() != 2 {
+            return Err(CodeGenError::UnsupportedStructure(
+                "IfStatement requires exactly 2 children (condition, body)".to_string(),
+            ));
+        }
+
+        // Process the condition and body
+        let condition = self.visit_node(&node.children[0])?;
+        let body = self.visit_node(&node.children[1])?;
+
+        Ok(format!("if {} {{ {} }}", condition, body))
+    }
+
+    /// Visit normalized component nodes (Condition, Assignment, TrueBranch, FalseBranch)
+    /// These are wrapper nodes created by the normalizer - process their children
+    fn visit_normalized_component(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        if node.children.is_empty() {
+            return Ok("".to_string());
+        }
+
+        // Delegate to process_node_sequence which handles binary operations (like =~) properly
+        // instead of just joining with spaces, which generates invalid Perl syntax
+        self.process_node_sequence(&node.children)
     }
 }

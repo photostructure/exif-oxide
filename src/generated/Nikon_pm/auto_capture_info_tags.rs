@@ -6,75 +6,113 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_16::ast_print_162c0c787a1ce5f3;
+use crate::generated::functions::hash_53::ast_print_53e26bd836197e46;
+use crate::generated::functions::hash_93::ast_print_936cc7e573e248bc;
+
 /// Tag definitions for Nikon::AutoCaptureInfo table
 pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (0, TagInfo {
-            name: "AutoCapturedFrame",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (1, TagInfo {
-            name: "AutoCaptureCriteria",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("\n            $_ = '';\n            return $_ . Image::ExifTool::DecodeBits($val,\n            {\n                0 => 'Distance',\n                1 => 'Motion',\n                2 => 'Subject Detection',\n            });\n        ".to_string())),
-            value_conv: None,
-        }),
-        (55, TagInfo {
-            name: "AutoCaptureRecordingTime",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (56, TagInfo {
-            name: "AutoCaptureWaitTime",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (74, TagInfo {
-            name: "AutoCaptureDistanceFar",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("sprintf(\"%.1f m\", $val/10)".to_string())),
-            value_conv: None,
-        }),
-        (78, TagInfo {
-            name: "AutoCaptureDistanceNear",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("sprintf(\"%.1f m\", $val/10)".to_string())),
-            value_conv: None,
-        }),
-        (95, TagInfo {
-            name: "AutoCaptureCriteriaMotionDirection",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("\n            return 'All' if $val eq 255;\n            $_ = '';\n            return $_ . Image::ExifTool::DecodeBits($val,\n            {\n                0 => 'Top Left',\n                1 => 'Top Right',\n                2 => 'Bottom Left',\n                3 => 'Bottom Right',\n                4 => 'Left',\n                5 => 'Right',\n                6 => 'Top Center',\n                7 => 'Bottom Center',\n            });\n        ".to_string())),
-            value_conv: None,
-        }),
-        (99, TagInfo {
-            name: "AutoCaptureCriteriaMotionSpeed",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (100, TagInfo {
-            name: "AutoCaptureCriteriaMotionSize",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (105, TagInfo {
-            name: "AutoCaptureCriteriaSubjectSize",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (106, TagInfo {
-            name: "AutoCaptureCriteriaSubjectType",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
+        (
+            0,
+            TagInfo {
+                name: "AutoCapturedFrame",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            1,
+            TagInfo {
+                name: "AutoCaptureCriteria",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_936cc7e573e248bc)),
+                value_conv: None,
+            },
+        ),
+        (
+            55,
+            TagInfo {
+                name: "AutoCaptureRecordingTime",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            56,
+            TagInfo {
+                name: "AutoCaptureWaitTime",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            74,
+            TagInfo {
+                name: "AutoCaptureDistanceFar",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_53e26bd836197e46)),
+                value_conv: None,
+            },
+        ),
+        (
+            78,
+            TagInfo {
+                name: "AutoCaptureDistanceNear",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_53e26bd836197e46)),
+                value_conv: None,
+            },
+        ),
+        (
+            95,
+            TagInfo {
+                name: "AutoCaptureCriteriaMotionDirection",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_162c0c787a1ce5f3)),
+                value_conv: None,
+            },
+        ),
+        (
+            99,
+            TagInfo {
+                name: "AutoCaptureCriteriaMotionSpeed",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            100,
+            TagInfo {
+                name: "AutoCaptureCriteriaMotionSize",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            105,
+            TagInfo {
+                name: "AutoCaptureCriteriaSubjectSize",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            106,
+            TagInfo {
+                name: "AutoCaptureCriteriaSubjectType",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
     ])
 });
 
@@ -83,19 +121,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = NIKON_AUTOCAPTUREINFO_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -103,7 +138,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -111,7 +149,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -121,11 +158,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

@@ -417,7 +417,7 @@ mod tests {
 
         // Verify all tag names are non-empty
         for tag in CANON_MAIN_TAGS.values() {
-            assert!(!tag.name.is_empty(), "Tag ID {} has empty name", tag.id);
+            assert!(!tag.name.is_empty(), "Tag name is empty: {}", tag.name);
         }
     }
 }

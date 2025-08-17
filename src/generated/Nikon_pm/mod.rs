@@ -82,7 +82,6 @@ pub mod i_so_auto_shutter_time_z9;
 pub mod image_area_d6;
 pub mod image_area_z9;
 pub mod image_area_z9b;
-pub mod info_zseries;
 pub mod interval_info_d6_tags;
 pub mod interval_info_z7ii_tags;
 pub mod iso_auto_info_d810_tags;

@@ -127,7 +127,6 @@ fn find_nikon_tag_id_by_name(tag_name: &str) -> Option<u32> {
 /// ExifTool: Nikon.pm SubDirectory processing for binary data expansion
 pub fn process_nikon_subdirectory_tags(exif_reader: &mut ExifReader) -> Result<()> {
     use crate::exif::subdirectory_processing::process_subdirectories_with_printconv;
-    use crate::generated::Nikon_pm::tag_kit;
 
     debug!("Processing Nikon subdirectory tags using generic system");
 

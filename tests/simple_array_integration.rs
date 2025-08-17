@@ -36,7 +36,8 @@ mod simple_array_integration_tests {
     #[test]
     fn test_xlat_arrays_have_correct_size_and_key_values() {
         // Import the generated arrays
-        use exif_oxide::generated::Nikon_pm::{XLAT_0, XLAT_1};
+        use exif_oxide::generated::Nikon_pm::xlat_0::XLAT_0;
+        use exif_oxide::generated::Nikon_pm::xlat_1::XLAT_1;
 
         // Test array sizes
         assert_eq!(XLAT_0.len(), 256, "XLAT_0 should have exactly 256 elements");
@@ -68,7 +69,8 @@ mod simple_array_integration_tests {
     #[test]
     fn test_xlat_arrays_are_accessible_at_runtime() {
         // Import the generated arrays
-        use exif_oxide::generated::Nikon_pm::{XLAT_0, XLAT_1};
+        use exif_oxide::generated::Nikon_pm::xlat_0::XLAT_0;
+        use exif_oxide::generated::Nikon_pm::xlat_1::XLAT_1;
 
         // Test that we can access arrays with bounds checking
         assert_eq!(XLAT_0.first(), Some(&193));
@@ -87,7 +89,8 @@ mod simple_array_integration_tests {
     #[test]
     fn test_xlat_arrays_cryptographic_properties() {
         // Import the generated arrays
-        use exif_oxide::generated::Nikon_pm::{XLAT_0, XLAT_1};
+        use exif_oxide::generated::Nikon_pm::xlat_0::XLAT_0;
+        use exif_oxide::generated::Nikon_pm::xlat_1::XLAT_1;
         use std::collections::HashSet;
 
         // Verify arrays contain diverse values (not all zeros, not all the same)

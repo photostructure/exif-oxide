@@ -6,6 +6,15 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_13::ast_print_139f419a2aaaa1f3;
+use crate::generated::functions::hash_84::ast_print_8497b6582cfb6c0a;
+use crate::generated::functions::hash_97::ast_print_976003e439a3f378;
+use crate::generated::functions::hash_99::ast_print_993ce46cc3d936eb;
+use crate::generated::functions::hash_9a::ast_print_9a8d70b79f825503;
+use crate::generated::functions::hash_d3::ast_print_d3baecf4975cff4c;
+use crate::generated::functions::hash_dd::ast_print_dda555683af957b;
+
 /// Tag definitions for GoPro::KBAT table
 pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
@@ -14,7 +23,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryCurrent",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val A\"".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_8497b6582cfb6c0a)),
                 value_conv: None,
             },
         ),
@@ -23,7 +32,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryCapacity",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val Ah\"".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_993ce46cc3d936eb)),
                 value_conv: None,
             },
         ),
@@ -32,7 +41,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "KBAT_Unknown2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val J\"".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_9a8d70b79f825503)),
                 value_conv: None,
             },
         ),
@@ -41,7 +50,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val C\"".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
                 value_conv: None,
             },
         ),
@@ -50,7 +59,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryVoltage1",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val V\"".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_dda555683af957b)),
                 value_conv: None,
             },
         ),
@@ -59,7 +68,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryVoltage2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val V\"".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_dda555683af957b)),
                 value_conv: None,
             },
         ),
@@ -68,7 +77,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryVoltage3",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val V\"".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_dda555683af957b)),
                 value_conv: None,
             },
         ),
@@ -77,7 +86,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryVoltage4",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val V\"".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_dda555683af957b)),
                 value_conv: None,
             },
         ),
@@ -86,9 +95,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "ConvertDuration(int($val + 0.5))".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_976003e439a3f378)),
                 value_conv: None,
             },
         ),
@@ -97,7 +104,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "KBAT_Unknown9",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val %\"".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_139f419a2aaaa1f3)),
                 value_conv: None,
             },
         ),
@@ -142,7 +149,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryLevel",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val %\"".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_139f419a2aaaa1f3)),
                 value_conv: None,
             },
         ),
@@ -154,19 +161,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = GO_PRO_KBAT_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -174,7 +178,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -182,7 +189,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -192,11 +198,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

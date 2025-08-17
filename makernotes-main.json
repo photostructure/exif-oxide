@@ -1,0 +1,1585 @@
+{
+  "type": "array",
+  "module": "MakerNotes",
+  "name": "Main",
+  "metadata": {
+    "size": 91,
+    "is_composite_table": 0
+  },
+  "data": [
+    {
+      "Name": "MakerNoteApple",
+      "Writable": "undef",
+      "Binary": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr + 14",
+        "Base": "$start - 14",
+        "TagTable": "Image::ExifTool::Apple::Main"
+      },
+      "MakerNotes": 1,
+      "Format": "undef",
+      "Condition": "$$valPt =~ /^Apple iOS\\0/",
+      "WriteGroup": "ExifIFD"
+    },
+    {
+      "Condition": "$$valPt=~/^Nikon\\x00\\x02/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Nikon::Main",
+        "Base": "$start - 8",
+        "Start": "$valuePtr + 18",
+        "ByteOrder": "Unknown"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteNikon"
+    },
+    {
+      "Writable": "undef",
+      "Binary": 1,
+      "Name": "MakerNoteCanon",
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$self{Make} =~ /^Canon/",
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Canon::Main",
+        "ByteOrder": "Unknown",
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::ProcessCanon]"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      }
+    },
+    {
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteCasio",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$self{Make}=~/^CASIO/ and $$valPt!~/^(QVC|DCI)\\0/",
+      "Format": "undef",
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Casio::Main",
+        "ByteOrder": "Unknown"
+      }
+    },
+    {
+      "Format": "undef",
+      "Condition": "$$valPt =~ /^(QVC|DCI)\\0/",
+      "WriteGroup": "ExifIFD",
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "Start": "$valuePtr + 6",
+        "ByteOrder": "Unknown",
+        "FixBase": 1,
+        "TagTable": "Image::ExifTool::Casio::Type2"
+      },
+      "MakerNotes": 1,
+      "Writable": "undef",
+      "Binary": 1,
+      "Name": "MakerNoteCasio2"
+    },
+    {
+      "Name": "MakerNoteDJIInfo",
+      "Writable": "undef",
+      "Binary": 1,
+      "NotIFD": 1,
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::DJI::Info"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt =~ /^\\[ae_dbg_info:/"
+    },
+    {
+      "Name": "MakerNoteDJI",
+      "Writable": "undef",
+      "Binary": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::DJI::Main",
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Format": "undef",
+      "Condition": "$$self{Make} eq \"DJI\" and $$valPt !~ /^(...\\@AMBA|DJI)/s",
+      "WriteGroup": "ExifIFD"
+    },
+    {
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::FLIR::Main",
+        "Start": "$valuePtr",
+        "ByteOrder": "Unknown"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$self{Make} =~ /^FLIR Systems/",
+      "Name": "MakerNoteFLIR",
+      "Writable": "undef",
+      "Binary": 1
+    },
+    {
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt =~ /^(FUJIFILM|GENERALE)/",
+      "Format": "undef",
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::FujiFilm::Main",
+        "OffsetPt": "$valuePtr+8",
+        "Base": "$start",
+        "ByteOrder": "LittleEndian"
+      },
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteFujiFilm"
+    },
+    {
+      "Condition": "$$valPt =~ /^GE(\\0\\0|NIC\\0)/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "SubDirectory": {
+        "AutoFix": 1,
+        "Start": "$valuePtr + 18",
+        "ByteOrder": "Unknown",
+        "FixBase": 1,
+        "TagTable": "Image::ExifTool::GE::Main"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteGE"
+    },
+    {
+      "SubDirectory": {
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::ProcessGE2]",
+        "Start": "$valuePtr + 12",
+        "FixOffsets": "$valuePtr -= 210 if $tagID >= 0x1303",
+        "ByteOrder": "LittleEndian",
+        "Base": "$start - 6",
+        "TagTable": "Image::ExifTool::FujiFilm::Main"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Condition": "$$valPt =~ /^GE\\x0c\\0\\0\\0\\x16\\0\\0\\0/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "Name": "MakerNoteGE2",
+      "Binary": 1,
+      "Writable": "undef"
+    },
+    {
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "Start": "$valuePtr",
+        "Base": 0,
+        "ByteOrder": "Unknown",
+        "TagTable": "Image::ExifTool::Unknown::Main"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$self{Make} eq \"Hasselblad\"",
+      "Name": "MakerNoteHasselblad",
+      "Writable": "undef",
+      "Binary": 1
+    },
+    {
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteHP",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt =~ /^(Hewlett-Packard|Vivitar)/",
+      "Format": "undef",
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::HP::Main",
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::ProcessUnknown]",
+        "ByteOrder": "Unknown"
+      }
+    },
+    {
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::HP::Type2",
+        "ByteOrder": "LittleEndian",
+        "Start": "$valuePtr"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Format": "undef",
+      "Condition": "$$valPt =~ /^610[\\0-\\4]/",
+      "WriteGroup": "ExifIFD",
+      "Name": "MakerNoteHP2",
+      "Writable": "undef",
+      "NotIFD": 1,
+      "Binary": 1
+    },
+    {
+      "Condition": "$$valPt =~ /^IIII[\\x04|\\x05]\\0/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::HP::Type4",
+        "ByteOrder": "LittleEndian",
+        "Start": "$valuePtr"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Binary": 1,
+      "NotIFD": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteHP4"
+    },
+    {
+      "Name": "MakerNoteHP6",
+      "Binary": 1,
+      "NotIFD": 1,
+      "Writable": "undef",
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "Start": "$valuePtr",
+        "ByteOrder": "LittleEndian",
+        "TagTable": "Image::ExifTool::HP::Type6"
+      },
+      "MakerNotes": 1,
+      "Condition": "$$valPt =~ /^IIII\\x06\\0/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef"
+    },
+    {
+      "Name": "MakerNoteISL",
+      "Binary": 1,
+      "Writable": "undef",
+      "SubDirectory": {
+        "ByteOrder": "Unknown",
+        "Base": "$start - 8",
+        "Start": "$valuePtr + 24",
+        "TagTable": "Image::ExifTool::Unknown::Main"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Condition": "$$valPt =~ /^ISLMAKERNOTE000\\0/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef"
+    },
+    {
+      "Name": "MakerNoteJVC",
+      "Binary": 1,
+      "Writable": "undef",
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::JVC::Main",
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr + 4"
+      },
+      "MakerNotes": 1,
+      "Condition": "$$valPt=~/^JVC /",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef"
+    },
+    {
+      "Name": "MakerNoteJVCText",
+      "Writable": "undef",
+      "NotIFD": 1,
+      "Binary": 1,
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::JVC::Text"
+      },
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$self{Make}=~/^(JVC|Victor)/ and $$valPt=~/^VER:/"
+    },
+    {
+      "Condition": "$$self{Make}=~/^EASTMAN KODAK/ and $$valPt=~/^KDK INFO/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Kodak::Main",
+        "Start": "$valuePtr + 8",
+        "ByteOrder": "BigEndian"
+      },
+      "MakerNotes": 1,
+      "NotIFD": 1,
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteKodak1a"
+    },
+    {
+      "Binary": 1,
+      "NotIFD": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteKodak1b",
+      "Condition": "$$self{Make}=~/^EASTMAN KODAK/ and $$valPt=~/^KDK/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "ByteOrder": "LittleEndian",
+        "Start": "$valuePtr + 8",
+        "TagTable": "Image::ExifTool::Kodak::Main"
+      },
+      "MakerNotes": 1
+    },
+    {
+      "Name": "MakerNoteKodak2",
+      "Writable": "undef",
+      "Binary": 1,
+      "NotIFD": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Kodak::Type2",
+        "ByteOrder": "BigEndian"
+      },
+      "MakerNotes": 1,
+      "Format": "undef",
+      "Condition": "\n            $$valPt =~ /^.{8}Eastman Kodak/s or\n            $$valPt =~ /^\\x01\\0[\\0\\x01]\\0\\0\\0\\x04\\0[a-zA-Z]{4}/\n        ",
+      "WriteGroup": "ExifIFD"
+    },
+    {
+      "Name": "MakerNoteKodak3",
+      "NotIFD": 1,
+      "Binary": 1,
+      "Writable": "undef",
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Kodak::Type3",
+        "ByteOrder": "BigEndian"
+      },
+      "MakerNotes": 1,
+      "Condition": "\n            $$self{Make} =~ /^EASTMAN KODAK/ and\n            $$valPt =~ /^(?!MM|II).{12}\\x07/s and\n            $$valPt !~ /^(MM|II|AOC)/\n        ",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef"
+    },
+    {
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Kodak::Type4",
+        "ByteOrder": "BigEndian"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Condition": "\n            $$self{Make} =~ /^Eastman Kodak/ and\n            $$valPt =~ /^.{41}JPG/s and\n            $$valPt !~ /^(MM|II|AOC)/\n        ",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "Name": "MakerNoteKodak4",
+      "Binary": 1,
+      "NotIFD": 1,
+      "Writable": "undef"
+    },
+    {
+      "Name": "MakerNoteKodak5",
+      "Writable": "undef",
+      "NotIFD": 1,
+      "Binary": 1,
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Kodak::Type5",
+        "ByteOrder": "BigEndian"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "\n            $$self{Make}=~/^EASTMAN KODAK/ and\n            ($$self{Model}=~/CX(4200|4230|4300|4310|6200|6230)/ or\n            # try to pick up similar models we haven't tested yet\n            $$valPt=~/^\\0(\\x1a\\x18|\\x3a\\x08|\\x59\\xf8|\\x14\\x80)\\0/)\n        "
+    },
+    {
+      "Name": "MakerNoteKodak6a",
+      "NotIFD": 1,
+      "Binary": 1,
+      "Writable": "undef",
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Kodak::Type6",
+        "ByteOrder": "BigEndian"
+      },
+      "WriteGroup": "ExifIFD",
+      "Condition": "\n            $$self{Make}=~/^EASTMAN KODAK/ and\n            $$self{Model}=~/DX3215/\n        ",
+      "Format": "undef"
+    },
+    {
+      "Binary": 1,
+      "NotIFD": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteKodak6b",
+      "Condition": "\n            $$self{Make}=~/^EASTMAN KODAK/ and\n            $$self{Model}=~/DX3700/\n        ",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Kodak::Type6",
+        "ByteOrder": "LittleEndian"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1
+    },
+    {
+      "Writable": "undef",
+      "Binary": 1,
+      "NotIFD": 1,
+      "Name": "MakerNoteKodak7",
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "\n            $$self{Make}=~/Kodak/i and\n            $$valPt =~ /^[CK][A-Z\\d]{3} ?[A-Z\\d]{1,2}\\d{2}[A-Z\\d]\\d{4}[ \\0]/\n        ",
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Kodak::Type7",
+        "ByteOrder": "LittleEndian"
+      }
+    },
+    {
+      "Name": "MakerNoteKodak8a",
+      "Binary": 1,
+      "Writable": "undef",
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Kodak::Type8",
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::ProcessUnknown]",
+        "ByteOrder": "Unknown"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "WriteGroup": "ExifIFD",
+      "Condition": "\n            $$self{Make}=~/Kodak/i and\n            ($$valPt =~ /^\\0[\\x02-\\x7f]..\\0[\\x01-\\x0c]\\0\\0/s or\n             $$valPt =~ /^[\\x02-\\x7f]\\0..[\\x01-\\x0c]\\0..\\0\\0/s)\n        ",
+      "Format": "undef"
+    },
+    {
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "Start": "$valuePtr + 8",
+        "Base": "$start - 8",
+        "ByteOrder": "BigEndian",
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::ProcessKodakPatch]",
+        "TagTable": "Image::ExifTool::Kodak::Type8"
+      },
+      "MakerNotes": 1,
+      "Condition": "\n            $$self{Make}=~/Kodak/i and\n            $$valPt =~ /^MM\\0\\x2a\\0\\0\\0\\x08\\0.\\0\\0/\n        ",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "Name": "MakerNoteKodak8b",
+      "Binary": 1,
+      "Writable": "undef"
+    },
+    {
+      "Condition": "\n            $$self{Make}=~/Kodak/i and\n            $$valPt =~ /^(MM\\0\\x2a\\0\\0\\0\\x08|II\\x2a\\0\\x08\\0\\0\\0)/\n        ",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "ByteOrder": "Unknown",
+        "Base": "$start - 8",
+        "Start": "$valuePtr + 8",
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::ProcessUnknown]",
+        "TagTable": "Image::ExifTool::Kodak::Type8"
+      },
+      "MakerNotes": 1,
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteKodak8c"
+    },
+    {
+      "Format": "undef",
+      "Condition": "$$valPt =~ m{^IIII[\\x02\\x03]\\0.{14}\\d{4}/\\d{2}/\\d{2} }s",
+      "WriteGroup": "ExifIFD",
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Kodak::Type9",
+        "ByteOrder": "LittleEndian"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Writable": "undef",
+      "NotIFD": 1,
+      "Binary": 1,
+      "Name": "MakerNoteKodak9"
+    },
+    {
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteKodak10",
+      "WriteGroup": "ExifIFD",
+      "Condition": "\n            $$self{Make}=~/Kodak/i and\n            $$valPt =~ /^(MM\\0[\\x02-\\x7f]|II[\\x02-\\x7f]\\0)/\n        ",
+      "Format": "undef",
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::ProcessUnknown]",
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr + 2",
+        "TagTable": "Image::ExifTool::Kodak::Type10"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      }
+    },
+    {
+      "Condition": "\n            $$self{Model}=~/(Kodak|PixPro)/i and\n            $$valPt =~ /^II\\x2a\\0\\x08\\0\\0\\0.\\0\\0\\0/s\n        ",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Kodak::Type11",
+        "Start": "$valuePtr + 8",
+        "Base": "$start - 8",
+        "ByteOrder": "LittleEndian",
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::ProcessKodakPatch]"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteKodak11"
+    },
+    {
+      "SubDirectory": {
+        "ByteOrder": "BigEndian",
+        "Base": "$start - 8",
+        "Start": "$valuePtr + 8",
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::ProcessKodakPatch]",
+        "TagTable": "Image::ExifTool::Kodak::Type11"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Condition": "\n            $$self{Model}=~/(Kodak|PixPro)/i and\n            $$valPt =~ /^MM\\0\\x2a\\0\\0\\0\\x08\\0\\0\\0./s\n        ",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "Name": "MakerNoteKodak12",
+      "Binary": 1,
+      "Writable": "undef"
+    },
+    {
+      "Condition": "$$self{Make}=~/Kodak/i and $$valPt!~/^AOC\\0/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Kodak::Unknown",
+        "ByteOrder": "BigEndian"
+      },
+      "MakerNotes": 1,
+      "Binary": 1,
+      "NotIFD": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteKodakUnknown"
+    },
+    {
+      "Name": "MakerNoteKyocera",
+      "Writable": "undef",
+      "Binary": 1,
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "ByteOrder": "Unknown",
+        "Base": "$start + 2",
+        "Start": "$valuePtr + 22",
+        "EntryBased": 1,
+        "TagTable": "Image::ExifTool::Unknown::Main"
+      },
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt =~ /^KYOCERA/"
+    },
+    {
+      "Format": "undef",
+      "Condition": "\n            $$self{Make}=~/^(Konica Minolta|Minolta)/i and\n            $$valPt !~ /^(MINOL|CAMER|MLY0|KC|\\+M\\+M|\\xd7)/\n        ",
+      "WriteGroup": "ExifIFD",
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Minolta::Main",
+        "ByteOrder": "Unknown"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Writable": "undef",
+      "Binary": 1,
+      "Name": "MakerNoteMinolta"
+    },
+    {
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Olympus::Main",
+        "Start": "$valuePtr + 8",
+        "ByteOrder": "Unknown"
+      },
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt =~ /^(MINOL|CAMER)\\0/ and $$self{OlympusCAMER} = 1",
+      "Name": "MakerNoteMinolta2",
+      "Writable": "undef",
+      "Binary": 1
+    },
+    {
+      "Name": "MakerNoteMinolta3",
+      "Writable": "undef",
+      "Binary": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "Format": "undef",
+      "Condition": "$$self{Make} =~ /^(Konica Minolta|Minolta)/i",
+      "WriteGroup": "ExifIFD",
+      "Notes": "not EXIF-based"
+    },
+    {
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt=~/^MOT\\0/",
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "Base": "$start - 8",
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr + 8",
+        "TagTable": "Image::ExifTool::Motorola::Main"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "Writable": "undef",
+      "Binary": 1,
+      "Name": "MakerNoteMotorola"
+    },
+    {
+      "Writable": "undef",
+      "Binary": 1,
+      "Name": "MakerNoteNikon2",
+      "Format": "undef",
+      "Condition": "$$valPt=~/^Nikon\\x00\\x01/",
+      "WriteGroup": "ExifIFD",
+      "SubDirectory": {
+        "ByteOrder": "LittleEndian",
+        "Start": "$valuePtr + 8",
+        "TagTable": "Image::ExifTool::Nikon::Type2"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1
+    },
+    {
+      "Name": "MakerNoteNikon3",
+      "Writable": "undef",
+      "Binary": 1,
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Nikon::Main",
+        "ByteOrder": "Unknown"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$self{Make}=~/^NIKON/i"
+    },
+    {
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteNintendo",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$self{Make} eq \"Nintendo\"",
+      "Format": "undef",
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "ByteOrder": "Unknown",
+        "TagTable": "Image::ExifTool::Nintendo::Main"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      }
+    },
+    {
+      "Name": "MakerNoteOlympus",
+      "Binary": 1,
+      "Writable": "undef",
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr + 8",
+        "TagTable": "Image::ExifTool::Olympus::Main"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt =~ /^(OLYMP|EPSON)\\0/",
+      "Format": "undef"
+    },
+    {
+      "Condition": "$$valPt =~ /^OLYMPUS\\0/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "Base": "$start - 12",
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr + 12",
+        "TagTable": "Image::ExifTool::Olympus::Main"
+      },
+      "MakerNotes": 1,
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteOlympus2"
+    },
+    {
+      "Condition": "$$valPt =~ /^OM SYSTEM\\0/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "SubDirectory": {
+        "Base": "$start - 16",
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr + 16",
+        "TagTable": "Image::ExifTool::Olympus::Main"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteOlympus3"
+    },
+    {
+      "Writable": "undef",
+      "Binary": 1,
+      "Name": "MakerNoteLeica",
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$self{Make} eq \"LEICA\"",
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Panasonic::Main",
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr + 8"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      }
+    },
+    {
+      "Name": "MakerNoteLeica2",
+      "Writable": "undef",
+      "Binary": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Panasonic::Leica2",
+        "Start": "$valuePtr + 8",
+        "ByteOrder": "Unknown",
+        "Base": "$start",
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::FixLeicaBase]"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Format": "undef",
+      "Condition": "$$self{Make} =~ /^Leica Camera AG/ and $$valPt =~ /^LEICA\\0\\0\\0/",
+      "WriteGroup": "ExifIFD"
+    },
+    {
+      "Name": "MakerNoteLeica3",
+      "Writable": "undef",
+      "Binary": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Panasonic::Leica3",
+        "Start": "$valuePtr",
+        "ByteOrder": "Unknown"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Format": "undef",
+      "Condition": "\n            $$self{Make} =~ /^Leica Camera AG/ and $$valPt !~ /^LEICA/ and\n            $$self{Model} ne \"S2\" and $$self{Model} ne \"LEICA M (Typ 240)\"\n        ",
+      "WriteGroup": "ExifIFD"
+    },
+    {
+      "Format": "undef",
+      "Condition": "$$self{Make} =~ /^Leica Camera AG/ and $$valPt =~ /^LEICA0/",
+      "WriteGroup": "ExifIFD",
+      "SubDirectory": {
+        "Start": "$valuePtr + 8",
+        "Base": "$start - 8",
+        "ByteOrder": "Unknown",
+        "TagTable": "Image::ExifTool::Panasonic::Leica4"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Writable": "undef",
+      "Binary": 1,
+      "Name": "MakerNoteLeica4"
+    },
+    {
+      "Name": "MakerNoteLeica5",
+      "Writable": "undef",
+      "Binary": 1,
+      "SubDirectory": {
+        "Start": "$valuePtr + 8",
+        "ByteOrder": "Unknown",
+        "Base": "$start - 8",
+        "TagTable": "Image::ExifTool::Panasonic::Leica5"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Format": "undef",
+      "Condition": "$$valPt =~ /^LEICA\\0[\\x01\\x04\\x05\\x06\\x07\\x10\\x1a]\\0/",
+      "WriteGroup": "ExifIFD"
+    },
+    {
+      "Condition": "\n            ($$self{Make} eq 'Leica Camera AG' and ($$self{Model} eq 'S2' or\n            $$self{Model} eq 'LEICA M (Typ 240)' or $$self{Model} eq 'LEICA S (Typ 006)'))\n        ",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Panasonic::Leica6",
+        "Start": "$valuePtr + 8",
+        "ByteOrder": "Unknown"
+      },
+      "MakerNotes": 1,
+      "Binary": 1,
+      "LeicaTrailer": 1,
+      "DataTag": "LeicaTrailer",
+      "Writable": "undef",
+      "Name": "MakerNoteLeica6"
+    },
+    {
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Panasonic::Leica6",
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr + 8",
+        "Base": "-$base"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt =~ /^LEICA\\0\\x02\\xff/",
+      "Format": "undef",
+      "Name": "MakerNoteLeica7",
+      "Binary": 1,
+      "LeicaTrailer": 1,
+      "DataTag": "LeicaTrailer",
+      "Writable": "undef"
+    },
+    {
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr + 8",
+        "TagTable": "Image::ExifTool::Panasonic::Leica5"
+      },
+      "MakerNotes": 1,
+      "Format": "undef",
+      "Condition": "$$valPt =~ /^LEICA\\0[\\x08\\x09\\x0a]\\0/",
+      "WriteGroup": "ExifIFD",
+      "Name": "MakerNoteLeica8",
+      "Writable": "undef",
+      "Binary": 1
+    },
+    {
+      "Name": "MakerNoteLeica9",
+      "Writable": "undef",
+      "Binary": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Panasonic::Leica9",
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr + 8"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Format": "undef",
+      "Condition": "$$self{Make} =~ /^Leica Camera AG/ and $$valPt =~ /^LEICA\\0\\x02\\0/",
+      "WriteGroup": "ExifIFD"
+    },
+    {
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt =~ /^LEICA CAMERA AG\\0/",
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Panasonic::Main",
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr + 18"
+      },
+      "Writable": "undef",
+      "Binary": 1,
+      "Name": "MakerNoteLeica10"
+    },
+    {
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNotePanasonic",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt=~/^Panasonic/ and $$self{Model} ne \"DC-FT7\"",
+      "Format": "undef",
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Panasonic::Main",
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr + 12"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      }
+    },
+    {
+      "Name": "MakerNotePanasonic2",
+      "Binary": 1,
+      "Writable": "undef",
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Panasonic::Type2",
+        "ByteOrder": "LittleEndian"
+      },
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$self{Make}=~/^Panasonic/ and $$valPt=~/^MKE/",
+      "Format": "undef"
+    },
+    {
+      "Writable": "undef",
+      "Binary": 1,
+      "Name": "MakerNotePanasonic3",
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt=~/^Panasonic/",
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "Base": 12,
+        "Start": "$valuePtr + 12",
+        "ByteOrder": "Unknown",
+        "TagTable": "Image::ExifTool::Panasonic::Main"
+      }
+    },
+    {
+      "WriteGroup": "ExifIFD",
+      "Condition": "\n            $$valPt=~/^AOC\\0/ and\n            $$self{Model} !~ /^PENTAX Optio ?[34]30RS\\s*$/\n        ",
+      "Format": "undef",
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "FixBase": 1,
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::ProcessUnknown]",
+        "ByteOrder": "Unknown",
+        "TagTable": "Image::ExifTool::Pentax::Main"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNotePentax"
+    },
+    {
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$self{Make}=~/^Asahi/ and $$valPt!~/^AOC\\0/",
+      "Format": "undef",
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Pentax::Type2",
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::ProcessUnknown]",
+        "ByteOrder": "Unknown",
+        "FixBase": 1
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNotePentax2"
+    },
+    {
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Casio::Type2",
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::ProcessUnknown]",
+        "ByteOrder": "Unknown",
+        "FixBase": 1
+      },
+      "MakerNotes": 1,
+      "Condition": "$$self{Make}=~/^Asahi/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "Name": "MakerNotePentax3",
+      "Binary": 1,
+      "Writable": "undef"
+    },
+    {
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$self{Make}=~/^PENTAX/ and $$valPt=~/^\\d{3}/",
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Pentax::Type4",
+        "Start": "$valuePtr",
+        "ByteOrder": "LittleEndian"
+      },
+      "Writable": "undef",
+      "NotIFD": 1,
+      "Binary": 1,
+      "Name": "MakerNotePentax4"
+    },
+    {
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "Base": "$start - 10",
+        "Start": "$valuePtr + 10",
+        "ByteOrder": "Unknown",
+        "TagTable": "Image::ExifTool::Pentax::Main"
+      },
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt=~/^PENTAX \\0/",
+      "Name": "MakerNotePentax5",
+      "Writable": "undef",
+      "Binary": 1
+    },
+    {
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "Base": "$start - 12",
+        "Start": "$valuePtr + 12",
+        "ByteOrder": "Unknown",
+        "TagTable": "Image::ExifTool::Pentax::S1"
+      },
+      "MakerNotes": 1,
+      "Condition": "$$valPt=~/^S1\\0{6}\\x0c\\0{3}/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "Name": "MakerNotePentax6",
+      "Binary": 1,
+      "Writable": "undef"
+    },
+    {
+      "NotIFD": 1,
+      "Writable": "undef",
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::PhaseOne::Main"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "PutFirst": 1,
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "Name": "MakerNotePhaseOne",
+      "Binary": 1,
+      "IsPhaseOne": 1,
+      "Condition": "\n            return undef unless $$valPt =~ /^(IIII.waR|MMMMRaw.)/s;\n            $self->OverrideFileType($$self{TIFF_TYPE} = 'IIQ') if $count > 1000000;\n            return 1;\n        "
+    },
+    {
+      "Name": "MakerNoteReconyx",
+      "Binary": 1,
+      "Writable": "undef",
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Reconyx::Main",
+        "ByteOrder": "Little-endian"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "WriteGroup": "ExifIFD",
+      "Condition": "\n            $$valPt =~ /^\\x01\\xf1([\\x02\\x03]\\x00)?/ and\n            ($1 or $$self{Make} eq \"RECONYX\")\n        ",
+      "Format": "undef"
+    },
+    {
+      "Name": "MakerNoteReconyx2",
+      "Writable": "undef",
+      "Binary": 1,
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Reconyx::Type2",
+        "ByteOrder": "Little-endian"
+      },
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt =~ /^RECONYXUF\\0/"
+    },
+    {
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt =~ /^RECONYXH2\\0/",
+      "Format": "undef",
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Reconyx::Type3",
+        "ByteOrder": "Little-endian"
+      },
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteReconyx3"
+    },
+    {
+      "Condition": "$$valPt=~/^RICOH\\0(II|MM)/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "Base": "$start - 8",
+        "Start": "$valuePtr + 8",
+        "ByteOrder": "Unknown",
+        "TagTable": "Image::ExifTool::Pentax::Main"
+      },
+      "MakerNotes": 1,
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteRicohPentax"
+    },
+    {
+      "Name": "MakerNoteRicoh",
+      "Writable": "undef",
+      "Binary": 1,
+      "MakerNotes": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Ricoh::Main",
+        "Start": "$valuePtr + 8",
+        "ByteOrder": "Unknown"
+      },
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "\n            $$self{Make} =~ /^(PENTAX )?RICOH/ and\n            $$valPt =~ /^(Ricoh|      |MM\\0\\x2a|II\\x2a\\0)/i and\n            $$valPt !~ /^(MM\\0\\x2a\\0\\0\\0\\x08\\0.\\0\\0|II\\x2a\\0\\x08\\0\\0\\0.\\0\\0\\0)/s and\n            $$self{Model} ne 'RICOH WG-M1'\n        "
+    },
+    {
+      "Writable": "undef",
+      "Binary": 1,
+      "Name": "MakerNoteRicoh2",
+      "Format": "undef",
+      "Condition": "\n            $$self{Make} =~ /^(PENTAX )?RICOH/ and ($$self{Model} eq 'RICOH WG-M1' or\n            $$valPt =~ /^(MM\\0\\x2a\\0\\0\\0\\x08\\0.\\0\\0|II\\x2a\\0\\x08\\0\\0\\0.\\0\\0\\0)/s)\n        ",
+      "WriteGroup": "ExifIFD",
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Ricoh::Type2",
+        "Base": "$start - 8",
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr + 8",
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::ProcessKodakPatch]"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1
+    },
+    {
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Ricoh::Text",
+        "ByteOrder": "Unknown"
+      },
+      "MakerNotes": 1,
+      "Format": "undef",
+      "Condition": "$$self{Make}=~/^RICOH/",
+      "WriteGroup": "ExifIFD",
+      "Name": "MakerNoteRicohText",
+      "Writable": "undef",
+      "NotIFD": 1,
+      "Binary": 1
+    },
+    {
+      "Condition": "$$valPt =~ /^STMN\\d{3}.\\0{4}/s",
+      "WriteGroup": "ExifIFD",
+      "Notes": "Samsung \"STMN\" maker notes without PreviewImage",
+      "Format": "undef",
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteSamsung1a"
+    },
+    {
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteSamsung1b",
+      "Condition": "$$valPt =~ /^STMN\\d{3}/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Samsung::Main"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1
+    },
+    {
+      "Format": "undef",
+      "Condition": "\n            uc $$self{Make} eq 'SAMSUNG' and ($$self{TIFF_TYPE} eq 'SRW' or\n            $$valPt=~/^(\\0.\\0\\x01\\0\\x07\\0{3}\\x04|.\\0\\x01\\0\\x07\\0\\x04\\0{3})0100/s)\n        ",
+      "WriteGroup": "ExifIFD",
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Samsung::Type2",
+        "FixBase": 1,
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::ProcessUnknown]",
+        "ByteOrder": "Unknown"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Writable": "undef",
+      "Binary": 1,
+      "Name": "MakerNoteSamsung2"
+    },
+    {
+      "Name": "MakerNoteSanyo",
+      "Writable": "undef",
+      "Binary": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "Start": "$valuePtr + 8",
+        "Validate": "$val =~ /^SANYO/",
+        "ByteOrder": "Unknown",
+        "TagTable": "Image::ExifTool::Sanyo::Main"
+      },
+      "MakerNotes": 1,
+      "Format": "undef",
+      "Condition": "$$self{Make}=~/^SANYO/ and $$self{Model}!~/^(C4|J\\d|S\\d)\\b/",
+      "WriteGroup": "ExifIFD"
+    },
+    {
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Sanyo::Main",
+        "FixBase": 1,
+        "Start": "$valuePtr + 8",
+        "ByteOrder": "Unknown",
+        "Validate": "$val =~ /^SANYO/"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$self{Make}=~/^SANYO/ and $$self{Model}=~/^C4\\b/",
+      "Name": "MakerNoteSanyoC4",
+      "Writable": "undef",
+      "Binary": 1
+    },
+    {
+      "Name": "MakerNoteSanyoPatch",
+      "Binary": 1,
+      "Writable": "undef",
+      "SubDirectory": {
+        "Validate": "$val =~ /^SANYO/",
+        "Start": "$valuePtr + 8",
+        "ByteOrder": "Unknown",
+        "FixOffsets": "Image::ExifTool::Sanyo::FixOffsets($valuePtr, $valEnd, $size, $tagID, $wFlag)",
+        "TagTable": "Image::ExifTool::Sanyo::Main"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1,
+      "Condition": "$$self{Make}=~/^SANYO/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef"
+    },
+    {
+      "Name": "MakerNoteSigma",
+      "Writable": "undef",
+      "Binary": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Sigma::Main",
+        "Start": "$valuePtr + 10",
+        "Validate": "$val =~ /^(SIGMA|FOVEON)/",
+        "ByteOrder": "Unknown"
+      },
+      "MakerNotes": 1,
+      "Format": "undef",
+      "Condition": "\n            return undef unless $$self{Make}=~/^(SIGMA|FOVEON)/i;\n            # save version number in \"MakerNoteSigmaVer\" member variable\n            $$self{MakerNoteSigmaVer} = $$valPt=~/^SIGMA\\0\\0\\0.(.)/s ? ord($1) : -1;\n            return 1;\n        ",
+      "WriteGroup": "ExifIFD"
+    },
+    {
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "Start": "$valuePtr + 12",
+        "ByteOrder": "Unknown",
+        "TagTable": "Image::ExifTool::Sony::Main"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt=~/^(SONY (DSC|CAM|MOBILE)|\\0\\0SONY PIC\\0|VHAB     \\0)/",
+      "Name": "MakerNoteSony",
+      "Writable": "undef",
+      "Binary": 1
+    },
+    {
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "Start": "$valuePtr + 12",
+        "ByteOrder": "Unknown",
+        "TagTable": "Image::ExifTool::Olympus::Main"
+      },
+      "MakerNotes": 1,
+      "Format": "undef",
+      "Condition": "$$valPt=~/^SONY PI\\0/ and $$self{OlympusCAMER}=1",
+      "WriteGroup": "ExifIFD",
+      "Name": "MakerNoteSony2",
+      "Writable": "undef",
+      "Binary": 1
+    },
+    {
+      "Name": "MakerNoteSony3",
+      "Writable": "undef",
+      "Binary": 1,
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Olympus::Main",
+        "Start": "$valuePtr + 8",
+        "ByteOrder": "Unknown"
+      },
+      "MakerNotes": 1,
+      "Format": "undef",
+      "Condition": "$$valPt=~/^(PREMI)\\0/ and $$self{OlympusCAMER}=1",
+      "WriteGroup": "ExifIFD"
+    },
+    {
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Sony::PIC"
+      },
+      "MakerNotes": 1,
+      "Format": "undef",
+      "Condition": "$$valPt=~/^SONY PIC\\0/",
+      "WriteGroup": "ExifIFD",
+      "Name": "MakerNoteSony4",
+      "Writable": "undef",
+      "Binary": 1
+    },
+    {
+      "Name": "MakerNoteSony5",
+      "Binary": 1,
+      "Writable": "undef",
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Sony::Main",
+        "Start": "$valuePtr",
+        "ByteOrder": "Unknown"
+      },
+      "MakerNotes": 1,
+      "Condition": "\n            ($$self{Make}=~/^SONY/ or ($$self{Make}=~/^HASSELBLAD/ and\n            $$self{Model}=~/^(HV|Stellar|Lusso|Lunar)/)) and $$valPt!~/^\\x01\\x00/\n        ",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef"
+    },
+    {
+      "Name": "MakerNoteSonyEricsson",
+      "Writable": "undef",
+      "Binary": 1,
+      "MakerNotes": 1,
+      "SubDirectory": {
+        "TagTable": "Image::ExifTool::Sony::Ericsson",
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr + 20",
+        "Base": "$start - 8"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Condition": "$$valPt =~ /^SEMC MS\\0/"
+    },
+    {
+      "Binary": 1,
+      "Writable": "undef",
+      "Name": "MakerNoteSonySRF",
+      "Condition": "$$self{Make}=~/^SONY/",
+      "WriteGroup": "ExifIFD",
+      "Format": "undef",
+      "SubDirectory": {
+        "ByteOrder": "Unknown",
+        "Start": "$valuePtr",
+        "TagTable": "Image::ExifTool::Sony::SRF"
+      },
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "MakerNotes": 1
+    },
+    {
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "Format": "undef",
+      "ValueConvInv": "$val",
+      "Condition": "$$valPt =~ /^[\\x09\\x0d\\x0a\\x20-\\x7e]+\\0*$/",
+      "Notes": "unknown text-based maker notes",
+      "WriteGroup": "ExifIFD",
+      "Name": "MakerNoteUnknownText",
+      "ValueConv": "length($val) > 64 ? \\$val : $val",
+      "Writable": "undef"
+    },
+    {
+      "Name": "MakerNoteUnknownBinary",
+      "Binary": 1,
+      "Writable": "undef",
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "Condition": "$$valPt =~ /^LSI1\\0/",
+      "WriteGroup": "ExifIFD",
+      "Notes": "unknown binary maker notes",
+      "Format": "undef"
+    },
+    {
+      "Writable": "undef",
+      "Binary": 1,
+      "PossiblePreview": 1,
+      "Name": "MakerNoteUnknown",
+      "Format": "undef",
+      "WriteGroup": "ExifIFD",
+      "Groups": {
+        "1": "MakerNotes"
+      },
+      "SubDirectory": {
+        "ByteOrder": "Unknown",
+        "WriteProc": "[Function: Image::ExifTool::MakerNotes::WriteUnknownOrPreview]",
+        "ProcessProc": "[Function: Image::ExifTool::MakerNotes::ProcessUnknownOrPreview]",
+        "FixBase": 2,
+        "TagTable": "Image::ExifTool::Unknown::Main"
+      },
+      "MakerNotes": 1
+    }
+  ]
+}

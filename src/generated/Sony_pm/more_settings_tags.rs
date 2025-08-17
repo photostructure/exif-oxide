@@ -7,7 +7,15 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::implementations::print_conv::fnumber_print_conv;
+use crate::generated::functions::hash_4b::ast_value_4b2b5b722bdd63f4;
+use crate::generated::functions::hash_58::ast_value_58f560b2a6e62b0d;
+use crate::generated::functions::hash_60::ast_value_6024bbf5fa17668a;
+use crate::generated::functions::hash_63::ast_print_634937674bb4dcf3;
+use crate::generated::functions::hash_64::ast_value_647eb869d9cb9ed1;
+use crate::generated::functions::hash_8b::ast_print_8b1cb18fc68bc972;
+use crate::generated::functions::hash_b7::ast_print_b75f5f46a9f320cf;
+use crate::generated::functions::hash_b9::ast_print_b93bf01b5173ce30;
+use crate::generated::functions::hash_bb::ast_print_bb36ed62e5a52a4;
 
 /// Tag definitions for Sony::MoreSettings table
 pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -71,9 +79,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "ContrastSetting",
                 format: "int8s",
-                print_conv: Some(PrintConv::Expression(
-                    "$val > 0 ? \"+$val\" : $val".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
                 value_conv: None,
             },
         ),
@@ -82,9 +88,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "SaturationSetting",
                 format: "int8s",
-                print_conv: Some(PrintConv::Expression(
-                    "$val > 0 ? \"+$val\" : $val".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
                 value_conv: None,
             },
         ),
@@ -93,9 +97,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "SharpnessSetting",
                 format: "int8s",
-                print_conv: Some(PrintConv::Expression(
-                    "$val > 0 ? \"+$val\" : $val".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
                 value_conv: None,
             },
         ),
@@ -113,8 +115,8 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "ColorTemperatureSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val K\"".to_string())),
-                value_conv: Some(ValueConv::Expression("$val * 100".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_8b1cb18fc68bc972)),
+                value_conv: Some(ValueConv::Function(ast_value_647eb869d9cb9ed1)),
             },
         ),
         (
@@ -122,9 +124,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "ColorCompensationFilterSet",
                 format: "int8s",
-                print_conv: Some(PrintConv::Expression(
-                    "$val > 0 ? \"+$val\" : $val".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
                 value_conv: None,
             },
         ),
@@ -223,8 +223,8 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "FNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(fnumber_print_conv)),
-                value_conv: Some(ValueConv::Expression("2 ** (($val/8 - 1) / 2)".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_634937674bb4dcf3)),
+                value_conv: Some(ValueConv::Function(ast_value_4b2b5b722bdd63f4)),
             },
         ),
         (
@@ -232,10 +232,8 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "ExposureCompensation2",
                 format: "int16s",
-                print_conv: Some(PrintConv::Expression(
-                    "$val ? sprintf(\"%+.1f\",$val) : 0".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("$val / 8".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
+                value_conv: Some(ValueConv::Function(ast_value_6024bbf5fa17668a)),
             },
         ),
         (
@@ -243,12 +241,8 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "ExposureTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\"".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression(
-                    "$val ? 2 ** (6 - $val/8) : 0".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_bb36ed62e5a52a4)),
+                value_conv: Some(ValueConv::Function(ast_value_58f560b2a6e62b0d)),
             },
         ),
         (
@@ -349,19 +343,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = SONY_MORESETTINGS_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -369,7 +360,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -377,7 +371,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -387,11 +380,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

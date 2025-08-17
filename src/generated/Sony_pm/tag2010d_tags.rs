@@ -6,135 +6,208 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_1a::ast_print_1ade125dab246be4;
+use crate::generated::functions::hash_3c::ast_value_3ca782d06a4e1676;
+use crate::generated::functions::hash_45::ast_print_45145cdaaff93e23;
+use crate::generated::functions::hash_74::ast_value_743e189656f40f03;
+use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
+use crate::generated::functions::hash_be::ast_value_be410aac07f2b930;
+use crate::generated::functions::hash_cc::ast_value_cc6d20d1f05f91ec;
+use crate::generated::functions::hash_e7::ast_value_e7d9353e489371f5;
+
 /// Tag definitions for Sony::Tag2010d table
 pub static SONY_TAG2010D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (0, TagInfo {
-            name: "SequenceImageNumber",
-            format: "int32u",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("$val + 1".to_string())),
-        }),
-        (4, TagInfo {
-            name: "SequenceFileNumber",
-            format: "int32u",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("$val + 1".to_string())),
-        }),
-        (8, TagInfo {
-            name: "ReleaseMode2",
-            format: "int32u",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (510, TagInfo {
-            name: "SonyDateTime",
-            format: "undef[7]",
-            print_conv: Some(PrintConv::Expression("$self->ConvertDateTime($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("\n        my @v = unpack('vC*', $val);\n        return sprintf(\"%.4d:%.2d:%.2d %.2d:%.2d:%.2d\", @v)\n    ".to_string())),
-        }),
-        (892, TagInfo {
-            name: "DynamicRangeOptimizer",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (1292, TagInfo {
-            name: "MeterInfo",
-            format: "int32u[486]",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4480, TagInfo {
-            name: "ReleaseMode3",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4484, TagInfo {
-            name: "ReleaseMode2",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4492, TagInfo {
-            name: "SelfTimer",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4496, TagInfo {
-            name: "FlashMode",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4502, TagInfo {
-            name: "StopsAboveBaseISO",
-            format: "int16u",
-            print_conv: Some(PrintConv::Expression("$val ? sprintf(\"%.1f\",$val) : $val".to_string())),
-            value_conv: Some(ValueConv::Expression("16 - $val/256".to_string())),
-        }),
-        (4504, TagInfo {
-            name: "BrightnessValue",
-            format: "int16u",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("$val/256 - 56.6".to_string())),
-        }),
-        (4508, TagInfo {
-            name: "DynamicRangeOptimizer",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4512, TagInfo {
-            name: "HDRSetting",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4538, TagInfo {
-            name: "PictureProfile",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4539, TagInfo {
-            name: "PictureProfile",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4543, TagInfo {
-            name: "PictureEffect2",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4560, TagInfo {
-            name: "MeteringMode",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4561, TagInfo {
-            name: "ExposureProgram",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4568, TagInfo {
-            name: "WB_RGBLevels",
-            format: "int16u[3]",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4720, TagInfo {
-            name: "SonyISO",
-            format: "int16u",
-            print_conv: Some(PrintConv::Expression("sprintf(\"%.0f\",$val)".to_string())),
-            value_conv: Some(ValueConv::Expression("100 * 2**(16 - $val/256)".to_string())),
-        }),
+        (
+            0,
+            TagInfo {
+                name: "SequenceImageNumber",
+                format: "int32u",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_cc6d20d1f05f91ec)),
+            },
+        ),
+        (
+            4,
+            TagInfo {
+                name: "SequenceFileNumber",
+                format: "int32u",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_cc6d20d1f05f91ec)),
+            },
+        ),
+        (
+            8,
+            TagInfo {
+                name: "ReleaseMode2",
+                format: "int32u",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            510,
+            TagInfo {
+                name: "SonyDateTime",
+                format: "undef[7]",
+                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                value_conv: Some(ValueConv::Function(ast_value_e7d9353e489371f5)),
+            },
+        ),
+        (
+            892,
+            TagInfo {
+                name: "DynamicRangeOptimizer",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            1292,
+            TagInfo {
+                name: "MeterInfo",
+                format: "int32u[486]",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4480,
+            TagInfo {
+                name: "ReleaseMode3",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4484,
+            TagInfo {
+                name: "ReleaseMode2",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4492,
+            TagInfo {
+                name: "SelfTimer",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4496,
+            TagInfo {
+                name: "FlashMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4502,
+            TagInfo {
+                name: "StopsAboveBaseISO",
+                format: "int16u",
+                print_conv: Some(PrintConv::Function(ast_print_45145cdaaff93e23)),
+                value_conv: Some(ValueConv::Function(ast_value_743e189656f40f03)),
+            },
+        ),
+        (
+            4504,
+            TagInfo {
+                name: "BrightnessValue",
+                format: "int16u",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_be410aac07f2b930)),
+            },
+        ),
+        (
+            4508,
+            TagInfo {
+                name: "DynamicRangeOptimizer",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4512,
+            TagInfo {
+                name: "HDRSetting",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4538,
+            TagInfo {
+                name: "PictureProfile",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4539,
+            TagInfo {
+                name: "PictureProfile",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4543,
+            TagInfo {
+                name: "PictureEffect2",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4560,
+            TagInfo {
+                name: "MeteringMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4561,
+            TagInfo {
+                name: "ExposureProgram",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4568,
+            TagInfo {
+                name: "WB_RGBLevels",
+                format: "int16u[3]",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4720,
+            TagInfo {
+                name: "SonyISO",
+                format: "int16u",
+                print_conv: Some(PrintConv::Function(ast_print_1ade125dab246be4)),
+                value_conv: Some(ValueConv::Function(ast_value_3ca782d06a4e1676)),
+            },
+        ),
     ])
 });
 
@@ -143,19 +216,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = SONY_TAG2010D_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -163,7 +233,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -171,7 +244,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -181,11 +253,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

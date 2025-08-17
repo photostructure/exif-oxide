@@ -6,849 +6,1339 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_15::ast_value_15b61e0dd2629a12;
+use crate::generated::functions::hash_16::ast_print_1654733938db8225;
+use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
+use crate::generated::functions::hash_32::ast_value_32a7e10f5e7f8777;
+use crate::generated::functions::hash_47::ast_value_4742ce1aa8d729e3;
+use crate::generated::functions::hash_4e::ast_print_4e5e992f9b388e54;
+use crate::generated::functions::hash_59::ast_print_59427ebd048dabd5;
+use crate::generated::functions::hash_64::ast_print_6486d152488d624b;
+use crate::generated::functions::hash_6c::ast_value_6c25803f7a885741;
+use crate::generated::functions::hash_70::ast_value_70d1d11e7183127a;
+use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
+use crate::generated::functions::hash_93::ast_print_937eb9745db39aa4;
+use crate::generated::functions::hash_b7::ast_print_b75f5f46a9f320cf;
+use crate::generated::functions::hash_bb::ast_value_bbb807c14c3cf509;
+use crate::generated::functions::hash_c1::ast_print_c12c7e50f55cf298;
+use crate::generated::functions::hash_c4::ast_value_c402fe0c5220435c;
+use crate::generated::functions::hash_d3::ast_print_d3baecf4975cff4c;
+use crate::generated::functions::hash_d7::ast_value_d7759f03b97f918d;
+use crate::generated::functions::hash_ee::ast_value_ee9b0901d11400f9;
+use crate::generated::functions::hash_ef::ast_print_ef689d4362d907e;
+use crate::generated::functions::hash_f0::ast_value_f0974ef9a0a8813d;
+use crate::generated::functions::hash_f8::ast_value_f810249e3e5ba00e;
+
 /// Tag definitions for Pentax::Main table
 pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (0, TagInfo {
-            name: "PentaxVersion",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val=~tr/ /./; $val".to_string())),
-            value_conv: None,
-        }),
-        (1, TagInfo {
-            name: "PentaxModelType",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (2, TagInfo {
-            name: "PreviewImageSize",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val =~ tr/ /x/; $val".to_string())),
-            value_conv: None,
-        }),
-        (3, TagInfo {
-            name: "PreviewImageLength",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4, TagInfo {
-            name: "PreviewImageStart",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (5, TagInfo {
-            name: "PentaxModelID",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (6, TagInfo {
-            name: "Date",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("length($val)==4 ? sprintf(\"%.4d:%.2d:%.2d\",unpack(\"nC2\",$val)) : \"Unknown ($val)\"".to_string())),
-        }),
-        (7, TagInfo {
-            name: "Time",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("length($val)>=3 ? sprintf(\"%.2d:%.2d:%.2d\",unpack(\"C3\",$val)) : \"Unknown ($val)\"".to_string())),
-        }),
-        (8, TagInfo {
-            name: "Quality",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (9, TagInfo {
-            name: "PentaxImageSize",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (11, TagInfo {
-            name: "PictureMode",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("(IsInt($val) and $val < 4 and $$self{Model} =~ /Optio 555\\b/) ? $val + 0.1 : $val".to_string())),
-        }),
-        (12, TagInfo {
-            name: "FlashMode",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (16, TagInfo {
-            name: "FocusPosition",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (18, TagInfo {
-            name: "ExposureTime",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val > 42949 ? \"Unknown (Bulb)\" : Image::ExifTool::Exif::PrintExposureTime($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val * 1e-5".to_string())),
-        }),
-        (19, TagInfo {
-            name: "FNumber",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("sprintf(\"%.1f\",$val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 10".to_string())),
-        }),
-        (20, TagInfo {
-            name: "ISO",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (21, TagInfo {
-            name: "LightReading",
-            format: "int16s",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (23, TagInfo {
-            name: "MeteringMode",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (24, TagInfo {
-            name: "AutoBracketing",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-            value_conv: None,
-        }),
-        (25, TagInfo {
-            name: "WhiteBalance",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (26, TagInfo {
-            name: "WhiteBalanceMode",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (27, TagInfo {
-            name: "BlueBalance",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("$val / 256".to_string())),
-        }),
-        (28, TagInfo {
-            name: "RedBalance",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("$val / 256".to_string())),
-        }),
-        (30, TagInfo {
-            name: "DigitalZoom",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("$val / 100".to_string())),
-        }),
-        (31, TagInfo {
-            name: "Saturation",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (32, TagInfo {
-            name: "Contrast",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (33, TagInfo {
-            name: "Sharpness",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (34, TagInfo {
-            name: "WorldTimeLocation",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (35, TagInfo {
-            name: "HometownCity",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (36, TagInfo {
-            name: "DestinationCity",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (37, TagInfo {
-            name: "HometownDST",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (38, TagInfo {
-            name: "DestinationDST",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (39, TagInfo {
-            name: "DSPFirmwareVersion",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val=~tr/ /./; $val".to_string())),
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-        }),
-        (40, TagInfo {
-            name: "CPUFirmwareVersion",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val=~tr/ /./; $val".to_string())),
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-        }),
-        (41, TagInfo {
-            name: "FrameNumber",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (50, TagInfo {
-            name: "ImageEditing",
-            format: "int8u",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (51, TagInfo {
-            name: "PictureMode",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (52, TagInfo {
-            name: "DriveMode",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (53, TagInfo {
-            name: "SensorSize",
-            format: "int16u",
-            print_conv: Some(PrintConv::Expression("sprintf(\"%.3f x %.3f mm\", split(\" \",$val))".to_string())),
-            value_conv: Some(ValueConv::Expression("my @a=split(\" \",$val); $_/=500 foreach @a; join(\" \",@a)".to_string())),
-        }),
-        (55, TagInfo {
-            name: "ColorSpace",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (56, TagInfo {
-            name: "ImageAreaOffset",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (57, TagInfo {
-            name: "RawImageSize",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$_=$val;s/ /x/;$_".to_string())),
-            value_conv: None,
-        }),
-        (60, TagInfo {
-            name: "AFPointsInFocus",
-            format: "int32u",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: Some(ValueConv::Expression("$val & 0x7ff".to_string())),
-        }),
-        (61, TagInfo {
-            name: "DataScaling",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (62, TagInfo {
-            name: "PreviewImageBorders",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (63, TagInfo {
-            name: "LensRec",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (64, TagInfo {
-            name: "SensitivityAdjust",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$val ? sprintf(\"%+.1f\", $val) : 0".to_string())),
-            value_conv: Some(ValueConv::Expression("($val - 50) / 10".to_string())),
-        }),
-        (65, TagInfo {
-            name: "ImageEditCount",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (71, TagInfo {
-            name: "CameraTemperature",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("\"$val C\"".to_string())),
-            value_conv: None,
-        }),
-        (72, TagInfo {
-            name: "AELock",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (73, TagInfo {
-            name: "NoiseReduction",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (79, TagInfo {
-            name: "ImageTone",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (80, TagInfo {
-            name: "ColorTemperature",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("53190 - $val".to_string())),
-        }),
-        (83, TagInfo {
-            name: "ColorTempDaylight",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-        }),
-        (84, TagInfo {
-            name: "ColorTempShade",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-        }),
-        (85, TagInfo {
-            name: "ColorTempCloudy",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-        }),
-        (86, TagInfo {
-            name: "ColorTempTungsten",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-        }),
-        (87, TagInfo {
-            name: "ColorTempFluorescentD",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-        }),
-        (88, TagInfo {
-            name: "ColorTempFluorescentN",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-        }),
-        (89, TagInfo {
-            name: "ColorTempFluorescentW",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-        }),
-        (90, TagInfo {
-            name: "ColorTempFlash",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-        }),
-        (93, TagInfo {
-            name: "ShutterCount",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Pentax::CryptShutterCount]".to_string())),
-        }),
-        (96, TagInfo {
-            name: "FaceInfo",
-            format: "undef",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (98, TagInfo {
-            name: "RawDevelopmentProcess",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (103, TagInfo {
-            name: "Hue",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (104, TagInfo {
-            name: "AWBInfo",
-            format: "undef",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (105, TagInfo {
-            name: "DynamicRangeExpansion",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (107, TagInfo {
-            name: "TimeInfo",
-            format: "undef",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (108, TagInfo {
-            name: "HighLowKeyAdj",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (109, TagInfo {
-            name: "ContrastHighlight",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (110, TagInfo {
-            name: "ContrastShadow",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (111, TagInfo {
-            name: "ContrastHighlightShadowAdj",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (112, TagInfo {
-            name: "FineSharpness",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (113, TagInfo {
-            name: "HighISONoiseReduction",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (114, TagInfo {
-            name: "AFAdjustment",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (115, TagInfo {
-            name: "MonochromeFilterEffect",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (116, TagInfo {
-            name: "MonochromeToning",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (118, TagInfo {
-            name: "FaceDetect",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (119, TagInfo {
-            name: "FaceDetectFrameSize",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (121, TagInfo {
-            name: "ShadowCorrection",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (122, TagInfo {
-            name: "ISOAutoMinSpeed",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (123, TagInfo {
-            name: "CrossProcess",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (125, TagInfo {
-            name: "LensCorr",
-            format: "undef",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (126, TagInfo {
-            name: "WhiteLevel",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (127, TagInfo {
-            name: "BleachBypassToning",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (128, TagInfo {
-            name: "AspectRatio",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (130, TagInfo {
-            name: "BlurControl",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (133, TagInfo {
-            name: "HDR",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (135, TagInfo {
-            name: "ShutterType",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (136, TagInfo {
-            name: "NeutralDensityFilter",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (139, TagInfo {
-            name: "ISO",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (146, TagInfo {
-            name: "IntervalShooting",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (150, TagInfo {
-            name: "ClarityControl",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (512, TagInfo {
-            name: "BlackPoint",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (513, TagInfo {
-            name: "WhitePoint",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (515, TagInfo {
-            name: "ColorMatrixA",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("join(\" \",map({sprintf(\"%.5f\",$_)} split(\" \",$val)))".to_string())),
-            value_conv: Some(ValueConv::Expression("join(\" \",map({ $_/8192 } split(\" \",$val)))".to_string())),
-        }),
-        (516, TagInfo {
-            name: "ColorMatrixB",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("join(\" \",map({sprintf(\"%.5f\",$_)} split(\" \",$val)))".to_string())),
-            value_conv: Some(ValueConv::Expression("join(\" \",map({ $_/8192 } split(\" \",$val)))".to_string())),
-        }),
-        (521, TagInfo {
-            name: "AEMeteringSegments",
-            format: "int8u",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-            value_conv: None,
-        }),
-        (522, TagInfo {
-            name: "FlashMeteringSegments",
-            format: "int8u",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-            value_conv: None,
-        }),
-        (523, TagInfo {
-            name: "SlaveFlashMeteringSegments",
-            format: "int8u",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Pentax::__ANON__]".to_string())),
-            value_conv: None,
-        }),
-        (525, TagInfo {
-            name: "WB_RGGBLevelsDaylight",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (526, TagInfo {
-            name: "WB_RGGBLevelsShade",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (527, TagInfo {
-            name: "WB_RGGBLevelsCloudy",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (528, TagInfo {
-            name: "WB_RGGBLevelsTungsten",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (529, TagInfo {
-            name: "WB_RGGBLevelsFluorescentD",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (530, TagInfo {
-            name: "WB_RGGBLevelsFluorescentN",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (531, TagInfo {
-            name: "WB_RGGBLevelsFluorescentW",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (532, TagInfo {
-            name: "WB_RGGBLevelsFlash",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (533, TagInfo {
-            name: "CameraInfo",
-            format: "undef",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (534, TagInfo {
-            name: "BatteryInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (539, TagInfo {
-            name: "SaturationInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (540, TagInfo {
-            name: "ColorMatrixA2",
-            format: "int16s",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (541, TagInfo {
-            name: "ColorMatrixB2",
-            format: "int16s",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (543, TagInfo {
-            name: "AFInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (544, TagInfo {
-            name: "HuffmanTable",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (545, TagInfo {
-            name: "KelvinWB",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (546, TagInfo {
-            name: "ColorInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (548, TagInfo {
-            name: "EVStepInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (550, TagInfo {
-            name: "ShotInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (551, TagInfo {
-            name: "FacePos",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (552, TagInfo {
-            name: "FaceSize",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (553, TagInfo {
-            name: "SerialNumber",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (557, TagInfo {
-            name: "WBLevels",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (558, TagInfo {
-            name: "Artist",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (559, TagInfo {
-            name: "Copyright",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (560, TagInfo {
-            name: "FirmwareVersion",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (561, TagInfo {
-            name: "ContrastDetectAFArea",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (565, TagInfo {
-            name: "CrossProcessParams",
-            format: "int8u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (568, TagInfo {
-            name: "CAFPointInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (569, TagInfo {
-            name: "LensInfoQ",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (575, TagInfo {
-            name: "Model",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (579, TagInfo {
-            name: "PixelShiftInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (581, TagInfo {
-            name: "AFPointInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1022, TagInfo {
-            name: "DataDump",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("\\$val".to_string())),
-            value_conv: None,
-        }),
-        (1026, TagInfo {
-            name: "ToneCurve",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("\\$val".to_string())),
-            value_conv: None,
-        }),
-        (1027, TagInfo {
-            name: "ToneCurves",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("\\$val".to_string())),
-            value_conv: None,
-        }),
-        (1029, TagInfo {
-            name: "UnknownBlock",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1035, TagInfo {
-            name: "FaceInfoK3III",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1036, TagInfo {
-            name: "AFInfoK3III",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (3584, TagInfo {
-            name: "PrintIM",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
+        (
+            0,
+            TagInfo {
+                name: "PentaxVersion",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+                value_conv: None,
+            },
+        ),
+        (
+            1,
+            TagInfo {
+                name: "PentaxModelType",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            2,
+            TagInfo {
+                name: "PreviewImageSize",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_4e5e992f9b388e54)),
+                value_conv: None,
+            },
+        ),
+        (
+            3,
+            TagInfo {
+                name: "PreviewImageLength",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4,
+            TagInfo {
+                name: "PreviewImageStart",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            5,
+            TagInfo {
+                name: "PentaxModelID",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            6,
+            TagInfo {
+                name: "Date",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_f0974ef9a0a8813d)),
+            },
+        ),
+        (
+            7,
+            TagInfo {
+                name: "Time",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_32a7e10f5e7f8777)),
+            },
+        ),
+        (
+            8,
+            TagInfo {
+                name: "Quality",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            9,
+            TagInfo {
+                name: "PentaxImageSize",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            11,
+            TagInfo {
+                name: "PictureMode",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_c402fe0c5220435c)),
+            },
+        ),
+        (
+            12,
+            TagInfo {
+                name: "FlashMode",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            16,
+            TagInfo {
+                name: "FocusPosition",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            18,
+            TagInfo {
+                name: "ExposureTime",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_1654733938db8225)),
+                value_conv: Some(ValueConv::Function(ast_value_bbb807c14c3cf509)),
+            },
+        ),
+        (
+            19,
+            TagInfo {
+                name: "FNumber",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+            },
+        ),
+        (
+            20,
+            TagInfo {
+                name: "ISO",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            21,
+            TagInfo {
+                name: "LightReading",
+                format: "int16s",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            23,
+            TagInfo {
+                name: "MeteringMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            24,
+            TagInfo {
+                name: "AutoBracketing",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+                value_conv: None,
+            },
+        ),
+        (
+            25,
+            TagInfo {
+                name: "WhiteBalance",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            26,
+            TagInfo {
+                name: "WhiteBalanceMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            27,
+            TagInfo {
+                name: "BlueBalance",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_70d1d11e7183127a)),
+            },
+        ),
+        (
+            28,
+            TagInfo {
+                name: "RedBalance",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_70d1d11e7183127a)),
+            },
+        ),
+        (
+            30,
+            TagInfo {
+                name: "DigitalZoom",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+            },
+        ),
+        (
+            31,
+            TagInfo {
+                name: "Saturation",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            32,
+            TagInfo {
+                name: "Contrast",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            33,
+            TagInfo {
+                name: "Sharpness",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            34,
+            TagInfo {
+                name: "WorldTimeLocation",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            35,
+            TagInfo {
+                name: "HometownCity",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            36,
+            TagInfo {
+                name: "DestinationCity",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            37,
+            TagInfo {
+                name: "HometownDST",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            38,
+            TagInfo {
+                name: "DestinationDST",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            39,
+            TagInfo {
+                name: "DSPFirmwareVersion",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+            },
+        ),
+        (
+            40,
+            TagInfo {
+                name: "CPUFirmwareVersion",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+            },
+        ),
+        (
+            41,
+            TagInfo {
+                name: "FrameNumber",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            50,
+            TagInfo {
+                name: "ImageEditing",
+                format: "int8u",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            51,
+            TagInfo {
+                name: "PictureMode",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            52,
+            TagInfo {
+                name: "DriveMode",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            53,
+            TagInfo {
+                name: "SensorSize",
+                format: "int16u",
+                print_conv: Some(PrintConv::Function(ast_print_ef689d4362d907e)),
+                value_conv: Some(ValueConv::Function(ast_value_6c25803f7a885741)),
+            },
+        ),
+        (
+            55,
+            TagInfo {
+                name: "ColorSpace",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            56,
+            TagInfo {
+                name: "ImageAreaOffset",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            57,
+            TagInfo {
+                name: "RawImageSize",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_937eb9745db39aa4)),
+                value_conv: None,
+            },
+        ),
+        (
+            60,
+            TagInfo {
+                name: "AFPointsInFocus",
+                format: "int32u",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: Some(ValueConv::Function(ast_value_f810249e3e5ba00e)),
+            },
+        ),
+        (
+            61,
+            TagInfo {
+                name: "DataScaling",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            62,
+            TagInfo {
+                name: "PreviewImageBorders",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            63,
+            TagInfo {
+                name: "LensRec",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            64,
+            TagInfo {
+                name: "SensitivityAdjust",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
+                value_conv: Some(ValueConv::Function(ast_value_4742ce1aa8d729e3)),
+            },
+        ),
+        (
+            65,
+            TagInfo {
+                name: "ImageEditCount",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            71,
+            TagInfo {
+                name: "CameraTemperature",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
+                value_conv: None,
+            },
+        ),
+        (
+            72,
+            TagInfo {
+                name: "AELock",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            73,
+            TagInfo {
+                name: "NoiseReduction",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            79,
+            TagInfo {
+                name: "ImageTone",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            80,
+            TagInfo {
+                name: "ColorTemperature",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_15b61e0dd2629a12)),
+            },
+        ),
+        (
+            83,
+            TagInfo {
+                name: "ColorTempDaylight",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+            },
+        ),
+        (
+            84,
+            TagInfo {
+                name: "ColorTempShade",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+            },
+        ),
+        (
+            85,
+            TagInfo {
+                name: "ColorTempCloudy",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+            },
+        ),
+        (
+            86,
+            TagInfo {
+                name: "ColorTempTungsten",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+            },
+        ),
+        (
+            87,
+            TagInfo {
+                name: "ColorTempFluorescentD",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+            },
+        ),
+        (
+            88,
+            TagInfo {
+                name: "ColorTempFluorescentN",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+            },
+        ),
+        (
+            89,
+            TagInfo {
+                name: "ColorTempFluorescentW",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+            },
+        ),
+        (
+            90,
+            TagInfo {
+                name: "ColorTempFlash",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+            },
+        ),
+        (
+            93,
+            TagInfo {
+                name: "ShutterCount",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::CryptShutterCount]".to_string(),
+                )),
+            },
+        ),
+        (
+            96,
+            TagInfo {
+                name: "FaceInfo",
+                format: "undef",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            98,
+            TagInfo {
+                name: "RawDevelopmentProcess",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            103,
+            TagInfo {
+                name: "Hue",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            104,
+            TagInfo {
+                name: "AWBInfo",
+                format: "undef",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            105,
+            TagInfo {
+                name: "DynamicRangeExpansion",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            107,
+            TagInfo {
+                name: "TimeInfo",
+                format: "undef",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            108,
+            TagInfo {
+                name: "HighLowKeyAdj",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            109,
+            TagInfo {
+                name: "ContrastHighlight",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            110,
+            TagInfo {
+                name: "ContrastShadow",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            111,
+            TagInfo {
+                name: "ContrastHighlightShadowAdj",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            112,
+            TagInfo {
+                name: "FineSharpness",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            113,
+            TagInfo {
+                name: "HighISONoiseReduction",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            114,
+            TagInfo {
+                name: "AFAdjustment",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            115,
+            TagInfo {
+                name: "MonochromeFilterEffect",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            116,
+            TagInfo {
+                name: "MonochromeToning",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            118,
+            TagInfo {
+                name: "FaceDetect",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            119,
+            TagInfo {
+                name: "FaceDetectFrameSize",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            121,
+            TagInfo {
+                name: "ShadowCorrection",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            122,
+            TagInfo {
+                name: "ISOAutoMinSpeed",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            123,
+            TagInfo {
+                name: "CrossProcess",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            125,
+            TagInfo {
+                name: "LensCorr",
+                format: "undef",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            126,
+            TagInfo {
+                name: "WhiteLevel",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            127,
+            TagInfo {
+                name: "BleachBypassToning",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            128,
+            TagInfo {
+                name: "AspectRatio",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            130,
+            TagInfo {
+                name: "BlurControl",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            133,
+            TagInfo {
+                name: "HDR",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            135,
+            TagInfo {
+                name: "ShutterType",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            136,
+            TagInfo {
+                name: "NeutralDensityFilter",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            139,
+            TagInfo {
+                name: "ISO",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            146,
+            TagInfo {
+                name: "IntervalShooting",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            150,
+            TagInfo {
+                name: "ClarityControl",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            512,
+            TagInfo {
+                name: "BlackPoint",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            513,
+            TagInfo {
+                name: "WhitePoint",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            515,
+            TagInfo {
+                name: "ColorMatrixA",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_59427ebd048dabd5)),
+                value_conv: Some(ValueConv::Function(ast_value_d7759f03b97f918d)),
+            },
+        ),
+        (
+            516,
+            TagInfo {
+                name: "ColorMatrixB",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_59427ebd048dabd5)),
+                value_conv: Some(ValueConv::Function(ast_value_d7759f03b97f918d)),
+            },
+        ),
+        (
+            521,
+            TagInfo {
+                name: "AEMeteringSegments",
+                format: "int8u",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+                value_conv: None,
+            },
+        ),
+        (
+            522,
+            TagInfo {
+                name: "FlashMeteringSegments",
+                format: "int8u",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+                value_conv: None,
+            },
+        ),
+        (
+            523,
+            TagInfo {
+                name: "SlaveFlashMeteringSegments",
+                format: "int8u",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
+                )),
+                value_conv: None,
+            },
+        ),
+        (
+            525,
+            TagInfo {
+                name: "WB_RGGBLevelsDaylight",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            526,
+            TagInfo {
+                name: "WB_RGGBLevelsShade",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            527,
+            TagInfo {
+                name: "WB_RGGBLevelsCloudy",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            528,
+            TagInfo {
+                name: "WB_RGGBLevelsTungsten",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            529,
+            TagInfo {
+                name: "WB_RGGBLevelsFluorescentD",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            530,
+            TagInfo {
+                name: "WB_RGGBLevelsFluorescentN",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            531,
+            TagInfo {
+                name: "WB_RGGBLevelsFluorescentW",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            532,
+            TagInfo {
+                name: "WB_RGGBLevelsFlash",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            533,
+            TagInfo {
+                name: "CameraInfo",
+                format: "undef",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            534,
+            TagInfo {
+                name: "BatteryInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            539,
+            TagInfo {
+                name: "SaturationInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            540,
+            TagInfo {
+                name: "ColorMatrixA2",
+                format: "int16s",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            541,
+            TagInfo {
+                name: "ColorMatrixB2",
+                format: "int16s",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            543,
+            TagInfo {
+                name: "AFInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            544,
+            TagInfo {
+                name: "HuffmanTable",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            545,
+            TagInfo {
+                name: "KelvinWB",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            546,
+            TagInfo {
+                name: "ColorInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            548,
+            TagInfo {
+                name: "EVStepInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            550,
+            TagInfo {
+                name: "ShotInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            551,
+            TagInfo {
+                name: "FacePos",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            552,
+            TagInfo {
+                name: "FaceSize",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            553,
+            TagInfo {
+                name: "SerialNumber",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            557,
+            TagInfo {
+                name: "WBLevels",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            558,
+            TagInfo {
+                name: "Artist",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            559,
+            TagInfo {
+                name: "Copyright",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            560,
+            TagInfo {
+                name: "FirmwareVersion",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            561,
+            TagInfo {
+                name: "ContrastDetectAFArea",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            565,
+            TagInfo {
+                name: "CrossProcessParams",
+                format: "int8u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            568,
+            TagInfo {
+                name: "CAFPointInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            569,
+            TagInfo {
+                name: "LensInfoQ",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            575,
+            TagInfo {
+                name: "Model",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            579,
+            TagInfo {
+                name: "PixelShiftInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            581,
+            TagInfo {
+                name: "AFPointInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1022,
+            TagInfo {
+                name: "DataDump",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_6486d152488d624b)),
+                value_conv: None,
+            },
+        ),
+        (
+            1026,
+            TagInfo {
+                name: "ToneCurve",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_6486d152488d624b)),
+                value_conv: None,
+            },
+        ),
+        (
+            1027,
+            TagInfo {
+                name: "ToneCurves",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_6486d152488d624b)),
+                value_conv: None,
+            },
+        ),
+        (
+            1029,
+            TagInfo {
+                name: "UnknownBlock",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1035,
+            TagInfo {
+                name: "FaceInfoK3III",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1036,
+            TagInfo {
+                name: "AFInfoK3III",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            3584,
+            TagInfo {
+                name: "PrintIM",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
     ])
 });
 
@@ -857,19 +1347,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = PENTAX_MAIN_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -877,7 +1364,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -885,7 +1375,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -895,11 +1384,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

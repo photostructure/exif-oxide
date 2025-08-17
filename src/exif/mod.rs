@@ -28,7 +28,7 @@ use crate::types::{
     DataMemberValue, DirectoryInfo, ExifError, ProcessorDispatch, Result, TagSourceInfo, TagValue,
 };
 use std::collections::HashMap;
-use tracing::{debug, trace};
+use tracing::debug;
 
 /// Stateful EXIF reader for processing JPEG-embedded EXIF data
 /// ExifTool: lib/Image/ExifTool/Exif.pm ProcessExif function architecture
@@ -426,7 +426,8 @@ impl ExifReader {
     pub fn get_all_tag_entries(&mut self) -> Vec<crate::types::TagEntry> {
         use crate::generated::Exif_pm::main_tags::EXIF_MAIN_TAGS as EXIF_PM_TAG_KITS;
         use crate::generated::GPS_pm::main_tags::GPS_MAIN_TAGS as GPS_PM_TAG_KITS;
-        use crate::generated::COMPOSITE_TAGS;
+        // TODO: Re-enable when COMPOSITE_TAGS registry is available
+        // use crate::generated::COMPOSITE_TAGS;
         use crate::implementations::canon;
         use crate::implementations::olympus;
         use crate::implementations::sony;
@@ -701,37 +702,38 @@ impl ExifReader {
             // Extract just the tag name part
             let name = tag_name.strip_prefix("Composite:").unwrap_or(tag_name);
 
+            // TODO: Re-enable when COMPOSITE_TAGS registry is available
             // Find the composite definition
-            let composite_def = COMPOSITE_TAGS
-                .iter()
-                .find(|(_, def)| def.name == name)
-                .map(|(_, def)| *def);
+            // let composite_def = COMPOSITE_TAGS
+            //     .iter()
+            //     .find(|(_, def)| def.name == name)
+            //     .map(|(_, def)| def.clone());
 
-            if let Some(def) = composite_def {
-                let (value, print) =
-                    crate::composite_tags::apply_composite_conversions(raw_value, def);
+            // if let Some(def) = composite_def {
+            //     let (value, print) =
+            //         crate::composite_tags::apply_composite_conversions(raw_value, &def);
 
-                let entry = TagEntry {
-                    group: "Composite".to_string(),
-                    group1: "Composite".to_string(),
-                    name: name.to_string(),
-                    value,
-                    print,
-                };
+            //     let entry = TagEntry {
+            //         group: "Composite".to_string(),
+            //         group1: "Composite".to_string(),
+            //         name: name.to_string(),
+            //         value,
+            //         print,
+            //     };
 
-                entries.push(entry);
-            } else {
-                // Fallback if definition not found
-                let entry = TagEntry {
-                    group: "Composite".to_string(),
-                    group1: "Composite".to_string(),
-                    name: name.to_string(),
-                    value: raw_value.clone(),
-                    print: raw_value.clone(),
-                };
+            //     entries.push(entry);
+            // } else {
+            // Fallback if definition not found
+            let entry = TagEntry {
+                group: "Composite".to_string(),
+                group1: "Composite".to_string(),
+                name: name.to_string(),
+                value: raw_value.clone(),
+                print: raw_value.clone(),
+            };
 
-                entries.push(entry);
-            }
+            entries.push(entry);
+            // }
         }
 
         entries

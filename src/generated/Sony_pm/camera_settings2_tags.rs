@@ -7,7 +7,19 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::implementations::print_conv::fnumber_print_conv;
+use crate::generated::functions::hash_4b::ast_value_4b2b5b722bdd63f4;
+use crate::generated::functions::hash_58::ast_value_58f560b2a6e62b0d;
+use crate::generated::functions::hash_63::ast_print_634937674bb4dcf3;
+use crate::generated::functions::hash_64::ast_value_647eb869d9cb9ed1;
+use crate::generated::functions::hash_83::ast_value_8350871c1b6679f7;
+use crate::generated::functions::hash_8b::ast_print_8b1cb18fc68bc972;
+use crate::generated::functions::hash_93::ast_print_9380e2f55474fc9;
+use crate::generated::functions::hash_a7::ast_value_a7fc8acd4df4945;
+use crate::generated::functions::hash_b7::ast_print_b75f5f46a9f320cf;
+use crate::generated::functions::hash_b9::ast_print_b93bf01b5173ce30;
+use crate::generated::functions::hash_bb::ast_print_bb36ed62e5a52a4;
+use crate::generated::functions::hash_d0::ast_value_d02980f78a9700ff;
+use crate::generated::functions::hash_e4::ast_value_e42dee863566f395;
 
 /// Tag definitions for Sony::CameraSettings2 table
 pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,12 +29,8 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "ExposureTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\"".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression(
-                    "$val ? 2 ** (6 - $val/8) : 0".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_bb36ed62e5a52a4)),
+                value_conv: Some(ValueConv::Function(ast_value_58f560b2a6e62b0d)),
             },
         ),
         (
@@ -30,8 +38,8 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(fnumber_print_conv)),
-                value_conv: Some(ValueConv::Expression("2 ** (($val/8 - 1) / 2)".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_634937674bb4dcf3)),
+                value_conv: Some(ValueConv::Function(ast_value_4b2b5b722bdd63f4)),
             },
         ),
         (
@@ -48,10 +56,8 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "ExposureCompensationSet",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "$val ? sprintf(\"%+.1f\",$val) : 0".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("($val - 128) / 24".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
+                value_conv: Some(ValueConv::Function(ast_value_8350871c1b6679f7)),
             },
         ),
         (
@@ -69,9 +75,7 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 name: "WhiteBalanceFineTune",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Expression(
-                    "$val > 128 ? $val - 256 : $val".to_string(),
-                )),
+                value_conv: Some(ValueConv::Function(ast_value_d02980f78a9700ff)),
             },
         ),
         (
@@ -79,8 +83,8 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "ColorTemperatureSet",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val K\"".to_string())),
-                value_conv: Some(ValueConv::Expression("$val * 100".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_8b1cb18fc68bc972)),
+                value_conv: Some(ValueConv::Function(ast_value_647eb869d9cb9ed1)),
             },
         ),
         (
@@ -88,12 +92,8 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "ColorCompensationFilterSet",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "$val > 0 ? \"+$val\" : $val".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression(
-                    "$val > 128 ? $val - 256 : $val".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                value_conv: Some(ValueConv::Function(ast_value_d02980f78a9700ff)),
             },
         ),
         (
@@ -110,8 +110,8 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "ColorTemperatureCustom",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val K\"".to_string())),
-                value_conv: Some(ValueConv::Expression("$val * 100".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_8b1cb18fc68bc972)),
+                value_conv: Some(ValueConv::Function(ast_value_647eb869d9cb9ed1)),
             },
         ),
         (
@@ -119,12 +119,8 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "ColorCompensationFilterCustom",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "$val > 0 ? \"+$val\" : $val".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression(
-                    "$val > 128 ? $val - 256 : $val".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                value_conv: Some(ValueConv::Function(ast_value_d02980f78a9700ff)),
             },
         ),
         (
@@ -168,10 +164,8 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FlashExposureCompSet",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "$val ? sprintf(\"%+.1f\",$val) : 0".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("($val - 128) / 24".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
+                value_conv: Some(ValueConv::Function(ast_value_8350871c1b6679f7)),
             },
         ),
         (
@@ -188,12 +182,8 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "ISOSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "$val ? sprintf(\"%.0f\",$val) : \"Auto\"".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression(
-                    "$val ? exp(($val/8-6)*log(2))*100 : $val".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_9380e2f55474fc9)),
+                value_conv: Some(ValueConv::Function(ast_value_a7fc8acd4df4945)),
             },
         ),
         (
@@ -219,10 +209,8 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "Sharpness",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "$val > 0 ? \"+$val\" : $val".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("$val - 10".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                value_conv: Some(ValueConv::Function(ast_value_e42dee863566f395)),
             },
         ),
         (
@@ -230,10 +218,8 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "Contrast",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "$val > 0 ? \"+$val\" : $val".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("$val - 10".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                value_conv: Some(ValueConv::Function(ast_value_e42dee863566f395)),
             },
         ),
         (
@@ -241,10 +227,8 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "Saturation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "$val > 0 ? \"+$val\" : $val".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("$val - 10".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                value_conv: Some(ValueConv::Function(ast_value_e42dee863566f395)),
             },
         ),
         (
@@ -288,12 +272,8 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "ShutterSpeedSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\"".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression(
-                    "$val ? 2 ** (6 - $val/8) : 0".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_bb36ed62e5a52a4)),
+                value_conv: Some(ValueConv::Function(ast_value_58f560b2a6e62b0d)),
             },
         ),
         (
@@ -301,8 +281,8 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "ApertureSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(fnumber_print_conv)),
-                value_conv: Some(ValueConv::Expression("2 ** (($val/8 - 1) / 2)".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_634937674bb4dcf3)),
+                value_conv: Some(ValueConv::Function(ast_value_4b2b5b722bdd63f4)),
             },
         ),
         (
@@ -448,19 +428,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = SONY_CAMERASETTINGS2_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -468,7 +445,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -476,7 +456,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -486,11 +465,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

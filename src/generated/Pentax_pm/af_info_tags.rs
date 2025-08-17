@@ -6,6 +6,12 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_32::ast_value_325ae39bdd3fcbb3;
+use crate::generated::functions::hash_ba::ast_print_ba730b85fae6fc80;
+use crate::generated::functions::hash_c2::ast_value_c261a90df23a5f06;
+use crate::generated::functions::hash_c7::ast_value_c7eada7e0548cfd1;
+
 /// Tag definitions for Pentax::AFInfo table
 pub static PENTAX_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
@@ -15,9 +21,7 @@ pub static PENTAX_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "AFPointsUnknown1",
                 format: "int16u",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Expression(
-                    "$self->Options(\"Unknown\") ? $val : $val & 0x7ff".to_string(),
-                )),
+                value_conv: Some(ValueConv::Function(ast_value_325ae39bdd3fcbb3)),
             },
         ),
         (
@@ -26,9 +30,7 @@ pub static PENTAX_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "AFPointsUnknown2",
                 format: "int16u",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Expression(
-                    "$self->Options(\"Unknown\") ? $val : $val & 0x7ff".to_string(),
-                )),
+                value_conv: Some(ValueConv::Function(ast_value_325ae39bdd3fcbb3)),
             },
         ),
         (
@@ -45,8 +47,8 @@ pub static PENTAX_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "AFIntegrationTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression("\"$val ms\"".to_string())),
-                value_conv: Some(ValueConv::Expression("$val * 2".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_ba730b85fae6fc80)),
+                value_conv: Some(ValueConv::Function(ast_value_c261a90df23a5f06)),
             },
         ),
         (
@@ -66,10 +68,7 @@ pub static PENTAX_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 print_conv: Some(PrintConv::Expression(
                     "[Function: Image::ExifTool::Pentax::AFPointValuesK3III]".to_string(),
                 )),
-                value_conv: Some(ValueConv::Expression(
-                    "my @a=split \" \",$val;$_>32767 and $_-=65536 foreach @a;join \" \",@a"
-                        .to_string(),
-                )),
+                value_conv: Some(ValueConv::Function(ast_value_c7eada7e0548cfd1)),
             },
         ),
         (
@@ -120,19 +119,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = PENTAX_AFINFO_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -140,7 +136,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -148,7 +147,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -158,11 +156,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

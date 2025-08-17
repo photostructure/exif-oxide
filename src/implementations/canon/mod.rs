@@ -927,7 +927,6 @@ pub fn apply_camera_settings_print_conv(
     tag_name: &str,
     tag_value: &crate::types::TagValue,
 ) -> crate::types::TagValue {
-    use crate::expressions::ExpressionEvaluator;
     use crate::generated::Canon_pm;
 
     debug!(
@@ -939,7 +938,6 @@ pub fn apply_camera_settings_print_conv(
     if let Some(tag_id) = get_canon_camera_settings_tag_id(tag_name) {
         debug!("Found tag kit ID {} for tag {}", tag_id, tag_name);
         // Use unified tag kit system for PrintConv
-        let mut evaluator = ExpressionEvaluator::new();
         let mut errors: Vec<String> = Vec::new();
         let mut warnings: Vec<String> = Vec::new();
 
