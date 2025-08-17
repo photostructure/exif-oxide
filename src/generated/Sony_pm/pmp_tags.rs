@@ -7,95 +7,142 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::implementations::print_conv::exposuretime_print_conv;
+use crate::generated::functions::hash_30::ast_print_30c6ff66128b242c;
+use crate::generated::functions::hash_75::ast_value_7572393db83255de;
+use crate::generated::functions::hash_93::ast_value_932aeef1bf94311d;
+use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
+use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_ee::ast_value_ee9b0901d11400f9;
 
 /// Tag definitions for Sony::PMP table
 pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (8, TagInfo {
-            name: "JpgFromRawStart",
-            format: "int32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (12, TagInfo {
-            name: "JpgFromRawLength",
-            format: "int32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (22, TagInfo {
-            name: "SonyImageWidth",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (24, TagInfo {
-            name: "SonyImageHeight",
-            format: "int16u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (27, TagInfo {
-            name: "Orientation",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (29, TagInfo {
-            name: "ImageQuality",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (52, TagInfo {
-            name: "Comment",
-            format: "string[19]",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (76, TagInfo {
-            name: "DateTimeOriginal",
-            format: "int8u[6]",
-            print_conv: Some(PrintConv::Expression("$self->ConvertDateTime($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("\n            my @a = split ' ', $val;\n            $a[0] += $a[0] < 70 ? 2000 : 1900;\n            sprintf('%.4d:%.2d:%.2d %.2d:%.2d:%.2d', @a);\n        ".to_string())),
-        }),
-        (84, TagInfo {
-            name: "ModifyDate",
-            format: "int8u[6]",
-            print_conv: Some(PrintConv::Expression("$self->ConvertDateTime($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("\n            my @a = split ' ', $val;\n            $a[0] += $a[0] < 70 ? 2000 : 1900;\n            sprintf('%.4d:%.2d:%.2d %.2d:%.2d:%.2d', @a);\n        ".to_string())),
-        }),
-        (102, TagInfo {
-            name: "ExposureTime",
-            format: "int16s",
-            print_conv: Some(PrintConv::Function(exposuretime_print_conv)),
-            value_conv: Some(ValueConv::Expression("2 ** (-$val / 100)".to_string())),
-        }),
-        (106, TagInfo {
-            name: "FNumber",
-            format: "int16s",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("$val / 100".to_string())),
-        }),
-        (108, TagInfo {
-            name: "ExposureCompensation",
-            format: "int16s",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("$val / 100".to_string())),
-        }),
-        (112, TagInfo {
-            name: "FocalLength",
-            format: "int16s",
-            print_conv: Some(PrintConv::Expression("sprintf(\"%.1f mm\",$val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 100".to_string())),
-        }),
-        (118, TagInfo {
-            name: "Flash",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
+        (
+            8,
+            TagInfo {
+                name: "JpgFromRawStart",
+                format: "int32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            12,
+            TagInfo {
+                name: "JpgFromRawLength",
+                format: "int32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            22,
+            TagInfo {
+                name: "SonyImageWidth",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            24,
+            TagInfo {
+                name: "SonyImageHeight",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            27,
+            TagInfo {
+                name: "Orientation",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            29,
+            TagInfo {
+                name: "ImageQuality",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            52,
+            TagInfo {
+                name: "Comment",
+                format: "string[19]",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            76,
+            TagInfo {
+                name: "DateTimeOriginal",
+                format: "int8u[6]",
+                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                value_conv: Some(ValueConv::Function(ast_value_932aeef1bf94311d)),
+            },
+        ),
+        (
+            84,
+            TagInfo {
+                name: "ModifyDate",
+                format: "int8u[6]",
+                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                value_conv: Some(ValueConv::Function(ast_value_932aeef1bf94311d)),
+            },
+        ),
+        (
+            102,
+            TagInfo {
+                name: "ExposureTime",
+                format: "int16s",
+                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
+                value_conv: Some(ValueConv::Function(ast_value_7572393db83255de)),
+            },
+        ),
+        (
+            106,
+            TagInfo {
+                name: "FNumber",
+                format: "int16s",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+            },
+        ),
+        (
+            108,
+            TagInfo {
+                name: "ExposureCompensation",
+                format: "int16s",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+            },
+        ),
+        (
+            112,
+            TagInfo {
+                name: "FocalLength",
+                format: "int16s",
+                print_conv: Some(PrintConv::Function(ast_print_30c6ff66128b242c)),
+                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+            },
+        ),
+        (
+            118,
+            TagInfo {
+                name: "Flash",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
     ])
 });
 
@@ -104,19 +151,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = SONY_PMP_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -124,7 +168,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -132,7 +179,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -142,11 +188,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

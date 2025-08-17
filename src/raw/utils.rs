@@ -40,13 +40,12 @@ pub fn kyocera_fnumber(val: u32) -> f64 {
 /// Now uses the generated tag kit system with PrintConv lookup
 pub fn kyocera_iso_lookup(val: u32) -> Option<u32> {
     // Temporarily disabled due to missing generated code
-    // use crate::expressions::ExpressionEvaluator;
     // use crate::generated::KyoceraRaw_pm::tag_kit::apply_print_conv;
     // use crate::types::TagValue;
 
     // Use the tag kit system to apply PrintConv for ISO tag (id=52)
     // let input_value = TagValue::U32(val);
-    // let result = apply_print_conv(52, &input_value, &mut evaluator, &mut errors, &mut warnings);
+    // let result = apply_print_conv(52, &input_value, &mut errors, &mut warnings);
 
     // Parse the result back to u32 if it's a valid ISO value
     // if let TagValue::String(iso_str) = result {

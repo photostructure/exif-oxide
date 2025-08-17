@@ -258,12 +258,10 @@ pub fn apply_print_conv_with_tag_id(tag_id: Option<u32>, name: &str, value: &Tag
 /// Try to apply PrintConv using tag kit system
 fn try_tag_kit_print_conv(tag_id: u32, value: &TagValue) -> Option<TagValue> {
     // For now, try EXIF tag kit (we can extend this to other modules later)
-    use crate::expressions::ExpressionEvaluator;
     use crate::generated::Exif_pm::main_tags;
 
     // Create temporary containers for errors/warnings
     // TODO: These should be passed through the API to collect for the user
-    let mut expression_evaluator = ExpressionEvaluator::new();
     let mut errors: Vec<String> = Vec::new();
     let mut warnings: Vec<String> = Vec::new();
 
@@ -303,7 +301,6 @@ pub fn apply_raw_conv(name: &str, value: &TagValue) -> TagValue {
 /// This function processes PrintConv expressions used in composite tag definitions,
 /// typically Perl expressions that need to be evaluated with resolved tag values.
 pub fn evaluate_print_conv(print_conv: &str, value: &TagValue) -> Result<TagValue> {
-    use crate::expressions::ExpressionEvaluator;
     use tracing::trace;
 
     trace!(
@@ -313,7 +310,8 @@ pub fn evaluate_print_conv(print_conv: &str, value: &TagValue) -> Result<TagValu
     );
 
     // Create expression evaluator for processing the PrintConv expression
-    let mut evaluator = ExpressionEvaluator::new();
+    use crate::types::binary_data::ExpressionEvaluator;
+    let mut evaluator = ExpressionEvaluator::new(std::collections::HashMap::new(), &std::collections::HashMap::new());
 
     // TODO: P07 - Full expression evaluation implementation
     // For now, attempt basic evaluation and fall back to original value

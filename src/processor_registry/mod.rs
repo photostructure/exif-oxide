@@ -36,7 +36,6 @@ pub mod registry;
 pub mod traits;
 
 // Re-export core types for convenience
-pub use crate::expressions::ExpressionEvaluator as ConditionEvaluator;
 pub use capability::ProcessorCapability;
 pub use context::ProcessorContext;
 pub use dispatch::DispatchRule;

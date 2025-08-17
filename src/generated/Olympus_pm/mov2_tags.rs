@@ -7,10 +7,11 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::implementations::print_conv::{
-    exposuretime_print_conv, fnumber_print_conv, print_fraction,
-};
-use crate::implementations::value_conv::reciprocal_10_value_conv;
+use crate::generated::functions::hash_30::ast_print_30c6ff66128b242c;
+use crate::generated::functions::hash_5b::ast_value_5b997436cb4c4a4f;
+use crate::generated::functions::hash_63::ast_print_634937674bb4dcf3;
+use crate::generated::functions::hash_bb::ast_print_bba76882980e1e1a;
+use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
 
 /// Tag definitions for Olympus::MOV2 table
 pub static OLYMPUS_MOV2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -38,8 +39,8 @@ pub static OLYMPUS_MOV2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "ExposureTime",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(exposuretime_print_conv)),
-                value_conv: Some(ValueConv::Function(reciprocal_10_value_conv)),
+                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
+                value_conv: Some(ValueConv::Function(ast_value_5b997436cb4c4a4f)),
             },
         ),
         (
@@ -47,7 +48,7 @@ pub static OLYMPUS_MOV2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "FNumber",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(fnumber_print_conv)),
+                print_conv: Some(PrintConv::Function(ast_print_634937674bb4dcf3)),
                 value_conv: None,
             },
         ),
@@ -56,7 +57,7 @@ pub static OLYMPUS_MOV2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "ExposureCompensation",
                 format: "rational64s",
-                print_conv: Some(PrintConv::Function(print_fraction)),
+                print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
                 value_conv: None,
             },
         ),
@@ -65,9 +66,7 @@ pub static OLYMPUS_MOV2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "FocalLength",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Expression(
-                    "sprintf(\"%.1f mm\",$val)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_30c6ff66128b242c)),
                 value_conv: None,
             },
         ),
@@ -88,19 +87,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = OLYMPUS_MOV2_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -108,7 +104,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -116,7 +115,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -126,11 +124,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

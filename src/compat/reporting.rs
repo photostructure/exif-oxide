@@ -4,7 +4,7 @@
 //! ExifTool and exif-oxide output.
 
 use crate::compat::{comparison::*, load_supported_tags};
-use crate::generated::composite_tags::lookup_composite_tag;
+// use crate::generated::composite_tags::lookup_composite_tag;
 use serde_json::Value;
 use std::collections::HashSet;
 
@@ -375,9 +375,11 @@ fn is_composite_dependency_failure(tag: &str, our_obj: &serde_json::Map<String, 
     let tag_name = &tag[10..];
 
     // Look up the composite tag definition
+    // TODO: Re-enable when composite_tags is generated
+    /*
     if let Some(composite_def) = lookup_composite_tag(tag_name) {
         // Check if all required dependencies are available in our output
-        for required_tag in composite_def.require {
+        for required_tag in &composite_def.require {
             // Check various possible tag name formats
             let possible_names = [
                 required_tag.to_string(),
@@ -407,6 +409,7 @@ fn is_composite_dependency_failure(tag: &str, our_obj: &serde_json::Map<String, 
             }
         }
     }
+    */
 
     false
 }

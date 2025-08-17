@@ -7,248 +7,376 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::implementations::print_conv::{exposuretime_print_conv, print_fraction};
-use crate::implementations::value_conv::{
-    exif_date_value_conv, gps_coordinate_value_conv, gpstimestamp_value_conv,
-};
+use crate::generated::functions::hash_15::ast_value_1535cc61d3e15b8b;
+use crate::generated::functions::hash_44::ast_print_449352809d0c73f5;
+use crate::generated::functions::hash_47::ast_value_473c62936c679f74;
+use crate::generated::functions::hash_4d::ast_value_4dd64ad8b929982b;
+use crate::generated::functions::hash_67::ast_value_67653a3c31f6d232;
+use crate::generated::functions::hash_6c::ast_value_6cb46ed7ea997c8d;
+use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
+use crate::generated::functions::hash_9e::ast_value_9ead6fbe543c3486;
+use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
+use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
+use crate::generated::functions::hash_bb::ast_print_bba76882980e1e1a;
+use crate::generated::functions::hash_c1::ast_print_c12c7e50f55cf298;
+use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_db::ast_value_db6d300cf2bc94e2;
+use crate::generated::functions::hash_ec::ast_print_ec01a8049c79f988;
 
 /// Tag definitions for H264::MDPM table
 pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (19, TagInfo {
-            name: "TimeCode",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("sprintf(\"%.2x:%.2x:%.2x:%.2x\",reverse unpack(\"C*\",$val))".to_string())),
-        }),
-        (24, TagInfo {
-            name: "DateTimeOriginal",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("$self->ConvertDateTime($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("\n            my ($tz, @a) = unpack('C*',$val);\n            return sprintf('%.2x%.2x:%.2x:%.2x %.2x:%.2x:%.2x%s%.2d:%s%s', @a,\n                           $tz & 0x20 ? '-' : '+', ($tz >> 1) & 0x0f,\n                           $tz & 0x01 ? '30' : '00',\n                           $tz & 0x40 ? ' DST' : '');\n        ".to_string())),
-        }),
-        (112, TagInfo {
-            name: "Camera1",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (113, TagInfo {
-            name: "Camera2",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (127, TagInfo {
-            name: "Shutter",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (160, TagInfo {
-            name: "ExposureTime",
-            format: "rational32u",
-            print_conv: Some(PrintConv::Function(exposuretime_print_conv)),
-            value_conv: None,
-        }),
-        (161, TagInfo {
-            name: "FNumber",
-            format: "rational32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (162, TagInfo {
-            name: "ExposureProgram",
-            format: "int32u",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (163, TagInfo {
-            name: "BrightnessValue",
-            format: "rational32s",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (164, TagInfo {
-            name: "ExposureCompensation",
-            format: "rational32s",
-            print_conv: Some(PrintConv::Function(print_fraction)),
-            value_conv: None,
-        }),
-        (165, TagInfo {
-            name: "MaxApertureValue",
-            format: "rational32u",
-            print_conv: Some(PrintConv::Expression("sprintf(\"%.1f\",$val)".to_string())),
-            value_conv: Some(ValueConv::Expression("2 ** ($val / 2)".to_string())),
-        }),
-        (166, TagInfo {
-            name: "Flash",
-            format: "int32u",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (167, TagInfo {
-            name: "CustomRendered",
-            format: "int32u",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (168, TagInfo {
-            name: "WhiteBalance",
-            format: "int32u",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (169, TagInfo {
-            name: "FocalLengthIn35mmFormat",
-            format: "rational32u",
-            print_conv: Some(PrintConv::Expression("\"$val mm\"".to_string())),
-            value_conv: None,
-        }),
-        (170, TagInfo {
-            name: "SceneCaptureType",
-            format: "int32u",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (176, TagInfo {
-            name: "GPSVersionID",
-            format: "int8u",
-            print_conv: Some(PrintConv::Expression("$val =~ tr/ /./; $val".to_string())),
-            value_conv: None,
-        }),
-        (177, TagInfo {
-            name: "GPSLatitudeRef",
-            format: "string",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (178, TagInfo {
-            name: "GPSLatitude",
-            format: "rational32u",
-            print_conv: Some(PrintConv::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1)".to_string())),
-            value_conv: Some(ValueConv::Function(gps_coordinate_value_conv)),
-        }),
-        (181, TagInfo {
-            name: "GPSLongitudeRef",
-            format: "string",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (182, TagInfo {
-            name: "GPSLongitude",
-            format: "rational32u",
-            print_conv: Some(PrintConv::Expression("Image::ExifTool::GPS::ToDMS($self, $val, 1)".to_string())),
-            value_conv: Some(ValueConv::Function(gps_coordinate_value_conv)),
-        }),
-        (185, TagInfo {
-            name: "GPSAltitudeRef",
-            format: "int32u",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: Some(ValueConv::Expression("$val ? 1 : 0".to_string())),
-        }),
-        (186, TagInfo {
-            name: "GPSAltitude",
-            format: "rational32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (187, TagInfo {
-            name: "GPSTimeStamp",
-            format: "rational32u",
-            print_conv: Some(PrintConv::Expression("Image::ExifTool::GPS::PrintTimeStamp($val)".to_string())),
-            value_conv: Some(ValueConv::Function(gpstimestamp_value_conv)),
-        }),
-        (190, TagInfo {
-            name: "GPSStatus",
-            format: "string",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (191, TagInfo {
-            name: "GPSMeasureMode",
-            format: "string",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (192, TagInfo {
-            name: "GPSDOP",
-            format: "rational32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (193, TagInfo {
-            name: "GPSSpeedRef",
-            format: "string",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (194, TagInfo {
-            name: "GPSSpeed",
-            format: "rational32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (195, TagInfo {
-            name: "GPSTrackRef",
-            format: "string",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (196, TagInfo {
-            name: "GPSTrack",
-            format: "rational32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (197, TagInfo {
-            name: "GPSImgDirectionRef",
-            format: "string",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (198, TagInfo {
-            name: "GPSImgDirection",
-            format: "rational32u",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (199, TagInfo {
-            name: "GPSMapDatum",
-            format: "string",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (202, TagInfo {
-            name: "GPSDateStamp",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Function(exif_date_value_conv)),
-        }),
-        (224, TagInfo {
-            name: "MakeModel",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (225, TagInfo {
-            name: "RecInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (228, TagInfo {
-            name: "Model",
-            format: "string",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (238, TagInfo {
-            name: "FrameInfo",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
+        (
+            19,
+            TagInfo {
+                name: "TimeCode",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_1535cc61d3e15b8b)),
+            },
+        ),
+        (
+            24,
+            TagInfo {
+                name: "DateTimeOriginal",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                value_conv: Some(ValueConv::Function(ast_value_473c62936c679f74)),
+            },
+        ),
+        (
+            112,
+            TagInfo {
+                name: "Camera1",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            113,
+            TagInfo {
+                name: "Camera2",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            127,
+            TagInfo {
+                name: "Shutter",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            160,
+            TagInfo {
+                name: "ExposureTime",
+                format: "rational32u",
+                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
+                value_conv: None,
+            },
+        ),
+        (
+            161,
+            TagInfo {
+                name: "FNumber",
+                format: "rational32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            162,
+            TagInfo {
+                name: "ExposureProgram",
+                format: "int32u",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            163,
+            TagInfo {
+                name: "BrightnessValue",
+                format: "rational32s",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            164,
+            TagInfo {
+                name: "ExposureCompensation",
+                format: "rational32s",
+                print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
+                value_conv: None,
+            },
+        ),
+        (
+            165,
+            TagInfo {
+                name: "MaxApertureValue",
+                format: "rational32u",
+                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                value_conv: Some(ValueConv::Function(ast_value_6cb46ed7ea997c8d)),
+            },
+        ),
+        (
+            166,
+            TagInfo {
+                name: "Flash",
+                format: "int32u",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            167,
+            TagInfo {
+                name: "CustomRendered",
+                format: "int32u",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            168,
+            TagInfo {
+                name: "WhiteBalance",
+                format: "int32u",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            169,
+            TagInfo {
+                name: "FocalLengthIn35mmFormat",
+                format: "rational32u",
+                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
+                value_conv: None,
+            },
+        ),
+        (
+            170,
+            TagInfo {
+                name: "SceneCaptureType",
+                format: "int32u",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            176,
+            TagInfo {
+                name: "GPSVersionID",
+                format: "int8u",
+                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+                value_conv: None,
+            },
+        ),
+        (
+            177,
+            TagInfo {
+                name: "GPSLatitudeRef",
+                format: "string",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            178,
+            TagInfo {
+                name: "GPSLatitude",
+                format: "rational32u",
+                print_conv: Some(PrintConv::Function(ast_print_ec01a8049c79f988)),
+                value_conv: Some(ValueConv::Function(ast_value_4dd64ad8b929982b)),
+            },
+        ),
+        (
+            181,
+            TagInfo {
+                name: "GPSLongitudeRef",
+                format: "string",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            182,
+            TagInfo {
+                name: "GPSLongitude",
+                format: "rational32u",
+                print_conv: Some(PrintConv::Function(ast_print_ec01a8049c79f988)),
+                value_conv: Some(ValueConv::Function(ast_value_4dd64ad8b929982b)),
+            },
+        ),
+        (
+            185,
+            TagInfo {
+                name: "GPSAltitudeRef",
+                format: "int32u",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: Some(ValueConv::Function(ast_value_9ead6fbe543c3486)),
+            },
+        ),
+        (
+            186,
+            TagInfo {
+                name: "GPSAltitude",
+                format: "rational32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            187,
+            TagInfo {
+                name: "GPSTimeStamp",
+                format: "rational32u",
+                print_conv: Some(PrintConv::Function(ast_print_449352809d0c73f5)),
+                value_conv: Some(ValueConv::Function(ast_value_67653a3c31f6d232)),
+            },
+        ),
+        (
+            190,
+            TagInfo {
+                name: "GPSStatus",
+                format: "string",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            191,
+            TagInfo {
+                name: "GPSMeasureMode",
+                format: "string",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            192,
+            TagInfo {
+                name: "GPSDOP",
+                format: "rational32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            193,
+            TagInfo {
+                name: "GPSSpeedRef",
+                format: "string",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            194,
+            TagInfo {
+                name: "GPSSpeed",
+                format: "rational32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            195,
+            TagInfo {
+                name: "GPSTrackRef",
+                format: "string",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            196,
+            TagInfo {
+                name: "GPSTrack",
+                format: "rational32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            197,
+            TagInfo {
+                name: "GPSImgDirectionRef",
+                format: "string",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            198,
+            TagInfo {
+                name: "GPSImgDirection",
+                format: "rational32u",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            199,
+            TagInfo {
+                name: "GPSMapDatum",
+                format: "string",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            202,
+            TagInfo {
+                name: "GPSDateStamp",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_db6d300cf2bc94e2)),
+            },
+        ),
+        (
+            224,
+            TagInfo {
+                name: "MakeModel",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            225,
+            TagInfo {
+                name: "RecInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            228,
+            TagInfo {
+                name: "Model",
+                format: "string",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            238,
+            TagInfo {
+                name: "FrameInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
     ])
 });
 
@@ -257,19 +385,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = H264_MDPM_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -277,7 +402,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -285,7 +413,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -295,11 +422,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

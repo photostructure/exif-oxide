@@ -10,7 +10,6 @@
 //! - lib/Image/ExifTool/Canon.pm:2166+ %Canon::CameraSettings table
 //! - ExifTool's ProcessBinaryData with FORMAT => 'int16s', FIRST_ENTRY => 1
 
-use crate::expressions::ExpressionEvaluator;
 use crate::generated::Canon_pm::main_tags::CANON_MAIN_TAGS;
 use crate::tiff_types::ByteOrder;
 use crate::types::{
@@ -24,7 +23,6 @@ use tracing::debug;
 fn apply_canon_print_conv(
     tag_id: u32,
     value: &TagValue,
-    evaluator: &mut ExpressionEvaluator,
     errors: &mut Vec<String>,
     warnings: &mut Vec<String>,
 ) -> TagValue {
@@ -33,19 +31,10 @@ fn apply_canon_print_conv(
         debug!("Found Canon tag {}: {}", tag_id, tag_info.name);
 
         match &tag_info.print_conv {
-            Some(PrintConv::Expression(expr)) => {
-                debug!("Using PrintConv expression: {}", expr);
-                // Use the expression evaluator for complex Perl expressions
-                match evaluator.evaluate_expression(expr, value) {
-                    Ok(result) => result,
-                    Err(e) => {
-                        warnings.push(format!(
-                            "Failed to evaluate PrintConv expression for tag {}: {}",
-                            tag_id, e
-                        ));
-                        value.clone()
-                    }
-                }
+            Some(PrintConv::Expression(_expr)) => {
+                // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                // Fallback to original value when expression not handled by PPI
+                value.clone()
             }
             Some(PrintConv::Complex) => {
                 debug!(
@@ -62,6 +51,14 @@ fn apply_canon_print_conv(
                     tag_id
                 );
                 // TODO: Handle simple lookup tables
+                value.clone()
+            }
+            Some(PrintConv::Function(_func_name)) => {
+                debug!(
+                    "Function PrintConv for tag {} (not yet implemented)",
+                    tag_id
+                );
+                // TODO: Handle function references
                 value.clone()
             }
             Some(PrintConv::None) | None => {
@@ -344,7 +341,6 @@ pub fn extract_focal_length(
     );
 
     // Use Canon tag kit system for PrintConv lookups
-    use crate::expressions::ExpressionEvaluator;
     use crate::generated::Canon_pm;
 
     // Extract FocalType (index 0)
@@ -355,14 +351,12 @@ pub fn extract_focal_length(
         // Apply PrintConv using Canon tag kit system
         // FocalType has tag ID 0 in Canon tag kit other.rs
         let raw_value = TagValue::U16(focal_type);
-        let mut evaluator = ExpressionEvaluator::new();
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
 
         let final_value = apply_canon_print_conv(
             0, // FocalType tag ID
             &raw_value,
-            &mut evaluator,
             &mut errors,
             &mut warnings,
         );
@@ -454,7 +448,6 @@ pub fn extract_shot_info(
     );
 
     // Use Canon tag kit system for PrintConv lookups
-    use crate::expressions::ExpressionEvaluator;
     use crate::generated::Canon_pm;
 
     // Extract AutoISO (index 1)
@@ -537,14 +530,12 @@ pub fn extract_shot_info(
         // Apply PrintConv using Canon tag kit system
         // WhiteBalance has tag ID 7 in Canon tag kit
         let raw_value = TagValue::I16(white_balance);
-        let mut evaluator = ExpressionEvaluator::new();
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
 
         let final_value = apply_canon_print_conv(
             7, // WhiteBalance tag ID
             &raw_value,
-            &mut evaluator,
             &mut errors,
             &mut warnings,
         );
@@ -571,14 +562,12 @@ pub fn extract_shot_info(
         // Apply PrintConv using Canon tag kit system
         // AFPointsInFocus has tag ID 14 in Canon tag kit
         let raw_value = TagValue::I16(af_points);
-        let mut evaluator = ExpressionEvaluator::new();
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
 
         let final_value = apply_canon_print_conv(
             14, // AFPointsInFocus tag ID
             &raw_value,
-            &mut evaluator,
             &mut errors,
             &mut warnings,
         );
@@ -605,14 +594,12 @@ pub fn extract_shot_info(
         // Apply PrintConv using Canon tag kit system
         // AutoExposureBracketing has tag ID 16 in Canon tag kit
         let raw_value = TagValue::I16(aeb_value);
-        let mut evaluator = ExpressionEvaluator::new();
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
 
         let final_value = apply_canon_print_conv(
             16, // AutoExposureBracketing tag ID
             &raw_value,
-            &mut evaluator,
             &mut errors,
             &mut warnings,
         );
@@ -639,14 +626,12 @@ pub fn extract_shot_info(
         // Apply PrintConv using Canon tag kit system
         // CameraType has tag ID 26 in Canon tag kit
         let raw_value = TagValue::I16(camera_type);
-        let mut evaluator = ExpressionEvaluator::new();
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
 
         let final_value = apply_canon_print_conv(
             26, // CameraType tag ID
             &raw_value,
-            &mut evaluator,
             &mut errors,
             &mut warnings,
         );
@@ -683,7 +668,6 @@ pub fn extract_panorama(
     let mut panorama = HashMap::new();
 
     // Use Canon tag kit system for PrintConv lookups
-    use crate::expressions::ExpressionEvaluator;
     use crate::generated::Canon_pm;
 
     // Canon Panorama format: int16s (signed 16-bit), starting at index 0
@@ -705,14 +689,12 @@ pub fn extract_panorama(
         // Apply PrintConv using Canon tag kit system
         // PanoramaDirection has tag ID 5 in Canon tag kit
         let raw_value = TagValue::I16(direction_raw);
-        let mut evaluator = ExpressionEvaluator::new();
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
 
         let direction_value = apply_canon_print_conv(
             5, // PanoramaDirection tag ID
             &raw_value,
-            &mut evaluator,
             &mut errors,
             &mut warnings,
         );
@@ -750,7 +732,6 @@ pub fn extract_my_colors(
     let mut my_colors = HashMap::new();
 
     // Use Canon tag kit system for PrintConv lookups
-    use crate::expressions::ExpressionEvaluator;
     use crate::generated::Canon_pm;
 
     // Canon MyColors format: int16u (unsigned 16-bit), starting at index 0
@@ -780,14 +761,12 @@ pub fn extract_my_colors(
         // Apply PrintConv using Canon tag kit system
         // MyColorMode has tag ID 2 in Canon tag kit
         let raw_value = TagValue::U16(my_color_mode);
-        let mut evaluator = ExpressionEvaluator::new();
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
 
         let color_mode_value = apply_canon_print_conv(
             2, // MyColorMode tag ID
             &raw_value,
-            &mut evaluator,
             &mut errors,
             &mut warnings,
         );
@@ -1883,13 +1862,11 @@ mod tests {
         println!("MacroMode PrintConv: {:?} -> {:?}", raw_value, result);
 
         // For debugging: also test with tag ID directly
-        use crate::expressions::ExpressionEvaluator;
         use crate::generated::Canon_pm;
-        let mut evaluator = ExpressionEvaluator::new();
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
         let direct_result =
-            apply_canon_print_conv(1, &raw_value, &mut evaluator, &mut errors, &mut warnings);
+            apply_canon_print_conv(1, &raw_value, &mut errors, &mut warnings);
         println!(
             "Direct tag ID 1 PrintConv: {:?} -> {:?}",
             raw_value, direct_result

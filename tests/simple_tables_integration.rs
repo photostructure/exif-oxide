@@ -8,7 +8,9 @@ mod simple_table_tests {
 
     #[test]
     fn test_nikon_lens_database_completeness() {
-        use exif_oxide::generated::Nikon_pm::{lookup_nikon_lens_ids, NIKON_LENS_IDS};
+        use exif_oxide::generated::Nikon_pm::nikon_lens_ids::{
+            lookup_nikon_lens_ids, NIKON_LENS_IDS,
+        };
 
         // Should have exactly 614 entries from ExifTool
         assert_eq!(NIKON_LENS_IDS.len(), 614);
@@ -29,7 +31,9 @@ mod simple_table_tests {
 
     #[test]
     fn test_canon_model_id_completeness() {
-        use exif_oxide::generated::Canon_pm::{lookup_canon_model_id, CANON_MODEL_ID};
+        use exif_oxide::generated::Canon_pm::canon_model_id::{
+            lookup_canon_model_id, CANON_MODEL_ID,
+        };
 
         // Should have exactly 354 entries from ExifTool
         assert_eq!(CANON_MODEL_ID.len(), 354);
@@ -43,7 +47,9 @@ mod simple_table_tests {
 
     #[test]
     fn test_canon_white_balance_completeness() {
-        use exif_oxide::generated::Canon_pm::{lookup_canon_white_balance, CANON_WHITE_BALANCE};
+        use exif_oxide::generated::Canon_pm::canon_white_balance::{
+            lookup_canon_white_balance, CANON_WHITE_BALANCE,
+        };
 
         // Should have exactly 22 entries from ExifTool
         assert_eq!(CANON_WHITE_BALANCE.len(), 22);
@@ -61,7 +67,9 @@ mod simple_table_tests {
 
     #[test]
     fn test_canon_picture_styles_completeness() {
-        use exif_oxide::generated::Canon_pm::{lookup_picture_styles, PICTURE_STYLES};
+        use exif_oxide::generated::Canon_pm::picture_styles::{
+            lookup_picture_styles, PICTURE_STYLES,
+        };
 
         // Should have exactly 24 entries from ExifTool
         assert_eq!(PICTURE_STYLES.len(), 24);
@@ -76,7 +84,9 @@ mod simple_table_tests {
 
     #[test]
     fn test_canon_image_size_completeness() {
-        use exif_oxide::generated::Canon_pm::{lookup_canon_image_size, CANON_IMAGE_SIZE};
+        use exif_oxide::generated::Canon_pm::canon_image_size::{
+            lookup_canon_image_size, CANON_IMAGE_SIZE,
+        };
 
         // Should have exactly 19 entries from ExifTool
         assert_eq!(CANON_IMAGE_SIZE.len(), 19);
@@ -91,7 +101,7 @@ mod simple_table_tests {
 
     #[test]
     fn test_canon_quality_completeness() {
-        use exif_oxide::generated::Canon_pm::{lookup_canon_quality, CANON_QUALITY};
+        use exif_oxide::generated::Canon_pm::canon_quality::{lookup_canon_quality, CANON_QUALITY};
 
         // Should have exactly 9 entries from ExifTool
         assert_eq!(CANON_QUALITY.len(), 9);
@@ -111,11 +121,12 @@ mod simple_table_tests {
         // This test ensures all generated modules compile and export correctly
         // If this compiles, all generated modules are syntactically correct
 
-        use exif_oxide::generated::Canon_pm::{
-            lookup_canon_image_size, lookup_canon_model_id, lookup_canon_quality,
-            lookup_canon_white_balance, lookup_picture_styles,
-        };
-        use exif_oxide::generated::Nikon_pm::lookup_nikon_lens_ids;
+        use exif_oxide::generated::Canon_pm::canon_image_size::lookup_canon_image_size;
+        use exif_oxide::generated::Canon_pm::canon_model_id::lookup_canon_model_id;
+        use exif_oxide::generated::Canon_pm::canon_quality::lookup_canon_quality;
+        use exif_oxide::generated::Canon_pm::canon_white_balance::lookup_canon_white_balance;
+        use exif_oxide::generated::Canon_pm::picture_styles::lookup_picture_styles;
+        use exif_oxide::generated::Nikon_pm::nikon_lens_ids::lookup_nikon_lens_ids;
 
         // Test that all lookup functions are callable and return correct types
         // This validates the generated function signatures and module exports
@@ -137,7 +148,7 @@ mod simple_table_tests {
 
     #[test]
     fn test_performance_benchmarks() {
-        use exif_oxide::generated::Canon_pm::lookup_canon_white_balance;
+        use exif_oxide::generated::Canon_pm::canon_white_balance::lookup_canon_white_balance;
         use std::time::Instant;
 
         let start = Instant::now();
@@ -159,10 +170,12 @@ mod simple_table_tests {
 
     #[test]
     fn test_total_simple_tables_coverage() {
-        use exif_oxide::generated::Canon_pm::{
-            CANON_IMAGE_SIZE, CANON_MODEL_ID, CANON_QUALITY, CANON_WHITE_BALANCE, PICTURE_STYLES,
-        };
-        use exif_oxide::generated::Nikon_pm::NIKON_LENS_IDS;
+        use exif_oxide::generated::Canon_pm::canon_image_size::CANON_IMAGE_SIZE;
+        use exif_oxide::generated::Canon_pm::canon_model_id::CANON_MODEL_ID;
+        use exif_oxide::generated::Canon_pm::canon_quality::CANON_QUALITY;
+        use exif_oxide::generated::Canon_pm::canon_white_balance::CANON_WHITE_BALANCE;
+        use exif_oxide::generated::Canon_pm::picture_styles::PICTURE_STYLES;
+        use exif_oxide::generated::Nikon_pm::nikon_lens_ids::NIKON_LENS_IDS;
 
         // Verify we have the expected total number of entries across all tables
         let total_entries = NIKON_LENS_IDS.len() +       // 614

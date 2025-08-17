@@ -39,11 +39,37 @@ together code from our automated [docs/CODEGEN.md](docs/CODEGEN.md) ExifTool
 perl-to-rust code generation system. This is discussed in
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
+**⚠️ RECENT ARCHITECTURAL DAMAGE**: We've had multiple instances where Claude Code engineers ignored architectural guidelines and broke critical systems, requiring emergency recoveries. The most recent involved deletion of 546 lines of ExifTool pattern recognition that broke camera support. These incidents are documented in [docs/ANTI-PATTERNS.md](docs/ANTI-PATTERNS.md) and [docs/todo/P07-emergency-ppi-recovery.md](docs/todo/P07-emergency-ppi-recovery.md).
+
 ## ⚠️ CRITICAL: Trust ExifTool
 
 **This is the #1 rule for all work on exif-oxide.**
 
 See [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md) for the complete guidelines.
+
+## 🚨 EMERGENCY: MANDATORY READING BEFORE ANY CODE CHANGES 🚨
+
+**WE'VE HAD 5+ EMERGENCY RECOVERIES** from Claude Code instances that ignored these warnings and committed "architectural vandalism" that broke the entire system.
+
+**BEFORE TOUCHING ANY CODE, ESPECIALLY PPI/EXPRESSION/CODEGEN WORK:**
+
+**READ THIS IMMEDIATELY**: [ANTI-PATTERNS.md](docs/ANTI-PATTERNS.md) 
+
+**CRITICAL VIOLATIONS THAT CAUSE IMMEDIATE REJECTION:**
+- `split_whitespace()` on AST nodes → **INSTANT PR REJECTION**
+- Deleting ExifTool pattern recognition → **INSTANT PR REJECTION** 
+- Manual transcription of ExifTool data → **INSTANT PR REJECTION**
+- Disabling working infrastructure → **INSTANT PR REJECTION**
+
+**MOST RECENT DISASTER**: 546 lines of critical ExifTool patterns were deleted, breaking Canon/Nikon/Sony support and requiring 3 weeks of emergency recovery.
+
+**MANDATORY PRE-COMMIT VALIDATION**:
+```bash
+# RUN THESE BEFORE ANY PR - if they fail, your PR will be rejected:
+rg "split_whitespace|\.join.*split" codegen/src/ppi/  # MUST return empty
+```
+****
+**IF YOU VIOLATE THESE PATTERNS, YOUR WORK WILL BE REVERTED AND YOU'LL BE ASKED TO START OVER.**
 
 The key principle: **wholly and completely trust the ExifTool implementation.**
 

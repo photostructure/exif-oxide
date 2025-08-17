@@ -3,15 +3,18 @@
 //! This module handles the multi-pass building of composite tags, resolving
 //! dependencies between composite tags and applying conversions.
 
-use std::collections::{HashMap, HashSet};
-use tracing::{debug, trace, warn};
+use std::collections::HashMap;
+// use tracing::{debug, trace, warn};
 
-use crate::generated::{CompositeTagDef, COMPOSITE_TAGS};
+// use crate::generated::{CompositeTagDef, COMPOSITE_TAGS};
 use crate::types::TagValue;
 
-use super::dispatch::compute_composite_tag;
-use super::resolution::can_build_composite;
+// TEMPORARILY COMMENTED OUT - composite tags not yet generated
+// use super::dispatch::compute_composite_tag;
+// use super::resolution::can_build_composite;
 
+// TODO: Re-enable when CompositeTagDef is generated
+/*
 /// Handle unresolved composite tags (circular dependencies or missing base tags)
 /// This provides diagnostic information and graceful degradation
 pub fn handle_unresolved_composites(unresolved_composites: &[&CompositeTagDef]) {
@@ -22,10 +25,10 @@ pub fn handle_unresolved_composites(unresolved_composites: &[&CompositeTagDef]) 
 
     for composite_def in unresolved_composites {
         let mut missing_deps = Vec::new();
-        for tag_name in composite_def.require {
+        for tag_name in &composite_def.require {
             // Note: We could make this more detailed by checking available_tags/built_composites
             // but for now, just log the unresolved composite and its requirements
-            missing_deps.push(*tag_name);
+            missing_deps.push(tag_name);
         }
 
         warn!("  - {} requires: {:?}", composite_def.name, missing_deps);
@@ -34,7 +37,10 @@ pub fn handle_unresolved_composites(unresolved_composites: &[&CompositeTagDef]) 
     // Future enhancement: Could implement ExifTool's "final pass ignoring inhibits"
     // strategy here for additional fallback resolution
 }
+*/
 
+// TODO: Re-enable when CompositeTagDef is generated
+/*
 /// Apply ValueConv and PrintConv transformations to composite tag values
 /// Returns tuple of (value, print) where:
 /// - value: The computed value (composite tags don't have ValueConv)
@@ -50,12 +56,12 @@ pub fn apply_composite_conversions(
     // Per TRUST-EXIFTOOL.md: GPS coordinates should always be in decimal format
     // Skip PrintConv for GPS coordinate composite tags to return decimal values
     let is_gps_coordinate = matches!(
-        composite_def.name,
+        composite_def.name.as_str(),
         "GPSLatitude" | "GPSLongitude" | "GPSPosition" | "GPSAltitude"
     );
 
     // Apply PrintConv if present to get human-readable string (except for GPS coordinates)
-    let print = if let Some(print_conv_ref) = composite_def.print_conv {
+    let print = if let Some(print_conv_ref) = &composite_def.print_conv {
         if is_gps_coordinate {
             // Return decimal value for GPS coordinates per project requirements
             value.clone()
@@ -68,7 +74,10 @@ pub fn apply_composite_conversions(
 
     (value, print)
 }
+*/
 
+// TODO: Re-enable when CompositeTagDef is generated
+/*
 /// Multi-pass composite tag resolution and computation
 /// This is the main logic extracted from ExifReader::build_composite_tags()
 pub fn resolve_and_compute_composites(
@@ -77,9 +86,9 @@ pub fn resolve_and_compute_composites(
     const MAX_PASSES: usize = 10; // Reasonable limit to prevent infinite loops
 
     let mut composite_tags = HashMap::new();
-    let mut built_composites = HashSet::new();
+    let mut built_composites: HashSet<String> = HashSet::new();
     let mut pending_composites: Vec<&CompositeTagDef> =
-        COMPOSITE_TAGS.iter().map(|(_, def)| *def).collect();
+        COMPOSITE_TAGS.iter().map(|(_, def)| def).collect();
 
     debug!(
         "Starting multi-pass composite building with {} pending composites",
@@ -101,7 +110,7 @@ pub fn resolve_and_compute_composites(
         for composite_def in pending_composites {
             // Skip if this composite has already been successfully built
             // ExifTool: Only the first successful definition is used per tag name
-            if built_composites.contains(composite_def.name) {
+            if built_composites.contains(&composite_def.name) {
                 trace!("Skipping {} - already built", composite_def.name);
                 continue;
             }
@@ -142,7 +151,7 @@ pub fn resolve_and_compute_composites(
 
                     // Store in composite_tags collection - use PrintConv result
                     composite_tags.insert(composite_name.clone(), print_value);
-                    built_composites.insert(composite_def.name);
+                    built_composites.insert(composite_def.name.clone());
 
                     debug!("Built composite tag: {} (pass {})", composite_name, pass);
                     progress_made = true;
@@ -194,4 +203,17 @@ pub fn resolve_and_compute_composites(
     );
 
     composite_tags
+}
+*/
+
+/// Stub implementation while composite tags are not generated
+pub fn handle_unresolved_composites(_unresolved_composites: &[&str]) {
+    // TODO: Re-enable when CompositeTagDef is generated
+}
+
+/// Stub implementation while composite tags are not generated
+pub fn resolve_and_compute_composites(
+    _available_tags: HashMap<String, TagValue>,
+) -> HashMap<String, TagValue> {
+    HashMap::new()
 }

@@ -6,261 +6,409 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_1e::ast_print_1e6de4de43d39e69;
+use crate::generated::functions::hash_c1::ast_print_c1c5cd7f1c4f4d2;
+
 /// Tag definitions for Apple::Main table
 pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (1, TagInfo {
-            name: "MakerNoteVersion",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (2, TagInfo {
-            name: "AEMatrix",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string())),
-        }),
-        (3, TagInfo {
-            name: "RunTime",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4, TagInfo {
-            name: "AEStable",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (5, TagInfo {
-            name: "AETarget",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (6, TagInfo {
-            name: "AEAverage",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (7, TagInfo {
-            name: "AFStable",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (8, TagInfo {
-            name: "AccelerationVector",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (10, TagInfo {
-            name: "HDRImageType",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (11, TagInfo {
-            name: "BurstUUID",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (12, TagInfo {
-            name: "FocusDistanceRange",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("\n            my @a = split ' ', $val;\n            sprintf('%.2f - %.2f m', $a[0] <= $a[1] ? @a : reverse @a);\n        ".to_string())),
-            value_conv: None,
-        }),
-        (15, TagInfo {
-            name: "OISMode",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (17, TagInfo {
-            name: "ContentIdentifier",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (20, TagInfo {
-            name: "ImageCaptureType",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (21, TagInfo {
-            name: "ImageUniqueID",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (23, TagInfo {
-            name: "LivePhotoVideoIndex",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (25, TagInfo {
-            name: "ImageProcessingFlags",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (26, TagInfo {
-            name: "QualityHint",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (29, TagInfo {
-            name: "LuminanceNoiseAmplitude",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (31, TagInfo {
-            name: "PhotosAppFeatureFlags",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (32, TagInfo {
-            name: "ImageCaptureRequestID",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (33, TagInfo {
-            name: "HDRHeadroom",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (35, TagInfo {
-            name: "AFPerformance",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("my @a=split \" \",$val; sprintf(\"%d %d %d\",$a[0],$a[1]>>28,$a[1]&0xfffffff)".to_string())),
-            value_conv: None,
-        }),
-        (37, TagInfo {
-            name: "SceneFlags",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (38, TagInfo {
-            name: "SignalToNoiseRatioType",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (39, TagInfo {
-            name: "SignalToNoiseRatio",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (43, TagInfo {
-            name: "PhotoIdentifier",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (45, TagInfo {
-            name: "ColorTemperature",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (46, TagInfo {
-            name: "CameraType",
-            format: "unknown",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (47, TagInfo {
-            name: "FocusPosition",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (48, TagInfo {
-            name: "HDRGain",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (56, TagInfo {
-            name: "AFMeasuredDepth",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (61, TagInfo {
-            name: "AFConfidence",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (62, TagInfo {
-            name: "ColorCorrectionMatrix",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string())),
-        }),
-        (63, TagInfo {
-            name: "GreenGhostMitigationStatus",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (64, TagInfo {
-            name: "SemanticStyle",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string())),
-        }),
-        (65, TagInfo {
-            name: "SemanticStyleRenderingVer",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string())),
-        }),
-        (66, TagInfo {
-            name: "SemanticStylePreset",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string())),
-        }),
-        (78, TagInfo {
-            name: "Apple_0x004e",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string())),
-        }),
-        (79, TagInfo {
-            name: "Apple_0x004f",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string())),
-        }),
-        (84, TagInfo {
-            name: "Apple_0x0054",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string())),
-        }),
-        (90, TagInfo {
-            name: "Apple_0x005a",
-            format: "unknown",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string())),
-        }),
+        (
+            1,
+            TagInfo {
+                name: "MakerNoteVersion",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            2,
+            TagInfo {
+                name: "AEMatrix",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
+                )),
+            },
+        ),
+        (
+            3,
+            TagInfo {
+                name: "RunTime",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4,
+            TagInfo {
+                name: "AEStable",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            5,
+            TagInfo {
+                name: "AETarget",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            6,
+            TagInfo {
+                name: "AEAverage",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            7,
+            TagInfo {
+                name: "AFStable",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            8,
+            TagInfo {
+                name: "AccelerationVector",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            10,
+            TagInfo {
+                name: "HDRImageType",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            11,
+            TagInfo {
+                name: "BurstUUID",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            12,
+            TagInfo {
+                name: "FocusDistanceRange",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_c1c5cd7f1c4f4d2)),
+                value_conv: None,
+            },
+        ),
+        (
+            15,
+            TagInfo {
+                name: "OISMode",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            17,
+            TagInfo {
+                name: "ContentIdentifier",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            20,
+            TagInfo {
+                name: "ImageCaptureType",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            21,
+            TagInfo {
+                name: "ImageUniqueID",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            23,
+            TagInfo {
+                name: "LivePhotoVideoIndex",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            25,
+            TagInfo {
+                name: "ImageProcessingFlags",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            26,
+            TagInfo {
+                name: "QualityHint",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            29,
+            TagInfo {
+                name: "LuminanceNoiseAmplitude",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            31,
+            TagInfo {
+                name: "PhotosAppFeatureFlags",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            32,
+            TagInfo {
+                name: "ImageCaptureRequestID",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            33,
+            TagInfo {
+                name: "HDRHeadroom",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            35,
+            TagInfo {
+                name: "AFPerformance",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_1e6de4de43d39e69)),
+                value_conv: None,
+            },
+        ),
+        (
+            37,
+            TagInfo {
+                name: "SceneFlags",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            38,
+            TagInfo {
+                name: "SignalToNoiseRatioType",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            39,
+            TagInfo {
+                name: "SignalToNoiseRatio",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            43,
+            TagInfo {
+                name: "PhotoIdentifier",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            45,
+            TagInfo {
+                name: "ColorTemperature",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            46,
+            TagInfo {
+                name: "CameraType",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            47,
+            TagInfo {
+                name: "FocusPosition",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            48,
+            TagInfo {
+                name: "HDRGain",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            56,
+            TagInfo {
+                name: "AFMeasuredDepth",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            61,
+            TagInfo {
+                name: "AFConfidence",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            62,
+            TagInfo {
+                name: "ColorCorrectionMatrix",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
+                )),
+            },
+        ),
+        (
+            63,
+            TagInfo {
+                name: "GreenGhostMitigationStatus",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            64,
+            TagInfo {
+                name: "SemanticStyle",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
+                )),
+            },
+        ),
+        (
+            65,
+            TagInfo {
+                name: "SemanticStyleRenderingVer",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
+                )),
+            },
+        ),
+        (
+            66,
+            TagInfo {
+                name: "SemanticStylePreset",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
+                )),
+            },
+        ),
+        (
+            78,
+            TagInfo {
+                name: "Apple_0x004e",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
+                )),
+            },
+        ),
+        (
+            79,
+            TagInfo {
+                name: "Apple_0x004f",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
+                )),
+            },
+        ),
+        (
+            84,
+            TagInfo {
+                name: "Apple_0x0054",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
+                )),
+            },
+        ),
+        (
+            90,
+            TagInfo {
+                name: "Apple_0x005a",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Expression(
+                    "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
+                )),
+            },
+        ),
     ])
 });
 
@@ -269,19 +417,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = APPLE_MAIN_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -289,7 +434,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -297,7 +445,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -307,11 +454,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

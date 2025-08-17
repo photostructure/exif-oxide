@@ -34,6 +34,12 @@ new_without_default = "allow"
 needless_borrow = "allow"
 # Allow uninlined format args in generated code for clarity
 uninlined_format_args = "allow"
+# Allow module names that don't follow snake_case (preserves ExifTool naming)
+module_name_repetitions = "allow"
+
+[lints.rust]
+# Allow module names that don't follow snake_case (preserves ExifTool naming)
+non_snake_case = "allow"
 
 [dependencies]
 byteorder = "1.5" # Efficient endian handling
@@ -54,7 +60,6 @@ chrono = { version = "0.4", features = [
 indexmap = { version = "2.10", features = [
     "serde",
 ] } # Preserves insertion order for tag output
-ast = { path = "ast" } # Shared AST types and infrastructure for P07/P08
 
 [dev-dependencies]
 criterion = "0.7" # Benchmarking
@@ -68,6 +73,7 @@ similar = { version = "2.7", features = [
 ] } # Text diffing for ExifTool comparison
 tracing-test = "0.2" # Testing utilities for tracing
 walkdir = "2.5" # Directory walking for integration tests
+codegen = { path = "codegen" } # For PPI AST integration tests
 
 [features]
 default = []

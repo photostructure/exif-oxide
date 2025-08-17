@@ -6,6 +6,12 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_33::ast_print_339a38d31392b4fd;
+use crate::generated::functions::hash_bb::ast_print_bb744a13f82c4cd2;
+use crate::generated::functions::hash_eb::ast_print_ebe0a6b7251033b3;
+use crate::generated::functions::hash_ec::ast_print_ec7bd11b49f50639;
+
 /// Tag definitions for DJI::ThermalParams2 table
 pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
@@ -14,9 +20,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "AmbientTemperature",
                 format: "float",
-                print_conv: Some(PrintConv::Expression(
-                    "sprintf(\"%.1f C\",$val)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_ebe0a6b7251033b3)),
                 value_conv: None,
             },
         ),
@@ -25,9 +29,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "ObjectDistance",
                 format: "float",
-                print_conv: Some(PrintConv::Expression(
-                    "sprintf(\"%.1f m\",$val)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_ec7bd11b49f50639)),
                 value_conv: None,
             },
         ),
@@ -36,7 +38,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "Emissivity",
                 format: "float",
-                print_conv: Some(PrintConv::Expression("sprintf(\"%.2f\",$val)".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_bb744a13f82c4cd2)),
                 value_conv: None,
             },
         ),
@@ -45,9 +47,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "RelativeHumidity",
                 format: "float",
-                print_conv: Some(PrintConv::Expression(
-                    "sprintf(\"%g %%\",$val*100)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_339a38d31392b4fd)),
                 value_conv: None,
             },
         ),
@@ -56,9 +56,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "ReflectedTemperature",
                 format: "float",
-                print_conv: Some(PrintConv::Expression(
-                    "sprintf(\"%.1f C\",$val)".to_string(),
-                )),
+                print_conv: Some(PrintConv::Function(ast_print_ebe0a6b7251033b3)),
                 value_conv: None,
             },
         ),
@@ -79,19 +77,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = DJI_THERMALPARAMS2_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -99,7 +94,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -107,7 +105,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -117,11 +114,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

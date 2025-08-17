@@ -6,1041 +6,1567 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_29::ast_value_29b4faab94339ab6;
+use crate::generated::functions::hash_48::ast_print_487657613095a4c6;
+use crate::generated::functions::hash_7e::ast_value_7eadc2f4518c667e;
+use crate::generated::functions::hash_83::ast_value_83f37d90ee875af5;
+use crate::generated::functions::hash_aa::ast_print_aaf44bf2fde8c749;
+use crate::generated::functions::hash_ab::ast_print_abb6a96ce6de058d;
+use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
+use crate::generated::functions::hash_da::ast_print_da3ee02492769652;
+
 /// Tag definitions for Matroska::Main table
 pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (0, TagInfo {
-            name: "ChapterDisplay",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (3, TagInfo {
-            name: "TrackType",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (5, TagInfo {
-            name: "ChapterString",
-            format: "utf8",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (8, TagInfo {
-            name: "TrackDefault",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (9, TagInfo {
-            name: "ChapterTrackNumber",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (14, TagInfo {
-            name: "Slices",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (15, TagInfo {
-            name: "ChapterTrack",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (17, TagInfo {
-            name: "ChapterTimeStart",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1e9".to_string())),
-        }),
-        (18, TagInfo {
-            name: "ChapterTimeEnd",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Expression("ConvertDuration($val)".to_string())),
-            value_conv: Some(ValueConv::Expression("$val / 1e9".to_string())),
-        }),
-        (22, TagInfo {
-            name: "CueRefTime",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Expression("$$self{TimecodeScale} ? ConvertDuration($val) : $val".to_string())),
-            value_conv: Some(ValueConv::Expression("$$self{TimecodeScale} ? $val * $$self{TimecodeScale} / 1e9 : $val".to_string())),
-        }),
-        (23, TagInfo {
-            name: "CueRefCluster",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (24, TagInfo {
-            name: "ChapterFlagHidden",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (26, TagInfo {
-            name: "VideoScanType",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (27, TagInfo {
-            name: "BlockDuration",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Expression("$$self{TimecodeScale} ? \"$val s\" : $val".to_string())),
-            value_conv: Some(ValueConv::Expression("$$self{TimecodeScale} ? $val * $$self{TimecodeScale} / 1e9 : $val".to_string())),
-        }),
-        (28, TagInfo {
-            name: "TrackLacing",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (31, TagInfo {
-            name: "AudioChannels",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (32, TagInfo {
-            name: "BlockGroup",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (33, TagInfo {
-            name: "Block",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (34, TagInfo {
-            name: "BlockVirtual",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (35, TagInfo {
-            name: "SimpleBlock",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (36, TagInfo {
-            name: "CodecState",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (37, TagInfo {
-            name: "BlockAdditional",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (38, TagInfo {
-            name: "BlockMore",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (39, TagInfo {
-            name: "Position",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (42, TagInfo {
-            name: "CodecDecodeAll",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (43, TagInfo {
-            name: "PrevSize",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (46, TagInfo {
-            name: "TrackEntry",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (47, TagInfo {
-            name: "EncryptedBlock",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (48, TagInfo {
-            name: "ImageWidth",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (51, TagInfo {
-            name: "CueTime",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Expression("$$self{TimecodeScale} ? ConvertDuration($val) : $val".to_string())),
-            value_conv: Some(ValueConv::Expression("$$self{TimecodeScale} ? $val * $$self{TimecodeScale} / 1e9 : $val".to_string())),
-        }),
-        (53, TagInfo {
-            name: "AudioSampleRate",
-            format: "float",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (54, TagInfo {
-            name: "ChapterAtom",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (55, TagInfo {
-            name: "CueTrackPositions",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (57, TagInfo {
-            name: "TrackUsed",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (58, TagInfo {
-            name: "ImageHeight",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (59, TagInfo {
-            name: "CuePoint",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (63, TagInfo {
-            name: "CRC-32",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (75, TagInfo {
-            name: "BlockAdditionalID",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (76, TagInfo {
-            name: "LaceNumber",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (77, TagInfo {
-            name: "FrameNumber",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (78, TagInfo {
-            name: "Delay",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (79, TagInfo {
-            name: "ClusterDuration",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (87, TagInfo {
-            name: "TrackNumber",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (91, TagInfo {
-            name: "CueReference",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (96, TagInfo {
-            name: "Video",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (97, TagInfo {
-            name: "Audio",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (103, TagInfo {
-            name: "TimeCode",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Expression("$$self{TimecodeScale} ? ConvertDuration($val) : $val".to_string())),
-            value_conv: Some(ValueConv::Expression("$$self{TimecodeScale} ? $val * $$self{TimecodeScale} / 1e9 : $val".to_string())),
-        }),
-        (104, TagInfo {
-            name: "TimeSlice",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (106, TagInfo {
-            name: "CueCodecState",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (107, TagInfo {
-            name: "CueRefCodecState",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (108, TagInfo {
-            name: "Void",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (110, TagInfo {
-            name: "BlockAddID",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (113, TagInfo {
-            name: "CueClusterPosition",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (119, TagInfo {
-            name: "CueTrack",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (122, TagInfo {
-            name: "ReferencePriority",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (123, TagInfo {
-            name: "ReferenceBlock",
-            format: "signed",
-            print_conv: Some(PrintConv::Expression("$$self{TimecodeScale} ? \"$val s\" : $val".to_string())),
-            value_conv: Some(ValueConv::Expression("$$self{TimecodeScale} ? $val * $$self{TimecodeScale} / 1e9 : $val".to_string())),
-        }),
-        (125, TagInfo {
-            name: "ReferenceVirtual",
-            format: "signed",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (596, TagInfo {
-            name: "ContentCompressionAlgorithm",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (597, TagInfo {
-            name: "ContentCompressionSettings",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (642, TagInfo {
-            name: "DocType",
-            format: "string",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (645, TagInfo {
-            name: "DocTypeReadVersion",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (646, TagInfo {
-            name: "EBMLVersion",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (647, TagInfo {
-            name: "DocTypeVersion",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (754, TagInfo {
-            name: "EBMLMaxIDLength",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (755, TagInfo {
-            name: "EBMLMaxSizeLength",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (759, TagInfo {
-            name: "EBMLReadVersion",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (892, TagInfo {
-            name: "ChapterLanguage",
-            format: "string",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (894, TagInfo {
-            name: "ChapterCountry",
-            format: "string",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1092, TagInfo {
-            name: "SegmentFamily",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1121, TagInfo {
-            name: "DateTimeOriginal",
-            format: "date",
-            print_conv: Some(PrintConv::Expression("$self->ConvertDateTime($val)".to_string())),
-            value_conv: None,
-        }),
-        (1146, TagInfo {
-            name: "TagLanguageBCP47",
-            format: "string",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1156, TagInfo {
-            name: "TagDefault",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (1157, TagInfo {
-            name: "TagBinary",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1159, TagInfo {
-            name: "TagString",
-            format: "utf8",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1161, TagInfo {
-            name: "Duration",
-            format: "float",
-            print_conv: Some(PrintConv::Expression("$$self{TimecodeScale} ? ConvertDuration($val) : $val".to_string())),
-            value_conv: Some(ValueConv::Expression("$$self{TimecodeScale} ? $val * $$self{TimecodeScale} / 1e9 : $val".to_string())),
-        }),
-        (1293, TagInfo {
-            name: "ChapterProcessPrivate",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1432, TagInfo {
-            name: "ChapterFlagEnabled",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1443, TagInfo {
-            name: "TagName",
-            format: "utf8",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1465, TagInfo {
-            name: "EditionEntry",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1468, TagInfo {
-            name: "EditionUID",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"H*\",$val)".to_string())),
-        }),
-        (1469, TagInfo {
-            name: "EditionFlagHidden",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1499, TagInfo {
-            name: "EditionFlagDefault",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1501, TagInfo {
-            name: "EditionFlagOrdered",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1628, TagInfo {
-            name: "AttachedFileData",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1632, TagInfo {
-            name: "AttachedFileMIMEType",
-            format: "string",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1646, TagInfo {
-            name: "AttachedFileName",
-            format: "utf8",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1653, TagInfo {
-            name: "AttachedFileReferral",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1662, TagInfo {
-            name: "AttachedFileDescription",
-            format: "utf8",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (1710, TagInfo {
-            name: "AttachedFileUID",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"H*\",$val)".to_string())),
-        }),
-        (2017, TagInfo {
-            name: "ContentEncryptionAlgorithm",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (2018, TagInfo {
-            name: "ContentEncryptionKeyID",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (2019, TagInfo {
-            name: "ContentSignature",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (2020, TagInfo {
-            name: "ContentSignatureKeyID",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (2021, TagInfo {
-            name: "ContentSignatureAlgorithm",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (2022, TagInfo {
-            name: "ContentSignatureHashAlgorithm",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (3456, TagInfo {
-            name: "MuxingApp",
-            format: "utf8",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (3515, TagInfo {
-            name: "Seek",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4145, TagInfo {
-            name: "ContentEncodingOrder",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4146, TagInfo {
-            name: "ContentEncodingScope",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4147, TagInfo {
-            name: "ContentEncodingType",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (4148, TagInfo {
-            name: "ContentCompression",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4149, TagInfo {
-            name: "ContentEncryption",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4959, TagInfo {
-            name: "CueRefNumber",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4974, TagInfo {
-            name: "TrackName",
-            format: "utf8",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4984, TagInfo {
-            name: "CueBlockNumber",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (4991, TagInfo {
-            name: "TrackOffset",
-            format: "signed",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (5035, TagInfo {
-            name: "SeekID",
-            format: "unknown",
-            print_conv: Some(PrintConv::Expression("\n            my $tagInfo = $Image::ExifTool::Matroska::Main{$val};\n            $val = sprintf('0x%x', $val);\n            $val .= \" ($$tagInfo{Name})\" if ref $tagInfo eq 'HASH' and $$tagInfo{Name};\n            return $val;\n        ".to_string())),
-            value_conv: None,
-        }),
-        (5036, TagInfo {
-            name: "SeekPosition",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (5048, TagInfo {
-            name: "Stereo3DMode",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (5290, TagInfo {
-            name: "CropBottom",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (5296, TagInfo {
-            name: "DisplayWidth",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (5298, TagInfo {
-            name: "DisplayUnit",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (5299, TagInfo {
-            name: "AspectRatioType",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (5306, TagInfo {
-            name: "DisplayHeight",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (5307, TagInfo {
-            name: "CropTop",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (5324, TagInfo {
-            name: "CropLeft",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (5341, TagInfo {
-            name: "CropRight",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (5546, TagInfo {
-            name: "TrackForced",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (5614, TagInfo {
-            name: "MaxBlockAdditionID",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (5953, TagInfo {
-            name: "WritingApp",
-            format: "utf8",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (6228, TagInfo {
-            name: "SilentTracks",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (6359, TagInfo {
-            name: "SilentTrackNumber",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (8615, TagInfo {
-            name: "AttachedFile",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (8768, TagInfo {
-            name: "ContentEncoding",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (8804, TagInfo {
-            name: "AudioBitsPerSample",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (9122, TagInfo {
-            name: "CodecPrivate",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (9152, TagInfo {
-            name: "Targets",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (9155, TagInfo {
-            name: "ChapterPhysicalEquivalent",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (9156, TagInfo {
-            name: "TagChapterUID",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"H*\",$val)".to_string())),
-        }),
-        (9157, TagInfo {
-            name: "TagTrackUID",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"H*\",$val)".to_string())),
-        }),
-        (9158, TagInfo {
-            name: "TagAttachmentUID",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"H*\",$val)".to_string())),
-        }),
-        (9161, TagInfo {
-            name: "TagEditionUID",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"H*\",$val)".to_string())),
-        }),
-        (9162, TagInfo {
-            name: "TargetType",
-            format: "string",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (9522, TagInfo {
-            name: "SignedElement",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (9764, TagInfo {
-            name: "TrackTranslate",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (9893, TagInfo {
-            name: "TrackTranslateTrackID",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (9919, TagInfo {
-            name: "TrackTranslateCodec",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (9980, TagInfo {
-            name: "TrackTranslateEditionUID",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"H*\",$val)".to_string())),
-        }),
-        (10184, TagInfo {
-            name: "SimpleTag",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (10442, TagInfo {
-            name: "TargetTypeValue",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (10513, TagInfo {
-            name: "ChapterProcessCommand",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (10530, TagInfo {
-            name: "ChapterProcessTime",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (10532, TagInfo {
-            name: "ChapterTranslate",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (10547, TagInfo {
-            name: "ChapterProcessData",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (10564, TagInfo {
-            name: "ChapterProcess",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (10581, TagInfo {
-            name: "ChapterProcessCodecID",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (10661, TagInfo {
-            name: "ChapterTranslateID",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (10687, TagInfo {
-            name: "ChapterTranslateCodec",
-            format: "unsigned",
-            print_conv: Some(PrintConv::Complex),
-            value_conv: None,
-        }),
-        (10748, TagInfo {
-            name: "ChapterTranslateEditionUID",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"H*\",$val)".to_string())),
-        }),
-        (11648, TagInfo {
-            name: "ContentEncodings",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (11751, TagInfo {
-            name: "MinCache",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (11768, TagInfo {
-            name: "MaxCache",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (11879, TagInfo {
-            name: "ChapterSegmentUID",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"H*\",$val)".to_string())),
-        }),
-        (11964, TagInfo {
-            name: "ChapterSegmentEditionUID",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"H*\",$val)".to_string())),
-        }),
-        (12203, TagInfo {
-            name: "TrackOverlay",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (13171, TagInfo {
-            name: "Tag",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (13188, TagInfo {
-            name: "SegmentFileName",
-            format: "utf8",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (13220, TagInfo {
-            name: "SegmentUID",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"H*\",$val)".to_string())),
-        }),
-        (13252, TagInfo {
-            name: "ChapterUID",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"H*\",$val)".to_string())),
-        }),
-        (13253, TagInfo {
-            name: "TrackUID",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"H*\",$val)".to_string())),
-        }),
-        (13382, TagInfo {
-            name: "TrackAttachmentUID",
-            format: "string",
-            print_conv: None,
-            value_conv: Some(ValueConv::Expression("unpack(\"H*\",$val)".to_string())),
-        }),
-        (13729, TagInfo {
-            name: "BlockAdditions",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (14517, TagInfo {
-            name: "OutputAudioSampleRate",
-            format: "float",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (15273, TagInfo {
-            name: "Title",
-            format: "utf8",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (15739, TagInfo {
-            name: "ChannelPositions",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (15963, TagInfo {
-            name: "SignatureElements",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (15995, TagInfo {
-            name: "SignatureElementList",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (16010, TagInfo {
-            name: "SignatureAlgo",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (16026, TagInfo {
-            name: "SignatureHash",
-            format: "unsigned",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (16037, TagInfo {
-            name: "SignaturePublicKey",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (16053, TagInfo {
-            name: "Signature",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
-        (30320, TagInfo {
-            name: "Projection",
-            format: "unknown",
-            print_conv: None,
-            value_conv: None,
-        }),
+        (
+            0,
+            TagInfo {
+                name: "ChapterDisplay",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            3,
+            TagInfo {
+                name: "TrackType",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            5,
+            TagInfo {
+                name: "ChapterString",
+                format: "utf8",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            8,
+            TagInfo {
+                name: "TrackDefault",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            9,
+            TagInfo {
+                name: "ChapterTrackNumber",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            14,
+            TagInfo {
+                name: "Slices",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            15,
+            TagInfo {
+                name: "ChapterTrack",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            17,
+            TagInfo {
+                name: "ChapterTimeStart",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_29b4faab94339ab6)),
+            },
+        ),
+        (
+            18,
+            TagInfo {
+                name: "ChapterTimeEnd",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
+                value_conv: Some(ValueConv::Function(ast_value_29b4faab94339ab6)),
+            },
+        ),
+        (
+            22,
+            TagInfo {
+                name: "CueRefTime",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Function(ast_print_da3ee02492769652)),
+                value_conv: Some(ValueConv::Function(ast_value_83f37d90ee875af5)),
+            },
+        ),
+        (
+            23,
+            TagInfo {
+                name: "CueRefCluster",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            24,
+            TagInfo {
+                name: "ChapterFlagHidden",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            26,
+            TagInfo {
+                name: "VideoScanType",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            27,
+            TagInfo {
+                name: "BlockDuration",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Function(ast_print_abb6a96ce6de058d)),
+                value_conv: Some(ValueConv::Function(ast_value_83f37d90ee875af5)),
+            },
+        ),
+        (
+            28,
+            TagInfo {
+                name: "TrackLacing",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            31,
+            TagInfo {
+                name: "AudioChannels",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            32,
+            TagInfo {
+                name: "BlockGroup",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            33,
+            TagInfo {
+                name: "Block",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            34,
+            TagInfo {
+                name: "BlockVirtual",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            35,
+            TagInfo {
+                name: "SimpleBlock",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            36,
+            TagInfo {
+                name: "CodecState",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            37,
+            TagInfo {
+                name: "BlockAdditional",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            38,
+            TagInfo {
+                name: "BlockMore",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            39,
+            TagInfo {
+                name: "Position",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            42,
+            TagInfo {
+                name: "CodecDecodeAll",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            43,
+            TagInfo {
+                name: "PrevSize",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            46,
+            TagInfo {
+                name: "TrackEntry",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            47,
+            TagInfo {
+                name: "EncryptedBlock",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            48,
+            TagInfo {
+                name: "ImageWidth",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            51,
+            TagInfo {
+                name: "CueTime",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Function(ast_print_da3ee02492769652)),
+                value_conv: Some(ValueConv::Function(ast_value_83f37d90ee875af5)),
+            },
+        ),
+        (
+            53,
+            TagInfo {
+                name: "AudioSampleRate",
+                format: "float",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            54,
+            TagInfo {
+                name: "ChapterAtom",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            55,
+            TagInfo {
+                name: "CueTrackPositions",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            57,
+            TagInfo {
+                name: "TrackUsed",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            58,
+            TagInfo {
+                name: "ImageHeight",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            59,
+            TagInfo {
+                name: "CuePoint",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            63,
+            TagInfo {
+                name: "CRC-32",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            75,
+            TagInfo {
+                name: "BlockAdditionalID",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            76,
+            TagInfo {
+                name: "LaceNumber",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            77,
+            TagInfo {
+                name: "FrameNumber",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            78,
+            TagInfo {
+                name: "Delay",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            79,
+            TagInfo {
+                name: "ClusterDuration",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            87,
+            TagInfo {
+                name: "TrackNumber",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            91,
+            TagInfo {
+                name: "CueReference",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            96,
+            TagInfo {
+                name: "Video",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            97,
+            TagInfo {
+                name: "Audio",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            103,
+            TagInfo {
+                name: "TimeCode",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Function(ast_print_da3ee02492769652)),
+                value_conv: Some(ValueConv::Function(ast_value_83f37d90ee875af5)),
+            },
+        ),
+        (
+            104,
+            TagInfo {
+                name: "TimeSlice",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            106,
+            TagInfo {
+                name: "CueCodecState",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            107,
+            TagInfo {
+                name: "CueRefCodecState",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            108,
+            TagInfo {
+                name: "Void",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            110,
+            TagInfo {
+                name: "BlockAddID",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            113,
+            TagInfo {
+                name: "CueClusterPosition",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            119,
+            TagInfo {
+                name: "CueTrack",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            122,
+            TagInfo {
+                name: "ReferencePriority",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            123,
+            TagInfo {
+                name: "ReferenceBlock",
+                format: "signed",
+                print_conv: Some(PrintConv::Function(ast_print_abb6a96ce6de058d)),
+                value_conv: Some(ValueConv::Function(ast_value_83f37d90ee875af5)),
+            },
+        ),
+        (
+            125,
+            TagInfo {
+                name: "ReferenceVirtual",
+                format: "signed",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            596,
+            TagInfo {
+                name: "ContentCompressionAlgorithm",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            597,
+            TagInfo {
+                name: "ContentCompressionSettings",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            642,
+            TagInfo {
+                name: "DocType",
+                format: "string",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            645,
+            TagInfo {
+                name: "DocTypeReadVersion",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            646,
+            TagInfo {
+                name: "EBMLVersion",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            647,
+            TagInfo {
+                name: "DocTypeVersion",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            754,
+            TagInfo {
+                name: "EBMLMaxIDLength",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            755,
+            TagInfo {
+                name: "EBMLMaxSizeLength",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            759,
+            TagInfo {
+                name: "EBMLReadVersion",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            892,
+            TagInfo {
+                name: "ChapterLanguage",
+                format: "string",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            894,
+            TagInfo {
+                name: "ChapterCountry",
+                format: "string",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1092,
+            TagInfo {
+                name: "SegmentFamily",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1121,
+            TagInfo {
+                name: "DateTimeOriginal",
+                format: "date",
+                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                value_conv: None,
+            },
+        ),
+        (
+            1146,
+            TagInfo {
+                name: "TagLanguageBCP47",
+                format: "string",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1156,
+            TagInfo {
+                name: "TagDefault",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            1157,
+            TagInfo {
+                name: "TagBinary",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1159,
+            TagInfo {
+                name: "TagString",
+                format: "utf8",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1161,
+            TagInfo {
+                name: "Duration",
+                format: "float",
+                print_conv: Some(PrintConv::Function(ast_print_da3ee02492769652)),
+                value_conv: Some(ValueConv::Function(ast_value_83f37d90ee875af5)),
+            },
+        ),
+        (
+            1293,
+            TagInfo {
+                name: "ChapterProcessPrivate",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1432,
+            TagInfo {
+                name: "ChapterFlagEnabled",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1443,
+            TagInfo {
+                name: "TagName",
+                format: "utf8",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1465,
+            TagInfo {
+                name: "EditionEntry",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1468,
+            TagInfo {
+                name: "EditionUID",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            },
+        ),
+        (
+            1469,
+            TagInfo {
+                name: "EditionFlagHidden",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1499,
+            TagInfo {
+                name: "EditionFlagDefault",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1501,
+            TagInfo {
+                name: "EditionFlagOrdered",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1628,
+            TagInfo {
+                name: "AttachedFileData",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1632,
+            TagInfo {
+                name: "AttachedFileMIMEType",
+                format: "string",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1646,
+            TagInfo {
+                name: "AttachedFileName",
+                format: "utf8",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1653,
+            TagInfo {
+                name: "AttachedFileReferral",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1662,
+            TagInfo {
+                name: "AttachedFileDescription",
+                format: "utf8",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1710,
+            TagInfo {
+                name: "AttachedFileUID",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            },
+        ),
+        (
+            2017,
+            TagInfo {
+                name: "ContentEncryptionAlgorithm",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            2018,
+            TagInfo {
+                name: "ContentEncryptionKeyID",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            2019,
+            TagInfo {
+                name: "ContentSignature",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            2020,
+            TagInfo {
+                name: "ContentSignatureKeyID",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            2021,
+            TagInfo {
+                name: "ContentSignatureAlgorithm",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            2022,
+            TagInfo {
+                name: "ContentSignatureHashAlgorithm",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            3456,
+            TagInfo {
+                name: "MuxingApp",
+                format: "utf8",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            3515,
+            TagInfo {
+                name: "Seek",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4145,
+            TagInfo {
+                name: "ContentEncodingOrder",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4146,
+            TagInfo {
+                name: "ContentEncodingScope",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4147,
+            TagInfo {
+                name: "ContentEncodingType",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4148,
+            TagInfo {
+                name: "ContentCompression",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4149,
+            TagInfo {
+                name: "ContentEncryption",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4959,
+            TagInfo {
+                name: "CueRefNumber",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4974,
+            TagInfo {
+                name: "TrackName",
+                format: "utf8",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4984,
+            TagInfo {
+                name: "CueBlockNumber",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4991,
+            TagInfo {
+                name: "TrackOffset",
+                format: "signed",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            5035,
+            TagInfo {
+                name: "SeekID",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_aaf44bf2fde8c749)),
+                value_conv: None,
+            },
+        ),
+        (
+            5036,
+            TagInfo {
+                name: "SeekPosition",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            5048,
+            TagInfo {
+                name: "Stereo3DMode",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            5290,
+            TagInfo {
+                name: "CropBottom",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            5296,
+            TagInfo {
+                name: "DisplayWidth",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            5298,
+            TagInfo {
+                name: "DisplayUnit",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            5299,
+            TagInfo {
+                name: "AspectRatioType",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            5306,
+            TagInfo {
+                name: "DisplayHeight",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            5307,
+            TagInfo {
+                name: "CropTop",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            5324,
+            TagInfo {
+                name: "CropLeft",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            5341,
+            TagInfo {
+                name: "CropRight",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            5546,
+            TagInfo {
+                name: "TrackForced",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            5614,
+            TagInfo {
+                name: "MaxBlockAdditionID",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            5953,
+            TagInfo {
+                name: "WritingApp",
+                format: "utf8",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            6228,
+            TagInfo {
+                name: "SilentTracks",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            6359,
+            TagInfo {
+                name: "SilentTrackNumber",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            8615,
+            TagInfo {
+                name: "AttachedFile",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            8768,
+            TagInfo {
+                name: "ContentEncoding",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            8804,
+            TagInfo {
+                name: "AudioBitsPerSample",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            9122,
+            TagInfo {
+                name: "CodecPrivate",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            9152,
+            TagInfo {
+                name: "Targets",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            9155,
+            TagInfo {
+                name: "ChapterPhysicalEquivalent",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            9156,
+            TagInfo {
+                name: "TagChapterUID",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            },
+        ),
+        (
+            9157,
+            TagInfo {
+                name: "TagTrackUID",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            },
+        ),
+        (
+            9158,
+            TagInfo {
+                name: "TagAttachmentUID",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            },
+        ),
+        (
+            9161,
+            TagInfo {
+                name: "TagEditionUID",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            },
+        ),
+        (
+            9162,
+            TagInfo {
+                name: "TargetType",
+                format: "string",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            9522,
+            TagInfo {
+                name: "SignedElement",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            9764,
+            TagInfo {
+                name: "TrackTranslate",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            9893,
+            TagInfo {
+                name: "TrackTranslateTrackID",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            9919,
+            TagInfo {
+                name: "TrackTranslateCodec",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            9980,
+            TagInfo {
+                name: "TrackTranslateEditionUID",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            },
+        ),
+        (
+            10184,
+            TagInfo {
+                name: "SimpleTag",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            10442,
+            TagInfo {
+                name: "TargetTypeValue",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            10513,
+            TagInfo {
+                name: "ChapterProcessCommand",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            10530,
+            TagInfo {
+                name: "ChapterProcessTime",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            10532,
+            TagInfo {
+                name: "ChapterTranslate",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            10547,
+            TagInfo {
+                name: "ChapterProcessData",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            10564,
+            TagInfo {
+                name: "ChapterProcess",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            10581,
+            TagInfo {
+                name: "ChapterProcessCodecID",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            10661,
+            TagInfo {
+                name: "ChapterTranslateID",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            10687,
+            TagInfo {
+                name: "ChapterTranslateCodec",
+                format: "unsigned",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            10748,
+            TagInfo {
+                name: "ChapterTranslateEditionUID",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            },
+        ),
+        (
+            11648,
+            TagInfo {
+                name: "ContentEncodings",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            11751,
+            TagInfo {
+                name: "MinCache",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            11768,
+            TagInfo {
+                name: "MaxCache",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            11879,
+            TagInfo {
+                name: "ChapterSegmentUID",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            },
+        ),
+        (
+            11964,
+            TagInfo {
+                name: "ChapterSegmentEditionUID",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            },
+        ),
+        (
+            12203,
+            TagInfo {
+                name: "TrackOverlay",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            13171,
+            TagInfo {
+                name: "Tag",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            13188,
+            TagInfo {
+                name: "SegmentFileName",
+                format: "utf8",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            13220,
+            TagInfo {
+                name: "SegmentUID",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            },
+        ),
+        (
+            13252,
+            TagInfo {
+                name: "ChapterUID",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            },
+        ),
+        (
+            13253,
+            TagInfo {
+                name: "TrackUID",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            },
+        ),
+        (
+            13382,
+            TagInfo {
+                name: "TrackAttachmentUID",
+                format: "string",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            },
+        ),
+        (
+            13729,
+            TagInfo {
+                name: "BlockAdditions",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            14517,
+            TagInfo {
+                name: "OutputAudioSampleRate",
+                format: "float",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            15273,
+            TagInfo {
+                name: "Title",
+                format: "utf8",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            15739,
+            TagInfo {
+                name: "ChannelPositions",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            15963,
+            TagInfo {
+                name: "SignatureElements",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            15995,
+            TagInfo {
+                name: "SignatureElementList",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            16010,
+            TagInfo {
+                name: "SignatureAlgo",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            16026,
+            TagInfo {
+                name: "SignatureHash",
+                format: "unsigned",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            16037,
+            TagInfo {
+                name: "SignaturePublicKey",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            16053,
+            TagInfo {
+                name: "Signature",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            30320,
+            TagInfo {
+                name: "Projection",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
     ])
 });
 
@@ -1049,19 +1575,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = MATROSKA_MAIN_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -1069,7 +1592,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -1077,7 +1603,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -1087,11 +1612,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

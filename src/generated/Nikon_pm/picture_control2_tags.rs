@@ -6,6 +6,12 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_78::ast_print_7887a47ea90c93f3;
+use crate::generated::functions::hash_7a::ast_value_7a5b0e7788309e2c;
+use crate::generated::functions::hash_8d::ast_print_8d3085faac7e7b15;
+use crate::generated::functions::hash_a0::ast_print_a08839f93b02bcac;
+
 /// Tag definitions for Nikon::PictureControl2 table
 pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
@@ -54,10 +60,8 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "PictureControlQuickAdjust",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "Image::ExifTool::Nikon::PrintPC($val)".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("$val - 0x80".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_7887a47ea90c93f3)),
+                value_conv: Some(ValueConv::Function(ast_value_7a5b0e7788309e2c)),
             },
         ),
         (
@@ -65,10 +69,8 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "Sharpness",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "Image::ExifTool::Nikon::PrintPC($val,\"None\",\"%.2f\",4)".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("$val - 0x80".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_8d3085faac7e7b15)),
+                value_conv: Some(ValueConv::Function(ast_value_7a5b0e7788309e2c)),
             },
         ),
         (
@@ -76,10 +78,8 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "Clarity",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "Image::ExifTool::Nikon::PrintPC($val,\"None\",\"%.2f\",4)".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("$val - 0x80".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_8d3085faac7e7b15)),
+                value_conv: Some(ValueConv::Function(ast_value_7a5b0e7788309e2c)),
             },
         ),
         (
@@ -87,10 +87,8 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "Contrast",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "Image::ExifTool::Nikon::PrintPC($val,\"None\",\"%.2f\",4)".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("$val - 0x80".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_8d3085faac7e7b15)),
+                value_conv: Some(ValueConv::Function(ast_value_7a5b0e7788309e2c)),
             },
         ),
         (
@@ -98,10 +96,8 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "Brightness",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "Image::ExifTool::Nikon::PrintPC($val,undef,\"%.2f\",4)".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("$val - 0x80".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_a08839f93b02bcac)),
+                value_conv: Some(ValueConv::Function(ast_value_7a5b0e7788309e2c)),
             },
         ),
         (
@@ -109,10 +105,8 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "Saturation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "Image::ExifTool::Nikon::PrintPC($val,\"None\",\"%.2f\",4)".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("$val - 0x80".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_8d3085faac7e7b15)),
+                value_conv: Some(ValueConv::Function(ast_value_7a5b0e7788309e2c)),
             },
         ),
         (
@@ -120,10 +114,8 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "Hue",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "Image::ExifTool::Nikon::PrintPC($val,\"None\",\"%.2f\",4)".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("$val - 0x80".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_8d3085faac7e7b15)),
+                value_conv: Some(ValueConv::Function(ast_value_7a5b0e7788309e2c)),
             },
         ),
         (
@@ -149,10 +141,8 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "ToningSaturation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "Image::ExifTool::Nikon::PrintPC($val,\"None\",\"%.2f\",4)".to_string(),
-                )),
-                value_conv: Some(ValueConv::Expression("$val - 0x80".to_string())),
+                print_conv: Some(PrintConv::Function(ast_print_8d3085faac7e7b15)),
+                value_conv: Some(ValueConv::Function(ast_value_7a5b0e7788309e2c)),
             },
         ),
     ])
@@ -163,19 +153,16 @@ pub fn apply_value_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
     _errors: &mut Vec<String>,
-) -> Result<crate::types::TagValue, String> {
+) -> Result<crate::types::TagValue, crate::types::ExifError> {
     let tag_id_u16 = tag_id as u16;
     if let Some(tag_def) = NIKON_PICTURECONTROL2_TAGS.get(&tag_id_u16) {
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value).map_err(|e| e.to_string()),
-                ValueConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    let mut evaluator = crate::expressions::ExpressionEvaluator::new();
-                    evaluator
-                        .evaluate_expression(expr, value)
-                        .map_err(|e| e.to_string())
+                ValueConv::Function(func) => func(value),
+                ValueConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
                 }
                 _ => Ok(value.clone()),
             }
@@ -183,7 +170,10 @@ pub fn apply_value_conv(
             Ok(value.clone())
         }
     } else {
-        Err(format!("Tag 0x{:04x} not found in table", tag_id))
+        Err(crate::types::ExifError::ParseError(format!(
+            "Tag 0x{:04x} not found in table",
+            tag_id
+        )))
     }
 }
 
@@ -191,7 +181,6 @@ pub fn apply_value_conv(
 pub fn apply_print_conv(
     tag_id: u32,
     value: &crate::types::TagValue,
-    _evaluator: &mut crate::expressions::ExpressionEvaluator,
     _errors: &mut Vec<String>,
     _warnings: &mut Vec<String>,
 ) -> crate::types::TagValue {
@@ -201,11 +190,9 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value),
-                PrintConv::Expression(expr) => {
-                    // Use runtime expression evaluator for dynamic evaluation
-                    _evaluator
-                        .evaluate_expression(expr, value)
-                        .unwrap_or_else(|_| value.clone())
+                PrintConv::Expression(_expr) => {
+                    // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
+                    value.clone() // Fallback to original value when expression not handled by PPI
                 }
                 _ => value.clone(),
             }

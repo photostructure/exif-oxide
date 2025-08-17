@@ -325,19 +325,22 @@ impl BinaryDataProcessor for CanonMainProcessor {
         let byte_order = context
             .byte_order
             .unwrap_or(crate::tiff_types::ByteOrder::LittleEndian);
-        let extracted_tags = extract_makernotes_via_tag_kit(
-            data,
-            context.data_offset,
-            byte_order,
-            "Canon",
-            crate::generated::Canon_pm::process_subdirectory,
-        );
+        // TEMPORARILY COMMENTED OUT - process_subdirectory not yet generated
+        // let extracted_tags = extract_makernotes_via_tag_kit(
+        //     data,
+        //     context.data_offset,
+        //     byte_order,
+        //     "Canon",
+        //     crate::generated::Canon_pm::process_subdirectory,
+        // );
+        let extracted_tags: std::result::Result<Vec<(String, String)>, Box<dyn std::error::Error>> =
+            Ok(vec![]);
 
         match extracted_tags {
             Ok(tags) => {
                 debug!("Canon tag kit extracted {} tags", tags.len());
                 for (tag_name, tag_value) in tags {
-                    result.add_tag(tag_name, tag_value);
+                    result.add_tag(tag_name, TagValue::String(tag_value));
                 }
             }
             Err(e) => {
@@ -494,18 +497,13 @@ fn extract_makernotes_via_tag_kit(
                 // ExifTool: lib/Image/ExifTool/Canon.pm PrintConv handling for scalar tags
                 let final_value = if manufacturer == "Canon" {
                     // Apply Canon-specific PrintConv using the tag kit system
-                    use crate::expressions::ExpressionEvaluator;
-                    let mut evaluator = ExpressionEvaluator::new();
-                    let mut errors = Vec::new();
-                    let mut warnings = Vec::new();
+                    let mut errors: Vec<String> = Vec::new();
+                    let mut warnings: Vec<String> = Vec::new();
 
-                    let print_value = crate::generated::Canon_pm::apply_print_conv(
-                        entry.tag_id as u32,
-                        &tag_value,
-                        &mut evaluator,
-                        &mut errors,
-                        &mut warnings,
-                    );
+                    // TEMPORARILY COMMENTED OUT - apply_print_conv not yet generated
+                    // let print_value =
+                    //     crate::generated::Canon_pm::apply_print_conv(&tag_name, &tag_value);
+                    let print_value = tag_value.clone();
 
                     // Log any warnings
                     for warning in warnings {
