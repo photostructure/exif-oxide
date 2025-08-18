@@ -18,6 +18,17 @@ pub fn ast_print_4186404e3c9fa11a(val: &TagValue) -> TagValue {
 }
 
 
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.1f deg", $val/1000)
+/// ```
+/// Used by:
+/// - SonyIDC::Main.InclinationAngle
+pub fn ast_print_41bf92216501bc5a(val: &TagValue) -> TagValue {
+    TagValue::String(format!("%.1f deg", val / 1000))
+}
+
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -31,21 +42,6 @@ pub fn ast_value_41e4bfecd227b921(val: &TagValue) -> Result<TagValue, crate::typ
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("%.1f deg", $val/1000)
-/// ```
-/// Used by:
-/// - SonyIDC::Main.InclinationAngle
-/// TODO: Add support for this expression pattern
-pub fn ast_print_41bf92216501bc5a(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
 }
 
 

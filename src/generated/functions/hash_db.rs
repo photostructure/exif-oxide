@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,12 +14,9 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Panasonic::Main.TravelDay
 pub fn ast_print_dbf94666acbb7012(val: &TagValue) -> TagValue {
-    if val == 65535 {
-        "n/a"
-    } else {
-        val
-    }
+    if val == 65535 { "n/a" } else { val }
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -28,12 +25,9 @@ pub fn ast_print_dbf94666acbb7012(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Olympus::ImageProcessing.CameraTemperature
 pub fn ast_value_db7a59febab7bd3c(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if val {
-        val
-    } else {
-        TagValue::String("".to_string())
-    })
+    Ok(if val { val } else { TagValue::String("".to_string()) })
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -52,7 +46,10 @@ pub fn ast_value_db7a59febab7bd3c(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Pentax::PENT.GPSDateStamp
 /// - Sony::rtmd.GPSDateStamp
 /// TODO: Add support for this expression pattern
-pub fn ast_value_db6d300cf2bc94e2(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_db6d300cf2bc94e2(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

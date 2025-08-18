@@ -7,6 +7,7 @@
 
 use crate::types::{ExifContext, TagValue};
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val / ($$self{FocalUnits} || 1)
@@ -15,8 +16,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Canon::CameraSettings.MaxFocalLength
 /// - Canon::CameraSettings.MinFocalLength
 /// - Canon::FocalLength.FocalLength
+/// TODO: Add support for this expression pattern
 pub fn ast_value_237333b021276c6e(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / (ctx.get("FocalUnits").unwrap_or_default() || 1))
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

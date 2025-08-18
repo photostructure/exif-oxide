@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,9 +14,7 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - RIFF::StreamHeader.Quality
 pub fn ast_print_f320ceed77e30bb7(val: &TagValue) -> TagValue {
-    if val == 0xffffffff {
-        "Default"
-    } else {
-        val
-    }
+    if val == 0xffffffff { "Default" } else { val }
 }
+
+

@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -21,3 +21,5 @@ use crate::types::{ExifContext, TagValue};
 pub fn ast_value_d02980f78a9700ff(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
     Ok(if val > 128 { val - 256 } else { val })
 }
+
+

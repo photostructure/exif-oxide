@@ -18,15 +18,19 @@ pub fn ast_value_4ffb07b2339cdeec(val: &TagValue) -> Result<TagValue, crate::typ
     Ok(val / 128)
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ s/(\d{2})/$1./; $val
 /// ```
 /// Used by:
 /// - Nikon::MakerNotes0x56.FirmwareVersion56
-/// TODO: Add support for this expression pattern
 pub fn ast_value_4f90f27dec9aa072(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok({
+        TagValue::String(crate::fmt::regex_replace(
+            "(\\d{2})",
+            &val.to_string(),
+            "$1.",
+        ));
+        val
+    })
 }

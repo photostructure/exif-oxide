@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -20,6 +20,7 @@ pub fn ast_print_dda555683af957b(val: &TagValue) -> TagValue {
     format!("{} V", val)
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -28,7 +29,10 @@ pub fn ast_print_dda555683af957b(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Nikon::MenuSettingsZ7II.ReleaseMode
 /// TODO: Add support for this expression pattern
-pub fn ast_value_dd0f53a300f2b076(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_dd0f53a300f2b076(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

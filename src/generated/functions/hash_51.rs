@@ -21,7 +21,6 @@ pub fn ast_print_515ec3f56b990031(val: &TagValue) -> TagValue {
     }
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~s/^.*: //;$val
@@ -41,8 +40,9 @@ pub fn ast_print_515ec3f56b990031(val: &TagValue) -> TagValue {
 /// - Exif::Main.Sharpness
 /// - Exif::Main.Smoothness
 /// - Exif::Main.WhiteBalance
-/// TODO: Add support for this expression pattern
 pub fn ast_value_51b27304e42ac9f0(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok({
+        TagValue::String(crate::fmt::regex_replace("^.*: ", &val.to_string(), ""));
+        val
+    })
 }

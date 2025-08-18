@@ -26,7 +26,13 @@ pub fn ast_print_423da13b81d6bdf1(val: &TagValue) -> TagValue {
 /// - QuickTime::VideoProf.PixelAspectRatio
 pub fn ast_print_422bfca23e0caff5(val: &TagValue) -> TagValue {
     {
-        val.to_string().contains(r"val.to_string().chars().map(|c| match c { ' ' => ':' , _ => c }).collect::<String>() ;");
+        val.to_string()
+            .chars()
+            .map(|c| match c {
+                ' ' => ':',
+                _ => c,
+            })
+            .collect::<String>();
         val
     }
 }

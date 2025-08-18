@@ -21,15 +21,15 @@ pub fn ast_print_77deeeaf9630ea8f(val: &TagValue) -> TagValue {
     }
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~s/\0*$//; \$val
 /// ```
 /// Used by:
 /// - Panasonic::PANA.ThumbnailImage
-/// TODO: Add support for this expression pattern
 pub fn ast_value_7759998ac069ebd5(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok({
+        TagValue::String(crate::fmt::regex_replace("\\0*$", &val.to_string(), ""));
+        val
+    })
 }

@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -21,20 +21,24 @@ pub fn ast_print_8b1cb18fc68bc972(val: &TagValue) -> TagValue {
     format!("{} K", val)
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
+/// 
 /// my @a = split ' ',$val;
 /// $_ /= 0x4000 foreach @a[2,5,8];
 /// return "@a";
-///
+/// 
 /// ```
 /// Used by:
 /// - QuickTime::MovieHeader.MatrixStructure
 /// - QuickTime::TrackHeader.MatrixStructure
 /// TODO: Add support for this expression pattern
-pub fn ast_value_8b1e8dd121063bd8(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_8b1e8dd121063bd8(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

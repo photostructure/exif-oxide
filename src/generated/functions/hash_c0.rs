@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -16,6 +16,7 @@ use crate::types::{ExifContext, TagValue};
 pub fn ast_value_c0d22fe788e3b3b6(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
     Ok(val * 2 / 3)
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -32,8 +33,9 @@ pub fn ast_value_c0d22fe788e3b3b6(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Red::RED1.FrameRate
 /// - Red::RED2.FrameRate
 pub fn ast_print_c0a8bf21acb9deb1(val: &TagValue) -> TagValue {
-    (val.trunc() as i32) / 1000
+    int (val * 1000 + 0.5) / 1000
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -44,7 +46,10 @@ pub fn ast_print_c0a8bf21acb9deb1(val: &TagValue) -> TagValue {
 /// - Sony::Main.FullImageSize
 /// - Sony::Main.PreviewImageSize
 /// TODO: Add support for this expression pattern
-pub fn ast_value_c0dee9b600d6a90b(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_c0dee9b600d6a90b(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

@@ -15,7 +15,11 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::Main.ColorTemperature
 pub fn ast_print_5a37abc3eeb8dead(val: &TagValue) -> TagValue {
     if val {
-        (if val == 0xffffffff { "n/a" } else { val })
+        (if val.to_string() == 0xffffffff.to_string() {
+            "n/a"
+        } else {
+            val
+        })
     } else {
         "Auto"
     }

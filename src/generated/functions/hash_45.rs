@@ -15,7 +15,7 @@ use crate::types::{TagValue, ExifContext};
 /// - Nikon::AVITags.Software
 pub fn ast_value_45e5361ebf476759(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
     Ok({
-        val.to_string().contains(r"val.to_string().chars().filter(|c| !['\', '0'].contains(c)).collect::<String>() ;");
+        { use regex::Regex; use std::sync::LazyLock; static REGEX_996afebe79a63fc8: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"val.to_string().chars().filter(|c| !['\', '0'].contains(c)).collect::<String>() ;").unwrap()); REGEX_996afebe79a63fc8.captures(&val.to_string()).is_some() };
         val
     }
     )
@@ -29,7 +29,7 @@ pub fn ast_value_45e5361ebf476759(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - QuickTime::MediaHeader.MediaLanguageCode
 pub fn ast_value_45fef045148be706(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if (val < 0x400 || val == 0x7fff) { val } else { pack "C*" , map |item| ((val >> val) & 0x1f) + 0x60 10 , 5 , 0 })
+    Ok(if (val.to_string() < 0x400 || val == 0x7fff.to_string()) { val } else { pack "C*" , map |item| ((val >> val) & 0x1f) + 0x60 10 , 5 , 0 })
 }
 
 

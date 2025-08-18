@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -17,6 +17,7 @@ pub fn ast_value_f810249e3e5ba00e(val: &TagValue) -> Result<TagValue, crate::typ
     Ok(val & 0x7ff)
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -25,7 +26,10 @@ pub fn ast_value_f810249e3e5ba00e(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Sigma::Main.ExposureTime2
 /// TODO: Add support for this expression pattern
-pub fn ast_value_f87b1058f4dbdeaa(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_f87b1058f4dbdeaa(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

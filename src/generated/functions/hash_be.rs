@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -25,6 +25,7 @@ pub fn ast_value_be410aac07f2b930(val: &TagValue) -> Result<TagValue, crate::typ
     Ok(val / 256 - 56.6)
 }
 
+
 /// Original perl expression:
 /// ``` perl
 /// 5 * 2**($val/24)
@@ -42,8 +43,9 @@ pub fn ast_value_be410aac07f2b930(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Nikon::LensData0800.MaxFocalLength
 /// - Nikon::LensData0800.MinFocalLength
 pub fn ast_value_bebb546318de4cc0(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(5 * 2 * *(val / 24))
+    Ok(5 * 2 ** (val / 24))
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -54,10 +56,12 @@ pub fn ast_value_bebb546318de4cc0(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Canon::CameraInfoPowerShot.ExposureTime
 /// - Canon::CameraInfoPowerShot2.ExposureTime
 /// TODO: Add support for this expression pattern
-pub fn ast_value_be1b3eec816c4342(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_be1b3eec816c4342(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -77,7 +81,10 @@ pub fn ast_value_be1b3eec816c4342(val: &TagValue) -> Result<TagValue, crate::typ
 /// - FujiFilm::MRAW.ExposureCompensation
 /// - FujiFilm::MRAW.ExposureCompensation2
 /// TODO: Add support for this expression pattern
-pub fn ast_print_bec70def03ed8463(val: &TagValue) -> TagValue {
+pub fn ast_print_bec70def03ed8463(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

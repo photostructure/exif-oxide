@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -17,6 +17,7 @@ pub fn ast_print_8497b6582cfb6c0a(val: &TagValue) -> TagValue {
     format!("{} A", val)
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -25,10 +26,12 @@ pub fn ast_print_8497b6582cfb6c0a(val: &TagValue) -> TagValue {
 /// Used by:
 /// - RIFF::BroadcastExt.DateTimeOriginal
 /// TODO: Add support for this expression pattern
-pub fn ast_value_84c0b26ba3ca2227(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_84c0b26ba3ca2227(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -45,10 +48,12 @@ pub fn ast_value_84c0b26ba3ca2227(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Pentax::AEInfo3.AEMaxAperture2
 /// - Pentax::AEInfo3.AEMinAperture
 /// TODO: Add support for this expression pattern
-pub fn ast_value_849772b1a5139524(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_849772b1a5139524(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -129,7 +134,10 @@ pub fn ast_value_849772b1a5139524(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Sony::Tag9416.SonyFNumber2
 /// - Sony::Tag9416.SonyMaxApertureValue
 /// TODO: Add support for this expression pattern
-pub fn ast_print_8470e30e1e5b4729(val: &TagValue) -> TagValue {
+pub fn ast_print_8470e30e1e5b4729(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

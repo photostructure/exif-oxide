@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -16,6 +16,7 @@ use crate::types::{ExifContext, TagValue};
 pub fn ast_print_c7ab2268f0055197(val: &TagValue) -> TagValue {
     val + 4
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -29,6 +30,7 @@ pub fn ast_value_c7431c5fa598bf69(val: &TagValue) -> Result<TagValue, crate::typ
     Ok((val + 100) / 2)
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -37,7 +39,10 @@ pub fn ast_value_c7431c5fa598bf69(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Pentax::AFInfo.AFPointValues
 /// TODO: Add support for this expression pattern
-pub fn ast_value_c7eada7e0548cfd1(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_c7eada7e0548cfd1(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

@@ -7,17 +7,17 @@
 
 use crate::types::{ExifContext, TagValue};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ s/Qual:\s*//, $val
 /// ```
 /// Used by:
 /// - Sigma::Main.Quality
-/// TODO: Add support for this expression pattern
 pub fn ast_value_30791c0bd9d5eab2(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(
+        TagValue::String(crate::fmt::regex_replace("Qual:\\s*", &val.to_string(), "")),
+        val,
+    )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

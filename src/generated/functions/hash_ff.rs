@@ -5,20 +5,30 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// abs($val)<100 ? 2**(-$val) : 0
 /// ```
 /// Used by:
 /// - Olympus::Main.ShutterSpeedValue
-/// TODO: Add support for this expression pattern
 pub fn ast_value_ff00b07c5d58863f(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(if abs (val) < 100 { 2 ** (-(val)) } else { 0 })
 }
+
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%x.%.2x",$val>>8,$val&0xff)
+/// ```
+/// Used by:
+/// - Sony::Tag940c.CameraE-mountVersion
+/// - Sony::Tag940c.LensE-mountVersion
+pub fn ast_print_ff580d7a7e7ea714(val: &TagValue) -> TagValue {
+    TagValue::String(format!("%x.%.2x", val >> 8, val & 0xff))
+}
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -28,21 +38,10 @@ pub fn ast_value_ff00b07c5d58863f(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Olympus::Equipment.LensType
 /// TODO: Add support for this expression pattern
-pub fn ast_value_ff5d284655150fa7(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_ff5d284655150fa7(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("%x.%.2x",$val>>8,$val&0xff)
-/// ```
-/// Used by:
-/// - Sony::Tag940c.CameraE-mountVersion
-/// - Sony::Tag940c.LensE-mountVersion
-/// TODO: Add support for this expression pattern
-pub fn ast_print_ff580d7a7e7ea714(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
+

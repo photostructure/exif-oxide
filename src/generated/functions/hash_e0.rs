@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -24,19 +24,23 @@ pub fn ast_value_e0b36f169462770c(val: &TagValue) -> Result<TagValue, crate::typ
     Ok((2 as f64).powf(((val / 256 - 16) / 2) as f64))
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
+/// 
 /// my @cols = qw(Red Green Blue Cyan Magenta Yellow White);
 /// my @vals = map { $cols[$_] || "Unknown($_)" } split(' ', $val);
 /// return join(',', @vals);
-///
+/// 
 /// ```
 /// Used by:
 /// - Exif::Main.CFAPlaneColor
 /// TODO: Add support for this expression pattern
-pub fn ast_print_e061810051fc636d(val: &TagValue) -> TagValue {
+pub fn ast_print_e061810051fc636d(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

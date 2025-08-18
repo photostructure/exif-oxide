@@ -9,6 +9,19 @@ use crate::types::{ExifContext, TagValue};
 
 /// Original perl expression:
 /// ``` perl
+/// $val =~ s/ *$//; $val
+/// ```
+/// Used by:
+/// - Ricoh::Type2.RicohMake
+pub fn ast_value_3e1220cade8783d3(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+    Ok({
+        TagValue::String(crate::fmt::regex_replace(" *$", &val.to_string(), ""));
+        val
+    })
+}
+
+/// Original perl expression:
+/// ``` perl
 /// -$val / 2
 /// ```
 /// Used by:
@@ -16,17 +29,4 @@ use crate::types::{ExifContext, TagValue};
 /// - Pentax::LevelInfoK3III.RollAngle
 pub fn ast_value_3ee5ea531e525a5e(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
     Ok(-val / 2)
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $val =~ s/ *$//; $val
-/// ```
-/// Used by:
-/// - Ricoh::Type2.RicohMake
-/// TODO: Add support for this expression pattern
-pub fn ast_value_3e1220cade8783d3(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
 }

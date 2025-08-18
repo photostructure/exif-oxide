@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -18,6 +18,7 @@ use crate::types::{ExifContext, TagValue};
 pub fn ast_value_9ceb49948df11722(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
     Ok(val / 0x10000)
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -32,6 +33,7 @@ pub fn ast_value_9c5fc67951116486(val: &TagValue) -> Result<TagValue, crate::typ
     Ok(val / 4294967296)
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -41,7 +43,10 @@ pub fn ast_value_9c5fc67951116486(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Nikon::LensData01.FocusPosition
 /// - Nikon::LensData0204.FocusPosition
 /// TODO: Add support for this expression pattern
-pub fn ast_print_9cf1a1875ed5985(val: &TagValue) -> TagValue {
+pub fn ast_print_9cf1a1875ed5985(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -21,6 +21,7 @@ use crate::types::{ExifContext, TagValue};
 pub fn ast_value_ada28829e28f9303(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
     Ok(val / 6)
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -44,7 +45,10 @@ pub fn ast_value_ada28829e28f9303(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Canon::ColorCalib.CameraColorCalibration14
 /// - Canon::ColorCalib.CameraColorCalibration15
 /// TODO: Add support for this expression pattern
-pub fn ast_print_ad5045ef02b4c16f(val: &TagValue) -> TagValue {
+pub fn ast_print_ad5045ef02b4c16f(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+
