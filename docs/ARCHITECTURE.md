@@ -251,6 +251,7 @@ pub struct ExifReader {
 - PrintConv/ValueConv infrastructure with registry
 - Canon MakerNote support with offset fixing
 - Composite tag framework with runtime evaluation
+- Multi-pass AST normalization system for Perl expression translation
 
 ### Current Focus
 See [MILESTONES.md](MILESTONES.md) for active development priorities.
@@ -275,6 +276,58 @@ See [MILESTONES.md](MILESTONES.md) for active development priorities.
 ### Deep Dives
 - [PRINTCONV-VALUECONV-GUIDE.md](guides/PRINTCONV-VALUECONV-GUIDE.md) - Expression processing details
 - [EXIFTOOL-GUIDE.md](guides/EXIFTOOL-GUIDE.md) - Working with ExifTool source
+
+## Expression Processing Architecture
+
+### Consistent Binary Operations Flow
+
+**ALL binary operations must follow the same processing path:**
+
+```mermaid
+flowchart LR
+    A[AST Nodes] --> B[ExpressionCombiner::combine_statement_parts]
+    B --> C[try_binary_operation_pattern]
+    C --> D[BinaryOperationsHandler::generate_binary_operation_from_parts]
+    D --> E[StringOperationsHandler::handle_regex_operation]
+```
+
+**❌ ANTI-PATTERN**: Special-case pattern matching in `process_node_sequence()`
+```rust
+// BANNED - Creates inconsistent architecture
+if children[i].class == "PPI::Token::Symbol"
+    && children[i + 1].content == Some("=~")
+    && children[i + 2].class == "PPI::Token::Regexp::Substitute"
+{
+    // Special handling here breaks consistency
+}
+```
+
+**✅ CORRECT PATTERN**: All binary operations go through expression handlers
+```rust
+// Binary operations detected by ExpressionCombiner
+if let Some(result) = self.try_binary_operation_pattern(parts)? {
+    return Ok(result);
+}
+```
+
+### Expression Handler Responsibilities
+
+- **Binary Operations**: `+`, `-`, `*`, `/`, `=~`, `!~`, `eq`, `ne`, etc.
+- **String Operations**: Concatenation (`.`), regex matching, substitution
+- **Normalized AST**: Structured nodes created by normalizers
+- **Complex Patterns**: Multi-token patterns like `join unpack`, `sprintf`
+
+**Key Principle**: Each handler has single responsibility and well-defined scope.
+
+### Why This Architecture Prevents Disasters
+
+**Historical Problem**: Engineers would add special-case pattern matching in `process_node_sequence()` for some binary operations while others went through `ExpressionCombiner`. This created:
+
+1. **Inconsistent enhancement** - improvements to binary operations only applied to some cases
+2. **Architectural confusion** - unclear where to add new operator support
+3. **Emergency recoveries** - when inconsistencies broke regex handling across the codebase
+
+**The Fix**: All binary operations follow the same path, making the system predictable and maintainable.
 
 ## Conclusion
 

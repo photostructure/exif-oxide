@@ -15,6 +15,7 @@
 - Deleting pattern recognition code → **BANNED** - breaks real camera files
 - `args[N].starts_with()` on stringified AST → **BANNED** - violates visitor pattern
 - Manual transcription of ExifTool data → **BANNED** - causes silent bugs
+- Inconsistent binary operations handling → **BANNED** - breaks expression architecture
 
 **READ**: [P07-emergency-ppi-recovery.md](todo/P07-emergency-ppi-recovery.md) shows what happens when these rules are ignored - 546 lines of critical ExifTool patterns were deleted, requiring emergency system recovery.
 
@@ -270,6 +271,14 @@ pub fn decrypt_nikon_data(data: &[u8], key: u8) -> Vec<u8> {
 rg "split_whitespace|\.join.*split|args\[.*\]\.starts_with" codegen/src/ppi/
 # If this finds matches: YOUR PR WILL BE REJECTED
 
+# Check for inconsistent binary operations handling (MUST return empty)
+rg "if.*=~.*Regexp::(Match|Substitute)" codegen/src/ppi/rust_generator/generator.rs
+# If this finds matches: YOUR PR WILL BE REJECTED
+
+# Check for pattern matching that should be in expression handlers
+rg "children\[.*\]\.class.*==.*Operator.*=~" codegen/src/ppi/rust_generator/
+# Binary operations must go through ExpressionCombiner, not process_node_sequence
+
 # Check for disabled infrastructure (MUST return empty) 
 rg "DISABLED|TODO.*normalize|//.*normalize" codegen/src/ppi/rust_generator/mod.rs
 # If this finds disabled code: ENABLE PROPERLY, don't disable working systems
@@ -309,6 +318,20 @@ make clean && make codegen
 1. **Don't edit generated files**: Fix the generator in `codegen/src/`
 2. **Check for non-UTF-8 data**: Binary patterns need proper escaping
 3. **Validate JSON output**: Use `jq` to check extractor output
+
+### Expression Generation Issues
+
+**Problem**: Binary operation not generating expected Rust code
+**Solution**: Check if it's being intercepted by pattern matching in `process_node_sequence()`
+
+**Problem**: Regex operations generating invalid Rust like `val =~ /pattern/`
+**Solution**: Ensure `StringOperationsHandler::handle_regex_operation()` supports the pattern
+
+**Problem**: Magic variables (`$1`, `$2`) not working in regex contexts
+**Solution**: Consider if this needs ternary-level pattern recognition in normalizers
+
+**Problem**: Inconsistent operator handling between similar expressions
+**Solution**: Verify all binary operations go through `ExpressionCombiner::try_binary_operation_pattern()`
 
 ### PPI Expression Debugging
 
@@ -350,33 +373,42 @@ These tools help diagnose:
 
 **3. Writing New AST Normalizers**
 
+**✅ CURRENT ARCHITECTURE**: The multi-pass AST rewriter uses explicit ordering with the `RewritePass` trait.
+
 When adding new normalizers, follow these principles to avoid architectural issues:
 
 ```rust
-// 1. Declare precedence level based on Perl operator precedence (perlop)
-impl NormalizationPass for MyNormalizer {
-    fn precedence_level(&self) -> PrecedenceLevel {
-        PrecedenceLevel::High   // Level 1-18: arithmetic, comparison
-        PrecedenceLevel::Medium // Level 19: ternary conditional (?:)
-        PrecedenceLevel::Low    // Level 22+: function calls without parentheses
+// 1. Implement RewritePass trait with single responsibility
+impl RewritePass for MyNormalizer {
+    fn name(&self) -> &str {
+        "MyNormalizer"
+    }
+
+    fn transform(&self, node: PpiNode) -> PpiNode {
+        // Pattern recognition and transformation logic
+        // No recursion needed - orchestrator handles tree traversal
+        if self.matches_pattern(&node) {
+            self.create_canonical_form(node)
+        } else {
+            node // Return unchanged
+        }
     }
 }
 
-// 2. Respect PPI structure boundaries - NEVER normalize functions that already have parentheses
-if node.children[1].class == "PPI::Structure::List" {
-    return None; // Skip - already properly structured by PPI
-}
+// 2. Add to multi-pass pipeline in correct order (codegen/src/ppi/normalizer/multi_pass.rs)
+rewriter.add_pass(Box::new(MyNormalizer));
 
-// 3. Skip patterns handled by higher precedence passes
-if contains_ternary_operators(&node) && self.precedence_level() == PrecedenceLevel::Low {
-    return None; // Let TernaryNormalizer handle this
+// 3. Respect PPI structure boundaries - NEVER normalize functions that already have parentheses
+if node.children[1].class == "PPI::Structure::List" {
+    return node; // Skip - already properly structured by PPI
 }
 ```
 
-**Critical Pitfalls to Avoid:**
-- **Never violate precedence**: Low-precedence passes must not process high-precedence operators
-- **Respect PPI structure**: Functions with `PPI::Structure::List` are already correct
-- **No greedy matching**: Don't consume entire statements as function arguments
+**Critical Principles for Multi-Pass Architecture:**
+- **Single responsibility**: Each pass handles one transformation type only
+- **Explicit ordering**: Passes run in declared order, no precedence levels needed
+- **Canonical forms**: Create standard patterns that the generator can handle reliably  
+- **No string parsing**: Work with PPI AST structure, never stringify and re-parse
 - **Test with debug-ppi**: Always verify your normalizer produces correct Rust code
 
 ## Extension Points
@@ -410,6 +442,61 @@ See [STRATEGY-DEVELOPMENT.md](STRATEGY-DEVELOPMENT.md) for detailed guidance.
 2. **Follow ExifTool logic exactly** - cite source line numbers
 3. **Register in appropriate registry** based on scope (module-specific vs universal)
 4. **Test against ExifTool output** for validation
+
+### Adding New Expression Patterns
+
+#### ✅ Correct Approach: Extend Expression Handlers
+
+When adding support for new operators or patterns:
+
+1. **For binary operations** (`+`, `-`, `=~`, etc.): Add to `BinaryOperationsHandler::generate_binary_operation_from_parts()`
+2. **For string operations** (regex, concatenation): Add to `StringOperationsHandler::handle_regex_operation()`
+3. **For function patterns** (`sprintf`, `unpack`): Add to `ComplexPatternHandler::try_*_pattern()`
+
+**Example - Adding new regex pattern:**
+```rust
+// ✅ CORRECT: Add to StringOperationsHandler
+fn handle_regex_operation(&self, left: &str, op: &str, right: &str) -> Result<String, CodeGenError> {
+    if right.starts_with("tr/") {
+        return self.handle_transliteration(left, op, right);
+    }
+    // ... existing logic
+}
+```
+
+#### ❌ Anti-Pattern: Process Node Sequence Interception
+
+**NEVER add pattern matching to `process_node_sequence()`** unless it's a structural construct (like method calls) that cannot be handled by expression combiners.
+
+```rust
+// ❌ BANNED - Creates architectural inconsistency
+if children[i].class == "PPI::Token::Symbol"
+    && children[i + 1].content == Some("new_operator")
+{
+    // This bypasses the expression handler architecture
+}
+```
+
+#### Expression Processing Violations
+
+**WHY THIS MATTERS**: We had multiple emergency recoveries where engineers created inconsistent binary operation handling:
+- Some `=~` operations went through pattern matching in `process_node_sequence()`
+- Others went through `ExpressionCombiner` → `BinaryOperationsHandler` 
+- This made it impossible to enhance regex handling consistently
+- Required architectural recovery to unify all binary operations
+
+**THE RULE**: ALL binary operations must go through `ExpressionCombiner::try_binary_operation_pattern()`
+
+#### Validation Commands
+
+Before submitting PRs with expression changes:
+```bash
+# Verify no bypassed binary operations
+rg "children\[.*\]\.class.*Operator" codegen/src/ppi/rust_generator/generator.rs
+
+# Verify expression handlers are used consistently  
+rg "try_binary_operation_pattern|handle_regex_operation" codegen/src/ppi/rust_generator/
+```
 
 ## Performance Characteristics
 
