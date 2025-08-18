@@ -1,21 +1,20 @@
 //! Function call normalization for AST transformation
 //!
 //! Transforms function calls without parentheses into consistent structure
+//!
+//! Single-node implementation: Focuses only on pattern recognition at the current node level.
+//! Tree traversal is handled by the leaves-first orchestrator.
 
-use crate::ppi::normalizer::{utils, NormalizationPass, PrecedenceLevel};
+use crate::ppi::normalizer::{multi_pass::RewritePass, utils};
 use crate::ppi::types::PpiNode;
 use tracing::trace;
 
 /// Normalizes function calls to consistent structure
 pub struct FunctionCallNormalizer;
 
-impl NormalizationPass for FunctionCallNormalizer {
+impl RewritePass for FunctionCallNormalizer {
     fn name(&self) -> &str {
         "FunctionCallNormalizer"
-    }
-
-    fn precedence_level(&self) -> PrecedenceLevel {
-        PrecedenceLevel::Low // Level 22+ - list operators without parentheses
     }
 
     fn transform(&self, node: PpiNode) -> PpiNode {
@@ -31,8 +30,7 @@ impl NormalizationPass for FunctionCallNormalizer {
                             "Skipping function call normalization for {} - already has parentheses",
                             func_name
                         );
-                        // Recurse into children without transforming this level
-                        return utils::transform_children(node, |child| self.transform(child));
+                        return node;
                     }
 
                     trace!("Found function call pattern: {}", func_name);
@@ -45,8 +43,8 @@ impl NormalizationPass for FunctionCallNormalizer {
             }
         }
 
-        // Recurse into children
-        utils::transform_children(node, |child| self.transform(child))
+        // No pattern matched, return unchanged
+        node
     }
 }
 
@@ -81,5 +79,83 @@ impl FunctionCallNormalizer {
                 | "hex"
                 | "oct"
         )
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_function_call_single_node() {
+        let normalizer = FunctionCallNormalizer;
+
+        // Test single-node transformation: length $val
+        let function_call_node = PpiNode {
+            class: "PPI::Statement".to_string(),
+            content: None,
+            children: vec![
+                PpiNode {
+                    class: "PPI::Token::Word".to_string(),
+                    content: Some("length".to_string()),
+                    children: vec![],
+                    symbol_type: None,
+                    numeric_value: None,
+                    string_value: None,
+                    structure_bounds: None,
+                },
+                PpiNode {
+                    class: "PPI::Token::Symbol".to_string(),
+                    content: Some("$val".to_string()),
+                    children: vec![],
+                    symbol_type: Some("scalar".to_string()),
+                    numeric_value: None,
+                    string_value: None,
+                    structure_bounds: None,
+                },
+            ],
+            symbol_type: None,
+            numeric_value: None,
+            string_value: None,
+            structure_bounds: None,
+        };
+
+        let result = RewritePass::transform(&normalizer, function_call_node);
+
+        // Should transform to FunctionCall
+        assert_eq!(result.class, "FunctionCall");
+        assert_eq!(result.content, Some("length".to_string()));
+        assert_eq!(result.children.len(), 1);
+        assert_eq!(result.children[0].content, Some("$val".to_string()));
+    }
+
+    #[test]
+    fn test_function_call_single_node_no_recursion() {
+        let normalizer = FunctionCallNormalizer;
+
+        // Test that single-node doesn't recurse into children
+        let non_function_node = PpiNode {
+            class: "PPI::Statement".to_string(),
+            content: None,
+            children: vec![PpiNode {
+                class: "PPI::Token::Symbol".to_string(),
+                content: Some("$other".to_string()),
+                children: vec![],
+                symbol_type: Some("scalar".to_string()),
+                numeric_value: None,
+                string_value: None,
+                structure_bounds: None,
+            }],
+            symbol_type: None,
+            numeric_value: None,
+            string_value: None,
+            structure_bounds: None,
+        };
+
+        let result = RewritePass::transform(&normalizer, non_function_node.clone());
+
+        // Should return unchanged (no recursion into children)
+        assert_eq!(result.class, "PPI::Statement");
+        assert_eq!(format!("{:?}", result), format!("{:?}", non_function_node));
     }
 }

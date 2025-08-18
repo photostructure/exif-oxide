@@ -2,20 +2,16 @@
 //!
 //! Transforms patterns like `$val ? 1/$val : 0` into safe function calls
 
-use crate::ppi::normalizer::{utils, NormalizationPass, PrecedenceLevel};
+use crate::ppi::normalizer::{multi_pass::RewritePass, utils};
 use crate::ppi::types::PpiNode;
 use tracing::trace;
 
 /// Normalizes safe division patterns like `$val ? 1/$val : 0`
 pub struct SafeDivisionNormalizer;
 
-impl NormalizationPass for SafeDivisionNormalizer {
+impl RewritePass for SafeDivisionNormalizer {
     fn name(&self) -> &str {
         "SafeDivisionNormalizer"
-    }
-
-    fn precedence_level(&self) -> PrecedenceLevel {
-        PrecedenceLevel::High // Level 1-18 - specific ternary patterns for mathematical operations
     }
 
     fn transform(&self, node: PpiNode) -> PpiNode {
@@ -44,8 +40,8 @@ impl NormalizationPass for SafeDivisionNormalizer {
             }
         }
 
-        // Recurse into children
-        utils::transform_children(node, |child| self.transform(child))
+        // No transformation - return unchanged
+        node
     }
 }
 
