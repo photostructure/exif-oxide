@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -27,7 +27,7 @@ pub fn ast_print_e1b9c18c6fb887af(val: &TagValue) -> TagValue {
     format!("{} m", val)
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
+
 /// Original perl expression:
 /// ``` perl
 /// $val =~ s/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/20$1:$2:$3 $4:$5:$6/; $val
@@ -35,11 +35,25 @@ pub fn ast_print_e1b9c18c6fb887af(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Olympus::DSS.EndTime
 /// - Olympus::DSS.StartTime
-/// TODO: Add support for this expression pattern
 pub fn ast_value_e10d39549dcc6453(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok({
+        TagValue::String(crate::fmt::regex_replace("(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})", &val.to_string(), "20$1:$2:$3 $4:$5:$6")) ;;
+        val
+    }
+    )
 }
+
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.2f", $val/300)
+/// ```
+/// Used by:
+/// - SonyIDC::Main.BrightnessAdj
+pub fn ast_print_e168284515af79a7(val: &TagValue) -> TagValue {
+    TagValue::String(format!("%.2f", val / 300))
+}
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -50,23 +64,12 @@ pub fn ast_value_e10d39549dcc6453(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Jpeg2000::FileType.CompatibleBrands
 /// - QuickTime::FileType.CompatibleBrands
 /// TODO: Add support for this expression pattern
-pub fn ast_value_e169d6db15e948b(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_e169d6db15e948b(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("%.2f", $val/300)
-/// ```
-/// Used by:
-/// - SonyIDC::Main.BrightnessAdj
-/// TODO: Add support for this expression pattern
-pub fn ast_print_e168284515af79a7(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -77,7 +80,10 @@ pub fn ast_print_e168284515af79a7(val: &TagValue) -> TagValue {
 /// - Photoshop::Main.GlobalAltitude
 /// - Photoshop::Main.GlobalAngle
 /// TODO: Add support for this expression pattern
-pub fn ast_value_e143a6a9ab8400ee(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_e143a6a9ab8400ee(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

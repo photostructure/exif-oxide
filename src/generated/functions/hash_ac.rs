@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -15,12 +15,9 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::Tag9400a.SonyImageHeight
 /// - Sony::Tag9400b.SonyImageHeight
 pub fn ast_print_ac819f699b1427c4(val: &TagValue) -> TagValue {
-    if val > 0 {
-        8 * val
-    } else {
-        "n.a."
-    }
+    if val > 0 { 8 * val } else { "n.a." }
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -32,6 +29,7 @@ pub fn ast_value_aca221497f1eb51c(val: &TagValue) -> Result<TagValue, crate::typ
     Ok((val & 0x3fff) + 1)
 }
 
+
 /// Original perl expression:
 /// ``` perl
 /// (($val >> 2) & 0xffff) . " " . ($val & 0x3)
@@ -39,10 +37,7 @@ pub fn ast_value_aca221497f1eb51c(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Panasonic::Data1.LensType
 pub fn ast_value_ac0e8b8bbf4b643f(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(TagValue::String(format!(
-        "{}{}{}",
-        ((val >> 2) & 0xffff),
-        " ",
-        (val & 0x3)
-    )))
+    Ok(TagValue::String(format!("{}{}{}", ((val >> 2) & 0xffff), " ", (val & 0x3))))
 }
+
+

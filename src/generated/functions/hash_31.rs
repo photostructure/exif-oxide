@@ -5,24 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
-
-/// Original perl expression:
-/// ``` perl
-/// 
-/// return 'Off' unless $val;
-/// return (($val&0xfff) / 10) . ' s' . ($val & 0x4000 ? ', Custom' : '');
-/// 
-/// ```
-/// Used by:
-/// - Canon::CameraSettings.SelfTimer
-pub fn ast_print_314bc158a5c6c330(val: &TagValue) -> TagValue {
-    {
-        return "Off" unless val ;;
-        return ((val & 0xfff) / 10) . " s" . (if val & 0x4000 { ", Custom" } else { "" }) ;
-    }
-}
-
+use crate::types::{ExifContext, TagValue};
 
 /// Original perl expression:
 /// ``` perl
@@ -31,7 +14,25 @@ pub fn ast_print_314bc158a5c6c330(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Nikon::PictureControl.ToningSaturation
 pub fn ast_print_312840a770399a53(val: &TagValue) -> TagValue {
-    if val == 0x7f { "n/a" } else { val }
+    if val == 0x7f {
+        "n/a"
+    } else {
+        val
+    }
 }
 
-
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+///
+/// return 'Off' unless $val;
+/// return (($val&0xfff) / 10) . ' s' . ($val & 0x4000 ? ', Custom' : '');
+///
+/// ```
+/// Used by:
+/// - Canon::CameraSettings.SelfTimer
+/// TODO: Add support for this expression pattern
+pub fn ast_print_314bc158a5c6c330(val: &TagValue) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
+}

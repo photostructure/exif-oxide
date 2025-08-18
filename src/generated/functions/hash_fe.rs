@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -15,7 +15,10 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Canon::Main.AFPointsInFocus1D
 /// TODO: Add support for this expression pattern
-pub fn ast_print_fe8d5cd591272bda(val: &TagValue) -> TagValue {
+pub fn ast_print_fe8d5cd591272bda(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

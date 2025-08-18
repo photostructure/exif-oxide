@@ -7,41 +7,6 @@
 
 use crate::types::{ExifContext, TagValue};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-///
-/// my $len = ord($val);
-/// $val = substr($val, 0, $len+1) if $len < length($val);
-/// return Image::ExifTool::Photoshop::ConvertPascalString($self,$val);
-///
-/// ```
-/// Used by:
-/// - Photoshop::Main.ClippingPathName
-/// TODO: Add support for this expression pattern
-pub fn ast_value_79412c758cdfcf8d(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// my @v=split " ",$val; "$v[0] (min $v[1], max $v[2])"
-/// ```
-/// Used by:
-/// - Olympus::CameraSettings.ContrastSetting
-/// - Olympus::CameraSettings.PictureModeContrast
-/// - Olympus::CameraSettings.PictureModeSaturation
-/// - Olympus::CameraSettings.PictureModeSharpness
-/// - Olympus::CameraSettings.SharpnessSetting
-/// TODO: Add support for this expression pattern
-pub fn ast_print_79289c26a24e6f78(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("%.1fmm",$val/10)
@@ -107,8 +72,40 @@ pub fn ast_print_79289c26a24e6f78(val: &TagValue) -> TagValue {
 /// - Nikon::MenuSettingsZ9v4.NonCPULens7FocalLength
 /// - Nikon::MenuSettingsZ9v4.NonCPULens8FocalLength
 /// - Nikon::MenuSettingsZ9v4.NonCPULens9FocalLength
-/// TODO: Add support for this expression pattern
 pub fn ast_print_79f8b183abd6a1b(val: &TagValue) -> TagValue {
+    TagValue::String(format!("%.1fmm", val / 10))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+///
+/// my $len = ord($val);
+/// $val = substr($val, 0, $len+1) if $len < length($val);
+/// return Image::ExifTool::Photoshop::ConvertPascalString($self,$val);
+///
+/// ```
+/// Used by:
+/// - Photoshop::Main.ClippingPathName
+/// TODO: Add support for this expression pattern
+pub fn ast_value_79412c758cdfcf8d(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// my @v=split " ",$val; "$v[0] (min $v[1], max $v[2])"
+/// ```
+/// Used by:
+/// - Olympus::CameraSettings.ContrastSetting
+/// - Olympus::CameraSettings.PictureModeContrast
+/// - Olympus::CameraSettings.PictureModeSaturation
+/// - Olympus::CameraSettings.PictureModeSharpness
+/// - Olympus::CameraSettings.SharpnessSetting
+/// TODO: Add support for this expression pattern
+pub fn ast_print_79289c26a24e6f78(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }

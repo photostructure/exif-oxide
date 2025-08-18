@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,12 +14,9 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Casio::Type2.ObjectDistance
 pub fn ast_print_8eb189bdce07b25f(val: &TagValue) -> TagValue {
-    if val == "inf" {
-        val
-    } else {
-        format!("{} m", val)
-    }
+    if val == "inf" { val } else { format!("{} m", val) }
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -41,15 +38,17 @@ pub fn ast_print_8eb189bdce07b25f(val: &TagValue) -> TagValue {
 /// s/ 1// and $_ = "1 $_";         # put "1" at start
 /// s/FT-1 // and $_ .= ' FT-1';    # put "FT-1" at end
 /// return $_;
-///
+/// 
 /// ```
 /// Used by:
 /// - Nikon::Main.LensType
 /// TODO: Add support for this expression pattern
-pub fn ast_print_8e2bf26a3866c12f(val: &TagValue) -> TagValue {
+pub fn ast_print_8e2bf26a3866c12f(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -59,7 +58,10 @@ pub fn ast_print_8e2bf26a3866c12f(val: &TagValue) -> TagValue {
 /// Used by:
 /// - JPEG::NITF.NITFVersion
 /// TODO: Add support for this expression pattern
-pub fn ast_value_8ef6bad16279ca65(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_8ef6bad16279ca65(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

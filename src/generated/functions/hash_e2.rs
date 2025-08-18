@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,12 +14,9 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Kodak::Main.DateTimeStamp
 pub fn ast_print_e2ddf072b19d8074(val: &TagValue) -> TagValue {
-    if val {
-        format!("Mode {}", val)
-    } else {
-        "Off"
-    }
+    if val { format!("Mode {}", val) } else { "Off" }
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -29,7 +26,10 @@ pub fn ast_print_e2ddf072b19d8074(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Sony::SR2Private.SR2SubIFDKey
 /// TODO: Add support for this expression pattern
-pub fn ast_print_e265b6e9dae11253(val: &TagValue) -> TagValue {
+pub fn ast_print_e265b6e9dae11253(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

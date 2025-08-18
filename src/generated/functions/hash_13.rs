@@ -18,6 +18,17 @@ pub fn ast_print_139f419a2aaaa1f3(val: &TagValue) -> TagValue {
     format!("{} %", val)
 }
 
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.2f%%", $val * 100)
+/// ```
+/// Used by:
+/// - QuickTime::MovieHeader.PreferredVolume
+/// - QuickTime::TrackHeader.TrackVolume
+pub fn ast_print_13019bc21b8fe7c4(val: &TagValue) -> TagValue {
+    TagValue::String(format!("%.2f%%", val * 100))
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -67,18 +78,4 @@ pub fn ast_print_13c6fe5be8efefda(val: &TagValue) -> TagValue {
 pub fn ast_value_13e9fff1dc7b41b2(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("%.2f%%", $val * 100)
-/// ```
-/// Used by:
-/// - QuickTime::MovieHeader.PreferredVolume
-/// - QuickTime::TrackHeader.TrackVolume
-/// TODO: Add support for this expression pattern
-pub fn ast_print_13019bc21b8fe7c4(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
 }

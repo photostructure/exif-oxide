@@ -7,17 +7,17 @@
 
 use crate::types::{ExifContext, TagValue};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~s/ / x /;"$val um"
 /// ```
 /// Used by:
 /// - Nikon::Main.SensorPixelSize
-/// TODO: Add support for this expression pattern
 pub fn ast_print_67e30de4b4355f98(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    {
+        TagValue::String(val.to_string().replacen(" ", " x ", 1));
+        format!("{} um", val)
+    }
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

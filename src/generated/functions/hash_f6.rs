@@ -7,6 +7,7 @@
 
 use crate::types::{TagValue, ExifContext};
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $self->Options("DateFormat") ? $self->ConvertDateTime("1970:01:01 $val") : $val
@@ -14,8 +15,11 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - IPTC::ApplicationRecord.DigitalCreationTime
 /// - IPTC::ApplicationRecord.TimeCreated
-pub fn ast_print_f6376183ea3a1573(val: &TagValue) -> TagValue {
-    if self -> Options ("DateFormat") { self -> ConvertDateTime (format!("1970:01:01 {}", val)) } else { val }
+/// TODO: Add support for this expression pattern
+pub fn ast_print_f6376183ea3a1573(val: &TagValue) -> TagValue
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
 }
 
 

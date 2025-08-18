@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -32,10 +32,11 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::rtmd.GPSVersionID
 pub fn ast_print_c12c7e50f55cf298(val: &TagValue) -> TagValue {
     {
-        val.to_string().contains(r"val.to_string().chars().map(|c| match c { ' ' => '.' , _ => c }).collect::<String>() ;");
+        val.to_string().chars().map(|c| match c { ' ' => '.' , _ => c }).collect::<String>() ;;
         val
     }
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -50,18 +51,22 @@ pub fn ast_value_c1d0defaf7444144(val: &TagValue) -> Result<TagValue, crate::typ
     Ok((2 as f64).powf(((val / 8 - 1.06) / 2) as f64))
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
+/// 
 /// my @a = split ' ', $val;
 /// sprintf('%.2f - %.2f m', $a[0] <= $a[1] ? @a : reverse @a);
-///
+/// 
 /// ```
 /// Used by:
 /// - Apple::Main.FocusDistanceRange
 /// TODO: Add support for this expression pattern
-pub fn ast_print_c1c5cd7f1c4f4d2(val: &TagValue) -> TagValue {
+pub fn ast_print_c1c5cd7f1c4f4d2(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

@@ -5,22 +5,23 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ s/ 0$//; $val
 /// ```
 /// Used by:
 /// - Nikon::NCTG.FrameCount
-/// TODO: Add support for this expression pattern
 pub fn ast_value_a140a65a5d8d60f(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok({
+        TagValue::String(crate::fmt::regex_replace(" 0$", &val.to_string(), "")) ;;
+        val
+    }
+    )
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
+
 /// Original perl expression:
 /// ``` perl
 /// $val =~ s/(\d{4})(\d{2})/$1:$2:/; $val
@@ -28,8 +29,12 @@ pub fn ast_value_a140a65a5d8d60f(val: &TagValue) -> Result<TagValue, crate::type
 /// Used by:
 /// - Red::Main.DateCreated
 /// - Red::Main.StorageFormatDate
-/// TODO: Add support for this expression pattern
 pub fn ast_value_a1bbe7c476ada4eb(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok({
+        TagValue::String(crate::fmt::regex_replace("(\\d{4})(\\d{2})", &val.to_string(), "$1:$2:")) ;;
+        val
+    }
+    )
 }
+
+

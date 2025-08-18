@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -17,6 +17,7 @@ pub fn ast_value_f549716a7ec6c29b(val: &TagValue) -> Result<TagValue, crate::typ
     Ok(val - 5)
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -25,10 +26,12 @@ pub fn ast_value_f549716a7ec6c29b(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - FujiFilm::RAF.XTransLayout
 /// TODO: Add support for this expression pattern
-pub fn ast_print_f591611bd0effe85(val: &TagValue) -> TagValue {
+pub fn ast_print_f591611bd0effe85(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -39,7 +42,10 @@ pub fn ast_print_f591611bd0effe85(val: &TagValue) -> TagValue {
 /// - Canon::CameraInfoPowerShot.FNumber
 /// - Canon::CameraInfoPowerShot2.FNumber
 /// TODO: Add support for this expression pattern
-pub fn ast_value_f5e2fd998937b3b3(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_f5e2fd998937b3b3(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

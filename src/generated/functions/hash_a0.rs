@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,13 +14,14 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Olympus::Main.ISOValue
 pub fn ast_value_a040417283f4e897(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(100 * 2 * *(val - 5))
+    Ok(100 * 2 ** (val - 5))
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
+/// 
 /// $_ = $val;
 /// if (/^(\d{2})(\d{2})\0\0(\d{2})(\d{2})\0\0(\d{2})(.{2})\0{2}$/) {
 /// my $yr = $1 + ($1 < 70 ? 2000 : 1900);
@@ -31,15 +32,17 @@ pub fn ast_value_a040417283f4e897(val: &TagValue) -> Result<TagValue, crate::typ
 /// }
 /// tr/\0/./;  s/\.+$//;
 /// return "Unknown ($_)";
-///
+/// 
 /// ```
 /// Used by:
 /// - Casio::Main.FirmwareDate
 /// TODO: Add support for this expression pattern
-pub fn ast_print_a04fe08e941ee2d(val: &TagValue) -> TagValue {
+pub fn ast_print_a04fe08e941ee2d(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -50,7 +53,10 @@ pub fn ast_print_a04fe08e941ee2d(val: &TagValue) -> TagValue {
 /// - Nikon::PictureControl2.Brightness
 /// - Nikon::PictureControl3.Brightness
 /// TODO: Add support for this expression pattern
-pub fn ast_print_a08839f93b02bcac(val: &TagValue) -> TagValue {
+pub fn ast_print_a08839f93b02bcac(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

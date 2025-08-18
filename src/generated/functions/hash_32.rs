@@ -5,36 +5,8 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{ExifContext, TagValue};
 
-/// Original perl expression:
-/// ``` perl
-/// $self->Options("Unknown") ? $val : $val & 0x7ff
-/// ```
-/// Used by:
-/// - Pentax::AFInfo.AFPointsUnknown1
-/// - Pentax::AFInfo.AFPointsUnknown2
-pub fn ast_value_325ae39bdd3fcbb3(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if self -> Options ("Unknown") { val } else { val & 0x7ff })
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// length($val)>=3 ? sprintf("%.2d:%.2d:%.2d",unpack("C3",$val)) : "Unknown ($val)"
-/// ```
-/// Used by:
-/// - Pentax::Main.Time
-/// TODO: Add support for this expression pattern
-pub fn ast_value_32a7e10f5e7f8777(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("f/%.1f",$val/100)
@@ -60,11 +32,33 @@ pub fn ast_value_32a7e10f5e7f8777(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Nikon::MenuSettingsZ9v4.NonCPULens7MaxAperture
 /// - Nikon::MenuSettingsZ9v4.NonCPULens8MaxAperture
 /// - Nikon::MenuSettingsZ9v4.NonCPULens9MaxAperture
-/// TODO: Add support for this expression pattern
-pub fn ast_print_32d15696c00cf4d1(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+pub fn ast_print_32d15696c00cf4d1(val: &TagValue) -> TagValue {
+    TagValue::String(format!("f/%.1f", val / 100))
 }
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $self->Options("Unknown") ? $val : $val & 0x7ff
+/// ```
+/// Used by:
+/// - Pentax::AFInfo.AFPointsUnknown1
+/// - Pentax::AFInfo.AFPointsUnknown2
+/// TODO: Add support for this expression pattern
+pub fn ast_value_325ae39bdd3fcbb3(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
+}
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// length($val)>=3 ? sprintf("%.2d:%.2d:%.2d",unpack("C3",$val)) : "Unknown ($val)"
+/// ```
+/// Used by:
+/// - Pentax::Main.Time
+/// TODO: Add support for this expression pattern
+pub fn ast_value_32a7e10f5e7f8777(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
+}

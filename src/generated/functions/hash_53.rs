@@ -22,6 +22,17 @@ pub fn ast_value_53ef12641c6719f5(val: &TagValue) -> Result<TagValue, crate::typ
     Ok(if val { 2 * *(16 - val / 256) } else { 0 })
 }
 
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.1f m", $val/10)
+/// ```
+/// Used by:
+/// - Nikon::AutoCaptureInfo.AutoCaptureDistanceFar
+/// - Nikon::AutoCaptureInfo.AutoCaptureDistanceNear
+pub fn ast_print_53e26bd836197e46(val: &TagValue) -> TagValue {
+    TagValue::String(format!("%.1f m", val / 10))
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -32,20 +43,6 @@ pub fn ast_value_53ef12641c6719f5(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Canon::AFInfo2.AFPointsInFocus
 /// TODO: Add support for this expression pattern
 pub fn ast_print_534d44d0c8f65074(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("%.1f m", $val/10)
-/// ```
-/// Used by:
-/// - Nikon::AutoCaptureInfo.AutoCaptureDistanceFar
-/// - Nikon::AutoCaptureInfo.AutoCaptureDistanceNear
-/// TODO: Add support for this expression pattern
-pub fn ast_print_53e26bd836197e46(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }

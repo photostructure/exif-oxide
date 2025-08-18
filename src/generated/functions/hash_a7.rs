@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -16,8 +16,9 @@ use crate::types::{ExifContext, TagValue};
 /// - Olympus::Equipment.MaxApertureAtMaxFocal
 /// - Olympus::Equipment.MaxApertureAtMinFocal
 pub fn ast_value_a702026eef5d42be(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if val { sqrt(2) * *(val / 256) } else { 0 })
+    Ok(if val { sqrt (2) ** (val / 256) } else { 0 })
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -27,10 +28,12 @@ pub fn ast_value_a702026eef5d42be(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Nikon::Main.MakerNoteVersion
 /// TODO: Add support for this expression pattern
-pub fn ast_print_a7bd7d3f338f7940(val: &TagValue) -> TagValue {
+pub fn ast_print_a7bd7d3f338f7940(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -43,10 +46,12 @@ pub fn ast_print_a7bd7d3f338f7940(val: &TagValue) -> TagValue {
 /// - Sony::FocusInfo.ISO
 /// - Sony::FocusInfo.ISOSetting
 /// TODO: Add support for this expression pattern
-pub fn ast_value_a7fc8acd4df4945(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_a7fc8acd4df4945(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -57,7 +62,10 @@ pub fn ast_value_a7fc8acd4df4945(val: &TagValue) -> Result<TagValue, crate::type
 /// - Canon::CameraInfoPowerShot.ISO
 /// - Canon::CameraInfoPowerShot2.ISO
 /// TODO: Add support for this expression pattern
-pub fn ast_value_a704a838f8b357a7(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_a704a838f8b357a7(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

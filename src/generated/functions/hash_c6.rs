@@ -5,7 +5,18 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("Ver.%.2x.%.3d",$val>>8,$val&0xff)
+/// ```
+/// Used by:
+/// - Sony::Tag940c.LensFirmwareVersion
+pub fn ast_print_c6578bbe163abd7e(val: &TagValue) -> TagValue {
+    TagValue::String(format!("Ver.%.2x.%.3d", val >> 8, val & 0xff))
+}
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -84,20 +95,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::PMP.ExposureTime
 /// - Sony::rtmd.ExposureTime
 /// TODO: Add support for this expression pattern
-pub fn ast_print_c60ce4347d672501(val: &TagValue) -> TagValue {
+pub fn ast_print_c60ce4347d672501(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("Ver.%.2x.%.3d",$val>>8,$val&0xff)
-/// ```
-/// Used by:
-/// - Sony::Tag940c.LensFirmwareVersion
-/// TODO: Add support for this expression pattern
-pub fn ast_print_c6578bbe163abd7e(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
+

@@ -5,7 +5,22 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
+
+/// Original perl expression:
+/// ``` perl
+/// $val=~s/( 0)+$//; $val
+/// ```
+/// Used by:
+/// - Nikon::Main.RetouchHistory
+pub fn ast_value_b8eb22ffc318bd41(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+    Ok({
+        TagValue::String(crate::fmt::regex_replace("( 0)+$", &val.to_string(), "")) ;;
+        val
+    }
+    )
+}
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -26,23 +41,12 @@ use crate::types::{ExifContext, TagValue};
 /// - Exif::Main.ProfileCopyright
 /// - Exif::Main.ProfileName
 /// TODO: Add support for this expression pattern
-pub fn ast_value_b8dc6123922f8b5b(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_b8dc6123922f8b5b(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $val=~s/( 0)+$//; $val
-/// ```
-/// Used by:
-/// - Nikon::Main.RetouchHistory
-/// TODO: Add support for this expression pattern
-pub fn ast_value_b8eb22ffc318bd41(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -52,10 +56,12 @@ pub fn ast_value_b8eb22ffc318bd41(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - JPEG::NITF.ImageFormat
 /// TODO: Add support for this expression pattern
-pub fn ast_value_b8adb9d29578d7d8(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_b8adb9d29578d7d8(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -65,7 +71,10 @@ pub fn ast_value_b8adb9d29578d7d8(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Canon::ShotInfo.TargetExposureTime
 /// TODO: Add support for this expression pattern
-pub fn ast_value_b88e4cfe5671f7ac(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_b88e4cfe5671f7ac(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

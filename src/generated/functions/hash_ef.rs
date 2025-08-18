@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -17,6 +17,7 @@ pub fn ast_value_efb6d499febeaf95(val: &TagValue) -> Result<TagValue, crate::typ
     Ok(crate::fmt::safe_reciprocal(&val))
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -25,10 +26,12 @@ pub fn ast_value_efb6d499febeaf95(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Nikon::AVIVers.MakerNoteVersion
 /// TODO: Add support for this expression pattern
-pub fn ast_value_efbc21cd45d1f526(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_efbc21cd45d1f526(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -39,10 +42,12 @@ pub fn ast_value_efbc21cd45d1f526(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Kodak::Main.MonthDayCreated
 /// - Kodak::Type3.MonthDayCreated
 /// TODO: Add support for this expression pattern
-pub fn ast_value_ef515e3e00781660(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_ef515e3e00781660(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -52,7 +57,10 @@ pub fn ast_value_ef515e3e00781660(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Pentax::Main.SensorSize
 /// TODO: Add support for this expression pattern
-pub fn ast_print_ef689d4362d907e(val: &TagValue) -> TagValue {
+pub fn ast_print_ef689d4362d907e(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

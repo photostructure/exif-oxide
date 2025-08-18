@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -85,6 +85,7 @@ pub fn ast_value_ee9b0901d11400f9(val: &TagValue) -> Result<TagValue, crate::typ
     Ok(val / 100)
 }
 
+
 /// Original perl expression:
 /// ``` perl
 /// ($val >> 8) + 1
@@ -94,6 +95,7 @@ pub fn ast_value_ee9b0901d11400f9(val: &TagValue) -> Result<TagValue, crate::typ
 pub fn ast_value_ee373eddfb12a7cf(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
     Ok((val >> 8) + 1)
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -105,23 +107,26 @@ pub fn ast_value_ee91ddedc5e86fe3(val: &TagValue) -> Result<TagValue, crate::typ
     Ok((2 as f64).powf(((val - 80) / 12) as f64))
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
+/// 
 /// my @v = split(' ',$val);
 /// $v[0] &= 0x0f;
 /// $v[1] = $v[3] * 256 + $v[4]; # (always high byte first)
 /// return "$v[0] $v[1]";
-///
+/// 
 /// ```
 /// Used by:
 /// - Pentax::LensInfo5.LensType
 /// TODO: Add support for this expression pattern
-pub fn ast_value_ee0ba302040a4bb7(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_ee0ba302040a4bb7(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -131,7 +136,10 @@ pub fn ast_value_ee0ba302040a4bb7(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Kodak::Borders.BorderName
 /// TODO: Add support for this expression pattern
-pub fn ast_print_ee86c0adbbb71bec(val: &TagValue) -> TagValue {
+pub fn ast_print_ee86c0adbbb71bec(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

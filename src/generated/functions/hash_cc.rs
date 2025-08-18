@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -55,6 +55,7 @@ pub fn ast_value_cc6d20d1f05f91ec(val: &TagValue) -> Result<TagValue, crate::typ
     Ok(val + 1)
 }
 
+
 /// Original perl expression:
 /// ``` perl
 /// 2**($val/384-1)
@@ -66,21 +67,24 @@ pub fn ast_value_ccebb986d6453c97(val: &TagValue) -> Result<TagValue, crate::typ
     Ok((2 as f64).powf((val / 384 - 1) as f64))
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
+/// 
 /// require Image::ExifTool::XMP;
 /// return Image::ExifTool::XMP::ConvertXMPDate($val);
-///
+/// 
 /// ```
 /// Used by:
 /// - Exif::Main.PreviewDateTime
 /// TODO: Add support for this expression pattern
-pub fn ast_value_cc04498da2daf80c(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_cc04498da2daf80c(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -90,7 +94,10 @@ pub fn ast_value_cc04498da2daf80c(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Canon::CameraSettings.CameraISO
 /// TODO: Add support for this expression pattern
-pub fn ast_value_cc8b3fc622e28074(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_cc8b3fc622e28074(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

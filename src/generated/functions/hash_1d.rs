@@ -7,15 +7,26 @@
 
 use crate::types::{ExifContext, TagValue};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~tr/./:/; $val=~s/(\d+:\d+:\d+):/$1 /; $val
 /// ```
 /// Used by:
 /// - Casio::QVCI.DateTimeOriginal
-/// TODO: Add support for this expression pattern
 pub fn ast_value_1ddeac1b4916acb0(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok({
+        val.to_string()
+            .chars()
+            .map(|c| match c {
+                '.' => ':',
+                _ => c,
+            })
+            .collect::<String>();
+        TagValue::String(crate::fmt::regex_replace(
+            "(\\d+:\\d+:\\d+):",
+            &val.to_string(),
+            "$1 ",
+        ));
+        val
+    })
 }

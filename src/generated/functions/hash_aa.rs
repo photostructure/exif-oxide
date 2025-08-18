@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -18,33 +18,38 @@ pub fn ast_print_aabd3f97f7321fbc(val: &TagValue) -> TagValue {
     format!("{} Hz", val)
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-///
-/// my $tagInfo = $Image::ExifTool::Matroska::Main{$val};
-/// $val = sprintf('0x%x', $val);
-/// $val .= " ($$tagInfo{Name})" if ref $tagInfo eq 'HASH' and $$tagInfo{Name};
-/// return $val;
-///
-/// ```
-/// Used by:
-/// - Matroska::Main.SeekID
-/// TODO: Add support for this expression pattern
-pub fn ast_print_aaf44bf2fde8c749(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ s/(\d+) (\d+)/$2\/$1/; $val
 /// ```
 /// Used by:
 /// - RIFF::Acidizer.Meter
-/// TODO: Add support for this expression pattern
 pub fn ast_print_aa93afa3ba8c29d4(val: &TagValue) -> TagValue {
+    {
+        TagValue::String(crate::fmt::regex_replace("(\\d+) (\\d+)", &val.to_string(), "$2\\")) ;;
+        val
+    }
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// 
+/// my $tagInfo = $Image::ExifTool::Matroska::Main{$val};
+/// $val = sprintf('0x%x', $val);
+/// $val .= " ($$tagInfo{Name})" if ref $tagInfo eq 'HASH' and $$tagInfo{Name};
+/// return $val;
+/// 
+/// ```
+/// Used by:
+/// - Matroska::Main.SeekID
+/// TODO: Add support for this expression pattern
+pub fn ast_print_aaf44bf2fde8c749(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

@@ -5,21 +5,24 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
+/// 
 /// my @v = split ' ', $val;
 /// return 'n/a' if $v[0] == 65535 or not $v[1] or not $v[3];
 /// sprintf "%.2g %.2g", $v[0]/$v[1], $v[2]/$v[3];
-///
+/// 
 /// ```
 /// Used by:
 /// - Casio::Type2.AFPointPosition
 /// TODO: Add support for this expression pattern
-pub fn ast_print_f99f157f7be94989(val: &TagValue) -> TagValue {
+pub fn ast_print_f99f157f7be94989(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

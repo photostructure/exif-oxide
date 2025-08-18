@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -15,10 +15,12 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Canon::Main.FileNumber
 /// TODO: Add support for this expression pattern
-pub fn ast_print_bffa130fcb334a97(val: &TagValue) -> TagValue {
+pub fn ast_print_bffa130fcb334a97(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -29,7 +31,10 @@ pub fn ast_print_bffa130fcb334a97(val: &TagValue) -> TagValue {
 /// - Nikon::RotationInfoD500.Interval
 /// - Nikon::RotationInfoD500.IntervalFrame
 /// TODO: Add support for this expression pattern
-pub fn ast_print_bf221c10c194a77e(val: &TagValue) -> TagValue {
+pub fn ast_print_bf221c10c194a77e(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

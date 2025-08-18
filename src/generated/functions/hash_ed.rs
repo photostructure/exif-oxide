@@ -5,7 +5,37 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
+
+/// Original perl expression:
+/// ``` perl
+/// $val=~s/ .*//; $val
+/// ```
+/// Used by:
+/// - Samsung::Type2.ExposureTime
+/// - Samsung::Type2.FNumber
+pub fn ast_value_edcabe5cee6e23c4(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+    Ok({
+        TagValue::String(crate::fmt::regex_replace(" .*", &val.to_string(), "")) ;;
+        val
+    }
+    )
+}
+
+
+/// Original perl expression:
+/// ``` perl
+/// $val=~s/(\S+) (\S+)/$1 m, $2 ft/; $val
+/// ```
+/// Used by:
+/// - Olympus::CameraSettings.ManometerReading
+pub fn ast_print_ed1555c62079876e(val: &TagValue) -> TagValue {
+    {
+        TagValue::String(crate::fmt::regex_replace("(\\S+) (\\S+)", &val.to_string(), "$1 m, $2 ft")) ;;
+        val
+    }
+}
+
 
 /// Original perl expression:
 /// ``` perl
@@ -14,36 +44,7 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Exif::Main.WangTag4
 pub fn ast_print_ed72af4e216ef08f(val: &TagValue) -> TagValue {
-    if length(val) <= 64 {
-        val
-    } else {
-        val
-    }
+    if length (val) <= 64 { val } else {  val }
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $val=~s/ .*//; $val
-/// ```
-/// Used by:
-/// - Samsung::Type2.ExposureTime
-/// - Samsung::Type2.FNumber
-/// TODO: Add support for this expression pattern
-pub fn ast_value_edcabe5cee6e23c4(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $val=~s/(\S+) (\S+)/$1 m, $2 ft/; $val
-/// ```
-/// Used by:
-/// - Olympus::CameraSettings.ManometerReading
-/// TODO: Add support for this expression pattern
-pub fn ast_print_ed1555c62079876e(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}

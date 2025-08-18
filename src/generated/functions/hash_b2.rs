@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,29 +14,39 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - PanasonicRaw::CameraIFD.ShutterSpeedValue
 pub fn ast_value_b2f81fafd2d2443b(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if abs(val / 256) < 100 {
-        2 * *(-val / 256)
-    } else {
-        0
-    })
+    Ok(if abs (val / 256) < 100 { 2 ** (- val / 256) } else { 0 })
 }
+
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.1f", $val/10)
+/// ```
+/// Used by:
+/// - SonyIDC::Main.PxShiftPeriphEdgeNRValue
+pub fn ast_print_b22e140fc097672a(val: &TagValue) -> TagValue {
+    TagValue::String(format!("%.1f", val / 10))
+}
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
+/// 
 /// return $val unless $val=~/^([A-Z][0-9A-Z]{2})(\d{2})(\d{2})(\d{2})(\d{4})/;
 /// my $yr = $2 + ($2 < 70 ? 2000 : 1900);
 /// return "($1) $yr:$3:$4 no. $5";
-///
+/// 
 /// ```
 /// Used by:
 /// - Panasonic::Main.InternalSerialNumber
 /// TODO: Add support for this expression pattern
-pub fn ast_print_b2e53ba58d428808(val: &TagValue) -> TagValue {
+pub fn ast_print_b2e53ba58d428808(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -102,20 +112,10 @@ pub fn ast_print_b2e53ba58d428808(val: &TagValue) -> TagValue {
 /// - SonyIDC::Main.VersionCreateDate
 /// - SonyIDC::Main.VersionModifyDate
 /// TODO: Add support for this expression pattern
-pub fn ast_print_b25c14c47d1cbc24(val: &TagValue) -> TagValue {
+pub fn ast_print_b25c14c47d1cbc24(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("%.1f", $val/10)
-/// ```
-/// Used by:
-/// - SonyIDC::Main.PxShiftPeriphEdgeNRValue
-/// TODO: Add support for this expression pattern
-pub fn ast_print_b22e140fc097672a(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
+

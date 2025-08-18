@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -15,10 +15,12 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - FujiFilm::RAFData.RawImageWidth
 /// TODO: Add support for this expression pattern
-pub fn ast_value_c8cc976fc4865a7f(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_c8cc976fc4865a7f(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -35,10 +37,12 @@ pub fn ast_value_c8cc976fc4865a7f(val: &TagValue) -> Result<TagValue, crate::typ
 /// - QuickTime::MovieHeader.SelectionTime
 /// - QuickTime::TrackHeader.TrackDuration
 /// TODO: Add support for this expression pattern
-pub fn ast_print_c84ae4fd283ed65e(val: &TagValue) -> TagValue {
+pub fn ast_print_c84ae4fd283ed65e(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -67,10 +71,12 @@ pub fn ast_print_c84ae4fd283ed65e(val: &TagValue) -> TagValue {
 /// - Canon::CameraInfo7D.ISO
 /// - Canon::CameraInfo80D.ISO
 /// TODO: Add support for this expression pattern
-pub fn ast_value_c8722122eace16df(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_c8722122eace16df(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -86,7 +92,10 @@ pub fn ast_value_c8722122eace16df(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Canon::CameraInfo5DmkII.MacroMagnification
 /// - Canon::FileInfo.MacroMagnification
 /// TODO: Add support for this expression pattern
-pub fn ast_value_c81520c2f48a3e3c(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_c81520c2f48a3e3c(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

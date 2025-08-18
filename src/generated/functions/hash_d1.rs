@@ -5,9 +5,8 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~s/ / to /; $val
@@ -15,11 +14,13 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Sigma::Main.LensFocalRange
 /// - Sigma::Main.LensMaxApertureRange
-/// TODO: Add support for this expression pattern
 pub fn ast_print_d1ea0bc590f67427(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    {
+        TagValue::String(val.to_string().replacen(" ", " to ", 1)) ;;
+        val
+    }
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -43,7 +44,10 @@ pub fn ast_print_d1ea0bc590f67427(val: &TagValue) -> TagValue {
 /// - Canon::ColorCalib2.CameraColorCalibration14
 /// - Canon::ColorCalib2.CameraColorCalibration15
 /// TODO: Add support for this expression pattern
-pub fn ast_print_d1371ccf5a7e3c3e(val: &TagValue) -> TagValue {
+pub fn ast_print_d1371ccf5a7e3c3e(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

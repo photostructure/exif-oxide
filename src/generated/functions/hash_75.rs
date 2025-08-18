@@ -28,7 +28,6 @@ pub fn ast_value_759479de720ee9c(val: &TagValue) -> Result<TagValue, crate::type
     Ok((2 as f64).powf((val / 16) as f64))
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// join " ", unpack "H2H2", $val
@@ -36,8 +35,9 @@ pub fn ast_value_759479de720ee9c(val: &TagValue) -> Result<TagValue, crate::type
 /// Used by:
 /// - Sony::Tag9050a.LensSpecFeatures
 /// - Sony::Tag9050b.LensSpecFeatures
-/// TODO: Add support for this expression pattern
 pub fn ast_value_75fc706b92c8c4f7(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(TagValue::String(crate::fmt::join_binary(
+        " ",
+        &TagValue::String(crate::fmt::unpack_binary("H2H2", &val)),
+    )))
 }

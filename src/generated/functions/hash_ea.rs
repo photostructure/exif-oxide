@@ -5,20 +5,22 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ s/^(\d{2})(\d{2})/$1:$2:/; $val
 /// ```
 /// Used by:
 /// - Olympus::WAV.RecordingTime
-/// TODO: Add support for this expression pattern
 pub fn ast_value_eaa9c283f27f62e3(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok({
+        TagValue::String(crate::fmt::regex_replace("^(\\d{2})(\\d{2})", &val.to_string(), "$1:$2:")) ;;
+        val
+    }
+    )
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -28,7 +30,10 @@ pub fn ast_value_eaa9c283f27f62e3(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - MinoltaRaw::RIF.WBMode
 /// TODO: Add support for this expression pattern
-pub fn ast_print_ea346521bd5b3d3e(val: &TagValue) -> TagValue {
+pub fn ast_print_ea346521bd5b3d3e(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

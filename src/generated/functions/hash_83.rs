@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,12 +14,9 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Canon::ShotInfo.OpticalZoomCode
 pub fn ast_print_8388b1ca19272fc5(val: &TagValue) -> TagValue {
-    if val == 8 {
-        "n/a"
-    } else {
-        val
-    }
+    if val == 8 { "n/a" } else { val }
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -29,10 +26,12 @@ pub fn ast_print_8388b1ca19272fc5(val: &TagValue) -> TagValue {
 /// - Kodak::IFD.KodakLook
 pub fn ast_value_839cd811382c9525(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
     Ok({
-        val.to_string().contains(r"val.to_string().chars().map(|c| match c { '\' => '\', '0' => 'n' , _ => c }).collect::<String>() ;");
+        val.to_string().chars().map(|c| match c { '\' => '\', '0' => 'n' , _ => c }).collect::<String>() ;;
         val
-    })
+    }
+    )
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -46,6 +45,7 @@ pub fn ast_value_839cd811382c9525(val: &TagValue) -> Result<TagValue, crate::typ
 pub fn ast_value_8350871c1b6679f7(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
     Ok((val - 128) / 24)
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -74,6 +74,7 @@ pub fn ast_value_8390ff1421e71f53(val: &TagValue) -> Result<TagValue, crate::typ
     Ok((val - 104) / 8)
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -87,7 +88,10 @@ pub fn ast_value_8390ff1421e71f53(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Matroska::Main.ReferenceBlock
 /// - Matroska::Main.TimeCode
 /// TODO: Add support for this expression pattern
-pub fn ast_value_83f37d90ee875af5(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_83f37d90ee875af5(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

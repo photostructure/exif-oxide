@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -19,3 +19,5 @@ use crate::types::{ExifContext, TagValue};
 pub fn ast_value_fdcd5166daf4068(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
     Ok(val * 1000)
 }
+
+

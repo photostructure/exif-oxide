@@ -7,15 +7,12 @@
 
 use crate::types::{ExifContext, TagValue};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// exp($val/3*log(2))*25
 /// ```
 /// Used by:
 /// - Kodak::Type10.ISO
-/// TODO: Add support for this expression pattern
 pub fn ast_value_505555435997e294(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(exp(val / 3 * log(2)) * 25)
 }

@@ -16,7 +16,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Photoshop::Resolution.XResolution
 /// - Photoshop::Resolution.YResolution
 pub fn ast_print_4d023868095dfa1c(val: &TagValue) -> TagValue {
-    (val.trunc() as i32) / 100
+    int(val * 100 + 0.5) / 100
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

@@ -20,8 +20,8 @@ use crate::types::{TagValue, ExifContext};
 /// - Pentax::CameraInfo.ManufactureDate
 pub fn ast_value_55021a595ffa8f71(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
     Ok({
-        val.to_string().contains(r"/^(\d{4})(\d{2})(\d{2})$/ && return "$1:$2:$3" ;");
-        val.to_string().contains(r"/^(\d)(\d{2})(\d{2})$/ && return "200$1:$2:$3" ;");
+        { use regex::Regex; use std::sync::LazyLock; static REGEX_352ae508c47c1f8b: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"/^(\d{4})(\d{2})(\d{2})$/ && return "$1:$2:$3" ;").unwrap()); REGEX_352ae508c47c1f8b.captures(&val.to_string()).is_some() };
+        { use regex::Regex; use std::sync::LazyLock; static REGEX_657ba0f9de5489a1: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"/^(\d)(\d{2})(\d{2})$/ && return "200$1:$2:$3" ;").unwrap()); REGEX_657ba0f9de5489a1.captures(&val.to_string()).is_some() };
         return Ok(format!("Unknown ({})", val) ;)
     }
     )

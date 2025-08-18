@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -15,7 +15,10 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - RIFF::UserText.GPSLongitude
 /// TODO: Add support for this expression pattern
-pub fn ast_value_e96c9d58b3e59ef2(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_e96c9d58b3e59ef2(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

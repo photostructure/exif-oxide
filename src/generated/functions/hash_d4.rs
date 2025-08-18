@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,12 +14,9 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Nikon::MenuSettingsZ9v4.ExposureDelay
 pub fn ast_print_d4f2f6797789d4ee(val: &TagValue) -> TagValue {
-    if val {
-        sprintf("%.1f sec", val / 1000)
-    } else {
-        "Off"
-    }
+    if val { sprintf ("%.1f sec" , val / 1000) } else { "Off" }
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -29,7 +26,10 @@ pub fn ast_print_d4f2f6797789d4ee(val: &TagValue) -> TagValue {
 /// Used by:
 /// - RIFF::StreamHeader.SampleSize
 /// TODO: Add support for this expression pattern
-pub fn ast_print_d43fd7a703ae1653(val: &TagValue) -> TagValue {
+pub fn ast_print_d43fd7a703ae1653(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

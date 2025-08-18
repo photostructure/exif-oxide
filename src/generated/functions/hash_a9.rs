@@ -5,7 +5,18 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
+
+/// Original perl expression:
+/// ``` perl
+/// exp($val/32*log(2))*100
+/// ```
+/// Used by:
+/// - Canon::ShotInfo.AutoISO
+pub fn ast_value_a9420a73315951ac(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+    Ok(exp (val / 32 * log (2)) * 100)
+}
+
 
 /// Original perl expression:
 /// ``` perl
@@ -14,21 +25,7 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Panasonic::Main.FaceDetInfo
 pub fn ast_print_a923dfe25a011d0e(val: &TagValue) -> TagValue {
-    TagValue::String(match val {
-        TagValue::String(s) => s.len().to_string(),
-        _ => "0".to_string(),
-    })
+    TagValue::String(match val { TagValue::String(s) => s.len().to_string(), _ => "0".to_string() })
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// exp($val/32*log(2))*100
-/// ```
-/// Used by:
-/// - Canon::ShotInfo.AutoISO
-/// TODO: Add support for this expression pattern
-pub fn ast_value_a9420a73315951ac(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
+

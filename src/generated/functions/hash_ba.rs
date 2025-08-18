@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -106,6 +106,7 @@ pub fn ast_print_ba030bb348470426(val: &TagValue) -> TagValue {
     format!("{} mm", val)
 }
 
+
 /// Original perl expression:
 /// ``` perl
 /// "$val ms"
@@ -116,6 +117,7 @@ pub fn ast_print_ba730b85fae6fc80(val: &TagValue) -> TagValue {
     format!("{} ms", val)
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -124,7 +126,10 @@ pub fn ast_print_ba730b85fae6fc80(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Photoshop::Main.AlphaChannelsNames
 /// TODO: Add support for this expression pattern
-pub fn ast_value_ba39cdf4578ace46(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_ba39cdf4578ace46(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

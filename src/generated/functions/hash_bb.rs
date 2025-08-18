@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -26,12 +26,9 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::Tag9416.ExposureTime
 /// - Sony::Tag9416.SonyExposureTime2
 pub fn ast_print_bb36ed62e5a52a4(val: &TagValue) -> TagValue {
-    if val {
-        Image::ExifTool::Exif::PrintExposureTime(val)
-    } else {
-        "Bulb"
-    }
+    if val { Image::ExifTool::Exif::PrintExposureTime (val) } else { "Bulb" }
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -41,10 +38,12 @@ pub fn ast_print_bb36ed62e5a52a4(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Pentax::Main.ExposureTime
 /// TODO: Add support for this expression pattern
-pub fn ast_value_bbb807c14c3cf509(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_bbb807c14c3cf509(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -72,10 +71,12 @@ pub fn ast_value_bbb807c14c3cf509(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Panasonic::Main.WhiteBalanceBias
 /// - Sanyo::MOV.ExposureCompensation
 /// TODO: Add support for this expression pattern
-pub fn ast_print_bba76882980e1e1a(val: &TagValue) -> TagValue {
+pub fn ast_print_bba76882980e1e1a(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -105,7 +106,10 @@ pub fn ast_print_bba76882980e1e1a(val: &TagValue) -> TagValue {
 /// - Panasonic::Subdir.ExternalSensorBrightnessValue
 /// - Panasonic::Subdir.MeasuredLV
 /// TODO: Add support for this expression pattern
-pub fn ast_print_bb744a13f82c4cd2(val: &TagValue) -> TagValue {
+pub fn ast_print_bb744a13f82c4cd2(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

@@ -5,17 +5,16 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// IsFloat($val) && abs($val)<100 ? 2**(-$val) : 0
 /// ```
 /// Used by:
 /// - Exif::Main.ShutterSpeedValue
-/// TODO: Add support for this expression pattern
 pub fn ast_value_e53323763c41feda(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(if IsFloat (val) && abs (val) < 100 { 2 ** (-(val)) } else { 0 })
 }
+
+

@@ -15,10 +15,14 @@ use crate::types::{ExifContext, TagValue};
 /// - PanasonicRaw::Main.Gamma
 pub fn ast_value_7626d89bf49583a2(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
     Ok(val
-        / (if val >= 1024 {
+        / (if val.to_string() >= 1024.to_string() {
             1024
         } else {
-            (if val >= 256 { 256 } else { 100 })
+            (if val.to_string() >= 256.to_string() {
+                256
+            } else {
+                100
+            })
         }))
 }
 

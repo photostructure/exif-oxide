@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -16,6 +16,7 @@ use crate::types::{ExifContext, TagValue};
 pub fn ast_print_e4d3ea89ebf53701(val: &TagValue) -> TagValue {
     format!("Case {}", val)
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -34,6 +35,21 @@ pub fn ast_value_e42dee863566f395(val: &TagValue) -> Result<TagValue, crate::typ
     Ok(val - 10)
 }
 
+
+/// Original perl expression:
+/// ``` perl
+/// $val =~ s/(\d)of(\d)/$1 of $2/; $val
+/// ```
+/// Used by:
+/// - Sigma::Main.AutoBracket
+pub fn ast_print_e4e7cb74671abf2f(val: &TagValue) -> TagValue {
+    {
+        TagValue::String(crate::fmt::regex_replace("(\\d)of(\\d)", &val.to_string(), "$1 of $2")) ;;
+        val
+    }
+}
+
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -42,23 +58,12 @@ pub fn ast_value_e42dee863566f395(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Exif::Main.LocalizedCameraModel
 /// TODO: Add support for this expression pattern
-pub fn ast_print_e4f2e8444c0901ff(val: &TagValue) -> TagValue {
+pub fn ast_print_e4f2e8444c0901ff(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $val =~ s/(\d)of(\d)/$1 of $2/; $val
-/// ```
-/// Used by:
-/// - Sigma::Main.AutoBracket
-/// TODO: Add support for this expression pattern
-pub fn ast_print_e4e7cb74671abf2f(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -69,7 +74,10 @@ pub fn ast_print_e4e7cb74671abf2f(val: &TagValue) -> TagValue {
 /// - JPEG::NITF.Flags
 /// - Olympus::Equipment.LensProperties
 /// TODO: Add support for this expression pattern
-pub fn ast_print_e4e23da0cd5e8937(val: &TagValue) -> TagValue {
+pub fn ast_print_e4e23da0cd5e8937(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

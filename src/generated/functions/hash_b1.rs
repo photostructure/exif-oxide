@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -19,7 +19,10 @@ use crate::types::{ExifContext, TagValue};
 /// - CanonRaw::TimeStamp.DateTimeOriginal
 /// - RIFF::UserText.GPSDateTime
 /// TODO: Add support for this expression pattern
-pub fn ast_value_b1a21daf01322ba9(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_b1a21daf01322ba9(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

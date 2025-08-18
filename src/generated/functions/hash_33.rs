@@ -18,7 +18,6 @@ pub fn ast_value_33118cafe9fb1cc3(val: &TagValue) -> Result<TagValue, crate::typ
 }
 
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("%.1fmm",$val/100)
@@ -44,26 +43,19 @@ pub fn ast_value_33118cafe9fb1cc3(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Nikon::MenuSettingsZ8v2.NonCPULens7MaxAperture
 /// - Nikon::MenuSettingsZ8v2.NonCPULens8MaxAperture
 /// - Nikon::MenuSettingsZ8v2.NonCPULens9MaxAperture
-/// TODO: Add support for this expression pattern
-pub fn ast_print_3329592de1a1592(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+pub fn ast_print_3329592de1a1592(val: &TagValue) -> TagValue {
+    TagValue::String(format!("%.1fmm", val / 100))
 }
 
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("%g %%",$val*100)
 /// ```
 /// Used by:
 /// - DJI::ThermalParams2.RelativeHumidity
-/// TODO: Add support for this expression pattern
-pub fn ast_print_339a38d31392b4fd(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+pub fn ast_print_339a38d31392b4fd(val: &TagValue) -> TagValue {
+    TagValue::String(format!("%g %%", val * 100))
 }
 
 

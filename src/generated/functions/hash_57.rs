@@ -14,5 +14,5 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - FujiFilm::RAF.RelativeExposure
 pub fn ast_value_574514e3d36a220e(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((val as f64).ln() / (val as f64).ln())
+    Ok(log(val) / log(2))
 }

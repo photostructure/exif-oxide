@@ -36,6 +36,21 @@ pub fn ast_print_899945aee711da6a(val: &TagValue) -> TagValue {
 }
 
 
+/// Original perl expression:
+/// ``` perl
+/// $val=~s/\0.*//s; $val
+/// ```
+/// Used by:
+/// - Nikon::LocationInfo.CountryCode
+pub fn ast_value_89a35071e834811a(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+    Ok({
+        TagValue::String(crate::fmt::regex_replace("\\0.*", &val.to_string(), "")) ;;
+        val
+    }
+    )
+}
+
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -73,21 +88,6 @@ pub fn ast_print_890e9fe5666b3c5c(val: &TagValue) -> TagValue
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $val=~s/\0.*//s; $val
-/// ```
-/// Used by:
-/// - Nikon::LocationInfo.CountryCode
-/// TODO: Add support for this expression pattern
-pub fn ast_value_89a35071e834811a(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
 }
 
 
