@@ -27,7 +27,7 @@ pub fn ast_value_743cc97ce826a767(val: &TagValue) -> Result<TagValue, crate::typ
 pub fn ast_print_74b67b38758b8b7c(val: &TagValue) -> TagValue {
     TagValue::String(format!(
         "{}{}",
-        (if val = crate::text::regex_replace(val, r"^-", "") {
+        (if TagValue::String(crate::fmt::regex_replace("^-", &val.to_string(), "")) {
             format!("{} m Below", val)
         } else {
             format!("{} m Above", val)

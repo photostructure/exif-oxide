@@ -5,19 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
-
-/// Original perl expression:
-/// ``` perl
-/// $self->Options("DateFormat") ? $self->ConvertDateTime("$val 00:00:00") : $val
-/// ```
-/// Used by:
-/// - IPTC::ApplicationRecord.DateCreated
-/// - IPTC::ApplicationRecord.DigitalCreationDate
-pub fn ast_print_5cbd28652a637e12(val: &TagValue) -> TagValue {
-    if self -> Options ("DateFormat") { self -> ConvertDateTime (format!("{} 00:00:00", val)) } else { val }
-}
-
+use crate::types::{ExifContext, TagValue};
 
 /// Original perl expression:
 /// ``` perl
@@ -27,7 +15,23 @@ pub fn ast_print_5cbd28652a637e12(val: &TagValue) -> TagValue {
 /// - Nikon::AFTune.AFFineTuneIndex
 /// - Pentax::AEInfo2.AEApertureSteps
 pub fn ast_print_5ce675b536bdc220(val: &TagValue) -> TagValue {
-    if val == 255 { "n/a" } else { val }
+    if val == 255 {
+        "n/a"
+    } else {
+        val
+    }
 }
 
-
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $self->Options("DateFormat") ? $self->ConvertDateTime("$val 00:00:00") : $val
+/// ```
+/// Used by:
+/// - IPTC::ApplicationRecord.DateCreated
+/// - IPTC::ApplicationRecord.DigitalCreationDate
+/// TODO: Add support for this expression pattern
+pub fn ast_print_5cbd28652a637e12(val: &TagValue) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
+}

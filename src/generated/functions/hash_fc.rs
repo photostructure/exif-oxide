@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -19,6 +19,7 @@ pub fn ast_print_fcbf0919480e8f99(val: &TagValue) -> TagValue {
     format!("{} m/s", val)
 }
 
+
 /// Original perl expression:
 /// ``` perl
 /// $val <= 180 ? $val : $val - 360
@@ -31,6 +32,7 @@ pub fn ast_value_fc17eee05ccde440(val: &TagValue) -> Result<TagValue, crate::typ
     Ok(if val <= 180 { val } else { val - 360 })
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -40,7 +42,10 @@ pub fn ast_value_fc17eee05ccde440(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Sony::rtmd.GPSLatitude
 /// - Sony::rtmd.GPSLongitude
 /// TODO: Add support for this expression pattern
-pub fn ast_value_fc24b94dc60f8d29(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_fc24b94dc60f8d29(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

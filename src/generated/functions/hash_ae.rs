@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -32,7 +32,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::MeterInfo9.MeterInfo2Row8
 /// - Sony::MeterInfo9.MeterInfo2Row9
 /// TODO: Add support for this expression pattern
-pub fn ast_print_aea4a5d7f9f0d34f(val: &TagValue) -> TagValue {
+pub fn ast_print_aea4a5d7f9f0d34f(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

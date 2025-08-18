@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -33,18 +33,21 @@ pub fn ast_value_f10fff6e97e57581(val: &TagValue) -> Result<TagValue, crate::typ
     Ok(val - 1)
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
+
 /// Original perl expression:
 /// ``` perl
 /// $val =~ s/\S* //; $val
 /// ```
 /// Used by:
 /// - Olympus::CameraSettings.AFPointSelected
-/// TODO: Add support for this expression pattern
 pub fn ast_value_f10df04f24c6ec2c(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok({
+        TagValue::String(crate::fmt::regex_replace("\\S* ", &val.to_string(), "")) ;;
+        val
+    }
+    )
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -54,7 +57,10 @@ pub fn ast_value_f10df04f24c6ec2c(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Olympus::CameraSettings.ManometerReading
 /// TODO: Add support for this expression pattern
-pub fn ast_value_f1277e290c2a7107(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_f1277e290c2a7107(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

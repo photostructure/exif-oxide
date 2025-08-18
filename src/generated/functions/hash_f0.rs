@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,12 +14,31 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Canon::ColorData3.FlashOutput
 pub fn ast_print_f0a9b201612fbfd0(val: &TagValue) -> TagValue {
-    if val == 255 {
-        "Strobe or Misfire"
-    } else {
-        sprintf("%.0f%%", val * 100)
-    }
+    if val == 255 { "Strobe or Misfire" } else { sprintf ("%.0f%%" , val * 100) }
 }
+
+
+/// Original perl expression:
+/// ``` perl
+/// $val=~s/ +$//; $val
+/// ```
+/// Used by:
+/// - Exif::Main.SubSecTime
+/// - Exif::Main.SubSecTimeDigitized
+/// - Exif::Main.SubSecTimeOriginal
+/// - Panasonic::Leica6.LensType
+/// - Panasonic::Main.AccessorySerialNumber
+/// - Panasonic::Main.AccessoryType
+/// - Panasonic::Main.LensSerialNumber
+/// - Panasonic::Main.LensType
+pub fn ast_value_f0ad119439d04a33(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+    Ok({
+        TagValue::String(crate::fmt::regex_replace(" +$", &val.to_string(), "")) ;;
+        val
+    }
+    )
+}
+
 
 /// Original perl expression:
 /// ``` perl
@@ -42,25 +61,6 @@ pub fn ast_print_f0406a5cf107f00d(val: &TagValue) -> TagValue {
     (val.trunc() as i32)
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $val=~s/ +$//; $val
-/// ```
-/// Used by:
-/// - Exif::Main.SubSecTime
-/// - Exif::Main.SubSecTimeDigitized
-/// - Exif::Main.SubSecTimeOriginal
-/// - Panasonic::Leica6.LensType
-/// - Panasonic::Main.AccessorySerialNumber
-/// - Panasonic::Main.AccessoryType
-/// - Panasonic::Main.LensSerialNumber
-/// - Panasonic::Main.LensType
-/// TODO: Add support for this expression pattern
-pub fn ast_value_f0ad119439d04a33(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -70,7 +70,10 @@ pub fn ast_value_f0ad119439d04a33(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Pentax::Main.Date
 /// TODO: Add support for this expression pattern
-pub fn ast_value_f0974ef9a0a8813d(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_f0974ef9a0a8813d(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

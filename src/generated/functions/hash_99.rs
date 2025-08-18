@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// Original perl expression:
 /// ``` perl
@@ -16,6 +16,7 @@ use crate::types::{ExifContext, TagValue};
 pub fn ast_print_993ce46cc3d936eb(val: &TagValue) -> TagValue {
     format!("{} Ah", val)
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -28,6 +29,7 @@ pub fn ast_print_9957cfcd700746af(val: &TagValue) -> TagValue {
     val || "inf"
 }
 
+
 /// Original perl expression:
 /// ``` perl
 /// 2**($val / 8) / 16000
@@ -38,10 +40,11 @@ pub fn ast_value_99d1796b50c9db89(val: &TagValue) -> Result<TagValue, crate::typ
     Ok((2 as f64).powf((val / 8) / 16000 as f64))
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
+/// 
 /// if ($val =~ /^(.*?\s*)([0-9a-fA-F]*)(\d{2})(\d{2})(\d{2})(.{12})\s*\0*$/s
 /// and $4 >= 1 and $4 <= 12 and $5 >= 1 and $5 <= 31)
 /// {
@@ -53,12 +56,15 @@ pub fn ast_value_99d1796b50c9db89(val: &TagValue) -> Result<TagValue, crate::typ
 /// $val =~ s/\b(592D(3[0-9])+)/pack("H*",$1).' '/e;
 /// }
 /// return $val;
-///
+/// 
 /// ```
 /// Used by:
 /// - FujiFilm::Main.InternalSerialNumber
 /// TODO: Add support for this expression pattern
-pub fn ast_print_99f2663c86a2cff(val: &TagValue) -> TagValue {
+pub fn ast_print_99f2663c86a2cff(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

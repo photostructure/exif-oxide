@@ -17,7 +17,7 @@ pub fn ast_value_58c924c1420b72a1(val: &TagValue) -> Result<TagValue, crate::typ
     Ok(if val >= 255 {
         255
     } else {
-        exp((val - 200) / 16 * (val as f64).ln())
+        exp((val - 200) / 16 * log(2))
     })
 }
 

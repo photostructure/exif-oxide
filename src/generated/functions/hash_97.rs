@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -15,10 +15,12 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - GoPro::KBAT.BatteryTime
 /// TODO: Add support for this expression pattern
-pub fn ast_print_976003e439a3f378(val: &TagValue) -> TagValue {
+pub fn ast_print_976003e439a3f378(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -41,7 +43,10 @@ pub fn ast_print_976003e439a3f378(val: &TagValue) -> TagValue {
 /// - Sony::MeterInfo9.MeterInfo1Row6
 /// - Sony::MeterInfo9.MeterInfo1Row7
 /// TODO: Add support for this expression pattern
-pub fn ast_print_971f2ccc38718e04(val: &TagValue) -> TagValue {
+pub fn ast_print_971f2ccc38718e04(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

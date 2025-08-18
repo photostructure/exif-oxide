@@ -7,6 +7,30 @@
 
 use crate::types::{ExifContext, TagValue};
 
+/// Original perl expression:
+/// ``` perl
+/// $val =~ s/^8 //; $val
+/// ```
+/// Used by:
+/// - Canon::Main.Categories
+pub fn ast_value_6d72618aafeeb2(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+    Ok({
+        TagValue::String(crate::fmt::regex_replace("^8 ", &val.to_string(), ""));
+        val
+    })
+}
+
+/// Original perl expression:
+/// ``` perl
+/// 100*exp(($val-32)*log(2)/8)
+/// ```
+/// Used by:
+/// - Pentax::AEInfo2.AE_ISO
+/// - Pentax::AEInfo3.AE_ISO
+pub fn ast_value_6d6b19c587a83655(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+    Ok(100 * exp((val - 32) * log(2) / 8))
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -34,31 +58,4 @@ pub fn ast_print_6de6ff12d32c1902(val: &TagValue) -> TagValue {
 pub fn ast_print_6d9da87e28213f05(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $val =~ s/^8 //; $val
-/// ```
-/// Used by:
-/// - Canon::Main.Categories
-/// TODO: Add support for this expression pattern
-pub fn ast_value_6d72618aafeeb2(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// 100*exp(($val-32)*log(2)/8)
-/// ```
-/// Used by:
-/// - Pentax::AEInfo2.AE_ISO
-/// - Pentax::AEInfo3.AE_ISO
-/// TODO: Add support for this expression pattern
-pub fn ast_value_6d6b19c587a83655(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
 }

@@ -5,7 +5,18 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
+
+/// Original perl expression:
+/// ``` perl
+/// exp($val/32*log(2))*100/32
+/// ```
+/// Used by:
+/// - Canon::ShotInfo.BaseISO
+pub fn ast_value_b74a49b788fbe61c(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+    Ok(exp (val / 32 * log (2)) * 100 / 32)
+}
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -15,10 +26,12 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Nikon::Main.ISOSetting
 /// TODO: Add support for this expression pattern
-pub fn ast_print_b777f2fa21c400c(val: &TagValue) -> TagValue {
+pub fn ast_print_b777f2fa21c400c(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -57,10 +70,12 @@ pub fn ast_print_b777f2fa21c400c(val: &TagValue) -> TagValue {
 /// - Sony::Tag2010h.ExposureCompensation
 /// - Sony::Tag2010i.ExposureCompensation
 /// TODO: Add support for this expression pattern
-pub fn ast_print_b75f5f46a9f320cf(val: &TagValue) -> TagValue {
+pub fn ast_print_b75f5f46a9f320cf(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -70,20 +85,10 @@ pub fn ast_print_b75f5f46a9f320cf(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Panasonic::Main.FirmwareVersion
 /// TODO: Add support for this expression pattern
-pub fn ast_value_b7b5c432b9d85328(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_b7b5c432b9d85328(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// exp($val/32*log(2))*100/32
-/// ```
-/// Used by:
-/// - Canon::ShotInfo.BaseISO
-/// TODO: Add support for this expression pattern
-pub fn ast_value_b74a49b788fbe61c(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
+

@@ -5,7 +5,25 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
+
+/// Original perl expression:
+/// ``` perl
+/// $val =~ s/(\d{4})_(\d{2})_/$1:$2:/; $val =~ tr/_/ /; $val
+/// ```
+/// Used by:
+/// - Red::Main.OtherDate1
+/// - Red::Main.OtherDate2
+/// - Red::Main.OtherDate3
+pub fn ast_value_b39416bae8717543(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+    Ok({
+        TagValue::String(crate::fmt::regex_replace("(\\d{4})_(\\d{2})_", &val.to_string(), "$1:$2:")) ;;
+        val.to_string().chars().map(|c| match c { '_' => ' ' , _ => c }).collect::<String>() ;;
+        val
+    }
+    )
+}
+
 
 /// Original perl expression:
 /// ``` perl
@@ -19,44 +37,32 @@ use crate::types::{ExifContext, TagValue};
 /// - PanasonicRaw::Main.StripByteCounts
 /// - PanasonicRaw::Main.StripOffsets
 pub fn ast_value_b3bc420d22d07d89(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if length(val) > 32 { val } else { val })
+    Ok(if length (val) > 32 {  val } else { val })
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
+/// 
 /// return 'Off' if $val == 0 ;
 /// my $i = sprintf("Interval %.0f of %.0f",$val, $$self{IntervalShootingIntervals}||0); # something like "Interval 1 of 3"
 /// my $f = ($$self{IntervalShootingShotsPerInterval}||0) > 1 ? sprintf(" Frame %.0f of %.0f",$$self{IntervalFrame}||0, $$self{IntervalShootingShotsPerInterval}||0): '' ;  # something like "Frame 1 of 3" or blank
 /// return "On: $i$f"
 /// #$val == 0 ? 'Off' : sprintf("On: Interval %.0f of %.0f Frame %.0f of %.0f",$val, $$self{IntervalShootingIntervals}||0, $$self{IntervalFrame}||0, $$self{IntervalShootingShotsPerInterval}||0),
-///
+/// 
 /// ```
 /// Used by:
 /// - Nikon::IntervalInfoZ7II.IntervalShooting
 /// - Nikon::SeqInfoD6.IntervalShooting
 /// - Nikon::SeqInfoZ9.IntervalShooting
 /// TODO: Add support for this expression pattern
-pub fn ast_print_b36147aae9781985(val: &TagValue) -> TagValue {
+pub fn ast_print_b36147aae9781985(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $val =~ s/(\d{4})_(\d{2})_/$1:$2:/; $val =~ tr/_/ /; $val
-/// ```
-/// Used by:
-/// - Red::Main.OtherDate1
-/// - Red::Main.OtherDate2
-/// - Red::Main.OtherDate3
-/// TODO: Add support for this expression pattern
-pub fn ast_value_b39416bae8717543(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -66,10 +72,12 @@ pub fn ast_value_b39416bae8717543(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Kodak::Main.TimeCreated
 /// TODO: Add support for this expression pattern
-pub fn ast_value_b3b6ac1021ca87a1(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_b3b6ac1021ca87a1(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -79,7 +87,10 @@ pub fn ast_value_b3b6ac1021ca87a1(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Nikon::ShotInfo.ShutterCount
 /// TODO: Add support for this expression pattern
-pub fn ast_value_b3e836a520234da9(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_b3e836a520234da9(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

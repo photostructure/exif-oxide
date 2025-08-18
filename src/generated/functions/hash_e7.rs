@@ -5,15 +5,15 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
+/// 
 /// my @v = unpack('vC*', $val);
 /// return sprintf("%.4d:%.2d:%.2d %.2d:%.2d:%.2d", @v)
-///
+/// 
 /// ```
 /// Used by:
 /// - Sony::Tag2010b.SonyDateTime
@@ -21,10 +21,12 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::Tag2010d.SonyDateTime
 /// - Sony::Tag2010e.SonyDateTime
 /// TODO: Add support for this expression pattern
-pub fn ast_value_e7d9353e489371f5(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_e7d9353e489371f5(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -34,7 +36,10 @@ pub fn ast_value_e7d9353e489371f5(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Photoshop::Main.CopyrightFlag
 /// TODO: Add support for this expression pattern
-pub fn ast_value_e76f84b1ea03c377(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_e76f84b1ea03c377(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

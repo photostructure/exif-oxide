@@ -5,9 +5,8 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~s/ .*//; $val / 256
@@ -15,8 +14,12 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Olympus::Main.BlueBalance
 /// - Olympus::Main.RedBalance
-/// TODO: Add support for this expression pattern
 pub fn ast_value_fa8a454a107a31f3(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok({
+        TagValue::String(crate::fmt::regex_replace(" .*", &val.to_string(), "")) ;;
+        val / 256
+    }
+    )
 }
+
+

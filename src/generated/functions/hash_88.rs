@@ -5,17 +5,21 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~s/(\d{2})(\d{2})(\d{2})(\d{2})/$4$3$2$1/; $val=~s/^0//; $val
 /// ```
 /// Used by:
 /// - Sony::Main.SerialNumber
-/// TODO: Add support for this expression pattern
 pub fn ast_value_88257fa51227f8f(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok({
+        TagValue::String(crate::fmt::regex_replace("(\\d{2})(\\d{2})(\\d{2})(\\d{2})", &val.to_string(), "$4$3$2$1")) ;;
+        TagValue::String(crate::fmt::regex_replace("^0", &val.to_string(), "")) ;;
+        val
+    }
+    )
 }
+
+

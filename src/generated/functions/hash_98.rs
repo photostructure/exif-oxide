@@ -5,23 +5,26 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
+/// 
 /// my @a = split ' ',$val;
 /// foreach (@a) {
 /// $_ = 2048 / $_ if $_;
 /// }
 /// return join ' ', @a;
-///
+/// 
 /// ```
 /// Used by:
 /// - Kodak::Processing.WB_RGBLevels
 /// TODO: Add support for this expression pattern
-pub fn ast_value_9828f515f9173f95(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_9828f515f9173f95(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

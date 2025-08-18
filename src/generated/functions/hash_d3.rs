@@ -71,7 +71,7 @@ pub fn ast_print_d3695e9544e1c996(val: &TagValue) -> TagValue {
 /// - Sigma::Main.ExposureCompensation
 pub fn ast_print_d367e2a7f0ec6d0c(val: &TagValue) -> TagValue {
     {
-        val && val = crate::text::regex_replace(val, r"^(\d)", "\+$1") ;;
+        val && val =~ TagValue::String(crate::fmt::regex_replace("^(\\d)", &val.to_string(), "\\+$1")) ;;
         val
     }
 }

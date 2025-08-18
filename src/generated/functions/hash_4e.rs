@@ -25,7 +25,13 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::Main.PreviewImageSize
 pub fn ast_print_4e5e992f9b388e54(val: &TagValue) -> TagValue {
     {
-        val.to_string().contains(r"val.to_string().chars().map(|c| match c { ' ' => 'x' , _ => c }).collect::<String>() ;");
+        val.to_string()
+            .chars()
+            .map(|c| match c {
+                ' ' => 'x',
+                _ => c,
+            })
+            .collect::<String>();
         val
     }
 }

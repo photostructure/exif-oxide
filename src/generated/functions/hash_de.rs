@@ -5,21 +5,24 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
+/// 
 /// my $sign = $val < 0 ? '-' : '+';
 /// my $h = int(abs($val) / 60);
 /// sprintf("%s%.2d:%.2d", $sign, $h, abs($val)-60*$h);
-///
+/// 
 /// ```
 /// Used by:
 /// - Nikon::WorldTime.TimeZone
 /// TODO: Add support for this expression pattern
-pub fn ast_print_de273c44b3d492eb(val: &TagValue) -> TagValue {
+pub fn ast_print_de273c44b3d492eb(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

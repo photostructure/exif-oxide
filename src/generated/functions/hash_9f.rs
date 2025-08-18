@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -20,7 +20,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Exif::Main.XPTitle
 /// - Exif::Main.XP_DIP_XML
 /// TODO: Add support for this expression pattern
-pub fn ast_value_9f9eee6bd4079325(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_9f9eee6bd4079325(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

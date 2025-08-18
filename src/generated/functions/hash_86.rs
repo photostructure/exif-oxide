@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -15,10 +15,12 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Nikon::MakerNotes0x51.FirmwareVersion51
 /// TODO: Add support for this expression pattern
-pub fn ast_value_865f85b3924a28e9(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_865f85b3924a28e9(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -30,7 +32,10 @@ pub fn ast_value_865f85b3924a28e9(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Olympus::WAV.FileNumber
 /// - Sony::CameraSettings.ImageNumber
 /// TODO: Add support for this expression pattern
-pub fn ast_print_86d069131c594edd(val: &TagValue) -> TagValue {
+pub fn ast_print_86d069131c594edd(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+
