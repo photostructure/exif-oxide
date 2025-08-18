@@ -21,6 +21,11 @@ pub trait BinaryOperationsHandler {
                 if i > 0 && i < parts.len() - 1 {
                     let left = parts[..i].join(" ");
                     let right = parts[i + 1..].join(" ");
+                    #[cfg(test)]
+                    eprintln!(
+                        "DEBUG: binary op pattern - left: '{}', op: '{}', right: '{}'",
+                        left, part, right
+                    );
                     let result = self.generate_binary_operation_from_parts(&left, part, &right)?;
                     return Ok(Some(result));
                 }
@@ -65,8 +70,17 @@ pub trait BinaryOperationsHandler {
 
         // Handle Perl string comparison operators (eq, ne, lt, gt, le, ge)
         // These require string conversion of operands, but be smart about string literals
-        if matches!(op, "eq" | "ne" | "lt" | "gt" | "le" | "ge") {
-            let rust_op = self.perl_to_rust_operator(op)?;
+        // Also handle already-converted operators when they involve TagValue comparisons
+        let is_perl_string_op = matches!(op, "eq" | "ne" | "lt" | "gt" | "le" | "ge");
+        let is_converted_string_op = matches!(op, "==" | "!=" | "<" | ">" | "<=" | ">=")
+            && self.is_string_comparison(left, right);
+
+        if is_perl_string_op || is_converted_string_op {
+            let rust_op = if is_perl_string_op {
+                self.perl_to_rust_operator(op)?
+            } else {
+                op.to_string() // Already converted
+            };
 
             // Smart conversion: only add .to_string() to non-string-literal operands
             let left_converted = if left.starts_with('"') && left.ends_with('"') {
@@ -88,6 +102,30 @@ pub trait BinaryOperationsHandler {
         }
 
         let rust_op = self.perl_to_rust_operator(op)?;
+
+        // Handle converted Perl string comparisons (== != < > <= >=) when involving TagValues
+        if matches!(op, "==" | "!=" | "<" | ">" | "<=" | ">=")
+            && self.is_string_comparison(left, right)
+        {
+            // Smart conversion: only add .to_string() to non-string-literal operands
+            let left_converted = if left.starts_with('"') && left.ends_with('"') {
+                left.to_string()
+            } else {
+                format!("{}.to_string()", left)
+            };
+
+            let right_converted = if right.starts_with('"') && right.ends_with('"') {
+                right.to_string()
+            } else {
+                format!("{}.to_string()", right)
+            };
+
+            return Ok(format!(
+                "{} {} {}",
+                left_converted, rust_op, right_converted
+            ));
+        }
+
         Ok(format!("{} {} {}", left, rust_op, right))
     }
 
