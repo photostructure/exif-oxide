@@ -353,6 +353,19 @@ pub trait PpiVisitor {
                     )),
                 }
             }
+            "if" => {
+                // Handle conditional statements created by ConditionalStatementsNormalizer
+                if args.len() != 2 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "if requires exactly 2 arguments (condition, statement)".to_string(),
+                    ));
+                }
+                let condition = &args[0];
+                let statement = &args[1];
+
+                // Generate Rust if statement
+                Ok(format!("if {} {{ {} }}", condition, statement))
+            }
             _ => {
                 // Generic function call
                 Ok(format!("{}({})", func_name, args.join(", ")))
@@ -959,6 +972,8 @@ pub trait PpiVisitor {
             }
         }
 
+        // Just join the parts with spaces for now - this is a fallback method
+        // The main implementation in RustGenerator handles this properly
         Ok(parts.join(" "))
     }
 
