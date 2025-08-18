@@ -58,6 +58,11 @@ Format as structured handoff enabling immediate progress continuation.
 
 Fixing this bug will require in-depth understanding of both how our code and ExifTool. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. Read **all** referenced documentation, and all relevant source code before planning your solution. Ultrathink.
 
+# Let me rethink this...
+
+Whenever you say "let me rethink this approach" it makes me think that either 1: the architecture is convoluted 2: the code isn't consistently following a coherent architecture or 3: the architecture wasn't really designed to gracefully/intuitively deal with this use case. Let's take a couple steps back here. Can you describe to me what the problem that we're trying to solve is here? What caused you to doubt your prior plan? Are you sure you have a deep understanding of both the problem we're solving and the different ways our current codebase could address it? Ultrathink.
+
+
 # Validate git diffs
 
 Your task is to review the staged changes in git and provide recommendations for
