@@ -50,7 +50,7 @@ pub trait NormalizedAstHandler {
         }
     }
 
-    /// Handle normalized TernaryOp nodes  
+    /// TODO: DELETE? Don't we convert ternaries in the normalizer? Handle normalized TernaryOp nodes  
     fn handle_normalized_ternary_op(&self, node: &PpiNode) -> Result<String, CodeGenError> {
         if node.children.len() != 3 {
             return Err(CodeGenError::UnsupportedStructure(
@@ -69,21 +69,110 @@ pub trait NormalizedAstHandler {
         ))
     }
 
-    /// Process a part of a ternary expression (condition, true_branch, or false_branch)
+    /// TODO: DELETE? Don't we convert ternaries in the normalizer?  Process a part of a ternary expression (condition, true_branch, or false_branch)
     fn process_ternary_part(&self, node: &PpiNode) -> Result<String, CodeGenError> {
         match node.class.as_str() {
-            "Condition" | "TrueBranch" | "FalseBranch" => {
-                // These are wrapper nodes - process their children
+            "Condition" => {
+                // Special handling for condition to enable proper string comparison
+                self.process_ternary_condition(&node.children)
+            }
+            "TrueBranch" | "FalseBranch" => {
+                // For branches, process children individually and join
                 let parts: Result<Vec<String>, CodeGenError> = node
                     .children
                     .iter()
-                    .map(|child| self.combine_statement_parts(&[], &[child.clone()]))
+                    .map(|child| self.visit_node_for_ternary(child))
                     .collect();
                 Ok(parts?.join(" "))
             }
             _ => {
                 // Direct node - process it
                 self.combine_statement_parts(&[], &[node.clone()])
+            }
+        }
+    }
+
+    /// TODO: DELETE? Don't we convert ternaries in the normalizer? Process ternary condition with special handling for string comparisons
+    fn process_ternary_condition(&self, children: &[PpiNode]) -> Result<String, CodeGenError> {
+        #[cfg(test)]
+        eprintln!(
+            "DEBUG: process_ternary_condition called with {} children",
+            children.len()
+        );
+
+        // Look for the pattern: symbol op value
+        if children.len() == 3 {
+            let left = &children[0];
+            let op = &children[1];
+            let right = &children[2];
+
+            #[cfg(test)]
+            eprintln!(
+                "DEBUG: condition pattern - left: '{:?}', op: '{:?}', right: '{:?}'",
+                left.content.as_deref().unwrap_or("?"),
+                op.content.as_deref().unwrap_or("?"),
+                right.content.as_deref().unwrap_or("?")
+            );
+
+            if op.class == "PPI::Token::Operator" {
+                if let Some(op_str) = op.content.as_deref() {
+                    if op_str == "eq" {
+                        #[cfg(test)]
+                        eprintln!("DEBUG: Found eq operator - converting to string comparison");
+
+                        // Handle string equality with .to_string() conversion
+                        let left_str = self.visit_node_for_ternary(left)?;
+                        let right_str = self.visit_node_for_ternary(right)?;
+
+                        // Add .to_string() to non-string-literal operands
+                        let left_converted = if left_str.starts_with('"') && left_str.ends_with('"')
+                        {
+                            left_str
+                        } else {
+                            format!("{}.to_string()", left_str)
+                        };
+
+                        let right_converted =
+                            if right_str.starts_with('"') && right_str.ends_with('"') {
+                                right_str
+                            } else {
+                                format!("{}.to_string()", right_str)
+                            };
+
+                        return Ok(format!("{} == {}", left_converted, right_converted));
+                    }
+                }
+            }
+        }
+
+        // Default handling for other patterns
+        let parts: Result<Vec<String>, CodeGenError> = children
+            .iter()
+            .map(|child| self.visit_node_for_ternary(child))
+            .collect();
+        Ok(parts?.join(" "))
+    }
+
+    /// TODO: DELETE? Don't we convert ternaries in the normalizer? Visit a node for ternary processing (similar to visitor but specialized)
+    fn visit_node_for_ternary(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        match node.class.as_str() {
+            "PPI::Token::Symbol" => Ok(node.content.as_deref().unwrap_or("").to_string()),
+            "PPI::Token::Operator" => Ok(node.content.as_deref().unwrap_or("").to_string()),
+            "PPI::Token::Quote::Double" => {
+                if let Some(ref string_value) = node.string_value {
+                    Ok(format!("\"{}\"", string_value))
+                } else if let Some(ref content) = node.content {
+                    Ok(content.clone())
+                } else {
+                    Ok("\"\"".to_string())
+                }
+            }
+            "PPI::Token::Number" | "PPI::Token::Number::Float" => {
+                Ok(node.content.as_deref().unwrap_or("0").to_string())
+            }
+            _ => {
+                // For other node types, just return content or empty string
+                Ok(node.content.as_deref().unwrap_or("").to_string())
             }
         }
     }
@@ -245,10 +334,27 @@ pub trait NormalizedAstHandler {
             ));
         }
 
+        let first_arg = &node.children[0];
+
+        // Check if first argument is a normalized string operation
+        match first_arg.class.as_str() {
+            "StringConcat" => {
+                // Handle sprintf with string concatenation
+                return self.handle_sprintf_with_string_operations(node);
+            }
+            "StringRepeat" => {
+                // Handle sprintf with string repetition
+                return self.handle_sprintf_with_string_operations(node);
+            }
+            _ => {
+                // Standard sprintf handling
+            }
+        }
+
         // Extract format string from first child node
-        let format_str = if let Some(ref string_value) = node.children[0].string_value {
+        let format_str = if let Some(ref string_value) = first_arg.string_value {
             format!("\"{}\"", string_value)
-        } else if let Some(ref content) = node.children[0].content {
+        } else if let Some(ref content) = first_arg.content {
             content.clone()
         } else {
             "\"\"".to_string() // Fallback
@@ -276,6 +382,149 @@ pub trait NormalizedAstHandler {
                 format_str, args_formatted
             )),
             _ => Ok(format!("format!({}, {})", format_str, args_formatted)),
+        }
+    }
+
+    /// Handle sprintf with normalized string operations (StringConcat, StringRepeat)
+    fn handle_sprintf_with_string_operations(
+        &self,
+        node: &PpiNode,
+    ) -> Result<String, CodeGenError> {
+        let format_arg = &node.children[0];
+
+        // Try to convert normalized string operations back to sprintf_with_string_concat_repeat pattern
+        match format_arg.class.as_str() {
+            "StringConcat" => {
+                // Check if this is a StringConcat containing a StringRepeat (the full pattern)
+                if format_arg.children.len() == 2 && format_arg.children[1].class == "StringRepeat"
+                {
+                    // This is: StringConcat(base, StringRepeat(part, count))
+                    let base_format = self.extract_string_from_node(&format_arg.children[0])?;
+                    let repeat_node = &format_arg.children[1];
+                    if repeat_node.children.len() >= 2 {
+                        let concat_part =
+                            self.extract_string_from_node(&repeat_node.children[0])?;
+                        let repeat_count =
+                            self.extract_number_from_node(&repeat_node.children[1])?;
+
+                        // Generate sprintf_with_string_concat_repeat call
+                        let remaining_args = if node.children.len() > 1 {
+                            let args: Result<Vec<String>, CodeGenError> = node.children[1..]
+                                .iter()
+                                .map(|child| self.combine_statement_parts(&[], &[child.clone()]))
+                                .collect();
+                            args?.join(", ")
+                        } else {
+                            "val".to_string()
+                        };
+
+                        return match self.expression_type() {
+                            ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
+                                "TagValue::String(crate::fmt::sprintf_with_string_concat_repeat(\"{}\", \"{}\", {}, &{}))",
+                                base_format, concat_part, repeat_count, remaining_args
+                            )),
+                            _ => Ok(format!(
+                                "crate::fmt::sprintf_with_string_concat_repeat(\"{}\", \"{}\", {}, &{})",
+                                base_format, concat_part, repeat_count, remaining_args
+                            )),
+                        };
+                    }
+                }
+
+                // Simple string concatenation - build the format string manually
+                let format_parts: Result<Vec<String>, CodeGenError> = format_arg
+                    .children
+                    .iter()
+                    .map(|child| self.extract_string_from_node(child))
+                    .collect();
+                let combined_format = format_parts?.join("");
+
+                let remaining_args = if node.children.len() > 1 {
+                    let args: Result<Vec<String>, CodeGenError> = node.children[1..]
+                        .iter()
+                        .map(|child| self.combine_statement_parts(&[], &[child.clone()]))
+                        .collect();
+                    args?.join(", ")
+                } else {
+                    "val".to_string()
+                };
+
+                return match self.expression_type() {
+                    ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
+                        "TagValue::String(crate::fmt::sprintf_perl(\"{}\", &{}))",
+                        combined_format, remaining_args
+                    )),
+                    _ => Ok(format!(
+                        "crate::fmt::sprintf_perl(\"{}\", &{})",
+                        combined_format, remaining_args
+                    )),
+                };
+            }
+            "StringRepeat" => {
+                // Simple string repetition: repeat(string, count)
+                if format_arg.children.len() >= 2 {
+                    let repeat_string = self.extract_string_from_node(&format_arg.children[0])?;
+                    let repeat_count = self.extract_number_from_node(&format_arg.children[1])?;
+                    let combined_format = repeat_string.repeat(repeat_count);
+
+                    let remaining_args = if node.children.len() > 1 {
+                        let args: Result<Vec<String>, CodeGenError> = node.children[1..]
+                            .iter()
+                            .map(|child| self.combine_statement_parts(&[], &[child.clone()]))
+                            .collect();
+                        args?.join(", ")
+                    } else {
+                        "val".to_string()
+                    };
+
+                    return match self.expression_type() {
+                        ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
+                            "TagValue::String(crate::fmt::sprintf_perl(\"{}\", &{}))",
+                            combined_format, remaining_args
+                        )),
+                        _ => Ok(format!(
+                            "crate::fmt::sprintf_perl(\"{}\", &{})",
+                            combined_format, remaining_args
+                        )),
+                    };
+                }
+            }
+            _ => {}
+        }
+
+        // Fallback: couldn't handle the pattern, return error
+        Err(CodeGenError::UnsupportedStructure(
+            "sprintf with unsupported string operations".to_string(),
+        ))
+    }
+
+    /// Extract a string value from a normalized string node
+    fn extract_string_from_node(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        if let Some(ref string_value) = node.string_value {
+            Ok(string_value.clone())
+        } else if let Some(ref content) = node.content {
+            // Remove quotes if present
+            let content = content.trim_matches('"').trim_matches('\'');
+            Ok(content.to_string())
+        } else {
+            Err(CodeGenError::UnsupportedStructure(
+                "Cannot extract string from node".to_string(),
+            ))
+        }
+    }
+
+    /// Extract a numeric value from a normalized number node
+    fn extract_number_from_node(&self, node: &PpiNode) -> Result<usize, CodeGenError> {
+        if let Some(num) = node.numeric_value {
+            Ok(num as usize)
+        } else if let Some(ref content) = node.content {
+            content.parse().map_err(|_| {
+                CodeGenError::UnsupportedStructure("Cannot parse number from node".to_string())
+            })
+        } else {
+            Err(CodeGenError::UnsupportedStructure(
+                "Cannot extract number from node".to_string(),
+            ))
         }
     }
 

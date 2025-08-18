@@ -103,6 +103,23 @@ pub trait ExpressionCombiner:
             return Ok(result);
         }
 
+        // Unary operations (!, -, etc.)
+        if parts.len() == 2 {
+            let op = &parts[0];
+            let operand = &parts[1];
+
+            if matches!(op.as_str(), "!" | "-" | "+" | "~") {
+                let result = match op.as_str() {
+                    "!" => format!("!({})", operand),
+                    "-" => format!("-({})", operand),
+                    "+" => format!("+({})", operand),
+                    "~" => format!("!({})", operand), // Convert to boolean NOT
+                    _ => unreachable!(),
+                };
+                return Ok(result);
+            }
+        }
+
         // Binary operations
         if let Some(result) = self.try_binary_operation_pattern(parts)? {
             return Ok(result);
