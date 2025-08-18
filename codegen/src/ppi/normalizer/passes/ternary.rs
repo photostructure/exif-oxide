@@ -1,21 +1,18 @@
 //! General ternary operator normalization for AST transformation
 //!
 //! Transforms patterns like `condition ? true_expr : false_expr` into normalized AST nodes
+//! BECAUSE RUST DOES NOT HAVE TERNARY SUPPORT whaaaaaat
 
-use crate::ppi::normalizer::{utils, NormalizationPass, PrecedenceLevel};
+use crate::ppi::normalizer::{multi_pass::RewritePass, utils};
 use crate::ppi::types::PpiNode;
 use tracing::trace;
 
 /// Normalizes general ternary expressions like `condition ? true_expr : false_expr`
 pub struct TernaryNormalizer;
 
-impl NormalizationPass for TernaryNormalizer {
+impl RewritePass for TernaryNormalizer {
     fn name(&self) -> &str {
         "TernaryNormalizer"
-    }
-
-    fn precedence_level(&self) -> PrecedenceLevel {
-        PrecedenceLevel::Medium // Level 19 - ternary conditional (?:)
     }
 
     fn transform(&self, node: PpiNode) -> PpiNode {
@@ -29,8 +26,8 @@ impl NormalizationPass for TernaryNormalizer {
             }
         }
 
-        // Recurse into children
-        utils::transform_children(node, |child| self.transform(child))
+        // No transformation - return unchanged
+        node
     }
 }
 

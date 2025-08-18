@@ -1,7 +1,7 @@
 //! Tests for normalization passes
 
 use super::*;
-use crate::ppi::normalizer::NormalizationPass;
+use crate::ppi::normalizer::multi_pass::RewritePass;
 use crate::ppi::types::PpiNode;
 
 #[test]
@@ -82,7 +82,7 @@ fn test_safe_division_normalization() {
     };
 
     let normalizer = SafeDivisionNormalizer;
-    let result = normalizer.transform(ast);
+    let result = RewritePass::transform(&normalizer, ast);
 
     assert_eq!(result.class, "FunctionCall");
     assert_eq!(result.content.as_deref(), Some("safe_reciprocal"));
@@ -122,7 +122,7 @@ fn test_function_call_normalization() {
     };
 
     let normalizer = FunctionCallNormalizer;
-    let result = normalizer.transform(ast);
+    let result = RewritePass::transform(&normalizer, ast);
 
     assert_eq!(result.class, "FunctionCall");
     assert_eq!(result.content.as_deref(), Some("length"));
@@ -171,7 +171,7 @@ fn test_string_concat_normalization() {
     };
 
     let normalizer = StringOpNormalizer;
-    let result = normalizer.transform(ast);
+    let result = RewritePass::transform(&normalizer, ast);
 
     assert_eq!(result.class, "StringConcat");
     assert_eq!(result.children.len(), 2);
@@ -254,26 +254,25 @@ fn test_postfix_return_normalization() {
         ],
     };
 
-    let normalizer = PostfixConditionalNormalizer;
-    let result = normalizer.transform(ast);
+    let normalizer = ConditionalStatementsNormalizer;
+    let result = RewritePass::transform(&normalizer, ast);
 
-    // Should be transformed to IfStatement
-    assert_eq!(result.class, "IfStatement");
+    // Should be transformed to FunctionCall with "if" content
+    assert_eq!(result.class, "FunctionCall");
+    assert_eq!(result.content, Some("if".to_string()));
     assert_eq!(result.children.len(), 2);
 
     // First child should be the condition
     assert_eq!(result.children[0].class, "PPI::Statement::Expression");
 
-    // Second child should be the block with return statement
-    assert_eq!(result.children[1].class, "PPI::Structure::Block");
-    let block_stmt = &result.children[1].children[0];
-    assert_eq!(block_stmt.class, "PPI::Statement");
+    // Second child should be the return statement directly
+    assert_eq!(result.children[1].class, "PPI::Statement::Break");
 
-    // Block should contain return keyword + expression + semicolon
-    assert_eq!(block_stmt.children.len(), 3);
-    assert_eq!(block_stmt.children[0].content, Some("return".to_string()));
-    assert_eq!(block_stmt.children[1].content, Some("\"n/a\"".to_string()));
-    assert_eq!(block_stmt.children[2].content, Some(";".to_string()));
+    // Return statement should contain return keyword + expression
+    let return_stmt = &result.children[1];
+    assert_eq!(return_stmt.children.len(), 2);
+    assert_eq!(return_stmt.children[0].content, Some("return".to_string()));
+    assert_eq!(return_stmt.children[1].content, Some("\"n/a\"".to_string()));
 }
 
 #[test]
@@ -344,11 +343,12 @@ fn test_postfix_assignment_normalization() {
         ],
     };
 
-    let normalizer = PostfixConditionalNormalizer;
-    let result = normalizer.transform(ast);
+    let normalizer = ConditionalStatementsNormalizer;
+    let result = RewritePass::transform(&normalizer, ast);
 
-    // Should be transformed to IfStatement
-    assert_eq!(result.class, "IfStatement");
+    // Should be transformed to FunctionCall with "if" content
+    assert_eq!(result.class, "FunctionCall");
+    assert_eq!(result.content, Some("if".to_string()));
     assert_eq!(result.children.len(), 2);
 
     // First child should be the condition
@@ -359,14 +359,16 @@ fn test_postfix_assignment_normalization() {
         Some("$condition".to_string())
     );
 
-    // Second child should be the block with assignment
-    assert_eq!(result.children[1].class, "PPI::Structure::Block");
-    let block_stmt = &result.children[1].children[0];
-    assert_eq!(block_stmt.class, "PPI::Statement");
+    // Second child should be the assignment statement directly
+    assert_eq!(result.children[1].class, "PPI::Statement");
 
-    // Block should contain assignment: $val = 42
-    assert_eq!(block_stmt.children.len(), 3);
-    assert_eq!(block_stmt.children[0].content, Some("$val".to_string()));
-    assert_eq!(block_stmt.children[1].content, Some("=".to_string()));
-    assert_eq!(block_stmt.children[2].content, Some("42".to_string()));
+    // Assignment statement should contain: $val = 42
+    let assignment_stmt = &result.children[1];
+    assert_eq!(assignment_stmt.children.len(), 3);
+    assert_eq!(
+        assignment_stmt.children[0].content,
+        Some("$val".to_string())
+    );
+    assert_eq!(assignment_stmt.children[1].content, Some("=".to_string()));
+    assert_eq!(assignment_stmt.children[2].content, Some("42".to_string()));
 }
