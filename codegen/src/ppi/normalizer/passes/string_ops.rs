@@ -1,21 +1,20 @@
 //! String operation normalization for AST transformation
 //!
 //! Transforms string concatenation (.) and repetition (x) into canonical forms
+//!
+//! Multi-pass architecture: This pass focuses only on string operations at the current node.
+//! Tree traversal is handled by the multi-pass orchestrator.
 
-use crate::ppi::normalizer::{utils, NormalizationPass, PrecedenceLevel};
+use crate::ppi::normalizer::multi_pass::RewritePass;
 use crate::ppi::types::PpiNode;
 use tracing::trace;
 
 /// Normalizes string operations (concatenation and repetition)
 pub struct StringOpNormalizer;
 
-impl NormalizationPass for StringOpNormalizer {
+impl RewritePass for StringOpNormalizer {
     fn name(&self) -> &str {
         "StringOpNormalizer"
-    }
-
-    fn precedence_level(&self) -> PrecedenceLevel {
-        PrecedenceLevel::High // Level 1-18 - string operations, no precedence conflicts
     }
 
     fn transform(&self, node: PpiNode) -> PpiNode {
@@ -31,8 +30,8 @@ impl NormalizationPass for StringOpNormalizer {
             }
         }
 
-        // Recurse into children
-        utils::transform_children(node, |child| self.transform(child))
+        // No recursion needed - multi-pass orchestrator handles tree traversal
+        node
     }
 }
 
