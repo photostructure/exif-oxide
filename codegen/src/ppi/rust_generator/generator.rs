@@ -9,8 +9,11 @@ use indoc::formatdoc;
 use std::fmt::Write;
 
 use crate::ppi::rust_generator::{
-    errors::CodeGenError, expressions::ExpressionCombiner, functions::FunctionGenerator,
-    pattern_matching, signature, visitor::PpiVisitor,
+    errors::CodeGenError,
+    expressions::{BinaryOperationsHandler, ExpressionCombiner},
+    functions::FunctionGenerator,
+    pattern_matching, signature,
+    visitor::PpiVisitor,
 };
 use crate::ppi::types::{ExpressionType, PpiNode};
 
@@ -78,8 +81,8 @@ impl RustGenerator {
 
     /// Generate function body from AST using recursive visitor pattern
     fn generate_body(&self, ast: &PpiNode) -> Result<String, CodeGenError> {
-        // Enable normalizer to fix string concatenation
-        let normalized_ast = crate::ppi::normalizer::normalize(ast.clone());
+        // Enable multi-pass normalizer for multi-token pattern recognition (e.g., join+unpack)
+        let normalized_ast = crate::ppi::normalizer::normalize_multi_pass(ast.clone());
         let code = self.visit_node(&normalized_ast)?;
 
         // Wrap the generated expression based on expression type
@@ -187,7 +190,18 @@ impl RustGenerator {
             return Ok(ternary_result);
         }
 
-        // Look for patterns in the sequence
+        // Check for binary operation patterns first
+        let parts: Vec<String> = children
+            .iter()
+            .filter(|child| child.class != "PPI::Token::Whitespace")
+            .map(|child| self.visit_node(child))
+            .collect::<Result<Vec<_>, _>>()?;
+
+        if let Some(binary_result) = self.try_binary_operation_pattern(&parts)? {
+            return Ok(binary_result);
+        }
+
+        // Look for other patterns in the sequence
         let mut processed = Vec::new();
         let mut i = 0;
 
@@ -198,6 +212,23 @@ impl RustGenerator {
                 continue;
             }
 
+            // Pattern: method call (Symbol + -> + Word) - detect and fail explicitly
+            if children[i].class == "PPI::Token::Symbol"
+                && i + 2 < children.len()
+                && children[i + 1].class == "PPI::Token::Operator"
+                && children[i + 1].content.as_ref() == Some(&"->".to_string())
+                && children[i + 2].is_word()
+            {
+                // Method call pattern detected - this is unsupported in standalone functions
+                // Following explicit failure semantics from CODEGEN.md
+                let symbol = children[i].content.as_deref().unwrap_or("unknown");
+                let method = children[i + 2].content.as_deref().unwrap_or("unknown");
+                return Err(CodeGenError::UnsupportedStructure(format!(
+                    "Method call '{}->{}()' is not supported in standalone functions",
+                    symbol, method
+                )));
+            }
+
             // Pattern: function call with parentheses (Word + Structure::List)
             if children[i].is_word()
                 && i + 1 < children.len()
@@ -206,21 +237,6 @@ impl RustGenerator {
                 let func_result = self.process_function_call(&children[i], &children[i + 1])?;
                 processed.push(func_result);
                 i += 2;
-                continue;
-            }
-
-            // Pattern: regex assignment (Symbol + =~ + Regexp::Substitute)
-            if children[i].class == "PPI::Token::Symbol"
-                && i + 2 < children.len()
-                && children[i + 1].class == "PPI::Token::Operator"
-                && children[i + 1].content.as_ref() == Some(&"=~".to_string())
-                && children[i + 2].class == "PPI::Token::Regexp::Substitute"
-            {
-                let var = self.visit_symbol(&children[i])?;
-                let regex_result = self.process_regex_assignment(&children[i + 2])?;
-                let assignment = format!("{} = {}", var, regex_result);
-                processed.push(assignment);
-                i += 3;
                 continue;
             }
 
@@ -281,7 +297,7 @@ impl RustGenerator {
                 let true_expr_nodes = &children[q_idx + 1..c_idx];
                 let false_expr_nodes = &children[c_idx + 1..];
 
-                // Process each part
+                // Process each part using the proper expression combiner logic
                 let condition = self.process_node_sequence(condition_nodes)?;
                 let true_expr = self.process_node_sequence(true_expr_nodes)?;
                 let false_expr = self.process_node_sequence(false_expr_nodes)?;
@@ -324,77 +340,102 @@ impl RustGenerator {
     /// Returns Some(result) if the pattern matches, None otherwise
     fn try_process_sprintf_with_string_ops(
         &self,
-        _args_node: &PpiNode,
+        args_node: &PpiNode,
     ) -> Result<Option<String>, CodeGenError> {
-        // This method handles complex sprintf patterns - implementation delegated to mod.rs for now
-        // to minimize disruption during refactoring
-        Ok(None)
-    }
+        // For now, handle standard sprintf calls by extracting arguments from the parentheses
+        // The args_node is a PPI::Structure::List containing the arguments
 
-    /// Process regex assignment for regex substitution operations
-    /// Generates the right-hand side without TagValue wrapper for assignment context
-    fn process_regex_assignment(&self, node: &PpiNode) -> Result<String, CodeGenError> {
-        let content = node.content.as_ref().ok_or(CodeGenError::MissingContent(
-            "regexp substitute".to_string(),
-        ))?;
-
-        // Parse s/pattern/replacement/flags
-        if !content.starts_with("s/") && !content.starts_with("s#") {
-            return Err(CodeGenError::UnsupportedStructure(format!(
-                "Invalid substitution pattern: {}",
-                content
-            )));
+        if args_node.children.is_empty() {
+            return Ok(None);
         }
 
-        // Determine delimiter
-        let delimiter = if content.starts_with("s/") { '/' } else { '#' };
-        let parts: Vec<&str> = content[2..].split(delimiter).collect();
+        // Extract arguments from the list structure
+        // For PPI::Statement::Expression, we need to extract individual arguments manually
+        let mut args = Vec::new();
 
-        if parts.len() < 2 {
-            return Err(CodeGenError::UnsupportedStructure(format!(
-                "Invalid substitution format: {}",
-                content
-            )));
-        }
-
-        let pattern = parts[0];
-        let replacement = if parts.len() > 1 { parts[1] } else { "" };
-        let flags = if parts.len() > 2 { parts[2] } else { "" };
-
-        // Check for global flag
-        let is_global = flags.contains('g');
-
-        // Generate the call without TagValue wrapper since this is for assignment
-        if pattern
-            .chars()
-            .all(|c| c.is_alphanumeric() || c.is_whitespace())
-        {
-            // Simple string replacement
-            if is_global {
-                Ok(format!(
-                    "crate::text::regex_replace_all(val, \"{}\", \"{}\")",
-                    pattern, replacement
-                ))
+        for child in &args_node.children {
+            if child.class == "PPI::Statement::Expression" {
+                // Extract arguments from the expression by splitting on commas
+                let mut current_arg_parts = Vec::new();
+                for expr_child in &child.children {
+                    if expr_child.class == "PPI::Token::Operator"
+                        && expr_child.content.as_deref() == Some(",")
+                    {
+                        // End of current argument, process accumulated parts
+                        if !current_arg_parts.is_empty() {
+                            if current_arg_parts.len() == 1 {
+                                let arg_result = self.visit_node(&current_arg_parts[0])?;
+                                args.push(arg_result);
+                            } else {
+                                // Multiple parts - join them (this shouldn't happen for simple args)
+                                let parts: Result<Vec<String>, _> = current_arg_parts
+                                    .iter()
+                                    .map(|p| self.visit_node(p))
+                                    .collect();
+                                args.push(parts?.join(" "));
+                            }
+                            current_arg_parts.clear();
+                        }
+                    } else {
+                        current_arg_parts.push(expr_child.clone());
+                    }
+                }
+                // Process any remaining parts as the last argument
+                if !current_arg_parts.is_empty() {
+                    if current_arg_parts.len() == 1 {
+                        let arg_result = self.visit_node(&current_arg_parts[0])?;
+                        args.push(arg_result);
+                    } else {
+                        let parts: Result<Vec<String>, _> = current_arg_parts
+                            .iter()
+                            .map(|p| self.visit_node(p))
+                            .collect();
+                        args.push(parts?.join(" "));
+                    }
+                }
+            } else if child.class == "PPI::Token::Operator" && child.content.as_deref() == Some(",")
+            {
+                continue; // Skip comma separators at the top level
             } else {
-                Ok(format!(
-                    "crate::text::regex_replace(val, \"{}\", \"{}\")",
-                    pattern, replacement
-                ))
+                // Direct argument
+                let arg_result = self.visit_node(child)?;
+                args.push(arg_result);
             }
+        }
+
+        if args.is_empty() {
+            return Ok(None);
+        }
+
+        // Generate sprintf call with extracted arguments
+        let format_str = &args[0];
+        let remaining_args = if args.len() > 1 {
+            args[1..].join(", ")
         } else {
-            // Complex pattern - use regex
-            if is_global {
-                Ok(format!(
-                    "crate::text::regex_replace_all(val, r\"{}\", \"{}\")",
-                    pattern, replacement
-                ))
-            } else {
-                Ok(format!(
-                    "crate::text::regex_replace(val, r\"{}\", \"{}\")",
-                    pattern, replacement
-                ))
+            "".to_string()
+        };
+
+        let sprintf_call = match self.expression_type {
+            ExpressionType::PrintConv | ExpressionType::ValueConv => {
+                if remaining_args.is_empty() {
+                    format!("TagValue::String({})", format_str)
+                } else {
+                    format!(
+                        "TagValue::String(format!({}, {}))",
+                        format_str, remaining_args
+                    )
+                }
             }
-        }
+            _ => {
+                if remaining_args.is_empty() {
+                    format_str.clone()
+                } else {
+                    format!("format!({}, {})", format_str, remaining_args)
+                }
+            }
+        };
+
+        Ok(Some(sprintf_call))
     }
 
     /// Combine processed parts using expression combiner logic

@@ -6,12 +6,14 @@
 //! - `control_flow`: Control flow, magic variables, transliterate operations
 //! - `pattern_recognition`: Pattern matching for pack, join, safe division
 //! - `function_generation`: Static function generation compliance
+//! - `sprintf_normalization`: sprintf with normalized string operations
 
 pub mod basic_generation;
 pub mod control_flow;
 pub mod function_generation;
 pub mod numeric_string_ops;
 pub mod pattern_recognition;
+pub mod sprintf_normalization;
 
 // Integration test for normalizer + visitor pipeline
 #[cfg(test)]
