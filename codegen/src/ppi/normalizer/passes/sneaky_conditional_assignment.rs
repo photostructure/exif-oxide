@@ -5,7 +5,7 @@
 //!
 //! Trust ExifTool: Canon.pm line 9359 - `$val > 1800 and $val -= 3600; -$val / 10`
 
-use crate::ppi::normalizer::{utils, NormalizationPass, PrecedenceLevel};
+use crate::ppi::normalizer::multi_pass::RewritePass;
 use crate::ppi::types::PpiNode;
 use tracing::trace;
 
@@ -14,13 +14,9 @@ use tracing::trace;
 /// Example: `$val > 1800 and $val -= 3600; -$val / 10`
 pub struct SneakyConditionalAssignmentNormalizer;
 
-impl NormalizationPass for SneakyConditionalAssignmentNormalizer {
+impl RewritePass for SneakyConditionalAssignmentNormalizer {
     fn name(&self) -> &str {
         "SneakyConditionalAssignmentNormalizer"
-    }
-
-    fn precedence_level(&self) -> PrecedenceLevel {
-        PrecedenceLevel::High // Level 1-18 - document-level patterns, must run first
     }
 
     fn transform(&self, node: PpiNode) -> PpiNode {
@@ -32,8 +28,8 @@ impl NormalizationPass for SneakyConditionalAssignmentNormalizer {
             }
         }
 
-        // Recurse into children
-        utils::transform_children(node, |child| self.transform(child))
+        // No transformation - return unchanged
+        node
     }
 }
 
@@ -345,7 +341,7 @@ mod tests {
         };
 
         let normalizer = SneakyConditionalAssignmentNormalizer;
-        let result = normalizer.transform(document);
+        let result = RewritePass::transform(&normalizer, document);
 
         // Should be normalized to ConditionalBlock
         assert_eq!(result.class, "ConditionalBlock");
@@ -385,7 +381,7 @@ mod tests {
         };
 
         let normalizer = SneakyConditionalAssignmentNormalizer;
-        let result = normalizer.transform(simple_stmt.clone());
+        let result = RewritePass::transform(&normalizer, simple_stmt.clone());
 
         // Should be unchanged
         assert_eq!(result.class, simple_stmt.class);
