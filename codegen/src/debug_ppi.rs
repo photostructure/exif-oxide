@@ -134,7 +134,7 @@ fn main() -> Result<()> {
     // Step 4: Run through normalizer
     println!("🔄 STEP 3: Normalized AST");
     println!("{}", "-".repeat(30));
-    let normalized_ast = normalizer::normalize(raw_ast.clone());
+    let normalized_ast = normalizer::normalize_multi_pass(raw_ast.clone());
 
     // Check if normalization actually changed anything
     let ast_changed = format!("{:?}", raw_ast) != format!("{:?}", normalized_ast);
