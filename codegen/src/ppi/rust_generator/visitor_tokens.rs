@@ -23,6 +23,12 @@ pub fn process_symbol(node: &PpiNode) -> Result<String, CodeGenError> {
         Ok("val".to_string())
     } else if content == "$valPt" {
         Ok("val_pt".to_string())
+    } else if content == "$self" {
+        // $self method calls are not supported in standalone functions
+        // Following explicit failure semantics from CODEGEN.md
+        Err(CodeGenError::UnsupportedStructure(
+            "$self method calls are not supported in standalone functions".to_string(),
+        ))
     } else {
         // Generic variable
         Ok(content.trim_start_matches('$').to_string())
