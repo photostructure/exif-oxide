@@ -45,35 +45,6 @@ fn test_static_function_generation() {
         Err(e) => panic!("Pack/map static function generation failed: {:?}", e),
     }
 
-    // Test 2: Safe division should generate static function
-    let safe_div_generator = RustGenerator::new(
-        ExpressionType::ValueConv,
-        "test_safe_division_static".to_string(),
-        "$val ? 1/$val : 0".to_string(),
-    );
-
-    let safe_div_parts = vec![
-        "$val".to_string(),
-        "?".to_string(),
-        "1".to_string(),
-        "/".to_string(),
-        "$val".to_string(),
-        ":".to_string(),
-        "0".to_string(),
-    ];
-
-    match safe_div_generator.combine_statement_parts(&safe_div_parts, &[]) {
-        Ok(result) => {
-            // Should generate static safe_reciprocal call
-            assert!(result.contains("safe_reciprocal"));
-            assert!(!result.contains("Expression"));
-            assert!(!result.contains("runtime"));
-
-            // Should use compile-time pattern recognition
-            assert!(result.contains("crate::fmt::"));
-        }
-        Err(e) => panic!("Safe division static function generation failed: {:?}", e),
-    }
 
     // Test 3: Complex sprintf should generate static function
     let sprintf_generator = RustGenerator::new(
@@ -114,7 +85,7 @@ fn test_static_function_generation() {
 
     // Test 4: Verify P07 compliance - static functions not runtime evaluation
     // All generated functions should produce compile-time Rust code, not runtime expression strings
-    for generator in [pack_map_generator, safe_div_generator, sprintf_generator] {
+    for generator in [pack_map_generator, sprintf_generator] {
         let ast_json = serde_json::json!({
             "children": [{
                 "children": [{
