@@ -48,9 +48,6 @@ pub trait ExpressionCombiner:
                 "StringRepeat" => {
                     return self.handle_normalized_string_repeat(&children[0]);
                 }
-                "TernaryOp" => {
-                    return self.handle_normalized_ternary_op(&children[0]);
-                }
                 _ => {}
             }
         }
@@ -93,8 +90,8 @@ pub trait ExpressionCombiner:
             return Ok(result);
         }
 
-        // Ternary operator (? :) - Enhanced with safe division pattern recognition
-        if let Some(result) = self.try_ternary_pattern(parts)? {
+        // Pattern: basic sprintf arguments - format_string, comma, variable
+        if let Some(result) = self.try_basic_sprintf_pattern(parts)? {
             return Ok(result);
         }
 
