@@ -153,99 +153,6 @@ pub trait ComplexPatternHandler {
         Ok(None)
     }
 
-    /// Try to handle ternary operator (? :) with safe division pattern recognition
-    fn try_ternary_pattern(&self, parts: &[String]) -> Result<Option<String>, CodeGenError> {
-        if let Some(question_pos) = parts.iter().position(|p| p == "?") {
-            if let Some(colon_pos) = parts.iter().position(|p| p == ":") {
-                if question_pos < colon_pos {
-                    let result =
-                        self.generate_ternary_from_parts(parts, question_pos, colon_pos)?;
-                    return Ok(Some(result));
-                }
-            }
-        }
-        Ok(None)
-    }
-
-    /// Generate ternary conditional with safe division pattern recognition
-    /// From ExifTool Canon.pm line 1234: $val ? 1/$val : 0
-    fn generate_ternary_from_parts(
-        &self,
-        parts: &[String],
-        question_pos: usize,
-        colon_pos: usize,
-    ) -> Result<String, CodeGenError> {
-        let condition_parts: Vec<&str> = parts[..question_pos].iter().map(|s| s.as_str()).collect();
-        let true_branch_parts: Vec<&str> = parts[question_pos + 1..colon_pos]
-            .iter()
-            .map(|s| s.as_str())
-            .collect();
-        let false_branch_parts: Vec<&str> =
-            parts[colon_pos + 1..].iter().map(|s| s.as_str()).collect();
-
-        // Pattern: $val ? 1 / $val : 0 (safe reciprocal)
-        // Pattern: $val ? N / $val : 0 (safe division)
-        if condition_parts.len() == 1
-            && true_branch_parts.len() == 3
-            && true_branch_parts[1] == "/"
-            && false_branch_parts.len() == 1
-            && false_branch_parts[0] == "0"
-            && condition_parts[0] == true_branch_parts[2]
-        // Same variable
-        {
-            let numerator = true_branch_parts[0];
-            let variable = condition_parts[0];
-
-            // If numerator is 1, use safe_reciprocal
-            if numerator == "1" {
-                return Ok(format!("crate::fmt::safe_reciprocal(&{})", variable));
-            }
-            // If numerator is a constant, use safe_division
-            else if numerator.parse::<f64>().is_ok() {
-                return Ok(format!(
-                    "crate::fmt::safe_division({}.0, &{})",
-                    numerator, variable
-                ));
-            }
-        }
-
-        // Default ternary handling
-        let condition_parts = &parts[..question_pos];
-        let condition = if condition_parts.len() == 3 {
-            // Check if it's a binary operation like "val eq inf"
-            let left = &condition_parts[0];
-            let op = &condition_parts[1];
-            let right = &condition_parts[2];
-
-            // Convert binary operators from Perl to Rust
-            match op.as_str() {
-                "eq" => {
-                    // Handle string equality - need to convert to proper comparison
-                    if right.starts_with('"') || right.starts_with('\'') {
-                        format!("{}.to_string() == {}", left, right)
-                    } else {
-                        format!("{} == {}", left, right)
-                    }
-                }
-                "ne" => format!("{} != {}", left, right),
-                "lt" => format!("{} < {}", left, right),
-                "gt" => format!("{} > {}", left, right),
-                "le" => format!("{} <= {}", left, right),
-                "ge" => format!("{} >= {}", left, right),
-                _ => condition_parts.join(" "),
-            }
-        } else {
-            condition_parts.join(" ")
-        };
-
-        let true_branch = parts[question_pos + 1..colon_pos].join(" ");
-        let false_branch = parts[colon_pos + 1..].join(" ");
-
-        Ok(format!(
-            "if {} {{ {} }} else {{ {} }}",
-            condition, true_branch, false_branch
-        ))
-    }
 
     /// Handle sprintf with string operations
     fn handle_sprintf_with_string_operations(
@@ -350,6 +257,30 @@ pub trait ComplexPatternHandler {
 
         // If we can't find a clear pattern, return None for fallback handling
         Ok(None)
+    }
+
+    /// Try to handle basic sprintf arguments pattern: format_string, comma, variable
+    fn try_basic_sprintf_pattern(&self, parts: &[String]) -> Result<Option<String>, CodeGenError> {
+        // Pattern: ["\"format_string\"", ",", "variable"]
+        if parts.len() == 3 && parts[1] == "," {
+            let format_str = &parts[0];
+            let variable = &parts[2];
+            
+            // Check if this looks like sprintf arguments (quoted format string)
+            if format_str.starts_with('"') && format_str.ends_with('"') {
+                match self.expression_type() {
+                    ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(Some(format!(
+                        "TagValue::String(format!({}, {}))",
+                        format_str, variable
+                    ))),
+                    _ => Ok(Some(format!("format!({}, {})", format_str, variable))),
+                }
+            } else {
+                Ok(None)
+            }
+        } else {
+            Ok(None)
+        }
     }
 
     /// Generate sprintf call (string-based interface for compatibility)
