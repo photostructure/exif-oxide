@@ -4,23 +4,14 @@
 //! EXIF tag values after parsing, along with its conversion methods and
 //! display formatting.
 
-mod arithmetic;
 mod conversion;
 mod display;
-mod helpers;
 mod serialization;
 
 #[cfg(test)]
 mod tests;
 
-// Re-export everything from submodules for backward compatibility
-pub use arithmetic::*;
-pub use conversion::*;
-pub use display::*;
-pub use helpers::*;
-pub use serialization::*;
-
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use std::collections::HashMap;
 
 /// Represents a tag value that can be of various types
@@ -33,7 +24,7 @@ use std::collections::HashMap;
 /// There are several convenient ways to create string TagValues:
 ///
 /// ```
-/// use exif_oxide::types::TagValue;
+/// use codegen_runtime::TagValue;
 ///
 /// // Most ergonomic - using From trait
 /// let tag1: TagValue = "Hello".into();
@@ -51,7 +42,7 @@ use std::collections::HashMap;
 /// assert_eq!(tag3, TagValue::String("Foo".to_string()));
 /// assert_eq!(tag4, TagValue::String("Bar".to_string()));
 /// ```
-#[derive(Debug, Clone, PartialEq, Deserialize, Serialize)]
+#[derive(Debug, Clone, PartialEq, Deserialize)]
 #[serde(untagged)]
 pub enum TagValue {
     /// Unsigned 8-bit integer

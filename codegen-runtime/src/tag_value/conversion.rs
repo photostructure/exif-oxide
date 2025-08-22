@@ -48,6 +48,8 @@ impl TagValue {
             TagValue::U32(v) => Some(*v as f64),
             TagValue::U16(v) => Some(*v as f64),
             TagValue::U8(v) => Some(*v as f64),
+            TagValue::I32(v) => Some(*v as f64),
+            TagValue::I16(v) => Some(*v as f64),
             TagValue::Rational(num, denom) => {
                 if *denom != 0 {
                     Some(*num as f64 / *denom as f64)
@@ -81,12 +83,6 @@ impl TagValue {
             _ => None,
         }
     }
-
-    // rational_to_decimal REMOVED in Milestone 8e
-    // GPS coordinate conversion moved to Composite tag system
-
-    // gps_to_decimal_with_ref REMOVED in Milestone 8e
-    // GPS coordinate conversion moved to Composite tag system
 
     /// Get as object (HashMap) if this is an Object variant
     pub fn as_object(&self) -> Option<&HashMap<String, TagValue>> {
@@ -146,7 +142,7 @@ impl TagValue {
     /// # Examples
     ///
     /// ```
-    /// use exif_oxide::types::TagValue;
+    /// use codegen_runtime::TagValue;
     ///
     /// let tag_value = TagValue::string("Hello");
     /// assert_eq!(tag_value, TagValue::String("Hello".to_string()));
@@ -167,7 +163,7 @@ impl TagValue {
     /// # Examples
     ///
     /// ```
-    /// use exif_oxide::types::TagValue;
+    /// use codegen_runtime::TagValue;
     ///
     /// // Numeric strings become F64 values
     /// let numeric = TagValue::string_with_numeric_detection("14.0");

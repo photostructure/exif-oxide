@@ -1,0 +1,26 @@
+[package]
+name = "codegen-runtime"
+version = "0.2.0"
+edition = "2021"
+authors = ["exif-oxide@photostructure.com"]
+description = "Runtime support for Rust code generated from ExifTool Perl expressions"
+license = "AGPL-3.0-or-later"
+
+[dependencies]
+# Core error handling
+thiserror = "2.0"
+
+# Serialization for TagValue and context
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Regex support for generated expressions
+regex = "1.11"
+
+# Byte order handling for binary data
+byteorder = "1.5"
+
+[features]
+default = []
+# Test helpers for integration testing
+test-helpers = []
