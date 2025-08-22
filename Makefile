@@ -51,11 +51,11 @@ ast-test:
 
 # Run codegen tests
 codegen-check:
-	$(MAKE) -C codegen -f Makefile.modular check
+	$(MAKE) -C codegen check
 
 # Run codegen tests
 codegen-test:
-	$(MAKE) -C codegen -f Makefile.modular test
+	$(MAKE) -C codegen test
 
 # Fix formatting and auto-fixable clippy issues
 fix: fmt
@@ -76,7 +76,7 @@ doc:
 # Clean build artifacts
 clean:
 	cargo clean
-	$(MAKE) -C codegen -f Makefile.modular clean
+	$(MAKE) -C codegen clean
 
 # Clean generated code (use with caution - requires regeneration)
 clean-generated:
@@ -92,7 +92,7 @@ clean-all: clean clean-generated
 # Extract EXIF tags from ExifTool and regenerate Rust code
 codegen:
 	@echo "🔧 Running code generation..."
-	@$(MAKE) --no-print-directory -C codegen -f Makefile.modular codegen
+	@$(MAKE) --no-print-directory -C codegen codegen
 	
 # Extract all ExifTool algorithms and regenerate code  
 sync: codegen

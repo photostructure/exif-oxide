@@ -8,7 +8,7 @@ all: codegen
 
 # Main codegen pipeline (Rust now handles everything including patch cleanup)
 codegen:
-	@flock --exclusive --timeout=30 .make.flock $(MAKE) --no-print-directory -f Makefile.modular codegen-flocked
+	@flock --exclusive --timeout=30 .make.flock $(MAKE) --no-print-directory codegen-flocked
 
 # We can't have codegen-flocked depend on `clean`, as that breaks concurrent builds. 
 codegen-flocked:
@@ -25,6 +25,7 @@ codegen-flocked:
 clean:
 	cargo clean
 	./scripts/exiftool-patcher-undo.sh
+	@rm -rf "$$(python3 -c "import tempfile; print(tempfile.gettempdir())" 2>/dev/null || echo /tmp)/exif_oxide_test_cache" 2>/dev/null || true
 
 check:
 	cargo check -p codegen
