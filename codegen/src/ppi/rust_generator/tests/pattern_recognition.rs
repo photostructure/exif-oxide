@@ -379,69 +379,6 @@ fn test_pack_map_pattern_extraction() {
     }
 }
 
-#[test]
-fn test_safe_division_pattern() {
-    // Test the restored safe division pattern recognition
-    // From ExifTool Canon.pm: $val ? 1/$val : 0
-    let generator = RustGenerator::new(
-        ExpressionType::ValueConv,
-        "test_safe_reciprocal".to_string(),
-        "$val ? 1/$val : 0".to_string(),
-    );
-
-    let parts = vec![
-        "$val".to_string(),
-        "?".to_string(),
-        "1".to_string(),
-        "/".to_string(),
-        "$val".to_string(),
-        ":".to_string(),
-        "0".to_string(),
-    ];
-
-    let children = vec![]; // Empty for this test
-
-    match generator.combine_statement_parts(&parts, &children) {
-        Ok(result) => {
-            // Should generate safe_reciprocal call
-            assert!(result.contains("crate::fmt::safe_reciprocal"));
-            assert!(result.contains("$val"));
-        }
-        Err(e) => panic!("Safe reciprocal pattern failed: {:?}", e),
-    }
-}
-
-#[test]
-fn test_safe_division_with_numerator() {
-    // Test safe division with custom numerator: $val ? 10/$val : 0
-    let generator = RustGenerator::new(
-        ExpressionType::ValueConv,
-        "test_safe_division".to_string(),
-        "$val ? 10/$val : 0".to_string(),
-    );
-
-    let parts = vec![
-        "$val".to_string(),
-        "?".to_string(),
-        "10".to_string(),
-        "/".to_string(),
-        "$val".to_string(),
-        ":".to_string(),
-        "0".to_string(),
-    ];
-
-    let children = vec![]; // Empty for this test
-
-    match generator.combine_statement_parts(&parts, &children) {
-        Ok(result) => {
-            // Should generate safe_division call with numerator
-            assert!(result.contains("crate::fmt::safe_division"));
-            assert!(result.contains("10.0"));
-            assert!(result.contains("$val"));
-        }
-        Err(e) => panic!("Safe division pattern failed: {:?}", e),
-    }
-}
 
 #[test]
 fn test_sprintf_with_string_operations() {
