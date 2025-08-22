@@ -305,9 +305,11 @@ dependencies = [
  "anyhow",
  "base64",
  "clap",
+ "codegen-runtime",
  "glob",
  "indoc",
  "jsonschema",
+ "libloading",
  "rayon",
  "regex",
  "serde",
@@ -316,6 +318,17 @@ dependencies = [
  "thiserror",
  "tracing",
  "tracing-subscriber",
+]
+
+[[package]]
+name = "codegen-runtime"
+version = "0.2.0"
+dependencies = [
+ "byteorder",
+ "regex",
+ "serde",
+ "serde_json",
+ "thiserror",
 ]
 
 [[package]]
@@ -451,6 +464,7 @@ dependencies = [
  "chrono",
  "clap",
  "codegen",
+ "codegen-runtime",
  "criterion",
  "indexmap",
  "pretty_assertions",
@@ -943,6 +957,16 @@ name = "libc"
 version = "0.2.175"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6a82ae493e598baaea5209805c49bbf2ea7de956d50d7da0da1164f9c6d28543"
+
+[[package]]
+name = "libloading"
+version = "0.8.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "07033963ba89ebaf1584d767badaa2e8fcec21aedea6b8c0346d487d49c28667"
+dependencies = [
+ "cfg-if",
+ "windows-targets 0.53.3",
+]
 
 [[package]]
 name = "linux-raw-sys"
