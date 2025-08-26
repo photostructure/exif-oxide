@@ -4,6 +4,7 @@
 
 # Generated code from ExifTool
 /codegen/generated/
+/codegen/tests/generated/
 
 # Coverage reports
 /codegen/coverage/
