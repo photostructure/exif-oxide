@@ -7,10 +7,11 @@
 //! - Sprintf with string operations
 //! - Static function generation compliance
 
-use crate::ppi::rust_generator::expressions::{ComplexPatternHandler, ExpressionCombiner};
-use crate::ppi::RustGenerator;
-use crate::ppi::{CodeGenError, ExpressionType, PpiNode};
-use serde_json::json;
+use crate::ppi::rust_generator::{
+    expressions::{ComplexPatternHandler, ExpressionCombiner},
+    RustGenerator,
+};
+use crate::ppi::{ExpressionType, PpiNode};
 
 #[test]
 fn test_pack_c_star_bit_extraction_pattern() {
@@ -378,7 +379,6 @@ fn test_pack_map_pattern_extraction() {
         Err(e) => panic!("Pack map pattern failed: {:?}", e),
     }
 }
-
 
 #[test]
 fn test_sprintf_with_string_operations() {

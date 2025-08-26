@@ -5,7 +5,7 @@
 //! This maintains coverage when the SprintfNormalizer is removed.
 
 use crate::ppi::normalizer::normalize_multi_pass;
-use crate::ppi::rust_generator::{ExpressionCombiner, RustGenerator};
+use crate::ppi::rust_generator::RustGenerator;
 use crate::ppi::{ExpressionType, PpiNode};
 
 /// Test sprintf with StringConcat nodes (after string ops normalization)
