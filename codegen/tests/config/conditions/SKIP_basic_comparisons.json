@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "Simple value comparisons for conditional logic",
+  "expression": "$val > 100",
+  "type": "Condition",
+  "exiftool_reference": "lib/Image/ExifTool/Nikon.pm:789",
+  "test_cases": [
+    {
+      "description": "Value greater than threshold",
+      "input": {
+        "U32": 150
+      },
+      "expected": {
+        "U32": 1
+      }
+    },
+    {
+      "description": "Value less than threshold",
+      "input": {
+        "U32": 50
+      },
+      "expected": {
+        "U32": 0
+      }
+    },
+    {
+      "description": "Value equal to threshold",
+      "input": {
+        "U32": 100
+      },
+      "expected": {
+        "U32": 0
+      }
+    }
+  ]
+}

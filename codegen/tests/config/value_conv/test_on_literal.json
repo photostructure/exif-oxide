@@ -1,0 +1,18 @@
+{
+  "$schema": "../schema.json",
+  "description": "Test standalone string literal 'On' (Minolta.pm pattern)",
+  "expression": "\"On\"",
+  "type": "ValueConv",
+  "exiftool_reference": "Minolta.pm has ValueConv => '\"On\"'",
+  "test_cases": [
+    {
+      "description": "Standalone string literal",
+      "input": {
+        "U32": 1
+      },
+      "expected": {
+        "String": "On"
+      }
+    }
+  ]
+}

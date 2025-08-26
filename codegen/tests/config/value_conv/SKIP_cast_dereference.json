@@ -1,0 +1,18 @@
+{
+  "expression": "$$val",
+  "type": "ValueConv",
+  "description": "Cast/dereference operation (double deref pattern)",
+  "exiftool_reference": "Common pattern for dereferencing reference values",
+  "test_cases": [
+    {
+      "description": "Dereference scalar reference",
+      "input": {
+        "String": "test"
+      },
+      "expected": {
+        "String": "test"
+      }
+    }
+  ],
+  "notes": "PPI::Token::Cast handler for $$ patterns"
+}

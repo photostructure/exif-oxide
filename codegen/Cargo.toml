@@ -14,6 +14,10 @@ path = "src/main.rs"
 name = "debug-ppi"
 path = "src/debug_ppi.rs"
 
+[[bin]]
+name = "generate-expression-tests"
+path = "src/generate_expression_tests.rs"
+
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -27,5 +31,12 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tempfile = "3.20"
 base64 = "0.22"
 glob = "0.3"
+
+# Runtime support for shared types and fmt functions
+codegen-runtime = { path = "../codegen-runtime", features = ["test-helpers"] }
+
+# For dynamic loading of compiled functions
+libloading = "0.8"
+
 rayon = "1.10"
 indoc = "2.0"

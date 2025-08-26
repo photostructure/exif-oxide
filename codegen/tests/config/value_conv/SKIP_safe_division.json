@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "Safe reciprocal calculation with zero check",
+  "expression": "$val ? 1/$val : 0",
+  "type": "ValueConv",
+  "exiftool_reference": "lib/Image/ExifTool/Canon.pm:892",
+  "test_cases": [
+    {
+      "description": "Non-zero value - calculate reciprocal",
+      "input": {
+        "F64": 2.0
+      },
+      "expected": {
+        "F64": 0.5
+      }
+    },
+    {
+      "description": "Zero value - return zero to avoid division by zero",
+      "input": {
+        "F64": 0.0
+      },
+      "expected": {
+        "F64": 0.0
+      }
+    },
+    {
+      "description": "Large value reciprocal",
+      "input": {
+        "F64": 1000.0
+      },
+      "expected": {
+        "F64": 0.001
+      }
+    }
+  ]
+}

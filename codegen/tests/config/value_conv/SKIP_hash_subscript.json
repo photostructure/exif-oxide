@@ -1,0 +1,22 @@
+{
+  "expression": "$val{key}",
+  "type": "ValueConv",
+  "description": "Hash subscript access",
+  "exiftool_reference": "Used for accessing hash values in complex structures",
+  "test_cases": [
+    {
+      "description": "Access hash value by key",
+      "input": {
+        "Hash": {
+          "key": {
+            "String": "value"
+          }
+        }
+      },
+      "expected": {
+        "String": "value"
+      }
+    }
+  ],
+  "notes": "PPI::Structure::Subscript for hash access patterns"
+}

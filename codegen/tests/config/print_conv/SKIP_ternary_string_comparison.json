@@ -1,0 +1,27 @@
+{
+  "$schema": "../schema.json",
+  "description": "Ternary with string comparison",
+  "expression": "$val eq \"inf\" ? $val : \"$val m\"",
+  "type": "PrintConv",
+  "exiftool_reference": "Pattern for handling infinity values",
+  "test_cases": [
+    {
+      "description": "Infinity value",
+      "input": {
+        "String": "inf"
+      },
+      "expected": {
+        "String": "inf"
+      }
+    },
+    {
+      "description": "Regular value gets 'm' suffix",
+      "input": {
+        "F64": 100.5
+      },
+      "expected": {
+        "String": "100.5 m"
+      }
+    }
+  ]
+}

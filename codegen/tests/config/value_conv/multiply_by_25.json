@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "Simple multiplication by 25 (migrated from numeric_string_ops.rs)",
+  "expression": "$val * 25",
+  "type": "ValueConv",
+  "exiftool_reference": "common scaling factor in exposure calculations",
+  "test_cases": [
+    {
+      "description": "Multiply integer by 25",
+      "input": {
+        "U32": 4
+      },
+      "expected": {
+        "U32": 100
+      }
+    },
+    {
+      "description": "Multiply decimal by 25",
+      "input": {
+        "F64": 2.5
+      },
+      "expected": {
+        "F64": 62.5
+      }
+    },
+    {
+      "description": "Multiply zero by 25",
+      "input": {
+        "U32": 0
+      },
+      "expected": {
+        "U32": 0
+      }
+    }
+  ]
+}

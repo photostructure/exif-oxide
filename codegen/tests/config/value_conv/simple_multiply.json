@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "Simple value multiplication by 2",
+  "expression": "$val * 2",
+  "type": "ValueConv",
+  "exiftool_reference": "lib/Image/ExifTool/Example.pm:123",
+  "test_cases": [
+    {
+      "description": "Double positive number",
+      "input": {
+        "U32": 50
+      },
+      "expected": {
+        "U32": 100
+      }
+    },
+    {
+      "description": "Double zero",
+      "input": {
+        "U32": 0
+      },
+      "expected": {
+        "U32": 0
+      }
+    },
+    {
+      "description": "Double decimal",
+      "input": {
+        "F64": 1.5
+      },
+      "expected": {
+        "F64": 3.0
+      }
+    }
+  ]
+}

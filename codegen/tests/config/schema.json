@@ -1,0 +1,195 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Expression Test Case",
+  "description": "Schema for ExifTool expression test case definitions",
+  "type": "object",
+  "required": [
+    "expression",
+    "type",
+    "test_cases"
+  ],
+  "properties": {
+    "description": {
+      "type": "string",
+      "description": "Human-readable description of what this expression does"
+    },
+    "expression": {
+      "type": "string",
+      "description": "The Perl expression to test (exactly as it appears in ExifTool)"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "ValueConv",
+        "PrintConv",
+        "Condition"
+      ],
+      "description": "Type of expression, determines function signature"
+    },
+    "exiftool_reference": {
+      "type": "string",
+      "description": "Source reference in ExifTool (e.g., 'lib/Image/ExifTool/Canon.pm:156')"
+    },
+    "test_cases": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Test cases with inputs and expected outputs",
+      "items": {
+        "type": "object",
+        "required": [
+          "input",
+          "expected"
+        ],
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Description of this specific test case"
+          },
+          "input": {
+            "$ref": "#/$defs/TagValue",
+            "description": "Input TagValue for the function"
+          },
+          "expected": {
+            "$ref": "#/$defs/TagValue",
+            "description": "Expected output TagValue"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "TagValue": {
+      "description": "Represents a TagValue variant used in exif-oxide",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "String": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "String"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "U8": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 255
+            }
+          },
+          "required": [
+            "U8"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "U16": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 65535
+            }
+          },
+          "required": [
+            "U16"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "U32": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            }
+          },
+          "required": [
+            "U32"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "I16": {
+              "type": "integer",
+              "minimum": -32768,
+              "maximum": 32767
+            }
+          },
+          "required": [
+            "I16"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "I32": {
+              "type": "integer",
+              "minimum": -2147483648,
+              "maximum": 2147483647
+            }
+          },
+          "required": [
+            "I32"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "F64": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "F64"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "Binary": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 255
+              }
+            }
+          },
+          "required": [
+            "Binary"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "Rational": {
+              "type": "array",
+              "items": {
+                "type": "integer"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "required": [
+            "Rational"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    }
+  }
+}

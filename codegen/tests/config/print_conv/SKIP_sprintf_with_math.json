@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "sprintf with % and inline math operator",
+  "expression": "sprintf(\"%.2f%%\", $val * 100)",
+  "type": "PrintConv",
+  "exiftool_reference": "QuickTime::TrackHeader.TrackVolume and QuickTime::MovieHeader.PreferredVolume",
+  "test_cases": [
+    {
+      "description": "0.25 -> 25.00%",
+      "input": {
+        "F64": 0.25
+      },
+      "expected": {
+        "String": "25.00%"
+      }
+    },
+    {
+      "description": "0.954321 -> 95.43%",
+      "input": {
+        "F64": 0.954321
+      },
+      "expected": {
+        "String": "95.43%"
+      }
+    },
+    {
+      "description": "0.345678 -> 34.57%",
+      "input": {
+        "F64": 0.345678
+      },
+      "expected": {
+        "String": "34.57%"
+      }
+    }
+  ]
+}
