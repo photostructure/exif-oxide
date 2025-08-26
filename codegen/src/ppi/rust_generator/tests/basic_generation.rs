@@ -5,9 +5,8 @@
 //! - String interpolation
 //! - Function signature generation
 
-use crate::ppi::rust_generator::{expressions::ExpressionCombiner, signature};
-use crate::ppi::RustGenerator;
-use crate::ppi::{CodeGenError, ExpressionType, PpiNode};
+use crate::ppi::rust_generator::{signature, RustGenerator};
+use crate::ppi::{ExpressionType, PpiNode};
 use serde_json::json;
 
 #[test]

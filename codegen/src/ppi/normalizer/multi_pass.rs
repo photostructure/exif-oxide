@@ -24,9 +24,9 @@ use tracing::{debug, trace};
 /// in the declared order within the multi-pass system.
 ///
 /// # Usage Example
-/// ```rust
-/// use crate::ppi::normalizer::multi_pass::RewritePass;
-/// use crate::ppi::types::PpiNode;
+/// ```rust,no_run
+/// use codegen::ppi::normalizer::multi_pass::RewritePass;
+/// use codegen::ppi::PpiNode;
 ///
 /// struct ExamplePass;
 ///
