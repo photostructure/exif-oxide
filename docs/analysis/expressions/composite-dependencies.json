@@ -1,0 +1,676 @@
+{
+  "_metadata": {
+    "description": "Composite tag dependencies extracted from ExifTool",
+    "generated": "Mon Aug 25 13:02:59 2025",
+    "total_tags": 54
+  },
+  "tags": {
+    "Aperture": {
+      "desire": [
+        "FNumber",
+        "ApertureValue"
+      ],
+      "inhibit": [],
+      "print_conv": "Image::ExifTool::Exif::PrintFNumber($val)",
+      "require": [],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "$val[0] || $val[1]"
+    },
+    "AutoFocus": {
+      "desire": [],
+      "inhibit": [],
+      "require": [
+        "FocusMode"
+      ],
+      "source": "Image::ExifTool::Nikon",
+      "value_conv": "($val[0] =~ /^Manual/i) ? 0 : 1"
+    },
+    "BlueBalance": {
+      "desire": [
+        "WB_RGGBLevels",
+        "WB_RGBGLevels",
+        "WB_RBGGLevels",
+        "WB_GRBGLevels",
+        "WB_GRGBLevels",
+        "WB_GBRGLevels",
+        "WB_RGBLevels",
+        "WB_GRBLevels",
+        "WB_RBLevels",
+        "WBBlueLevel",
+        "WBGreenLevel"
+      ],
+      "inhibit": [],
+      "print_conv": "int($val * 1e6 + 0.5) * 1e-6",
+      "require": [],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "Image::ExifTool::Exif::RedBlueBalance(1,@val)"
+    },
+    "CFAPattern": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "Image::ExifTool::Exif::PrintCFAPattern($val)",
+      "require": [
+        "CFARepeatPatternDim",
+        "CFAPattern2"
+      ],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "\n            my @a = split / /, $val[0];\n            my @b = split / /, $val[1];\n            return '?' unless @a==2 and @b==$a[0]*$a[1];\n            return \"$a[0] $a[1] @b\";\n        "
+    },
+    "CircleOfConfusion": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "sprintf(\"%.3f mm\",$val)",
+      "require": [
+        "ScaleFactor35efl"
+      ],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "sqrt(24*24+36*36) / ($val * 1440)"
+    },
+    "ConditionalFEC": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "$prt[0]",
+      "require": [
+        "FlashExposureComp",
+        "FlashBits"
+      ],
+      "source": "Image::ExifTool::Canon",
+      "value_conv": "$val[0]"
+    },
+    "ContrastDetectAF": {
+      "desire": [],
+      "inhibit": [],
+      "require": [
+        "FocusMode",
+        "AFDetectionMethod"
+      ],
+      "source": "Image::ExifTool::Nikon",
+      "value_conv": "(($val[0] !~ /^Manual/i) and ($val[1] == 1)) ? 1 : 0"
+    },
+    "DOF": {
+      "desire": [
+        "FocusDistance",
+        "SubjectDistance",
+        "ObjectDistance",
+        "ApproximateFocusDistance",
+        "FocusDistanceLower",
+        "FocusDistanceUpper"
+      ],
+      "inhibit": [],
+      "print_conv": "\n            $val =~ tr/,/./;    # in case locale is whacky\n            my @v = split ' ', $val;\n            $v[1] or return sprintf(\"inf (%.2f m - inf)\", $v[0]);\n            my $dof = $v[1] - $v[0];\n            my $fmt = ($dof>0 and $dof<0.02) ? \"%.3f\" : \"%.2f\";\n            return sprintf(\"$fmt m ($fmt - $fmt m)\",$dof,$v[0],$v[1]);\n        ",
+      "require": [
+        "FocalLength",
+        "Aperture",
+        "CircleOfConfusion"
+      ],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "\n            ToFloat(@val);\n            my ($d, $f) = ($val[3], $val[0]);\n            if (defined $d) {\n                $d or $d = 1e10;    # (use large number for infinity)\n            } else {\n                $d = $val[4] || $val[5] || $val[6];\n                unless (defined $d) {\n                    return undef unless defined $val[7] and defined $val[8];\n                    $d = ($val[7] + $val[8]) / 2;\n                }\n            }\n            return 0 unless $f and $val[2];\n            my $t = $val[1] * $val[2] * ($d * 1000 - $f) / ($f * $f);\n            my @v = ($d / (1 + $t), $d / (1 - $t));\n            $v[1] < 0 and $v[1] = 0; # 0 means 'inf'\n            return join(' ',@v);\n        "
+    },
+    "DateTimeOriginal": {
+      "desire": [
+        "DateTimeCreated",
+        "DateCreated",
+        "TimeCreated"
+      ],
+      "inhibit": [],
+      "print_conv": "$self->ConvertDateTime($val)",
+      "require": [],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "\n            return $val[0] if $val[0] and $val[0]=~/ /;\n            return \"$val[1] $val[2]\";\n        "
+    },
+    "DigitalZoom": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "sprintf(\"%.2fx\",$val)",
+      "require": [
+        "ZoomSourceWidth",
+        "ZoomTargetWidth",
+        "DigitalZoom"
+      ],
+      "source": "Image::ExifTool::Canon"
+    },
+    "DriveMode": {
+      "desire": [],
+      "inhibit": [],
+      "require": [
+        "ContinuousDrive",
+        "SelfTimer"
+      ],
+      "source": "Image::ExifTool::Canon",
+      "value_conv": "$val[0] ? 0 : ($val[1] ? 1 : 2)"
+    },
+    "FOV": {
+      "desire": [
+        "FocusDistance"
+      ],
+      "inhibit": [],
+      "print_conv": "\n            my @v = split(' ',$val);\n            my $str = sprintf(\"%.1f deg\", $v[0]);\n            $str .= sprintf(\" (%.2f m)\", $v[1]) if $v[1];\n            return $str;\n        ",
+      "require": [
+        "FocalLength",
+        "ScaleFactor35efl"
+      ],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "\n            ToFloat(@val);\n            return undef unless $val[0] and $val[1];\n            my $corr = 1;\n            if ($val[2]) {\n                my $d = 1000 * $val[2] - $val[0];\n                $corr += $val[0]/$d if $d > 0;\n            }\n            my $fd2 = atan2(36, 2*$val[0]*$val[1]*$corr);\n            my @fov = ( $fd2 * 360 / 3.14159 );\n            if ($val[2] and $val[2] > 0 and $val[2] < 10000) {\n                push @fov, 2 * $val[2] * sin($fd2) / cos($fd2);\n            }\n            return join(' ', @fov);\n        "
+    },
+    "FileNumber": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "$_=$val;s/(\\d+)(\\d{4})/$1-$2/;$_",
+      "require": [
+        "DirectoryIndex",
+        "FileIndex"
+      ],
+      "source": "Image::ExifTool::Canon",
+      "value_conv": "\n            # fix the funny things that these numbers do when they wrap over 9999\n            # (it seems that FileIndex and DirectoryIndex actually store the\n            #  numbers from the previous image, so we need special logic\n            #  to handle the FileIndex wrap properly)\n            $val[1] == 10000 and $val[1] = 1, ++$val[0];\n            return sprintf(\"%.3d%.4d\",@val);\n        "
+    },
+    "FlashType": {
+      "desire": [],
+      "inhibit": [],
+      "require": [
+        "FlashBits"
+      ],
+      "source": "Image::ExifTool::Canon",
+      "value_conv": "$val[0]&(1<<14)? 1 : 0"
+    },
+    "FocalLength35efl": {
+      "desire": [
+        "ScaleFactor35efl"
+      ],
+      "inhibit": [],
+      "print_conv": "$val[1] ? sprintf(\"%.1f mm (35 mm equivalent: %.1f mm)\", $val[0], $val) : sprintf(\"%.1f mm\", $val)",
+      "require": [
+        "FocalLength"
+      ],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "ToFloat(@val); ($val[0] || 0) * ($val[1] || 1)"
+    },
+    "FocusDistance": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "$val eq \"inf\" ? $val : \"$val m\"",
+      "require": [
+        "FocusPosition",
+        "FocalLength"
+      ],
+      "source": "Image::ExifTool::Sony",
+      "value_conv": "$val >= 128 ? \"inf\" : $val * $val[1] / 1000"
+    },
+    "FocusDistance2": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "$val eq \"inf\" ? $val : sprintf(\"%.4g m\", $val)",
+      "require": [
+        "FocusPosition2",
+        "FocalLengthIn35mmFormat"
+      ],
+      "source": "Image::ExifTool::Sony",
+      "value_conv": "\n            return undef unless $val;\n            return 'inf' if $val >= 255;\n            return (2**($val/16-5) + 1) * $val[1] / 1000;\n        "
+    },
+    "GPSAltitude": {
+      "desire": [
+        "GPS:GPSAltitude",
+        "GPS:GPSAltitudeRef",
+        "XMP:GPSAltitude",
+        "XMP:GPSAltitudeRef"
+      ],
+      "inhibit": [],
+      "print_conv": "\n            foreach (0,2) {\n                next unless defined $val[$_] and IsFloat($val[$_]);\n                next unless defined $prt[$_+1] and $prt[$_+1] =~ /Sea/;\n                return((int($val[$_]*10)/10) . ' m ' . $prt[$_+1]);\n            }\n            $val = int($val * 10) / 10;\n            return(($val =~ s/^-// ? \"$val m Below\" : \"$val m Above\") . \" Sea Level\");\n        ",
+      "require": [],
+      "source": "Image::ExifTool::GPS",
+      "value_conv": "\n            foreach (0,2) {\n                next unless defined $val[$_] and IsFloat($val[$_]) and defined $val[$_+1];\n                return $val[$_+1] ? -abs($val[$_]) : $val[$_];\n            }\n            return undef;\n        "
+    },
+    "GPSDateTime": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "$self->ConvertDateTime($val)",
+      "require": [
+        "GPSDateStamp",
+        "GPSTimeStamp"
+      ],
+      "source": "Image::ExifTool::Sony",
+      "value_conv": "\"$val[0] $val[1]Z\""
+    },
+    "GPSDestLatitude": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")",
+      "require": [
+        "GPS:GPSDestLatitude",
+        "GPS:GPSDestLatitudeRef"
+      ],
+      "source": "Image::ExifTool::GPS",
+      "value_conv": "$val[1] =~ /^S/i ? -$val[0] : $val[0]"
+    },
+    "GPSDestLongitude": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")",
+      "require": [
+        "GPS:GPSDestLongitude",
+        "GPS:GPSDestLongitudeRef"
+      ],
+      "source": "Image::ExifTool::GPS",
+      "value_conv": "$val[1] =~ /^W/i ? -$val[0] : $val[0]"
+    },
+    "GPSLatitude": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")",
+      "require": [
+        "GPSLatitude",
+        "GPSLatitudeRef"
+      ],
+      "source": "Image::ExifTool::Sony",
+      "value_conv": "$val[1] =~ /^S/i ? -$val[0] : $val[0]"
+    },
+    "GPSLongitude": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")",
+      "require": [
+        "GPSLongitude",
+        "GPSLongitudeRef"
+      ],
+      "source": "Image::ExifTool::Sony",
+      "value_conv": "$val[1] =~ /^W/i ? -$val[0] : $val[0]"
+    },
+    "GPSPosition": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "\"$prt[0], $prt[1]\"",
+      "require": [
+        "GPSLatitude",
+        "GPSLongitude"
+      ],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "(length($val[0]) or length($val[1])) ? \"$val[0] $val[1]\" : undef"
+    },
+    "HiddenData": {
+      "desire": [],
+      "inhibit": [],
+      "require": [
+        "HiddenDataOffset",
+        "HiddenDataLength"
+      ],
+      "source": "Image::ExifTool::Sony"
+    },
+    "HyperfocalDistance": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "sprintf(\"%.2f m\", $val)",
+      "require": [
+        "FocalLength",
+        "Aperture",
+        "CircleOfConfusion"
+      ],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "\n            ToFloat(@val);\n            return 'inf' unless $val[1] and $val[2];\n            return $val[0] * $val[0] / ($val[1] * $val[2] * 1000);\n        "
+    },
+    "ISO": {
+      "desire": [
+        "CameraISO",
+        "BaseISO",
+        "AutoISO"
+      ],
+      "inhibit": [],
+      "print_conv": "sprintf(\"%.0f\",$val)",
+      "require": [],
+      "source": "Image::ExifTool::Canon",
+      "value_conv": "\n            return $val[0] if $val[0] and $val[0] =~ /^\\d+$/;\n            return undef unless $val[1] and $val[2];\n            return $val[1] * $val[2] / 100;\n        "
+    },
+    "ImageSize": {
+      "desire": [
+        "ExifImageWidth",
+        "ExifImageHeight",
+        "RawImageCroppedSize"
+      ],
+      "inhibit": [],
+      "print_conv": "$val =~ tr/ /x/; $val",
+      "require": [
+        "ImageWidth",
+        "ImageHeight"
+      ],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "\n            return $val[4] if $val[4];\n            return \"$val[2] $val[3]\" if $val[2] and $val[3] and\n                    $$self{TIFF_TYPE} =~ /^(CR2|Canon 1D RAW|IIQ|EIP)$/;\n            return \"$val[0] $val[1]\" if IsFloat($val[0]) and IsFloat($val[1]);\n            return undef;\n        "
+    },
+    "JpgFromRaw": {
+      "desire": [],
+      "inhibit": [],
+      "require": [
+        "JpgFromRawStart",
+        "JpgFromRawLength"
+      ],
+      "source": "Image::ExifTool::Exif"
+    },
+    "Lens": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "Image::ExifTool::Canon::PrintFocalRange(@val)",
+      "require": [
+        "MinFocalLength",
+        "MaxFocalLength"
+      ],
+      "source": "Image::ExifTool::Canon",
+      "value_conv": "$val[0]"
+    },
+    "Lens35efl": {
+      "desire": [
+        "ScaleFactor35efl"
+      ],
+      "inhibit": [],
+      "print_conv": "$prt[3] . ($val[2] ? sprintf(\" (35 mm equivalent: %s)\",Image::ExifTool::Canon::PrintFocalRange(@val)) : \"\")",
+      "require": [
+        "MinFocalLength",
+        "MaxFocalLength",
+        "Lens"
+      ],
+      "source": "Image::ExifTool::Canon",
+      "value_conv": "$val[3] * ($val[2] ? $val[2] : 1)"
+    },
+    "LensID": {
+      "desire": [],
+      "inhibit": [],
+      "require": [
+        "LensIDNumber",
+        "LensFStops",
+        "MinFocalLength",
+        "MaxFocalLength",
+        "MaxApertureAtMinFocal",
+        "MaxApertureAtMaxFocal",
+        "MCUVersion",
+        "LensType"
+      ],
+      "source": "Image::ExifTool::Nikon",
+      "value_conv": "sprintf(\"%.2X\".\" %.2X\"x7, @raw)"
+    },
+    "LensID-2": {
+      "desire": [
+        "LensModel",
+        "Lens",
+        "XMP-aux:LensID",
+        "Make"
+      ],
+      "inhibit": [
+        "LensID"
+      ],
+      "print_conv": "$_=$val; s/(\\d)\\/F/$1mm F/; s/mmF/mm F/; s/(\\d) mm/${1}mm/; s/ - /-/; $_",
+      "require": [],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "\n            return $val[0] if defined $val[0] and $val[0] =~ /(mm|\\d\\/F)/;\n            return $val[1];\n        "
+    },
+    "LensSpec": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "\"$prt[0] $prt[1]\"",
+      "require": [
+        "Lens",
+        "LensType"
+      ],
+      "source": "Image::ExifTool::Nikon",
+      "value_conv": "\"$val[0] $val[1]\""
+    },
+    "LightValue": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "sprintf(\"%.1f\",$val)",
+      "require": [
+        "Aperture",
+        "ShutterSpeed",
+        "ISO"
+      ],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "Image::ExifTool::Exif::CalculateLV($val[0],$val[1],$prt[2])"
+    },
+    "Megapixels": {
+      "desire": [],
+      "inhibit": [],
+      "print_conv": "sprintf(\"%.*f\", ($val >= 1 ? 1 : ($val >= 0.001 ? 3 : 6)), $val)",
+      "require": [
+        "ImageSize"
+      ],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "my @d = ($val =~ /\\d+/g); $d[0] * $d[1] / 1000000"
+    },
+    "OriginalDecisionData": {
+      "desire": [],
+      "inhibit": [],
+      "require": [
+        "OriginalDecisionDataOffset"
+      ],
+      "source": "Image::ExifTool::Canon"
+    },
+    "OtherImage": {
+      "desire": [
+        "OtherImageStart (1)",
+        "OtherImageLength (1)"
+      ],
+      "inhibit": [],
+      "require": [
+        "OtherImageStart",
+        "OtherImageLength"
+      ],
+      "source": "Image::ExifTool::Exif"
+    },
+    "PhaseDetectAF": {
+      "desire": [],
+      "inhibit": [],
+      "require": [
+        "FocusPointSchema",
+        "AFDetectionMethod"
+      ],
+      "source": "Image::ExifTool::Nikon",
+      "value_conv": "(($val[1]) == 0) ?  ($val[0]) : 0"
+    },
+    "PreviewImage": {
+      "desire": [
+        "PreviewImageValid",
+        "PreviewImageStart (1)",
+        "PreviewImageLength (1)"
+      ],
+      "inhibit": [],
+      "require": [
+        "PreviewImageStart",
+        "PreviewImageLength"
+      ],
+      "source": "Image::ExifTool::Exif"
+    },
+    "PreviewImageSize": {
+      "desire": [],
+      "inhibit": [],
+      "require": [
+        "PreviewImageWidth",
+        "PreviewImageHeight"
+      ],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "\"$val[0]x$val[1]\""
+    },
+    "PreviewJXL": {
+      "desire": [
+        "PreviewJXLStart (1)",
+        "PreviewJXLLength (1)"
+      ],
+      "inhibit": [],
+      "require": [
+        "PreviewJXLStart",
+        "PreviewJXLLength"
+      ],
+      "source": "Image::ExifTool::Exif"
+    },
+    "RedBalance": {
+      "desire": [
+        "WB_RGGBLevels",
+        "WB_RGBGLevels",
+        "WB_RBGGLevels",
+        "WB_GRBGLevels",
+        "WB_GRGBLevels",
+        "WB_GBRGLevels",
+        "WB_RGBLevels",
+        "WB_GRBLevels",
+        "WB_RBLevels",
+        "WBRedLevel",
+        "WBGreenLevel"
+      ],
+      "inhibit": [],
+      "print_conv": "int($val * 1e6 + 0.5) * 1e-6",
+      "require": [],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "Image::ExifTool::Exif::RedBlueBalance(0,@val)"
+    },
+    "RedEyeReduction": {
+      "desire": [],
+      "inhibit": [],
+      "require": [
+        "CanonFlashMode",
+        "FlashBits"
+      ],
+      "source": "Image::ExifTool::Canon",
+      "value_conv": "($val[0]==3 or $val[0]==4 or $val[0]==6) ? 1 : 0"
+    },
+    "ScaleFactor35efl": {
+      "desire": [
+        "FocalLength",
+        "FocalLengthIn35mmFormat",
+        "DigitalZoom",
+        "FocalPlaneDiagonal",
+        "SensorSize",
+        "FocalPlaneXSize",
+        "FocalPlaneYSize",
+        "FocalPlaneResolutionUnit",
+        "FocalPlaneXResolution",
+        "FocalPlaneYResolution",
+        "ExifImageWidth",
+        "ExifImageHeight",
+        "CanonImageWidth",
+        "CanonImageHeight",
+        "ImageWidth",
+        "ImageHeight"
+      ],
+      "inhibit": [],
+      "print_conv": "sprintf(\"%.1f\", $val)",
+      "require": [],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "Image::ExifTool::Exif::CalcScaleFactor35efl($self, @val)"
+    },
+    "ShootingMode": {
+      "desire": [
+        "BulbDuration"
+      ],
+      "inhibit": [],
+      "print_conv": "$val eq \"7\" ? \"Bulb\" : ($val[0] ? $prt[0] : $prt[1])",
+      "require": [
+        "CanonExposureMode",
+        "EasyMode"
+      ],
+      "source": "Image::ExifTool::Canon",
+      "value_conv": "$val[0] ? (($val[0] eq \"4\" and $val[2]) ? 7 : $val[0]) : $val[1] + 10"
+    },
+    "ShutterCurtainHack": {
+      "desire": [
+        "ShutterCurtainSync"
+      ],
+      "inhibit": [],
+      "require": [
+        "FlashBits"
+      ],
+      "source": "Image::ExifTool::Canon",
+      "value_conv": "defined($val[0]) ? $val[0] : 0"
+    },
+    "ShutterSpeed": {
+      "desire": [
+        "ExposureTime",
+        "ShutterSpeedValue",
+        "BulbDuration"
+      ],
+      "inhibit": [],
+      "print_conv": "Image::ExifTool::Exif::PrintExposureTime($val)",
+      "require": [],
+      "source": "Image::ExifTool::Exif",
+      "value_conv": "($val[2] and $val[2]>0) ? $val[2] : (defined($val[0]) ? $val[0] : $val[1])"
+    },
+    "SubSecCreateDate": {
+      "desire": [
+        "SubSecTimeDigitized",
+        "OffsetTimeDigitized"
+      ],
+      "inhibit": [],
+      "print_conv": "$self->ConvertDateTime($val)",
+      "require": [
+        "EXIF:CreateDate"
+      ],
+      "source": "Image::ExifTool::Exif"
+    },
+    "SubSecDateTimeOriginal": {
+      "desire": [
+        "SubSecTimeOriginal",
+        "OffsetTimeOriginal"
+      ],
+      "inhibit": [],
+      "print_conv": "$self->ConvertDateTime($val)",
+      "require": [
+        "EXIF:DateTimeOriginal"
+      ],
+      "source": "Image::ExifTool::Exif"
+    },
+    "SubSecModifyDate": {
+      "desire": [
+        "SubSecTime",
+        "OffsetTime"
+      ],
+      "inhibit": [],
+      "print_conv": "$self->ConvertDateTime($val)",
+      "require": [
+        "EXIF:ModifyDate"
+      ],
+      "source": "Image::ExifTool::Exif"
+    },
+    "ThumbnailImage": {
+      "desire": [],
+      "inhibit": [],
+      "require": [
+        "ThumbnailOffset",
+        "ThumbnailLength"
+      ],
+      "source": "Image::ExifTool::Exif"
+    },
+    "ThumbnailTIFF": {
+      "desire": [
+        "PlanarConfiguration",
+        "Orientation"
+      ],
+      "inhibit": [],
+      "require": [
+        "SubfileType",
+        "Compression",
+        "ImageWidth",
+        "ImageHeight",
+        "BitsPerSample",
+        "PhotometricInterpretation",
+        "StripOffsets",
+        "SamplesPerPixel",
+        "RowsPerStrip",
+        "StripByteCounts"
+      ],
+      "source": "Image::ExifTool::Exif"
+    },
+    "WB_RGGBLevels": {
+      "desire": [
+        "WB_RGGBLevelsAsShot",
+        "WB_RGGBLevelsAuto",
+        "WB_RGGBLevelsDaylight",
+        "WB_RGGBLevelsCloudy",
+        "WB_RGGBLevelsTungsten",
+        "WB_RGGBLevelsFluorescent",
+        "WB_RGGBLevelsFlash",
+        "WB_RGGBLevelsCustom",
+        "WB_RGGBLevelsShade",
+        "WB_RGGBLevelsKelvin"
+      ],
+      "inhibit": [],
+      "require": [
+        "WhiteBalance"
+      ],
+      "source": "Image::ExifTool::Canon",
+      "value_conv": "$val[1] ? $val[1] : $val[($val[0] || 0) + 2]"
+    }
+  }
+}

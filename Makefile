@@ -1,4 +1,4 @@
-.PHONY: all ast-check ast-test check check-fmt check-json fmt lint yamllint unit-test test t codegen-test fix build install doc clean clean-generated clean-all check-deps check-perl codegen sync subdirectory-coverage check-subdirectory-coverage perl-setup perl-deps update upgrade-gha upgrade audit tests precommit compat-gen compat-gen-force compat-test test-mime-compat binary-compat-test cmp compat compat-force compat-full help
+.PHONY: all ast-check ast-test check check-fmt check-json fmt lint yamllint unit-test test t codegen-test fix build install doc clean clean-generated clean-all check-deps check-perl codegen sync expression-analysis expression-analysis-force subdirectory-coverage check-subdirectory-coverage perl-setup perl-deps update upgrade-gha upgrade audit tests precommit compat-gen compat-gen-force compat-test test-mime-compat binary-compat-test cmp compat compat-force compat-full help
 
 # Default target: build the project
 all: build
@@ -80,8 +80,7 @@ clean:
 
 # Clean generated code (use with caution - requires regeneration)
 clean-generated:
-	rm -rf src/generated
-	rm -rf codegen/generated
+	find src/generated codegen/generated -maxdepth 3 -type f -delete
 	codegen/scripts/exiftool-patcher-undo.sh
 
 # Deep clean - removes all build artifacts and generated code
@@ -97,6 +96,30 @@ codegen:
 # Extract all ExifTool algorithms and regenerate code  
 sync: codegen
 	cargo build
+
+# Generate expression analysis for required tags (composite dependencies and PPI patterns)
+expression-analysis: docs/analysis/expressions/composite-dependencies.json docs/analysis/expressions/required-expressions-analysis.json
+	@echo "✅ Expression analysis files are up to date"
+	@echo "   - composite-dependencies.json: $$(jq '._metadata.total_tags' docs/analysis/expressions/composite-dependencies.json) composite tags"
+	@echo "   - required-expressions-analysis.json: $$(jq '.summary.total_required_tags' docs/analysis/expressions/required-expressions-analysis.json) required tags analyzed"
+
+# Extract composite tag dependencies from ExifTool
+docs/analysis/expressions/composite-dependencies.json:
+	@echo "📊 Extracting composite tag dependencies..."
+	@./scripts/composite-dependencies.sh
+
+# Analyze expressions used by required tags
+docs/analysis/expressions/required-expressions-analysis.json: docs/analysis/expressions/composite-dependencies.json
+	@echo "🔍 Analyzing required tag expressions..."
+	@mkdir -p docs/analysis/expressions
+	@python3 scripts/analyze-required-expressions.py > docs/analysis/expressions/required-expressions-analysis.json 2>docs/analysis/expressions/analysis.stderr
+	@echo "   Found $$(jq '.expressions.ValueConv.unique_count' docs/analysis/expressions/required-expressions-analysis.json) unique ValueConv expressions"
+	@echo "   Found $$(jq '.expressions.PrintConv.unique_count' docs/analysis/expressions/required-expressions-analysis.json) unique PrintConv expressions"
+
+# Force regeneration of expression analysis files
+expression-analysis-force:
+	@rm -f docs/analysis/expressions/composite-dependencies.json docs/analysis/expressions/required-expressions-analysis.json
+	@$(MAKE) expression-analysis
 
 # Generate SubDirectory coverage report
 subdirectory-coverage:
