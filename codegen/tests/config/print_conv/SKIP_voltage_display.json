@@ -1,0 +1,39 @@
+{
+  "$schema": "../schema.json",
+  "description": "Voltage display formatting with sprintf",
+  "expression": "sprintf(\"%.2f V\", $val)",
+  "type": "PrintConv",
+  "exiftool_reference": "lib/Image/ExifTool/Battery.pm:42",
+  "test_cases": [
+    {
+      "description": "Basic voltage formatting - integer input",
+      "input": {
+        "U32": 100
+      },
+      "expected": {
+        "String": "1.00 V"
+      }
+    },
+    {
+      "description": "Zero voltage handling",
+      "input": {
+        "U32": 0
+      },
+      "expected": {
+        "String": "0.00 V"
+      }
+    },
+    {
+      "description": "Decimal voltage with rational input",
+      "input": {
+        "Rational": [
+          325,
+          100
+        ]
+      },
+      "expected": {
+        "String": "3.25 V"
+      }
+    }
+  ]
+}

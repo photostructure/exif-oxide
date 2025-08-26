@@ -1,0 +1,18 @@
+{
+  "$schema": "../schema.json",
+  "description": "Hexadecimal number literal (migrated from numeric_string_ops.rs)",
+  "expression": "0x100",
+  "type": "ValueConv",
+  "exiftool_reference": "hex literals used for bitmasks and flags",
+  "test_cases": [
+    {
+      "description": "Hex literal as constant",
+      "input": {
+        "String": "unused"
+      },
+      "expected": {
+        "U32": 256
+      }
+    }
+  ]
+}

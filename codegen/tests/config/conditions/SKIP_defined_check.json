@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "Check if value is defined and non-empty",
+  "expression": "defined $val",
+  "type": "Condition",
+  "exiftool_reference": "lib/Image/ExifTool/EXIF.pm:445",
+  "test_cases": [
+    {
+      "description": "Defined non-zero value",
+      "input": {
+        "U32": 42
+      },
+      "expected": {
+        "U32": 1
+      }
+    },
+    {
+      "description": "Defined zero value",
+      "input": {
+        "U32": 0
+      },
+      "expected": {
+        "U32": 1
+      }
+    },
+    {
+      "description": "Defined string value",
+      "input": {
+        "String": "test"
+      },
+      "expected": {
+        "U32": 1
+      }
+    }
+  ]
+}

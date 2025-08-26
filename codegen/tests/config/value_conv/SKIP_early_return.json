@@ -1,0 +1,27 @@
+{
+  "expression": "return undef unless $val",
+  "type": "ValueConv",
+  "description": "Early return with conditional check",
+  "exiftool_reference": "Common pattern for validation and early exit",
+  "test_cases": [
+    {
+      "description": "Value exists, no early return",
+      "input": {
+        "String": "test"
+      },
+      "expected": {
+        "String": "test"
+      }
+    },
+    {
+      "description": "Value is undefined, early return",
+      "input": {
+        "Undefined": null
+      },
+      "expected": {
+        "Undefined": null
+      }
+    }
+  ],
+  "notes": "PPI::Statement::Break for return statements"
+}

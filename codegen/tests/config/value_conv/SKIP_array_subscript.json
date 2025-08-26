@@ -1,0 +1,25 @@
+{
+  "expression": "$val[0]",
+  "type": "ValueConv",
+  "description": "Array subscript access",
+  "exiftool_reference": "Common for accessing array elements like GPS coordinates",
+  "test_cases": [
+    {
+      "description": "Access first element of array",
+      "input": {
+        "Array": [
+          {
+            "U32": 45
+          },
+          {
+            "U32": 30
+          }
+        ]
+      },
+      "expected": {
+        "U32": 45
+      }
+    }
+  ],
+  "notes": "PPI::Structure::Subscript for array access patterns"
+}

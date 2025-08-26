@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "Perl tr transliteration - replace null bytes with newlines",
+  "expression": "$val=~tr/\\0/\\n/; $val",
+  "type": "ValueConv",
+  "exiftool_reference": "lib/Image/ExifTool/GPS.pm:156",
+  "test_cases": [
+    {
+      "description": "String with null bytes should be converted to newlines",
+      "input": {
+        "String": "hello\\0world\\0test"
+      },
+      "expected": {
+        "String": "hello\\nworld\\ntest"
+      }
+    },
+    {
+      "description": "String without null bytes should remain unchanged",
+      "input": {
+        "String": "hello world test"
+      },
+      "expected": {
+        "String": "hello world test"
+      }
+    },
+    {
+      "description": "Empty string should remain empty",
+      "input": {
+        "String": ""
+      },
+      "expected": {
+        "String": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "../schema.json",
+  "description": "Pack with map for bit extraction (static function generation test)",
+  "expression": "pack(\"C*\", map { (($_>>$_)&0x1f)+0x60 } 10, 5, 0)",
+  "type": "ValueConv",
+  "exiftool_reference": "Pattern used for extracting and encoding bit fields",
+  "test_cases": [
+    {
+      "description": "Extract bits at positions 10, 5, 0 and encode",
+      "input": {
+        "U32": 1057
+      },
+      "expected": {
+        "Binary": [
+          96,
+          97,
+          96
+        ]
+      }
+    }
+  ]
+}

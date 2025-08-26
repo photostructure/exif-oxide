@@ -1,0 +1,27 @@
+{
+  "expression": "$val !~ /test/",
+  "type": "Condition",
+  "description": "Negative regex pattern matching",
+  "exiftool_reference": "Used for exclusion patterns in tag processing",
+  "test_cases": [
+    {
+      "description": "String does not contain pattern",
+      "input": {
+        "String": "hello world"
+      },
+      "expected": {
+        "Bool": true
+      }
+    },
+    {
+      "description": "String contains pattern",
+      "input": {
+        "String": "test string"
+      },
+      "expected": {
+        "Bool": false
+      }
+    }
+  ],
+  "notes": "PPI::Token::Regexp::Match with negation operator"
+}

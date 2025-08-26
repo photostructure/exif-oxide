@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "Simple arithmetic operations for value conversion",
+  "expression": "$val * 2",
+  "type": "ValueConv",
+  "exiftool_reference": "lib/Image/ExifTool/Canon.pm:156",
+  "test_cases": [
+    {
+      "description": "Double positive number",
+      "input": {
+        "U32": 50
+      },
+      "expected": {
+        "U32": 100
+      }
+    },
+    {
+      "description": "Double zero",
+      "input": {
+        "U32": 0
+      },
+      "expected": {
+        "U32": 0
+      }
+    },
+    {
+      "description": "Double negative number",
+      "input": {
+        "I32": -25
+      },
+      "expected": {
+        "I32": -50
+      }
+    }
+  ]
+}
