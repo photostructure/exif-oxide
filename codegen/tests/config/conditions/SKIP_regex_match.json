@@ -1,0 +1,27 @@
+{
+  "expression": "$val =~ /Canon/",
+  "type": "Condition",
+  "description": "Regex pattern matching",
+  "exiftool_reference": "Critical for model/manufacturer detection patterns",
+  "test_cases": [
+    {
+      "description": "Match Canon in string",
+      "input": {
+        "String": "Canon EOS 5D"
+      },
+      "expected": {
+        "Bool": true
+      }
+    },
+    {
+      "description": "No match",
+      "input": {
+        "String": "Nikon D850"
+      },
+      "expected": {
+        "Bool": false
+      }
+    }
+  ],
+  "notes": "PPI::Token::Regexp::Match for pattern matching"
+}

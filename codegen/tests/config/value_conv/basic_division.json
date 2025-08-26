@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "Simple division by 100 (migrated from basic_generation.rs)",
+  "expression": "$val / 100",
+  "type": "ValueConv",
+  "exiftool_reference": "basic arithmetic patterns - common in exposure calculations",
+  "test_cases": [
+    {
+      "description": "Divide large number by 100",
+      "input": {
+        "U32": 50000
+      },
+      "expected": {
+        "U32": 500
+      }
+    },
+    {
+      "description": "Divide smaller number by 100",
+      "input": {
+        "U32": 1000
+      },
+      "expected": {
+        "U32": 10
+      }
+    },
+    {
+      "description": "Divide decimal by 100",
+      "input": {
+        "F64": 150.5
+      },
+      "expected": {
+        "F64": 1.505
+      }
+    }
+  ]
+}

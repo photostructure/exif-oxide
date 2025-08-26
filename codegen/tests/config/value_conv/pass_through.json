@@ -1,0 +1,27 @@
+{
+  "$schema": "../schema.json",
+  "description": "Simple pass-through (no conversion)",
+  "expression": "$val",
+  "type": "ValueConv",
+  "exiftool_reference": "lib/Image/ExifTool/Example.pm:100",
+  "test_cases": [
+    {
+      "description": "Pass through string",
+      "input": {
+        "String": "test"
+      },
+      "expected": {
+        "String": "test"
+      }
+    },
+    {
+      "description": "Pass through number",
+      "input": {
+        "U32": 42
+      },
+      "expected": {
+        "U32": 42
+      }
+    }
+  ]
+}

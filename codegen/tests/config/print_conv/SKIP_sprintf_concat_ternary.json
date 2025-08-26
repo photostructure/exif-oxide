@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "sprintf with concatenation and ternary operator",
+  "expression": "sprintf(\"%.2f s\",$val) . ($val > 254.5/60 ? \" or longer\" : \"\")",
+  "type": "PrintConv",
+  "exiftool_reference": "Common pattern for displaying durations with conditional suffix",
+  "test_cases": [
+    {
+      "description": "Short duration (under 4.24 seconds)",
+      "input": {
+        "F64": 2.5
+      },
+      "expected": {
+        "String": "2.50 s"
+      }
+    },
+    {
+      "description": "Long duration (over 4.24 seconds)",
+      "input": {
+        "F64": 5.0
+      },
+      "expected": {
+        "String": "5.00 s or longer"
+      }
+    },
+    {
+      "description": "Exact threshold (254.5/60 = 4.24166...)",
+      "input": {
+        "F64": 4.24
+      },
+      "expected": {
+        "String": "4.24 s"
+      }
+    }
+  ]
+}

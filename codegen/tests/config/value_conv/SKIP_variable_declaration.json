@@ -1,0 +1,27 @@
+{
+  "$schema": "../schema.json",
+  "description": "Variable declaration and assignment (migrated from numeric_string_ops.rs)",
+  "expression": "my $temp = $val",
+  "type": "ValueConv",
+  "exiftool_reference": "temporary variable pattern for multi-step calculations",
+  "test_cases": [
+    {
+      "description": "Assign value to temporary variable",
+      "input": {
+        "U32": 42
+      },
+      "expected": {
+        "U32": 42
+      }
+    },
+    {
+      "description": "Assign string to temporary variable",
+      "input": {
+        "String": "test"
+      },
+      "expected": {
+        "String": "test"
+      }
+    }
+  ]
+}

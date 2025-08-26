@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "String interpolation with variable (migrated from basic_generation.rs)",
+  "expression": "\"Case $val\"",
+  "type": "PrintConv",
+  "exiftool_reference": "common pattern for case-sensitive value formatting",
+  "test_cases": [
+    {
+      "description": "Interpolate string value",
+      "input": {
+        "String": "A"
+      },
+      "expected": {
+        "String": "Case A"
+      }
+    },
+    {
+      "description": "Interpolate numeric value",
+      "input": {
+        "U32": 42
+      },
+      "expected": {
+        "String": "Case 42"
+      }
+    },
+    {
+      "description": "Interpolate decimal value",
+      "input": {
+        "F64": 3.14
+      },
+      "expected": {
+        "String": "Case 3.14"
+      }
+    }
+  ]
+}
