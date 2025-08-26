@@ -8,7 +8,6 @@ mod registry;
 mod stats;
 
 pub use registry::{FunctionSpec, PpiFunctionRegistry, UsageContext};
-pub use stats::{ConversionStats, RegistryStats};
 
 use anyhow::Result;
 use indoc::formatdoc;
@@ -23,6 +22,14 @@ use crate::strategies::GeneratedFile;
 impl PpiFunctionRegistry {
     /// Generate all function files after all modules have been processed
     pub fn generate_function_files(&mut self) -> Result<Vec<GeneratedFile>> {
+        self.generate_function_files_with_imports("crate::types::{TagValue, ExifContext}")
+    }
+
+    /// Generate all function files with custom imports (for test environment)
+    pub fn generate_function_files_with_imports(
+        &mut self,
+        import_path: &str,
+    ) -> Result<Vec<GeneratedFile>> {
         let mut files = Vec::new();
 
         // Collect all the data we need first to avoid borrow checker issues
@@ -58,7 +65,11 @@ impl PpiFunctionRegistry {
 
         for prefix in prefixes {
             let function_codes = functions_by_prefix.get(prefix).unwrap();
-            let file_content = self.generate_function_file_content(prefix, function_codes);
+            let file_content = self.generate_function_file_content_with_imports(
+                prefix,
+                function_codes,
+                import_path,
+            );
             let file_path = format!("functions/hash_{}.rs", prefix);
 
             files.push(GeneratedFile {
@@ -126,8 +137,13 @@ impl PpiFunctionRegistry {
         Ok(function_code)
     }
 
-    /// Generate content for a single function file
-    fn generate_function_file_content(&self, prefix: &str, function_codes: &[String]) -> String {
+    /// Generate content for a single function file with custom imports
+    fn generate_function_file_content_with_imports(
+        &self,
+        prefix: &str,
+        function_codes: &[String],
+        import_path: &str,
+    ) -> String {
         let mut content = formatdoc! {r#"
             //! Generated AST functions for hash prefix {prefix_upper}
             //!
@@ -136,9 +152,9 @@ impl PpiFunctionRegistry {
 
             #![allow(dead_code, unused_variables, unreachable_code)]
 
-            use crate::types::{{TagValue, ExifContext}};
+            use {import_path};
 
-        "#, prefix_upper = prefix.to_uppercase()};
+        "#, prefix_upper = prefix.to_uppercase(), import_path = import_path};
 
         // Sort function codes for deterministic output
         let mut sorted_function_codes = function_codes.to_vec();
@@ -207,7 +223,7 @@ impl PpiFunctionRegistry {
             ),
             ExpressionType::ValueConv => (
                 format!(
-                    "pub fn {}(val: &TagValue) -> Result<TagValue, crate::types::ExifError>",
+                    "pub fn {}(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>",
                     function_spec.function_name
                 ),
                 "Ok(val.clone())",

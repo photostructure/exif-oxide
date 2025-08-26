@@ -4,13 +4,12 @@
 //! Perl function calls and their Rust equivalents.
 
 use super::errors::CodeGenError;
+use super::visitor::PpiVisitor;
 use crate::ppi::types::*;
 use indoc::formatdoc;
 
 /// Trait for generating function calls and related constructs
-pub trait FunctionGenerator {
-    fn expression_type(&self) -> &ExpressionType;
-
+pub trait FunctionGenerator: PpiVisitor {
     /// Generate multi-argument function call using AST traversal (e.g., "join ' ', unpack 'H2H2', val")
     fn generate_multi_arg_function_call(
         &self,
@@ -316,34 +315,77 @@ pub trait FunctionGenerator {
             ));
         }
 
-        // Extract format string from first child node
-        let format_str = if let Some(ref string_value) = node.children[0].string_value {
-            string_value.clone()
-        } else if let Some(ref content) = node.children[0].content {
-            content.trim_matches('"').trim_matches('\'').to_string()
-        } else {
+        // The children might be wrapped in a Statement::Expression
+        // Check if first child is a Statement::Expression and unwrap if needed
+        let actual_args =
+            if node.children.len() == 1 && node.children[0].class == "PPI::Statement::Expression" {
+                &node.children[0].children
+            } else {
+                &node.children
+            };
+
+        if actual_args.is_empty() {
             return Err(CodeGenError::UnsupportedStructure(
-                "sprintf missing format string".to_string(),
+                "sprintf needs arguments".to_string(),
             ));
+        }
+
+        // Extract format string from first argument, skipping commas
+        let mut arg_index = 0;
+        let format_str = loop {
+            if arg_index >= actual_args.len() {
+                return Err(CodeGenError::UnsupportedStructure(
+                    "sprintf missing format string".to_string(),
+                ));
+            }
+
+            let arg = &actual_args[arg_index];
+            // Skip comma operators
+            if arg.class == "PPI::Token::Operator" && arg.content.as_deref() == Some(",") {
+                arg_index += 1;
+                continue;
+            }
+
+            // Extract the format string
+            let fmt = if let Some(ref string_value) = arg.string_value {
+                string_value.clone()
+            } else if let Some(ref content) = arg.content {
+                content.trim_matches('"').trim_matches('\'').to_string()
+            } else {
+                return Err(CodeGenError::UnsupportedStructure(
+                    "sprintf missing format string".to_string(),
+                ));
+            };
+            arg_index += 1;
+            break fmt;
         };
 
-        // Process remaining arguments using AST traversal
-        let format_args: Result<Vec<String>, CodeGenError> = node.children[1..]
-            .iter()
-            .map(|child| {
-                if let Some(ref content) = child.content {
-                    Ok(content.clone())
-                } else if let Some(ref string_value) = child.string_value {
-                    Ok(format!("\"{}\"", string_value))
-                } else {
-                    Ok("val".to_string()) // Fallback
-                }
-            })
-            .collect();
+        // Process remaining arguments, skipping commas
+        let mut args = Vec::new();
+        for i in arg_index..actual_args.len() {
+            let child = &actual_args[i];
 
-        let args = format_args?;
+            // Skip comma operators
+            if child.class == "PPI::Token::Operator" && child.content.as_deref() == Some(",") {
+                continue;
+            }
+
+            let arg = if let Some(ref content) = child.content {
+                content.replace("$val", "val")
+            } else if let Some(ref string_value) = child.string_value {
+                format!("\"{}\"", string_value)
+            } else {
+                "val".to_string() // Fallback
+            };
+            args.push(arg);
+        }
 
         // Handle different sprintf patterns based on arguments
+        if args.is_empty() {
+            // No arguments provided, use val as default
+            args.push("val".to_string());
+        }
+
         if args.len() == 1 {
             // Simple case: sprintf("format", single_arg)
             let arg = &args[0];
