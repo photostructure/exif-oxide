@@ -153,7 +153,6 @@ pub trait ComplexPatternHandler {
         Ok(None)
     }
 
-
     /// Handle sprintf with string operations
     fn handle_sprintf_with_string_operations(
         &self,
@@ -265,7 +264,7 @@ pub trait ComplexPatternHandler {
         if parts.len() == 3 && parts[1] == "," {
             let format_str = &parts[0];
             let variable = &parts[2];
-            
+
             // Check if this looks like sprintf arguments (quoted format string)
             if format_str.starts_with('"') && format_str.ends_with('"') {
                 match self.expression_type() {
