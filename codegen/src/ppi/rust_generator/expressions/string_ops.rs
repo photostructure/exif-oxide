@@ -190,8 +190,6 @@ pub trait StringOperationsHandler {
         pattern: &str,
     ) -> Result<String, CodeGenError> {
         // Count capture groups by counting opening parentheses (not escaped)
-        let capture_count = pattern.matches('(').count();
-
         // Generate regex static variable name based on pattern hash
         use std::collections::hash_map::DefaultHasher;
         use std::hash::{Hash, Hasher};
@@ -229,7 +227,7 @@ pub trait StringOperationsHandler {
     fn handle_regex_substitution(
         &self,
         left: &str,
-        op: &str,
+        _op: &str,
         substitution: &str,
     ) -> Result<String, CodeGenError> {
         // Parse s/pattern/replacement/flags
@@ -417,10 +415,13 @@ pub trait StringOperationsHandler {
                 let args_str = if args.is_empty() {
                     "val".to_string()
                 } else {
-                    args.join(", ")
+                    args.join(", ").replace("$val", "val")
                 };
 
-                return Ok(format!("format!(\"{}\", {})", format_str, args_str));
+                // Convert Perl format to Rust format
+                let rust_format = self.convert_perl_sprintf_format(&format_str);
+
+                return Ok(format!("format!(\"{}\", {})", rust_format, args_str));
             }
         }
 
@@ -537,4 +538,47 @@ pub trait StringOperationsHandler {
 
     /// Process function arguments from child nodes
     fn process_function_args(&self, children: &[PpiNode]) -> Result<Vec<String>, CodeGenError>;
+
+    /// Convert Perl sprintf format string to Rust format! compatible format
+    fn convert_perl_sprintf_format(&self, perl_format: &str) -> String {
+        let mut rust_format = perl_format.to_string();
+
+        // Float precision: %.3f -> {:.3}, %.2f -> {:.2}, %.0f -> {:.0}
+        for precision in (0..=10).rev() {
+            let perl_pattern = format!("%.{}f", precision);
+            let rust_pattern = format!("{{:.{}}}", precision);
+            rust_format = rust_format.replace(&perl_pattern, &rust_pattern);
+        }
+
+        // Integer padding: %.3d -> {:03}, %.5d -> {:05}
+        for width in (1..=10).rev() {
+            let perl_pattern = format!("%.{}d", width);
+            let rust_pattern = format!("{{:0{}}}", width);
+            rust_format = rust_format.replace(&perl_pattern, &rust_pattern);
+        }
+
+        // Hex with padding: %.8x -> {:08x}, %.4X -> {:04X}
+        for width in (1..=10).rev() {
+            let perl_pattern_lower = format!("%.{}x", width);
+            let rust_pattern_lower = format!("{{:0{}x}}", width);
+            rust_format = rust_format.replace(&perl_pattern_lower, &rust_pattern_lower);
+
+            let perl_pattern_upper = format!("%.{}X", width);
+            let rust_pattern_upper = format!("{{:0{}X}}", width);
+            rust_format = rust_format.replace(&perl_pattern_upper, &rust_pattern_upper);
+        }
+
+        // Handle generic formats (no precision/padding)
+        rust_format = rust_format.replace("%d", "{}");
+        rust_format = rust_format.replace("%s", "{}");
+        rust_format = rust_format.replace("%f", "{}");
+        rust_format = rust_format.replace("%x", "{:x}");
+        rust_format = rust_format.replace("%X", "{:X}");
+        rust_format = rust_format.replace("%o", "{:o}");
+
+        // Handle escaped percent: %% -> %
+        rust_format = rust_format.replace("%%", "%");
+
+        rust_format
+    }
 }

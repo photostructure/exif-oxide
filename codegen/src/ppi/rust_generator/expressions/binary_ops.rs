@@ -189,11 +189,9 @@ pub trait BinaryOperationsHandler {
         let left_is_string = left.starts_with('"') && left.ends_with('"');
         let right_is_string = right.starts_with('"') && right.ends_with('"');
 
-        // If either operand is 'val' (TagValue), treat as string comparison
-        let left_is_tagvalue = left.trim() == "val";
-        let right_is_tagvalue = right.trim() == "val";
-
-        (left_is_string || right_is_string) || (left_is_tagvalue || right_is_tagvalue)
+        // Only treat as string comparison if at least one side is actually a string
+        // Don't assume val comparisons are always strings - they could be numeric
+        left_is_string || right_is_string
     }
 
     /// Handle regex matching operations - delegate to string operations
