@@ -14,9 +14,9 @@ pub mod fn_registry;
 pub mod normalizer;
 pub mod parser;
 pub mod rust_generator;
+pub mod shared_pipeline;
 pub mod types;
 
 pub use fn_registry::*;
 pub use parser::*;
-pub use rust_generator::*;
 pub use types::*;
