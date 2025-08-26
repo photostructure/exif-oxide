@@ -7,9 +7,8 @@
 //! - Block structures and closures
 //! - Multi-statement expressions
 
-use crate::ppi::rust_generator::expressions::ExpressionCombiner;
-use crate::ppi::RustGenerator;
-use crate::ppi::{CodeGenError, ExpressionType, PpiNode};
+use crate::ppi::rust_generator::{CodeGenError, RustGenerator};
+use crate::ppi::{ExpressionType, PpiNode};
 use serde_json::json;
 
 #[test]
