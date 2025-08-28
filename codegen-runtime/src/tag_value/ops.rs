@@ -231,6 +231,39 @@ impl Div<f64> for TagValue {
     }
 }
 
+// Implement TagValue op TagValue (owned values) by delegating to borrowed operations
+impl Add for TagValue {
+    type Output = TagValue;
+
+    fn add(self, rhs: TagValue) -> Self::Output {
+        (&self) + (&rhs)
+    }
+}
+
+impl Sub for TagValue {
+    type Output = TagValue;
+
+    fn sub(self, rhs: TagValue) -> Self::Output {
+        (&self) - (&rhs)
+    }
+}
+
+impl Mul for TagValue {
+    type Output = TagValue;
+
+    fn mul(self, rhs: TagValue) -> Self::Output {
+        (&self) * (&rhs)
+    }
+}
+
+impl Div for TagValue {
+    type Output = TagValue;
+
+    fn div(self, rhs: TagValue) -> Self::Output {
+        (&self) / (&rhs)
+    }
+}
+
 // Helper methods for TagValue
 impl TagValue {
     /// Convert to numeric value (f64) if possible
@@ -290,5 +323,21 @@ mod tests {
         let b = TagValue::U32(2);
         let result = &a * &b;
         assert_eq!(result, TagValue::F64(21.0));
+    }
+
+    #[test]
+    fn test_tagvalue_multiply_tagvalue_owned() {
+        let a = TagValue::U32(10);
+        let b = TagValue::U32(5);
+        let result = a * b; // Using owned values, not borrowed
+        assert_eq!(result, TagValue::U32(50));
+    }
+
+    #[test]
+    fn test_tagvalue_multiply_float_owned() {
+        let a = TagValue::F64(3.5);
+        let b = TagValue::F64(2.0);
+        let result = a * b; // Using owned values, not borrowed
+        assert_eq!(result, TagValue::F64(7.0));
     }
 }

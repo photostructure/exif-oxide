@@ -14,7 +14,9 @@ use crate::TagValue;
 ///
 /// # Examples
 /// ```
-/// unpack_binary("nC2", &TagValue::Binary(vec![0x20, 0x24, 0x0A, 0x14]))
+/// use codegen_runtime::{TagValue, data::unpack_binary};
+/// 
+/// let result = unpack_binary("nC2", &TagValue::Binary(vec![0x20, 0x24, 0x0A, 0x14]));
 /// // Returns: [TagValue::U16(8228), TagValue::U8(10), TagValue::U8(20)]
 /// ```
 pub fn unpack_binary(spec: &str, val: &TagValue) -> Vec<TagValue> {
@@ -34,23 +36,52 @@ fn unpack_bytes(spec: &str, bytes: &[u8]) -> Vec<TagValue> {
     let mut spec_chars = spec.chars().peekable();
 
     while let Some(ch) = spec_chars.next() {
-        // Get repeat count if present
-        let mut count_str = String::new();
-        while let Some(&next) = spec_chars.peek() {
-            if next.is_ascii_digit() {
-                count_str.push(spec_chars.next().unwrap());
-            } else {
-                break;
+        // Handle special cases that need to look ahead for their own count
+        match ch {
+            'H' => {
+                // Hex string - next char should be digit count
+                let hex_count = if let Some(&next) = spec_chars.peek() {
+                    if next.is_ascii_digit() {
+                        spec_chars.next().unwrap().to_digit(10).unwrap_or(2) as usize
+                    } else {
+                        2 // Default to 2 hex digits
+                    }
+                } else {
+                    2 // Default to 2 hex digits
+                };
+                
+                let byte_count = (hex_count + 1) / 2; // Round up
+                let mut hex_str = String::new();
+                for _ in 0..byte_count {
+                    if byte_index < bytes.len() {
+                        hex_str.push_str(&format!("{:02x}", bytes[byte_index]));
+                        byte_index += 1;
+                    } else {
+                        hex_str.push_str("00");
+                    }
+                }
+                // Truncate to exact hex digit count
+                hex_str.truncate(hex_count);
+                results.push(TagValue::String(hex_str));
             }
-        }
-        let count = if count_str.is_empty() {
-            1
-        } else {
-            count_str.parse::<usize>().unwrap_or(1)
-        };
+            _ => {
+                // Get repeat count if present for other format characters
+                let mut count_str = String::new();
+                while let Some(&next) = spec_chars.peek() {
+                    if next.is_ascii_digit() {
+                        count_str.push(spec_chars.next().unwrap());
+                    } else {
+                        break;
+                    }
+                }
+                let count = if count_str.is_empty() {
+                    1
+                } else {
+                    count_str.parse::<usize>().unwrap_or(1)
+                };
 
-        // Process the format character
-        for _ in 0..count {
+                // Process the format character
+                for _ in 0..count {
             if byte_index >= bytes.len() {
                 // Not enough bytes - pad with zeros
                 results.push(TagValue::I32(0));
@@ -120,33 +151,13 @@ fn unpack_bytes(spec: &str, bytes: &[u8]) -> Vec<TagValue> {
                         byte_index = bytes.len();
                     }
                 }
-                'H' => {
-                    // Hex string - next char should be digit count
-                    if let Some(&next) = spec_chars.peek() {
-                        if next.is_ascii_digit() {
-                            let hex_count =
-                                spec_chars.next().unwrap().to_digit(10).unwrap_or(2) as usize;
-                            let byte_count = (hex_count + 1) / 2; // Round up
-                            let mut hex_str = String::new();
-                            for _ in 0..byte_count {
-                                if byte_index < bytes.len() {
-                                    hex_str.push_str(&format!("{:02x}", bytes[byte_index]));
-                                    byte_index += 1;
-                                } else {
-                                    hex_str.push_str("00");
-                                }
-                            }
-                            // Truncate to exact hex digit count
-                            hex_str.truncate(hex_count);
-                            results.push(TagValue::String(hex_str));
-                        }
-                    }
-                }
                 _ => {
                     // Unknown format - skip
                     byte_index += 1;
                 }
+                }
             }
+        }
         }
     }
 

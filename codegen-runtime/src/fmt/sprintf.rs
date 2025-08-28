@@ -13,14 +13,16 @@ use std::collections::VecDeque;
 ///
 /// # Examples
 /// ```
-/// sprintf_perl("%.3f x %.3f mm", &[TagValue::F64(1.234), TagValue::F64(5.678)])
-/// // Returns: "1.234 x 5.678 mm"
+/// use codegen_runtime::{TagValue, fmt::sprintf_perl};
+/// 
+/// let result = sprintf_perl("%.3f x %.3f mm", &[TagValue::F64(1.234), TagValue::F64(5.678)]);
+/// assert_eq!(result, "1.234 x 5.678 mm");
 ///
-/// sprintf_perl("%.3f x %.3f mm", &[TagValue::F64(1.234)])  
-/// // Returns: "1.234 x 0.000 mm" (missing arg becomes 0)
+/// let result = sprintf_perl("%.3f x %.3f mm", &[TagValue::F64(1.234)]);
+/// assert_eq!(result, "1.234 x 0.000 mm"); // missing arg becomes 0
 ///
-/// sprintf_perl("%.2f", &[TagValue::F64(1.234), TagValue::F64(5.678)])
-/// // Returns: "1.23" (extra arg ignored)
+/// let result = sprintf_perl("%.2f", &[TagValue::F64(1.234), TagValue::F64(5.678)]);
+/// assert_eq!(result, "1.23"); // extra arg ignored
 /// ```
 pub fn sprintf_perl(format: &str, args: &[TagValue]) -> String {
     // Extract all format specifiers from the format string
@@ -204,6 +206,21 @@ fn tagvalue_to_i64(val: &TagValue) -> i64 {
         TagValue::F64(f) => *f as i64,
         // F32 doesn't exist in TagValue enum - already handled by F64 above
         TagValue::String(s) => s.parse::<i64>().unwrap_or(0),
+        // Handle rational numbers - divide numerator by denominator and truncate
+        TagValue::Rational(num, den) => {
+            if *den != 0 {
+                (*num as f64 / *den as f64) as i64
+            } else {
+                0
+            }
+        }
+        TagValue::SRational(num, den) => {
+            if *den != 0 {
+                (*num as f64 / *den as f64) as i64
+            } else {
+                0
+            }
+        }
         _ => 0,
     }
 }
@@ -218,6 +235,21 @@ fn tagvalue_to_f64(val: &TagValue) -> f64 {
         TagValue::U16(u) => *u as f64,
         TagValue::U8(u) => *u as f64,
         TagValue::String(s) => s.parse::<f64>().unwrap_or(0.0),
+        // Handle rational numbers - divide numerator by denominator
+        TagValue::Rational(num, den) => {
+            if *den != 0 {
+                *num as f64 / *den as f64
+            } else {
+                0.0
+            }
+        }
+        TagValue::SRational(num, den) => {
+            if *den != 0 {
+                *num as f64 / *den as f64
+            } else {
+                0.0
+            }
+        }
         _ => 0.0,
     }
 }
@@ -404,7 +436,7 @@ mod tests {
 
     #[test]
     fn test_sprintf_with_math() {
-        // Test the actual use case: sprintf("%.2f%%", $val * 100)  
+        // Test the actual use case: sprintf("%.2f%%", $val * 100)
         let args = vec![TagValue::F64(25.0)]; // This would be val * 100 = 0.25 * 100 = 25.0
         assert_eq!(sprintf_perl("%.2f%%", &args), "25.00%");
     }

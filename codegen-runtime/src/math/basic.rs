@@ -1,0 +1,344 @@
+//! Basic mathematical functions for Perl-to-Rust code generation
+//!
+//! This module provides Rust implementations of basic Perl mathematical functions
+//! like int(), exp(), log() that are commonly used in ExifTool expressions.
+
+use crate::TagValue;
+
+/// Perl exp() function - returns e raised to the power of the argument
+///
+/// In Perl, exp() converts its argument to a number and returns e^x.
+///
+/// # Arguments
+/// * `val` - Value that can be converted to TagValue
+///
+/// # Returns
+/// TagValue::F64 containing e^val
+///
+/// # Example
+/// ```rust
+/// # use codegen_runtime::{TagValue, exp};
+/// let result = exp(TagValue::F64(1.0));
+/// let result2 = exp(2i32);  // Also works
+/// // Should be approximately e ≈ 2.718281828
+/// ```
+pub fn exp<T: Into<TagValue>>(val: T) -> TagValue {
+    let val = val.into();
+    let num = match val {
+        TagValue::F64(f) => f,
+        TagValue::I32(i) => i as f64,
+        TagValue::I16(i) => i as f64,
+        TagValue::U8(u) => u as f64,
+        TagValue::U16(u) => u as f64,
+        TagValue::U32(u) => u as f64,
+        TagValue::U64(u) => u as f64,
+        TagValue::String(s) => s.parse::<f64>().unwrap_or(0.0),
+        TagValue::Rational(num, denom) => {
+            if denom != 0 {
+                num as f64 / denom as f64
+            } else {
+                0.0
+            }
+        }
+        TagValue::SRational(num, denom) => {
+            if denom != 0 {
+                num as f64 / denom as f64
+            } else {
+                0.0
+            }
+        }
+        TagValue::Empty => 0.0,
+        _ => val.to_string().parse::<f64>().unwrap_or(0.0),
+    };
+
+    TagValue::F64(num.exp())
+}
+
+/// Perl log() function - returns the natural logarithm of the argument
+///
+/// In Perl, log() converts its argument to a number and returns ln(x).
+/// For values <= 0, Perl's behavior varies, but we'll return NaN for safety.
+///
+/// # Arguments
+/// * `val` - Value that can be converted to TagValue
+///
+/// # Returns
+/// TagValue::F64 containing ln(val)
+///
+/// # Example
+/// ```rust
+/// # use codegen_runtime::{TagValue, log};
+/// let result = log(TagValue::F64(2.718281828));
+/// let result2 = log(2i32);  // Also works
+/// // Should be approximately 1.0
+/// ```
+pub fn log<T: Into<TagValue>>(val: T) -> TagValue {
+    let val = val.into();
+    let num = match val {
+        TagValue::F64(f) => f,
+        TagValue::I32(i) => i as f64,
+        TagValue::I16(i) => i as f64,
+        TagValue::U8(u) => u as f64,
+        TagValue::U16(u) => u as f64,
+        TagValue::U32(u) => u as f64,
+        TagValue::U64(u) => u as f64,
+        TagValue::String(s) => s.parse::<f64>().unwrap_or(0.0),
+        TagValue::Rational(num, denom) => {
+            if denom != 0 {
+                num as f64 / denom as f64
+            } else {
+                0.0
+            }
+        }
+        TagValue::SRational(num, denom) => {
+            if denom != 0 {
+                num as f64 / denom as f64
+            } else {
+                0.0
+            }
+        }
+        TagValue::Empty => 0.0,
+        _ => val.to_string().parse::<f64>().unwrap_or(0.0),
+    };
+
+    if num > 0.0 {
+        TagValue::F64(num.ln())
+    } else {
+        TagValue::F64(f64::NAN)
+    }
+}
+
+/// Perl int() function - converts a number to integer by truncating towards zero
+///
+/// In Perl, int() truncates towards zero (not floor), so:
+/// - int(3.7) = 3
+/// - int(-3.7) = -3
+/// - int(0.5) = 0
+///
+/// This matches Perl's behavior exactly, following the "Trust ExifTool" principle.
+///
+/// # Arguments
+/// * `val` - Value that can be converted to TagValue
+///
+/// # Returns
+/// TagValue containing the truncated integer value
+///
+/// # Example
+/// ```rust
+/// # use codegen_runtime::{TagValue, int};
+/// assert_eq!(int(TagValue::F64(3.7)), TagValue::F64(3.0));
+/// assert_eq!(int(TagValue::F64(-3.7)), TagValue::F64(-3.0));
+/// assert_eq!(int(TagValue::I32(42)), TagValue::F64(42.0));
+/// assert_eq!(int(3.7f64), TagValue::F64(3.0));  // Also works with literals
+/// ```
+pub fn int<T: Into<TagValue>>(val: T) -> TagValue {
+    let val = val.into();
+    match val {
+        TagValue::F64(f) => TagValue::F64(f.trunc()),
+        TagValue::U8(n) => TagValue::F64(n as f64),
+        TagValue::U16(n) => TagValue::F64(n as f64),
+        TagValue::U32(n) => TagValue::F64(n as f64),
+        TagValue::U64(n) => TagValue::F64(n as f64),
+        TagValue::I16(n) => TagValue::F64(n as f64),
+        TagValue::I32(n) => TagValue::F64(n as f64),
+        TagValue::String(s) => {
+            if let Ok(f) = s.parse::<f64>() {
+                TagValue::F64(f.trunc())
+            } else {
+                // Non-numeric string - Perl int() returns 0
+                TagValue::F64(0.0)
+            }
+        }
+        TagValue::Rational(num, denom) => {
+            if denom != 0 {
+                let f = num as f64 / denom as f64;
+                TagValue::F64(f.trunc())
+            } else {
+                TagValue::F64(0.0)
+            }
+        }
+        TagValue::SRational(num, denom) => {
+            if denom != 0 {
+                let f = num as f64 / denom as f64;
+                TagValue::F64(f.trunc())
+            } else {
+                TagValue::F64(0.0)
+            }
+        }
+        TagValue::Empty => TagValue::F64(0.0),
+        _ => {
+            // For complex types, try converting to string then parsing
+            if let Ok(f) = val.to_string().parse::<f64>() {
+                TagValue::F64(f.trunc())
+            } else {
+                TagValue::F64(0.0)
+            }
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_int_function() {
+        // Positive floats - truncate towards zero
+        assert_eq!(int(TagValue::F64(3.7)), TagValue::F64(3.0));
+        assert_eq!(int(TagValue::F64(3.2)), TagValue::F64(3.0));
+        assert_eq!(int(TagValue::F64(0.9)), TagValue::F64(0.0));
+
+        // Negative floats - truncate towards zero (not floor)
+        assert_eq!(int(TagValue::F64(-3.7)), TagValue::F64(-3.0));
+        assert_eq!(int(TagValue::F64(-3.2)), TagValue::F64(-3.0));
+        assert_eq!(int(TagValue::F64(-0.9)), TagValue::F64(0.0));
+
+        // Integers should convert to F64
+        assert_eq!(int(TagValue::I32(42)), TagValue::F64(42.0));
+        assert_eq!(int(TagValue::I32(-42)), TagValue::F64(-42.0));
+        assert_eq!(int(TagValue::U16(100)), TagValue::F64(100.0));
+
+        // String parsing
+        assert_eq!(int(TagValue::String("3.7".to_string())), TagValue::F64(3.0));
+        assert_eq!(
+            int(TagValue::String("-2.9".to_string())),
+            TagValue::F64(-2.0)
+        );
+        assert_eq!(int(TagValue::String("42".to_string())), TagValue::F64(42.0));
+
+        // Non-numeric strings return 0 (Perl behavior)
+        assert_eq!(
+            int(TagValue::String("hello".to_string())),
+            TagValue::F64(0.0)
+        );
+        assert_eq!(int(TagValue::String("".to_string())), TagValue::F64(0.0));
+
+        // Rational numbers
+        assert_eq!(int(TagValue::Rational(7, 2)), TagValue::F64(3.0)); // 7/2 = 3.5 -> 3
+        assert_eq!(int(TagValue::SRational(-7, 2)), TagValue::F64(-3.0)); // -7/2 = -3.5 -> -3
+        assert_eq!(int(TagValue::SRational(5, 2)), TagValue::F64(2.0)); // 5/2 = 2.5 -> 2
+
+        // Edge cases
+        assert_eq!(int(TagValue::Empty), TagValue::F64(0.0));
+        assert_eq!(int(TagValue::Rational(0, 1)), TagValue::F64(0.0));
+        assert_eq!(int(TagValue::Rational(5, 0)), TagValue::F64(0.0)); // Division by zero
+    }
+
+    #[test]
+    fn test_int_vs_floor() {
+        // Verify that int() truncates towards zero, not floor
+        // This is the key difference between Perl's int() and floor()
+
+        // Positive numbers: int() and floor() are the same
+        assert_eq!(int(TagValue::F64(3.7)), TagValue::F64(3.0));
+        // floor(3.7) would also be 3.0
+
+        // Negative numbers: int() and floor() are different
+        assert_eq!(int(TagValue::F64(-3.7)), TagValue::F64(-3.0)); // int() truncates towards zero
+                                                                   // floor(-3.7) would be -4.0 (rounds down)
+
+        assert_eq!(int(TagValue::F64(-0.5)), TagValue::F64(0.0)); // int() -> 0
+                                                                  // floor(-0.5) would be -1.0 (rounds down)
+    }
+
+    #[test]
+    fn test_exp_function() {
+        // exp(0) = 1
+        assert_eq!(exp(TagValue::F64(0.0)), TagValue::F64(1.0));
+
+        // exp(1) ≈ e
+        let result = exp(TagValue::F64(1.0));
+        if let TagValue::F64(val) = result {
+            assert!((val - std::f64::consts::E).abs() < 1e-10);
+        } else {
+            panic!("Expected F64 result");
+        }
+
+        // Integer input
+        let result = exp(TagValue::I32(2));
+        if let TagValue::F64(val) = result {
+            assert!((val - (2.0_f64.exp())).abs() < 1e-10);
+        } else {
+            panic!("Expected F64 result");
+        }
+    }
+
+    #[test]
+    fn test_log_function() {
+        // log(1) = 0
+        assert_eq!(log(TagValue::F64(1.0)), TagValue::F64(0.0));
+
+        // log(e) ≈ 1
+        let result = log(TagValue::F64(std::f64::consts::E));
+        if let TagValue::F64(val) = result {
+            assert!((val - 1.0).abs() < 1e-10);
+        } else {
+            panic!("Expected F64 result");
+        }
+
+        // log(2) ≈ ln(2)
+        let result = log(TagValue::F64(2.0));
+        if let TagValue::F64(val) = result {
+            assert!((val - 2.0_f64.ln()).abs() < 1e-10);
+        } else {
+            panic!("Expected F64 result");
+        }
+
+        // log(0) or negative values return NaN
+        let result = log(TagValue::F64(0.0));
+        if let TagValue::F64(val) = result {
+            assert!(val.is_nan());
+        } else {
+            panic!("Expected F64 result");
+        }
+    }
+
+    #[test]
+    fn test_log_with_generic_input() {
+        // Test log() with integer literals (what was failing before)
+        let result = log(2i32);
+        if let TagValue::F64(val) = result {
+            assert!((val - 2.0_f64.ln()).abs() < 1e-10);
+        } else {
+            panic!("Expected F64 result");
+        }
+
+        // Test log() with f64 literals
+        let result = log(2.0f64);
+        if let TagValue::F64(val) = result {
+            assert!((val - 2.0_f64.ln()).abs() < 1e-10);
+        } else {
+            panic!("Expected F64 result");
+        }
+    }
+
+    #[test]
+    fn test_exp_with_generic_input() {
+        // Test exp() with integer literals (what was failing before)
+        let result = exp(2i32);
+        if let TagValue::F64(val) = result {
+            assert!((val - (2.0_f64.exp())).abs() < 1e-10);
+        } else {
+            panic!("Expected F64 result");
+        }
+
+        // Test exp() with f64 literals
+        let result = exp(1.0f64);
+        if let TagValue::F64(val) = result {
+            assert!((val - std::f64::consts::E).abs() < 1e-10);
+        } else {
+            panic!("Expected F64 result");
+        }
+    }
+
+    #[test]
+    fn test_int_with_generic_input() {
+        // Test int() with f64 literals
+        assert_eq!(int(3.7f64), TagValue::F64(3.0));
+        assert_eq!(int(-3.7f64), TagValue::F64(-3.0));
+
+        // Test int() with i32 literals
+        assert_eq!(int(42i32), TagValue::F64(42.0));
+        assert_eq!(int(-42i32), TagValue::F64(-42.0));
+    }
+}
