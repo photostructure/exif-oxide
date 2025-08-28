@@ -371,7 +371,91 @@ These tools help diagnose:
 - Whether PPI parsing matches your expectations
 - Pattern recognition issues in the expression generator
 
-**3. Writing New AST Normalizers**
+**3. Static Pipeline Integration Testing**
+
+For rapid development and debugging of PPI→AST→Rust generation issues, use the JSON-based static test system:
+
+**Create Test Configuration**:
+```bash
+# Generate test for your problematic expression
+cd codegen
+./scripts/create_test_config.sh "sprintf(\"%.2f V\", \$val)" PrintConv voltage_format
+```
+
+**Generated Test Structure** (see `codegen/tests/config/schema.json` for complete JSON schema):
+```json
+{
+    "expression": "sprintf(\"%.2f V\", $val)",
+    "type": "PrintConv", 
+    "description": "Format voltage with 2 decimal places",
+    "exiftool_reference": "common pattern for electrical measurements",
+    "test_cases": [
+        {
+            "description": "Test case description",
+            "input": {"F64": 3.3}, 
+            "expected": {"String": "3.30 V"}
+        },
+        {
+            "description": "Another test case", 
+            "input": {"F64": 12.0}, 
+            "expected": {"String": "12.00 V"}
+        }
+    ]
+}
+```
+
+**Run Tests**:
+```bash
+# Generate all expression tests from JSON configs
+cd codegen && make generate-expression-tests
+
+# Test single expression file for rapid iteration (debug mode)
+make test-expression-file FILE=tests/config/value_conv/multiply_by_25.json
+
+# Run all generated tests
+cargo test -p codegen --test generated_expressions
+
+# Debug single expression through pipeline
+make debug-expression EXPR='$$val * 25'
+```
+
+**Generated Test Architecture**:
+
+The test generation system follows a complete pipeline approach:
+
+1. **JSON configs** → Define expressions with test cases (`codegen/tests/config/`)
+2. **PPI AST generation** → Call `ppi_ast.pl` for each expression
+3. **AST normalization** → Apply multi-pass normalizer
+4. **Function registration** → Use `PpiFunctionRegistry` for deduplication
+5. **Function generation** → Create deduplicated functions in `tests/generated/functions/hash_XX.rs`
+6. **Test generation** → Create test files that import and execute generated functions
+
+**Directory Structure**:
+```
+codegen/tests/generated/
+├── functions/               # Deduplicated generated functions
+│   ├── mod.rs
+│   ├── hash_a1.rs          # Functions with AST hash starting with 'a1'
+│   └── hash_fc.rs          # Functions with AST hash starting with 'fc'
+├── value_conv/             # Test files organized by type
+│   ├── multiply_by_25.rs  # Imports and tests functions from functions/
+│   └── pass_through.rs
+├── print_conv/
+│   └── string_interpolation.rs
+├── types.rs                # Type aliases for test environment
+└── mod.rs                  # Module declarations
+```
+
+**Benefits**:
+- **Fast iteration**: Tests run in <10 seconds with normal `cargo test`
+- **Full pipeline validation**: Verifies complete PPI→AST→Rust→execution flow
+- **Function deduplication**: Same expressions share generated functions
+- **Real execution**: Tests actually run generated code with assertions
+- **Debug mode**: Single-file processing without breaking other tests
+
+**When to add tests**: Always add JSON test configs when implementing new expression patterns - they provide end-to-end validation and prevent regressions.
+
+**4. Writing New AST Normalizers**
 
 **✅ CURRENT ARCHITECTURE**: The multi-pass AST rewriter uses explicit ordering with the `RewritePass` trait.
 
@@ -445,12 +529,34 @@ See [STRATEGY-DEVELOPMENT.md](STRATEGY-DEVELOPMENT.md) for detailed guidance.
 
 ### Adding New Expression Patterns
 
-#### ✅ Correct Approach: Extend Expression Handlers
+#### ✅ NEW ARCHITECTURE: Precedence Climbing Binary Operations
+
+**🚨 MAJOR ARCHITECTURAL IMPROVEMENT**: As of August 2025, all binary operations use precedence climbing normalization following proven LLVM/Pratt parsing techniques.
+
+**Benefits over previous approach:**
+- **Perl-correct precedence**: Uses actual Perl operator precedence table 
+- **Separation of concerns**: Normalization handles parsing, visitor handles code generation
+- **Architectural consistency**: All binary operations become `BinaryOperation` AST nodes
+- **Prior art**: Based on proven precedence climbing algorithm (LLVM tutorial, Rust Pratt parsers)
+
+**How it works:**
+```rust
+// 1. PPI parses: sprintf("%.2f%%", $val * 100) 
+//    Raw tokens: [$val, *, 100] (flat sequence)
+
+// 2. BinaryOperatorNormalizer applies precedence climbing
+//    Result: BinaryOperation("*", $val, 100) (structured AST)
+
+// 3. Visitor generates clean Rust code
+//    Output: (val * 100).clone() (correct syntax)
+```
+
+#### ✅ Updated Extension Points:
 
 When adding support for new operators or patterns:
 
-1. **For binary operations** (`+`, `-`, `=~`, etc.): Add to `BinaryOperationsHandler::generate_binary_operation_from_parts()`
-2. **For string operations** (regex, concatenation): Add to `StringOperationsHandler::handle_regex_operation()`
+1. **For binary operations** (`+`, `-`, `*`, `=~`, etc.): Add to precedence table in `BinaryOperatorNormalizer::PRECEDENCE`
+2. **For string operations** (regex, concatenation): Add to `StringOperationsHandler::handle_regex_operation()` 
 3. **For function patterns** (`sprintf`, `unpack`): Add to `ComplexPatternHandler::try_*_pattern()`
 
 **Example - Adding new regex pattern:**
@@ -477,25 +583,51 @@ if children[i].class == "PPI::Token::Symbol"
 }
 ```
 
-#### Expression Processing Violations
+#### ❌ BANNED: Bypassing Precedence Climbing Architecture
 
-**WHY THIS MATTERS**: We had multiple emergency recoveries where engineers created inconsistent binary operation handling:
-- Some `=~` operations went through pattern matching in `process_node_sequence()`
-- Others went through `ExpressionCombiner` → `BinaryOperationsHandler` 
-- This made it impossible to enhance regex handling consistently
-- Required architectural recovery to unify all binary operations
+**ARCHITECTURAL ANTI-PATTERN**: Handling binary operations outside the normalization pipeline:
 
-**THE RULE**: ALL binary operations must go through `ExpressionCombiner::try_binary_operation_pattern()`
+```rust
+// ❌ BANNED - Bypasses precedence climbing normalization
+if child.class == "PPI::Token::Operator" && child.content == "*" {
+    // Manual operator handling in visitor - creates precedence bugs
+}
 
-#### Validation Commands
+// ❌ BANNED - String parsing binary operations
+if parts.join(" ").contains(" * ") {
+    // Destroys AST structure and precedence information  
+}
+
+// ❌ BANNED - Direct visitor binary operation generation
+match (left_operand, operator, right_operand) {
+    // Should be handled by BinaryOperatorNormalizer pass
+}
+```
+
+**WHY THIS IS BANNED**: 
+- **Precedence violations**: Manual parsing ignores Perl operator precedence rules
+- **Architectural inconsistency**: Bypasses the proven precedence climbing normalization
+- **Type safety loss**: String parsing destroys structured AST data
+- **Maintenance nightmare**: Changes require updates in multiple places
+
+**THE RULE**: ALL binary operations MUST be processed by `BinaryOperatorNormalizer` during AST normalization.
+
+#### ✅ Validation Commands
 
 Before submitting PRs with expression changes:
 ```bash
-# Verify no bypassed binary operations
-rg "children\[.*\]\.class.*Operator" codegen/src/ppi/rust_generator/generator.rs
+# Verify no bypassed binary operations in visitor
+rg "children\[.*\]\.class.*Operator" codegen/src/ppi/rust_generator/visitor.rs
 
-# Verify expression handlers are used consistently  
-rg "try_binary_operation_pattern|handle_regex_operation" codegen/src/ppi/rust_generator/
+# Verify BinaryOperatorNormalizer is in pipeline 
+rg "BinaryOperatorNormalizer" codegen/src/ppi/normalizer/multi_pass.rs
+
+# Verify no string parsing of binary operations
+rg "split.*\*|contains.*\*|join.*\*" codegen/src/ppi/rust_generator/
+
+# Verify precedence climbing is working
+cargo run --bin debug-ppi -- --verbose '$val * 100'
+# Should show: BinaryOperation("*", $val, 100) in normalized AST
 ```
 
 ## Performance Characteristics
