@@ -17,4 +17,4 @@ cd "$ROOT"
 # Note! We don't just revert all of third-party/exiftool because the
 # exiftool-researcher may have written new docs in third-party/exiftool/docs
 # that we don't want to lose.
-git -C ./third-party/exiftool checkout --quiet -- lib/Image/ExifTool.pm lib/Image/ExifTool/*.pm lib/Image/ExifTool/*.pl 
+git -C ./third-party/exiftool checkout --quiet -- lib/Image/ExifTool.pm lib/Image/ExifTool/*.pm lib/Image/ExifTool/*.pl

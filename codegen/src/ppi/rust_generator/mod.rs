@@ -110,8 +110,4 @@ impl ComplexPatternHandler for RustGenerator {
     }
 }
 
-impl FunctionGenerator for RustGenerator {
-    fn expression_type(&self) -> &ExpressionType {
-        &self.expression_type
-    }
-}
+impl FunctionGenerator for RustGenerator {}

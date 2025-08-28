@@ -1,32 +1,31 @@
 /// Perl-compatible sprintf implementation
-/// 
+///
 /// This module provides a sprintf function that matches Perl's behavior:
 /// - Missing arguments become 0 (with Perl warnings, but we handle gracefully)
 /// - Extra arguments are ignored
 /// - Format specifiers are replaced in order
-
 use crate::TagValue;
 use std::collections::VecDeque;
 
 /// Perl-compatible sprintf that handles any number of arguments
-/// 
+///
 /// Just like Perl: missing args become 0, extra args ignored
-/// 
+///
 /// # Examples
 /// ```
 /// sprintf_perl("%.3f x %.3f mm", &[TagValue::F64(1.234), TagValue::F64(5.678)])
 /// // Returns: "1.234 x 5.678 mm"
-/// 
+///
 /// sprintf_perl("%.3f x %.3f mm", &[TagValue::F64(1.234)])  
 /// // Returns: "1.234 x 0.000 mm" (missing arg becomes 0)
-/// 
+///
 /// sprintf_perl("%.2f", &[TagValue::F64(1.234), TagValue::F64(5.678)])
 /// // Returns: "1.23" (extra arg ignored)
 /// ```
 pub fn sprintf_perl(format: &str, args: &[TagValue]) -> String {
     // Extract all format specifiers from the format string
     let specs = extract_format_specifiers(format);
-    
+
     // Format each argument according to its specifier
     let mut formatted_values = Vec::new();
     for (i, spec) in specs.iter().enumerate() {
@@ -38,7 +37,7 @@ pub fn sprintf_perl(format: &str, args: &[TagValue]) -> String {
         };
         formatted_values.push(formatted);
     }
-    
+
     // Replace format specifiers with formatted values
     apply_formatted_values(format, &specs, &formatted_values)
 }
@@ -47,7 +46,7 @@ pub fn sprintf_perl(format: &str, args: &[TagValue]) -> String {
 fn extract_format_specifiers(format: &str) -> Vec<String> {
     let mut specs = Vec::new();
     let mut chars = format.chars().peekable();
-    
+
     while let Some(ch) = chars.next() {
         if ch == '%' {
             if chars.peek() == Some(&'%') {
@@ -55,9 +54,9 @@ fn extract_format_specifiers(format: &str) -> Vec<String> {
                 chars.next();
                 continue;
             }
-            
+
             let mut spec = String::from("%");
-            
+
             // Handle flags (+, -, 0, space, #)
             while let Some(&next) = chars.peek() {
                 if matches!(next, '+' | '-' | '0' | ' ' | '#') {
@@ -66,7 +65,7 @@ fn extract_format_specifiers(format: &str) -> Vec<String> {
                     break;
                 }
             }
-            
+
             // Handle width
             while let Some(&next) = chars.peek() {
                 if next.is_ascii_digit() {
@@ -75,7 +74,7 @@ fn extract_format_specifiers(format: &str) -> Vec<String> {
                     break;
                 }
             }
-            
+
             // Handle precision
             if chars.peek() == Some(&'.') {
                 spec.push(chars.next().unwrap()); // consume '.'
@@ -87,17 +86,32 @@ fn extract_format_specifiers(format: &str) -> Vec<String> {
                     }
                 }
             }
-            
+
             // Handle conversion specifier
             if let Some(&next) = chars.peek() {
-                if matches!(next, 'd' | 'i' | 'o' | 'u' | 'x' | 'X' | 'e' | 'E' | 'f' | 'F' | 'g' | 'G' | 's' | 'c') {
+                if matches!(
+                    next,
+                    'd' | 'i'
+                        | 'o'
+                        | 'u'
+                        | 'x'
+                        | 'X'
+                        | 'e'
+                        | 'E'
+                        | 'f'
+                        | 'F'
+                        | 'g'
+                        | 'G'
+                        | 's'
+                        | 'c'
+                ) {
                     spec.push(chars.next().unwrap());
                     specs.push(spec);
                 }
             }
         }
     }
-    
+
     specs
 }
 
@@ -105,7 +119,7 @@ fn extract_format_specifiers(format: &str) -> Vec<String> {
 fn format_tagvalue(spec: &str, val: &TagValue) -> String {
     // Parse the format specifier
     let conversion = spec.chars().last().unwrap_or('s');
-    
+
     // Extract precision if present
     let precision = if let Some(dot_pos) = spec.rfind('.') {
         let precision_str = &spec[dot_pos + 1..spec.len() - 1];
@@ -113,12 +127,12 @@ fn format_tagvalue(spec: &str, val: &TagValue) -> String {
     } else {
         None
     };
-    
+
     // Extract width and flags
     let has_zero_pad = spec.contains('0') && spec.chars().nth(1) == Some('0');
     let has_plus = spec.contains('+');
     let width = extract_width(spec);
-    
+
     // Convert TagValue to appropriate type and format
     match conversion {
         'd' | 'i' => {
@@ -149,9 +163,7 @@ fn format_tagvalue(spec: &str, val: &TagValue) -> String {
             let num = tagvalue_to_f64(val);
             format_general(num, precision.unwrap_or(6), conversion == 'G')
         }
-        's' | _ => {
-            val.to_string()
-        }
+        's' | _ => val.to_string(),
     }
 }
 
@@ -211,13 +223,19 @@ fn tagvalue_to_f64(val: &TagValue) -> f64 {
 }
 
 /// Format an integer with optional width and padding
-fn format_integer(num: i64, width: Option<usize>, zero_pad: bool, plus: bool, _decimal: bool) -> String {
+fn format_integer(
+    num: i64,
+    width: Option<usize>,
+    zero_pad: bool,
+    plus: bool,
+    _decimal: bool,
+) -> String {
     let formatted = if plus && num >= 0 {
         format!("+{}", num)
     } else {
         num.to_string()
     };
-    
+
     if let Some(w) = width {
         if zero_pad && !formatted.starts_with('-') && !formatted.starts_with('+') {
             format!("{:0>width$}", formatted, width = w)
@@ -241,7 +259,7 @@ fn format_hex(num: i64, width: Option<usize>, zero_pad: bool, uppercase: bool) -
     } else {
         format!("{:x}", num)
     };
-    
+
     if let Some(w) = width {
         if zero_pad {
             format!("{:0>width$}", formatted, width = w)
@@ -256,7 +274,7 @@ fn format_hex(num: i64, width: Option<usize>, zero_pad: bool, uppercase: bool) -
 /// Format as octal
 fn format_octal(num: i64, width: Option<usize>, zero_pad: bool) -> String {
     let formatted = format!("{:o}", num);
-    
+
     if let Some(w) = width {
         if zero_pad {
             format!("{:0>width$}", formatted, width = w)
@@ -275,7 +293,7 @@ fn format_float(num: f64, precision: usize, width: Option<usize>, plus: bool) ->
     } else {
         format!("{:.prec$}", num, prec = precision)
     };
-    
+
     if let Some(w) = width {
         format!("{:>width$}", formatted, width = w)
     } else {
@@ -306,7 +324,7 @@ fn format_general(num: f64, precision: usize, uppercase: bool) -> String {
 fn apply_formatted_values(format: &str, specs: &[String], values: &[String]) -> String {
     let mut result = format.to_string();
     let mut values_queue: VecDeque<_> = values.iter().collect();
-    
+
     // Replace each specifier with its formatted value
     for spec in specs {
         if let Some(value) = values_queue.pop_front() {
@@ -316,8 +334,9 @@ fn apply_formatted_values(format: &str, specs: &[String], values: &[String]) -> 
             }
         }
     }
-    
-    result
+
+    // Convert %% to % (Perl's literal % escape)
+    result.replace("%%", "%")
 }
 
 #[cfg(test)]
@@ -344,7 +363,11 @@ mod tests {
 
     #[test]
     fn test_sprintf_extra_args() {
-        let args = vec![TagValue::F64(1.234), TagValue::F64(5.678), TagValue::F64(9.012)];
+        let args = vec![
+            TagValue::F64(1.234),
+            TagValue::F64(5.678),
+            TagValue::F64(9.012),
+        ];
         assert_eq!(sprintf_perl("%.2f", &args), "1.23");
     }
 
@@ -370,5 +393,19 @@ mod tests {
     fn test_sprintf_mixed_formats() {
         let args = vec![TagValue::I32(1), TagValue::I32(2), TagValue::I32(3)];
         assert_eq!(sprintf_perl("%02d:%02d:%02d", &args), "01:02:03");
+    }
+
+    #[test]
+    fn test_sprintf_literal_percent() {
+        // Test %% -> % conversion
+        let args = vec![TagValue::F64(25.0)];
+        assert_eq!(sprintf_perl("%.2f%%", &args), "25.00%");
+    }
+
+    #[test]
+    fn test_sprintf_with_math() {
+        // Test the actual use case: sprintf("%.2f%%", $val * 100)  
+        let args = vec![TagValue::F64(25.0)]; // This would be val * 100 = 0.25 * 100 = 25.0
+        assert_eq!(sprintf_perl("%.2f%%", &args), "25.00%");
     }
 }

@@ -14,13 +14,13 @@ use std::collections::HashMap;
 pub struct ExifContext {
     /// DataMember variables from ExifTool  
     pub data_members: HashMap<String, crate::TagValue>,
-    
+
     /// Processing state variables
     pub state: HashMap<String, String>,
-    
+
     /// Current directory path stack
     pub path: Vec<String>,
-    
+
     /// Base offset for pointer calculations
     pub base_offset: u64,
 }
@@ -68,13 +68,13 @@ impl Default for ExifContext {
 pub enum ExifError {
     #[error("Parse error: {0}")]
     ParseError(String),
-    
+
     #[error("IO error: {0}")]
     IoError(String),
-    
+
     #[error("Format error: {0}")]
     FormatError(String),
-    
+
     #[error("Not implemented: {0}")]
     NotImplemented(String),
 }

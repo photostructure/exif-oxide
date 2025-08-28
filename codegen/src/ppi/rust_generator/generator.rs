@@ -83,13 +83,92 @@ impl RustGenerator {
     fn generate_body(&self, ast: &PpiNode) -> Result<String, CodeGenError> {
         // Enable multi-pass normalizer for multi-token pattern recognition (e.g., join+unpack)
         let normalized_ast = crate::ppi::normalizer::normalize_multi_pass(ast.clone());
-        let code = self.visit_node(&normalized_ast)?;
+
+        // Check AST structure for standalone literals (rare in ExifTool)
+        // Document -> Statement -> Single literal node
+        let is_standalone_literal = self.is_standalone_literal(&normalized_ast);
+
+        let code = if is_standalone_literal && self.expression_type == ExpressionType::ValueConv {
+            // For standalone literals in ValueConv, wrap them properly
+            self.visit_standalone_literal_for_valueconv(&normalized_ast)?
+        } else {
+            self.visit_node(&normalized_ast)?
+        };
 
         // Wrap the generated expression based on expression type
         match self.expression_type {
-            ExpressionType::ValueConv => Ok(format!("Ok({})", code)),
+            ExpressionType::ValueConv => {
+                // Special case: if the expression is just "val", we need to clone it
+                // because ValueConv functions return owned TagValue
+                if code == "val" {
+                    Ok("Ok(val.clone())".to_string())
+                } else {
+                    // All other expressions: binary operations, function calls, etc.
+                    // Trust that the visitor pattern has generated correct code.
+                    Ok(format!("Ok({})", code))
+                }
+            }
             ExpressionType::PrintConv => Ok(code),
             ExpressionType::Condition => Ok(code),
+        }
+    }
+
+    /// Check if AST represents a standalone literal (no operations)
+    fn is_standalone_literal(&self, ast: &PpiNode) -> bool {
+        // Pattern: Document -> Statement -> Single literal
+        if ast.class != "PPI::Document" || ast.children.len() != 1 {
+            return false;
+        }
+
+        let statement = &ast.children[0];
+        if statement.class != "PPI::Statement" || statement.children.len() != 1 {
+            return false;
+        }
+
+        let node = &statement.children[0];
+        matches!(
+            node.class.as_str(),
+            "PPI::Token::Number"
+                | "PPI::Token::Number::Float"
+                | "PPI::Token::Quote::Single"
+                | "PPI::Token::Quote::Double"
+        )
+    }
+
+    /// Special handling for standalone literals in ValueConv context
+    fn visit_standalone_literal_for_valueconv(
+        &self,
+        ast: &PpiNode,
+    ) -> Result<String, CodeGenError> {
+        // Navigate to the actual literal node
+        let literal = &ast.children[0].children[0];
+
+        match literal.class.as_str() {
+            "PPI::Token::Number" | "PPI::Token::Number::Float" => {
+                if let Some(num) = literal.numeric_value {
+                    if num.fract() == 0.0 && num.abs() < i32::MAX as f64 {
+                        Ok(format!("TagValue::I32({})", num as i32))
+                    } else {
+                        Ok(format!("TagValue::F64({})", num))
+                    }
+                } else {
+                    Err(CodeGenError::MissingContent("number".to_string()))
+                }
+            }
+            "PPI::Token::Quote::Single" | "PPI::Token::Quote::Double" => {
+                if let Some(ref str_val) = literal.string_value {
+                    Ok(format!(
+                        "TagValue::String(\"{}\".to_string())",
+                        str_val.escape_default()
+                    ))
+                } else {
+                    Err(CodeGenError::MissingContent("string".to_string()))
+                }
+            }
+            _ => {
+                // Shouldn't happen based on is_standalone_literal check
+                self.visit_node(ast)
+            }
         }
     }
 
@@ -322,11 +401,12 @@ impl RustGenerator {
     ) -> Result<String, CodeGenError> {
         let func_name = self.visit_word(name_node)?;
 
-        // Special handling for sprintf with string concatenation and repetition
-        if func_name == "sprintf" && !args_node.children.is_empty() {
-            if let Some(sprintf_result) = self.try_process_sprintf_with_string_ops(args_node)? {
-                return Ok(sprintf_result);
-            }
+        // Special handling for sprintf - always convert it
+        if func_name == "sprintf" {
+            // Create a temporary node structure for the function call
+            let mut function_node = name_node.clone();
+            function_node.children = args_node.children.clone();
+            return FunctionGenerator::generate_function_call_from_parts(self, &function_node);
         }
 
         // Generate the function call using AST node
@@ -334,108 +414,6 @@ impl RustGenerator {
         let mut function_node = name_node.clone();
         function_node.children = args_node.children.clone();
         FunctionGenerator::generate_function_call_from_parts(self, &function_node)
-    }
-
-    /// Try to process sprintf with string concatenation and repetition operations
-    /// Returns Some(result) if the pattern matches, None otherwise
-    fn try_process_sprintf_with_string_ops(
-        &self,
-        args_node: &PpiNode,
-    ) -> Result<Option<String>, CodeGenError> {
-        // For now, handle standard sprintf calls by extracting arguments from the parentheses
-        // The args_node is a PPI::Structure::List containing the arguments
-
-        if args_node.children.is_empty() {
-            return Ok(None);
-        }
-
-        // Extract arguments from the list structure
-        // For PPI::Statement::Expression, we need to extract individual arguments manually
-        let mut args = Vec::new();
-
-        for child in &args_node.children {
-            if child.class == "PPI::Statement::Expression" {
-                // Extract arguments from the expression by splitting on commas
-                let mut current_arg_parts = Vec::new();
-                for expr_child in &child.children {
-                    if expr_child.class == "PPI::Token::Operator"
-                        && expr_child.content.as_deref() == Some(",")
-                    {
-                        // End of current argument, process accumulated parts
-                        if !current_arg_parts.is_empty() {
-                            if current_arg_parts.len() == 1 {
-                                let arg_result = self.visit_node(&current_arg_parts[0])?;
-                                args.push(arg_result);
-                            } else {
-                                // Multiple parts - join them (this shouldn't happen for simple args)
-                                let parts: Result<Vec<String>, _> = current_arg_parts
-                                    .iter()
-                                    .map(|p| self.visit_node(p))
-                                    .collect();
-                                args.push(parts?.join(" "));
-                            }
-                            current_arg_parts.clear();
-                        }
-                    } else {
-                        current_arg_parts.push(expr_child.clone());
-                    }
-                }
-                // Process any remaining parts as the last argument
-                if !current_arg_parts.is_empty() {
-                    if current_arg_parts.len() == 1 {
-                        let arg_result = self.visit_node(&current_arg_parts[0])?;
-                        args.push(arg_result);
-                    } else {
-                        let parts: Result<Vec<String>, _> = current_arg_parts
-                            .iter()
-                            .map(|p| self.visit_node(p))
-                            .collect();
-                        args.push(parts?.join(" "));
-                    }
-                }
-            } else if child.class == "PPI::Token::Operator" && child.content.as_deref() == Some(",")
-            {
-                continue; // Skip comma separators at the top level
-            } else {
-                // Direct argument
-                let arg_result = self.visit_node(child)?;
-                args.push(arg_result);
-            }
-        }
-
-        if args.is_empty() {
-            return Ok(None);
-        }
-
-        // Generate sprintf call with extracted arguments
-        let format_str = &args[0];
-        let remaining_args = if args.len() > 1 {
-            args[1..].join(", ")
-        } else {
-            "".to_string()
-        };
-
-        let sprintf_call = match self.expression_type {
-            ExpressionType::PrintConv | ExpressionType::ValueConv => {
-                if remaining_args.is_empty() {
-                    format!("TagValue::String({})", format_str)
-                } else {
-                    format!(
-                        "TagValue::String(format!({}, {}))",
-                        format_str, remaining_args
-                    )
-                }
-            }
-            _ => {
-                if remaining_args.is_empty() {
-                    format_str.clone()
-                } else {
-                    format!("format!({}, {})", format_str, remaining_args)
-                }
-            }
-        };
-
-        Ok(Some(sprintf_call))
     }
 
     /// Combine processed parts using expression combiner logic

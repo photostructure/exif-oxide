@@ -92,38 +92,15 @@ Example:
 
 **Success Criteria**:
 
-- [ ] **Test exists**: `tests/integration_p[XX]_[goal_description].rs:test_function_name`
-- [ ] **Test fails**: `cargo t test_name` fails with specific error demonstrating the problem
-- [ ] **Integration focus**: Test validates end-to-end behavior change, not just unit functionality
-- [ ] **TPP reference**: Test includes comment `// P[XX]: [Goal] - see docs/todo/P[XX]-description.md`
-- [ ] **Measurable outcome**: Test clearly shows what "success" looks like when implementation completes
+- [ ] **Test exists**: `tests/integration_p[XX]_[goal].rs:test_name`
+- [ ] **Test fails**: `cargo t test_name` fails demonstrating the exact problem
+- [ ] **End-to-end focus**: Tests the complete user-facing behavior, not internals
+- [ ] **Success criteria clear**: Test shows what "working" looks like
 
-**Requirements**:
+### When Skipping: Alternative Success Criteria
 
-- Must test the overall goal described in Project Overview
-- Should fail for the exact reason this TPP was created
-- Must demonstrate the problem is solved when all tasks complete
-- Include error message linking back to this TPP: `"// Fails until P[XX] complete - requires [specific_capability]"`
-
-**Quality Check**: Can you run the test, see it fail, and understand exactly what needs to be implemented to make it pass?
-
-### When Skipping: Define Success Criteria
-
-**If Task 0 doesn't apply**, clearly state why and define measurable success criteria:
-
-**Example for Research TPP**:
-
-```md
-**Task 0**: Not applicable - pure research with no behavior changes
-**Success Criteria**: Research document `docs/research/gps-analysis.md` exists with function signatures and implementation recommendations
-```
-
-**Example for Refactoring TPP**:
-
-```md
-**Task 0**: Not applicable - refactoring with identical behavior
-**Success Criteria**: All existing tests continue passing, module structure improved, no functionality changes
-```
+**Research Example**: Success = `docs/research/topic.md` with implementation recommendations  
+**Refactoring Example**: Success = all existing tests pass, cleaner module structure
 
 ---
 
