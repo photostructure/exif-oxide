@@ -195,7 +195,6 @@ impl JoinUnpackPass {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use serde_json::json;
 
     /// Helper to create test PpiNode from JSON-like structure
     fn create_test_node(class: &str, content: Option<&str>) -> PpiNode {

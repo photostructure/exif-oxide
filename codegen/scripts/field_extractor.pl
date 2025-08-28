@@ -218,10 +218,10 @@ sub add_inline_ast_to_data {
                     # Trim leading and trailing whitespace from expression
                     my $trimmed_expr = $expr_value;
                     $trimmed_expr =~ s/^\s+|\s+$//g;
-                    
+
                     # Update the original field with trimmed value
                     $data->{$expr_type} = $trimmed_expr;
-                    
+
                     my $ast = $ppi_converter->parse_expression($trimmed_expr);
                     if ($ast) {
                         $data->{"${expr_type}_ast"} = $ast;

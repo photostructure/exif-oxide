@@ -6,6 +6,7 @@
 
 mod conversion;
 mod display;
+mod ops;
 mod serialization;
 
 #[cfg(test)]

@@ -3,7 +3,7 @@
 use super::function_registry::{
     get_function_details, get_function_registry, get_pattern_registry, lookup_function,
     lookup_functions_by_category, needs_function_registry_lookup, FunctionCategory,
-    FunctionDetails, FunctionImplementation,
+    FunctionImplementation,
 };
 use super::printconv_registry::{get_printconv_registry, get_tag_specific_printconv};
 use super::valueconv_registry::{

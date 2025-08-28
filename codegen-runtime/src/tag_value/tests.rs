@@ -49,9 +49,18 @@ fn test_rational_conversion() {
 #[test]
 fn test_string_with_numeric_detection() {
     // Numeric strings should become numeric values
-    assert_eq!(TagValue::string_with_numeric_detection("14"), TagValue::U16(14));
-    assert_eq!(TagValue::string_with_numeric_detection("14.0"), TagValue::F64(14.0));
-    assert_eq!(TagValue::string_with_numeric_detection("-5"), TagValue::I16(-5));
+    assert_eq!(
+        TagValue::string_with_numeric_detection("14"),
+        TagValue::U16(14)
+    );
+    assert_eq!(
+        TagValue::string_with_numeric_detection("14.0"),
+        TagValue::F64(14.0)
+    );
+    assert_eq!(
+        TagValue::string_with_numeric_detection("-5"),
+        TagValue::I16(-5)
+    );
 
     // Non-numeric strings should remain strings
     assert_eq!(

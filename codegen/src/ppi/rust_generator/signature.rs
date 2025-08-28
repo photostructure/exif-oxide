@@ -18,7 +18,7 @@ pub fn generate_signature(expression_type: &ExpressionType, function_name: &str)
         }
         ExpressionType::ValueConv => {
             format!(
-                "pub fn {}(val: &TagValue) -> Result<TagValue, crate::types::ExifError>",
+                "pub fn {}(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>",
                 function_name
             )
         }
