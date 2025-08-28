@@ -10,7 +10,10 @@
 //! - `fmt` module - Runtime functions for sprintf, unpack, arithmetic, etc.
 //! - `test_support` - Utilities for testing generated code
 
+pub mod data;
 pub mod fmt;
+pub mod math;
+pub mod string;
 pub mod tag_value;
 pub mod types;
 
@@ -18,11 +21,17 @@ pub mod types;
 pub use tag_value::TagValue;
 pub use types::{ExifContext, ExifError};
 
+// Re-export data functions commonly used by generated code
+pub use data::{join_unpack_binary, pack_c_star_bit_extract, unpack_binary};
+
 // Re-export fmt functions commonly used by generated code
-pub use fmt::{
-    join_unpack_binary, pack_c_star_bit_extract, regex_substitute_perl, safe_binary_operation,
-    safe_division, safe_reciprocal, sprintf_perl, sprintf_split_values, unpack_binary,
-};
+pub use fmt::{sprintf_perl, sprintf_split_values};
+
+// Re-export math functions commonly used by generated code
+pub use math::{exp, int, log, safe_division, safe_reciprocal};
+
+// Re-export string functions commonly used by generated code
+pub use string::{length_i32, length_string, regex_replace, regex_substitute_perl};
 
 // Test support module - only available with test-helpers feature
 #[cfg(feature = "test-helpers")]
