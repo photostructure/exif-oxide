@@ -27,6 +27,11 @@ node.to_string().starts_with("sprintf")
 // ❌ MANUAL EXIFTOOL DATA (Silent bugs, transcription errors)
 match wb_value { 0 => "Auto", 1 => "Daylight" }  // Hand-copied from ExifTool
 static XLAT: [u8; 256] = [193, 191, 109, ...]    // Manually transcribed arrays
+
+// ❌ BYPASSING PRECEDENCE CLIMBING (Creates precedence bugs, architectural inconsistency)
+if child.class == "PPI::Token::Operator" && child.content == "*" { } // Manual operator handling
+if parts.join(" ").contains(" * ") { }  // String parsing binary operations
+match (left, op, right) { }             // Direct visitor binary generation
 ```
 
 **REAL RECOVERY COSTS:**
@@ -34,6 +39,7 @@ static XLAT: [u8; 256] = [193, 191, 109, ...]    // Manually transcribed arrays
 - **AST string parsing**: Complete rewrite of functions.rs required  
 - **Manual transcription**: 100+ bug reports from silent failures
 - **Disabled infrastructure**: Months of technical debt accumulation
+- **Bypassed precedence climbing**: Precedence bugs in sprintf/math expressions, operator inconsistency
 
 This document covers the specific architectural mistakes that have caused multiple PR rejections and significant technical debt. These are not style issues - they are fundamental violations of the system architecture that break functionality.
 
@@ -207,6 +213,63 @@ code.push_str(&format!("//! Timestamp: {}", source.extracted_at));
 //! DO NOT EDIT MANUALLY - changes will be overwritten.
 ```
 
+## 🚨 NEVER Bypass Precedence Climbing Binary Operations
+
+**Problem**: Engineers manually handle binary operations in visitor code instead of using the precedence climbing normalization pass.
+
+**Why This Creates Bugs**:
+- **Precedence violations**: Manual parsing ignores Perl's operator precedence rules (`*` binds tighter than `,`)
+- **Type safety loss**: String parsing destroys structured AST information 
+- **Architectural inconsistency**: Some expressions use normalization, others use manual parsing
+- **Maintenance nightmare**: Operator changes require updates in multiple places
+
+**Examples of Banned Patterns**:
+
+```rust
+// ❌ BANNED - Manual operator handling in visitor bypasses precedence climbing
+if child.class == "PPI::Token::Operator" && child.content.as_deref() == Some("*") {
+    // This ignores operator precedence and creates bugs like: val.clone(), *.clone(), 100.clone()
+}
+
+// ❌ BANNED - String parsing binary operations destroys AST structure
+let parts = node.to_string().split(' ').collect::<Vec<_>>();
+if parts.contains(&"*") && parts.contains(&"100") {
+    // Loses type information and precedence context
+}
+
+// ❌ BANNED - Direct binary operation generation in visitor
+match (&args[1], &args[2], &args[3]) {
+    (left, op_token, right) if op_token.content == "*" => {
+        // Should be handled by BinaryOperatorNormalizer during normalization
+    }
+}
+```
+
+**Real Example of Bug This Causes**:
+```rust
+// Input: sprintf("%.2f%%", $val * 100)
+// WRONG OUTPUT: sprintf_perl("%.2f%%", &[val.clone(), *.clone(), 100i32.clone()]) // INVALID RUST!
+// CORRECT OUTPUT: sprintf_perl("%.2f%%", &[(val * 100).clone()])                  // VALID RUST!
+```
+
+**REQUIRED APPROACH**: Use precedence climbing normalization
+
+```rust
+// ✅ CORRECT - All binary operations handled by BinaryOperatorNormalizer
+// 1. Normalization pass detects [$val, *, 100] and applies precedence climbing
+// 2. Creates BinaryOperation("*", $val, 100) AST node
+// 3. Visitor handles BinaryOperation nodes and generates proper Rust: (val * 100)
+
+impl RewritePass for BinaryOperatorNormalizer {
+    fn transform(&self, node: PpiNode) -> PpiNode {
+        // Precedence climbing algorithm respects Perl operator precedence
+        self.parse_with_precedence_climbing(node)
+    }
+}
+```
+
+**ENFORCEMENT**: Any PR containing manual binary operation handling will be **REJECTED**. All binary operations MUST use the `BinaryOperatorNormalizer` pass.
+
 ## 🚨 MANDATORY Pre-Commit Checks: Avoid Immediate Rejection 🚨
 
 **RUN ALL OF THESE BEFORE SUBMITTING YOUR PR**. If any fail, your PR will be rejected:
@@ -227,7 +290,15 @@ echo "Disabled infrastructure found: $?" # Must be 1 (no disabled code)
 rg "match.*=>" src/implementations/ | grep -E "0x[0-9a-f]+ =>"
 # Any hardcoded hex lookup tables are BANNED - use generated tables
 
-# 5. Build must succeed (MUST pass)
+# 5. Check for bypassed precedence climbing (MUST return 0 matches)
+rg "children\[.*\]\.class.*Operator.*\*|parts.*contains.*\*" codegen/src/ppi/rust_generator/visitor.rs
+echo "Bypassed precedence climbing found: $?" # Must be 1 (no matches)
+
+# 6. Verify BinaryOperatorNormalizer in pipeline (MUST find it)
+rg "BinaryOperatorNormalizer" codegen/src/ppi/normalizer/multi_pass.rs
+echo "BinaryOperatorNormalizer in pipeline: $?" # Must be 0 (found)
+
+# 7. Build must succeed (MUST pass)
 cargo check -p codegen
 echo "Codegen build status: $?" # Must be 0 (success)
 
@@ -259,6 +330,19 @@ grep -A5 -B5 "normalizer.*normalize" codegen/src/ppi/rust_generator/mod.rs
 rg "match.*=>" src/implementations/ | grep -E "0x[0-9a-f]+ =>"
 ```
 
+**Verify precedence climbing architecture**:
+```bash
+# Should show BinaryOperatorNormalizer in the pipeline
+rg "BinaryOperatorNormalizer" codegen/src/ppi/normalizer/multi_pass.rs
+
+# Should return empty - no bypassed binary operations
+rg "children\[.*\]\.class.*Operator.*\*" codegen/src/ppi/rust_generator/visitor.rs
+
+# Test precedence climbing works correctly
+cargo run --bin debug-ppi -- --verbose '$val * 100'
+# Should show: BinaryOperation("*", $val, 100) in normalized AST
+```
+
 ## Emergency Recovery
 
 If you find these anti-patterns in the codebase:
@@ -267,6 +351,7 @@ If you find these anti-patterns in the codebase:
 2. **Deleted pattern recognition**: Restore from `expressions_original.rs.bak`
 3. **Disabled infrastructure**: Re-enable with proper error handling
 4. **Manual ExifTool data**: Replace with generated tables via codegen
+5. **Bypassed precedence climbing**: Remove manual operator handling, ensure `BinaryOperatorNormalizer` is in pipeline
 
 ## Enforcement
 

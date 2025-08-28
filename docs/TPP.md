@@ -1,96 +1,153 @@
-# Technical Project Plan (TPP)
+# Technical Project Plan (TPP) Template
 
-A TPP ensures new engineers succeed by providing critical context AND clear, actionable tasks.
+**IMPORTANT**: This is a TEMPLATE. Copy the structure below but DELETE these instructions and write YOUR OWN content. Do not include the template's purpose statement or boilerplate text in your actual TPP.
 
-## Goals
-
-**TL;DR:** a high quality technical project plan **provides the context necessary for an engineer to successfully accomplish a given task or set of tasks.** Everything else is secondary.
-
-The remainder of this document provides some consistent structure, but omit irrelevant sections, and if there is content that doesn't fit into this structure, feel free to add that in a novel section.
-
-- **Purpose**: Rich context + clear tasks prevent wrong implementations. Tasks without "why" = dangerous.
-- **Length**: < 500 lines (ReadTool limit)
-- **Style**: Bullet points > prose. Examples > abstractions.
-- **Context First**: Document surprising/non-intuitive aspects that casual observers may miss
+**Purpose of TPPs**: Prevent architectural vandalism by ensuring engineers have sufficient context to make coherent solutions that integrate with existing systems.
 
 ---
 
-## Project Overview
+## START YOUR TPP HERE - DELETE EVERYTHING ABOVE THIS LINE
 
-- **Goal**: [What success looks like in 1-4 sentences]
-- **Problem**: [What's broken and why]
-- **Constraints**: [Non-negotiable requirements -- optional]
+# Technical Project Plan: [Your Specific Project Name]
 
-Example:
+## 🟦 TPP CREATION PHASE (Do This First)
 
-- **Goal**: Fix PrintConv to show `3.9` not `[39, 10]`
-- **Problem**: Conversion pipeline broken for array values
-- **Constraints**: Zero runtime overhead, no circular deps
+**WHO**: TPP Author (you right now)  
+**GOAL**: Gather sufficient context for implementer success  
+**OUTPUT**: Research analysis written FOR the implementer  
+**WORKFLOW**: Complete all research sections below, then move to Execution Phase
 
-## Context & Foundation
+## 🟨 EXECUTION PHASE (Do This Later)
 
-**REQUIRED**: Assume reader is unfamiliar with this domain. Provide comprehensive context.
+**WHO**: Implementer (could be you or someone else)  
+**GOAL**: Complete tasks using research context  
+**OUTPUT**: Working code with checkbox evidence  
+**WORKFLOW**: Use research context to complete tasks with verifiable proof
 
-### System Overview
+## Goal Definition (MANDATORY FIRST SECTION)
 
-- **Components involved**: [2-3 sentence "cliff's notes" for each system this touches]
-- **Key interactions**: [How these systems work together]
+**Template**: Complete this section first. Maximum 5 sentences covering what, why, constraints, and validation.
 
-### Key Concepts & Domain Knowledge
+- **What Success Looks Like**: [1 sentence - specific, measurable outcome]
+- **Core Problem**: [1 sentence - what's broken and why it matters]
+- **Key Constraints**: [1 sentence - non-negotiable requirements]
+- **ExifTool Alignment**: [1 sentence - how this relates to Trust ExifTool principle]
+- **Success Validation**: [1 sentence - how you'll prove it works]
 
-- **Technical terms**: [Define domain-specific concepts]
-- **Business logic**: [Why things work this way]
+**Example**:
 
-### Surprising Context
+- **What Success Looks Like**: Canon lens metadata displays "Canon EF 50mm f/1.8" instead of raw numeric values
+- **Core Problem**: PrintConv pipeline doesn't handle Canon's complex lens ID lookup tables
+- **Key Constraints**: Must use generated lookup tables, zero manual transcription allowed
+- **ExifTool Alignment**: Implement identical logic to Canon.pm:2847-2863 lens ID resolution
+- **Success Validation**: All Canon test images show human-readable lens names matching ExifTool exactly
 
-**CRITICAL**: Document non-intuitive aspects that aren't obvious from casual code inspection:
+## Mandatory Context Research Phase
 
-- **Hidden dependencies**: [What relies on what in non-obvious ways]
-- **Counterintuitive behaviors**: [Things that work differently than expected]
-- **Historical quirks**: [Why code exists in seemingly odd states]
-- **Gotchas**: [What will trip up future engineers]
+**CRITICAL**: Complete ALL sections before defining tasks. This prevents architectural vandalism and shallow solutions.
 
-### Foundation Documents
+### Step 1: Project Foundation Review
 
-- **Design docs**: [Links to architectural decisions]
-- **ExifTool source**: [Relevant perl code references]
-- **Start here**: [Specific files/functions to examine first]
+**MANDATORY READING** (document your understanding - future implementers must read this):
 
-### Prerequisites
+**⚠️ CRITICAL**: Write this analysis for the IMPLEMENTER, not yourself. Use **IMPERATIVE LANGUAGE** ("You must...", "Never do...", "This will break if...") so implementers understand constraints.
 
-- **Knowledge assumed**: [What background is needed]
-- **Setup required**: [Environment/dependencies]
+**CLAUDE.md Analysis**: 
+[Write 2-3 sentences explaining what the implementer must never do and why. Include specific file:line references for critical patterns. Explain what causes instant PR rejection.]
 
-**Context Quality Check**: Can a new engineer understand WHY this approach is needed after reading this section?
+**TRUST-EXIFTOOL.md Analysis**:
+[Document the exact ExifTool behavior the implementer must replicate. Include .pm file references and line numbers. Explain why deviation breaks compatibility.]
 
-## Work Completed
+**SIMPLE-DESIGN.md Analysis**:
+[Explain which of the 4 rules apply most to this work. Show how this project directly applies them with concrete examples.]
 
-- ✅ [Feature] → chose [approach] over [alternative] because [reason]
-- ✅ [Decision] → rejected [option] due to [constraint]
+**TDD.md Analysis**:
+[Specify what tests are needed to validate success. Document the testing framework and workflow the implementer must follow.]
 
-## TDD Foundation Requirement
+**ARCHITECTURE.md Analysis**:
+[Identify existing systems this integrates with. Explain what will break if integration points change. Provide specific file:line references.]
 
-### Task 0: Integration Test (conditional)
+### Step 2: Precedent Analysis
 
-**Required for**:
+**CRITICAL ARCHITECTURAL CONTEXT** (document constraints for implementers):
 
-- Feature development (new capabilities, functionality)
-- Bug fixes (behavior corrections)
-- System behavior changes (different outputs/processing)
+**⚠️ CRITICAL**: Write this for the IMPLEMENTER. Explain what will BREAK if they don't follow existing patterns.
 
-**Optional/Skip for**:
+**Existing Patterns Analysis**:
+[Document what similar work has been done. Specify exact patterns the implementer must follow with file:line citations. Explain consequences of deviating from these patterns.]
 
-- **Pure research**: Analyzing ExifTool algorithms, studying manufacturer formats
-- **Documentation**: Writing guides, updating docs, creating reference materials
-- **Architecture/Design**: Planning module structure, designing interfaces
-- **Pure refactoring**: Code reorganization with identical behavior (existing tests should suffice)
-- **Infrastructure/Tooling**: CI setup, build improvements, development tools
+**Dependencies Analysis**:
+[List what systems this change will affect. Trace actual data flow paths. Explain what breaks if these dependencies change.]
 
-### When Required: Write Failing Integration Test
+**Integration Points Analysis**: 
+[Specify where this must connect to existing code with file:line references. Explain what happens if these integration points break.]
 
-**Purpose**: Ensure the TPP solves a real, measurable problem with verifiable success criteria.
+**Generated Code Analysis**:
+[Document what lookup tables or codegen outputs are available. Explain why manual transcription is banned with specific examples of past disasters.]
 
-**Success Criteria**:
+### Step 3: ExifTool Research
+
+**EXIFTOOL BEHAVIOR REQUIREMENTS** (document what implementers must replicate exactly):
+
+**⚠️ CRITICAL**: Write this for the IMPLEMENTER. Document the EXACT behavior they must replicate and WHY.
+
+**Source Analysis**:
+[Document what ExifTool does in this area with specific .pm files and line numbers. Explain the algorithms that must be replicated exactly.]
+
+**Critical Edge Cases**:
+[Document camera-specific quirks with concrete examples. Explain what will break if these aren't handled. Include manufacturer-specific behaviors.]
+
+**Test Cases**:
+[List sample files that demonstrate the behavior. Specify expressions that must work identically to ExifTool.]
+
+**Output Format Requirements**:
+[Specify what output must match ExifTool exactly. Document where deviation is allowed vs forbidden.]
+
+### Step 4: Risk Assessment
+
+**FAILURE MODES** (document specific ways implementers can break things):
+
+**⚠️ CRITICAL**: Write this for the IMPLEMENTER. Document SPECIFIC failure modes with EXAMPLES.
+
+**What Could Go Wrong**:
+[List specific ways this could break existing functionality. Provide concrete examples of what breaks and why.]
+
+**Emergency Recovery Plan**:
+[Explain how the implementer can quickly revert/fix if this breaks. Document the fallback plan with specific commands.]
+
+**Validation Strategy**:
+[Specify how the implementer will prove this works correctly. List exact commands that must pass.]
+
+**Integration Testing Requirements**:
+[Document end-to-end scenarios that must pass. Explain what indicates success vs failure.]
+
+**Quality Gate**: Can another engineer understand the CONTEXT and MOTIVATION behind this approach?
+
+## 🔍 TPP HANDOFF VALIDATION
+
+**COMPLETE THIS BEFORE MARKING TPP READY FOR IMPLEMENTATION**
+
+Before moving to Execution Phase, verify this TPP provides sufficient context for successful handoff:
+
+- [ ] **Context Sufficiency**: Another engineer can understand WHY this approach is needed (not just what to build)
+- [ ] **Implementation Clarity**: Tasks are specific enough to execute without clarifying questions  
+- [ ] **Constraint Documentation**: All "gotchas" and failure modes are documented with concrete examples
+- [ ] **Success Measurement**: Clear commands provided to prove each task is complete
+- [ ] **ExifTool Alignment**: Specific .pm file references and behavior requirements documented
+- [ ] **Integration Requirements**: Clear proof requirements showing production usage (not just test code)
+
+**HANDOFF TEST**: Could you hand this TPP to another engineer and have them successfully complete the work without asking you clarifying questions?
+
+---
+
+## TDD Integration Test (Task 0)
+
+**Required for**: Feature development, bug fixes, behavior changes  
+**Skip for**: Pure research, documentation, architecture planning, refactoring
+
+### When Required: Failing Integration Test
+
+**Purpose**: Prove the TPP solves a real, measurable problem.
 
 - [ ] **Test exists**: `tests/integration_p[XX]_[goal].rs:test_name`
 - [ ] **Test fails**: `cargo t test_name` fails demonstrating the exact problem
@@ -104,337 +161,112 @@ Example:
 
 ---
 
-## Remaining Tasks
+## Task Definition
 
-**REQUIRED**: Each task must have a unique alphabetic ID (A, B, C, etc.), be actionable, and include success criteria with specific proof requirements.
-
-**Task Naming Convention**: Use `### Task A:`, `### Task B:`, etc. for unique identification and easy cross-referencing.
+**Template**: Each task follows outcome-focused format with minimal bullets.
 
 ### Task A: [Specific, actionable name]
 
-**Success Criteria**:
+**What works after this task**: [1 sentence describing the capability gained]
 
-- [ ] **Implementation**: [Technical detail] → `src/path/file.rs:123-145` implements feature
-- [ ] **Integration**: [How wired into production] → `src/main.rs:67` calls new function
-- [ ] **Task 0 passes**: `cargo t test_integration_p[XX]_[goal]` now succeeds (if Task 0 exists)
-- [ ] **Unit tests**: `cargo t test_specific_feature` or `tests/unit_test.rs:test_name`
-- [ ] **Manual validation**: `cargo run -- test_case` produces expected output change
-- [ ] **Cleanup**: [Obsolete code removed] → commit `abc123f` or `grep -r "old_pattern" src/` returns empty
-- [ ] **Documentation**: [Updated docs] → `docs/file.md:section` or N/A if none needed
+**Implementation approach**: [2-3 sentences on strategy and key technical steps]
 
-**Implementation Details**: [Strategy and key technical steps]
-**Integration Strategy**: [How to wire into production execution paths]  
-**Validation Plan**: [Commands/tests that prove end-to-end functionality]
-**Dependencies**: [What must be done first - reference other tasks by ID like "Task B complete"]
+**Validation commands**: 
+- `cargo t test_name` - [what this proves]
+- `grep -r "pattern" src/` - [what this shows for integration]
+- `cargo run test_case` - [what behavior change this demonstrates]
 
-**Success Patterns**:
+**Dependencies**: [Other tasks that must complete first, or "None"]
 
-- ✅ [What good implementation looks like with specific proof]
-- ✅ [Key indicator of correctness with measurement command]
-- ✅ [How to verify integration works end-to-end]
+**Completion checklist** (mark during execution):
+- [ ] **Code implemented** → [file:line where functionality exists]
+- [ ] **Tests passing** → [specific test command that succeeds]  
+- [ ] **Production integration** → [proof of actual usage in main flows]
+- [ ] **Cleanup complete** → [evidence old code removed]
 
-### Task B: RESEARCH - [Specific question to answer]
+### Task B: RESEARCH - [Specific investigation]
 
-**Objective**: [What exactly to discover]
-**Success Criteria**: [Specific deliverable/answer to obtain]
-**Done When**: [Clear completion signal]
+**What is understood after this task**: [What will be documented/analyzed that enables implementation]
 
-**Task Quality Check**: Can another engineer pick up any task and complete it without asking clarifying questions?
+**Research approach**: [2-3 sentences on investigation strategy and key areas to analyze]
 
-## Task Completion Standards
+**Validation commands**: 
+- `[analysis command]` - [what this reveals about the domain]
+- `[comparison command]` - [what this shows about ExifTool behavior]
 
-**RULE**: No checkbox can be marked complete without specific proof.
+**Dependencies**: [Other tasks that must complete first, or "None"]
 
-### Required Evidence Types
+**Completion checklist** (mark during execution):
+- [ ] **Analysis documented** → [docs/research/file.md with findings]
+- [ ] **ExifTool behavior mapped** → [specific .pm files and line numbers cited]
+- [ ] **Implementation strategy** → [clear path forward for implementation tasks]
+- [ ] **Test cases identified** → [sample files and edge cases documented]
 
-- **Code references**: `file.rs:line_range` where implementation exists
-- **Passing commands**: `cargo t test_name` or `make command` that succeeds
-- **Integration proof**: `grep -r "new_function" src/` shows production usage
-- **Removal evidence**: Commit link or `grep` returning empty for removed code
-- **Output changes**: Before/after examples showing behavior differences
+## Validation Requirements
 
-### ❌ Common Incomplete Patterns
+**RULE**: Every checkbox must have verifiable proof that another engineer can independently validate.
 
-**Implementation without Integration**:
+**WARNING**: Do not mark checkboxes complete based on "it works when I test it manually." Provide specific commands and evidence.
 
-- "Module implemented but `main.rs` unchanged" → Missing integration proof
-- "Feature works when called directly but no production usage" → Not wired into system
-- "`grep -r new_feature src/` only shows test files" → No production consumption
+### Required Evidence
 
-**Testing without Validation**:
+- **Commands that pass**: `cargo t test_name`, `make precommit`, etc.
+- **Code locations**: `src/file.rs:line_range` where implementation exists
+- **Integration proof**: `grep` commands showing production usage
+- **Behavior changes**: Before/after examples or comparison tool output
 
-- "`cargo t` passes but new test was commented out" → Invalid test proof
-- "Unit tests pass but integration test still fails" → Incomplete implementation
-- "Test exists but doesn't validate end-to-end behavior" → Wrong test scope
+### Anti-Vandalism Validation
 
-**Cleanup Avoidance**:
+**CRITICAL**: "Working code" ≠ "Complete task". Most engineering failures come from declaring victory too early.
 
-- "Generated code updated but old workaround still active" → Incomplete cleanup
-- "New feature works but legacy code path unchanged" → No obsolete code removal
-- "Documentation says 'TODO: update this section'" → Invalid documentation proof
+**Integration Requirements**: Every feature must prove it connects to existing systems.
 
-### ✅ Valid Completion Examples
+- ✅ **Production Usage**: `grep -r "new_function" src/` shows actual usage (not just tests)
+- ✅ **Behavior Change**: `cargo run test_case` produces different output than before
+- ✅ **Cleanup Complete**: `grep -r "old_pattern" src/` returns empty. Obsolete/deadwood code has been deleted.
+- ❌ **Shelf-ware**: Code exists but nothing calls it in production workflows
+- ❌ **Half-integrated**: Works when called directly but not in normal usage
 
-- [ ] **Integration**: Parser uses new extraction method → `src/parser.rs:234` calls `extract_gps_coords()`
-- [ ] **Testing**: Regression prevented → `cargo t test_gps_coordinate_parsing` passes
-- [ ] **Cleanup**: Dead code removed → `git show abc123f` removed `legacy_gps_parser()`
-- [ ] **Documentation**: Guide updated → `docs/GPS-PARSING.md:45-67` documents new behavior
-- [ ] **Validation**: Behavior changed → `cargo run image.jpg` now shows decimal GPS coordinates
+**Common Over-Selling Patterns** (DO NOT mark tasks complete if any apply):
+- "Implementation works" but no integration proof
+- "Tests pass" but only unit tests, no end-to-end validation
+- "Feature complete" but old workaround code still active
+- "Ready for review" but `make precommit` fails
+- "99% done" but missing cleanup/documentation/integration
 
-**Accountability Principle**: Every checkbox creates a verifiable claim that another engineer can independently validate.
+**Definition of Complete**: System behavior changes + old path removed + new capability used automatically + all validation commands pass.
 
-## Implementation Guidance (Optional)
+## Quick Reference
 
-Include this section if there are specific techniques, patterns, or considerations that would help with implementation:
+### TPP Quality Checklist
 
-- **Recommended patterns**: [Specific coding patterns that work well for this domain]
-- **Tools to leverage**: [Existing utilities, macros, or frameworks to use]
-- **Architecture considerations**: [How this fits into the broader system]
-- **Performance notes**: [Any optimization considerations]
-- **ExifTool translation notes**: [Specific perl → rust patterns to follow]
+- [ ] **Goal defined first**: 5 sentences covering what, why, constraints, ExifTool alignment, validation
+- [ ] **Context research complete**: All 4 mandatory steps documented with citations
+- [ ] **Tasks outcome-focused**: "At end of task X works that didn't before"
+- [ ] **Integration required**: Every feature proves production usage
+- [ ] **ExifTool references**: Cite specific .pm files and line numbers
+- [ ] **No over-selling**: Tasks marked complete only when ALL checkboxes have evidence
+- [ ] **End-to-end validation**: `make precommit` passes before declaring victory
 
-## Integration Requirements
+### Common Project Gotchas
 
-**CRITICAL**: Building without integrating is failure. Don't accept tasks that build "shelf-ware."
+- **Generated code looks wrong** → Fix `codegen/`, never edit `src/generated/`
+- **ExifTool does weird thing** → Trust it completely, 25 years of camera bug fixes
+- **Manual edits disappear** → Use codegen extraction, ban manual transcription
+- **Feature works but unused** → Integration proof required, no "shelf-ware"
+- **"It works on my machine"** → Provide specific commands others can run to verify
+- **"Just needs cleanup"** → Cleanup is PART of the task, not a future TODO
+- **"95% complete"** → Either complete with evidence or incomplete, no percentages
 
-### Mandatory Integration Proof
+### Essential Commands
 
-Every feature must include specific evidence of integration:
+- `cargo t test_name` - Run specific test
+- `grep -r "pattern" src/` - Find usage in codebase
+- `make precommit` - Final validation before completion
+- `cargo run --bin compare-with-exiftool image.jpg` - Verify ExifTool alignment
 
-- [ ] **Activation**: Feature is enabled/used by default → `src/main.rs:line` shows automatic usage
-- [ ] **Consumption**: Existing code paths actively use new capability → `grep -r "new_function" src/` shows production calls
-- [ ] **Measurement**: Can prove feature works via output changes → `cargo run test_case` shows different behavior
-- [ ] **Cleanup**: Old approach deprecated/removed → commit link or `grep -r "old_function" src/` returns empty
+### File Naming
 
-### Integration Verification Commands
+`docs/todo/PXX-description.md` → `docs/done/YYYYMMDD-PXX-description.md`
 
-**Production Usage Proof**:
-
-- `grep -r "new_feature" src/` → Should show non-test usage in main execution paths
-- `git log --oneline -5` → Should show commits that wire new functionality into existing flows
-- `cargo run representative_test_case` → Should demonstrate behavior change from previous baseline
-
-**Integration vs Implementation Test**:
-
-- ❌ **Implementation only**: "Feature works when I call `new_function()` directly"
-- ✅ **Integrated**: "Feature works when I run normal workflow - `cargo run image.jpg` uses new logic automatically"
-
-**Red Flag Check**: If a task seems like "build a tool/module but don't wire it anywhere," ask for clarity. We're not writing tools to sit on a shelf - everything must get us closer to "ExifTool in Rust for PhotoStructure."
-
-## Working Definition of "Complete"
-
-_Use these criteria to evaluate your own work - adapt to your specific context:_
-
-A feature is complete when:
-
-- ✅ **System behavior changes** - something works differently/better than before
-- ✅ **Default usage** - new capability is used automatically, not opt-in
-- ✅ **Old path removed** - previous workarounds/hacks are eliminated
-- ❌ Code exists but isn't used _(example: "parser implemented but codegen still uses old logic")_
-- ❌ Feature works "if you call it directly" _(example: "new API exists but nothing calls it")_
-
-_Note: These are evaluation guidelines, not literal requirements for every task._
-
-## Prerequisites
-
-- [Dependency] → [TPP link] → verify with `[command/test]`
-
-## Testing
-
-- **Unit**: Test [specific functions/edge cases]
-- **Integration**: Verify [end-to-end scenario]
-- **Manual check**: Run `[command]` and confirm [expected output]
-
-## Definition of Done
-
-- [ ] `cargo t [test_name]` passes
-- [ ] `make precommit` clean
-- [ ] [Specific acceptance criteria]
-
-## TPP Quality Checklist
-
-Before submitting, verify your TPP includes:
-
-**Context Requirements**:
-
-- [ ] System overview with 2-3 sentence summaries of each component
-- [ ] Key domain concepts defined for unfamiliar readers
-- [ ] **Surprising Context**: At least 2-3 non-obvious/counterintuitive aspects documented
-- [ ] Prerequisites and assumed knowledge clearly stated
-- [ ] Links to relevant design docs and ExifTool source
-
-**Task Requirements**:
-
-- [ ] All tasks are numbered and actionable
-- [ ] Each task has specific success criteria (not vague goals)
-- [ ] Dependencies between tasks clearly marked
-- [ ] Tasks focus on positive outcomes ("do X to achieve Y")
-
-**Verification Requirements**:
-
-- [ ] Task 0: TDD Foundation exists with failing integration test
-- [ ] Every task includes specific proof requirements for each checkbox
-- [ ] Integration proof explicitly required (not just implementation proof)
-- [ ] Cleanup verification includes specific commands or commit references
-- [ ] Manual validation includes exact commands that demonstrate success
-- [ ] All checkboxes require code references, passing commands, or verifiable evidence
-
-**Quality Test**: Can a new engineer understand the context, complete any task, and verify completion without asking clarifying questions?
-
-## Examples: Good vs Poor TPP Structure
-
-### ❌ Poor Context Example
-
-```md
-## Context & Foundation
-
-- Fix the parser bug in Canon module
-- It's not working right
-- Check the ExifTool code
-```
-
-### ✅ Good Context Example
-
-```md
-## Context & Foundation
-
-### System Overview
-
-- **Canon PrintConv system**: Converts raw Canon values to human-readable strings using lookup tables from ExifTool's Canon.pm module
-- **Value pipeline**: Raw bytes → ValueConv (normalize) → PrintConv (humanize) → display
-
-### Surprising Context
-
-- **PrintConv arrays are ordered**: Canon.pm uses positional arrays where index=value, but we store as HashMaps
-- **Missing entries != "Unknown"**: ExifTool returns literal value when no PrintConv match found
-- **Generated code mismatch**: Our codegen extracts `%canonModes` but misses inline conditional logic
-```
-
-### ❌ Poor Task Example
-
-```md
-### Task: Fix the bug
-
-**Success**: Make it work
-**Approach**: Debug and fix
-```
-
-### ✅ Good Task Example
-
-```md
-### Task A: Implement Canon WhiteBalance PrintConv with conditional logic
-
-**Success Criteria**:
-
-- [ ] **Implementation**: Conditional logic extracted → `src/generated/Canon_pm/white_balance.rs:23-67`
-- [ ] **Integration**: PrintConv generator uses logic → `codegen/src/tag_kit.rs:145` calls `generate_conditional_printconv()`
-- [ ] **Task 0 passes**: `cargo t test_integration_p10_canon_wb` now succeeds
-- [ ] **Unit tests**: `cargo t test_canon_white_balance_printconv` passes
-- [ ] **Manual validation**: `cargo run -- canon_image.jpg` shows "Daylight" not "1"
-- [ ] **Cleanup**: Old hardcoded lookup removed → `git show abc123f` removed static WB array
-- [ ] **Documentation**: N/A
-
-**Implementation Details**: Extract conditional logic from Canon.pm:2847-2863, implement in tag_kit generator
-**Integration Strategy**: Wire into PrintConv pipeline for all Canon WB tags
-**Validation Plan**: Test with 47 ExifTool comparison cases
-**Dependencies**: None
-
-**Success Patterns**:
-
-- ✅ All ExifTool WhiteBalance values match our output exactly
-- ✅ "Unknown (15)" format used for unmapped values
-- ✅ Generated code handles both hash lookups AND conditional expressions
-```
-
-## Examples: Task Completion Patterns
-
-### ❌ Poor Completion Examples
-
-**Implementation without Integration**:
-
-```md
-- [x] **Implementation**: GPS parser written → `src/gps.rs:45-120` implements parsing
-- [x] **Integration**: Added to main system → "It compiles when imported"
-- [x] **Testing**: Unit tests pass → `cargo t test_gps_unit`
-```
-
-_Problem_: No proof that main system actually uses GPS parser, no integration test, vague integration claim.
-
-**Testing without Validation**:
-
-```md
-- [x] **Testing**: All tests pass → `cargo t` succeeds
-- [x] **Manual validation**: Tested manually → "I ran it and it worked"
-```
-
-_Problem_: Could be passing because test was commented out, no specific validation command.
-
-**Cleanup Avoidance**:
-
-```md
-- [x] **Cleanup**: Old code removed → "Not needed anymore"
-- [x] **Documentation**: Updated → "Fixed the docs"
-```
-
-_Problem_: No evidence of actual removal or specific documentation changes.
-
-### ✅ Good Completion Examples
-
-**Complete Implementation with Integration (Task C example)**:
-
-```md
-- [x] **Implementation**: GPS coordinate parser → `src/gps.rs:45-120` implements `parse_coordinates()`
-- [x] **Integration**: Main parser uses GPS logic → `src/parser.rs:234` calls `parse_coordinates()` for GPS tags
-- [x] **Task 0 passes**: `cargo t test_integration_p15_gps` now succeeds
-- [x] **Unit tests**: `cargo t test_gps_coordinate_parsing` passes
-- [x] **Manual validation**: `cargo run -- test-images/gps/sample.jpg` shows decimal coordinates
-- [x] **Cleanup**: Removed string fallback → `git show abc123f` deleted `gps_string_fallback()`
-- [x] **Documentation**: Updated GPS guide → `docs/GPS-PARSING.md:23-45` documents coordinate format
-```
-
-_Why good_: Every checkbox has specific, verifiable evidence that another engineer can independently check.
-
-**Proper Research Documentation (Task A example)**:
-
-```md
-- [x] **Research complete**: Canon lens database analyzed → `docs/research/canon-lens-analysis.md` with 47 lens entries
-- [x] **Implementation plan**: Strategy documented → Same file, lines 89-102 outline extraction approach
-- [x] **ExifTool verification**: Confirmed behavior → `./exiftool -LensModel test-images/canon/*.jpg` output matches analysis
-```
-
-_Why good_: Research creates concrete deliverables that inform later tasks (Task B, Task C, etc.).
-
-**Accountability Principle**: Each checkbox creates a verifiable claim. If you can't provide specific evidence, the task isn't complete.
-
-## Additional Gotchas & Tribal Knowledge
-
-**Format**: Surprise → Why → Solution (Focus on positive guidance)
-
-Common examples:
-
-- **src/generated/\* looks buggy** → It's generated → Fix codegen configs, not the output
-- **ExifTool does weird thing** → 25 years of camera bugs → Trust and copy exactly
-- **Where's this tag?** → Could be anywhere → Check: generated/, composite_tags/, implementations/
-- **Composite tag implemented but not working** → Probably missing from generated definitions → Check if it's in module-specific `%ModuleName::Composite` table that codegen doesn't extract
-- **Manual edits to generated files disappear** → Codegen overwrites them → Always fix extraction configs, never edit generated code directly
-
-**Note**: Most gotchas should be captured in the "Surprising Context" section above.
-
-## Quick Debugging
-
-Stuck? Try these:
-
-1. `grep -r "TagName" src/` - Find all uses
-2. `rg "tag_name" third-party/exiftool/` - Check ExifTool impl
-3. `cargo t test_name -- --nocapture` - See debug prints
-4. `git log -S "feature"` - Find when/why added
-
----
-
-## File Naming
-
-`docs/todo/PXX-short-kebab-description.md`
-
-- PXX = 2-digit priority (P00 highest → P99 lowest)
-- Suffixes (a,b,c) ONLY for dependencies: P10a must complete before P10b
-- Done: Move to `docs/done/YYYYMMDD-PXX-description.md`
+PXX = priority (P00 highest, P99 lowest). Use suffixes (a,b,c) only for dependencies.

@@ -1,0 +1,4680 @@
+  {
+    "ValueConv": "$val / 100",
+    "Names": [
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "Canon.FocusDistanceUpper",
+      "Canon.FocusDistanceLower",
+      "DJI.Emissivity",
+      "GoPro.GPSHPositioningError",
+      "Kodak.FNumber",
+      "Kodak.FNumber",
+      "Kodak.DigitalZoom",
+      "Kodak.FNumber",
+      "Kodak.TotalZoom",
+      "Kodak.FNumber",
+      "Kodak.OpticalZoom",
+      "Kodak.OpticalZoom",
+      "Kodak.MaxAperture",
+      "Kodak.OpticalZoom",
+      "Kodak.FNumber",
+      "Kodak.OpticalZoom",
+      "Kodak.OpticalZoom",
+      "Kodak.FocalLength",
+      "Kodak.OpticalZoom",
+      "Kodak.FNumber",
+      "Kodak.FNumber",
+      "Kodak.OpticalZoom",
+      "Kodak.DigitalZoom",
+      "Kodak.FNumber",
+      "Kodak.OpticalZoom",
+      "Kodak.DigitalZoom",
+      "Kodak.FNumber",
+      "Panasonic.TimeSincePowerOn",
+      "Pentax.BodyBatteryVoltage1",
+      "Pentax.BodyBatteryVoltage2",
+      "Pentax.BodyBatteryVoltage3",
+      "Pentax.BodyBatteryVoltage4",
+      "Pentax.FocalLength",
+      "Pentax.DigitalZoom",
+      "Sony.FNumber",
+      "Sony.ExposureCompensation",
+      "Sony.FocalLength",
+      "Sony.MasterGainAdjustment"
+    ],
+    "Count": 78
+  },
+  {
+    "ValueConv": "$val / 10",
+    "Names": [
+      "Canon.DisplayAperture",
+      "Canon.FocalLength",
+      "Canon.MinFocalLength2",
+      "Canon.MaxFocalLength2",
+      "Canon.ModifiedDigitalGain",
+      "Canon.DigitalGain",
+      "Canon.BulbDuration",
+      "Canon.SelfTimer2",
+      "DJI.DroneRoll",
+      "DJI.DronePitch",
+      "DJI.DroneYaw",
+      "DJI.GimbalPitch",
+      "DJI.GimbalRoll",
+      "DJI.GimbalYaw",
+      "DJI.ReflectedTemperature",
+      "DJI.ObjectDistance",
+      "HP.MaxAperture",
+      "HP.FNumber",
+      "Kodak.ISO",
+      "Kodak.FNumber",
+      "Kodak.FNumber",
+      "Nikon.DigitalROC",
+      "Olympus.ManometerPressure",
+      "Panasonic.ManometerPressure",
+      "Panasonic.RollAngle",
+      "Pentax.FNumber",
+      "Pentax.FocalLength",
+      "Pentax.SensorTemperature",
+      "Pentax.SensorTemperature2",
+      "Pentax.SensorTemperature",
+      "Red.FNumber",
+      "Samsung.FocalLengthIn35mmFormat",
+      "Sanyo.FNumber",
+      "Sanyo.ExposureCompensation",
+      "Sanyo.FocalLength",
+      "Sony.FocalLength",
+      "Sony.FocalLength",
+      "Sony.MinFocalLength",
+      "Sony.MaxFocalLength",
+      "Sony.FocalLength",
+      "Sony.MinFocalLength",
+      "Sony.MaxFocalLength",
+      "Sony.FocalLength",
+      "Sony.MinFocalLength",
+      "Sony.MaxFocalLength",
+      "Sony.FocalLength",
+      "Sony.MinFocalLength",
+      "Sony.MaxFocalLength",
+      "Sony.FocalLength",
+      "Sony.MinFocalLength",
+      "Sony.MaxFocalLength",
+      "Sony.FocalLength",
+      "Sony.MinFocalLength",
+      "Sony.MaxFocalLength",
+      "RIFF.GPSAltitude"
+    ],
+    "Count": 55
+  },
+  {
+    "ValueConv": "$val + 1",
+    "Names": [
+      "Canon.AFConfigTool",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.ShutterCount",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex2",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Canon.FileIndex",
+      "Sony.SequenceImageNumber",
+      "Sony.SequenceFileNumber",
+      "Sony.SequenceImageNumber",
+      "Sony.SequenceFileNumber",
+      "Sony.SequenceImageNumber",
+      "Sony.SequenceFileNumber",
+      "Sony.SequenceImageNumber",
+      "Sony.SequenceFileNumber",
+      "Sony.SequenceFileNumber",
+      "Sony.SequenceImageNumber",
+      "Sony.SequenceFileNumber",
+      "Sony.SequenceImageNumber",
+      "Sony.SequenceImageNumber",
+      "Sony.SequenceFileNumber",
+      "Sony.SequenceImageNumber",
+      "Sony.SequenceImageNumber"
+    ],
+    "Count": 40
+  },
+  {
+    "ValueConv": "$val / 1000",
+    "Names": [
+      "Canon.Duration",
+      "Casio.ObjectDistance",
+      "DJI.AbsoluteAltitude",
+      "DJI.RelativeAltitude",
+      "DJI.AbsoluteAltitude",
+      "DJI.RelativeAltitude",
+      "DJI.GPSAltitude",
+      "DJI.GPSAltitude",
+      "DJI.AbsoluteAltitude",
+      "DJI.RelativeAltitude",
+      "DJI.AbsoluteAltitude",
+      "DJI.RelativeAltitude",
+      "Kodak.BrightnessValue",
+      "Kodak.ExposureCompensation",
+      "Olympus.Duration",
+      "Olympus.Index01",
+      "Olympus.Index02",
+      "Olympus.Index03",
+      "Olympus.Index04",
+      "Olympus.Index05",
+      "Olympus.Index06",
+      "Olympus.Index07",
+      "Olympus.Index08",
+      "Olympus.Index09",
+      "Olympus.Index10",
+      "Olympus.Index11",
+      "Olympus.Index12",
+      "Olympus.Index13",
+      "Olympus.Index14",
+      "Olympus.Index15",
+      "Olympus.Index16",
+      "Panasonic.FocusDistance",
+      "Panasonic.FocalLength",
+      "Panasonic.FNumber",
+      "CanonRaw.SelfTimerTime",
+      "Casio.ObjectDistance",
+      "QuickTime.GoogleTrackDuration",
+      "RIFF.Duration"
+    ],
+    "Count": 38
+  },
+  {
+    "ValueConv": "[Function: Image::ExifTool::Pentax::__ANON__]",
+    "Names": [
+      "Pentax.KelvinWB_Daylight",
+      "Pentax.KelvinWB_03",
+      "Pentax.KelvinWB_04",
+      "Pentax.KelvinWB_05",
+      "Pentax.KelvinWB_06",
+      "Pentax.KelvinWB_07",
+      "Pentax.KelvinWB_08",
+      "Pentax.KelvinWB_09",
+      "Pentax.KelvinWB_10",
+      "Pentax.KelvinWB_11",
+      "Pentax.KelvinWB_12",
+      "Pentax.KelvinWB_01",
+      "Pentax.KelvinWB_13",
+      "Pentax.KelvinWB_14",
+      "Pentax.KelvinWB_15",
+      "Pentax.KelvinWB_16",
+      "Pentax.KelvinWB_02",
+      "Pentax.DSPFirmwareVersion",
+      "Pentax.CPUFirmwareVersion",
+      "Pentax.ColorTempDaylight",
+      "Pentax.ColorTempShade",
+      "Pentax.ColorTempCloudy",
+      "Pentax.ColorTempTungsten",
+      "Pentax.ColorTempFluorescentD",
+      "Pentax.ColorTempFluorescentN",
+      "Pentax.ColorTempFluorescentW",
+      "Pentax.ColorTempFlash"
+    ],
+    "Count": 27
+  },
+  {
+    "ValueConv": "-$val/6",
+    "Names": [
+      "Nikon.FlashCompensation",
+      "Nikon.FlashGroupACompensation",
+      "Nikon.FlashGroupBCompensation",
+      "Nikon.FlashCompensation",
+      "Nikon.FlashGroupACompensation",
+      "Nikon.FlashGroupBCompensation",
+      "Nikon.FlashGroupCCompensation",
+      "Nikon.FlashCompensation",
+      "Nikon.FlashGroupACompensation",
+      "Nikon.FlashGroupBCompensation",
+      "Nikon.FlashGroupCCompensation",
+      "Nikon.ExternalFlashCompensation",
+      "Nikon.FlashExposureComp3",
+      "Nikon.FlashExposureComp4",
+      "Nikon.FlashCompensation",
+      "Nikon.FlashGroupACompensation",
+      "Nikon.FlashGroupBCompensation",
+      "Nikon.FlashGroupCCompensation",
+      "Nikon.FlashCompensation",
+      "Nikon.FlashGroupACompensation",
+      "Nikon.FlashGroupBCompensation",
+      "Nikon.FlashGroupCCompensation",
+      "Nikon.FlashCompensation",
+      "Nikon.FlashExposureComp2"
+    ],
+    "Count": 24
+  },
+  {
+    "ValueConv": "$val - 0x80",
+    "Names": [
+      "Nikon.PictureControlQuickAdjust",
+      "Nikon.Sharpness",
+      "Nikon.Contrast",
+      "Nikon.Brightness",
+      "Nikon.Saturation",
+      "Nikon.HueAdjustment",
+      "Nikon.ToningSaturation",
+      "Nikon.PictureControlQuickAdjust",
+      "Nikon.Sharpness",
+      "Nikon.Clarity",
+      "Nikon.Contrast",
+      "Nikon.Brightness",
+      "Nikon.Saturation",
+      "Nikon.Hue",
+      "Nikon.ToningSaturation",
+      "Nikon.PictureControlQuickAdjust",
+      "Nikon.Sharpness",
+      "Nikon.MidRangeSharpness",
+      "Nikon.Clarity",
+      "Nikon.Contrast",
+      "Nikon.Brightness",
+      "Nikon.Saturation",
+      "Nikon.Hue",
+      "Nikon.ToningSaturation"
+    ],
+    "Count": 24
+  },
+  {
+    "ValueConv": "unpack(\"H*\",$val)",
+    "Names": [
+      "Canon.LensSerialNumber",
+      "Canon.LensSerialNumber",
+      "Ricoh.RicohRDC2",
+      "Samsung.UniqueID",
+      "Jpeg2000.C2PASaltHash",
+      "Matroska.ChapterTranslateEditionUID",
+      "Matroska.ChapterSegmentUID",
+      "Matroska.ChapterSegmentEditionUID",
+      "Matroska.SegmentUID",
+      "Matroska.ChapterUID",
+      "Matroska.TrackUID",
+      "Matroska.TrackAttachmentUID",
+      "Matroska.EditionUID",
+      "Matroska.AttachedFileUID",
+      "Matroska.PrevUID",
+      "Matroska.NextUID",
+      "Matroska.TagChapterUID",
+      "Matroska.TagTrackUID",
+      "Matroska.TagAttachmentUID",
+      "Matroska.TagEditionUID",
+      "Matroska.TrackTranslateEditionUID",
+      "QuickTime.InitializationVector",
+      "QuickTime.SerialNumberHash"
+    ],
+    "Count": 23
+  },
+  {
+    "ValueConv": "exp(4*log(2)*(1-Image::ExifTool::Canon::CanonEv($val-24)))",
+    "Names": [
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime",
+      "Canon.ExposureTime"
+    ],
+    "Count": 23
+  },
+  {
+    "ValueConv": "2 ** (-$val/6)",
+    "Names": [
+      "Nikon.FlashOutput",
+      "Nikon.FlashGroupAOutput",
+      "Nikon.FlashGroupBOutput",
+      "Nikon.FlashOutput",
+      "Nikon.FlashGroupAOutput",
+      "Nikon.FlashGroupBOutput",
+      "Nikon.FlashGroupCOutput",
+      "Nikon.FlashOutput",
+      "Nikon.FlashGroupAOutput",
+      "Nikon.FlashGroupBOutput",
+      "Nikon.FlashGroupCOutput",
+      "Nikon.FlashOutput",
+      "Nikon.FlashGroupAOutput",
+      "Nikon.FlashGroupBOutput",
+      "Nikon.FlashGroupCOutput",
+      "Nikon.FlashGroupAOutput",
+      "Nikon.FlashGroupBOutput",
+      "Nikon.FlashGroupCOutput",
+      "Nikon.FlashOutput",
+      "Nikon.FlashGroupAOutput",
+      "Nikon.FlashGroupBOutput",
+      "Nikon.FlashGroupCOutput",
+      "Nikon.RepeatingFlashOutputExternal"
+    ],
+    "Count": 23
+  },
+  {
+    "ValueConv": "$val - 128",
+    "Names": [
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature",
+      "Canon.CameraTemperature"
+    ],
+    "Count": 21
+  },
+  {
+    "ValueConv": "my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\"",
+    "Names": [
+      "Sony.Face1Position",
+      "Sony.Face3Position",
+      "Sony.Face4Position",
+      "Sony.Face5Position",
+      "Sony.Face6Position",
+      "Sony.Face7Position",
+      "Sony.Face8Position",
+      "Sony.Face2Position",
+      "Sony.Face2Position",
+      "Sony.PotentialFace1Position",
+      "Sony.Face3Position",
+      "Sony.Face4Position",
+      "Sony.PotentialFace2Position",
+      "Sony.PotentialFace3Position",
+      "Sony.PotentialFace4Position",
+      "Sony.PotentialFace5Position",
+      "Sony.PotentialFace6Position",
+      "Sony.PotentialFace7Position",
+      "Sony.PotentialFace8Position",
+      "Sony.Face1Position"
+    ],
+    "Count": 20
+  },
+  {
+    "ValueConv": "exp(($val-8)/16*log(2))",
+    "Names": [
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber",
+      "Canon.FNumber"
+    ],
+    "Count": 20
+  },
+  {
+    "ValueConv": "100*exp(($val/8-9)*log(2))",
+    "Names": [
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO",
+      "Canon.ISO"
+    ],
+    "Count": 20
+  },
+  {
+    "ValueConv": "my @a=split \" \",$val;$a[0]*=2;$a[3]*=2;\"@a\"",
+    "Names": [
+      "Nikon.WB_RGGBLevels",
+      "Nikon.WB_RGGBLevelsDaylight",
+      "Nikon.WB_RGGBLevelsCloudy",
+      "Nikon.WB_RGGBLevelsTungsten",
+      "Nikon.WB_RGGBLevelsFluorescentW",
+      "Nikon.WB_RGGBLevelsFlash",
+      "Nikon.WB_RGGBLevelsCustom",
+      "Nikon.WB_RGGBLevelsAuto",
+      "Nikon.WB_RGGBLevelsShade",
+      "Nikon.WB_RGGBLevelsTungsten",
+      "Nikon.WB_RGGBLevelsFluorescentW",
+      "Nikon.WB_RGGBLevelsFluorescentN",
+      "Nikon.WB_RGGBLevelsFluorescentD",
+      "Nikon.WB_RGGBLevelsHTMercury",
+      "Nikon.WB_RGGBLevelsCustom",
+      "Nikon.WB_RGGBLevelsAuto",
+      "Nikon.WB_RGGBLevels",
+      "Nikon.WB_RGGBLevelsDaylight",
+      "Nikon.WB_RGGBLevelsCloudy"
+    ],
+    "Count": 19
+  },
+  {
+    "ValueConv": "$val - 1",
+    "Names": [
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex2",
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex",
+      "Canon.DirectoryIndex",
+      "Sony.AFPointSelected"
+    ],
+    "Count": 19
+  },
+  {
+    "ValueConv": "($val-104)/8",
+    "Names": [
+      "Nikon.ISOAutoHiLimit",
+      "Nikon.MovieISOAutoManualMode",
+      "Nikon.ISOAutoHiLimit",
+      "Nikon.ISOAutoFlashLimit",
+      "Nikon.MovieISOAutoHiLimit",
+      "Nikon.MovieISOAutoManualMode",
+      "Nikon.ISOAutoHiLimit",
+      "Nikon.ISOAutoFlashLimit",
+      "Nikon.MovieISOAutoHiLimit",
+      "Nikon.MovieISOAutoManualMode",
+      "Nikon.ISOAutoHiLimit",
+      "Nikon.ISOAutoFlashLimit",
+      "Nikon.MovieISOAutoHiLimit",
+      "Nikon.MovieISOAutoManualMode",
+      "Nikon.ISOAutoHiLimit",
+      "Nikon.ISOAutoFlashLimit",
+      "Nikon.MovieISOAutoHiLimit",
+      "Nikon.MovieISOAutoManualMode"
+    ],
+    "Count": 18
+  },
+  {
+    "ValueConv": "[Function: Image::ExifTool::MacOS::MDItemLocalTime]",
+    "Names": [
+      "MacOS.",
+      "MacOS.",
+      "MacOS.",
+      "MacOS.",
+      "MacOS.",
+      "MacOS.",
+      "MacOS.",
+      "MacOS.",
+      "MacOS.",
+      "MacOS.",
+      "MacOS.",
+      "MacOS.",
+      "MacOS.",
+      "MacOS.",
+      "MacOS.",
+      "MacOS.AppleMailDateReceived",
+      "MacOS.AppleMailDateSent"
+    ],
+    "Count": 17
+  },
+  {
+    "ValueConv": "PrintHex($val)",
+    "Names": [
+      "Sony.Sony_0x9050",
+      "Sony.Sony_0x9400",
+      "Sony.Sony_0x9402",
+      "Sony.Sony_0x9404",
+      "Sony.Sony_0x9405",
+      "Sony.Sony_0x9406",
+      "Sony.Sony_0x9407",
+      "Sony.Sony_0x9408",
+      "Sony.Sony_0x9409",
+      "Sony.Sony_0x940a",
+      "Sony.Sony_0x940b",
+      "Sony.Sony_0x940c",
+      "Sony.Sony_0x940d",
+      "Sony.Sony_0x940e",
+      "Sony.Sony_0x940f",
+      "Sony.Sony_0x9411",
+      "Sony.Tag_0x2010"
+    ],
+    "Count": 17
+  },
+  {
+    "ValueConv": "length($val) > 64 ? \\$val : $val",
+    "Names": [
+      "Exif.MakerNoteUnknownText",
+      "Exif.BlackLevelDeltaH",
+      "Exif.BlackLevelDeltaV",
+      "Exif.ProfileHueSatMapData1",
+      "Exif.ProfileHueSatMapData2",
+      "Exif.ProfileToneCurve",
+      "Exif.ProfileLookTableData",
+      "Exif.ProfileHueSatMapData3",
+      "Canon.ToneCurveTable",
+      "Canon.SharpnessTable",
+      "Canon.SharpnessFreqTable",
+      "Canon.WhiteBalanceTable",
+      "Canon.ToneCurveMatching",
+      "Canon.WhiteBalanceMatching",
+      "DNG.MakerNoteUnknownText"
+    ],
+    "Count": 15
+  },
+  {
+    "ValueConv": "2**($val/24)",
+    "Names": [
+      "Nikon.MaxApertureAtMinFocal",
+      "Nikon.MaxApertureAtMaxFocal",
+      "Nikon.MaxApertureAtMinFocal",
+      "Nikon.MaxApertureAtMaxFocal",
+      "Nikon.EffectiveMaxAperture",
+      "Nikon.AFAperture",
+      "Nikon.MaxApertureAtMinFocal",
+      "Nikon.MaxApertureAtMaxFocal",
+      "Nikon.EffectiveMaxAperture",
+      "Nikon.AFAperture",
+      "Nikon.MaxApertureAtMinFocal",
+      "Nikon.MaxApertureAtMaxFocal",
+      "Nikon.EffectiveMaxAperture",
+      "Nikon.AFAperture"
+    ],
+    "Count": 14
+  },
+  {
+    "ValueConv": "$val=~s/^.*: //;$val",
+    "Names": [
+      "Exif.OwnerName",
+      "Exif.SerialNumber",
+      "Exif.Lens",
+      "Exif.RawFile",
+      "Exif.Converter",
+      "Exif.WhiteBalance",
+      "Exif.Exposure",
+      "Exif.Shadows",
+      "Exif.Brightness",
+      "Exif.Contrast",
+      "Exif.Saturation",
+      "Exif.Sharpness",
+      "Exif.Smoothness",
+      "Exif.MoireFilter"
+    ],
+    "Count": 14
+  },
+  {
+    "ValueConv": "100 * 2**(16 - $val/256)",
+    "Names": [
+      "Sony.SonyISO",
+      "Sony.SonyISO",
+      "Sony.SonyISO",
+      "Sony.SonyISO",
+      "Sony.SonyISO",
+      "Sony.SonyISO",
+      "Sony.SonyISO",
+      "Sony.SonyISO",
+      "Sony.SonyISO",
+      "Sony.SonyISO",
+      "Sony.SonyISO",
+      "Sony.BaseISO",
+      "Sony.SonyISO"
+    ],
+    "Count": 13
+  },
+  {
+    "ValueConv": "exp(($val-68)*log(2)/16)",
+    "Names": [
+      "Pentax.AEAperture",
+      "Pentax.AEMaxAperture2",
+      "Pentax.AEMinAperture",
+      "Pentax.AEMaxAperture",
+      "Pentax.AEMaxAperture",
+      "Pentax.AEMaxAperture2",
+      "Pentax.AEMinAperture",
+      "Pentax.AEAperture",
+      "Pentax.AEAperture",
+      "Pentax.AEMaxAperture",
+      "Pentax.AEMaxAperture2",
+      "Pentax.AEMinAperture"
+    ],
+    "Count": 12
+  },
+  {
+    "ValueConv": "100*exp(($val/12-5)*log(2))",
+    "Names": [
+      "Nikon.ISO",
+      "Nikon.ISO2",
+      "Nikon.ISO2",
+      "Nikon.ISO2",
+      "Nikon.ISO2",
+      "Nikon.ISO2",
+      "Nikon.ISO2",
+      "Nikon.ISO2",
+      "Nikon.ISO2",
+      "Nikon.ISO2",
+      "Nikon.ISO2",
+      "Nikon.ISO2"
+    ],
+    "Count": 12
+  },
+  {
+    "ValueConv": "$val / 8",
+    "Names": [
+      "FujiFilm.DigitalZoom",
+      "Nikon.ISOAutoShutterTime",
+      "Nikon.ISOAutoShutterTime",
+      "Nikon.ISOAutoShutterTime",
+      "Nikon.ISOAutoShutterTime",
+      "Pentax.AEBXv",
+      "Pentax.AEBXv",
+      "Sony.ExposureCompensation2",
+      "Sony.FlashExposureCompSet2",
+      "Sony.ExposureCompensation2",
+      "Sony.ExposureCompensation2",
+      "Sony.FlashExposureCompSet2"
+    ],
+    "Count": 12
+  },
+  {
+    "ValueConv": "$val / 256",
+    "Names": [
+      "Pentax.BlueBalance",
+      "Pentax.RedBalance",
+      "Pentax.FlashExposureComp",
+      "PanasonicRaw.SensitivityValue",
+      "PanasonicRaw.RedBalance",
+      "PanasonicRaw.BlueBalance",
+      "PanasonicRaw.HighISOMultiplierRed",
+      "PanasonicRaw.HighISOMultiplierGreen",
+      "PanasonicRaw.HighISOMultiplierBlue",
+      "QuickTime.AverageFrameRate",
+      "QuickTime.PreferredVolume",
+      "QuickTime.TrackVolume"
+    ],
+    "Count": 12
+  },
+  {
+    "ValueConv": "$self->Decode($val, \"UTF8\")",
+    "Names": [
+      "Exif.LocalizedCameraModel",
+      "Exif.OriginalRawFileName",
+      "Exif.PanasonicTitle",
+      "Exif.PanasonicTitle2",
+      "Exif.CameraCalibrationSig",
+      "Exif.ProfileCalibrationSig",
+      "Exif.AsShotProfileName",
+      "Exif.ProfileName",
+      "Exif.ProfileCopyright",
+      "Exif.PreviewApplicationName",
+      "Exif.PreviewApplicationVersion",
+      "Exif.PreviewSettingsName"
+    ],
+    "Count": 12
+  },
+  {
+    "ValueConv": "unpack(\"H*\", $val)",
+    "Names": [
+      "ExifTool.",
+      "Exif.PreviewSettingsDigest",
+      "Exif.RawImageDigest",
+      "Exif.OriginalRawFileDigest",
+      "Exif.NewRawImageDigest",
+      "Canon.LensSerialNumber",
+      "Canon.ImageUniqueID",
+      "Ricoh.InternalSerialNumber",
+      "Photoshop.IPTCDigest",
+      "QuickTime.MediaUID",
+      "SigmaRaw.ImageUniqueID"
+    ],
+    "Count": 11
+  },
+  {
+    "ValueConv": "Image::ExifTool::Exif::ExifDate($val)",
+    "Names": [
+      "GPS.GPSDateStamp",
+      "IPTC.ReleaseDate",
+      "IPTC.ExpirationDate",
+      "IPTC.ReferenceDate",
+      "IPTC.DateCreated",
+      "IPTC.DigitalCreationDate",
+      "IPTC.DateSent",
+      "Nikon.GPSDateStamp",
+      "Pentax.GPSDateStamp",
+      "Sony.GPSDateStamp",
+      "H264.GPSDateStamp"
+    ],
+    "Count": 11
+  },
+  {
+    "ValueConv": "5 * 2**($val/24)",
+    "Names": [
+      "Nikon.MinFocalLength",
+      "Nikon.MaxFocalLength",
+      "Nikon.FocalLength",
+      "Nikon.MinFocalLength",
+      "Nikon.MaxFocalLength",
+      "Nikon.FocalLength",
+      "Nikon.MinFocalLength",
+      "Nikon.MaxFocalLength",
+      "Nikon.FocalLength",
+      "Nikon.MinFocalLength",
+      "Nikon.MaxFocalLength"
+    ],
+    "Count": 11
+  },
+  {
+    "ValueConv": "16 - $val/256",
+    "Names": [
+      "Sony.StopsAboveBaseISO",
+      "Sony.StopsAboveBaseISO",
+      "Sony.StopsAboveBaseISO",
+      "Sony.StopsAboveBaseISO",
+      "Sony.StopsAboveBaseISO",
+      "Sony.StopsAboveBaseISO",
+      "Sony.StopsAboveBaseISO",
+      "Sony.StopsAboveBaseISO",
+      "Sony.StopsAboveBaseISO",
+      "Sony.StopsAboveBaseISO",
+      "Sony.StopsAboveBaseISO"
+    ],
+    "Count": 11
+  },
+  {
+    "ValueConv": "[Function: Image::ExifTool::Sony::ConvMeter2]",
+    "Names": [
+      "Sony.MeterInfo2Row5",
+      "Sony.MeterInfo2Row6",
+      "Sony.MeterInfo2Row7",
+      "Sony.MeterInfo2Row8",
+      "Sony.MeterInfo2Row9",
+      "Sony.MeterInfo2Row1",
+      "Sony.MeterInfo2Row2",
+      "Sony.MeterInfo2Row3",
+      "Sony.MeterInfo2Row4"
+    ],
+    "Count": 9
+  },
+  {
+    "ValueConv": "[Function: Image::ExifTool::Apple::ConvertPLIST]",
+    "Names": [
+      "Apple.AEMatrix",
+      "Apple.ColorCorrectionMatrix",
+      "Apple.SemanticStyle",
+      "Apple.SemanticStyleRenderingVer",
+      "Apple.SemanticStylePreset",
+      "Apple.Apple_0x004e",
+      "Apple.Apple_0x004f",
+      "Apple.Apple_0x0054",
+      "Apple.Apple_0x005a"
+    ],
+    "Count": 9
+  },
+  {
+    "ValueConv": "2 ** (-$val/3)",
+    "Names": [
+      "Nikon.FlashOutput",
+      "Nikon.FlashMasterOutput",
+      "Nikon.FlashOutput",
+      "Nikon.FlashMasterOutput",
+      "Nikon.FlashOutput",
+      "Nikon.FlashMasterOutput",
+      "Nikon.FlashOutput",
+      "Nikon.FlashOutput",
+      "Nikon.FlashOutput"
+    ],
+    "Count": 9
+  },
+  {
+    "ValueConv": "2 ** (($val/256 - 16) / 2)",
+    "Names": [
+      "Sony.SonyFNumber",
+      "Sony.SonyFNumber",
+      "Sony.SonyFNumber",
+      "Sony.SonyFNumber",
+      "Sony.SonyFNumber",
+      "Sony.SonyFNumber",
+      "Sony.SonyMaxApertureValue",
+      "Sony.SonyFNumber2",
+      "Sony.SonyMaxApertureValue"
+    ],
+    "Count": 9
+  },
+  {
+    "ValueConv": "$val/256 - 56.6",
+    "Names": [
+      "Sony.BrightnessValue",
+      "Sony.BrightnessValue",
+      "Sony.BrightnessValue",
+      "Sony.BrightnessValue",
+      "Sony.BrightnessValue",
+      "Sony.BrightnessValue",
+      "Sony.BrightnessValue",
+      "Sony.BrightnessValue",
+      "Sony.BrightnessValue"
+    ],
+    "Count": 9
+  },
+  {
+    "ValueConv": "$val / 1e6",
+    "Names": [
+      "DJI.TimeStamp",
+      "GoPro.TimeStamp",
+      "HP.ExposureTime",
+      "HP.ExposureTime",
+      "Kodak.ExposureTime",
+      "Kodak.DarkFrameShortExposure",
+      "Kodak.DarkFrameLongExposure",
+      "Kodak.ExposureTime",
+      "Kodak.ExposureTime"
+    ],
+    "Count": 9
+  },
+  {
+    "ValueConv": "$val * 100",
+    "Names": [
+      "Sony.ColorTemperatureCustom",
+      "Sony.ColorTemperatureSet",
+      "Sony.ColorTemperatureCustom",
+      "Sony.ColorTemperatureSet",
+      "Sony.ColorTemperatureSetting",
+      "Sony.ColorTemperatureSetting",
+      "MinoltaRaw.ColorTemperature",
+      "MinoltaRaw.ColorTemperature",
+      "MinoltaRaw.ColorTemperature"
+    ],
+    "Count": 9
+  },
+  {
+    "ValueConv": "length($val) > 32 ? \\$val : $val",
+    "Names": [
+      "Exif.StripOffsets",
+      "Exif.StripByteCounts",
+      "Exif.FreeOffsets",
+      "Exif.FreeByteCounts",
+      "Exif.TileOffsets",
+      "Exif.TileByteCounts",
+      "PanasonicRaw.StripOffsets",
+      "PanasonicRaw.StripByteCounts"
+    ],
+    "Count": 8
+  },
+  {
+    "ValueConv": "Image::ExifTool::GPS::ToDegrees($val)",
+    "Names": [
+      "GPS.GPSLatitude",
+      "GPS.GPSDestLatitude",
+      "GPS.GPSDestLongitude",
+      "GPS.GPSLongitude",
+      "Pentax.GPSLatitude",
+      "Pentax.GPSLongitude",
+      "H264.GPSLatitude",
+      "H264.GPSLongitude"
+    ],
+    "Count": 8
+  },
+  {
+    "ValueConv": "2 ** (($val/8 - 1) / 2)",
+    "Names": [
+      "Sony.FNumber",
+      "Sony.ApertureSetting",
+      "Sony.FNumber",
+      "Sony.ApertureSetting",
+      "Sony.ApertureSetting",
+      "Sony.FNumber",
+      "Sony.FNumber",
+      "Sony.FNumber"
+    ],
+    "Count": 8
+  },
+  {
+    "ValueConv": "-$val/256",
+    "Names": [
+      "Sony.ExposureCompensation",
+      "Sony.ExposureCompensation",
+      "Sony.ExposureCompensation",
+      "Sony.ExposureCompensation",
+      "Sony.ExposureCompensation",
+      "Sony.ExposureCompensation",
+      "Sony.ExposureCompensation",
+      "Sony.ExposureCompensation"
+    ],
+    "Count": 8
+  },
+  {
+    "ValueConv": "($val - 128) / 24",
+    "Names": [
+      "Sony.FlashExposureCompSet",
+      "Sony.ExposureCompensationSet",
+      "Sony.FlashExposureCompSet",
+      "Sony.ExposureCompensationSet",
+      "Sony.ExposureCompensationSet",
+      "Sony.FlashExposureCompSet",
+      "Sony.ExposureCompensationSet",
+      "Sony.FlashExposureCompSet"
+    ],
+    "Count": 8
+  },
+  {
+    "ValueConv": "$val=~s/ +$//; $val",
+    "Names": [
+      "Exif.SubSecTime",
+      "Exif.SubSecTimeOriginal",
+      "Exif.SubSecTimeDigitized",
+      "Panasonic.LensType",
+      "Panasonic.LensType",
+      "Panasonic.LensSerialNumber",
+      "Panasonic.AccessoryType",
+      "Panasonic.AccessorySerialNumber"
+    ],
+    "Count": 8
+  },
+  {
+    "ValueConv": "$val ? 2 ** (6 - $val/8) : 0",
+    "Names": [
+      "Sony.ExposureTime",
+      "Sony.ShutterSpeedSetting",
+      "Sony.ExposureTime",
+      "Sony.ShutterSpeedSetting",
+      "Sony.ShutterSpeedSetting",
+      "Sony.ExposureTime",
+      "Sony.ExposureTime",
+      "Sony.ExposureTime"
+    ],
+    "Count": 8
+  },
+  {
+    "ValueConv": "$val ? 10 / $val : 0",
+    "Names": [
+      "Kodak.ExposureTime",
+      "Nikon.ExposureTime",
+      "Olympus.ExposureUnknown",
+      "Olympus.ExposureTime",
+      "Pentax.ExposureTime",
+      "Pentax.ExposureTime",
+      "Samsung.ExposureTime",
+      "Sanyo.ExposureTime"
+    ],
+    "Count": 8
+  },
+  {
+    "ValueConv": "$val / 1e5",
+    "Names": [
+      "Kodak.ExposureTime",
+      "Kodak.ExposureTime",
+      "Kodak.ExposureTime",
+      "Kodak.ExposureTime",
+      "Kodak.ExposureTime",
+      "Kodak.ExposureTime",
+      "Panasonic.MeasuredLV",
+      "Panasonic.ExternalSensorBrightnessValue"
+    ],
+    "Count": 8
+  },
+  {
+    "ValueConv": "$val / 100000",
+    "Names": [
+      "PNG.WhitePointX",
+      "PNG.WhitePointY",
+      "PNG.RedX",
+      "PNG.RedY",
+      "PNG.GreenX",
+      "PNG.GreenY",
+      "PNG.BlueX",
+      "PNG.BlueY"
+    ],
+    "Count": 8
+  },
+  {
+    "ValueConv": "$val - 10",
+    "Names": [
+      "Sony.Sharpness",
+      "Sony.Contrast",
+      "Sony.Saturation",
+      "Sony.ZoneMatchingValue",
+      "Sony.Brightness",
+      "Sony.Sharpness",
+      "Sony.Contrast",
+      "Sony.Saturation"
+    ],
+    "Count": 8
+  },
+  {
+    "ValueConv": "$$self{TimeScale} ? $val / $$self{TimeScale} : $val",
+    "Names": [
+      "QuickTime.PreviewTime",
+      "QuickTime.PreviewDuration",
+      "QuickTime.PosterTime",
+      "QuickTime.SelectionTime",
+      "QuickTime.SelectionDuration",
+      "QuickTime.CurrentTime",
+      "QuickTime.Duration",
+      "QuickTime.TrackDuration"
+    ],
+    "Count": 8
+  },
+  {
+    "ValueConv": "join \" \", unpack \"H2H2\", $val",
+    "Names": [
+      "Sony.LensSpecFeatures",
+      "Sony.LensSpecFeatures",
+      "Sony.LensSpecFeatures",
+      "Sony.LensSpecFeatures",
+      "Sony.LensSpecFeatures",
+      "Sony.LensSpecFeatures",
+      "Sony.LensSpecFeatures"
+    ],
+    "Count": 7
+  },
+  {
+    "ValueConv": "exp((75-$val) * log(2) * 3 / 40)",
+    "Names": [
+      "Canon.MacroMagnification",
+      "Canon.MacroMagnification",
+      "Canon.MacroMagnification",
+      "Canon.MacroMagnification",
+      "Canon.MacroMagnification",
+      "Canon.MacroMagnification",
+      "Canon.MacroMagnification"
+    ],
+    "Count": 7
+  },
+  {
+    "ValueConv": "[Function: Image::ExifTool::Sony::ConvMeter1]",
+    "Names": [
+      "Sony.MeterInfo1Row1",
+      "Sony.MeterInfo1Row3",
+      "Sony.MeterInfo1Row4",
+      "Sony.MeterInfo1Row5",
+      "Sony.MeterInfo1Row6",
+      "Sony.MeterInfo1Row7",
+      "Sony.MeterInfo1Row2"
+    ],
+    "Count": 7
+  },
+  {
+    "ValueConv": "ConvertUnixTime($val, $self->Options(\"QuickTimeUTC\") || $$self{FileType} eq \"CR3\")",
+    "Names": [
+      "QuickTime.MediaCreateDate",
+      "QuickTime.MediaModifyDate",
+      "QuickTime.CreateDate",
+      "QuickTime.ModifyDate",
+      "QuickTime.PreviewDate",
+      "QuickTime.TrackCreateDate",
+      "QuickTime.TrackModifyDate"
+    ],
+    "Count": 7
+  },
+  {
+    "ValueConv": "$val ? exp(($val/8-6)*log(2))*100 : $val",
+    "Names": [
+      "Sony.ISOSetting",
+      "Sony.ISOSetting",
+      "Sony.ISOSetting",
+      "Sony.ISO",
+      "Sony.ISO",
+      "Sony.ISO",
+      "Sony.ISO"
+    ],
+    "Count": 7
+  },
+  {
+    "ValueConv": "$val ? 2 ** (16 - $val/256) : 0",
+    "Names": [
+      "Sony.SonyExposureTime",
+      "Sony.SonyExposureTime",
+      "Sony.SonyExposureTime",
+      "Sony.SonyExposureTime",
+      "Sony.SonyExposureTime",
+      "Sony.SonyExposureTime2",
+      "Sony.SonyExposureTime2"
+    ],
+    "Count": 7
+  },
+  {
+    "ValueConv": "$val =~ s/^(\\d{4})-(\\d{2})-/$1:$2:/; $val",
+    "Names": [
+      "Matroska.CreateDate",
+      "Matroska.DateEncoded",
+      "Matroska.DatePurchased",
+      "Matroska.DateTimeOriginal",
+      "Matroska.DateReleased",
+      "Matroska.DateTagged",
+      "Matroska.DateWritten"
+    ],
+    "Count": 7
+  },
+  {
+    "ValueConv": "\n        require Image::ExifTool::XMP;\n        $val =  Image::ExifTool::XMP::ConvertXMPDate($val);\n        $val =~ s/([-+]\\d{2})(\\d{2})$/$1:$2/; # add colon to timezone if necessary\n        return $val;\n    ",
+    "Names": [
+      "QuickTime.ContentCreateDate",
+      "QuickTime.CreationTime",
+      "QuickTime.CreationDate",
+      "QuickTime.LocationDate",
+      "QuickTime.ContentCreateDate",
+      "QuickTime.DateTimeOriginal",
+      "QuickTime.ContentCreateDate"
+    ],
+    "Count": 7
+  },
+  {
+    "ValueConv": "my ($a,$b,$c)=unpack(\"c3\",$val); $c ? $a*($b/$c) : 0",
+    "Names": [
+      "Nikon.ProgramShift",
+      "Nikon.ExposureDifference",
+      "Nikon.FlashExposureComp",
+      "Nikon.ExternalFlashExposureComp",
+      "Nikon.FlashExposureBracketValue",
+      "Nikon.ExposureTuning"
+    ],
+    "Count": 6
+  },
+  {
+    "ValueConv": "int($$self{AFAreaXPosition} / 260 )",
+    "Names": [
+      "Nikon.FocusPositionHorizontal",
+      "Nikon.FocusPositionHorizontal",
+      "Nikon.FocusPositionHorizontal",
+      "Nikon.FocusPositionHorizontal",
+      "Nikon.FocusPositionHorizontal",
+      "Nikon.FocusPositionHorizontal"
+    ],
+    "Count": 6
+  },
+  {
+    "ValueConv": "[Function: Image::ExifTool::Sony::__ANON__]",
+    "Names": [
+      "Sony.LensSpec",
+      "Sony.BatteryUnknown",
+      "Sony.BatteryVoltage",
+      "Sony.TiffMeteringImage",
+      "Sony.TiffMeteringImage",
+      "Sony.TiffMeteringImage"
+    ],
+    "Count": 6
+  },
+  {
+    "ValueConv": "[Function: Image::ExifTool::Canon::SwapWords]",
+    "Names": [
+      "Canon.RawMeasuredRGGB",
+      "Canon.MeasuredRGGBData",
+      "Canon.RawMeasuredRGGB",
+      "Canon.RawMeasuredRGGB",
+      "Canon.RawMeasuredRGGB",
+      "Canon.RawMeasuredRGGB"
+    ],
+    "Count": 6
+  },
+  {
+    "ValueConv": "Image::ExifTool::XMP::DecodeBase64($val)",
+    "Names": [
+      "Nikon.",
+      "Nikon.",
+      "Nikon.",
+      "Nikon.",
+      "XMP.",
+      "XMP."
+    ],
+    "Count": 6
+  },
+  {
+    "ValueConv": "Image::ExifTool::GPS::ToDegrees($val, 1)",
+    "Names": [
+      "MIE.GPSLatitude",
+      "MIE.GPSLongitude",
+      "XMP.",
+      "XMP.",
+      "XMP.",
+      "XMP."
+    ],
+    "Count": 6
+  },
+  {
+    "ValueConv": "ConvertUnixTime($val)",
+    "Names": [
+      "Canon.TimeStamp1",
+      "Canon.TimeStamp",
+      "Canon.TimeStamp",
+      "CanonRaw.DateTimeOriginal",
+      "RIFF.GPSDateTime",
+      "SigmaRaw.DateTimeOriginal"
+    ],
+    "Count": 6
+  },
+  {
+    "ValueConv": "24*exp(-($val-32)*log(2)/8)",
+    "Names": [
+      "Pentax.AEExposureTime",
+      "Pentax.AEMinExposureTime",
+      "Pentax.AEMinExposureTime",
+      "Pentax.AEExposureTime",
+      "Pentax.AEExposureTime",
+      "Pentax.AEMinExposureTime"
+    ],
+    "Count": 6
+  },
+  {
+    "ValueConv": "2 ** ($val / 2)",
+    "Names": [
+      "Exif.ApertureValue",
+      "Exif.MaxApertureValue",
+      "Nikon.MaxApertureValue",
+      "Olympus.ApertureValue",
+      "CanonRaw.ApertureValue",
+      "H264.MaxApertureValue"
+    ],
+    "Count": 6
+  },
+  {
+    "ValueConv": "$val/6",
+    "Names": [
+      "Nikon.FlashMasterCompensation",
+      "Nikon.FlashMasterCompensation",
+      "Nikon.FlashMasterCompensation",
+      "Nikon.FlashMasterCompensation",
+      "Nikon.FlashMasterCompensation",
+      "Nikon.FlashMasterCompensation"
+    ],
+    "Count": 6
+  },
+  {
+    "ValueConv": "$val > 128 ? $val - 256 : $val",
+    "Names": [
+      "Sony.ColorCompensationFilterCustom",
+      "Sony.WhiteBalanceFineTune",
+      "Sony.ColorCompensationFilterSet",
+      "Sony.ColorCompensationFilterCustom",
+      "Sony.WhiteBalanceFineTune",
+      "Sony.ColorCompensationFilterSet"
+    ],
+    "Count": 6
+  },
+  {
+    "ValueConv": "$val + 3",
+    "Names": [
+      "Nikon.FlashGNDistance",
+      "Nikon.FlashGNDistance",
+      "Nikon.FlashGNDistance",
+      "Nikon.FlashGNDistance",
+      "Nikon.FlashGNDistance",
+      "Nikon.FlashGNDistance"
+    ],
+    "Count": 6
+  },
+  {
+    "ValueConv": "$self->Decode($val,\"UCS2\",\"II\")",
+    "Names": [
+      "Exif.XP_DIP_XML",
+      "Exif.XPTitle",
+      "Exif.XPComment",
+      "Exif.XPAuthor",
+      "Exif.XPKeywords",
+      "Exif.XPSubject"
+    ],
+    "Count": 6
+  },
+  {
+    "ValueConv": "$$self{TimecodeScale} ? $val * $$self{TimecodeScale} / 1e9 : $val",
+    "Names": [
+      "Matroska.TimeCode",
+      "Matroska.Duration",
+      "Matroska.ReferenceBlock",
+      "Matroska.CueRefTime",
+      "Matroska.BlockDuration",
+      "Matroska.CueTime"
+    ],
+    "Count": 6
+  },
+  {
+    "ValueConv": "my @v=reverse split(\" \",$val);\"@v\"",
+    "Names": [
+      "FujiFilm.RawImageFullSize",
+      "FujiFilm.RawImageCroppedSize",
+      "FujiFilm.RawImageAspectRatio",
+      "FujiFilm.RawZoomTopLeft",
+      "FujiFilm.RawZoomSize"
+    ],
+    "Count": 5
+  },
+  {
+    "ValueConv": "join(\" \", unpack(\"H2\"x7, $val))",
+    "Names": [
+      "Nikon.AFPointsUsed",
+      "Nikon.AFPointsUsed",
+      "Nikon.AFPointsInFocus",
+      "Nikon.AFPointsUsed",
+      "Nikon.AFPointsUsed"
+    ],
+    "Count": 5
+  },
+  {
+    "ValueConv": "Image::ExifTool::Exif::ExifTime($val)",
+    "Names": [
+      "IPTC.ReleaseTime",
+      "IPTC.ExpirationTime",
+      "IPTC.TimeCreated",
+      "IPTC.DigitalCreationTime",
+      "IPTC.TimeSent"
+    ],
+    "Count": 5
+  },
+  {
+    "ValueConv": "-$val / 2",
+    "Names": [
+      "Pentax.RollAngle",
+      "Pentax.PitchAngle",
+      "Pentax.CompositionAdjustRotation",
+      "Pentax.RollAngle",
+      "Pentax.PitchAngle"
+    ],
+    "Count": 5
+  },
+  {
+    "ValueConv": "$val =~ /^([\\x20-\\x7e]*)\\0*$/ ? $1 : \\$val",
+    "Names": [
+      "QuickTime.UUID-Unknown",
+      "QuickTime.UUID-Unknown",
+      "QuickTime.UUID-Unknown",
+      "QuickTime.UUID-Unknown",
+      "QuickTime.UUID-Unknown"
+    ],
+    "Count": 5
+  },
+  {
+    "ValueConv": "$val / 8 - 6",
+    "Names": [
+      "Canon.MeasuredEV2",
+      "Canon.MeasuredEV3",
+      "Canon.MeasuredEV2",
+      "Canon.MeasuredEV",
+      "Canon.MeasuredEV2"
+    ],
+    "Count": 5
+  },
+  {
+    "ValueConv": "$val / 32768",
+    "Names": [
+      "PanasonicRaw.DistortionParam11",
+      "PanasonicRaw.DistortionParam02",
+      "PanasonicRaw.DistortionParam04",
+      "PanasonicRaw.DistortionParam08",
+      "PanasonicRaw.DistortionParam09"
+    ],
+    "Count": 5
+  },
+  {
+    "ValueConv": "join(\" \", unpack(\"H2\"x20, $val))",
+    "Names": [
+      "Nikon.AFPointsSelected",
+      "Nikon.AFPointsSelected",
+      "Nikon.AFPointsInFocus",
+      "Nikon.AFPointsUsed"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "int($$self{AFAreaYPosition} / 286 )",
+    "Names": [
+      "Nikon.FocusPositionVertical",
+      "Nikon.FocusPositionVertical",
+      "Nikon.FocusPositionVertical",
+      "Nikon.FocusPositionVertical"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "exp(Image::ExifTool::Canon::CanonEv($val)*log(2)/2)",
+    "Names": [
+      "Canon.MaxAperture",
+      "Canon.MinAperture",
+      "Canon.FNumber",
+      "Canon.TargetAperture"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "[Function: Image::ExifTool::QuickTime::ConvertISO6709]",
+    "Names": [
+      "QuickTime.GPSCoordinates",
+      "QuickTime.GPSCoordinates",
+      "QuickTime.GPSCoordinates",
+      "QuickTime.GPSCoordinates"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "[Function: Image::ExifTool::KyoceraRaw::ReverseString]",
+    "Names": [
+      "KyoceraRaw.FirmwareVersion",
+      "KyoceraRaw.Model",
+      "KyoceraRaw.Make",
+      "KyoceraRaw.DateTimeOriginal"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "2 ** (($val/8 - 1.06) / 2)",
+    "Names": [
+      "Sony.SonyMaxAperture",
+      "Sony.SonyMinAperture",
+      "Sony.SonyMaxAperture",
+      "Sony.SonyMinAperture"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "$val / 4294967296",
+    "Names": [
+      "QuickTime.ProjectionBoundsTop",
+      "QuickTime.ProjectionBoundsBottom",
+      "QuickTime.ProjectionBoundsLeft",
+      "QuickTime.ProjectionBoundsRight"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "$val / 1e9",
+    "Names": [
+      "Matroska.ChapterTimeStart",
+      "Matroska.ChapterTimeEnd",
+      "Matroska.DefaultDuration",
+      "Matroska.TimecodeScale"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "$val / 12",
+    "Names": [
+      "Nikon.LensFStops",
+      "Nikon.LensFStops",
+      "Nikon.LensFStops",
+      "Nikon.LensFStops"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "$val * 3.6",
+    "Names": [
+      "GoPro.GPSSpeed",
+      "GoPro.GPSSpeed3D",
+      "GoPro.GPSSpeed",
+      "GoPro.GPSSpeed3D"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "$val * 1e-9",
+    "Names": [
+      "Ricoh.TimeStamp",
+      "Ricoh.TimeStamp",
+      "Ricoh.TimeStamp",
+      "Ricoh.TimeStamp"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "$val * 1000",
+    "Names": [
+      "QuickTime.AudioAvgBitrate",
+      "QuickTime.AudioMaxBitrate",
+      "QuickTime.VideoAvgBitrate",
+      "QuickTime.VideoMaxBitrate"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "$self->Decode($val,\"UTF8\")",
+    "Names": [
+      "ExifTool.",
+      "ExifTool.",
+      "ExifTool.",
+      "ExifTool."
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "$self->Decode($val, \"Latin\")",
+    "Names": [
+      "GoPro.Comments",
+      "GoPro.SIUnits",
+      "GoPro.StreamName",
+      "GoPro.Units"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "\"0x\" . unpack(\"H*\",$val)",
+    "Names": [
+      "Nintendo.InternalSerialNumber",
+      "QuickTime.Certificate",
+      "QuickTime.KeyID",
+      "QuickTime.UserID"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "\"$val[0] $val[1]\"",
+    "Names": [
+      "IPTC.DateTimeCreated",
+      "IPTC.DigitalCreationDateTime",
+      "Nikon.LensSpec",
+      "Olympus.LensType"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": "\n        my @v = unpack('vC*', $val);\n        return sprintf(\"%.4d:%.2d:%.2d %.2d:%.2d:%.2d\", @v)\n    ",
+    "Names": [
+      "Sony.SonyDateTime",
+      "Sony.SonyDateTime",
+      "Sony.SonyDateTime",
+      "Sony.SonyDateTime"
+    ],
+    "Count": 4
+  },
+  {
+    "ValueConv": {
+      "0": "Auto",
+      "10": 80,
+      "11": 100,
+      "12": 125,
+      "13": 160,
+      "14": 200,
+      "15": 250,
+      "16": 320,
+      "17": 400,
+      "18": 500,
+      "19": 640,
+      "20": 800,
+      "21": 1000,
+      "22": 1250,
+      "23": 1600,
+      "24": 2000,
+      "25": 2500,
+      "26": 3200,
+      "27": 4000,
+      "28": 5000,
+      "29": 6400,
+      "30": 8000,
+      "31": 10000,
+      "32": 12800,
+      "33": 16000,
+      "34": 20000,
+      "35": 25600,
+      "36": 32000,
+      "37": 40000,
+      "38": 51200,
+      "39": 64000,
+      "40": 80000,
+      "41": 102400,
+      "42": 128000,
+      "43": 160000,
+      "44": 204800,
+      "45": 256000,
+      "46": 320000,
+      "47": 409600,
+      "5": 25,
+      "7": 40,
+      "8": 50,
+      "9": 64
+    },
+    "Names": [
+      "Sony.ISOSetting",
+      "Sony.ISOAutoMin",
+      "Sony.ISOAutoMax"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "[Function: Image::ExifTool::Sony::ConvLensSpec]",
+    "Names": [
+      "Sony.LensSpec",
+      "Sony.LensSpec",
+      "Sony.LensSpec"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "Image::ExifTool::RIFF::ConvertRIFFDate($val)",
+    "Names": [
+      "RIFF.DateTimeOriginal",
+      "RIFF.DateTimeOriginal",
+      "RIFF.DateTimeOriginal"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "Image::ExifTool::GPS::ConvertTimeStamp($val)",
+    "Names": [
+      "GPS.GPSTimeStamp",
+      "Pentax.GPSTimeStamp",
+      "H264.GPSTimeStamp"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "Image::ExifTool::Canon::CanonEv($val)",
+    "Names": [
+      "Canon.FlashExposureComp",
+      "Canon.AEBBracketValue",
+      "Canon.ExposureCompensation"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "ConvertUnixTime($val,1)",
+    "Names": [
+      "ExifTool.",
+      "ExifTool.",
+      "ExifTool."
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "100*exp(($val-32)*log(2)/8)",
+    "Names": [
+      "Pentax.AE_ISO",
+      "Pentax.AE_ISO",
+      "Pentax.AE_ISO"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "10 * 2 ** (($val-28)/16)",
+    "Names": [
+      "Sony.FocalLength2",
+      "Sony.FocalLength2",
+      "Sony.FocalLength2"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "0.01 * 10**($val/40)",
+    "Names": [
+      "Nikon.FocusDistance",
+      "Nikon.FocusDistance",
+      "Nikon.FocusDistance"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "-($val-2)/6",
+    "Names": [
+      "Nikon.FlashGroupACompensation",
+      "Nikon.FlashGroupBCompensation",
+      "Nikon.FlashGroupCCompensation"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "($val - 32) / 1.8",
+    "Names": [
+      "Sony.BatteryTemperature",
+      "Sony.BatteryTemperature",
+      "Sony.BatteryTemperature"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "($val + 100) / 2",
+    "Names": [
+      "SonyIDC.NoiseReductionValue",
+      "SonyIDC.EdgeNoiseReduction",
+      "SonyIDC.ColorNoiseReduction"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$val[1] =~ /^W/i ? -$val[0] : $val[0]",
+    "Names": [
+      "GPS.GPSDestLongitude",
+      "GPS.GPSLongitude",
+      "Sony.GPSLongitude"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$val[1] =~ /^S/i ? -$val[0] : $val[0]",
+    "Names": [
+      "GPS.GPSDestLatitude",
+      "GPS.GPSLatitude",
+      "Sony.GPSLatitude"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$val=~s/^f//i; $val",
+    "Names": [
+      "Kodak.Aperture",
+      "Kodak.MaxAperture",
+      "Kodak.MinAperture"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$val ? sqrt(2)**($val/256) : 0",
+    "Names": [
+      "Olympus.MaxApertureAtMinFocal",
+      "Olympus.MaxApertureAtMaxFocal",
+      "Olympus.MaxAperture"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$val ? 2048 / $val : $val",
+    "Names": [
+      "Nikon.ExitPupilPosition",
+      "Nikon.ExitPupilPosition",
+      "Nikon.ExitPupilPosition"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$val =~ s/^.*? //; $val",
+    "Names": [
+      "QuickTime.CleanApertureDimensions",
+      "QuickTime.EncodedPixelsDimensions",
+      "QuickTime.ProductionApertureDimensions"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$val =~ s/(\\d{4})_(\\d{2})_/$1:$2:/; $val =~ tr/_/ /; $val",
+    "Names": [
+      "Red.OtherDate1",
+      "Red.OtherDate2",
+      "Red.OtherDate3"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$val <= 180 ? $val : $val - 360",
+    "Names": [
+      "Nikon.RollAngle",
+      "Nikon.PitchAngle",
+      "Nikon.YawAngle"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$val / 3",
+    "Names": [
+      "Kodak.ExposureCompensation",
+      "Panasonic.WhiteBalanceBias",
+      "Panasonic.FlashBias"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$val / 0x10000",
+    "Names": [
+      "Photoshop.XResolution",
+      "Photoshop.YResolution",
+      "QuickTime.PreferredRate"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$val / ($$self{FocalUnits} || 1)",
+    "Names": [
+      "Canon.MaxFocalLength",
+      "Canon.MinFocalLength",
+      "Canon.FocalLength"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$val - 4",
+    "Names": [
+      "Samsung.PictureWizardSaturation",
+      "Samsung.PictureWizardSharpness",
+      "Samsung.PictureWizardContrast"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$val * 1e-6",
+    "Names": [
+      "Sigma.ExposureTime2",
+      "QuickTime.FrameReadoutTime",
+      "SigmaRaw.IntegrationTime"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$_=sprintf(\"%.4x\",$val); s/(..)(..)/$2 $1/; $_",
+    "Names": [
+      "Panasonic.LensTypeModel",
+      "Panasonic.LensTypeModel",
+      "PanasonicRaw.LensTypeModel"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$$self{FujiLayout} ? ($val / 2) : $val",
+    "Names": [
+      "FujiFilm.RawImageWidth",
+      "FujiFilm.RawImageWidth",
+      "FujiFilm.RawImageWidth"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "$$self{FujiLayout} ? ($val * 2) : $val",
+    "Names": [
+      "FujiFilm.RawImageHeight",
+      "FujiFilm.RawImageHeight",
+      "FujiFilm.RawImageHeight"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "\n            my @v = split(' ',$val);\n            $v[0] &= 0x0f;\n            $v[1] = $v[2] * 256 + $v[3]; # (always high byte first)\n            return \"$v[0] $v[1]\";\n        ",
+    "Names": [
+      "Pentax.LensType",
+      "Pentax.LensType",
+      "Pentax.LensType"
+    ],
+    "Count": 3
+  },
+  {
+    "ValueConv": "unpack(\"v\",$val)",
+    "Names": [
+      "Nikon.AFPointsUsed",
+      "Nikon.AFPointsUsed"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "unpack(\"N\",$val)",
+    "Names": [
+      "Photoshop.GlobalAngle",
+      "Photoshop.GlobalAltitude"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "substr($val, 4)",
+    "Names": [
+      "QuickTime.OtherName",
+      "QuickTime.GarminSettings"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "substr($val, 2, unpack(\"C\",$val))",
+    "Names": [
+      "Kodak.FirmwareVersion",
+      "Kodak.SerialNumber"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "sqrt(2) ** $val",
+    "Names": [
+      "XMP.",
+      "XMP."
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "sprintf(\"%x.%x.%x\", unpack(\"nCC\", $val))",
+    "Names": [
+      "Jpeg2000.MinorVersion",
+      "QuickTime.MinorVersion"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "sprintf(\"%.2d:%.2d\",split(\" \", $val))",
+    "Names": [
+      "Kodak.MonthDayCreated",
+      "Kodak.MonthDayCreated"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "require Image::ExifTool::XMP; Image::ExifTool::XMP::ConvertXMPDate($val)",
+    "Names": [
+      "PNG.CreateDate",
+      "PNG.ModDate"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "require Image::ExifTool::GPS;Image::ExifTool::GPS::ToDegrees($val)",
+    "Names": [
+      "Sony.GPSLatitude",
+      "Sony.GPSLongitude"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "my @a=($val=~/.{4}/sg); @a=grep(!/\\0/,@a); \\@a",
+    "Names": [
+      "Jpeg2000.CompatibleBrands",
+      "QuickTime.CompatibleBrands"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "my @a = split /,\\s?/, $val; \\@a",
+    "Names": [
+      "Matroska.Instruments",
+      "Matroska.Keywords"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "my $val=Image::ExifTool::XMP::DecodeBase64($val); unpack(\"V\",$$val)",
+    "Names": [
+      "Nikon.",
+      "Nikon."
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "my $val=Image::ExifTool::XMP::DecodeBase64($val); join(\".\",unpack(\"C*\",$$val))",
+    "Names": [
+      "Nikon.",
+      "Nikon."
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "my $str=substr($val,4); $str=~s/\\0+$//; unpack(\"V\",$val) . \" \" . $str",
+    "Names": [
+      "RIFF.CuePointLabel",
+      "RIFF.CuePointNote"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "join(\" \",map({ $_/8192 } split(\" \",$val)))",
+    "Names": [
+      "Pentax.ColorMatrixA",
+      "Pentax.ColorMatrixB"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "join(\" \", unpack(\"H2\"x29, $val))",
+    "Names": [
+      "Nikon.AFPointsUsed",
+      "Nikon.AFPointsUsed"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "join(\" \", reverse split(\" \", $val))",
+    "Names": [
+      "Sony.FullImageSize",
+      "Sony.PreviewImageSize"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "int(100*exp(Image::ExifTool::Pentax::PentaxEv($val-32)*log(2))+0.5)",
+    "Names": [
+      "Pentax.SvISOSetting",
+      "Pentax.ISOFloor"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "int($$self{AFAreaYPosition} / 292 )",
+    "Names": [
+      "Nikon.FocusPositionVertical",
+      "Nikon.FocusPositionVertical"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "exp(Image::ExifTool::Canon::CanonEv($val*4-32)*log(2)/2)",
+    "Names": [
+      "CanonCustom.PF5ApertureMin",
+      "CanonCustom.PF5ApertureMax"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "exp(-Image::ExifTool::Canon::CanonEv($val*4)*log(2))*1000/8",
+    "Names": [
+      "CanonCustom.PF4ExposureTimeMin",
+      "CanonCustom.PF4ExposureTimeMax"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "exp(-Image::ExifTool::Canon::CanonEv($val)*log(2))",
+    "Names": [
+      "Canon.ExposureTime",
+      "Canon.TargetExposureTime"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "exp(-$val/96*log(2))",
+    "Names": [
+      "Canon.ExposureTime",
+      "Canon.ExposureTime"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "exp($val/192*log(2))",
+    "Names": [
+      "Canon.FNumber",
+      "Canon.FNumber"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "abs($val)<100 ? 1/(2**$val) : 0",
+    "Names": [
+      "CanonRaw.ShutterSpeedValue",
+      "XMP."
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "[Function: Image::ExifTool::XMP::ConvertRationalList]",
+    "Names": [
+      "XMP.",
+      "XMP.LensInfo"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "[Function: Image::ExifTool::Photoshop::__ANON__]",
+    "Names": [
+      "Photoshop.WorkflowURL",
+      "Photoshop.URL_List"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "[Function: Image::ExifTool::GoPro::ConvertSystemTime]",
+    "Names": [
+      "GoPro.GPSDateTime",
+      "GoPro.GPSDateTimeRaw"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "2**($val/384-1)",
+    "Names": [
+      "Nikon.MaxAperture",
+      "Nikon.FNumber"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "2**($val/16)",
+    "Names": [
+      "KyoceraRaw.MaxAperture",
+      "KyoceraRaw.FNumber"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "100*exp((($val-411)/96)*log(2))",
+    "Names": [
+      "Canon.ISO",
+      "Canon.ISO"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "-$val",
+    "Names": [
+      "Pentax.CompositionAdjustX",
+      "Pentax.CompositionAdjustY"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "($val-64)/8",
+    "Names": [
+      "Pentax.AEXv",
+      "Pentax.AEXv"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "($val >> 2) . \" \" . ($val & 0x3)",
+    "Names": [
+      "Panasonic.LensType",
+      "Panasonic.LensType"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "($val >> 16) . \".\" . ($val & 0xffff)",
+    "Names": [
+      "SigmaRaw.FileVersion",
+      "SigmaRaw.FileVersion"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "($val - 50) / 10",
+    "Names": [
+      "Pentax.ExposureCompensation",
+      "Pentax.SensitivityAdjust"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "($val & 0x1f) . \" \" . ($val & 0xffe0)",
+    "Names": [
+      "Olympus.AFPoint",
+      "Olympus.AFPoint"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val[1] - $val[0]",
+    "Names": [
+      "PanasonicRaw.ImageHeight",
+      "PanasonicRaw.ImageWidth"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val[0]",
+    "Names": [
+      "Canon.ConditionalFEC",
+      "Canon.Lens"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val=~tr{/}{:}; $val",
+    "Names": [
+      "QuickTime.ModifyDate",
+      "QuickTime.ProductionDate"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val=~tr/./:/; $val=~s/(\\d+:\\d+:\\d+):/$1 /; $val",
+    "Names": [
+      "Casio.DateTimeOriginal",
+      "Casio.DateTimeOriginal"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val=~s/ .*//; $val / 256",
+    "Names": [
+      "Olympus.RedBalance",
+      "Olympus.BlueBalance"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val=~s/ .*//; $val",
+    "Names": [
+      "Samsung.ExposureTime",
+      "Samsung.FNumber"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val=join(\" \",unpack(\"N*\",pack(\"V*\",split(\" \",$val))));\\$val",
+    "Names": [
+      "Exif.StripOffsets",
+      "Exif.StripByteCounts"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val/16",
+    "Names": [
+      "Sony.DigitalZoomRatio",
+      "Sony.DigitalZoomRatio"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val/1024",
+    "Names": [
+      "Pentax.EffectiveLV",
+      "Pentax.EffectiveLV"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val/1000",
+    "Names": [
+      "Red.FocusDistance",
+      "RIFF.Length"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val ? 1/$val : 0",
+    "Names": [
+      "RIFF.AudioSampleRate",
+      "RIFF.StreamSampleRate"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val >= 0x20000000 ? \"inf\" : $val / 1000",
+    "Names": [
+      "Casio.ObjectDistance",
+      "Casio.ObjectDistance"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val =~ tr/-/:/; $val",
+    "Names": [
+      "DJI.GPSDateTime",
+      "DJI.GPSDateTime"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val =~ s/(\\d{4})(\\d{2})/$1:$2:/; $val",
+    "Names": [
+      "Red.DateCreated",
+      "Red.StorageFormatDate"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val =~ s/(\\d{2})(\\d{2})/$1:$2:/; $val",
+    "Names": [
+      "Red.TimeCreated",
+      "Red.StorageFormatTime"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val =~ s/(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})/20$1:$2:$3 $4:$5:$6/; $val",
+    "Names": [
+      "Olympus.StartTime",
+      "Olympus.EndTime"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val =~ /^[0-9a-f]+$/i ? hex($val) : $val",
+    "Names": [
+      "Sigma.LensType",
+      "SigmaRaw.LensType"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val / 128",
+    "Names": [
+      "Sony.BatteryVoltage1",
+      "Sony.BatteryVoltage2"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val + 8",
+    "Names": [
+      "QuickTime.BitDepthLuma",
+      "QuickTime.BitDepthChroma"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val * 4e-8 + 0.27219",
+    "Names": [
+      "Pentax.GripBatteryVoltage",
+      "Pentax.BodyBatteryVoltage"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val * 25.4 / 1000",
+    "Names": [
+      "Canon.FocalPlaneXSize",
+      "Canon.FocalPlaneYSize"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val * 1e-7",
+    "Names": [
+      "RIFF.EndTimecode",
+      "RIFF.StartTimecode"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$val",
+    "Names": [
+      "Exif.LensID",
+      "XMP.LensID"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "$self->Options(\"Unknown\") ? $val : $val & 0x7ff",
+    "Names": [
+      "Pentax.AFPointsUnknown1",
+      "Pentax.AFPointsUnknown2"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "\"$val[0] $val[1]Z\"",
+    "Names": [
+      "GPS.GPSDateTime",
+      "Sony.GPSDateTime"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "\n        my $val=Image::ExifTool::XMP::DecodeBase64($val);\n        my $saveOrder = GetByteOrder();\n        SetByteOrder('II');\n        $val = GetDouble($val,0);\n        SetByteOrder($saveOrder);\n        return $val;\n    ",
+    "Names": [
+      "Nikon.",
+      "Nikon."
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "\n        my $val=Image::ExifTool::XMP::DecodeBase64($val);\n        my $saveOrder = GetByteOrder();\n        SetByteOrder('II');\n        $val = GetDouble($val,0) + GetDouble($val,8)/60 + GetDouble($val,16)/3600;\n        SetByteOrder($saveOrder);\n        return $val;\n    ",
+    "Names": [
+      "Nikon.",
+      "Nikon."
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "\n            return undef unless length ${$val[0]} == $val[1] * $val[2];\n            my $tiff = MakeTiffHeader($val[1],$val[2],1,8) . ${$val[0]};\n            return \\$tiff;\n        ",
+    "Names": [
+      "Samsung.DepthMapTiff",
+      "Samsung.SingleShotDepthMapTiff"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "\n            return undef unless $val =~ /^(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})$/;\n            my $y = $1 < 70 ? \"20$1\" : \"19$1\";\n            return \"$y:$2:$3 $4:$5:$6\";\n        ",
+    "Names": [
+      "Olympus.DateTimeOriginal",
+      "Olympus.DateTimeEnd"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "\n            return \\$val unless length($val) >= 6;\n            my @a = unpack 'x2nn', $val;\n            return $a[1] ? join(' of ', @a) : $a[0];\n        ",
+    "Names": [
+      "QuickTime.DiskNumber",
+      "QuickTime.TrackNumber"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "\n            require Image::ExifTool::GPS;\n            Image::ExifTool::GPS::ToDegrees($val);\n        ",
+    "Names": [
+      "Nikon.GPSLatitude",
+      "Nikon.GPSLongitude"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "\n            my @v=split(\" \",$val);\n            return $val / 1000 if @v == 1;\n            return $v[1] ? \"$v[1]-$v[0]\" : ($v[0] > 10000 ? $v[0] / 1000 : $v[0]);\n        ",
+    "Names": [
+      "Casio.CaptureFrameRate",
+      "Casio.CaptureFrameRate"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "\n            my @a = split ' ',$val;\n            $_ /= 0x4000 foreach @a[2,5,8];\n            return \"@a\";\n        ",
+    "Names": [
+      "QuickTime.MatrixStructure",
+      "QuickTime.MatrixStructure"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "\n            my @a = split ' ', $val;\n            $a[0] += $a[0] < 70 ? 2000 : 1900;\n            sprintf('%.4d:%.2d:%.2d %.2d:%.2d:%.2d', @a);\n        ",
+    "Names": [
+      "Sony.DateTimeOriginal",
+      "Sony.ModifyDate"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "\n            IsFloat($val[0]) and return $val[0] < 0 ? \"W\" : \"E\";\n            $val[0] =~ /^.*([EW])/;\n            return $1;\n        ",
+    "Names": [
+      "XMP.GPSDestLongitudeRef",
+      "XMP.GPSLongitudeRef"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": "\n            IsFloat($val[0]) and return $val[0] < 0 ? \"S\" : \"N\";\n            $val[0] =~ /^.*([NS])/;\n            return $1;\n        ",
+    "Names": [
+      "XMP.GPSDestLatitudeRef",
+      "XMP.GPSLatitudeRef"
+    ],
+    "Count": 2
+  },
+  {
+    "ValueConv": {
+      "1": "0 1 1 2",
+      "2": "2 1 1 0",
+      "3": "1 2 0 1",
+      "4": "1 0 2 1"
+    },
+    "Names": [
+      "Exif.CR2CFAPattern"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": [
+      "exp(-$val/(1600*log(2)))",
+      "exp(-$val/(1600*log(2)))",
+      "exp(-$val/(1600*log(2)))",
+      "exp(-$val/(1600*log(2)))"
+    ],
+    "Names": [
+      "CanonCustom.ShutterSpeedRange"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": [
+      "exp($val/2400)",
+      "exp($val/2400)",
+      "exp($val/2400)",
+      "exp($val/2400)"
+    ],
+    "Names": [
+      "CanonCustom.ApertureRange"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": [
+      "$val / 6"
+    ],
+    "Names": [
+      "Pentax.FlashExposureComp"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": [
+      "\n            return $val / 3 if $val < 10;\n            return $val - 9.5 if $val < 20;\n            return ($val - 0x1000) . '/2' if $val & 0x1000;\n            return ($val - 0x2000) . '/3' if $val & 0x2000;\n            return $val; # (shouldn't happen)\n        "
+    ],
+    "Names": [
+      "Pentax.AutoBracketing"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": [
+      null,
+      "exp(-($val/8-7)*log(2))",
+      "exp(-($val/8-7)*log(2))"
+    ],
+    "Names": [
+      "CanonCustom.ShutterSpeedRange"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": [
+      null,
+      "exp(($val/8-1)*log(2)/2)",
+      "exp(($val/8-1)*log(2)/2)"
+    ],
+    "Names": [
+      "CanonCustom.ApertureRange"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": [
+      null,
+      "$val ? exp(-Image::ExifTool::Pentax::PentaxEv($val-68)*log(2)) : 0"
+    ],
+    "Names": [
+      "Pentax.ISOAutoMinSpeed"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": [
+      null,
+      "$val < 2 ? $val : ($val < 1000 ? exp(($val/8-9)*log(2))*100 : 0)",
+      "$val < 2 ? $val : ($val < 1000 ? exp(($val/8-9)*log(2))*100 : 0)"
+    ],
+    "Names": [
+      "CanonCustom.ISOSpeedRange"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "unpack(\"x4H*\",$val)",
+    "Names": [
+      "QuickTime.TomTomID"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "unpack(\"n\",$val)",
+    "Names": [
+      "QuickTime.Genre"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "unpack(\"n\", $val)",
+    "Names": [
+      "Nikon.ShutterCount"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "unpack(\"N\",$val) . \" \" . substr($val, 5)",
+    "Names": [
+      "QuickTime.PayloadType"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "unpack(\"N\", $val)",
+    "Names": [
+      "QuickTime.SceneIlluminance"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "unpack(\"C\",$val)",
+    "Names": [
+      "PNG.SRGBRendering"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "unpack \"H*\", $val",
+    "Names": [
+      "Jpeg2000.JUMDType"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "uc(unpack(\"H*\",$val))",
+    "Names": [
+      "Exif.RawDataUniqueID"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "substr($val,7)",
+    "Names": [
+      "JPEG.DJI_DTAT"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "substr($val,16)",
+    "Names": [
+      "Jpeg2000.UUID-Signature"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "substr($val, 5)",
+    "Names": [
+      "QuickTime.FontTable"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "substr($val, 4, -1)",
+    "Names": [
+      "QuickTime.OriginalFileName"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "sqrt(24*24+36*36) / ($val * 1440)",
+    "Names": [
+      "Exif.CircleOfConfusion"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "sprintf(\"%s:%s:%s %s:%s:%s.%s\", unpack \"H4H2H2H2H2H2H2\", $val)",
+    "Names": [
+      "Panasonic.PanasonicDateTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "sprintf(\"%d.%.2d\", split(\" \",$val))",
+    "Names": [
+      "JPEG.NITFVersion"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "sprintf(\"%2d:%.2d:%.2d.%.2d\",split(\" \", $val))",
+    "Names": [
+      "Kodak.TimeCreated"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "sprintf(\"%.4d:%.2d:%.2d %.2d:%.2d:%.2d\", unpack(\"nC5\", $val))",
+    "Names": [
+      "PNG.ModifyDate"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "sprintf(\"%.3o\", $val)",
+    "Names": [
+      "ExifTool."
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "sprintf(\"%.2x:%.2x:%.2x:%.2x\",reverse unpack(\"C*\",$val))",
+    "Names": [
+      "H264.TimeCode"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "sprintf(\"%.2d:%.2d:%.2d.%.2d\",split(\" \", $val))",
+    "Names": [
+      "Kodak.TimeCreated"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "sprintf(\"%.2X\".\" %.2X\"x7, @raw)",
+    "Names": [
+      "Nikon.LensID"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "require Image::ExifTool::PDF; $val = Image::ExifTool::PDF::ConvertPDFDate($val)",
+    "Names": [
+      "XMP.SourceModified"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "require Image::ExifTool::GPS;Image::ExifTool::GPS::ConvertTimeStamp($val)",
+    "Names": [
+      "Sony.GPSTimeStamp"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @v=split(\" \",$val); $v[0] + $v[1] * 4294967296",
+    "Names": [
+      "RIFF.TimeReference"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @v = split(\" \",$val); $v[1]",
+    "Names": [
+      "Ricoh.RicohPitch"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @v = split(\" \",$val); $v[0] <= 180 ? $v[0] : $v[0] - 360",
+    "Names": [
+      "Ricoh.RicohRoll"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @d = ($val =~ /\\d+/g); $d[0] * $d[1] / 1000000",
+    "Names": [
+      "Exif.Megapixels"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @c = split \" \", $val; defined $c[2] ? abs($c[2]) : undef",
+    "Names": [
+      "QuickTime.GPSAltitude"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @c = split \" \", $val; defined $c[2] ? ($c[2] < 0 ? 1 : 0) : undef",
+    "Names": [
+      "QuickTime.GPSAltitudeRef"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @c = split \" \", $val; $c[1]",
+    "Names": [
+      "QuickTime.GPSLongitude"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @c = split \" \", $val; $c[0]",
+    "Names": [
+      "QuickTime.GPSLatitude"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @a=unpack(\"x1H4H2H2H2H2H2\",$val); \"$a[0]:$a[1]:$a[2] $a[3]:$a[4]:$a[5]\"",
+    "Names": [
+      "Sony.DateTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @a=split(\" \",$val); sprintf(\"%x %.2x\",@a[0,2])",
+    "Names": [
+      "Olympus.Extender"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @a=split(\" \",$val); sprintf(\"%x %.2x %.2x\",@a[0,2,3])",
+    "Names": [
+      "Olympus.LensType"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @a=split(\" \",$val); $_/=500 foreach @a; join(\" \",@a)",
+    "Names": [
+      "Pentax.SensorSize"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @a=split(\" \",$val); $_ /= 10 foreach @a; \"@a\"",
+    "Names": [
+      "Olympus.ManometerReading"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @a=split \" \",$val;$_>32767 and $_-=65536 foreach @a;join \" \",@a",
+    "Names": [
+      "Pentax.AFPointValues"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @a = split \" \",$val; ($a[1] * 0x10000 + $a[2]) / $a[0]",
+    "Names": [
+      "Red.FrameRate"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @a = reverse split \" \", $val; join \".\", @a;",
+    "Names": [
+      "Nikon.MakerNoteVersion"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my @a = ($val =~ /[\\x20-\\x7e]+/g); \"@a\"",
+    "Names": [
+      "QuickTime.TomTomVD"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my ($a,$b,$c)=unpack(\"C3\",$val); $c ? $a*($b/$c) : 0",
+    "Names": [
+      "Nikon.LensFStops"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my $deg = int($val / 100); -($deg + ($val - $deg * 100) / 60)",
+    "Names": [
+      "RIFF.GPSLongitude"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my $deg = int($val / 100); $deg + ($val - $deg * 100) / 60",
+    "Names": [
+      "RIFF.GPSLatitude"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "my $a=unpack(\"N\",$val);$a ? int(1e9/$a+0.5)/1e4 : $val",
+    "Names": [
+      "PNG.Gamma"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "log($val) / log(2)",
+    "Names": [
+      "FujiFilm.RelativeExposure"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "length($val)>=3 ? sprintf(\"%.2d:%.2d:%.2d\",unpack(\"C3\",$val)) : \"Unknown ($val)\"",
+    "Names": [
+      "Pentax.Time"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "length($val)==4 ? sprintf(\"%.4d:%.2d:%.2d\",unpack(\"nC2\",$val)) : \"Unknown ($val)\"",
+    "Names": [
+      "Pentax.Date"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "length($val) >= 6 ? unpack(\"x4n\",$val) : \"<err>\"",
+    "Names": [
+      "QuickTime.Year"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "length($val) > 4 ? substr($val,4) : $val",
+    "Names": [
+      "QuickTime.ARDroneFile"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "length($val) > 12 ? substr($val,0,12) : $val",
+    "Names": [
+      "Sony.Barcode"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "length($val) <= 3 ? join(\" \",unpack(\"C*\",$val)) : \\$val",
+    "Names": [
+      "PNG.Palette"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "length $val ? ConvertUnixTime($val,1) : \"\"",
+    "Names": [
+      "Photoshop.LayerModifyDates"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join(\":\", unpack(\"N*\",$val))",
+    "Names": [
+      "QuickTime.PixelAspectRatio"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join(\" \",unpack(length($val) < 2 ? \"C\" : \"n*\", $val))",
+    "Names": [
+      "PNG.BackgroundColor"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join(\" \",unpack(\"C*\",$val))",
+    "Names": [
+      "PNG.SignificantBits"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join(\" \",unpack(\"C*\", $val))",
+    "Names": [
+      "Photoshop.CopyrightFlag"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join(\" \", unpack(\"H2\"x51, $val))",
+    "Names": [
+      "Nikon.AFPointsUsed"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join(\" \", unpack(\"H2\"x5, $val))",
+    "Names": [
+      "Nikon.AFPointsUsed"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join(\" \", unpack(\"H2\"x38, $val))",
+    "Names": [
+      "Nikon.AFPointsUsed"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join(\" \", unpack(\"H2\"x21, $val))",
+    "Names": [
+      "Nikon.AFPointsUsed"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join(\" \", unpack(\"H2\"x17, $val))",
+    "Names": [
+      "Nikon.AFPointsUsed"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join(\" \", unpack(\"H2\"x14, $val))",
+    "Names": [
+      "Nikon.AFPointsUsed"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join(\" \", unpack(\"H2\"x11, $val))",
+    "Names": [
+      "Nikon.AFPointsUsed"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join(\" \", unpack(\"C*\",$val))",
+    "Names": [
+      "QuickTime.VideoFieldOrder"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join \".\", unpack(\"ncc\", pack(\"N\",$val))",
+    "Names": [
+      "QuickTime.AudioComponentVersion"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join \".\", $val =~ /../g",
+    "Names": [
+      "Nikon.FirmwareVersion51"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join \" \",unpack(\"x8N*\",$val)",
+    "Names": [
+      "QuickTime.PartialSyncSamples"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "join \" \",unpack \"VfVVf6c4lCCcclf4Vvv\", $val",
+    "Names": [
+      "QuickTime.LivePhotoInfo"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "exp(Image::ExifTool::Pentax::PentaxEv($val-68)*log(2)/2)",
+    "Names": [
+      "Pentax.AvApertureSetting"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "exp(-Image::ExifTool::Pentax::PentaxEv($val-68)*log(2))",
+    "Names": [
+      "Pentax.TvExposureTimeSetting"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "exp(-Image::ExifTool::Canon::CanonEv($val)*log(2))*1000/32",
+    "Names": [
+      "Canon.ExposureTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "exp($val/32*log(2))*100/32",
+    "Names": [
+      "Canon.BaseISO"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "exp($val/32*log(2))*100",
+    "Names": [
+      "Canon.AutoISO"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "exp($val/3*log(2))*25",
+    "Names": [
+      "Kodak.ISO"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "defined($val[0]) ? $val[0] : 0",
+    "Names": [
+      "Canon.ShutterCurtainHack"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "chr($val & 0xff)",
+    "Names": [
+      "JPEG.ImageFormat"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "abs($val/256)<100 ? 2**(-$val/256) : 0",
+    "Names": [
+      "PanasonicRaw.ShutterSpeedValue"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "abs($val)<100 ? 2**(-$val/3) : 0",
+    "Names": [
+      "Kodak.ShutterSpeedValue"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "abs($val)<100 ? 2**(-$val) : 0",
+    "Names": [
+      "Olympus.ShutterSpeedValue"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "[Function: Image::ExifTool::QuickTime::ConvertChapterList]",
+    "Names": [
+      "QuickTime.ChapterList"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "[Function: Image::ExifTool::Pentax::CryptShutterCount]",
+    "Names": [
+      "Pentax.ShutterCount"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "ToFloat(@val); ($val[0] || 0) * ($val[1] || 1)",
+    "Names": [
+      "Exif.FocalLength35efl"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "IsFloat($val) && abs($val)<100 ? 2**(-$val) : 0",
+    "Names": [
+      "Exif.ShutterSpeedValue"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "Image::ExifTool::XMP::ConvertXMPDate($val)",
+    "Names": [
+      "XMP."
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "Image::ExifTool::QuickTime::CalcRotation($self)",
+    "Names": [
+      "QuickTime.Rotation"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "Image::ExifTool::Photoshop::ConvertPascalString($self,$val)",
+    "Names": [
+      "Photoshop.AlphaChannelsNames"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "Image::ExifTool::Pentax::PentaxEv(64-$val)",
+    "Names": [
+      "Pentax.BaseExposureCompensation"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "Image::ExifTool::Pentax::PentaxEv($val)",
+    "Names": [
+      "Pentax.FlashExposureCompSet"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "Image::ExifTool::Olympus::ExtenderStatus($val[0],$prt[1],$val[2])",
+    "Names": [
+      "Olympus.ExtenderStatus"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "Image::ExifTool::Kodak::CalculateRGBLevels(@val)",
+    "Names": [
+      "Kodak.WB_RGBLevels"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "Image::ExifTool::Exif::RedBlueBalance(1,@val)",
+    "Names": [
+      "Exif.BlueBalance"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "Image::ExifTool::Exif::RedBlueBalance(0,@val)",
+    "Names": [
+      "Exif.RedBalance"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "Image::ExifTool::Exif::CalculateLV($val[0],$val[1],$prt[2])",
+    "Names": [
+      "Exif.LightValue"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "Image::ExifTool::Exif::CalcScaleFactor35efl($self, @val)",
+    "Names": [
+      "Exif.ScaleFactor35efl"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "Image::ExifTool::Canon::CameraISO($val)",
+    "Names": [
+      "Canon.CameraISO"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "ConvertUnixTime(($val - (70 * 365 + 17 + 2)) * 24 * 3600)",
+    "Names": [
+      "JPEG."
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "ConvertUnixTime($val*1e-9, 1, 9)",
+    "Names": [
+      "Ricoh.GPSDateTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "ConvertUnixTime($val / 1e3, 1, 3)",
+    "Names": [
+      "Samsung.TimeStamp"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "ConvertUnixTime($val + 10957 * 24 * 3600)",
+    "Names": [
+      "Nintendo.TimeStamp"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "84 - 3 * $val / 26",
+    "Names": [
+      "Olympus.SensorTemperature"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "53190 - $val",
+    "Names": [
+      "Pentax.ColorTemperature"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "5 + ($val ^ 0x07) / 2",
+    "Names": [
+      "Pentax.LensFStops"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "2**(($val-80)/12)",
+    "Names": [
+      "Nikon.FocusDistance"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "2**(($val-1)/32)",
+    "Names": [
+      "Pentax.MaxAperture"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "2**(($val+10)/4)",
+    "Names": [
+      "Pentax.NominalMinAperture"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "2**($val/4)",
+    "Names": [
+      "Pentax.NominalMaxAperture"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "2**($val / 8) / 16000",
+    "Names": [
+      "KyoceraRaw.ExposureTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "2 ** (8-$val/8192)",
+    "Names": [
+      "Sony.FNumber"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "2 ** (-$val / 100)",
+    "Names": [
+      "Sony.ExposureTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "2 ** ($val / 512)",
+    "Names": [
+      "PanasonicRaw.ApertureValue"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "2 ** ($val / 2000)",
+    "Names": [
+      "Kodak.ApertureValue"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "100 * 2 ** ($val - 5)",
+    "Names": [
+      "Olympus.ISOValue"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "100 * $val / 255",
+    "Names": [
+      "Photoshop.LayerOpacities"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "10*($val>>2) * 4**(($val&0x03)-2)",
+    "Names": [
+      "Pentax.LensFocalLength"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "1 / (1 + $val/32768)",
+    "Names": [
+      "PanasonicRaw.DistortionScale"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "-($val-64)/8",
+    "Names": [
+      "Pentax.AEError"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "-$val / 10",
+    "Names": [
+      "Panasonic.PitchAngle"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "(length($val[0]) or length($val[1])) ? \"$val[0] $val[1]\" : undef",
+    "Names": [
+      "Exif.GPSPosition"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "(IsInt($val) and $val < 4 and $$self{Model} =~ /Optio 555\\b/) ? $val + 0.1 : $val",
+    "Names": [
+      "Pentax.PictureMode"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "(($val[1]) == 0) ?  ($val[0]) : 0",
+    "Names": [
+      "Nikon.PhaseDetectAF"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "(($val[0] !~ /^Manual/i) and ($val[1] == 1)) ? 1 : 0",
+    "Names": [
+      "Nikon.ContrastDetectAF"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "(($val&0xffc0)>>6)*10000+(($val>>16)&0xff)+(($val&0x3f)<<8)",
+    "Names": [
+      "Canon.FileNumber"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "(($val >> 6) & 0x3fff) + 1",
+    "Names": [
+      "RIFF.ImageHeight"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "(($val >> 2) & 0xffff) . \" \" . ($val & 0x3)",
+    "Names": [
+      "Panasonic.LensType"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "(($val >> 13) & 0x7) . \" \" . (($val >> 12) & 0x1) . \" \" .  (($val >> 11) & 0x1) . \" \" .\n            #               subject detect               face and eye                  half press\n                          (($val >> 8) & 0x3) . \" \" . (($val >> 7) & 0x1) . \" \" . (($val >> 5) & 0x1) . \" \" .\n            #               eye AF                      face detect                 x-AF with MF\n                          (($val >> 4) & 0x1) . \" \" . (($val >> 3) & 0x1) . \" \" . ($val & 0x7)",
+    "Names": [
+      "Olympus.AFPointDetails"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "($val[2] and $val[2]>0) ? $val[2] : (defined($val[0]) ? $val[0] : $val[1])",
+    "Names": [
+      "Exif.ShutterSpeed"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "($val[0]==3 or $val[0]==4 or $val[0]==6) ? 1 : 0",
+    "Names": [
+      "Canon.RedEyeReduction"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "($val[0] =~ /^Manual/i) ? 0 : 1",
+    "Names": [
+      "Nikon.AutoFocus"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "($val>>16)|(($val&0xffff)<<16)",
+    "Names": [
+      "Canon.ShutterCount"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "($val-106)/8",
+    "Names": [
+      "Sony.BrightnessValue"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "($val and $val < 254) ? exp(($val/8-6)*log(2))*100 : $val",
+    "Names": [
+      "Sony.ISOSetting"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "($val >> 8) + 1",
+    "Names": [
+      "RIFF.ImageHeight"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "($val >> 4) . \" \" . ($val & 0x0f)",
+    "Names": [
+      "Pentax.CAFGridSize"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "($val >> 4) * ($val & 0x0f)",
+    "Names": [
+      "Pentax.NumCAFPoints"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "($val < 0x400 or $val == 0x7fff) ? $val : pack \"C*\", map { (($val>>$_)&0x1f)+0x60 } 10, 5, 0",
+    "Names": [
+      "QuickTime.MediaLanguageCode"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "($val - 1) * 3",
+    "Names": [
+      "H264.Gain"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "($val & 0xffffff) + 1",
+    "Names": [
+      "RIFF.ImageWidth"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "($val & 0x3fff) + 1",
+    "Names": [
+      "RIFF.ImageWidth"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val[3] * ($val[2] ? $val[2] : 1)",
+    "Names": [
+      "Canon.Lens35efl"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val[1] ? $val[1] : $val[($val[0] || 0) + 2]",
+    "Names": [
+      "Canon.WB_RGGBLevels"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val[1] ? $val[0] / $val[1] : undef",
+    "Names": [
+      "Apple.RunTimeSincePowerUp"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val[0]&(1<<14)? 1 : 0",
+    "Names": [
+      "Canon.FlashType"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val[0] || $val[1]",
+    "Names": [
+      "Exif.Aperture"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val[0] ? 0 : ($val[1] ? 1 : 2)",
+    "Names": [
+      "Canon.DriveMode"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val[0] ? (($val[0] eq \"4\" and $val[2]) ? 7 : $val[0]) : $val[1] + 10",
+    "Names": [
+      "Canon.ShootingMode"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val[$val[0] + 1]",
+    "Names": [
+      "Kodak.WB_RGBLevels"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~tr/\\0/\\n/; $val",
+    "Names": [
+      "Kodak.KodakLook"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~tr/\\0//d; $val",
+    "Names": [
+      "QuickTime.MetadataSource"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~tr/-/:/; $val",
+    "Names": [
+      "QuickTime.DateTimeOriginal"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~tr/ /./; $val",
+    "Names": [
+      "Pentax.ProductionCode"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~s{^/}{}; $val",
+    "Names": [
+      "XMP."
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~s{/}{:}g; $val",
+    "Names": [
+      "Kodak.DateTimeOriginal"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~s/mm/mm /; $val",
+    "Names": [
+      "Pentax.LensInfo"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~s/^(.{4})(.{4})/Entity=$1 Criteria=$2 /i; $val",
+    "Names": [
+      "QuickTime.Rating"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~s/^(.{4})(.{2})/\"Entity=$1 Index=\".unpack(\"n\",$2).\" \"/ie; $val",
+    "Names": [
+      "QuickTime.Classification"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~s/\\xff+$//; $val",
+    "Names": [
+      "Canon.InternalSerialNumber"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~s/\\s+$//; $val",
+    "Names": [
+      "Kodak.SerialNumber"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~s/\\s*:.*//; $val",
+    "Names": [
+      "Ricoh.LensID"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~s/\\0\\0.*//; $val=~s/\\0 */\\n/g; $val",
+    "Names": [
+      "Samsung.LocalLocationName"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~s/\\0.*//s; $val",
+    "Names": [
+      "Nikon.CountryCode"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~s/\\0*$//; \\$val",
+    "Names": [
+      "Panasonic.ThumbnailImage"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~s/IP1.*//; $val",
+    "Names": [
+      "Sony.Barcode"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~s/(\\d{2})(\\d{2})(\\d{2})(\\d{2})/$4$3$2$1/; $val=~s/^0//; $val",
+    "Names": [
+      "Sony.SerialNumber"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~s/( 0)+$//; $val",
+    "Names": [
+      "Nikon.RetouchHistory"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~s/ 1$// ? -$val/10 : \"n/a\"",
+    "Names": [
+      "Olympus.RollAngle"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val=~/[\\0-\\x2f]/ ? join(\" \",unpack(\"C*\",$val)) : $val",
+    "Names": [
+      "Panasonic.FirmwareVersion"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val<95 ? $val/20-1 : 4",
+    "Names": [
+      "Nikon.DigitalGEM"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val ? 1e9 / $val : 0",
+    "Names": [
+      "Matroska.VideoFrameRate"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val ? 1 : 0",
+    "Names": [
+      "H264.GPSAltitudeRef"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val ? 1 / $val : 0",
+    "Names": [
+      "FujiFilm.ExposureTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val ? $val : undef",
+    "Names": [
+      "Olympus.CameraTemperature"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val >= 255 ? 255 : exp(($val-200)/16*log(2))",
+    "Names": [
+      "Canon.FlashOutput"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val >= 128 ? \"inf\" : $val * $val[1] / 1000",
+    "Names": [
+      "Sony.FocusDistance"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val > 8 ? 0 : $val",
+    "Names": [
+      "Sony.FacesDetected"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val > 1800 and $val -= 3600; -$val / 10",
+    "Names": [
+      "Canon.RollAngle"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val > 1800 and $val -= 3600; $val / 10",
+    "Names": [
+      "Canon.PitchAngle"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ tr/\\0//d; $val",
+    "Names": [
+      "Nikon.Software"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/^8 //; $val",
+    "Names": [
+      "Canon.Categories"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/^1 //; $val",
+    "Names": [
+      "QuickTime.ElementaryStreamTrack"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/^-?\\d+ //; \\$val",
+    "Names": [
+      "QuickTime.AccelerometerData"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/^(\\d{2})(\\d{2})/$1:$2:/; $val",
+    "Names": [
+      "Olympus.RecordingTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/^(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})/20$1:$2:$3 $4:$5:/; $val",
+    "Names": [
+      "GoPro.GPSDateTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/\\s+$//; $val",
+    "Names": [
+      "Olympus.CameraType"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/\\S* //; $val",
+    "Names": [
+      "Olympus.AFPointSelected"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/\\0+/\\n/g; $val",
+    "Names": [
+      "IPTC.DocumentHistory"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/Shar:\\s*//, $val",
+    "Names": [
+      "Sigma.Sharpness"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/Shad:\\s*//, $val",
+    "Names": [
+      "Sigma.Shadow"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/Satu:\\s*//, $val",
+    "Names": [
+      "Sigma.Saturation"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/Qual:\\s*//, $val",
+    "Names": [
+      "Sigma.Quality"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/Luma:\\s*//, $val",
+    "Names": [
+      "Sigma.LuminanceNoiseReduction"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/High:\\s*//, $val",
+    "Names": [
+      "Sigma.Highlight"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/Fill:\\s*//, $val",
+    "Names": [
+      "Sigma.X3FillLight"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/Expo:\\s*//, $val",
+    "Names": [
+      "Sigma.ExposureCompensation"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/Cont:\\s*//, $val",
+    "Names": [
+      "Sigma.Contrast"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/Chro:\\s*//, $val",
+    "Names": [
+      "Sigma.ChrominanceNoiseReduction"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/CC:\\s*//, $val",
+    "Names": [
+      "Sigma.ColorAdjustment"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/.* //; $val",
+    "Names": [
+      "QuickTime.Stereoscopic3D"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/(\\d{4})(\\d{2})(\\d{2})(\\d{2})(\\d{2})/$1:$2:$3 $4:$5:/; $val",
+    "Names": [
+      "Red.DateTimeOriginal"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/(\\d{2})/$1./; $val",
+    "Names": [
+      "Nikon.FirmwareVersion56"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/ 1$// ? $val / 10 : \"n/a\"",
+    "Names": [
+      "Olympus.PitchAngle"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/ 0$//; $val",
+    "Names": [
+      "Nikon.FrameCount"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/ .*//; ConvertUnixTime($val)",
+    "Names": [
+      "QuickTime.TimeStamp"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/ .*//; ($val - 50) / 10",
+    "Names": [
+      "Pentax.ExposureCompensation"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ s/ *$//; $val",
+    "Names": [
+      "Ricoh.RicohMake"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ /^.{6}([a-z0-9]{2})/i ? hex($1) : undef",
+    "Names": [
+      "QuickTime.CDDBDiscTracks"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ /^..([a-z0-9]{4})/i ? hex($1) : undef",
+    "Names": [
+      "QuickTime.CDDBDiscPlayTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ /Lon=([-+.\\d]+)/; $1",
+    "Names": [
+      "QuickTime.GPSLongitude"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ /Lat=([-+.\\d]+)/; $1",
+    "Names": [
+      "QuickTime.GPSLatitude"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ /Alt=([-+.\\d]+)/; abs($1)",
+    "Names": [
+      "QuickTime.GPSAltitude"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ /Alt=([-+.\\d]+)/; $1 < 0 ? 1 : 0",
+    "Names": [
+      "QuickTime.GPSAltitudeRef"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val =~ /(\\d{2})(\\d{2})(\\d{2})/ ? ($1 * 60 + $2) * 60 + $3 : undef",
+    "Names": [
+      "Olympus.Duration"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val == 7 ? undef : $val",
+    "Names": [
+      "H264.WhiteBalance"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val == 15 ? undef : $val",
+    "Names": [
+      "H264.ExposureProgram"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val == 0xffffffff ? 0xffff : $val",
+    "Names": [
+      "XMP."
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val == 0xff ? undef : $val",
+    "Names": [
+      "H264.Focus"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val / 60",
+    "Names": [
+      "Pentax.SRHalfPressTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val / 3600",
+    "Names": [
+      "CanonRaw.TimeZoneCode"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val / 32 + 5",
+    "Names": [
+      "Canon.MeasuredEV"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val / 32",
+    "Names": [
+      "Canon.FlashGuideNumber"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val / 28125",
+    "Names": [
+      "H264.ExposureTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val / 1000000",
+    "Names": [
+      "Sigma.ExposureTime2"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val / ($val >= 1024 ? 1024 : ($val >= 256 ? 256 : 100))",
+    "Names": [
+      "PanasonicRaw.Gamma"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val - 5",
+    "Names": [
+      "Nikon.MonitorBrightness"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val - 20",
+    "Names": [
+      "Sony.AFMicroAdjValue"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val + 5",
+    "Names": [
+      "CanonRaw.MeasuredEV"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val * 2 / 3",
+    "Names": [
+      "Sony.FocalLengthTeleZoom"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val * 2",
+    "Names": [
+      "Pentax.AFIntegrationTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val * 1e-5",
+    "Names": [
+      "Pentax.ExposureTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val & 0x7fffffff",
+    "Names": [
+      "Canon.ISO"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val & 0x7fff",
+    "Names": [
+      "FujiFilm.ImageCount"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val & 0x7ff",
+    "Names": [
+      "Pentax.AFPointsInFocus"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val & 0x02",
+    "Names": [
+      "Photoshop.LayerVisible"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$val & 0x01 ? $val * 4 : $val / 2",
+    "Names": [
+      "Pentax.SRFocalLength"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$self->Decode($val, $self->Options(\"CharsetQuickTime\"))",
+    "Names": [
+      "QuickTime.FontName"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$_=unpack(\"H*\",$val); s/0{64}$//; uc $_",
+    "Names": [
+      "RIFF.BWF_UMID"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$_=substr($val,1); s/\\0+$//; s/\\0/, /; $_",
+    "Names": [
+      "Jpeg2000.BinaryDataType"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$_=$val; tr/-/:/; s/^(\\d{4}:\\d{2}:\\d{2})/$1 /; $_",
+    "Names": [
+      "RIFF.DateTimeOriginal"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$_=$val; s/^(Unicode\\0|ASCII\\0\\0\\0)//; tr/\\0//d; s/\\s+$//; $_",
+    "Names": [
+      "Ricoh.Comment"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$_=$val; s/-/:/g; $_",
+    "Names": [
+      "RIFF.DateCreated"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$_=$val; s/(\\s*\\0)+$//; s/(\\s*\\0)/, /; s/\\0+//g; $_",
+    "Names": [
+      "RIFF.Software"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$_=$val; /^[\\x00-\\x09]/ and $_=join(\"\",unpack(\"CCCC\",$_)); $_",
+    "Names": [
+      "Nikon.MakerNoteVersion"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$^O eq \"darwin\" ? $val : ConvertUnixTime($val,1)",
+    "Names": [
+      "ExifTool."
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "$$self{SingleFrame} == 0 ? 5 : $val",
+    "Names": [
+      "Nikon.ReleaseMode"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\"$val[0]x$val[1]\"",
+    "Names": [
+      "Exif.PreviewImageSize"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\"$val[0]:$val[1]\"",
+    "Names": [
+      "Kodak.DateCreated"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\"$val[0] $val[1] $val[2]\"",
+    "Names": [
+      "Panasonic.AdvancedSceneMode"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            sprintf(\"%.2x%.2x:%.2x:%.2x %.2x:%.2x:%.2x\",\n                    split(' ', $val));\n        ",
+    "Names": [
+      "Ricoh.RicohDate"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            return undef unless $val;\n            return 'inf' if $val >= 255;\n            return (2**($val/16-5) + 1) * $val[1] / 1000;\n        ",
+    "Names": [
+      "Sony.FocusDistance2"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            return \\$val if length($val) > 6;\n            join(\" \",unpack($Image::ExifTool::PNG::colorType == 3 ? \"C*\" : \"n*\", $val));\n        ",
+    "Names": [
+      "PNG.Transparency"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            return 0 unless $val;\n            $val = -3 if $val == 29;  # -3 is stored as 0x1d\n            return 2**($val/16 + 4);\n        ",
+    "Names": [
+      "Pentax.ExternalFlashGuideNumber"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            return '<err>' unless length $val >= 8;\n            unpack('x7C', $val);\n        ",
+    "Names": [
+      "QuickTime.UserRating"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            return $val[4] if $val[4];\n            return \"$val[2] $val[3]\" if $val[2] and $val[3] and\n                    $$self{TIFF_TYPE} =~ /^(CR2|Canon 1D RAW|IIQ|EIP)$/;\n            return \"$val[0] $val[1]\" if IsFloat($val[0]) and IsFloat($val[1]);\n            return undef;\n        ",
+    "Names": [
+      "Exif.ImageSize"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            return $val[0] if defined $val[0] and $val[0] =~ /(mm|\\d\\/F)/;\n            return $val[1];\n        ",
+    "Names": [
+      "Exif.LensID"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            return $val[0] if $val[0] and $val[0]=~/ /;\n            return \"$val[1] $val[2]\";\n        ",
+    "Names": [
+      "Exif.DateTimeOriginal"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            return $val[0] if $val[0] and $val[0] =~ /^\\d+$/;\n            return undef unless $val[1] and $val[2];\n            return $val[1] * $val[2] / 100;\n        ",
+    "Names": [
+      "Canon.ISO"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            require Image::ExifTool::XMP;\n            return Image::ExifTool::XMP::ConvertXMPDate($val);\n        ",
+    "Names": [
+      "Exif.PreviewDateTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            require Image::ExifTool::XMP;\n            Image::ExifTool::XMP::DecodeBase64($val);\n        ",
+    "Names": [
+      "Vorbis.CoverArt"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            require Image::ExifTool::GPS;\n            Image::ExifTool::GPS::ConvertTimeStamp($val);\n        ",
+    "Names": [
+      "Nikon.GPSTimeStamp"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            require Image::ExifTool::ASF;\n            $val = Image::ExifTool::ASF::GetGUID($val);\n            # GUID's are too long, so remove redundant information\n            $val =~ s/^6fddc324-4e03-4bfe-b185-3d77768dc9//i and $val = hex($val);\n            return $val;\n        ",
+    "Names": [
+      "Exif.PixelFormat"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my @v = unpack('C*', $val);\n            return undef unless $v[0] > 0;\n            return sprintf(\"20%.2d:%.2d:%.2d %.2d:%.2d:%.2d\", @v)\n        ",
+    "Names": [
+      "Sony.SonyDateTime2"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my @v = unpack('C*', $val);\n            return sprintf(\"%.2d:%.2d\", @v)\n        ",
+    "Names": [
+      "Sony.SonyTimeMinSec"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my @v = split(' ',$val);\n            $v[0] &= 0x0f;\n            $v[1] = $v[3] * 256 + $v[4]; # (always high byte first)\n            return \"$v[0] $v[1]\";\n        ",
+    "Names": [
+      "Pentax.LensType"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my @v = split ' ', $val;\n            return undef unless @v == 2;\n            # the Kodak EASYSHARE Sport stores this incorrectly as a string:\n            return $val if $val =~ /^\\d{4}:\\d{2}:\\d{2} \\d{2}:\\d{2}:\\d{2}$/;\n            # get time in seconds\n            $val = 1e-7 * ($v[0] * 4294967296 + $v[1]);\n            # shift from Jan 1, 1601 to Jan 1, 1970\n            $val -= 134774 * 24 * 3600 if $val != 0;\n            return Image::ExifTool::ConvertUnixTime($val);\n        ",
+    "Names": [
+      "RIFF.DateTimeOriginal"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my @a = unpack('a4a4n3x10nx2N', $$val);\n            tr/\\0//d, $_=\"'${_}'\" foreach @a[0,1];\n            return \"@a\";\n        ",
+    "Names": [
+      "MacOS.XAttrFinderInfo"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my @a = unpack('VVa4vvvv', $val);\n            $a[2] = \"'$a[2]'\";\n            my $txt = substr($val, 18);\n            $txt =~ s/\\0+$//;   # remove null terminator\n            return join(' ', @a, $txt);\n        ",
+    "Names": [
+      "RIFF.LabeledText"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my @a = unpack(\"NNC\",$val);\n            $a[2] = ($a[2] ? \"microns\" : \"pixels\");\n            return \"$a[0], $a[1] ($a[2])\";\n        ",
+    "Names": [
+      "PNG.ImageOffset"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my @a = split / /, $val[0];\n            my @b = split / /, $val[1];\n            return '?' unless @a==2 and @b==$a[0]*$a[1];\n            return \"$a[0] $a[1] @b\";\n        ",
+    "Names": [
+      "Exif.CFAPattern"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my @a = split ' ',$val;\n            foreach (@a) {\n                $_ = 2048 / $_ if $_;\n            }\n            return join ' ', @a;\n        ",
+    "Names": [
+      "Kodak.WB_RGBLevels"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my @a = split ' ', $val[0];\n            my @b = split ' ', $val[1];\n            $a[$_] -= $b[$_] foreach 0..$#a;\n            return \"@a\";\n        ",
+    "Names": [
+      "Samsung.WB_RGGBLevels"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my @a = split ' ', $val;\n            my @v;\n            push @v, join('.', map { sprintf('%.2x',$_) } splice(@a,0,8)) while @a >= 8;\n            join ' ', @v;\n        ",
+    "Names": [
+      "Exif.TimeCodes"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my ($tz, @a) = unpack('C*',$val);\n            return sprintf('%.2x%.2x:%.2x:%.2x %.2x:%.2x:%.2x%s%.2d:%s%s', @a,\n                           $tz & 0x20 ? '-' : '+', ($tz >> 1) & 0x0f,\n                           $tz & 0x01 ? '30' : '00',\n                           $tz & 0x40 ? ' DST' : '');\n        ",
+    "Names": [
+      "H264.DateTimeOriginal"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my ($n, @a) = unpack(\"nN*\",$val);\n            $#a = $n - 1 if $n > @a;\n            return join(' ', @a);\n        ",
+    "Names": [
+      "Photoshop.LayerSelectionIDs"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my ($a,$b) = split ' ',$val;\n            return 0 if $a == 0xffffffff;\n            return $a / 1000;\n        ",
+    "Names": [
+      "Olympus.FocusDistance"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my $str = sprintf('%.8x', $val);\n            $str =~ s/(..)(..)(..)(..)/$1:$2:$3:$4/;\n            return $str;\n        ",
+    "Names": [
+      "RIFF.SMPTEOffset"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my $size = length $val;\n            return \\$val if $size < 12 or not $$self{OPTIONS}{Binary};\n            my $len = Get16u(\\$val, 2);\n            my $str = '';\n            SetByteOrder('II');\n            my $pos = 12;\n            while ($pos + $len <= $size) {\n                my $s1 = Get16u(\\$val, $pos);\n                # s2: 7=take-off?, 3=moving, 4=hovering, 9=landing?, 2=landed\n                my $s2 = Get16u(\\$val, $pos + 2);\n                $str .= \"$s1 $s2\";\n                my $num = int(($len-4)/4);\n                my ($i, $v);\n                for ($i=0; $i<$num; ++$i) {\n                    my $pt = $pos + 4 + $i * 4;\n                    if ($i > 0 && $i < 4) {\n                        $v = GetFloat(\\$val, $pt); # pitch/roll/yaw\n                    } else {\n                        $v = Get32u(\\$val, $pt);\n                        # convert time to sec, and speed(NC)/altitude to metres\n                        $v /= 1000 if $i <= 5;\n                    }\n                    $str .= \" $v\";\n                }\n                $str .= \"\\n\";\n                $pos += $len;\n            }\n            SetByteOrder('MM');\n            return \\$str;\n        ",
+    "Names": [
+      "QuickTime.ARDroneTelemetry"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my $secs = int($val / 1000);\n            return ConvertUnixTime($secs) . sprintf(\".%03d\",$val - $secs * 1000);\n        ",
+    "Names": [
+      "QuickTime.StartTime"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my $len = ord($val);\n            $val = substr($val, 0, $len+1) if $len < length($val);\n            return Image::ExifTool::Photoshop::ConvertPascalString($self,$val);\n        ",
+    "Names": [
+      "Photoshop.ClippingPathName"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            my $charset = $self->Options('CharsetPhotoshop') || 'Latin';\n            return $self->Decode($val, $charset);\n        ",
+    "Names": [
+      "Photoshop.LayerNames"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            if (ref $val[5] eq 'HASH') {\n                # copy structure fields into value array\n                my $i = 0;\n                $val[$i++] = $val[5]{$_} foreach qw(Fired Return Mode Function RedEyeMode);\n            }\n            return((($val[0] and lc($val[0]) eq 'true') ? 0x01 : 0) |\n                   (($val[1] || 0) << 1) |\n                   (($val[2] || 0) << 3) |\n                   (($val[3] and lc($val[3]) eq 'true') ? 0x20 : 0) |\n                   (($val[4] and lc($val[4]) eq 'true') ? 0x40 : 0));\n        ",
+    "Names": [
+      "XMP.Flash"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            foreach (0,2) {\n                next unless defined $val[$_] and IsFloat($val[$_]) and defined $val[$_+1];\n                return $val[$_+1] ? -abs($val[$_]) : $val[$_];\n            }\n            return undef;\n        ",
+    "Names": [
+      "GPS.GPSAltitude"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            ToFloat(@val);\n            return undef unless $val[0] and $val[1];\n            my $corr = 1;\n            if ($val[2]) {\n                my $d = 1000 * $val[2] - $val[0];\n                $corr += $val[0]/$d if $d > 0;\n            }\n            my $fd2 = atan2(36, 2*$val[0]*$val[1]*$corr);\n            my @fov = ( $fd2 * 360 / 3.14159 );\n            if ($val[2] and $val[2] > 0 and $val[2] < 10000) {\n                push @fov, 2 * $val[2] * sin($fd2) / cos($fd2);\n            }\n            return join(' ', @fov);\n        ",
+    "Names": [
+      "Exif.FOV"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            ToFloat(@val);\n            return 'inf' unless $val[1] and $val[2];\n            return $val[0] * $val[0] / ($val[1] * $val[2] * 1000);\n        ",
+    "Names": [
+      "Exif.HyperfocalDistance"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            ToFloat(@val);\n            my ($d, $f) = ($val[3], $val[0]);\n            if (defined $d) {\n                $d or $d = 1e10;    # (use large number for infinity)\n            } else {\n                $d = $val[4] || $val[5] || $val[6];\n                unless (defined $d) {\n                    return undef unless defined $val[7] and defined $val[8];\n                    $d = ($val[7] + $val[8]) / 2;\n                }\n            }\n            return 0 unless $f and $val[2];\n            my $t = $val[1] * $val[2] * ($d * 1000 - $f) / ($f * $f);\n            my @v = ($d / (1 + $t), $d / (1 - $t));\n            $v[1] < 0 and $v[1] = 0; # 0 means 'inf'\n            return join(' ',@v);\n        ",
+    "Names": [
+      "Exif.DOF"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            $val =~ s/\\0$//;    # remove trailing null\n            $val =~ s/([\\0-\\x1f])/'.'.ord($1)/ge;\n            $val =~ s/\\./ /; return $val;\n        ",
+    "Names": [
+      "Nikon.MakerNoteVersion"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            $val =~ /^(\\d{4})(\\d{2})(\\d{2})$/ and return \"$1:$2:$3\";\n            # Optio A10 and A20 leave \"200\" off the year\n            $val =~ /^(\\d)(\\d{2})(\\d{2})$/ and return \"200$1:$2:$3\";\n            return \"Unknown ($val)\";\n        ",
+    "Names": [
+      "Pentax.ManufactureDate"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n            # fix the funny things that these numbers do when they wrap over 9999\n            # (it seems that FileIndex and DirectoryIndex actually store the\n            #  numbers from the previous image, so we need special logic\n            #  to handle the FileIndex wrap properly)\n            $val[1] == 10000 and $val[1] = 1, ++$val[0];\n            return sprintf(\"%.3d%.4d\",@val);\n        ",
+    "Names": [
+      "Canon.FileNumber"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n                my @v=split(\" \",$val);\n                $v[0]*=2, $v[1]/=2;\n                return \"@v\";\n            ",
+    "Names": [
+      "FujiFilm.RawImageSize"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n                my @v=reverse split(\" \",$val);\n                $$self{FujiLayout} and $v[0]/=2, $v[1]*=2;\n                return \"@v\";\n            ",
+    "Names": [
+      "FujiFilm.RawImageSize"
+    ],
+    "Count": 1
+  },
+  {
+    "ValueConv": "\n                my $d = ($val & 0xffc00) >> 10;\n                # we know there are missing bits if directory number is < 100\n                $d += 0x40 while $d < 100;  # (repair the damage as best we can)\n                return $d*10000 + (($val&0x3ff)<<4) + (($val>>20)&0x0f);\n            ",
+    "Names": [
+      "Canon.FileNumber"
+    ],
+    "Count": 1
+  }
+]

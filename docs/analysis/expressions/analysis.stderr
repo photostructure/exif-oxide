@@ -1,0 +1,92 @@
+Running ExifTool patcher...
+Found 130 directly required tags
+Loaded 54 composite tags from docs/analysis/expressions/composite-dependencies.json
+Found 54 composite tags with dependencies
+  Added dependency: EXIF:CreateDate (required by SubSecCreateDate)
+  Added dependency: SubSecTimeDigitized (required by SubSecCreateDate)
+  Added dependency: OffsetTimeDigitized (required by SubSecCreateDate)
+  Added dependency: DirectoryIndex (required by FileNumber)
+  Added dependency: FileIndex (required by FileNumber)
+  Added dependency: GPS:GPSAltitude (required by GPSAltitude)
+  Added dependency: GPS:GPSAltitudeRef (required by GPSAltitude)
+  Added dependency: XMP:GPSAltitude (required by GPSAltitude)
+  Added dependency: XMP:GPSAltitudeRef (required by GPSAltitude)
+  Added dependency: JpgFromRawStart (required by JpgFromRaw)
+  Added dependency: JpgFromRawLength (required by JpgFromRaw)
+  Added dependency: MinFocalLength (required by Lens)
+  Added dependency: MaxFocalLength (required by Lens)
+  Added dependency: ExifImageWidth (required by ImageSize)
+  Added dependency: ExifImageHeight (required by ImageSize)
+  Added dependency: RawImageCroppedSize (required by ImageSize)
+  Added dependency: PreviewImageStart (required by PreviewImage)
+  Added dependency: PreviewImageLength (required by PreviewImage)
+  Added dependency: PreviewImageValid (required by PreviewImage)
+  Added dependency: PreviewImageStart (1) (required by PreviewImage)
+  Added dependency: PreviewImageLength (1) (required by PreviewImage)
+  Added dependency: SubfileType (required by ThumbnailTIFF)
+  Added dependency: Compression (required by ThumbnailTIFF)
+  Added dependency: BitsPerSample (required by ThumbnailTIFF)
+  Added dependency: PhotometricInterpretation (required by ThumbnailTIFF)
+  Added dependency: StripOffsets (required by ThumbnailTIFF)
+  Added dependency: SamplesPerPixel (required by ThumbnailTIFF)
+  Added dependency: RowsPerStrip (required by ThumbnailTIFF)
+  Added dependency: StripByteCounts (required by ThumbnailTIFF)
+  Added dependency: PlanarConfiguration (required by ThumbnailTIFF)
+  Added dependency: LensIDNumber (required by LensID)
+  Added dependency: LensFStops (required by LensID)
+  Added dependency: MaxApertureAtMinFocal (required by LensID)
+  Added dependency: MaxApertureAtMaxFocal (required by LensID)
+  Added dependency: MCUVersion (required by LensID)
+  Added dependency: ThumbnailOffset (required by ThumbnailImage)
+  Added dependency: ThumbnailLength (required by ThumbnailImage)
+  Added dependency: BulbDuration (required by ShutterSpeed)
+  Added dependency: CameraISO (required by ISO)
+  Added dependency: BaseISO (required by ISO)
+  Added dependency: AutoISO (required by ISO)
+  Added dependency: DateCreated (required by DateTimeOriginal)
+  Added dependency: TimeCreated (required by DateTimeOriginal)
+  Added dependency: EXIF:DateTimeOriginal (required by SubSecDateTimeOriginal)
+  Added dependency: SubSecTimeOriginal (required by SubSecDateTimeOriginal)
+  Added dependency: OffsetTimeOriginal (required by SubSecDateTimeOriginal)
+  Added dependency: EXIF:ModifyDate (required by SubSecModifyDate)
+  Added dependency: OffsetTime (required by SubSecModifyDate)
+Total required tags with dependencies: 178
+Processing 49 modules...
+
+=== Summary ===
+
+ValueConv:
+  Unique expressions: 41
+  Total usage: 55
+  Pattern breakdown:
+    function_calls: 29 tags
+    arithmetic: 26 tags
+    ternary: 14 tags
+    regex_match: 11 tags
+    complex: 10 tags
+    string_concat: 6 tags
+    sprintf: 3 tags
+    unpack: 3 tags
+    pack: 3 tags
+    regex_substitute: 3 tags
+    hash_lookups: 3 tags
+
+PrintConv:
+  Unique expressions: 25
+  Total usage: 71
+  Pattern breakdown:
+    function_calls: 58 tags
+    arithmetic: 39 tags
+    string_concat: 7 tags
+    sprintf: 6 tags
+    ternary: 3 tags
+    regex_match: 3 tags
+    hash_lookups: 3 tags
+    complex: 2 tags
+    regex_substitute: 1 tags
+
+Condition:
+  Unique expressions: 1
+  Total usage: 1
+  Pattern breakdown:
+    hash_lookups: 1 tags

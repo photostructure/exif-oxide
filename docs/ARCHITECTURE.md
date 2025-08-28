@@ -108,7 +108,63 @@ exif-oxide is a Rust translation of [ExifTool](https://exiftool.org/), focusing 
 2. **Registry Lookup** - Complex operations like regex substitution
 3. **Manual Implementation** - Camera-specific quirks that can't be automated
 
-### 5. State Management & Offset Calculations
+### 5. PPI→AST→Rust Pipeline Integration Testing
+
+**The Challenge**: Complex Perl expressions require reliable translation to equivalent Rust code, with full pipeline validation and actual execution testing.
+
+**Complete Test Generation Pipeline**: The system processes JSON test configurations through the entire PPI pipeline to generate and execute real Rust functions:
+
+```json
+{
+    "expression": "$val * 2",
+    "type": "ValueConv",
+    "description": "Simple value multiplication by 2",
+    "exiftool_reference": "lib/Image/ExifTool/Example.pm:123",
+    "test_cases": [
+        {"input": {"U32": 50}, "expected": {"U32": 100}},
+        {"input": {"F64": 1.5}, "expected": {"F64": 3.0}}
+    ]
+}
+```
+
+**Full Pipeline Implementation**:
+1. **JSON Configuration** → Test definitions with expressions and expected outputs
+2. **PPI AST Generation** → Call `ppi_ast.pl` for each expression  
+3. **AST Normalization** → Apply multi-pass normalizer for canonical forms
+4. **Function Registration** → Use `PpiFunctionRegistry` for deduplication
+5. **Function Generation** → Create actual Rust functions in `tests/generated/functions/`
+6. **Test Generation** → Create test files that import and execute functions
+7. **Execution & Validation** → Run generated code with real assertions
+
+**Key Architectural Components**:
+- **PpiFunctionRegistry**: Deduplicates identical expressions across test files
+- **Two-phase processing**: Registration phase followed by generation phase
+- **AST-based hashing**: Functions deduplicated by normalized AST structure
+- **Debug mode**: Single-file processing without regenerating mod.rs files
+
+**Why This Architecture**: The system provides:
+- **Real execution testing**: Generated functions are compiled and run with actual inputs
+- **Fast iteration**: <10 seconds for full test cycle with `cargo test`
+- **Function deduplication**: Identical expressions share generated functions
+- **Clear failure diagnosis**: Tests show exactly which expressions generate invalid Rust
+- **Incremental debugging**: Single-file mode for rapid expression development
+
+**Test Organization**:
+```
+codegen/tests/generated/
+├── functions/               # Deduplicated generated functions
+│   ├── hash_XX.rs          # Functions grouped by AST hash prefix
+│   └── mod.rs              # Module declarations
+├── value_conv/             # Tests organized by expression type
+├── print_conv/
+├── conditions/
+├── types.rs                # Type aliases for test environment
+└── mod.rs
+```
+
+This architecture validates the complete expression processing pipeline while providing rapid feedback during development.
+
+### 6. State Management & Offset Calculations
 
 **The Challenge**: EXIF data has complex nested structures with manufacturer-specific offset schemes.
 
@@ -142,7 +198,7 @@ pub struct ExifReader {
   - Nikon: TIFF header at offset 0x0a from maker note start
   - Sony: Offset 0 or 4 depending on model era
 
-### 6. Streaming-First Design
+### 7. Streaming-First Design
 
 **The Decision**: All binary data handled via streaming references, not in-memory copies.
 
@@ -252,6 +308,10 @@ pub struct ExifReader {
 - Canon MakerNote support with offset fixing
 - Composite tag framework with runtime evaluation
 - Multi-pass AST normalization system for Perl expression translation
+- Complete PPI→AST→Rust test generation pipeline with function deduplication
+- Two-phase test generation with PpiFunctionRegistry integration
+- TagValue arithmetic operators for expression evaluation
+- Debug mode for single-file expression testing
 
 ### Current Focus
 See [MILESTONES.md](MILESTONES.md) for active development priorities.
