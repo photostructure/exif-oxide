@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "Simple sprintf with single float precision",
+  "expression": "sprintf(\"%.1f\",$val)",
+  "type": "PrintConv",
+  "exiftool_reference": "SigmaRaw.APERTURE and XMP.ApertureValue - common aperture formatting",
+  "test_cases": [
+    {
+      "description": "1.4 -> 1.4", 
+      "input": {
+        "F64": 1.4
+      },
+      "expected": {
+        "String": "1.4"
+      }
+    },
+    {
+      "description": "2.83 -> 2.8",
+      "input": {
+        "F64": 2.83
+      },
+      "expected": {
+        "String": "2.8"
+      }
+    },
+    {
+      "description": "5.67 -> 5.7",
+      "input": {
+        "F64": 5.67
+      },
+      "expected": {
+        "String": "5.7"
+      }
+    }
+  ]
+}

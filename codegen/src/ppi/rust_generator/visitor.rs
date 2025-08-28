@@ -18,22 +18,18 @@ pub trait PpiVisitor {
         match node.class.as_str() {
             "PPI::Document" => self.visit_document(node),
             "PPI::Statement" => self.visit_statement(node),
-            // Task A: Critical Foundation Tokens (Phase 1)
             "PPI::Statement::Expression" => self.visit_expression(node),
             "PPI::Token::Cast" => self.visit_cast(node),
             "PPI::Structure::Subscript" => self.visit_subscript(node),
             "PPI::Token::Regexp::Match" => self.visit_regexp_match(node),
-            // Task B: Numeric & String Operations (Phase 2)
             "PPI::Token::Number::Hex" => self.visit_number_hex(node),
             "PPI::Token::Number::Float" => self.visit_number(node), // Handle float the same as number
             "PPI::Statement::Variable" => self.visit_variable(node),
             "PPI::Token::Regexp::Substitute" => self.visit_regexp_substitute(node),
-            // Task D: Control Flow & Advanced Features (Phase 3)
             "PPI::Token::Magic" => self.visit_magic(node),
             "PPI::Statement::Break" => self.visit_break(node),
             "PPI::Token::Regexp::Transliterate" => self.visit_transliterate(node),
             "PPI::Structure::Block" => self.visit_block(node),
-            // Existing supported tokens
             "PPI::Token::Symbol" => self.visit_symbol(node),
             "PPI::Token::Operator" => self.visit_operator(node),
             "PPI::Token::Number" => self.visit_number(node),
@@ -41,13 +37,13 @@ pub trait PpiVisitor {
             "PPI::Token::Word" => self.visit_word(node),
             "PPI::Structure::List" => self.visit_list(node),
             "PPI::Token::Structure" => self.visit_structure(node),
-            // Normalized AST node types (created by normalizer)
             "ConditionalBlock" => self.visit_normalized_conditional_block(node),
             "FunctionCall" => self.visit_normalized_function_call(node),
             "IfStatement" => self.visit_normalized_if_statement(node),
             "StringConcat" => self.visit_normalized_string_concat(node),
             "StringRepeat" => self.visit_normalized_string_repeat(node),
-            "TernaryOp" => self.visit_normalized_ternary_op(node),
+            "TernaryOp" | "TernaryOperation" | "SafeDivision" => self.visit_normalized_ternary_op(node),
+            "BinaryOperation" => self.visit_normalized_binary_operation(node),
             // Normalized component nodes (parts of larger structures)
             "Condition" | "Assignment" | "TrueBranch" | "FalseBranch" => {
                 self.visit_normalized_component(node)
@@ -145,42 +141,54 @@ pub trait PpiVisitor {
 
     /// Visit number node - enhanced for better float and scientific notation handling
     fn visit_number(&self, node: &PpiNode) -> Result<String, CodeGenError> {
-        if let Some(num) = node.numeric_value {
+        let raw_number = if let Some(num) = node.numeric_value {
             // For code generation, use appropriate literal format
             if num.fract() == 0.0 && num.abs() < 1e10 {
                 // Integer value within reasonable range
-                Ok(format!("{}", num as i64))
+                format!("{}", num as i64)
             } else {
                 // Float value or large number - ensure Rust float literal format
                 let num_str = num.to_string();
                 // Add explicit float suffix if not present for clarity
                 if !num_str.contains('e') && !num_str.contains('.') {
-                    Ok(format!("{}.0", num_str))
+                    format!("{}.0", num_str)
                 } else {
-                    Ok(num_str)
+                    num_str
                 }
             }
         } else if let Some(content) = &node.content {
             // Handle special numeric formats
             if content.contains('e') || content.contains('E') {
                 // Scientific notation - ensure proper format
-                Ok(content.to_lowercase())
+                content.to_lowercase()
             } else if content.contains('.') {
                 // Decimal number - preserve as-is
-                Ok(content.clone())
+                content.clone()
             } else {
                 // Integer - validate and return
                 if content
                     .chars()
                     .all(|c| c.is_ascii_digit() || c == '-' || c == '+')
                 {
-                    Ok(content.clone())
+                    content.clone()
                 } else {
-                    Err(CodeGenError::InvalidNumber(content.clone()))
+                    return Err(CodeGenError::InvalidNumber(content.clone()));
                 }
             }
         } else {
-            Err(CodeGenError::MissingContent("number".to_string()))
+            return Err(CodeGenError::MissingContent("number".to_string()));
+        };
+
+        // For all contexts, return raw numbers with appropriate type suffixes
+        // The TagValue operators handle raw numeric types (Mul<i32>, Mul<f64>, etc.)
+        // Using .into() here causes type ambiguity in binary operations
+        if raw_number.contains('.') || raw_number.contains('e') {
+            // Add f64 suffix for floats
+            Ok(format!("{}f64", raw_number))
+        } else {
+            // For integers, use i32 suffix since that's what the operators support
+            // (codegen-runtime only implements Mul<i32> and Mul<f64>, not Mul<u32>)
+            Ok(format!("{}i32", raw_number))
         }
     }
 
@@ -195,10 +203,22 @@ pub trait PpiVisitor {
         // Handle simple variable interpolation
         if string_value.contains("$val") && string_value.matches('$').count() == 1 {
             let template = string_value.replace("$val", "{}");
-            Ok(format!("format!(\"{}\", val)", template))
+            let format_expr = format!("format!(\"{}\", val)", template);
+
+            // In PrintConv context, wrap in TagValue::String or use .into()
+            match self.expression_type() {
+                ExpressionType::PrintConv => Ok(format!("{}.into()", format_expr)),
+                _ => Ok(format_expr),
+            }
         } else {
             // Simple string literal
-            Ok(format!("\"{}\"", string_value.replace('\"', "\\\"")))
+            let string_literal = format!("\"{}\"", string_value.replace('\"', "\\\""));
+
+            // In PrintConv context, wrap string literals with .into()
+            match self.expression_type() {
+                ExpressionType::PrintConv => Ok(format!("{}.into()", string_literal)),
+                _ => Ok(string_literal),
+            }
         }
     }
 
@@ -316,6 +336,33 @@ pub trait PpiVisitor {
                         var
                     )),
                     _ => Ok(format!("match {} {{ TagValue::String(s) => s.len() as i32, _ => 0 }}", var)),
+                }
+            }
+            "sprintf" => {
+                if args.is_empty() {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "sprintf requires at least a format string".to_string(),
+                    ));
+                }
+                let format_str = &args[0];
+                let sprintf_args = if args.len() > 1 {
+                    let cloned_args = args[1..].iter()
+                        .map(|arg| format!("{}.clone()", arg))
+                        .collect::<Vec<_>>()
+                        .join(", ");
+                    format!("&[{}]", cloned_args)
+                } else {
+                    "&[]".to_string()
+                };
+                
+                tracing::debug!("Generating sprintf call: format={}, args={}", format_str, sprintf_args);
+                
+                match self.expression_type() {
+                    ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
+                        "TagValue::String(codegen_runtime::fmt::sprintf_perl({}, {}))",
+                        format_str, sprintf_args
+                    )),
+                    _ => Ok(format!("codegen_runtime::fmt::sprintf_perl({}, {})", format_str, sprintf_args)),
                 }
             }
             "join" => {
@@ -580,7 +627,19 @@ pub trait PpiVisitor {
             let hex_part = &content[2..];
             if hex_part.chars().all(|c| c.is_ascii_hexdigit()) {
                 // Preserve the hex literal format for clarity in generated code
-                Ok(content.to_lowercase())
+                let hex_literal = content.to_lowercase();
+
+                // Add appropriate type suffix to hex literals
+                // Parse the hex value to determine appropriate type
+                if let Ok(val) = u64::from_str_radix(hex_part, 16) {
+                    if val <= u32::MAX as u64 {
+                        Ok(format!("{}u32", hex_literal))
+                    } else {
+                        Ok(format!("{}u64", hex_literal))
+                    }
+                } else {
+                    Ok(hex_literal)
+                }
             } else {
                 Err(CodeGenError::InvalidNumber(content.clone()))
             }
@@ -1060,4 +1119,103 @@ pub trait PpiVisitor {
         // instead of just joining with spaces, which generates invalid Perl syntax
         self.process_node_sequence(&node.children)
     }
+
+    /// Visit normalized binary operation nodes
+    /// These are created by the BinaryOperatorNormalizer to group mathematical expressions
+    fn visit_normalized_binary_operation(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        let operator = node
+            .content
+            .as_ref()
+            .ok_or(CodeGenError::MissingContent("binary operation operator".to_string()))?;
+
+        if node.children.len() != 2 {
+            return Err(CodeGenError::UnsupportedStructure(format!(
+                "Binary operation must have exactly 2 children, got {}",
+                node.children.len()
+            )));
+        }
+
+        let left = self.visit_node(&node.children[0])?;
+        let right = self.visit_node(&node.children[1])?;
+
+        // Generate appropriate Rust code for the binary operation
+        match operator.as_str() {
+            "*" | "/" | "+" | "-" | "%" => {
+                // Arithmetic operations - clean and simple with complete operator trait coverage
+                Ok(format!("({} {} {})", left, operator, right))
+            }
+            "**" => {
+                // Power operator -> powf method
+                Ok(format!("({} as f64).powf({} as f64)", left, right))
+            }
+            "." => {
+                // String concatenation
+                match self.expression_type() {
+                    ExpressionType::PrintConv | ExpressionType::ValueConv => {
+                        Ok(format!("TagValue::String(format!(\"{{}}{{}}\", {}, {}))", left, right))
+                    }
+                    _ => Ok(format!("format!(\"{{}}{{}}\", {}, {})", left, right)),
+                }
+            }
+            "=~" | "!~" => {
+                // Regex operations - delegate to existing regex handling
+                // This should be handled by the existing binary operation handlers
+                Err(CodeGenError::UnsupportedStructure(format!(
+                    "Regex operation {} should be handled by existing handlers",
+                    operator
+                )))
+            }
+            "eq" | "ne" | "lt" | "gt" | "le" | "ge" => {
+                // String comparison operators
+                let rust_op = match operator.as_str() {
+                    "eq" => "==",
+                    "ne" => "!=", 
+                    "lt" => "<",
+                    "gt" => ">",
+                    "le" => "<=",
+                    "ge" => ">=",
+                    _ => operator, // shouldn't happen
+                };
+
+                // Convert to string for comparison
+                let left_str = if left.starts_with('"') && left.ends_with('"') {
+                    left
+                } else {
+                    format!("{}.to_string()", left)
+                };
+
+                let right_str = if right.starts_with('"') && right.ends_with('"') {
+                    right  
+                } else {
+                    format!("{}.to_string()", right)
+                };
+
+                Ok(format!("({} {} {})", left_str, rust_op, right_str))
+            }
+            "==" | "!=" | "<" | ">" | "<=" | ">=" => {
+                // Numeric comparisons
+                Ok(format!("({} {} {})", left, operator, right))
+            }
+            "&&" | "||" => {
+                // Logical operations
+                Ok(format!("({} {} {})", left, operator, right))
+            }
+            "&" | "|" | "^" => {
+                // Bitwise operations
+                Ok(format!("({} {} {})", left, operator, right))
+            }
+            "x" => {
+                // String repetition operator: $string x $count
+                Ok(format!("{}.repeat({} as usize)", left, right))
+            }
+            _ => {
+                // Unknown operator - return error for now
+                Err(CodeGenError::UnsupportedStructure(format!(
+                    "Unsupported binary operator: {}",
+                    operator
+                )))
+            }
+        }
+    }
+
 }

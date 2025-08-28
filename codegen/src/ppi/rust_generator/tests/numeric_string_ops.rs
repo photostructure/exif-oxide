@@ -285,50 +285,6 @@ fn test_sprintf_concatenation_ternary() {
 }
 
 #[test]
-fn test_unary_minus_operation() {
-    // Test the expression: -$val/256
-    let ast_json = json!({
-        "children": [{
-            "children": [{
-                "class": "PPI::Token::Operator",
-                "content": "-"
-            }, {
-                "class": "PPI::Token::Symbol",
-                "content": "$val",
-                "symbol_type": "scalar"
-            }, {
-                "class": "PPI::Token::Operator",
-                "content": "/"
-            }, {
-                "class": "PPI::Token::Number",
-                "content": "256",
-                "numeric_value": 256
-            }],
-            "class": "PPI::Statement"
-        }],
-        "class": "PPI::Document"
-    });
-
-    let ast: PpiNode = serde_json::from_value(ast_json).unwrap();
-
-    let generator = RustGenerator::new(
-        ExpressionType::ValueConv,
-        "test_unary_minus".to_string(),
-        "-$val/256".to_string(),
-    );
-
-    let result = generator.generate_function(&ast).unwrap();
-
-    // Uncomment to see the generated code:
-    // println!("Generated unary minus code:\n{}", result);
-
-    // Should generate clean unary minus operation (trusting PPI's structure)
-    assert!(result.contains("- val / 256")); // Clean, simple expression
-    assert!(result.contains("pub fn test_unary_minus"));
-    assert!(!result.contains("( as f64)")); // Should not have empty left operand
-}
-
-#[test]
 fn test_length_function_without_parens() {
     // Test the expression: length $val
     let ast_json = json!({

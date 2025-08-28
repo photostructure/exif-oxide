@@ -136,6 +136,55 @@ impl From<&String> for TagValue {
     }
 }
 
+// Numeric type conversions for easier TagValue creation
+impl From<u8> for TagValue {
+    fn from(v: u8) -> Self {
+        TagValue::U8(v)
+    }
+}
+
+impl From<u16> for TagValue {
+    fn from(v: u16) -> Self {
+        TagValue::U16(v)
+    }
+}
+
+impl From<u32> for TagValue {
+    fn from(v: u32) -> Self {
+        TagValue::U32(v)
+    }
+}
+
+impl From<u64> for TagValue {
+    fn from(v: u64) -> Self {
+        TagValue::U64(v)
+    }
+}
+
+impl From<i16> for TagValue {
+    fn from(v: i16) -> Self {
+        TagValue::I16(v)
+    }
+}
+
+impl From<i32> for TagValue {
+    fn from(v: i32) -> Self {
+        TagValue::I32(v)
+    }
+}
+
+impl From<f32> for TagValue {
+    fn from(v: f32) -> Self {
+        TagValue::F64(v as f64)
+    }
+}
+
+impl From<f64> for TagValue {
+    fn from(v: f64) -> Self {
+        TagValue::F64(v)
+    }
+}
+
 impl TagValue {
     /// Convenience method for creating a string TagValue
     ///

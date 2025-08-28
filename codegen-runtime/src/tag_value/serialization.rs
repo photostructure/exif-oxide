@@ -2,7 +2,7 @@
 
 use super::TagValue;
 use regex::Regex;
-use serde::{Serializer, Serialize};
+use serde::{Serialize, Serializer};
 use std::sync::LazyLock;
 
 /// Check if a string matches ExifTool's JSON numeric pattern

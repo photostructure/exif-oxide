@@ -23,6 +23,28 @@ impl RewritePass for FunctionCallNormalizer {
         if node.class == "PPI::Statement" && node.children.len() >= 2 {
             if let Some(func_name) = self.extract_function_name(&node.children[0]) {
                 if self.is_known_function(&func_name) {
+                    // For sprintf with parentheses, only normalize if it's the ONLY thing in the statement
+                    // If there are more children after the parentheses, this statement contains other operations
+                    if func_name == "sprintf"
+                        && node.children.len() >= 2
+                        && node.children[1].class == "PPI::Structure::List"
+                    {
+                        // Check if this is JUST sprintf(...) or sprintf(...) followed by other operations
+                        if node.children.len() > 2 {
+                            // This statement has sprintf + other operations (like concatenation)
+                            // Don't transform the whole statement - let the visitor handle it piece by piece
+                            trace!(
+                                "Skipping sprintf normalization - statement contains additional operations after sprintf"
+                            );
+                            return node;
+                        }
+
+                        // This is JUST sprintf(...) - safe to normalize
+                        trace!("Normalizing standalone sprintf call");
+                        let args = self.extract_args_from_parentheses(&node.children[1]);
+                        return utils::create_function_call(&func_name, args);
+                    }
+
                     // Skip if function is followed by PPI::Structure::List - already properly structured
                     if node.children.len() >= 2 && node.children[1].class == "PPI::Structure::List"
                     {
@@ -79,6 +101,36 @@ impl FunctionCallNormalizer {
                 | "hex"
                 | "oct"
         )
+    }
+
+    /// Extract function arguments from a PPI::Structure::List node (parentheses)
+    fn extract_args_from_parentheses(&self, list_node: &PpiNode) -> Vec<PpiNode> {
+        if list_node.class != "PPI::Structure::List" {
+            return Vec::new();
+        }
+
+        // PPI::Structure::List contains expressions and comma separators
+        // We need to collect the expression nodes and skip the commas
+        let mut args = Vec::new();
+
+        for child in &list_node.children {
+            // Skip commas and collect expression nodes
+            if child.class == "PPI::Statement::Expression" {
+                // For expressions, we want the actual content nodes
+                for expr_child in &child.children {
+                    if expr_child.class != "PPI::Token::Operator"
+                        || expr_child.content.as_deref() != Some(",")
+                    {
+                        args.push(expr_child.clone());
+                    }
+                }
+            } else if child.class != "PPI::Token::Operator" {
+                // Direct nodes that aren't comma operators
+                args.push(child.clone());
+            }
+        }
+
+        args
     }
 }
 
@@ -157,5 +209,87 @@ mod tests {
         // Should return unchanged (no recursion into children)
         assert_eq!(result.class, "PPI::Statement");
         assert_eq!(format!("{:?}", result), format!("{:?}", non_function_node));
+    }
+
+    #[test]
+    fn test_sprintf_with_parentheses_normalization() {
+        let normalizer = FunctionCallNormalizer;
+
+        // Test sprintf("%.2f s", $val) normalization
+        let sprintf_node = PpiNode {
+            class: "PPI::Statement".to_string(),
+            content: None,
+            children: vec![
+                PpiNode {
+                    class: "PPI::Token::Word".to_string(),
+                    content: Some("sprintf".to_string()),
+                    children: vec![],
+                    symbol_type: None,
+                    numeric_value: None,
+                    string_value: None,
+                    structure_bounds: None,
+                },
+                PpiNode {
+                    class: "PPI::Structure::List".to_string(),
+                    content: Some("(".to_string()),
+                    children: vec![PpiNode {
+                        class: "PPI::Statement::Expression".to_string(),
+                        content: None,
+                        children: vec![
+                            PpiNode {
+                                class: "PPI::Token::Quote::Double".to_string(),
+                                content: Some("\"%.2f s\"".to_string()),
+                                string_value: Some("%.2f s".to_string()),
+                                children: vec![],
+                                symbol_type: None,
+                                numeric_value: None,
+                                structure_bounds: None,
+                            },
+                            PpiNode {
+                                class: "PPI::Token::Operator".to_string(),
+                                content: Some(",".to_string()),
+                                children: vec![],
+                                symbol_type: None,
+                                numeric_value: None,
+                                string_value: None,
+                                structure_bounds: None,
+                            },
+                            PpiNode {
+                                class: "PPI::Token::Symbol".to_string(),
+                                content: Some("$val".to_string()),
+                                symbol_type: Some("scalar".to_string()),
+                                children: vec![],
+                                numeric_value: None,
+                                string_value: None,
+                                structure_bounds: None,
+                            },
+                        ],
+                        symbol_type: None,
+                        numeric_value: None,
+                        string_value: None,
+                        structure_bounds: None,
+                    }],
+                    symbol_type: None,
+                    numeric_value: None,
+                    string_value: None,
+                    structure_bounds: None,
+                },
+            ],
+            symbol_type: None,
+            numeric_value: None,
+            string_value: None,
+            structure_bounds: None,
+        };
+
+        let result = RewritePass::transform(&normalizer, sprintf_node);
+
+        // Should transform to FunctionCall despite having parentheses
+        assert_eq!(result.class, "FunctionCall");
+        assert_eq!(result.content, Some("sprintf".to_string()));
+
+        // Should have extracted arguments: format string and variable
+        assert_eq!(result.children.len(), 2);
+        assert_eq!(result.children[0].content, Some("\"%.2f s\"".to_string()));
+        assert_eq!(result.children[1].content, Some("$val".to_string()));
     }
 }

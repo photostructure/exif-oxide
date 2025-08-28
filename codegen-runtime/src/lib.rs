@@ -6,13 +6,13 @@
 //!
 //! Key components:
 //! - `TagValue` - Universal value type for EXIF data
-//! - `ExifContext` - Expression evaluation context 
+//! - `ExifContext` - Expression evaluation context
 //! - `fmt` module - Runtime functions for sprintf, unpack, arithmetic, etc.
 //! - `test_support` - Utilities for testing generated code
 
+pub mod fmt;
 pub mod tag_value;
 pub mod types;
-pub mod fmt;
 
 // Re-export core types for convenience
 pub use tag_value::TagValue;
@@ -20,9 +20,8 @@ pub use types::{ExifContext, ExifError};
 
 // Re-export fmt functions commonly used by generated code
 pub use fmt::{
-    sprintf_perl, unpack_binary, safe_reciprocal, safe_division,
-    sprintf_split_values, join_unpack_binary, regex_substitute_perl,
-    safe_binary_operation, pack_c_star_bit_extract
+    join_unpack_binary, pack_c_star_bit_extract, regex_substitute_perl, safe_binary_operation,
+    safe_division, safe_reciprocal, sprintf_perl, sprintf_split_values, unpack_binary,
 };
 
 // Test support module - only available with test-helpers feature
