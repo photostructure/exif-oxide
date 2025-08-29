@@ -54,16 +54,34 @@ Remember: do not invent heuristics! @docs/TRUST-EXIFTOOL.md !
 
 Remember: do not edit, add, or delete files in @src/generated/** -- the `codegen` system completely overwrites all files in that directory. If you need any edits made, fix the generator.
 
+---
+
 # /compact
 
-/compact and include the following context for the next engineer so they can successfully complete your unfinished tasks:
+/compact Emit the following context for the next engineer so they can successfully complete your unfinished tasks. Focus on preventing confident but uninformed changes by emphasizing prerequisite knowledge:
 
-1. **TPP status** - Iff a TPP is being worked on, require the next engineer to read `docs/todo/PXX-*.md`, and include supplemental task progress, and any pending updates that should be made to the TPP 
-2. **Critical files** - Must-read paths with rationale
-3. **Progress state** - What was tried, current status, remaining work
-4. **Failed attempts** - What failed and why (prevent repetition)
-5. **Key insights** - Important codebase/ExifTool discoveries
-6. **Next steps** - Concrete actions with locations, TPP task references
+## CRITICAL: MANDATORY READING BEFORE ANY CHANGES
+The next engineer MUST read these files completely before making changes:
+- List specific file paths with 1-2 sentence rationale for why each is essential
+- Include core docs: `@docs/TRUST-EXIFTOOL.md`, `@docs/ARCHITECTURE.md`, `@docs/CODEGEN.md`, `@CLAUDE.md`
+- If TPP active: the specific TPP file path in `docs/todo/`
+
+## WORK CONTEXT
+1. **TPP Status**: Current TPP file, completed vs incomplete tasks, required updates to TPP
+2. **Technical State**: Exact files/functions being worked on, current implementation status
+3. **Failed Attempts**: What was tried, why it failed, what constraints were discovered
+4. **Key Discoveries**: Codebase patterns, ExifTool behavior, architectural constraints that affect the work
+5. **Next Actions**: Specific file locations, function names, TPP task references
+
+## CODE CONTEXT
+Include relevant code snippets that show:
+- Current implementation state
+- Key patterns/constraints in the codebase that must be followed
+- Specific ExifTool behavior that drives the implementation
+
+**WARNING FOR NEXT ENGINEER**: This codebase has subtle architectural constraints. Review all prerequisite files before making changes. When uncertain, ask questions rather than making confident edits.
+
+---
 
 # Fix a test or bug
 
