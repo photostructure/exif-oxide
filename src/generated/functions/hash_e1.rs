@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -24,23 +24,7 @@ use crate::types::{TagValue, ExifContext};
 /// - Nikon::BarometerInfo.Altitude
 /// - Red::Main.FocusDistance
 pub fn ast_print_e1b9c18c6fb887af(val: &TagValue) -> TagValue {
-    format!("{} m", val)
-}
-
-
-/// Original perl expression:
-/// ``` perl
-/// $val =~ s/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/20$1:$2:$3 $4:$5:$6/; $val
-/// ```
-/// Used by:
-/// - Olympus::DSS.EndTime
-/// - Olympus::DSS.StartTime
-pub fn ast_value_e10d39549dcc6453(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        TagValue::String(crate::fmt::regex_replace("(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})", &val.to_string(), "20$1:$2:$3 $4:$5:$6")) ;;
-        val
-    }
-    )
+    format!("{} m", val).into()
 }
 
 
@@ -51,7 +35,35 @@ pub fn ast_value_e10d39549dcc6453(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - SonyIDC::Main.BrightnessAdj
 pub fn ast_print_e168284515af79a7(val: &TagValue) -> TagValue {
-    TagValue::String(format!("%.2f", val / 300))
+    TagValue::String(codegen_runtime::sprintf_perl("%.2f".into(), &[val / 300i32.clone()]))
+}
+
+
+/// Original perl expression:
+/// ``` perl
+/// unpack("N",$val)
+/// ```
+/// Used by:
+/// - Photoshop::Main.GlobalAltitude
+/// - Photoshop::Main.GlobalAngle
+pub fn ast_value_e143a6a9ab8400ee(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(codegen_runtime::unpack_binary("N", &val)))
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val =~ s/(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/20$1:$2:$3 $4:$5:$6/; $val
+/// ```
+/// Used by:
+/// - Olympus::DSS.EndTime
+/// - Olympus::DSS.StartTime
+/// TODO: Add support for this expression pattern
+pub fn ast_value_e10d39549dcc6453(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }
 
 
@@ -64,23 +76,7 @@ pub fn ast_print_e168284515af79a7(val: &TagValue) -> TagValue {
 /// - Jpeg2000::FileType.CompatibleBrands
 /// - QuickTime::FileType.CompatibleBrands
 /// TODO: Add support for this expression pattern
-pub fn ast_value_e169d6db15e948b(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// unpack("N",$val)
-/// ```
-/// Used by:
-/// - Photoshop::Main.GlobalAltitude
-/// - Photoshop::Main.GlobalAngle
-/// TODO: Add support for this expression pattern
-pub fn ast_value_e143a6a9ab8400ee(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_e169d6db15e948b(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

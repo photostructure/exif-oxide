@@ -6,20 +6,24 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// my ($a,$b) = split ' ',$val;
 /// return 0 if $a == 0xffffffff;
 /// return $a / 1000;
-///
 /// ```
 /// Used by:
 /// - Olympus::FocusInfo.FocusDistance
 /// TODO: Add support for this expression pattern
-pub fn ast_value_564016ad7399b16a(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_564016ad7399b16a(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

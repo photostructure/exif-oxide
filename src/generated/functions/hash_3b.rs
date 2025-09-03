@@ -6,20 +6,39 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.2f V",$val)
+/// ```
+/// Used by:
+/// - Sony::ExtraInfo.BatteryVoltage
+/// - Sony::ExtraInfo3.BatteryVoltage1
+/// - Sony::ExtraInfo3.BatteryVoltage2
+pub fn ast_print_3b2373f5e3819dad(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "%.2f V".into(),
+        &[val.clone()],
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val > 1800 and $val -= 3600; $val / 10
 /// ```
 /// Used by:
 /// - Canon::LevelInfo.PitchAngle
-pub fn ast_value_3b77080649d79275(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        if val > 1800 {
-            val -= 3600
-        }
-        val / 10
-    })
+/// TODO: Add support for this expression pattern
+pub fn ast_value_3b77080649d79275(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -38,22 +57,9 @@ pub fn ast_value_3b77080649d79275(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Nikon::ShotInfoD700.ISO2
 /// - Nikon::ShotInfoD90.ISO2
 /// TODO: Add support for this expression pattern
-pub fn ast_value_3be01b4842453c7b(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_3be01b4842453c7b(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("%.2f V",$val)
-/// ```
-/// Used by:
-/// - Sony::ExtraInfo.BatteryVoltage
-/// - Sony::ExtraInfo3.BatteryVoltage1
-/// - Sony::ExtraInfo3.BatteryVoltage2
-/// TODO: Add support for this expression pattern
-pub fn ast_print_3b2373f5e3819dad(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
 }

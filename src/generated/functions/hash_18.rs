@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,6 +17,12 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - Casio::Type2.ObjectDistance
-pub fn ast_value_182eb86db93049bd(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if val >= 0x20000000 { "inf" } else { val / 1000 })
+pub fn ast_value_182eb86db93049bd(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if (val >= 0x20000000u32) {
+        "inf"
+    } else {
+        (val / 1000i32)
+    })
 }

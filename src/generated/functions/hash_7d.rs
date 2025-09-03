@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -33,9 +33,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Canon::CameraInfo7D.CameraTemperature
 /// - Canon::CameraInfo80D.CameraTemperature
 /// - Canon::ShotInfo.CameraTemperature
-pub fn ast_value_7d55a3546017f4c7(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val - 128)
+pub fn ast_value_7d55a3546017f4c7(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val - 128i32))
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -45,10 +46,12 @@ pub fn ast_value_7d55a3546017f4c7(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Exif::Main.CFAPattern
 /// TODO: Add support for this expression pattern
-pub fn ast_print_7d90dbf32d8eb4be(val: &TagValue) -> TagValue {
+pub fn ast_print_7d90dbf32d8eb4be(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -58,7 +61,10 @@ pub fn ast_print_7d90dbf32d8eb4be(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Kodak::Type3.TimeCreated
 /// TODO: Add support for this expression pattern
-pub fn ast_value_7d8c182238f51a22(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_7d8c182238f51a22(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

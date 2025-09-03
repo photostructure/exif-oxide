@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -36,9 +36,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::PictureControl3.Saturation
 /// - Nikon::PictureControl3.Sharpness
 /// - Nikon::PictureControl3.ToningSaturation
-pub fn ast_value_7a5b0e7788309e2c(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val - 0x80)
+pub fn ast_value_7a5b0e7788309e2c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val - 0x80u32))
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -47,11 +48,8 @@ pub fn ast_value_7a5b0e7788309e2c(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Panasonic::Leica2.LensType
 /// - Panasonic::Subdir.LensType
-pub fn ast_value_7a955354dcc5394a(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(TagValue::String(format!(
-        "{}{}{}",
-        (val >> 2),
-        " ",
-        (val & 0x3)
-    )))
+pub fn ast_value_7a955354dcc5394a(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(format!("{}{}", (val >> 2i32), " " . ((val & 0x3u32)))))
 }
+
+

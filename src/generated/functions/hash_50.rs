@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,6 +17,8 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - Kodak::Type10.ISO
-pub fn ast_value_505555435997e294(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(exp(val / 3 * log(2)) * 25)
+pub fn ast_value_505555435997e294(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((exp(((val / 3i32) * log((2i32)))) * 25i32))
 }

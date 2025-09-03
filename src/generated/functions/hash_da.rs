@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -17,8 +17,8 @@ use crate::types::{TagValue, ExifContext};
 /// - Canon::CameraInfo7D.MeasuredEV
 /// - Canon::CameraInfo7D.MeasuredEV2
 /// - Canon::ShotInfo.MeasuredEV2
-pub fn ast_value_da95df81681cbeeb(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / 8 - 6)
+pub fn ast_value_da95df81681cbeeb(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((val / 8i32) - 6i32))
 }
 
 
@@ -70,7 +70,7 @@ pub fn ast_value_da95df81681cbeeb(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Canon::ShotInfo.FocusDistanceLower
 /// - Canon::ShotInfo.FocusDistanceUpper
 pub fn ast_print_dad6b5d4251a08c7(val: &TagValue) -> TagValue {
-    if val > 655.345 { "inf" } else { format!("{} m", val) }
+    if (val > 655.345f64) { "inf".into() } else { format!("{} m", val).into() }
 }
 
 
@@ -83,8 +83,8 @@ pub fn ast_print_dad6b5d4251a08c7(val: &TagValue) -> TagValue {
 /// - Pentax::AEInfo2.AEMinExposureTime
 /// - Pentax::AEInfo3.AEExposureTime
 /// - Pentax::AEInfo3.AEMinExposureTime
-pub fn ast_value_da79bd1c8902b829(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(24 * exp (- (val - 32) *log (2) / 8))
+pub fn ast_value_da79bd1c8902b829(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(24i32 * exp ((0i32 - ((val - 32i32)))))
 }
 
 
@@ -97,25 +97,7 @@ pub fn ast_value_da79bd1c8902b829(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Sony::Tag9404b.LensZoomPosition
 /// - Sony::Tag9405b.LensZoomPosition
 pub fn ast_print_da1eca5e0712c7b0(val: &TagValue) -> TagValue {
-    TagValue::String(format!("%.0f%%", val / 10.24))
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// 
-/// my @v = unpack('C*', $val);
-/// return sprintf("%.2d:%.2d", @v)
-/// 
-/// ```
-/// Used by:
-/// - Sony::Tag9050b.SonyTimeMinSec
-/// TODO: Add support for this expression pattern
-pub fn ast_value_da76e49d05066f83(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    TagValue::String(codegen_runtime::sprintf_perl("%.0f%%".into(), &[val / 10.24f64.clone()]))
 }
 
 
@@ -134,6 +116,22 @@ pub fn ast_print_da3ee02492769652(val: &TagValue) -> TagValue
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// my @v = unpack('C*', $val);
+/// return sprintf("%.2d:%.2d", @v)
+/// ```
+/// Used by:
+/// - Sony::Tag9050b.SonyTimeMinSec
+/// TODO: Add support for this expression pattern
+pub fn ast_value_da76e49d05066f83(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }
 
 

@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -15,12 +15,11 @@ use crate::types::{TagValue, ExifContext};
 /// - Sony::ExtraInfo.BatteryTemperature
 /// - Sony::ExtraInfo3.BatteryTemperature
 /// - Sony::Tag9406.BatteryTemperature
-pub fn ast_value_f7873b2dff9e970c(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((val - 32) / 1.8)
+pub fn ast_value_f7873b2dff9e970c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((val - 32i32)) / 1.8f64)
 }
 
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("%6d",$val)
@@ -28,11 +27,8 @@ pub fn ast_value_f7873b2dff9e970c(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Sony::Tag9050c.ShutterCount
 /// - Sony::Tag9050d.ShutterCount
-/// TODO: Add support for this expression pattern
-pub fn ast_print_f78c26f012d763ba(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+pub fn ast_print_f78c26f012d763ba(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl("%6d".into(), &[val.clone()]))
 }
 
 

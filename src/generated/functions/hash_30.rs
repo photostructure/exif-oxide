@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,14 +17,19 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - Sigma::Main.Quality
-pub fn ast_value_30791c0bd9d5eab2(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_30791c0bd9d5eab2(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(
-        TagValue::String(crate::fmt::regex_replace("Qual:\\s*", &val.to_string(), "")),
+        TagValue::String(codegen_runtime::regex_replace(
+            "Qual:\\s*",
+            "",
+            &val.to_string(),
+        )),
         val,
     )
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("%.1f mm",$val)
@@ -73,8 +82,9 @@ pub fn ast_value_30791c0bd9d5eab2(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Sony::Tag9416.FocalLength
 /// - Sony::Tag9416.MaxFocalLength
 /// - Sony::Tag9416.MinFocalLength
-/// TODO: Add support for this expression pattern
 pub fn ast_print_30c6ff66128b242c(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "%.1f mm".into(),
+        &[val.clone()],
+    ))
 }

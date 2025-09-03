@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -64,6 +68,8 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::Tag9416.FocalLength
 /// - Sony::Tag9416.MaxFocalLength
 /// - Sony::Tag9416.MinFocalLength
-pub fn ast_value_28edfda19b0d16dd(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / 10)
+pub fn ast_value_28edfda19b0d16dd(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val / 10i32))
 }

@@ -6,6 +6,26 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
+
+/// Original perl expression:
+/// ``` perl
+/// "0x" . unpack("H*",$val)
+/// ```
+/// Used by:
+/// - Nintendo::CameraInfo.InternalSerialNumber
+pub fn ast_value_1aa8084d7d68c73f(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(format!(
+        "{}{}",
+        "0x",
+        unpack(TagValue::String(format!("H*", val)))
+    )))
+}
 
 /// Original perl expression:
 /// ``` perl
@@ -13,24 +33,12 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - Sony::rtmd.FNumber
-pub fn ast_value_1a943147cffc80a4(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((2 as f64).powf((8 - val / 8192) as f64))
+pub fn ast_value_1a943147cffc80a4(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf((8i32 - (val / 8192i32)) as f64))
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// "0x" . unpack("H*",$val)
-/// ```
-/// Used by:
-/// - Nintendo::CameraInfo.InternalSerialNumber
-/// TODO: Add support for this expression pattern
-pub fn ast_value_1aa8084d7d68c73f(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("%.0f",$val)
@@ -75,8 +83,6 @@ pub fn ast_value_1aa8084d7d68c73f(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Sony::Tag9405b.BaseISO
 /// - Sony::Tag9405b.SonyISO
 /// - Sony::Tag9416.SonyISO
-/// TODO: Add support for this expression pattern
 pub fn ast_print_1ade125dab246be4(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    TagValue::String(codegen_runtime::sprintf_perl("%.0f".into(), &[val.clone()]))
 }

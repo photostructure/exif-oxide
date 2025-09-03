@@ -5,8 +5,23 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
+/// Original perl expression:
+/// ``` perl
+/// 2 ** (($val/8 - 1.06) / 2)
+/// ```
+/// Used by:
+/// - Sony::Tag9050a.SonyMaxAperture
+/// - Sony::Tag9050a.SonyMinAperture
+/// - Sony::Tag9050b.SonyMaxAperture
+/// - Sony::Tag9050b.SonyMinAperture
+pub fn ast_value_c1d0defaf7444144(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf(((((val / 8i32) - 1.06f64)) / 2i32) as f64))
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ tr/ /./; $val
@@ -30,35 +45,19 @@ use crate::types::{TagValue, ExifContext};
 /// - Pentax::PENT.GPSVersionID
 /// - Sony::ExtraInfo.ExtraInfoVersion
 /// - Sony::rtmd.GPSVersionID
-pub fn ast_print_c12c7e50f55cf298(val: &TagValue) -> TagValue {
-    {
-        val.to_string().chars().map(|c| match c { ' ' => '.' , _ => c }).collect::<String>() ;;
-        val
-    }
-}
-
-
-/// Original perl expression:
-/// ``` perl
-/// 2 ** (($val/8 - 1.06) / 2)
-/// ```
-/// Used by:
-/// - Sony::Tag9050a.SonyMaxAperture
-/// - Sony::Tag9050a.SonyMinAperture
-/// - Sony::Tag9050b.SonyMaxAperture
-/// - Sony::Tag9050b.SonyMinAperture
-pub fn ast_value_c1d0defaf7444144(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((2 as f64).powf(((val / 8 - 1.06) / 2) as f64))
+/// TODO: Add support for this expression pattern
+pub fn ast_print_c12c7e50f55cf298(val: &TagValue) -> TagValue
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
 }
 
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// 
 /// my @a = split ' ', $val;
 /// sprintf('%.2f - %.2f m', $a[0] <= $a[1] ? @a : reverse @a);
-/// 
 /// ```
 /// Used by:
 /// - Apple::Main.FocusDistanceRange

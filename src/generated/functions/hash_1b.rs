@@ -6,6 +6,24 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("0x%.4x", $val)
+/// ```
+/// Used by:
+/// - QuickTime::AudioProf.AudioCodecInfo
+/// - QuickTime::VideoProf.VideoCodecInfo
+pub fn ast_print_1b836ed3009794ff(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "0x%.4x".into(),
+        &[val.clone()],
+    ))
+}
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -28,21 +46,9 @@ pub fn ast_print_1bcd3679c283faf3(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Sony::rtmd.GPSTimeStamp
 /// TODO: Add support for this expression pattern
-pub fn ast_value_1b787d9ee3f14dc1(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_1b787d9ee3f14dc1(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("0x%.4x", $val)
-/// ```
-/// Used by:
-/// - QuickTime::AudioProf.AudioCodecInfo
-/// - QuickTime::VideoProf.VideoCodecInfo
-/// TODO: Add support for this expression pattern
-pub fn ast_print_1b836ed3009794ff(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
 }

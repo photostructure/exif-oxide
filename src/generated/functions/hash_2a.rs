@@ -6,21 +6,25 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// return undef unless $val =~ /^(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/;
 /// my $y = $1 < 70 ? "20$1" : "19$1";
 /// return "$y:$2:$3 $4:$5:$6";
-///
 /// ```
 /// Used by:
 /// - Olympus::WAV.DateTimeEnd
 /// - Olympus::WAV.DateTimeOriginal
 /// TODO: Add support for this expression pattern
-pub fn ast_value_2a663a50a009bfa(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_2a663a50a009bfa(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

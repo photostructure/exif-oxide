@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -16,7 +16,7 @@ use crate::types::{TagValue, ExifContext};
 /// - GoPro::GLPI.GPSSpeedY
 /// - GoPro::GLPI.GPSSpeedZ
 pub fn ast_print_fcbf0919480e8f99(val: &TagValue) -> TagValue {
-    format!("{} m/s", val)
+    format!("{} m/s", val).into()
 }
 
 
@@ -28,8 +28,8 @@ pub fn ast_print_fcbf0919480e8f99(val: &TagValue) -> TagValue {
 /// - Nikon::OrientationInfo.PitchAngle
 /// - Nikon::OrientationInfo.RollAngle
 /// - Nikon::OrientationInfo.YawAngle
-pub fn ast_value_fc17eee05ccde440(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if val <= 180 { val } else { val - 360 })
+pub fn ast_value_fc17eee05ccde440(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if (val <= 180i32) { val } else { (val - 360i32) })
 }
 
 
@@ -42,7 +42,7 @@ pub fn ast_value_fc17eee05ccde440(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Sony::rtmd.GPSLatitude
 /// - Sony::rtmd.GPSLongitude
 /// TODO: Add support for this expression pattern
-pub fn ast_value_fc24b94dc60f8d29(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_fc24b94dc60f8d29(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,23 +17,25 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - Canon::ExposureInfo.ISO
-pub fn ast_value_2c6b83cffd1363b8(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val & 0x7fffffff)
+pub fn ast_value_2c6b83cffd1363b8(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val & 0x7fffffffu32))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// my @v = unpack('C*', $val);
 /// return undef unless $v[0] > 0;
 /// return sprintf("20%.2d:%.2d:%.2d %.2d:%.2d:%.2d", @v)
-///
 /// ```
 /// Used by:
 /// - Sony::Tag9050a.SonyDateTime2
 /// TODO: Add support for this expression pattern
-pub fn ast_value_2c10be511c94be8f(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_2c10be511c94be8f(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

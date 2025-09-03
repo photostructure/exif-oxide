@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,8 +13,8 @@ use crate::types::{TagValue, ExifContext};
 /// ```
 /// Used by:
 /// - Sony::CameraInfo3.FocalLengthTeleZoom
-pub fn ast_value_c0d22fe788e3b3b6(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val * 2 / 3)
+pub fn ast_value_c0d22fe788e3b3b6(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((val * 2i32) / 3i32))
 }
 
 
@@ -33,7 +33,7 @@ pub fn ast_value_c0d22fe788e3b3b6(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Red::RED1.FrameRate
 /// - Red::RED2.FrameRate
 pub fn ast_print_c0a8bf21acb9deb1(val: &TagValue) -> TagValue {
-    int (val * 1000 + 0.5) / 1000
+    (int((((val * 1000i32) + 0.5f64))) / 1000i32)
 }
 
 
@@ -46,7 +46,7 @@ pub fn ast_print_c0a8bf21acb9deb1(val: &TagValue) -> TagValue {
 /// - Sony::Main.FullImageSize
 /// - Sony::Main.PreviewImageSize
 /// TODO: Add support for this expression pattern
-pub fn ast_value_c0dee9b600d6a90b(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_c0dee9b600d6a90b(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

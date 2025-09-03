@@ -5,8 +5,55 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.2f",$val)
+/// ```
+/// Used by:
+/// - Canon::ShotInfo.MeasuredEV
+/// - DJI::ThermalParams2.Emissivity
+/// - Kodak::SubIFD0.OpticalZoom
+/// - Kodak::SubIFD2.OpticalZoom
+/// - Kodak::SubIFD3.OpticalZoom
+/// - Kodak::SubIFD5.OpticalZoom
+/// - Nikon::LensData00.LensFStops
+/// - Nikon::LensData01.LensFStops
+/// - Nikon::LensData0204.LensFStops
+/// - Nikon::LensData0800.LensFStops
+/// - Nikon::Main.LensFStops
+/// - Nikon::Scan.MasterGain
+/// - Nintendo::CameraInfo.Parallax
+/// - Panasonic::Leica2.ExternalSensorBrightnessValue
+/// - Panasonic::Leica2.MeasuredLV
+/// - Panasonic::Leica6.ExternalSensorBrightnessValue
+/// - Panasonic::Leica6.MeasuredLV
+/// - Panasonic::Leica9.ExternalSensorBrightnessValue
+/// - Panasonic::Leica9.MeasuredLV
+/// - Panasonic::Subdir.ExternalSensorBrightnessValue
+/// - Panasonic::Subdir.MeasuredLV
+pub fn ast_print_bb744a13f82c4cd2(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl("%.2f".into(), &[val.clone()]))
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val * 1e-5
+/// ```
+/// Used by:
+/// - Pentax::Main.ExposureTime
+/// TODO: Add support for this expression pattern
+pub fn ast_value_bbb807c14c3cf509(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val ? Image::ExifTool::Exif::PrintExposureTime($val) : "Bulb"
@@ -25,23 +72,11 @@ use crate::types::{TagValue, ExifContext};
 /// - Sony::Tag9405b.SonyExposureTime2
 /// - Sony::Tag9416.ExposureTime
 /// - Sony::Tag9416.SonyExposureTime2
-pub fn ast_print_bb36ed62e5a52a4(val: &TagValue) -> TagValue {
-    if val { Image::ExifTool::Exif::PrintExposureTime (val) } else { "Bulb" }
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $val * 1e-5
-/// ```
-/// Used by:
-/// - Pentax::Main.ExposureTime
 /// TODO: Add support for this expression pattern
-pub fn ast_value_bbb807c14c3cf509(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_print_bb36ed62e5a52a4(val: &TagValue) -> TagValue
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    val.clone()
 }
 
 
@@ -72,41 +107,6 @@ pub fn ast_value_bbb807c14c3cf509(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Sanyo::MOV.ExposureCompensation
 /// TODO: Add support for this expression pattern
 pub fn ast_print_bba76882980e1e1a(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("%.2f",$val)
-/// ```
-/// Used by:
-/// - Canon::ShotInfo.MeasuredEV
-/// - DJI::ThermalParams2.Emissivity
-/// - Kodak::SubIFD0.OpticalZoom
-/// - Kodak::SubIFD2.OpticalZoom
-/// - Kodak::SubIFD3.OpticalZoom
-/// - Kodak::SubIFD5.OpticalZoom
-/// - Nikon::LensData00.LensFStops
-/// - Nikon::LensData01.LensFStops
-/// - Nikon::LensData0204.LensFStops
-/// - Nikon::LensData0800.LensFStops
-/// - Nikon::Main.LensFStops
-/// - Nikon::Scan.MasterGain
-/// - Nintendo::CameraInfo.Parallax
-/// - Panasonic::Leica2.ExternalSensorBrightnessValue
-/// - Panasonic::Leica2.MeasuredLV
-/// - Panasonic::Leica6.ExternalSensorBrightnessValue
-/// - Panasonic::Leica6.MeasuredLV
-/// - Panasonic::Leica9.ExternalSensorBrightnessValue
-/// - Panasonic::Leica9.MeasuredLV
-/// - Panasonic::Subdir.ExternalSensorBrightnessValue
-/// - Panasonic::Subdir.MeasuredLV
-/// TODO: Add support for this expression pattern
-pub fn ast_print_bb744a13f82c4cd2(val: &TagValue) -> TagValue
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()

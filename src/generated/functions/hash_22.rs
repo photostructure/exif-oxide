@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -33,7 +37,9 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::ColorBalanceC.WB_RGGBLevelsShade
 /// - Nikon::ColorBalanceC.WB_RGGBLevelsTungsten
 /// TODO: Add support for this expression pattern
-pub fn ast_value_22aa2ef47b11cd7c(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_22aa2ef47b11cd7c(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

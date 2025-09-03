@@ -6,11 +6,32 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%s:%s:%s %s:%s:%s.%s", unpack "H4H2H2H2H2H2H2", $val)
+/// ```
+/// Used by:
+/// - Panasonic::TimeInfo.PanasonicDateTime
+pub fn ast_value_1ef1bd5c951da1f3(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(codegen_runtime::sprintf_perl(
+        "%s:%s:%s %s:%s:%s.%s",
+        &[
+            codegen_runtime::unpack_binary("H4H2H2H2H2H2H2", &val).clone(),
+            val.clone(),
+        ],
+    )))
+}
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// $_ = $val;
 /// if (/^(\d{2})(\d{2})\0\0(\d{2})(\d{2})\0\0(\d{2})\0{4}$/) {
 /// my $yr = $1 + ($1 < 70 ? 2000 : 1900);
@@ -18,7 +39,6 @@ use crate::types::{ExifContext, TagValue};
 /// }
 /// tr/\0/./;  s/\.+$//;
 /// return "Unknown ($_)";
-///
 /// ```
 /// Used by:
 /// - Casio::Type2.FirmwareDate
@@ -39,17 +59,4 @@ pub fn ast_print_1eea9199a5407b99(val: &TagValue) -> TagValue {
 pub fn ast_print_1e6de4de43d39e69(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("%s:%s:%s %s:%s:%s.%s", unpack "H4H2H2H2H2H2H2", $val)
-/// ```
-/// Used by:
-/// - Panasonic::TimeInfo.PanasonicDateTime
-/// TODO: Add support for this expression pattern
-pub fn ast_value_1ef1bd5c951da1f3(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
 }

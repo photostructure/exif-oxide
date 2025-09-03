@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,8 +13,8 @@ use crate::types::{TagValue, ExifContext};
 /// ```
 /// Used by:
 /// - Canon::ShotInfo.AutoISO
-pub fn ast_value_a9420a73315951ac(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(exp (val / 32 * log (2)) * 100)
+pub fn ast_value_a9420a73315951ac(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((exp((((val / 32i32) * log((2i32))))) * 100i32))
 }
 
 

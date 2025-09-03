@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -46,7 +46,7 @@ use crate::types::{TagValue, ExifContext};
 /// - Sony::Tag9402.AmbientTemperature
 /// - Sony::Tag9403.CameraTemperature
 pub fn ast_print_d3baecf4975cff4c(val: &TagValue) -> TagValue {
-    format!("{} C", val)
+    format!("{} C", val).into()
 }
 
 
@@ -59,21 +59,7 @@ pub fn ast_print_d3baecf4975cff4c(val: &TagValue) -> TagValue {
 /// - MinoltaRaw::RIF.ColorTemperature
 /// - Olympus::CameraSettings.WhiteBalanceTemperature
 pub fn ast_print_d3695e9544e1c996(val: &TagValue) -> TagValue {
-    if val { val } else { "Auto" }
-}
-
-
-/// Original perl expression:
-/// ``` perl
-/// $val and $val =~ s/^(\d)/\+$1/; $val
-/// ```
-/// Used by:
-/// - Sigma::Main.ExposureCompensation
-pub fn ast_print_d367e2a7f0ec6d0c(val: &TagValue) -> TagValue {
-    {
-        val && val =~ TagValue::String(crate::fmt::regex_replace("^(\\d)", &val.to_string(), "\\+$1")) ;;
-        val
-    }
+    if val { val } else { "Auto".into() }
 }
 
 
@@ -96,8 +82,24 @@ pub fn ast_print_d367e2a7f0ec6d0c(val: &TagValue) -> TagValue {
 /// - Nikon::LensData0800.EffectiveMaxAperture
 /// - Nikon::LensData0800.MaxApertureAtMaxFocal
 /// - Nikon::LensData0800.MaxApertureAtMinFocal
-pub fn ast_value_d39b819d3cebc1bf(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((2 as f64).powf((val / 24) as f64))
+pub fn ast_value_d39b819d3cebc1bf(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf(((val / 24i32)) as f64))
+}
+
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.5f",$val)
+/// ```
+/// Used by:
+/// - Nikon::DistortionInfo.RadialDistortionCoefficient1
+/// - Nikon::DistortionInfo.RadialDistortionCoefficient2
+/// - Nikon::DistortionInfo.RadialDistortionCoefficient3
+/// - Nikon::VignetteInfo.VignetteCoefficient1
+/// - Nikon::VignetteInfo.VignetteCoefficient2
+/// - Nikon::VignetteInfo.VignetteCoefficient3
+pub fn ast_print_d37c45a072187ab5(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl("%.5f".into(), &[val.clone()]))
 }
 
 
@@ -115,7 +117,7 @@ pub fn ast_value_d39b819d3cebc1bf(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Kodak::SubIFD2.ExposureTime
 /// - Kodak::Type9.ExposureTime
 /// TODO: Add support for this expression pattern
-pub fn ast_value_d37ffb72c49bf107(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_d37ffb72c49bf107(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
@@ -125,17 +127,12 @@ pub fn ast_value_d37ffb72c49bf107(val: &TagValue) -> Result<TagValue, crate::typ
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// sprintf("%.5f",$val)
+/// $val and $val =~ s/^(\d)/\+$1/; $val
 /// ```
 /// Used by:
-/// - Nikon::DistortionInfo.RadialDistortionCoefficient1
-/// - Nikon::DistortionInfo.RadialDistortionCoefficient2
-/// - Nikon::DistortionInfo.RadialDistortionCoefficient3
-/// - Nikon::VignetteInfo.VignetteCoefficient1
-/// - Nikon::VignetteInfo.VignetteCoefficient2
-/// - Nikon::VignetteInfo.VignetteCoefficient3
+/// - Sigma::Main.ExposureCompensation
 /// TODO: Add support for this expression pattern
-pub fn ast_print_d37c45a072187ab5(val: &TagValue) -> TagValue
+pub fn ast_print_d367e2a7f0ec6d0c(val: &TagValue) -> TagValue
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()

@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -19,6 +23,8 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::MenuSettingsZ9v4.ISOAutoShutterTime
 /// - Pentax::AEInfo2.AEBXv
 /// - Sony::MoreSettings.ExposureCompensation2
-pub fn ast_value_6024bbf5fa17668a(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / 8)
+pub fn ast_value_6024bbf5fa17668a(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val / 8i32))
 }

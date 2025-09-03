@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -20,8 +20,8 @@ use crate::types::{TagValue, ExifContext};
 /// - PNG::PrimaryChromaticities.RedY
 /// - PNG::PrimaryChromaticities.WhitePointX
 /// - PNG::PrimaryChromaticities.WhitePointY
-pub fn ast_value_891fb9e200fd161b(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / 100000)
+pub fn ast_value_891fb9e200fd161b(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val / 100000i32))
 }
 
 
@@ -32,35 +32,33 @@ pub fn ast_value_891fb9e200fd161b(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Ricoh::Main.FirmwareVersion
 pub fn ast_print_899945aee711da6a(val: &TagValue) -> TagValue {
-    if val =~ /^Rev(\d+)$/ { sprintf ("%.2f" , magic_var_1 / 100) } else { val }
-}
-
-
-/// Original perl expression:
-/// ``` perl
-/// $val=~s/\0.*//s; $val
-/// ```
-/// Used by:
-/// - Nikon::LocationInfo.CountryCode
-pub fn ast_value_89a35071e834811a(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        TagValue::String(crate::fmt::regex_replace("\\0.*", &val.to_string(), "")) ;;
-        val
-    }
-    )
+    if { use regex::Regex; use std::sync::LazyLock; static REGEX_cc49e32eef4f4b10: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"^Rev(\d+)$").unwrap()); REGEX_cc49e32eef4f4b10.captures(&val.to_string()).is_some() } { TagValue::String(codegen_runtime::sprintf_perl("%.2f", &[$1, /, 100])) } else { val }
 }
 
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// 
+/// $val=~s/\0.*//s; $val
+/// ```
+/// Used by:
+/// - Nikon::LocationInfo.CountryCode
+/// TODO: Add support for this expression pattern
+pub fn ast_value_89a35071e834811a(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// my $rev = sprintf("%.8x", $val);
 /// my ($rel, $v1, $v2, $r1, $r2) = ($rev =~ /^(.)(.)(..)0?(.+)(..)$/);
 /// my %r = ( a => 'Alpha ', b => 'Beta ', '0' => '' );
 /// $rel = defined $r{$rel} ? $r{$rel} : "Unknown($rel) ";
 /// return "$rel$v1.$v2 rev $r1.$r2",
-/// 
 /// ```
 /// Used by:
 /// - Canon::Main.FirmwareRevision
@@ -75,11 +73,9 @@ pub fn ast_print_897f73182e8225d2(val: &TagValue) -> TagValue
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// 
 /// return $val unless $val =~ /^\d+$/;
 /// require Image::ExifTool::Font;
 /// return $Image::ExifTool::Font::ttLang{Macintosh}{$val} || "Unknown ($val)";
-/// 
 /// ```
 /// Used by:
 /// - QuickTime::MediaHeader.MediaLanguageCode

@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -15,8 +19,8 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::AFTune.AFFineTuneIndex
 /// - Pentax::AEInfo2.AEApertureSteps
 pub fn ast_print_5ce675b536bdc220(val: &TagValue) -> TagValue {
-    if val == 255 {
-        "n/a"
+    if (val == 255i32) {
+        "n/a".into()
     } else {
         val
     }

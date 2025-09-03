@@ -5,28 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
-
-/// Original perl expression:
-/// ``` perl
-/// 
-/// $val =~ /^(\d{4})(\d{2})(\d{2})$/ and return "$1:$2:$3";
-/// # Optio A10 and A20 leave "200" off the year
-/// $val =~ /^(\d)(\d{2})(\d{2})$/ and return "200$1:$2:$3";
-/// return "Unknown ($val)";
-/// 
-/// ```
-/// Used by:
-/// - Pentax::CameraInfo.ManufactureDate
-pub fn ast_value_55021a595ffa8f71(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        { use regex::Regex; use std::sync::LazyLock; static REGEX_352ae508c47c1f8b: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"/^(\d{4})(\d{2})(\d{2})$/ && return "$1:$2:$3" ;").unwrap()); REGEX_352ae508c47c1f8b.captures(&val.to_string()).is_some() };
-        { use regex::Regex; use std::sync::LazyLock; static REGEX_657ba0f9de5489a1: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"/^(\d)(\d{2})(\d{2})$/ && return "200$1:$2:$3" ;").unwrap()); REGEX_657ba0f9de5489a1.captures(&val.to_string()).is_some() };
-        return Ok(format!("Unknown ({})", val) ;)
-    }
-    )
-}
-
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -34,8 +17,38 @@ pub fn ast_value_55021a595ffa8f71(val: &TagValue) -> Result<TagValue, crate::typ
 /// ```
 /// Used by:
 /// - Olympus::DSS.Duration
-pub fn ast_value_5576e8c123ff3a25(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if val =~ /(\d{2})(\d{2})(\d{2})/ { (magic_var_1 * 60 + magic_var_2) * 60 + magic_var_3 } else { TagValue::String("".to_string()) })
+pub fn ast_value_5576e8c123ff3a25(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if {
+            use regex::Regex;
+            use std::sync::LazyLock;
+            static REGEX_6493a4d1c01aa2d: LazyLock<Regex> =
+                LazyLock::new(|| Regex::new(r"(\d{2})(\d{2})(\d{2})").unwrap());
+            REGEX_6493a4d1c01aa2d.captures(&val.to_string()).is_some()
+        } {
+            ((magic_var_1 * 60i32) + magic_var_2) * 60i32 + magic_var_3
+        } else {
+            TagValue::String("".to_string())
+        },
+    )
 }
 
-
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val =~ /^(\d{4})(\d{2})(\d{2})$/ and return "$1:$2:$3";
+/// # Optio A10 and A20 leave "200" off the year
+/// $val =~ /^(\d)(\d{2})(\d{2})$/ and return "200$1:$2:$3";
+/// return "Unknown ($val)";
+/// ```
+/// Used by:
+/// - Pentax::CameraInfo.ManufactureDate
+/// TODO: Add support for this expression pattern
+pub fn ast_value_55021a595ffa8f71(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
+}

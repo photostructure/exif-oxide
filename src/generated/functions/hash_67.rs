@@ -6,18 +6,22 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~s/ / x /;"$val um"
 /// ```
 /// Used by:
 /// - Nikon::Main.SensorPixelSize
+/// TODO: Add support for this expression pattern
 pub fn ast_print_67e30de4b4355f98(val: &TagValue) -> TagValue {
-    {
-        TagValue::String(val.to_string().replacen(" ", " x ", 1));
-        format!("{} um", val)
-    }
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -30,7 +34,9 @@ pub fn ast_print_67e30de4b4355f98(val: &TagValue) -> TagValue {
 /// - H264::MDPM.GPSTimeStamp
 /// - Pentax::PENT.GPSTimeStamp
 /// TODO: Add support for this expression pattern
-pub fn ast_value_67653a3c31f6d232(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_67653a3c31f6d232(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

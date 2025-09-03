@@ -6,26 +6,14 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
-
-/// Original perl expression:
-/// ``` perl
-/// $val > 1800 and $val -= 3600; -$val / 10
-/// ```
-/// Used by:
-/// - Canon::LevelInfo.RollAngle
-pub fn ast_value_5f3878bca702b7b7(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        if val > 1800 {
-            val -= 3600
-        }
-        -val / 10
-    })
-}
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// $_ = '';
 /// unless ($val & 0x87) {
 /// return 'Single-Frame' unless $val;
@@ -44,7 +32,6 @@ pub fn ast_value_5f3878bca702b7b7(val: &TagValue) -> Result<TagValue, crate::typ
 /// 8 => 'D-Lighting Bracketing', #forum6281 (NC)
 /// 11 => 'Pre-capture', #28  Z9 pre-release burst
 /// });
-///
 /// ```
 /// Used by:
 /// - Nikon::Main.ShootingMode
@@ -52,4 +39,19 @@ pub fn ast_value_5f3878bca702b7b7(val: &TagValue) -> Result<TagValue, crate::typ
 pub fn ast_print_5f0ac2991506bef1(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val > 1800 and $val -= 3600; -$val / 10
+/// ```
+/// Used by:
+/// - Canon::LevelInfo.RollAngle
+/// TODO: Add support for this expression pattern
+pub fn ast_value_5f3878bca702b7b7(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }

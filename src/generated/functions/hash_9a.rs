@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,7 +14,7 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - GoPro::KBAT.KBAT_Unknown2
 pub fn ast_print_9a8d70b79f825503(val: &TagValue) -> TagValue {
-    format!("{} J", val)
+    format!("{} J", val).into()
 }
 
 

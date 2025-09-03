@@ -6,23 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-///
-/// return $val unless $val=~/^(.{3})(\d{2})(\d{2})(\d{2})(\d{4})/;
-/// my $yr = $2 + ($2 < 70 ? 2000 : 1900);
-/// return "($1) $yr:$3:$4 no. $5";
-///
-/// ```
-/// Used by:
-/// - Panasonic::Leica5.InternalSerialNumber
-/// TODO: Add support for this expression pattern
-pub fn ast_print_5410ebd1831763d8(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -36,7 +23,24 @@ pub fn ast_print_5410ebd1831763d8(val: &TagValue) -> TagValue {
 /// - IPTC::ApplicationRecord.TimeCreated
 /// - IPTC::EnvelopeRecord.TimeSent
 /// TODO: Add support for this expression pattern
-pub fn ast_value_54193e0c249aa3ab(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_54193e0c249aa3ab(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// return $val unless $val=~/^(.{3})(\d{2})(\d{2})(\d{2})(\d{4})/;
+/// my $yr = $2 + ($2 < 70 ? 2000 : 1900);
+/// return "($1) $yr:$3:$4 no. $5";
+/// ```
+/// Used by:
+/// - Panasonic::Leica5.InternalSerialNumber
+/// TODO: Add support for this expression pattern
+pub fn ast_print_5410ebd1831763d8(val: &TagValue) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
 }

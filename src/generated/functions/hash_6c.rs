@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -22,12 +22,9 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::MenuSettingsZ9v3.FlashOutput
 /// - Nikon::MenuSettingsZ9v4.FlashOutput
 pub fn ast_print_6c62520a706b493(val: &TagValue) -> TagValue {
-    if val > 0.99 {
-        "Full"
-    } else {
-        sprintf("%.1f%%", val * 100)
-    }
+    if val > 0.99f64 { "Full".into() } else { TagValue::String(codegen_runtime::sprintf_perl("%.1f%%", &[val, *, 100])) }
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -40,9 +37,10 @@ pub fn ast_print_6c62520a706b493(val: &TagValue) -> TagValue {
 /// - H264::MDPM.MaxApertureValue
 /// - Nikon::AVITags.MaxApertureValue
 /// - Olympus::Main.ApertureValue
-pub fn ast_value_6cb46ed7ea997c8d(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((2 as f64).powf((val / 2) as f64))
+pub fn ast_value_6cb46ed7ea997c8d(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf(((val / 2i32)) as f64))
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -57,10 +55,12 @@ pub fn ast_value_6cb46ed7ea997c8d(val: &TagValue) -> Result<TagValue, crate::typ
 /// - GoPro::GPS9.GPSLongitude
 /// - RIFF::UserText.GPSLongitude
 /// TODO: Add support for this expression pattern
-pub fn ast_print_6cee0408ed0783c7(val: &TagValue) -> TagValue {
+pub fn ast_print_6cee0408ed0783c7(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -70,7 +70,10 @@ pub fn ast_print_6cee0408ed0783c7(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Pentax::Main.SensorSize
 /// TODO: Add support for this expression pattern
-pub fn ast_value_6c25803f7a885741(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_6c25803f7a885741(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

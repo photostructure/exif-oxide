@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,26 +14,10 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - GoPro::KBAT.BatteryCurrent
 pub fn ast_print_8497b6582cfb6c0a(val: &TagValue) -> TagValue {
-    format!("{} A", val)
+    format!("{} A", val).into()
 }
 
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $_=$val; tr/-/:/; s/^(\d{4}:\d{2}:\d{2})/$1 /; $_
-/// ```
-/// Used by:
-/// - RIFF::BroadcastExt.DateTimeOriginal
-/// TODO: Add support for this expression pattern
-pub fn ast_value_84c0b26ba3ca2227(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// exp(($val-68)*log(2)/16)
@@ -47,15 +31,11 @@ pub fn ast_value_84c0b26ba3ca2227(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Pentax::AEInfo3.AEMaxAperture
 /// - Pentax::AEInfo3.AEMaxAperture2
 /// - Pentax::AEInfo3.AEMinAperture
-/// TODO: Add support for this expression pattern
-pub fn ast_value_849772b1a5139524(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+pub fn ast_value_849772b1a5139524(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(exp(((val - 68i32)) *log (2i32) / 16i32))
 }
 
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("%.1f",$val)
@@ -133,11 +113,23 @@ pub fn ast_value_849772b1a5139524(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Sony::Tag9405b.SonyMaxApertureValue
 /// - Sony::Tag9416.SonyFNumber2
 /// - Sony::Tag9416.SonyMaxApertureValue
+pub fn ast_print_8470e30e1e5b4729(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl("%.1f".into(), &[val.clone()]))
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $_=$val; tr/-/:/; s/^(\d{4}:\d{2}:\d{2})/$1 /; $_
+/// ```
+/// Used by:
+/// - RIFF::BroadcastExt.DateTimeOriginal
 /// TODO: Add support for this expression pattern
-pub fn ast_print_8470e30e1e5b4729(val: &TagValue) -> TagValue
+pub fn ast_value_84c0b26ba3ca2227(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    Ok(val.clone())
 }
 
 

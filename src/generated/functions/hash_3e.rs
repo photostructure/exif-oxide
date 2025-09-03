@@ -6,19 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
-
-/// Original perl expression:
-/// ``` perl
-/// $val =~ s/ *$//; $val
-/// ```
-/// Used by:
-/// - Ricoh::Type2.RicohMake
-pub fn ast_value_3e1220cade8783d3(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        TagValue::String(crate::fmt::regex_replace(" *$", &val.to_string(), ""));
-        val
-    })
-}
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -27,6 +18,23 @@ pub fn ast_value_3e1220cade8783d3(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Pentax::LevelInfoK3III.PitchAngle
 /// - Pentax::LevelInfoK3III.RollAngle
-pub fn ast_value_3ee5ea531e525a5e(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(-val / 2)
+pub fn ast_value_3ee5ea531e525a5e(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((0i32 - val) / 2i32))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val =~ s/ *$//; $val
+/// ```
+/// Used by:
+/// - Ricoh::Type2.RicohMake
+/// TODO: Add support for this expression pattern
+pub fn ast_value_3e1220cade8783d3(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }

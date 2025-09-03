@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,22 +14,22 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Panasonic::Main.BabyAge
 pub fn ast_print_77deeeaf9630ea8f(val: &TagValue) -> TagValue {
-    if val == "9999:99:99 00:00:00" {
-        "(not set)"
-    } else {
-        val
-    }
+    if (val.to_string() == "9999:99:99 00:00:00".into().to_string()) { "(not set)".into() } else { val }
 }
 
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~s/\0*$//; \$val
 /// ```
 /// Used by:
 /// - Panasonic::PANA.ThumbnailImage
-pub fn ast_value_7759998ac069ebd5(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        TagValue::String(crate::fmt::regex_replace("\\0*$", &val.to_string(), ""));
-        val
-    })
+/// TODO: Add support for this expression pattern
+pub fn ast_value_7759998ac069ebd5(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }
+
+

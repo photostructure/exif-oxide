@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -15,13 +19,13 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::Main.ColorTemperature
 pub fn ast_print_5a37abc3eeb8dead(val: &TagValue) -> TagValue {
     if val {
-        (if val.to_string() == 0xffffffff.to_string() {
-            "n/a"
+        (if (val == 0xffffffffu32) {
+            "n/a".into()
         } else {
             val
         })
     } else {
-        "Auto"
+        "Auto".into()
     }
 }
 
@@ -33,7 +37,9 @@ pub fn ast_print_5a37abc3eeb8dead(val: &TagValue) -> TagValue {
 /// Used by:
 /// - RIFF::BroadcastExt.BWF_UMID
 /// TODO: Add support for this expression pattern
-pub fn ast_value_5aff1f95e99e78bf(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_5aff1f95e99e78bf(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

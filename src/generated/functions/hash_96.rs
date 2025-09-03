@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,8 +13,8 @@ use crate::types::{TagValue, ExifContext};
 /// ```
 /// Used by:
 /// - RIFF::VP8L.ImageHeight
-pub fn ast_value_96aef71cc28585a8(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(((val >> 6) & 0x3fff) + 1)
+pub fn ast_value_96aef71cc28585a8(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((val >> 6i32) & 0x3fffu32) + 1i32)
 }
 
 

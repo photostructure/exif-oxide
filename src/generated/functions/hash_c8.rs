@@ -5,7 +5,24 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+
+/// Original perl expression:
+/// ``` perl
+/// exp((75-$val) * log(2) * 3 / 40)
+/// ```
+/// Used by:
+/// - Canon::CameraInfo1000D.MacroMagnification
+/// - Canon::CameraInfo1DmkIII.MacroMagnification
+/// - Canon::CameraInfo40D.MacroMagnification
+/// - Canon::CameraInfo450D.MacroMagnification
+/// - Canon::CameraInfo5D.MacroMagnification
+/// - Canon::CameraInfo5DmkII.MacroMagnification
+/// - Canon::FileInfo.MacroMagnification
+pub fn ast_value_c81520c2f48a3e3c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(exp(((75i32 - val)) * log (2i32) * 3i32 / 40i32))
+}
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -15,7 +32,7 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - FujiFilm::RAFData.RawImageWidth
 /// TODO: Add support for this expression pattern
-pub fn ast_value_c8cc976fc4865a7f(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_c8cc976fc4865a7f(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
@@ -71,28 +88,7 @@ pub fn ast_print_c84ae4fd283ed65e(val: &TagValue) -> TagValue
 /// - Canon::CameraInfo7D.ISO
 /// - Canon::CameraInfo80D.ISO
 /// TODO: Add support for this expression pattern
-pub fn ast_value_c8722122eace16df(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// exp((75-$val) * log(2) * 3 / 40)
-/// ```
-/// Used by:
-/// - Canon::CameraInfo1000D.MacroMagnification
-/// - Canon::CameraInfo1DmkIII.MacroMagnification
-/// - Canon::CameraInfo40D.MacroMagnification
-/// - Canon::CameraInfo450D.MacroMagnification
-/// - Canon::CameraInfo5D.MacroMagnification
-/// - Canon::CameraInfo5DmkII.MacroMagnification
-/// - Canon::FileInfo.MacroMagnification
-/// TODO: Add support for this expression pattern
-pub fn ast_value_c81520c2f48a3e3c(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_c8722122eace16df(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

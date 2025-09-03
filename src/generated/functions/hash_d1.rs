@@ -5,8 +5,9 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~s/ / to /; $val
@@ -14,11 +15,11 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - Sigma::Main.LensFocalRange
 /// - Sigma::Main.LensMaxApertureRange
-pub fn ast_print_d1ea0bc590f67427(val: &TagValue) -> TagValue {
-    {
-        TagValue::String(val.to_string().replacen(" ", " to ", 1)) ;;
-        val
-    }
+/// TODO: Add support for this expression pattern
+pub fn ast_print_d1ea0bc590f67427(val: &TagValue) -> TagValue
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
 }
 
 

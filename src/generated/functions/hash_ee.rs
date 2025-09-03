@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -81,8 +81,8 @@ use crate::types::{TagValue, ExifContext};
 /// - Sony::PMP.FNumber
 /// - Sony::PMP.FocalLength
 /// - Sony::rtmd.MasterGainAdjustment
-pub fn ast_value_ee9b0901d11400f9(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / 100)
+pub fn ast_value_ee9b0901d11400f9(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val / 100i32))
 }
 
 
@@ -92,8 +92,8 @@ pub fn ast_value_ee9b0901d11400f9(val: &TagValue) -> Result<TagValue, crate::typ
 /// ```
 /// Used by:
 /// - RIFF::VP8X.ImageHeight
-pub fn ast_value_ee373eddfb12a7cf(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((val >> 8) + 1)
+pub fn ast_value_ee373eddfb12a7cf(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val >> 8i32) + 1i32)
 }
 
 
@@ -103,28 +103,8 @@ pub fn ast_value_ee373eddfb12a7cf(val: &TagValue) -> Result<TagValue, crate::typ
 /// ```
 /// Used by:
 /// - Nikon::LensData0800.FocusDistance
-pub fn ast_value_ee91ddedc5e86fe3(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((2 as f64).powf(((val - 80) / 12) as f64))
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// 
-/// my @v = split(' ',$val);
-/// $v[0] &= 0x0f;
-/// $v[1] = $v[3] * 256 + $v[4]; # (always high byte first)
-/// return "$v[0] $v[1]";
-/// 
-/// ```
-/// Used by:
-/// - Pentax::LensInfo5.LensType
-/// TODO: Add support for this expression pattern
-pub fn ast_value_ee0ba302040a4bb7(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+pub fn ast_value_ee91ddedc5e86fe3(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf((((val - 80i32)) / 12i32) as f64))
 }
 
 
@@ -140,6 +120,24 @@ pub fn ast_print_ee86c0adbbb71bec(val: &TagValue) -> TagValue
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// my @v = split(' ',$val);
+/// $v[0] &= 0x0f;
+/// $v[1] = $v[3] * 256 + $v[4]; # (always high byte first)
+/// return "$v[0] $v[1]";
+/// ```
+/// Used by:
+/// - Pentax::LensInfo5.LensType
+/// TODO: Add support for this expression pattern
+pub fn ast_value_ee0ba302040a4bb7(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }
 
 

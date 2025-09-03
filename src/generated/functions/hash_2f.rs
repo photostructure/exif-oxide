@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,6 +17,8 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - Sony::FaceInfoA.FacesDetected
-pub fn ast_value_2f6e191c54ef7f4e(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if val > 8 { 0 } else { val })
+pub fn ast_value_2f6e191c54ef7f4e(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if (val > 8i32) { 0i32 } else { val })
 }

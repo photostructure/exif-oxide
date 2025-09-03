@@ -5,63 +5,37 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.3d", $val)
+/// ```
+/// Used by:
+/// - Nikon::FileInfo.DirectoryNumber
+/// - Sony::CameraSettings.FolderNumber
+pub fn ast_print_45502c266bb9ea6b(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl("%.3d".into(), &[val.clone()]))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ tr/\0//d; $val
 /// ```
 /// Used by:
 /// - Nikon::AVITags.Software
-pub fn ast_value_45e5361ebf476759(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        { use regex::Regex; use std::sync::LazyLock; static REGEX_996afebe79a63fc8: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"val.to_string().chars().filter(|c| !['\', '0'].contains(c)).collect::<String>() ;").unwrap()); REGEX_996afebe79a63fc8.captures(&val.to_string()).is_some() };
-        val
-    }
-    )
-}
-
-
-/// Original perl expression:
-/// ``` perl
-/// ($val < 0x400 or $val == 0x7fff) ? $val : pack "C*", map { (($val>>$_)&0x1f)+0x60 } 10, 5, 0
-/// ```
-/// Used by:
-/// - QuickTime::MediaHeader.MediaLanguageCode
-pub fn ast_value_45fef045148be706(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if (val.to_string() < 0x400 || val == 0x7fff.to_string()) { val } else { pack "C*" , map |item| ((val >> val) & 0x1f) + 0x60 10 , 5 , 0 })
-}
-
-
-/// Original perl expression:
-/// ``` perl
-/// IsInt($val) ? "$val C" : $val
-/// ```
-/// Used by:
-/// - Sigma::Main.SensorTemperature
-pub fn ast_print_45781a09f536a8e0(val: &TagValue) -> TagValue {
-    if IsInt (val) { format!("{} C", val) } else { val }
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// 
-/// my ($n, @a) = unpack("nN*",$val);
-/// $#a = $n - 1 if $n > @a;
-/// return join(' ', @a);
-/// 
-/// ```
-/// Used by:
-/// - Photoshop::Main.LayerSelectionIDs
 /// TODO: Add support for this expression pattern
-pub fn ast_value_45f64f13ca77f48e(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
+pub fn ast_value_45e5361ebf476759(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -81,12 +55,55 @@ pub fn ast_value_45f64f13ca77f48e(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Sony::Tag9405b.StopsAboveBaseISO
 /// - Sony::Tag9416.StopsAboveBaseISO
 /// TODO: Add support for this expression pattern
-pub fn ast_print_45145cdaaff93e23(val: &TagValue) -> TagValue
-{
+pub fn ast_print_45145cdaaff93e23(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// ($val < 0x400 or $val == 0x7fff) ? $val : pack "C*", map { (($val>>$_)&0x1f)+0x60 } 10, 5, 0
+/// ```
+/// Used by:
+/// - QuickTime::MediaHeader.MediaLanguageCode
+/// TODO: Add support for this expression pattern
+pub fn ast_value_45fef045148be706(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// IsInt($val) ? "$val C" : $val
+/// ```
+/// Used by:
+/// - Sigma::Main.SensorTemperature
+/// TODO: Add support for this expression pattern
+pub fn ast_print_45781a09f536a8e0(val: &TagValue) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// my ($n, @a) = unpack("nN*",$val);
+/// $#a = $n - 1 if $n > @a;
+/// return join(' ', @a);
+/// ```
+/// Used by:
+/// - Photoshop::Main.LayerSelectionIDs
+/// TODO: Add support for this expression pattern
+pub fn ast_value_45f64f13ca77f48e(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
+}
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -100,26 +117,9 @@ pub fn ast_print_45145cdaaff93e23(val: &TagValue) -> TagValue
 /// - FujiFilm::RAF.RawZoomSize
 /// - FujiFilm::RAF.RawZoomTopLeft
 /// TODO: Add support for this expression pattern
-pub fn ast_value_4564b55cdb8716ed(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
+pub fn ast_value_4564b55cdb8716ed(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("%.3d", $val)
-/// ```
-/// Used by:
-/// - Nikon::FileInfo.DirectoryNumber
-/// - Sony::CameraSettings.FolderNumber
-/// TODO: Add support for this expression pattern
-pub fn ast_print_45502c266bb9ea6b(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
-
-

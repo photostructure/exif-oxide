@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,6 +17,8 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - Pentax::AEInfo2.AEError
-pub fn ast_value_6875c432d26ce26f(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(-(val - 64) / 8)
+pub fn ast_value_6875c432d26ce26f(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(-(val - 64i32) / 8i32)
 }

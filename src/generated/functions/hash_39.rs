@@ -6,21 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-///
-/// (defined $$self{FocusStepsFromInfinity} and $$self{FocusStepsFromInfinity} eq 0) ? "Inf" : $val < 100 ? $val < 10 ? $val < 1 ? $val < 0.35 ? sprintf("%.4f m", $val): sprintf("%.3f m", $val): sprintf("%.2f m", $val) : sprintf("%.1f m", $val) : sprintf("%.0f m", $val),
-///
-/// ```
-/// Used by:
-/// - Nikon::LensData0800.FocusDistance
-/// TODO: Add support for this expression pattern
-pub fn ast_print_397064182f359f5a(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -30,9 +19,24 @@ pub fn ast_print_397064182f359f5a(val: &TagValue) -> TagValue {
 /// Used by:
 /// - FujiFilm::RAFData.RawImageHeight
 /// TODO: Add support for this expression pattern
-pub fn ast_value_393186b6faed2a8e(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_393186b6faed2a8e(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// (defined $$self{FocusStepsFromInfinity} and $$self{FocusStepsFromInfinity} eq 0) ? "Inf" : $val < 100 ? $val < 10 ? $val < 1 ? $val < 0.35 ? sprintf("%.4f m", $val): sprintf("%.3f m", $val): sprintf("%.2f m", $val) : sprintf("%.1f m", $val) : sprintf("%.0f m", $val),
+/// ```
+/// Used by:
+/// - Nikon::LensData0800.FocusDistance
+/// TODO: Add support for this expression pattern
+pub fn ast_print_397064182f359f5a(val: &TagValue) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

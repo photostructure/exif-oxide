@@ -5,7 +5,18 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.1f m",$val)
+/// ```
+/// Used by:
+/// - DJI::ThermalParams2.ObjectDistance
+pub fn ast_print_ec7bd11b49f50639(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl("%.1f m".into(), &[val.clone()]))
+}
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -15,7 +26,7 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - Samsung::Trailer.TimeStamp
 /// TODO: Add support for this expression pattern
-pub fn ast_value_ec4363ad50929239(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_ec4363ad50929239(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
@@ -42,21 +53,6 @@ pub fn ast_value_ec4363ad50929239(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Sony::rtmd.GPSLongitude
 /// TODO: Add support for this expression pattern
 pub fn ast_print_ec01a8049c79f988(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("%.1f m",$val)
-/// ```
-/// Used by:
-/// - DJI::ThermalParams2.ObjectDistance
-/// TODO: Add support for this expression pattern
-pub fn ast_print_ec7bd11b49f50639(val: &TagValue) -> TagValue
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()

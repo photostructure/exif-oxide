@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -51,8 +51,8 @@ use crate::types::{TagValue, ExifContext};
 /// - Sony::Tag9400c.SequenceImageNumber
 /// - Sony::Tag9405b.SequenceImageNumber
 /// - Sony::Tag9416.SequenceImageNumber
-pub fn ast_value_cc6d20d1f05f91ec(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val + 1)
+pub fn ast_value_cc6d20d1f05f91ec(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val + 1i32))
 }
 
 
@@ -63,26 +63,8 @@ pub fn ast_value_cc6d20d1f05f91ec(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Nikon::LensData0800.FNumber
 /// - Nikon::LensData0800.MaxAperture
-pub fn ast_value_ccebb986d6453c97(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((2 as f64).powf((val / 384 - 1) as f64))
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// 
-/// require Image::ExifTool::XMP;
-/// return Image::ExifTool::XMP::ConvertXMPDate($val);
-/// 
-/// ```
-/// Used by:
-/// - Exif::Main.PreviewDateTime
-/// TODO: Add support for this expression pattern
-pub fn ast_value_cc04498da2daf80c(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+pub fn ast_value_ccebb986d6453c97(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf((((val / 384i32) - 1i32)) as f64))
 }
 
 
@@ -94,7 +76,23 @@ pub fn ast_value_cc04498da2daf80c(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Canon::CameraSettings.CameraISO
 /// TODO: Add support for this expression pattern
-pub fn ast_value_cc8b3fc622e28074(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_cc8b3fc622e28074(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// require Image::ExifTool::XMP;
+/// return Image::ExifTool::XMP::ConvertXMPDate($val);
+/// ```
+/// Used by:
+/// - Exif::Main.PreviewDateTime
+/// TODO: Add support for this expression pattern
+pub fn ast_value_cc04498da2daf80c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -15,8 +15,8 @@ use crate::types::{TagValue, ExifContext};
 /// - Olympus::Equipment.MaxAperture
 /// - Olympus::Equipment.MaxApertureAtMaxFocal
 /// - Olympus::Equipment.MaxApertureAtMinFocal
-pub fn ast_value_a702026eef5d42be(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if val { sqrt (2) ** (val / 256) } else { 0 })
+pub fn ast_value_a702026eef5d42be(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if val { (sqrt (2i32) as f64).powf(((val / 256i32)) as f64) } else { 0i32 })
 }
 
 
@@ -46,7 +46,7 @@ pub fn ast_print_a7bd7d3f338f7940(val: &TagValue) -> TagValue
 /// - Sony::FocusInfo.ISO
 /// - Sony::FocusInfo.ISOSetting
 /// TODO: Add support for this expression pattern
-pub fn ast_value_a7fc8acd4df4945(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_a7fc8acd4df4945(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
@@ -62,7 +62,7 @@ pub fn ast_value_a7fc8acd4df4945(val: &TagValue) -> Result<TagValue, crate::type
 /// - Canon::CameraInfoPowerShot.ISO
 /// - Canon::CameraInfoPowerShot2.ISO
 /// TODO: Add support for this expression pattern
-pub fn ast_value_a704a838f8b357a7(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_a704a838f8b357a7(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

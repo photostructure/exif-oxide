@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -22,7 +22,7 @@ use crate::types::{TagValue, ExifContext};
 /// - Panasonic::Subdir.ExternalSensorBrightnessValue
 /// - Panasonic::Subdir.MeasuredLV
 /// TODO: Add support for this expression pattern
-pub fn ast_value_d257a2f28a742d8d(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_d257a2f28a742d8d(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
@@ -59,7 +59,7 @@ pub fn ast_print_d23a0db383ac12a7(val: &TagValue) -> TagValue
 /// - Nikon::Main.FlashExposureComp
 /// - Nikon::Main.ProgramShift
 /// TODO: Add support for this expression pattern
-pub fn ast_value_d25c2abd9d1305a3(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_d25c2abd9d1305a3(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

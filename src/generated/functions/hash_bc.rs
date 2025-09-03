@@ -5,9 +5,8 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("%.2g",$val)
@@ -43,11 +42,8 @@ use crate::types::{TagValue, ExifContext};
 /// - CanonCustom::PersonalFuncValues.PF5ApertureMin
 /// - KyoceraRaw::Main.FNumber
 /// - KyoceraRaw::Main.MaxAperture
-/// TODO: Add support for this expression pattern
-pub fn ast_print_bc983315d45d48a3(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+pub fn ast_print_bc983315d45d48a3(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl("%.2g".into(), &[val.clone()]))
 }
 
 

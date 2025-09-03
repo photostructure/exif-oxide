@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,7 +14,7 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - GoPro::KBAT.BatteryCapacity
 pub fn ast_print_993ce46cc3d936eb(val: &TagValue) -> TagValue {
-    format!("{} Ah", val)
+    format!("{} Ah", val).into()
 }
 
 
@@ -26,7 +26,7 @@ pub fn ast_print_993ce46cc3d936eb(val: &TagValue) -> TagValue {
 /// - PNG::AnimationControl.AnimationPlays
 /// - RIFF::ANIM.AnimationLoopCount
 pub fn ast_print_9957cfcd700746af(val: &TagValue) -> TagValue {
-    val || "inf"
+    (val || "inf".into())
 }
 
 
@@ -36,15 +36,14 @@ pub fn ast_print_9957cfcd700746af(val: &TagValue) -> TagValue {
 /// ```
 /// Used by:
 /// - KyoceraRaw::Main.ExposureTime
-pub fn ast_value_99d1796b50c9db89(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((2 as f64).powf((val / 8) / 16000 as f64))
+pub fn ast_value_99d1796b50c9db89(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf(((val / 8i32)) / 16000i32 as f64))
 }
 
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// 
 /// if ($val =~ /^(.*?\s*)([0-9a-fA-F]*)(\d{2})(\d{2})(\d{2})(.{12})\s*\0*$/s
 /// and $4 >= 1 and $4 <= 12 and $5 >= 1 and $5 <= 31)
 /// {
@@ -56,7 +55,6 @@ pub fn ast_value_99d1796b50c9db89(val: &TagValue) -> Result<TagValue, crate::typ
 /// $val =~ s/\b(592D(3[0-9])+)/pack("H*",$1).' '/e;
 /// }
 /// return $val;
-/// 
 /// ```
 /// Used by:
 /// - FujiFilm::Main.InternalSerialNumber

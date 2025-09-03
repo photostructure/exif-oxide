@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -18,8 +18,8 @@ use crate::types::{TagValue, ExifContext};
 /// - Sony::CameraSettings2.ColorCompensationFilterCustom
 /// - Sony::CameraSettings2.ColorCompensationFilterSet
 /// - Sony::CameraSettings2.WhiteBalanceFineTune
-pub fn ast_value_d02980f78a9700ff(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if val > 128 { val - 256 } else { val })
+pub fn ast_value_d02980f78a9700ff(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if (val > 128i32) { (val - 256i32) } else { val })
 }
 
 

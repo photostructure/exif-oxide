@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -15,8 +19,8 @@ use crate::types::{ExifContext, TagValue};
 /// - Olympus::FocusInfo.FocusDistance
 pub fn ast_print_2e926c6f528517f0(val: &TagValue) -> TagValue {
     if val {
-        format!("{} m", val)
+        format!("{} m", val).into()
     } else {
-        "inf"
+        "inf".into()
     }
 }

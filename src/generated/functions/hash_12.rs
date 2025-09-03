@@ -6,22 +6,26 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// require Image::ExifTool::ASF;
 /// $val = Image::ExifTool::ASF::GetGUID($val);
 /// # GUID's are too long, so remove redundant information
 /// $val =~ s/^6fddc324-4e03-4bfe-b185-3d77768dc9//i and $val = hex($val);
 /// return $val;
-///
 /// ```
 /// Used by:
 /// - Exif::Main.PixelFormat
 /// TODO: Add support for this expression pattern
-pub fn ast_value_1278a798296d5090(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_1278a798296d5090(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

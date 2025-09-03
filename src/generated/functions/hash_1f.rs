@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -20,18 +24,18 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::Tag2010g.ExposureCompensation
 /// - Sony::Tag2010h.ExposureCompensation
 /// - Sony::Tag2010i.ExposureCompensation
-pub fn ast_value_1f3cbbb3d7cfc943(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(-val / 256)
+pub fn ast_value_1f3cbbb3d7cfc943(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((0i32 - val) / 256i32))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// $val == 0xff and return 'Variable';
 /// my $sign = ($val & 0x80) ? 'Signed' : 'Unsigned';
 /// return (($val & 0x7f) + 1) . " Bits, $sign";
-///
 /// ```
 /// Used by:
 /// - Jpeg2000::ImageHeader.BitsPerComponent

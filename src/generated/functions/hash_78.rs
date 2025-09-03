@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,9 +13,10 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - PanasonicRaw::CameraIFD.ApertureValue
-pub fn ast_value_78de420ad35cdf27(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((2 as f64).powf((val / 512) as f64))
+pub fn ast_value_78de420ad35cdf27(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf(((val / 512i32)) as f64))
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -30,7 +31,10 @@ pub fn ast_value_78de420ad35cdf27(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Nikon::PictureControl2.PictureControlQuickAdjust
 /// - Nikon::PictureControl3.PictureControlQuickAdjust
 /// TODO: Add support for this expression pattern
-pub fn ast_print_7887a47ea90c93f3(val: &TagValue) -> TagValue {
+pub fn ast_print_7887a47ea90c93f3(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

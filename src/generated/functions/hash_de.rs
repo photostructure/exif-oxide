@@ -5,16 +5,14 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// 
 /// my $sign = $val < 0 ? '-' : '+';
 /// my $h = int(abs($val) / 60);
 /// sprintf("%s%.2d:%.2d", $sign, $h, abs($val)-60*$h);
-/// 
 /// ```
 /// Used by:
 /// - Nikon::WorldTime.TimeZone

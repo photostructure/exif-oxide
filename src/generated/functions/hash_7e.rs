@@ -5,9 +5,8 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// unpack("H*", $val)
@@ -37,8 +36,8 @@ use crate::types::{ExifContext, TagValue};
 /// - Matroska::Main.TrackUID
 /// - Photoshop::Main.IPTCDigest
 /// - SigmaRaw::Header.ImageUniqueID
-/// TODO: Add support for this expression pattern
-pub fn ast_value_7eadc2f4518c667e(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+pub fn ast_value_7eadc2f4518c667e(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(codegen_runtime::unpack_binary("H*", &val)))
 }
+
+

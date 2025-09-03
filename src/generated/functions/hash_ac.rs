@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -15,7 +15,7 @@ use crate::types::{TagValue, ExifContext};
 /// - Sony::Tag9400a.SonyImageHeight
 /// - Sony::Tag9400b.SonyImageHeight
 pub fn ast_print_ac819f699b1427c4(val: &TagValue) -> TagValue {
-    if val > 0 { 8 * val } else { "n.a." }
+    if (val > 0i32) { (8i32 * val) } else { "n.a.".into() }
 }
 
 
@@ -25,8 +25,8 @@ pub fn ast_print_ac819f699b1427c4(val: &TagValue) -> TagValue {
 /// ```
 /// Used by:
 /// - RIFF::VP8L.ImageWidth
-pub fn ast_value_aca221497f1eb51c(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((val & 0x3fff) + 1)
+pub fn ast_value_aca221497f1eb51c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((val & 0x3fffu32)) + 1i32)
 }
 
 
@@ -36,8 +36,8 @@ pub fn ast_value_aca221497f1eb51c(val: &TagValue) -> Result<TagValue, crate::typ
 /// ```
 /// Used by:
 /// - Panasonic::Data1.LensType
-pub fn ast_value_ac0e8b8bbf4b643f(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(TagValue::String(format!("{}{}{}", ((val >> 2) & 0xffff), " ", (val & 0x3))))
+pub fn ast_value_ac0e8b8bbf4b643f(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(format!("{}{}", ((val >> 2i32) & 0xffffu32), " " . ((val & 0x3u32)))))
 }
 
 

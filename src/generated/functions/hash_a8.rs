@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,7 +14,7 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - Canon::ColorData3.FlashBatteryLevel
 pub fn ast_print_a8b9ab9d001cb5dd(val: &TagValue) -> TagValue {
-    if val { sprintf ("%.2fV" , val * 5 / 186) } else { "n/a" }
+    if val { TagValue::String(codegen_runtime::sprintf_perl("%.2fV", &[val, *, 5, /, 186])) } else { "n/a".into() }
 }
 
 

@@ -6,20 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
-
-/// Original perl expression:
-/// ``` perl
-/// $val >= 255 ? 255 : exp(($val-200)/16*log(2))
-/// ```
-/// Used by:
-/// - Canon::ColorData3.FlashOutput
-pub fn ast_value_58c924c1420b72a1(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if val >= 255 {
-        255
-    } else {
-        exp((val - 200) / 16 * log(2))
-    })
-}
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -31,6 +21,27 @@ pub fn ast_value_58c924c1420b72a1(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Sony::CameraSettings2.ExposureTime
 /// - Sony::CameraSettings2.ShutterSpeedSetting
 /// - Sony::MoreSettings.ExposureTime
-pub fn ast_value_58f560b2a6e62b0d(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if val { 2 * *(6 - val / 8) } else { 0 })
+pub fn ast_value_58f560b2a6e62b0d(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if val {
+        (2i32 as f64).powf((6i32 - (val / 8i32)) as f64)
+    } else {
+        0i32
+    })
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val >= 255 ? 255 : exp(($val-200)/16*log(2))
+/// ```
+/// Used by:
+/// - Canon::ColorData3.FlashOutput
+/// TODO: Add support for this expression pattern
+pub fn ast_value_58c924c1420b72a1(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }

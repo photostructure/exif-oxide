@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,42 +14,44 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Sony::Tag2010c.DigitalZoomRatio
 /// - Sony::Tag2010e.DigitalZoomRatio
-pub fn ast_value_716ee738f3ea2696(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / 16)
+pub fn ast_value_716ee738f3ea2696(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val / 16i32))
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// my @v = split(' ',$val);
 /// $v[0] &= 0x0f;
 /// $v[1] = $v[2] * 256 + $v[3]; # (always high byte first)
 /// return "$v[0] $v[1]";
-///
 /// ```
 /// Used by:
 /// - Pentax::LensInfo2.LensType
 /// - Pentax::LensInfo3.LensType
 /// - Pentax::LensInfo4.LensType
 /// TODO: Add support for this expression pattern
-pub fn ast_value_71a1a9e0382cbde4(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_71a1a9e0382cbde4(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
 
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// return 'n/a' if $val =~ /undef/;
 /// sprintf("(%d%%,%d%%) (%d%%,%d%%)", map {$_ * 100} split(" ",$val));
-///
 /// ```
 /// Used by:
 /// - Olympus::CameraSettings.AFPointSelected
 /// TODO: Add support for this expression pattern
-pub fn ast_print_71d89be5ccb75efd(val: &TagValue) -> TagValue {
+pub fn ast_print_71d89be5ccb75efd(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

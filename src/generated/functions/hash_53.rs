@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -18,8 +22,14 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::Tag9050d.SonyExposureTime
 /// - Sony::Tag9405b.SonyExposureTime2
 /// - Sony::Tag9416.SonyExposureTime2
-pub fn ast_value_53ef12641c6719f5(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if val { 2 * *(16 - val / 256) } else { 0 })
+pub fn ast_value_53ef12641c6719f5(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if val {
+        (2i32 as f64).powf((16i32 - (val / 256i32)) as f64)
+    } else {
+        0i32
+    })
 }
 
 /// Original perl expression:
@@ -30,7 +40,10 @@ pub fn ast_value_53ef12641c6719f5(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Nikon::AutoCaptureInfo.AutoCaptureDistanceFar
 /// - Nikon::AutoCaptureInfo.AutoCaptureDistanceNear
 pub fn ast_print_53e26bd836197e46(val: &TagValue) -> TagValue {
-    TagValue::String(format!("%.1f m", val / 10))
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "%.1f m".into(),
+        &[val / 10i32.clone()],
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

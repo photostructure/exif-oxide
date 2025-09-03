@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -16,7 +20,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Photoshop::Resolution.XResolution
 /// - Photoshop::Resolution.YResolution
 pub fn ast_print_4d023868095dfa1c(val: &TagValue) -> TagValue {
-    int(val * 100 + 0.5) / 100
+    (int(((val * 100i32) + 0.5f64)) / 100i32)
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -34,7 +38,9 @@ pub fn ast_print_4d023868095dfa1c(val: &TagValue) -> TagValue {
 /// - Pentax::PENT.GPSLatitude
 /// - Pentax::PENT.GPSLongitude
 /// TODO: Add support for this expression pattern
-pub fn ast_value_4dd64ad8b929982b(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_4dd64ad8b929982b(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

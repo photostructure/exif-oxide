@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,25 +17,27 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - Pentax::Main.SensitivityAdjust
-pub fn ast_value_4742ce1aa8d729e3(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((val - 50) / 10)
+pub fn ast_value_4742ce1aa8d729e3(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val - 50i32) / 10i32)
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// my ($tz, @a) = unpack('C*',$val);
 /// return sprintf('%.2x%.2x:%.2x:%.2x %.2x:%.2x:%.2x%s%.2d:%s%s', @a,
 /// $tz & 0x20 ? '-' : '+', ($tz >> 1) & 0x0f,
 /// $tz & 0x01 ? '30' : '00',
 /// $tz & 0x40 ? ' DST' : '');
-///
 /// ```
 /// Used by:
 /// - H264::MDPM.DateTimeOriginal
 /// TODO: Add support for this expression pattern
-pub fn ast_value_473c62936c679f74(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_473c62936c679f74(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

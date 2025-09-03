@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,8 +13,8 @@ use crate::types::{TagValue, ExifContext};
 /// ```
 /// Used by:
 /// - Canon::ShotInfo.BaseISO
-pub fn ast_value_b74a49b788fbe61c(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(exp (val / 32 * log (2)) * 100 / 32)
+pub fn ast_value_b74a49b788fbe61c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((exp((((val / 32i32) * log((2i32))))) * 100i32) / 32i32))
 }
 
 
@@ -85,7 +85,7 @@ pub fn ast_print_b75f5f46a9f320cf(val: &TagValue) -> TagValue
 /// Used by:
 /// - Panasonic::Main.FirmwareVersion
 /// TODO: Add support for this expression pattern
-pub fn ast_value_b7b5c432b9d85328(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_b7b5c432b9d85328(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

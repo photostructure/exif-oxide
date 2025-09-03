@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,9 +13,10 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - Sony::PMP.ExposureTime
-pub fn ast_value_7572393db83255de(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((2 as f64).powf((-val / 100) as f64))
+pub fn ast_value_7572393db83255de(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf((((0i32 - val) / 100i32)) as f64))
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -24,9 +25,10 @@ pub fn ast_value_7572393db83255de(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - KyoceraRaw::Main.FNumber
 /// - KyoceraRaw::Main.MaxAperture
-pub fn ast_value_759479de720ee9c(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((2 as f64).powf((val / 16) as f64))
+pub fn ast_value_759479de720ee9c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf(((val / 16i32)) as f64))
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -35,9 +37,8 @@ pub fn ast_value_759479de720ee9c(val: &TagValue) -> Result<TagValue, crate::type
 /// Used by:
 /// - Sony::Tag9050a.LensSpecFeatures
 /// - Sony::Tag9050b.LensSpecFeatures
-pub fn ast_value_75fc706b92c8c4f7(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(TagValue::String(crate::fmt::join_binary(
-        " ",
-        &TagValue::String(crate::fmt::unpack_binary("H2H2", &val)),
-    )))
+pub fn ast_value_75fc706b92c8c4f7(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(codegen_runtime::join_unpack_binary(" ", &TagValue::String(codegen_runtime::unpack_binary("H2H2", &val)))))
 }
+
+

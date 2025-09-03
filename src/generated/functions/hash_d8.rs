@@ -5,19 +5,20 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~s/\s+/, /g; $val
 /// ```
 /// Used by:
 /// - Exif::Main.ISO
-pub fn ast_print_d8a29c30d565fdb7(val: &TagValue) -> TagValue {
-    {
-        TagValue::String(crate::fmt::regex_replace_all("\\s+", &val.to_string(), ", ")) ;;
-        val
-    }
+/// TODO: Add support for this expression pattern
+pub fn ast_print_d8a29c30d565fdb7(val: &TagValue) -> TagValue
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
 }
 
 

@@ -6,16 +6,18 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// my $version = int($val / 256);
 /// my $release =  int(($val - 256 * $version)/16);
 /// my $modification = $val - (256 * $version + 16 * $release);
 /// return sprintf("%.0f.%.0f.%.0f", $version,$release,$modification);
-///
 /// ```
 /// Used by:
 /// - Nikon::LensData0800.LensFirmwareVersion

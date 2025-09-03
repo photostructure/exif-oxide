@@ -5,9 +5,8 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("%.1f C",$val)
@@ -20,11 +19,8 @@ use crate::types::{TagValue, ExifContext};
 /// - Sony::ExtraInfo.BatteryTemperature
 /// - Sony::ExtraInfo3.BatteryTemperature
 /// - Sony::Tag9406.BatteryTemperature
-/// TODO: Add support for this expression pattern
-pub fn ast_print_ebe0a6b7251033b3(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+pub fn ast_print_ebe0a6b7251033b3(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl("%.1f C".into(), &[val.clone()]))
 }
 
 

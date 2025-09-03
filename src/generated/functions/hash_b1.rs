@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -19,7 +19,7 @@ use crate::types::{TagValue, ExifContext};
 /// - CanonRaw::TimeStamp.DateTimeOriginal
 /// - RIFF::UserText.GPSDateTime
 /// TODO: Add support for this expression pattern
-pub fn ast_value_b1a21daf01322ba9(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_b1a21daf01322ba9(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,8 +13,8 @@ use crate::types::{TagValue, ExifContext};
 /// ```
 /// Used by:
 /// - CanonRaw::TimeStamp.TimeZoneCode
-pub fn ast_value_36edbc9980448bd8(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / 3600)
+pub fn ast_value_36edbc9980448bd8(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val / 3600i32))
 }
 
 
@@ -26,7 +26,7 @@ pub fn ast_value_36edbc9980448bd8(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Olympus::Main.DigitalZoom
 pub fn ast_print_36fdfc46408f209a(val: &TagValue) -> TagValue {
     {
-        val.to_string().contains(r"/\./ || val .= ".0" ;");
+        { use regex::Regex; use std::sync::LazyLock; static REGEX_c3fd015cb7dd6e3a: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"/\./ || val .= ".0".into() ;").unwrap()); REGEX_c3fd015cb7dd6e3a.captures(&val.to_string()).is_some() };
         val
     }
 }

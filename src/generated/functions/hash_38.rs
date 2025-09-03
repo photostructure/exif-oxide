@@ -6,8 +6,11 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// exp(($val-8)/16*log(2))
@@ -33,8 +36,8 @@ use crate::types::{ExifContext, TagValue};
 /// - Canon::CameraInfo750D.FNumber
 /// - Canon::CameraInfo7D.FNumber
 /// - Canon::CameraInfo80D.FNumber
-/// TODO: Add support for this expression pattern
-pub fn ast_value_380417f4c177add7(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+pub fn ast_value_380417f4c177add7(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(exp((val - 8i32) / 16i32 * log(2i32)))
 }

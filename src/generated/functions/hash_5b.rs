@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -38,8 +42,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Panasonic::Leica9.FNumber
 /// - RIFF::ANMF.Duration
 /// - Red::Main.FocusDistance
-pub fn ast_value_5b2c41e400f339d0(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / 1000)
+pub fn ast_value_5b2c41e400f339d0(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val / 1000i32))
 }
 
 /// Original perl expression:
@@ -55,19 +61,18 @@ pub fn ast_value_5b2c41e400f339d0(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Pentax::PENT.ExposureTime
 /// - Samsung::MP4.ExposureTime
 /// - Sanyo::MOV.ExposureTime
-pub fn ast_value_5b997436cb4c4a4f(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(crate::fmt::safe_division(10.0, &val))
+pub fn ast_value_5b997436cb4c4a4f(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if val { (10i32 / val) } else { 0i32 })
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("%.7d", $val)
 /// ```
 /// Used by:
 /// - Panasonic::Leica2.SerialNumber
-/// TODO: Add support for this expression pattern
 pub fn ast_print_5bf8478023213c9(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    TagValue::String(codegen_runtime::sprintf_perl("%.7d".into(), &[val.clone()]))
 }

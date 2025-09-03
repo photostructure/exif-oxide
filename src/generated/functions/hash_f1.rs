@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -29,23 +29,23 @@ use crate::types::{TagValue, ExifContext};
 /// - Canon::CameraInfo70D.DirectoryIndex
 /// - Canon::CameraInfo7D.DirectoryIndex
 /// - Canon::CameraInfo80D.DirectoryIndex
-pub fn ast_value_f10fff6e97e57581(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val - 1)
+pub fn ast_value_f10fff6e97e57581(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val - 1i32))
 }
 
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ s/\S* //; $val
 /// ```
 /// Used by:
 /// - Olympus::CameraSettings.AFPointSelected
-pub fn ast_value_f10df04f24c6ec2c(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        TagValue::String(crate::fmt::regex_replace("\\S* ", &val.to_string(), "")) ;;
-        val
-    }
-    )
+/// TODO: Add support for this expression pattern
+pub fn ast_value_f10df04f24c6ec2c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }
 
 
@@ -57,7 +57,7 @@ pub fn ast_value_f10df04f24c6ec2c(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Olympus::CameraSettings.ManometerReading
 /// TODO: Add support for this expression pattern
-pub fn ast_value_f1277e290c2a7107(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_f1277e290c2a7107(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,7 +14,7 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - Canon::AFConfig.AFConfigTool
 pub fn ast_print_e4d3ea89ebf53701(val: &TagValue) -> TagValue {
-    format!("Case {}", val)
+    format!("Case {}", val).into()
 }
 
 
@@ -31,22 +31,20 @@ pub fn ast_print_e4d3ea89ebf53701(val: &TagValue) -> TagValue {
 /// - Sony::CameraSettings2.Contrast
 /// - Sony::CameraSettings2.Saturation
 /// - Sony::CameraSettings2.Sharpness
-pub fn ast_value_e42dee863566f395(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val - 10)
+pub fn ast_value_e42dee863566f395(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val - 10i32))
 }
 
 
 /// Original perl expression:
 /// ``` perl
-/// $val =~ s/(\d)of(\d)/$1 of $2/; $val
+/// sprintf("0x%x", $val)
 /// ```
 /// Used by:
-/// - Sigma::Main.AutoBracket
-pub fn ast_print_e4e7cb74671abf2f(val: &TagValue) -> TagValue {
-    {
-        TagValue::String(crate::fmt::regex_replace("(\\d)of(\\d)", &val.to_string(), "$1 of $2")) ;;
-        val
-    }
+/// - JPEG::NITF.Flags
+/// - Olympus::Equipment.LensProperties
+pub fn ast_print_e4e23da0cd5e8937(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl("0x%x".into(), &[val.clone()]))
 }
 
 
@@ -68,13 +66,12 @@ pub fn ast_print_e4f2e8444c0901ff(val: &TagValue) -> TagValue
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// sprintf("0x%x", $val)
+/// $val =~ s/(\d)of(\d)/$1 of $2/; $val
 /// ```
 /// Used by:
-/// - JPEG::NITF.Flags
-/// - Olympus::Equipment.LensProperties
+/// - Sigma::Main.AutoBracket
 /// TODO: Add support for this expression pattern
-pub fn ast_print_e4e23da0cd5e8937(val: &TagValue) -> TagValue
+pub fn ast_print_e4e7cb74671abf2f(val: &TagValue) -> TagValue
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()

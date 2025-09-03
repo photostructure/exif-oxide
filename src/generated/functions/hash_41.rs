@@ -5,18 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
-
-/// Original perl expression:
-/// ``` perl
-/// $val =~ /^(inf|undef)$/ ? $val : "${val} m"
-/// ```
-/// Used by:
-/// - Exif::Main.SubjectDistance
-pub fn ast_print_4186404e3c9fa11a(val: &TagValue) -> TagValue {
-    if val =~ /^(inf|undef)$/ { val } else { "${val} m" }
-}
-
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -25,9 +18,24 @@ pub fn ast_print_4186404e3c9fa11a(val: &TagValue) -> TagValue {
 /// Used by:
 /// - SonyIDC::Main.InclinationAngle
 pub fn ast_print_41bf92216501bc5a(val: &TagValue) -> TagValue {
-    TagValue::String(format!("%.1f deg", val / 1000))
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "%.1f deg".into(),
+        &[val / 1000i32.clone()],
+    ))
 }
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val =~ /^(inf|undef)$/ ? $val : "${val} m"
+/// ```
+/// Used by:
+/// - Exif::Main.SubjectDistance
+/// TODO: Add support for this expression pattern
+pub fn ast_print_4186404e3c9fa11a(val: &TagValue) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
+}
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -38,10 +46,9 @@ pub fn ast_print_41bf92216501bc5a(val: &TagValue) -> TagValue {
 /// - CanonCustom::PersonalFuncValues.PF4ExposureTimeMax
 /// - CanonCustom::PersonalFuncValues.PF4ExposureTimeMin
 /// TODO: Add support for this expression pattern
-pub fn ast_value_41e4bfecd227b921(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
+pub fn ast_value_41e4bfecd227b921(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
-
-

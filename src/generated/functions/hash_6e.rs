@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -16,6 +20,8 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::LensData01.LensFStops
 /// - Nikon::LensData0204.LensFStops
 /// - Nikon::LensData0800.LensFStops
-pub fn ast_value_6ec31a66c09b11db(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / 12)
+pub fn ast_value_6ec31a66c09b11db(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val / 12i32))
 }
