@@ -38,3 +38,6 @@ Thumbs.db
 # Debug files
 *.pdb
 /third-party/exif-oxide-node/
+
+# this cost too much to store in LFS on GitHub
+test-images/
