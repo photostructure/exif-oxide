@@ -6,8 +6,3 @@
 
 // Re-export all fmt functions from codegen-runtime for API compatibility
 pub use codegen_runtime::fmt::*;
-
-#[cfg(test)]
-mod tests {
-    // Tests are handled in the runtime crate
-}

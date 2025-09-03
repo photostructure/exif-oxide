@@ -11,6 +11,7 @@ check-deps:
 check-perl:
 	@./scripts/check-perl.sh
 
+
 # Run all checks without modifying (for CI)
 check: check-fmt lint yamllint check-json check-perl
 
@@ -56,6 +57,9 @@ codegen-check:
 # Run codegen tests
 codegen-test:
 	$(MAKE) -C codegen test
+
+codegen-runtime-test:
+	cargo test -p codegen-runtime
 
 # Fix formatting and auto-fixable clippy issues
 fix: fmt
@@ -171,7 +175,7 @@ audit: check-deps
 	cargo audit
 
 # All tests including unit, integration, codegen, and compatibility tests
-tests: test codegen-test compat-full
+tests: codegen-test codegen-runtime-test test compat-full
 
 # Pre-commit checks: codegen, fix code, lint, test, audit, and build. We don't
 # clean-all because that leaves the tree temporarily broken, and we don't
@@ -248,6 +252,17 @@ compat-force: compat-gen-force compat-test test-mime-compat
 
 # Run all compatibility tests including binary extraction
 compat-full: compat binary-compat-test
+
+# Fetch test-images from backblaze b2
+pull-test-images:
+	@echo "Pulling test images from Backblaze B2..."
+	b2 sync --delete --replaceNewer b2://exif-oxide-test-images/ test-images/
+
+push-test-images:
+	@echo "Pushing test images to Backblaze B2..."
+	b2 sync --replaceNewer test-images/ b2://exif-oxide-test-images/
+
+
 
 # Show available make targets
 help:
