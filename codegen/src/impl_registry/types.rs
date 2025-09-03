@@ -15,16 +15,17 @@
 #[derive(Debug, Clone)]
 pub enum ValueConvType {
     /// PPI-generated ValueConv without context: fn(&TagValue) -> Result<TagValue>
-    PpiGeneratedSimple(String), // e.g., "$val / 100"
+    PpiGeneratedSimple(()), // e.g., "$val / 100"
     /// PPI-generated ValueConv with context: fn(&TagValue, &ExifContext) -> Result<TagValue>
-    PpiGeneratedWithContext(String), // e.g., "$val / ($$self{FocalUnits} || 1)"
+    PpiGeneratedWithContext(()), // e.g., "$val / ($$self{FocalUnits} || 1)"
     /// PPI-generated Composite ValueConv: fn(&[TagValue], &ExifContext) -> Result<TagValue>
-    PpiGeneratedComposite(String), // e.g., "$val[0] + $val[1]" for composite tags
+    PpiGeneratedComposite(()), // e.g., "$val[0] + $val[1]" for composite tags
     /// Complex expression requiring a custom function
     CustomFunction(&'static str, &'static str), // (module_path, function_name)
 }
 
 /// Classification of PrintConv expressions for code generation
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub enum PrintConvType {
     /// PPI-generated PrintConv function: fn(&TagValue) -> Result<String>
@@ -34,6 +35,7 @@ pub enum PrintConvType {
 }
 
 /// Classification of Condition expressions for code generation
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub enum ConditionType {
     /// PPI-generated Condition function: fn(&TagValue, &ExifContext) -> bool

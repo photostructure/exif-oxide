@@ -61,23 +61,6 @@ impl ConversionStats {
 /// Registry statistics for overall performance monitoring
 #[derive(Debug, Clone)]
 pub struct RegistryStats {
-    /// Total number of unique functions registered
-    pub total_functions: usize,
-    /// Total number of AST registrations (including duplicates)
-    pub total_registrations: usize,
-    /// Number of deduplicated cases (total_registrations - total_functions)
-    pub deduplicated_count: usize,
     /// Conversion processing statistics
     pub conversion_stats: ConversionStats,
-}
-
-impl RegistryStats {
-    /// Calculate deduplication percentage
-    pub fn deduplication_percentage(&self) -> f64 {
-        if self.total_registrations == 0 {
-            0.0
-        } else {
-            (self.deduplicated_count as f64 / self.total_registrations as f64) * 100.0
-        }
-    }
 }

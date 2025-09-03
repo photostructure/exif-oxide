@@ -125,7 +125,7 @@ impl MultiPassRewriter {
         rewriter.add_pass(Box::new(
             crate::ppi::normalizer::passes::ExpressionPrecedenceNormalizer::new(),
         ));
-        
+
         // STRUCTURAL TRANSFORMATIONS: Preserved as focused single-purpose passes
         rewriter.add_pass(Box::new(
             crate::ppi::normalizer::passes::ConditionalStatementsNormalizer,

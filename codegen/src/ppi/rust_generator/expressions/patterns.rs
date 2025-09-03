@@ -3,6 +3,8 @@
 //! This module handles complex ExifTool patterns including pack/map operations,
 //! sprintf with string operations, ternary conditionals, and function calls.
 
+#![allow(dead_code)]
+
 use crate::ppi::rust_generator::errors::CodeGenError;
 use crate::ppi::types::*;
 
@@ -29,7 +31,7 @@ pub trait ComplexPatternHandler {
                         "val".to_string()
                     };
                     let result = format!(
-                        "crate::fmt::join_unpack_binary(\"{}\", \"{}\", &{})",
+                        "codegen_runtime::join_unpack_binary(\"{}\", \"{}\", &{})",
                         separator, format, data
                     );
                     return Ok(Some(result));
@@ -42,14 +44,14 @@ pub trait ComplexPatternHandler {
     /// Try to handle standalone unpack calls
     fn try_unpack_pattern(&self, parts: &[String]) -> Result<Option<String>, CodeGenError> {
         if parts.len() >= 2 && parts[0] == "unpack" {
-            // unpack "H2H2", val -> crate::fmt::unpack_binary("H2H2", val)
+            // unpack "H2H2", val -> codegen_runtime::unpack_binary("H2H2", val)
             let format = parts[1].trim_matches('"').trim_matches('\'');
             let data = if parts.len() > 2 {
                 parts[2..].join(" ").trim_matches(',').trim().to_string()
             } else {
                 "val".to_string()
             };
-            let result = format!("crate::fmt::unpack_binary(\"{}\", &{})", format, data);
+            let result = format!("codegen_runtime::unpack_binary(\"{}\", &{})", format, data);
             return Ok(Some(result));
         }
         Ok(None)
@@ -108,7 +110,7 @@ pub trait ComplexPatternHandler {
             // Enhanced pattern recognition: extract mask and offset from the map block
             if let Some((mask, offset, shifts)) = self.extract_pack_map_pattern(parts, children)? {
                 let result = format!(
-                    "crate::fmt::pack_c_star_bit_extract(val, &{:?}, {}, {})",
+                    "codegen_runtime::pack_c_star_bit_extract(val, &{:?}, {}, {})",
                     shifts, mask, offset
                 );
                 return Ok(Some(result));
@@ -127,7 +129,7 @@ pub trait ComplexPatternHandler {
 
             if !numbers.is_empty() {
                 let result = format!(
-                    "crate::fmt::pack_c_star_bit_extract(val, &{:?}, {}, {})",
+                    "codegen_runtime::pack_c_star_bit_extract(val, &{:?}, {}, {})",
                     numbers, mask, offset
                 );
                 return Ok(Some(result));
@@ -197,12 +199,12 @@ pub trait ComplexPatternHandler {
 
         match self.expression_type() {
             ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                "TagValue::String(crate::fmt::sprintf_with_string_ops(\"{}\", &{}))",
+                "TagValue::String(codegen_runtime::sprintf_perl(\"{}\", &{}))",
                 args_part.trim_matches('(').trim_matches(')'),
                 "val"
             )),
             _ => Ok(format!(
-                "crate::fmt::sprintf_with_string_ops(\"{}\", &{})",
+                "codegen_runtime::sprintf_perl(\"{}\", &{})",
                 args_part.trim_matches('(').trim_matches(')'),
                 "val"
             )),

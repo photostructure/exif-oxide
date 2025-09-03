@@ -274,11 +274,11 @@ pub fn classify_valueconv_expression(expr: &str, module: &str) -> ValueConvType 
 
     // Check if expression needs context (has $$self references)
     if expr.contains("$$self") {
-        ValueConvType::PpiGeneratedWithContext(format!("// PPI will generate: {}", expr))
+        ValueConvType::PpiGeneratedWithContext(())
     } else if expr.contains("$val[") {
-        ValueConvType::PpiGeneratedComposite(format!("// PPI will generate composite: {}", expr))
+        ValueConvType::PpiGeneratedComposite(())
     } else {
-        ValueConvType::PpiGeneratedSimple(format!("// PPI will generate: {}", expr))
+        ValueConvType::PpiGeneratedSimple(())
     }
 }
 

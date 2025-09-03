@@ -86,13 +86,19 @@ impl BinaryOperatorNormalizer {
     fn has_binary_operators(&self, node: &PpiNode) -> bool {
         node.children.iter().any(|child| {
             child.class == "PPI::Token::Operator"
-                && child.content.as_ref().map_or(false, |op| self.get_precedence(op).is_some())
+                && child
+                    .content
+                    .as_ref()
+                    .map_or(false, |op| self.get_precedence(op).is_some())
         })
     }
 
     /// Get operator precedence, returns None for non-binary operators
     fn get_precedence(&self, op: &str) -> Option<u8> {
-        PRECEDENCE.iter().find(|(name, _)| *name == op).map(|(_, prec)| *prec)
+        PRECEDENCE
+            .iter()
+            .find(|(name, _)| *name == op)
+            .map(|(_, prec)| *prec)
     }
 
     /// Normalize binary operations in a node using precedence climbing
@@ -312,7 +318,7 @@ impl BinaryOperatorNormalizer {
                 && !self.is_operator(&tokens[i + 1])
             {
                 let operator = tokens[i].content.as_deref().unwrap_or("");
-                
+
                 // Create BinaryOperation node for unary operations
                 let binary_node = match operator {
                     "-" => {
@@ -327,7 +333,7 @@ impl BinaryOperatorNormalizer {
                             string_value: None,
                             structure_bounds: None,
                         };
-                        
+
                         PpiNode {
                             class: "BinaryOperation".to_string(),
                             content: Some("-".to_string()),
@@ -349,7 +355,7 @@ impl BinaryOperatorNormalizer {
                             string_value: None,
                             structure_bounds: None,
                         };
-                        
+
                         PpiNode {
                             class: "BinaryOperation".to_string(),
                             content: Some("+".to_string()),
@@ -372,7 +378,7 @@ impl BinaryOperatorNormalizer {
                             string_value: None,
                             structure_bounds: None,
                         };
-                        
+
                         PpiNode {
                             class: "BinaryOperation".to_string(),
                             content: tokens[i].content.clone(),
