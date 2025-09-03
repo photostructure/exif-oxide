@@ -14,7 +14,7 @@ use std::collections::VecDeque;
 /// # Examples
 /// ```
 /// use codegen_runtime::{TagValue, fmt::sprintf_perl};
-/// 
+///
 /// let result = sprintf_perl("%.3f x %.3f mm", &[TagValue::F64(1.234), TagValue::F64(5.678)]);
 /// assert_eq!(result, "1.234 x 5.678 mm");
 ///

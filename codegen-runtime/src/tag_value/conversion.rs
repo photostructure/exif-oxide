@@ -185,6 +185,12 @@ impl From<f64> for TagValue {
     }
 }
 
+impl From<&TagValue> for TagValue {
+    fn from(v: &TagValue) -> Self {
+        v.clone()
+    }
+}
+
 impl TagValue {
     /// Convenience method for creating a string TagValue
     ///

@@ -121,7 +121,6 @@ pub fn sprintf_with_string_concat_repeat(
     }
 }
 
-
 /// Conservative fallback for complex Perl expressions that can't be parsed
 ///
 /// When pattern recognition fails, this provides a safe fallback that
@@ -212,7 +211,6 @@ mod basic_tests {
         // Should handle gracefully even with no args
         assert!(!result.is_empty()); // sprintf_perl should handle missing args gracefully
     }
-
 
     #[test]
     fn test_conservative_fallback() {

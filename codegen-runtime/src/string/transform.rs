@@ -75,17 +75,20 @@ mod tests {
     #[test]
     fn test_regex_substitute_perl() {
         // Test successful substitution
-        let (success, result) = regex_substitute_perl(r" 1$", "", &TagValue::String("123 1".to_string()));
+        let (success, result) =
+            regex_substitute_perl(r" 1$", "", &TagValue::String("123 1".to_string()));
         assert_eq!(success, true);
         assert_eq!(result, TagValue::String("123".to_string()));
 
         // Test no match
-        let (success, result) = regex_substitute_perl(r"xyz", "abc", &TagValue::String("hello".to_string()));
+        let (success, result) =
+            regex_substitute_perl(r"xyz", "abc", &TagValue::String("hello".to_string()));
         assert_eq!(success, false);
         assert_eq!(result, TagValue::String("hello".to_string()));
 
         // Test invalid regex pattern
-        let (success, result) = regex_substitute_perl(r"[", "abc", &TagValue::String("hello".to_string()));
+        let (success, result) =
+            regex_substitute_perl(r"[", "abc", &TagValue::String("hello".to_string()));
         assert_eq!(success, false);
         assert_eq!(result, TagValue::String("hello".to_string()));
     }
@@ -93,21 +96,22 @@ mod tests {
     #[test]
     fn test_regex_substitute_perl_direct() {
         // Debug what's happening with regex_substitute_perl directly
-        let (success, result) = regex_substitute_perl("123", "X", &TagValue::String("hello 123 world".to_string()));
+        let (success, result) =
+            regex_substitute_perl("123", "X", &TagValue::String("hello 123 world".to_string()));
         assert_eq!(success, true);
         assert_eq!(result, TagValue::String("hello X world".to_string()));
     }
 
-    #[test] 
+    #[test]
     fn test_regex_replace() {
         // Test successful replacement
         let result = regex_replace(r"123", "X", "hello 123 world");
         assert_eq!(result, "hello X world");
-        
+
         // Test no match - should return original string
         let result = regex_replace(r"\d+", "X", "hello world");
         assert_eq!(result, "hello world");
-        
+
         // Test invalid pattern - should return original string
         let result = regex_replace(r"[", "X", "hello world");
         assert_eq!(result, "hello world");
