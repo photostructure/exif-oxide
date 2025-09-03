@@ -15,7 +15,7 @@ use crate::TagValue;
 /// # Examples
 /// ```
 /// use codegen_runtime::{TagValue, data::unpack_binary};
-/// 
+///
 /// let result = unpack_binary("nC2", &TagValue::Binary(vec![0x20, 0x24, 0x0A, 0x14]));
 /// // Returns: [TagValue::U16(8228), TagValue::U8(10), TagValue::U8(20)]
 /// ```
@@ -49,7 +49,7 @@ fn unpack_bytes(spec: &str, bytes: &[u8]) -> Vec<TagValue> {
                 } else {
                     2 // Default to 2 hex digits
                 };
-                
+
                 let byte_count = (hex_count + 1) / 2; // Round up
                 let mut hex_str = String::new();
                 for _ in 0..byte_count {
@@ -82,82 +82,82 @@ fn unpack_bytes(spec: &str, bytes: &[u8]) -> Vec<TagValue> {
 
                 // Process the format character
                 for _ in 0..count {
-            if byte_index >= bytes.len() {
-                // Not enough bytes - pad with zeros
-                results.push(TagValue::I32(0));
-                continue;
-            }
+                    if byte_index >= bytes.len() {
+                        // Not enough bytes - pad with zeros
+                        results.push(TagValue::I32(0));
+                        continue;
+                    }
 
-            match ch {
-                'C' => {
-                    // Unsigned char
-                    results.push(TagValue::U8(bytes[byte_index]));
-                    byte_index += 1;
-                }
-                'c' => {
-                    // Signed char
-                    results.push(TagValue::I32(bytes[byte_index] as i8 as i32));
-                    byte_index += 1;
-                }
-                'n' => {
-                    // Network (big-endian) unsigned short
-                    if byte_index + 1 < bytes.len() {
-                        let value =
-                            ((bytes[byte_index] as u16) << 8) | (bytes[byte_index + 1] as u16);
-                        results.push(TagValue::U16(value));
-                        byte_index += 2;
-                    } else {
-                        results.push(TagValue::I32(0));
-                        byte_index = bytes.len();
+                    match ch {
+                        'C' => {
+                            // Unsigned char
+                            results.push(TagValue::U8(bytes[byte_index]));
+                            byte_index += 1;
+                        }
+                        'c' => {
+                            // Signed char
+                            results.push(TagValue::I32(bytes[byte_index] as i8 as i32));
+                            byte_index += 1;
+                        }
+                        'n' => {
+                            // Network (big-endian) unsigned short
+                            if byte_index + 1 < bytes.len() {
+                                let value = ((bytes[byte_index] as u16) << 8)
+                                    | (bytes[byte_index + 1] as u16);
+                                results.push(TagValue::U16(value));
+                                byte_index += 2;
+                            } else {
+                                results.push(TagValue::I32(0));
+                                byte_index = bytes.len();
+                            }
+                        }
+                        'N' => {
+                            // Network (big-endian) unsigned long
+                            if byte_index + 3 < bytes.len() {
+                                let value = ((bytes[byte_index] as u32) << 24)
+                                    | ((bytes[byte_index + 1] as u32) << 16)
+                                    | ((bytes[byte_index + 2] as u32) << 8)
+                                    | (bytes[byte_index + 3] as u32);
+                                results.push(TagValue::U32(value));
+                                byte_index += 4;
+                            } else {
+                                results.push(TagValue::I32(0));
+                                byte_index = bytes.len();
+                            }
+                        }
+                        'v' => {
+                            // Little-endian unsigned short
+                            if byte_index + 1 < bytes.len() {
+                                let value = (bytes[byte_index] as u16)
+                                    | ((bytes[byte_index + 1] as u16) << 8);
+                                results.push(TagValue::U16(value));
+                                byte_index += 2;
+                            } else {
+                                results.push(TagValue::I32(0));
+                                byte_index = bytes.len();
+                            }
+                        }
+                        'V' => {
+                            // Little-endian unsigned long
+                            if byte_index + 3 < bytes.len() {
+                                let value = (bytes[byte_index] as u32)
+                                    | ((bytes[byte_index + 1] as u32) << 8)
+                                    | ((bytes[byte_index + 2] as u32) << 16)
+                                    | ((bytes[byte_index + 3] as u32) << 24);
+                                results.push(TagValue::U32(value));
+                                byte_index += 4;
+                            } else {
+                                results.push(TagValue::I32(0));
+                                byte_index = bytes.len();
+                            }
+                        }
+                        _ => {
+                            // Unknown format - skip
+                            byte_index += 1;
+                        }
                     }
-                }
-                'N' => {
-                    // Network (big-endian) unsigned long
-                    if byte_index + 3 < bytes.len() {
-                        let value = ((bytes[byte_index] as u32) << 24)
-                            | ((bytes[byte_index + 1] as u32) << 16)
-                            | ((bytes[byte_index + 2] as u32) << 8)
-                            | (bytes[byte_index + 3] as u32);
-                        results.push(TagValue::U32(value));
-                        byte_index += 4;
-                    } else {
-                        results.push(TagValue::I32(0));
-                        byte_index = bytes.len();
-                    }
-                }
-                'v' => {
-                    // Little-endian unsigned short
-                    if byte_index + 1 < bytes.len() {
-                        let value =
-                            (bytes[byte_index] as u16) | ((bytes[byte_index + 1] as u16) << 8);
-                        results.push(TagValue::U16(value));
-                        byte_index += 2;
-                    } else {
-                        results.push(TagValue::I32(0));
-                        byte_index = bytes.len();
-                    }
-                }
-                'V' => {
-                    // Little-endian unsigned long
-                    if byte_index + 3 < bytes.len() {
-                        let value = (bytes[byte_index] as u32)
-                            | ((bytes[byte_index + 1] as u32) << 8)
-                            | ((bytes[byte_index + 2] as u32) << 16)
-                            | ((bytes[byte_index + 3] as u32) << 24);
-                        results.push(TagValue::U32(value));
-                        byte_index += 4;
-                    } else {
-                        results.push(TagValue::I32(0));
-                        byte_index = bytes.len();
-                    }
-                }
-                _ => {
-                    // Unknown format - skip
-                    byte_index += 1;
-                }
                 }
             }
-        }
         }
     }
 

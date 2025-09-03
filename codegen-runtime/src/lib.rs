@@ -25,13 +25,16 @@ pub use types::{ExifContext, ExifError};
 pub use data::{join_unpack_binary, pack_c_star_bit_extract, unpack_binary};
 
 // Re-export fmt functions commonly used by generated code
-pub use fmt::{sprintf_perl, sprintf_split_values};
+pub use fmt::{sprintf_perl, sprintf_split_values, sprintf_with_string_concat_repeat};
 
 // Re-export math functions commonly used by generated code
-pub use math::{exp, int, log, safe_division, safe_reciprocal};
+pub use math::{abs, atan2, cos, exp, int, log, safe_division, safe_reciprocal, sin, sqrt};
 
 // Re-export string functions commonly used by generated code
-pub use string::{length_i32, length_string, regex_replace, regex_substitute_perl};
+pub use string::{
+    index_2arg, index_3arg, length_i32, length_string, regex_replace, regex_substitute_perl,
+    substr_2arg, substr_3arg,
+};
 
 // Test support module - only available with test-helpers feature
 #[cfg(feature = "test-helpers")]

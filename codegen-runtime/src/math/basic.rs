@@ -177,6 +177,212 @@ pub fn int<T: Into<TagValue>>(val: T) -> TagValue {
     }
 }
 
+/// Perl abs() function - absolute value
+///
+/// Returns the absolute value of a number, following Perl's behavior.
+pub fn abs<T: Into<TagValue>>(val: T) -> TagValue {
+    let val = val.into();
+    match val {
+        TagValue::F64(f) => TagValue::F64(f.abs()),
+        TagValue::I32(i) => TagValue::F64((i as f64).abs()),
+        TagValue::I16(i) => TagValue::F64((i as f64).abs()),
+        TagValue::U8(i) => TagValue::F64(i as f64),
+        TagValue::U16(i) => TagValue::F64(i as f64),
+        TagValue::U32(i) => TagValue::F64(i as f64),
+        TagValue::U64(i) => TagValue::F64(i as f64),
+        TagValue::String(s) => {
+            if let Ok(f) = s.parse::<f64>() {
+                TagValue::F64(f.abs())
+            } else {
+                // Non-numeric string - Perl abs() returns 0
+                TagValue::F64(0.0)
+            }
+        }
+        TagValue::Rational(num, denom) => {
+            if denom != 0 {
+                let f = num as f64 / denom as f64;
+                TagValue::F64(f.abs())
+            } else {
+                TagValue::F64(0.0)
+            }
+        }
+        TagValue::SRational(num, denom) => {
+            if denom != 0 {
+                let f = num as f64 / denom as f64;
+                TagValue::F64(f.abs())
+            } else {
+                TagValue::F64(0.0)
+            }
+        }
+        TagValue::Empty => TagValue::F64(0.0),
+        _ => TagValue::F64(0.0),
+    }
+}
+
+/// Perl sqrt() function - square root
+pub fn sqrt<T: Into<TagValue>>(val: T) -> TagValue {
+    let val = val.into();
+    let f = match val {
+        TagValue::F64(f) => f,
+        TagValue::I32(i) => i as f64,
+        TagValue::I16(i) => i as f64,
+        TagValue::U8(i) => i as f64,
+        TagValue::U16(i) => i as f64,
+        TagValue::U32(i) => i as f64,
+        TagValue::U64(i) => i as f64,
+        TagValue::String(s) => s.parse::<f64>().unwrap_or(0.0),
+        TagValue::Rational(num, denom) => {
+            if denom != 0 {
+                num as f64 / denom as f64
+            } else {
+                0.0
+            }
+        }
+        TagValue::SRational(num, denom) => {
+            if denom != 0 {
+                num as f64 / denom as f64
+            } else {
+                0.0
+            }
+        }
+        TagValue::Empty => 0.0,
+        _ => 0.0,
+    };
+
+    if f < 0.0 {
+        // Perl sqrt of negative number throws error, we'll return NaN like Rust
+        TagValue::F64(f64::NAN)
+    } else {
+        TagValue::F64(f.sqrt())
+    }
+}
+
+/// Perl sin() function - sine
+pub fn sin<T: Into<TagValue>>(val: T) -> TagValue {
+    let val = val.into();
+    let f = match val {
+        TagValue::F64(f) => f,
+        TagValue::I32(i) => i as f64,
+        TagValue::I16(i) => i as f64,
+        TagValue::U8(i) => i as f64,
+        TagValue::U16(i) => i as f64,
+        TagValue::U32(i) => i as f64,
+        TagValue::U64(i) => i as f64,
+        TagValue::String(s) => s.parse::<f64>().unwrap_or(0.0),
+        TagValue::Rational(num, denom) => {
+            if denom != 0 {
+                num as f64 / denom as f64
+            } else {
+                0.0
+            }
+        }
+        TagValue::SRational(num, denom) => {
+            if denom != 0 {
+                num as f64 / denom as f64
+            } else {
+                0.0
+            }
+        }
+        TagValue::Empty => 0.0,
+        _ => 0.0,
+    };
+    TagValue::F64(f.sin())
+}
+
+/// Perl cos() function - cosine
+pub fn cos<T: Into<TagValue>>(val: T) -> TagValue {
+    let val = val.into();
+    let f = match val {
+        TagValue::F64(f) => f,
+        TagValue::I32(i) => i as f64,
+        TagValue::I16(i) => i as f64,
+        TagValue::U8(i) => i as f64,
+        TagValue::U16(i) => i as f64,
+        TagValue::U32(i) => i as f64,
+        TagValue::U64(i) => i as f64,
+        TagValue::String(s) => s.parse::<f64>().unwrap_or(0.0),
+        TagValue::Rational(num, denom) => {
+            if denom != 0 {
+                num as f64 / denom as f64
+            } else {
+                0.0
+            }
+        }
+        TagValue::SRational(num, denom) => {
+            if denom != 0 {
+                num as f64 / denom as f64
+            } else {
+                0.0
+            }
+        }
+        TagValue::Empty => 0.0,
+        _ => 0.0,
+    };
+    TagValue::F64(f.cos())
+}
+
+/// Perl atan2() function - arctangent of y/x
+pub fn atan2<T: Into<TagValue>>(y: T, x: T) -> TagValue {
+    let y_val = y.into();
+    let x_val = x.into();
+
+    let y_f = match y_val {
+        TagValue::F64(f) => f,
+        TagValue::I32(i) => i as f64,
+        TagValue::I16(i) => i as f64,
+        TagValue::U8(i) => i as f64,
+        TagValue::U16(i) => i as f64,
+        TagValue::U32(i) => i as f64,
+        TagValue::U64(i) => i as f64,
+        TagValue::String(s) => s.parse::<f64>().unwrap_or(0.0),
+        TagValue::Rational(num, denom) => {
+            if denom != 0 {
+                num as f64 / denom as f64
+            } else {
+                0.0
+            }
+        }
+        TagValue::SRational(num, denom) => {
+            if denom != 0 {
+                num as f64 / denom as f64
+            } else {
+                0.0
+            }
+        }
+        TagValue::Empty => 0.0,
+        _ => 0.0,
+    };
+
+    let x_f = match x_val {
+        TagValue::F64(f) => f,
+        TagValue::I32(i) => i as f64,
+        TagValue::I16(i) => i as f64,
+        TagValue::U8(i) => i as f64,
+        TagValue::U16(i) => i as f64,
+        TagValue::U32(i) => i as f64,
+        TagValue::U64(i) => i as f64,
+        TagValue::String(s) => s.parse::<f64>().unwrap_or(0.0),
+        TagValue::Rational(num, denom) => {
+            if denom != 0 {
+                num as f64 / denom as f64
+            } else {
+                0.0
+            }
+        }
+        TagValue::SRational(num, denom) => {
+            if denom != 0 {
+                num as f64 / denom as f64
+            } else {
+                0.0
+            }
+        }
+        TagValue::Empty => 0.0,
+        _ => 0.0,
+    };
+
+    TagValue::F64(y_f.atan2(x_f))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -115,7 +115,7 @@ mod tests {
         let _result = pack_c_star_bit_extract(&TagValue::I32(0x1234), &[8, 0], 0xFF, 0);
         // 0x1234 >> 8 = 0x12, 0x1234 >> 0 = 0x34
         // Should pack as bytes [0x12, 0x34] → string
-        
+
         // Test with mask and offset
         let result = pack_c_star_bit_extract(&TagValue::I32(0x1F), &[0], 0x1F, 0x40);
         // (0x1F >> 0) & 0x1F + 0x40 = 0x1F + 0x40 = 0x5F
