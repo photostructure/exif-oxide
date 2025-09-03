@@ -230,13 +230,14 @@ pub struct ExifReader {
 - Failures only discovered months later during real-world testing
 - Cost: 100+ bug reports from manual transcription errors
 
-**EXAMPLE 4: Disabled Infrastructure**
-- Engineer disabled AST normalizer because of integration complexity
-- Created broken expectations throughout PPI system
-- Required systematic enablement with proper error handling
-- Cost: Technical debt that compounded over multiple months
+**EXAMPLE 4: Arithmetic Operations Bug (2025)**
+- Critical precedence climbing bugs completely ignored basic arithmetic
+- `$val + 4` generated `val` instead of `(val + 4i32)` - silently wrong!
+- Broke ExifTool compatibility for temperature conversions, offset calculations
+- Required emergency fix with proper precedence climbing algorithm
+- Cost: Potential data corruption for thousands of ExifTool expressions
 
-**Why These Patterns Are Banned**: Each rule prevents specific disasters that have already happened multiple times. This isn't theoretical - these are lessons learned from actual emergency recoveries.
+**Why These Patterns Are Banned**: Each rule prevents specific disasters that have already happened. The arithmetic bug shows how AST processing bugs can silently corrupt data while appearing to work.
 
 ## Development Workflow
 
@@ -307,11 +308,11 @@ pub struct ExifReader {
 - PrintConv/ValueConv infrastructure with registry
 - Canon MakerNote support with offset fixing
 - Composite tag framework with runtime evaluation
-- Multi-pass AST normalization system for Perl expression translation
+- **Unified precedence climbing normalizer** (consolidated 6 expression normalizers into 1)
 - Complete PPI→AST→Rust test generation pipeline with function deduplication
 - Two-phase test generation with PpiFunctionRegistry integration
 - TagValue arithmetic operators for expression evaluation
-- Debug mode for single-file expression testing
+- **Fixed arithmetic operations** - all basic math (`+`, `-`, `*`, `/`) working correctly
 
 ### Current Focus
 See [MILESTONES.md](MILESTONES.md) for active development priorities.
@@ -337,57 +338,62 @@ See [MILESTONES.md](MILESTONES.md) for active development priorities.
 - [PRINTCONV-VALUECONV-GUIDE.md](guides/PRINTCONV-VALUECONV-GUIDE.md) - Expression processing details
 - [EXIFTOOL-GUIDE.md](guides/EXIFTOOL-GUIDE.md) - Working with ExifTool source
 
-## Expression Processing Architecture
+## PPI Expression Processing: The Critical Path
 
-### Consistent Binary Operations Flow
+### Unified Precedence Climbing (2025 Architecture)
 
-**ALL binary operations must follow the same processing path:**
+**KEY SUCCESS**: Consolidated 6 separate normalizers into 1 using precedence climbing algorithm:
 
-```mermaid
-flowchart LR
-    A[AST Nodes] --> B[ExpressionCombiner::combine_statement_parts]
-    B --> C[try_binary_operation_pattern]
-    C --> D[BinaryOperationsHandler::generate_binary_operation_from_parts]
-    D --> E[StringOperationsHandler::handle_regex_operation]
+```
+8 normalizers (3,383 lines) → 3 normalizers (683 lines)
+
+✅ UNIFIED: ExpressionPrecedenceNormalizer handles:
+  - Binary operations (+, -, *, /, ==, !=, etc.)
+  - String operations (concatenation, regex)
+  - Function calls with proper precedence
+  - Ternary operations (?:)
+  - Complex patterns (join+unpack, safe division)
+
+✅ PRESERVED: Structural passes remain separate:
+  - ConditionalStatementsNormalizer (if/return restructuring)
+  - SneakyConditionalAssignmentNormalizer (complex control flow)
 ```
 
-**❌ ANTI-PATTERN**: Special-case pattern matching in `process_node_sequence()`
-```rust
-// BANNED - Creates inconsistent architecture
-if children[i].class == "PPI::Token::Symbol"
-    && children[i + 1].content == Some("=~")
-    && children[i + 2].class == "PPI::Token::Regexp::Substitute"
-{
-    // Special handling here breaks consistency
-}
+**Processing Flow**:
+```
+PPI Raw AST → ExpressionPrecedenceNormalizer → BinaryOperation nodes → Visitor → Rust code
+
+Example: $val + 4
+├─ Raw: [Symbol($val), Operator(+), Number(4)]
+├─ Normalized: BinaryOperation("+", Symbol($val), Number(4))
+└─ Generated: (val + 4i32)
 ```
 
-**✅ CORRECT PATTERN**: All binary operations go through expression handlers
-```rust
-// Binary operations detected by ExpressionCombiner
-if let Some(result) = self.try_binary_operation_pattern(parts)? {
-    return Ok(result);
-}
+### Critical Debugging Commands
+
+```bash
+# Test any expression through the full pipeline
+cargo run --bin debug-ppi -- --verbose '$val + 4'
+
+# Validate precedence climbing works
+make generate-expression-tests && cargo test -p codegen --test generated_expressions
+
+# Check if expression creates correct BinaryOperation node
+RUST_LOG=debug cargo run --bin debug-ppi -- '$val * 100 + 50'
+# Should show: "Created binary operation: *" and "Created binary operation: +"
 ```
 
-### Expression Handler Responsibilities
+### Expression Processing Gotchas
 
-- **Binary Operations**: `+`, `-`, `*`, `/`, `=~`, `!~`, `eq`, `ne`, etc.
-- **String Operations**: Concatenation (`.`), regex matching, substitution
-- **Normalized AST**: Structured nodes created by normalizers
-- **Complex Patterns**: Multi-token patterns like `join unpack`, `sprintf`
+**🚨 CRITICAL**: The precedence climbing algorithm is **complex but essential**:
+- **DO NOT** simplify the precedence logic - it handles Perl's exact operator precedence
+- **DO NOT** bypass ExpressionPrecedenceNormalizer for "simple" cases
+- **ALWAYS** test with `debug-ppi` tool before assuming expressions work
 
-**Key Principle**: Each handler has single responsibility and well-defined scope.
-
-### Why This Architecture Prevents Disasters
-
-**Historical Problem**: Engineers would add special-case pattern matching in `process_node_sequence()` for some binary operations while others went through `ExpressionCombiner`. This created:
-
-1. **Inconsistent enhancement** - improvements to binary operations only applied to some cases
-2. **Architectural confusion** - unclear where to add new operator support
-3. **Emergency recoveries** - when inconsistencies broke regex handling across the codebase
-
-**The Fix**: All binary operations follow the same path, making the system predictable and maintainable.
+**Common Failure Modes**:
+1. **Unary vs Binary Detection**: `+4` (unary) vs `$val + 4` (binary) requires left-operand context
+2. **Precedence Bugs**: `$val + 4 * 2` must generate `(val + (4i32 * 2i32))`, not `((val + 4i32) * 2i32)`
+3. **Token Position Tracking**: Parser position bugs cause operations to be silently dropped
 
 ## Conclusion
 
