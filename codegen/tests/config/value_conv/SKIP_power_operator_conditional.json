@@ -1,0 +1,45 @@
+{
+  "$schema": "../schema.json",
+  "description": "Power operator with conditional logic - tests right-associative operator precedence",
+  "expression": "abs($val)<100 ? 1/(2**$val) : 0",
+  "type": "ValueConv",
+  "exiftool_reference": "XMP.ShutterSpeedValue - converts APEX shutter speed values to fractions",
+  "test_cases": [
+    {
+      "description": "APEX value 3: 2^3 = 8, so 1/8 = 0.125",
+      "input": {
+        "F64": 3.0
+      },
+      "expected": {
+        "F64": 0.125
+      }
+    },
+    {
+      "description": "APEX value 5: 2^5 = 32, so 1/32 = 0.03125",
+      "input": {
+        "F64": 5.0
+      },
+      "expected": {
+        "F64": 0.03125
+      }
+    },
+    {
+      "description": "Large APEX value 150 (>=100): returns 0",
+      "input": {
+        "F64": 150.0
+      },
+      "expected": {
+        "F64": 0.0
+      }
+    },
+    {
+      "description": "Negative APEX value -2: abs(-2) = 2, 2^2 = 4, so 1/4 = 0.25",
+      "input": {
+        "F64": -2.0
+      },
+      "expected": {
+        "F64": 0.25
+      }
+    }
+  ]
+}

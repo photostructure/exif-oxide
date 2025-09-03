@@ -1,0 +1,126 @@
+{
+  "$schema": "../schema.json",
+  "description": "Cast to int with arithmetic",
+  "expression": "int($val * 100 + 0.5) / 100",
+  "type": "PrintConv",
+  "exiftool_reference": "Photoshop::Resolution.XResolution, Olympus::Main.ISOValue",
+  "test_cases": [
+    {
+      "description": "Round down: 1.234 -> 1.23",
+      "input": {
+        "F64": 1.234
+      },
+      "expected": {
+        "F64": 1.23
+      }
+    },
+    {
+      "description": "Round up: 1.235 -> 1.24",
+      "input": {
+        "F64": 1.235
+      },
+      "expected": {
+        "F64": 1.24
+      }
+    },
+    {
+      "description": "Round up: 1.236 -> 1.24",
+      "input": {
+        "F64": 1.236
+      },
+      "expected": {
+        "F64": 1.24
+      }
+    },
+    {
+      "description": "Exact two decimals: 2.50 -> 2.50",
+      "input": {
+        "F64": 2.5
+      },
+      "expected": {
+        "F64": 2.5
+      }
+    },
+    {
+      "description": "Integer value: 5 -> 5.00",
+      "input": {
+        "F64": 5.0
+      },
+      "expected": {
+        "F64": 5.0
+      }
+    },
+    {
+      "description": "Small value round down: 0.123 -> 0.12",
+      "input": {
+        "F64": 0.123
+      },
+      "expected": {
+        "F64": 0.12
+      }
+    },
+    {
+      "description": "Small value round up: 0.125 -> 0.13",
+      "input": {
+        "F64": 0.125
+      },
+      "expected": {
+        "F64": 0.13
+      }
+    },
+    {
+      "description": "Negative value: -1.234 -> -1.22 (int truncates toward zero)",
+      "input": {
+        "F64": -1.234
+      },
+      "expected": {
+        "F64": -1.22
+      }
+    },
+    {
+      "description": "Negative value: -1.236 -> -1.23 (int truncates toward zero)",
+      "input": {
+        "F64": -1.236
+      },
+      "expected": {
+        "F64": -1.23
+      }
+    },
+    {
+      "description": "Zero value: 0.0 -> 0.0",
+      "input": {
+        "F64": 0.0
+      },
+      "expected": {
+        "F64": 0.0
+      }
+    },
+    {
+      "description": "Small negative: -0.5 -> -0.49 (int truncates toward zero)",
+      "input": {
+        "F64": -0.5
+      },
+      "expected": {
+        "F64": -0.49
+      }
+    },
+    {
+      "description": "Large positive: 999.999 -> 1000.0",
+      "input": {
+        "F64": 999.999
+      },
+      "expected": {
+        "F64": 1000.0
+      }
+    },
+    {
+      "description": "Large negative: -999.999 -> -999.99 (int truncates toward zero)",
+      "input": {
+        "F64": -999.999
+      },
+      "expected": {
+        "F64": -999.99
+      }
+    }
+  ]
+}

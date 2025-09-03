@@ -1,0 +1,45 @@
+{
+  "$schema": "../schema.json",
+  "description": "Function result raised to power - tests function call precedence with power operator",
+  "expression": "sqrt(2) ** $val",
+  "type": "ValueConv",
+  "exiftool_reference": "XMP.ApertureValue - converts APEX aperture values to f-stops",
+  "test_cases": [
+    {
+      "description": "APEX value 2: sqrt(2)^2 = 1.414^2 ≈ 2.0",
+      "input": {
+        "F64": 2.0
+      },
+      "expected": {
+        "F64": 2.0
+      }
+    },
+    {
+      "description": "APEX value 3: sqrt(2)^3 = 1.414^3 ≈ 2.828",
+      "input": {
+        "F64": 3.0
+      },
+      "expected": {
+        "F64": 2.8284271247461903
+      }
+    },
+    {
+      "description": "APEX value 1: sqrt(2)^1 = 1.414",
+      "input": {
+        "F64": 1.0
+      },
+      "expected": {
+        "F64": 1.4142135623730951
+      }
+    },
+    {
+      "description": "APEX value 4: sqrt(2)^4 = 1.414^4 = 4.0",
+      "input": {
+        "F64": 4.0
+      },
+      "expected": {
+        "F64": 4.0
+      }
+    }
+  ]
+}

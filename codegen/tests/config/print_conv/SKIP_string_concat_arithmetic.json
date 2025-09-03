@@ -1,0 +1,45 @@
+{
+  "$schema": "../schema.json",
+  "description": "String concatenation with arithmetic expression - tests mixed string/arithmetic precedence",
+  "expression": "(int($val*10)/10) . \" m\"",
+  "type": "PrintConv",
+  "exiftool_reference": "GPS altitude display - formats elevation with units (extracted from GPS coordinate expressions)",
+  "test_cases": [
+    {
+      "description": "Altitude 12.456: (int(12.456*10)/10) . \" m\" = \"12.4 m\"",
+      "input": {
+        "F64": 12.456
+      },
+      "expected": {
+        "String": "12.4 m"
+      }
+    },
+    {
+      "description": "Altitude 100.89: (int(100.89*10)/10) . \" m\" = \"100.8 m\"",
+      "input": {
+        "F64": 100.89
+      },
+      "expected": {
+        "String": "100.8 m"
+      }
+    },
+    {
+      "description": "Zero altitude: (int(0*10)/10) . \" m\" = \"0 m\"",
+      "input": {
+        "F64": 0.0
+      },
+      "expected": {
+        "String": "0 m"
+      }
+    },
+    {
+      "description": "Negative altitude -45.67: (int(-45.67*10)/10) . \" m\" = \"-45.6 m\"",
+      "input": {
+        "F64": -45.67
+      },
+      "expected": {
+        "String": "-45.6 m"
+      }
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "$schema": "../schema.json",
+  "description": "Basic int() function tests",
+  "expression": "int($val)",
+  "type": "PrintConv",
+  "exiftool_reference": "Perl's int() function truncates toward zero",
+  "test_cases": [
+    {
+      "description": "Positive float truncation",
+      "input": {
+        "F64": 3.14
+      },
+      "expected": {
+        "F64": 3.0
+      }
+    },
+    {
+      "description": "Negative float truncation",
+      "input": {
+        "F64": -3.14
+      },
+      "expected": {
+        "F64": -3.0
+      }
+    },
+    {
+      "description": "Integer value unchanged",
+      "input": {
+        "I32": 42
+      },
+      "expected": {
+        "F64": 42.0
+      }
+    },
+    {
+      "description": "String number parsing",
+      "input": {
+        "String": "3.14"
+      },
+      "expected": {
+        "F64": 3.0
+      }
+    },
+    {
+      "description": "Non-numeric string returns 0",
+      "input": {
+        "String": "hello"
+      },
+      "expected": {
+        "F64": 0.0
+      }
+    },
+    {
+      "description": "Empty string returns 0",
+      "input": {
+        "String": ""
+      },
+      "expected": {
+        "F64": 0.0
+      }
+    }
+  ]
+}

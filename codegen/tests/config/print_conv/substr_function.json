@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "Basic substr() function tests",
+  "expression": "substr($val, 1, 3)",
+  "type": "PrintConv",
+  "exiftool_reference": "Perl's substr() function extracts substring",
+  "test_cases": [
+    {
+      "description": "Extract middle characters",
+      "input": {
+        "String": "hello world"
+      },
+      "expected": {
+        "String": "ell"
+      }
+    },
+    {
+      "description": "Extract from short string",
+      "input": {
+        "String": "hi"
+      },
+      "expected": {
+        "String": "i"
+      }
+    },
+    {
+      "description": "Extract beyond string length",
+      "input": {
+        "String": "a"
+      },
+      "expected": {
+        "String": ""
+      }
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "$schema": "../schema.json",
   "description": "Voltage display formatting with sprintf",
-  "expression": "sprintf(\"%.2f V\", $val)",
+  "expression": "sprintf(\"%.2f V\", $val / 100)",
   "type": "PrintConv",
   "exiftool_reference": "lib/Image/ExifTool/Battery.pm:42",
   "test_cases": [
@@ -28,7 +28,7 @@
       "input": {
         "Rational": [
           325,
-          100
+          1
         ]
       },
       "expected": {

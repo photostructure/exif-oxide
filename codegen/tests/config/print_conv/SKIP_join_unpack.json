@@ -1,7 +1,7 @@
 {
   "$schema": "../schema.json",
   "description": "Join and unpack pattern for hex formatting",
-  "expression": "join \" \", unpack \"H2H2\", $val", // 'join " ", unpack "H2H2", $val',
+  "expression": "join \" \", unpack \"H2H2\", $val",
   "type": "PrintConv",
   "exiftool_reference": "lib/Image/ExifTool/Panasonic.pm:234",
   "test_cases": [

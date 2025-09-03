@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "Simple subtraction - testing if arithmetic operations are preserved",
+  "expression": "$val - 10",
+  "type": "ValueConv",
+  "exiftool_reference": "Basic arithmetic subtraction should be preserved",
+  "test_cases": [
+    {
+      "description": "Subtract 10 from input: 50 - 10 = 40",
+      "input": {
+        "U32": 50
+      },
+      "expected": {
+        "U32": 40
+      }
+    },
+    {
+      "description": "Subtract 10 from 10: 10 - 10 = 0",
+      "input": {
+        "U32": 10
+      },
+      "expected": {
+        "U32": 0
+      }
+    },
+    {
+      "description": "Subtract 10 from larger value: 200 - 10 = 190",
+      "input": {
+        "U32": 200
+      },
+      "expected": {
+        "U32": 190
+      }
+    }
+  ]
+}

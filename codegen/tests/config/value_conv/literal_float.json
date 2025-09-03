@@ -1,9 +1,9 @@
 {
   "$schema": "../schema.json",
-  "description": "Float number literal (migrated from numeric_string_ops.rs)",
+  "description": "Enhanced float number literal (migrated from numeric_string_ops.rs)",
   "expression": "25.4",
   "type": "ValueConv",
-  "exiftool_reference": "common in metric conversions (mm to inches: 25.4mm/inch)",
+  "exiftool_reference": "float literals used for precision calculations",
   "test_cases": [
     {
       "description": "Float literal as constant",

@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "Basic index() function tests",
+  "expression": "index($val, \"world\")",
+  "type": "PrintConv",
+  "exiftool_reference": "Perl's index() function finds substring position",
+  "test_cases": [
+    {
+      "description": "Find substring at middle",
+      "input": {
+        "String": "hello world"
+      },
+      "expected": {
+        "I32": 6
+      }
+    },
+    {
+      "description": "Substring not found",
+      "input": {
+        "String": "hello"
+      },
+      "expected": {
+        "I32": -1
+      }
+    },
+    {
+      "description": "Find at beginning",
+      "input": {
+        "String": "world hello"
+      },
+      "expected": {
+        "I32": 0
+      }
+    }
+  ]
+}
