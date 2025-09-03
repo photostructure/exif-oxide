@@ -1,0 +1,54 @@
+{
+  "$schema": "../schema.json",
+  "description": "Unary negation operations (Sony ExposureCompensation and similar tags)",
+  "expression": "-$val/256",
+  "type": "ValueConv",
+  "exiftool_reference": "lib/Image/ExifTool/Sony.pm:ExposureCompensation",
+  "test_cases": [
+    {
+      "description": "Zero case: -0/256 = 0",
+      "input": {
+        "I32": 0
+      },
+      "expected": {
+        "I32": 0
+      }
+    },
+    {
+      "description": "Standard case: -256/256 = -1",
+      "input": {
+        "I32": 256
+      },
+      "expected": {
+        "I32": -1
+      }
+    },
+    {
+      "description": "Negative input: -(-256)/256 = 1",
+      "input": {
+        "I32": -256
+      },
+      "expected": {
+        "I32": 1
+      }
+    },
+    {
+      "description": "Larger value: -512/256 = -2",
+      "input": {
+        "I32": 512
+      },
+      "expected": {
+        "I32": -2
+      }
+    },
+    {
+      "description": "Fractional case with integer truncation: -128/256 = 0 (integer division)",
+      "input": {
+        "I32": 128
+      },
+      "expected": {
+        "I32": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "Simple addition - CRITICAL BUG: generates just 'val' instead of 'val + 4'",
+  "expression": "$val + 4",
+  "type": "ValueConv",
+  "exiftool_reference": "Basic arithmetic addition should be preserved",
+  "test_cases": [
+    {
+      "description": "Add 4 to input value: 10 + 4 = 14",
+      "input": {
+        "U32": 10
+      },
+      "expected": {
+        "U32": 14
+      }
+    },
+    {
+      "description": "Add 4 to zero: 0 + 4 = 4",
+      "input": {
+        "U32": 0
+      },
+      "expected": {
+        "U32": 4
+      }
+    },
+    {
+      "description": "Add 4 to larger value: 100 + 4 = 104",
+      "input": {
+        "U32": 100
+      },
+      "expected": {
+        "U32": 104
+      }
+    }
+  ]
+}

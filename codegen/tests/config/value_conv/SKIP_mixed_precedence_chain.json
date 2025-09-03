@@ -1,0 +1,45 @@
+{
+  "$schema": "../schema.json",
+  "description": "Mixed precedence chain - tests left-to-right evaluation of same-precedence operators",
+  "expression": "$val * 25 / 1000000",
+  "type": "ValueConv",
+  "exiftool_reference": "Dimension calculations - similar to regex pattern '$d[0] * $d[1] / 1000000' found in required expressions",
+  "test_cases": [
+    {
+      "description": "Value 40000: 40000 * 25 / 1000000 = 1000000 / 1000000 = 1.0",
+      "input": {
+        "U32": 40000
+      },
+      "expected": {
+        "F64": 1.0
+      }
+    },
+    {
+      "description": "Value 80000: 80000 * 25 / 1000000 = 2000000 / 1000000 = 2.0",
+      "input": {
+        "U32": 80000
+      },
+      "expected": {
+        "F64": 2.0
+      }
+    },
+    {
+      "description": "Value 20000: 20000 * 25 / 1000000 = 500000 / 1000000 = 0.5",
+      "input": {
+        "U32": 20000
+      },
+      "expected": {
+        "F64": 0.5
+      }
+    },
+    {
+      "description": "Value 1000: 1000 * 25 / 1000000 = 25000 / 1000000 = 0.025",
+      "input": {
+        "U32": 1000
+      },
+      "expected": {
+        "F64": 0.025
+      }
+    }
+  ]
+}

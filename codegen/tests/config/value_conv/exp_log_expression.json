@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "Exponential and logarithm function test",
+  "expression": "exp($val/32*log(2))*100",
+  "type": "ValueConv",
+  "exiftool_reference": "Canon::ShotInfo.AutoISO",
+  "test_cases": [
+    {
+      "description": "Basic calculation: exp(32/32*log(2))*100 = exp(log(2))*100 = 2*100 = 200",
+      "input": {
+        "F64": 32.0
+      },
+      "expected": {
+        "F64": 200.0
+      }
+    },
+    {
+      "description": "Zero input: exp(0/32*log(2))*100 = exp(0)*100 = 1*100 = 100",
+      "input": {
+        "F64": 0.0
+      },
+      "expected": {
+        "F64": 100.0
+      }
+    },
+    {
+      "description": "Double value: exp(64/32*log(2))*100 = exp(2*log(2))*100 = exp(log(4))*100 = 4*100 = 400",
+      "input": {
+        "F64": 64.0
+      },
+      "expected": {
+        "F64": 400.0
+      }
+    }
+  ]
+}

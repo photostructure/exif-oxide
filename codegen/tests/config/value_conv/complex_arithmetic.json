@@ -1,0 +1,36 @@
+{
+  "$schema": "../schema.json",
+  "description": "Complex arithmetic expression with addition and division - REGRESSION TEST",
+  "expression": "($val + 100) / 2",
+  "type": "ValueConv",
+  "exiftool_reference": "Complex arithmetic operations should preserve all terms",
+  "test_cases": [
+    {
+      "description": "Basic calculation: (50 + 100) / 2 = 75",
+      "input": {
+        "U32": 50
+      },
+      "expected": {
+        "U32": 75
+      }
+    },
+    {
+      "description": "Zero input: (0 + 100) / 2 = 50",
+      "input": {
+        "U32": 0
+      },
+      "expected": {
+        "U32": 50
+      }
+    },
+    {
+      "description": "Large value: (200 + 100) / 2 = 150",
+      "input": {
+        "U32": 200
+      },
+      "expected": {
+        "U32": 150
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "../schema.json",
+  "description": "Length function without parentheses",
+  "expression": "length $val",
+  "type": "PrintConv",
+  "exiftool_reference": "Perl's length function can be called without parens",
+  "test_cases": [
+    {
+      "description": "Numeric value converted to string",
+      "input": {
+        "I32": 123
+      },
+      "expected": {
+        "String": "3"
+      }
+    },
+    {
+      "description": "Zero numeric value",
+      "input": {
+        "I32": 0
+      },
+      "expected": {
+        "String": "1"
+      }
+    }
+  ]
+}

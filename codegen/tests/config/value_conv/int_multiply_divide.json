@@ -1,0 +1,45 @@
+{
+  "$schema": "../schema.json",
+  "description": "Integer casting with multiplication and division - tests function call precedence",
+  "expression": "int($val * 10) / 10",
+  "type": "ValueConv",
+  "exiftool_reference": "GPS altitude rounding - found in GPS coordinate processing expressions",
+  "test_cases": [
+    {
+      "description": "Value 3.456: int(3.456 * 10) / 10 = int(34.56) / 10 = 34 / 10 = 3.4",
+      "input": {
+        "F64": 3.456
+      },
+      "expected": {
+        "F64": 3.4
+      }
+    },
+    {
+      "description": "Value 7.89: int(7.89 * 10) / 10 = int(78.9) / 10 = 78 / 10 = 7.8",
+      "input": {
+        "F64": 7.89
+      },
+      "expected": {
+        "F64": 7.8
+      }
+    },
+    {
+      "description": "Value 1.11: int(1.11 * 10) / 10 = int(11.1) / 10 = 11 / 10 = 1.1",
+      "input": {
+        "F64": 1.11
+      },
+      "expected": {
+        "F64": 1.1
+      }
+    },
+    {
+      "description": "Negative value -2.67: int(-2.67 * 10) / 10 = int(-26.7) / 10 = -26 / 10 = -2.6",
+      "input": {
+        "F64": -2.67
+      },
+      "expected": {
+        "F64": -2.6
+      }
+    }
+  ]
+}

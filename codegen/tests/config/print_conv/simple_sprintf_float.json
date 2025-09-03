@@ -6,7 +6,7 @@
   "exiftool_reference": "SigmaRaw.APERTURE and XMP.ApertureValue - common aperture formatting",
   "test_cases": [
     {
-      "description": "1.4 -> 1.4", 
+      "description": "1.4 -> 1.4",
       "input": {
         "F64": 1.4
       },
