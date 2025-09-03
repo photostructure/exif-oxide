@@ -42,7 +42,9 @@ pub trait PpiVisitor {
             "IfStatement" => self.visit_normalized_if_statement(node),
             "StringConcat" => self.visit_normalized_string_concat(node),
             "StringRepeat" => self.visit_normalized_string_repeat(node),
-            "TernaryOp" | "TernaryOperation" | "SafeDivision" => self.visit_normalized_ternary_op(node),
+            "TernaryOp" | "TernaryOperation" | "SafeDivision" => {
+                self.visit_normalized_ternary_op(node)
+            }
             "BinaryOperation" => self.visit_normalized_binary_operation(node),
             // Normalized component nodes (parts of larger structures)
             "Condition" | "Assignment" | "TrueBranch" | "FalseBranch" => {
@@ -298,7 +300,7 @@ pub trait PpiVisitor {
                         "safe_reciprocal requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("crate::fmt::safe_reciprocal(&{})", args[0]))
+                Ok(format!("codegen_runtime::safe_reciprocal(&{})", args[0]))
             }
             "safe_division" => {
                 if args.len() != 2 {
@@ -307,7 +309,7 @@ pub trait PpiVisitor {
                     ));
                 }
                 Ok(format!(
-                    "crate::fmt::safe_division({}.0, &{})",
+                    "codegen_runtime::safe_division({}.0, &{})",
                     args[0], args[1]
                 ))
             }
@@ -317,7 +319,63 @@ pub trait PpiVisitor {
                         "log requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("({} as f64).ln()", args[0]))
+                Ok(format!("log({})", args[0]))
+            }
+            "exp" => {
+                if args.len() != 1 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "exp requires exactly 1 argument".to_string(),
+                    ));
+                }
+                Ok(format!("exp({})", args[0]))
+            }
+            "int" => {
+                if args.len() != 1 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "int requires exactly 1 argument".to_string(),
+                    ));
+                }
+                Ok(format!("int({})", args[0]))
+            }
+            "abs" => {
+                if args.len() != 1 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "abs requires exactly 1 argument".to_string(),
+                    ));
+                }
+                Ok(format!("abs({})", args[0]))
+            }
+            "sqrt" => {
+                if args.len() != 1 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "sqrt requires exactly 1 argument".to_string(),
+                    ));
+                }
+                Ok(format!("sqrt({})", args[0]))
+            }
+            "sin" => {
+                if args.len() != 1 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "sin requires exactly 1 argument".to_string(),
+                    ));
+                }
+                Ok(format!("sin({})", args[0]))
+            }
+            "cos" => {
+                if args.len() != 1 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "cos requires exactly 1 argument".to_string(),
+                    ));
+                }
+                Ok(format!("cos({})", args[0]))
+            }
+            "atan2" => {
+                if args.len() != 2 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "atan2 requires exactly 2 arguments".to_string(),
+                    ));
+                }
+                Ok(format!("atan2({}, {})", args[0], args[1]))
             }
             "length" => {
                 if args.len() != 1 {
@@ -325,17 +383,10 @@ pub trait PpiVisitor {
                         "length requires exactly 1 argument".to_string(),
                     ));
                 }
-                let var = &args[0];
                 match self.expression_type() {
-                    ExpressionType::PrintConv => Ok(format!(
-                        "TagValue::String(match {} {{ TagValue::String(s) => s.len().to_string(), _ => \"0\".to_string() }})",
-                        var
-                    )),
-                    ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::I32(match {} {{ TagValue::String(s) => s.len() as i32, _ => 0 }})",
-                        var
-                    )),
-                    _ => Ok(format!("match {} {{ TagValue::String(s) => s.len() as i32, _ => 0 }}", var)),
+                    ExpressionType::PrintConv => Ok(format!("length_string({})", args[0])),
+                    ExpressionType::ValueConv => Ok(format!("length_i32({})", args[0])),
+                    _ => Ok(format!("length_i32({})", args[0])),
                 }
             }
             "sprintf" => {
@@ -346,7 +397,8 @@ pub trait PpiVisitor {
                 }
                 let format_str = &args[0];
                 let sprintf_args = if args.len() > 1 {
-                    let cloned_args = args[1..].iter()
+                    let cloned_args = args[1..]
+                        .iter()
                         .map(|arg| format!("{}.clone()", arg))
                         .collect::<Vec<_>>()
                         .join(", ");
@@ -354,16 +406,52 @@ pub trait PpiVisitor {
                 } else {
                     "&[]".to_string()
                 };
-                
-                tracing::debug!("Generating sprintf call: format={}, args={}", format_str, sprintf_args);
-                
+
+                tracing::debug!(
+                    "Generating sprintf call: format={}, args={}",
+                    format_str,
+                    sprintf_args
+                );
+
                 match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::String(codegen_runtime::fmt::sprintf_perl({}, {}))",
+                        "TagValue::String(codegen_runtime::sprintf_perl({}, {}))",
                         format_str, sprintf_args
                     )),
-                    _ => Ok(format!("codegen_runtime::fmt::sprintf_perl({}, {})", format_str, sprintf_args)),
+                    _ => Ok(format!(
+                        "codegen_runtime::sprintf_perl({}, {})",
+                        format_str, sprintf_args
+                    )),
                 }
+            }
+            "substr" => {
+                if args.len() < 2 || args.len() > 3 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "substr requires 2 or 3 arguments (string, offset, [length])".to_string(),
+                    ));
+                }
+                let func_name = if args.len() == 2 {
+                    "substr_2arg"
+                } else {
+                    "substr_3arg"
+                };
+                let args_str = args.join(", ");
+                Ok(format!("codegen_runtime::{}({})", func_name, args_str))
+            }
+            "index" => {
+                if args.len() < 2 || args.len() > 3 {
+                    return Err(CodeGenError::UnsupportedStructure(
+                        "index requires 2 or 3 arguments (haystack, needle, [position])"
+                            .to_string(),
+                    ));
+                }
+                let func_name = if args.len() == 2 {
+                    "index_2arg"
+                } else {
+                    "index_3arg"
+                };
+                let args_str = args.join(", ");
+                Ok(format!("codegen_runtime::{}({})", func_name, args_str))
             }
             "join" => {
                 if args.len() != 2 {
@@ -375,10 +463,13 @@ pub trait PpiVisitor {
                 let list = &args[1];
                 match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::String(crate::fmt::join_binary({}, &{}))",
+                        "TagValue::String(codegen_runtime::join_unpack_binary({}, &{}))",
                         separator, list
                     )),
-                    _ => Ok(format!("crate::fmt::join_binary({}, &{})", separator, list)),
+                    _ => Ok(format!(
+                        "codegen_runtime::join_unpack_binary({}, &{})",
+                        separator, list
+                    )),
                 }
             }
             "unpack" => {
@@ -391,11 +482,11 @@ pub trait PpiVisitor {
                 let data = &args[1];
                 match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::String(crate::fmt::unpack_binary({}, &{}))",
+                        "TagValue::String(codegen_runtime::unpack_binary({}, &{}))",
                         format_str, data
                     )),
                     _ => Ok(format!(
-                        "crate::fmt::unpack_binary({}, &{})",
+                        "codegen_runtime::unpack_binary({}, &{})",
                         format_str, data
                     )),
                 }
@@ -758,12 +849,12 @@ pub trait PpiVisitor {
 
             if is_global {
                 Ok(format!(
-                    "TagValue::String(crate::fmt::regex_replace_all(\"{}\", &val.to_string(), \"{}\"))",
+                    "TagValue::String(codegen_runtime::regex_replace(\"{}\", \"{}\", &val.to_string()))",
                     safe_pattern, escaped_replacement
                 ))
             } else {
                 Ok(format!(
-                    "TagValue::String(crate::fmt::regex_replace(\"{}\", &val.to_string(), \"{}\"))",
+                    "TagValue::String(codegen_runtime::regex_replace(\"{}\", \"{}\", &val.to_string()))",
                     safe_pattern, escaped_replacement
                 ))
             }
@@ -1123,10 +1214,9 @@ pub trait PpiVisitor {
     /// Visit normalized binary operation nodes
     /// These are created by the BinaryOperatorNormalizer to group mathematical expressions
     fn visit_normalized_binary_operation(&self, node: &PpiNode) -> Result<String, CodeGenError> {
-        let operator = node
-            .content
-            .as_ref()
-            .ok_or(CodeGenError::MissingContent("binary operation operator".to_string()))?;
+        let operator = node.content.as_ref().ok_or(CodeGenError::MissingContent(
+            "binary operation operator".to_string(),
+        ))?;
 
         if node.children.len() != 2 {
             return Err(CodeGenError::UnsupportedStructure(format!(
@@ -1151,9 +1241,10 @@ pub trait PpiVisitor {
             "." => {
                 // String concatenation
                 match self.expression_type() {
-                    ExpressionType::PrintConv | ExpressionType::ValueConv => {
-                        Ok(format!("TagValue::String(format!(\"{{}}{{}}\", {}, {}))", left, right))
-                    }
+                    ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
+                        "TagValue::String(format!(\"{{}}{{}}\", {}, {}))",
+                        left, right
+                    )),
                     _ => Ok(format!("format!(\"{{}}{{}}\", {}, {})", left, right)),
                 }
             }
@@ -1169,7 +1260,7 @@ pub trait PpiVisitor {
                 // String comparison operators
                 let rust_op = match operator.as_str() {
                     "eq" => "==",
-                    "ne" => "!=", 
+                    "ne" => "!=",
                     "lt" => "<",
                     "gt" => ">",
                     "le" => "<=",
@@ -1185,7 +1276,7 @@ pub trait PpiVisitor {
                 };
 
                 let right_str = if right.starts_with('"') && right.ends_with('"') {
-                    right  
+                    right
                 } else {
                     format!("{}.to_string()", right)
                 };
@@ -1217,5 +1308,4 @@ pub trait PpiVisitor {
             }
         }
     }
-
 }

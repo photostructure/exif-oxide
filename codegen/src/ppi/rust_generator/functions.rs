@@ -3,6 +3,8 @@
 //! This module contains specialized generators for different types of
 //! Perl function calls and their Rust equivalents.
 
+#![allow(dead_code)]
+
 use super::errors::CodeGenError;
 use super::visitor::PpiVisitor;
 use crate::ppi::types::*;
@@ -35,14 +37,14 @@ pub trait FunctionGenerator: PpiVisitor {
                     {
                         // Handle multi-argument unpack call using structured AST
                         format!(
-                            "crate::fmt::unpack_binary(\"{}\", &{})",
+                            "codegen_runtime::unpack_binary(\"{}\", &{})",
                             node.children[1].string_value.as_deref().unwrap_or("H2H2"),
                             node.children[2].content.as_deref().unwrap_or("val")
                         )
                     } else if node.children[1].content.as_deref() == Some("unpack") {
                         // Handle nested unpack call using AST
                         format!(
-                            "crate::fmt::unpack_binary(\"{}\", &val)",
+                            "codegen_runtime::unpack_binary(\"{}\", &val)",
                             node.children[1].string_value.as_deref().unwrap_or("H2H2")
                         )
                     } else {
@@ -289,11 +291,11 @@ pub trait FunctionGenerator: PpiVisitor {
 
                     match self.expression_type() {
                         ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                            "crate::fmt::unpack_binary(\"{}\", &{})",
+                            "codegen_runtime::unpack_binary(\"{}\", &{})",
                             format, data
                         )),
                         _ => Ok(format!(
-                            "crate::fmt::unpack_binary(\"{}\", &{})",
+                            "codegen_runtime::unpack_binary(\"{}\", &{})",
                             format, data
                         )),
                     }
@@ -419,11 +421,11 @@ pub trait FunctionGenerator: PpiVisitor {
                 // Fallback to sprintf_perl for complex patterns
                 match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::String(crate::fmt::sprintf_perl(\"{}\", &[{}]))",
+                        "TagValue::String(codegen_runtime::sprintf_perl(\"{}\", &[{}]))",
                         format_str, processed_arg
                     )),
                     _ => Ok(format!(
-                        "crate::fmt::sprintf_perl(\"{}\", &[{}])",
+                        "codegen_runtime::sprintf_perl(\"{}\", &[{}])",
                         format_str, processed_arg
                     )),
                 }
@@ -434,11 +436,11 @@ pub trait FunctionGenerator: PpiVisitor {
 
             match self.expression_type() {
                 ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                    "TagValue::String(crate::fmt::sprintf_perl(\"{}\", &[{}]))",
+                    "TagValue::String(codegen_runtime::sprintf_perl(\"{}\", &[{}]))",
                     format_str, args_formatted
                 )),
                 _ => Ok(format!(
-                    "crate::fmt::sprintf_perl(\"{}\", &[{}])",
+                    "codegen_runtime::sprintf_perl(\"{}\", &[{}])",
                     format_str, args_formatted
                 )),
             }
@@ -621,7 +623,7 @@ pub trait FunctionGenerator: PpiVisitor {
             _ => {
                 // Use generic unpack function for other formats
                 Ok(format!(
-                    "crate::fmt::unpack_binary(\"{}\", {})?",
+                    "codegen_runtime::unpack_binary(\"{}\", {})?",
                     format, data
                 ))
             }

@@ -22,7 +22,7 @@ use crate::strategies::GeneratedFile;
 impl PpiFunctionRegistry {
     /// Generate all function files after all modules have been processed
     pub fn generate_function_files(&mut self) -> Result<Vec<GeneratedFile>> {
-        self.generate_function_files_with_imports("crate::types::{TagValue, ExifContext}")
+        self.generate_function_files_with_imports("crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}}")
     }
 
     /// Generate all function files with custom imports (for test environment)

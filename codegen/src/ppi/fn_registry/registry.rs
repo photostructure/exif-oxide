@@ -149,19 +149,6 @@ impl PpiFunctionRegistry {
         }
     }
 
-    /// Find AST hash for a given function spec (helper for fallback generation)
-    pub fn find_ast_hash_for_function(&self, function_spec: &FunctionSpec) -> Result<String> {
-        for (ast_hash, spec) in &self.ast_to_function {
-            if spec.function_name == function_spec.function_name {
-                return Ok(ast_hash.clone());
-            }
-        }
-        anyhow::bail!(
-            "No AST hash found for function: {}",
-            function_spec.function_name
-        )
-    }
-
     /// Record conversion attempt for statistics
     pub fn record_conversion_attempt(&mut self, expression_type: ExpressionType) {
         self.conversion_stats.record_attempt(expression_type);
@@ -169,22 +156,7 @@ impl PpiFunctionRegistry {
 
     /// Get registry statistics
     pub fn stats(&self) -> RegistryStats {
-        let total_functions = self.ast_to_function.len();
-        let total_registrations: usize = self
-            .usage_contexts
-            .values()
-            .map(|contexts| contexts.len())
-            .sum();
-        let deduplicated_count = if total_registrations > total_functions {
-            total_registrations - total_functions
-        } else {
-            0
-        };
-
         RegistryStats {
-            total_functions,
-            total_registrations,
-            deduplicated_count,
             conversion_stats: self.conversion_stats.clone(),
         }
     }

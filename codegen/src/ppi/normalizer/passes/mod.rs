@@ -23,13 +23,5 @@ pub use conditional_statements::ConditionalStatementsNormalizer;
 pub use expression_precedence::ExpressionPrecedenceNormalizer;
 pub use sneaky_conditional_assignment::SneakyConditionalAssignmentNormalizer;
 
-// LEGACY EXPORTS: Available for debugging/comparison but not used in pipeline
-pub use binary_operators::BinaryOperatorNormalizer;
-pub use function_calls::FunctionCallNormalizer;
-pub use join_unpack::JoinUnpackPass;
-pub use safe_division::SafeDivisionNormalizer;
-pub use string_ops::StringOpNormalizer;
-pub use ternary::TernaryNormalizer;
-
 #[cfg(test)]
 mod tests;

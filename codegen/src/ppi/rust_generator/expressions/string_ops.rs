@@ -3,6 +3,8 @@
 //! This module handles string operations including concatenation, repetition,
 //! and regex pattern matching.
 
+#![allow(dead_code)]
+
 use crate::ppi::rust_generator::errors::CodeGenError;
 use crate::ppi::types::*;
 
@@ -284,12 +286,12 @@ pub trait StringOperationsHandler {
 
             if is_global {
                 format!(
-                    "crate::fmt::regex_replace_all(\"{}\", &{}.to_string(), \"{}\")",
+                    "codegen_runtime::regex_replace(\"{}\", \"{}\", &{}.to_string())",
                     safe_pattern, left, escaped_replacement
                 )
             } else {
                 format!(
-                    "crate::fmt::regex_replace(\"{}\", &{}.to_string(), \"{}\")",
+                    "codegen_runtime::regex_replace(\"{}\", &{}.to_string(), \"{}\")",
                     safe_pattern, left, escaped_replacement
                 )
             }
