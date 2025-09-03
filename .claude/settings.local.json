@@ -1,7 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Read(/tmp/**)",
+      "Read(/tmp/**)",
+      "Bash(mv:*)",
+      "Bash(cargo test:*)",
+      "Bash(RUST_LOG=debug cargo run --bin ppi_debugger \"0x100\")",
+      "Bash(env RUST_LOG=debug cargo run --bin ppi_debugger \"0x100\")",
+      "Bash(git log:*)",
+      "Bash(gpg:*)",
+      "Bash(env RUST_LOG=debug cargo run --package codegen --bin debug-ppi \"0x100\")",
+      "Bash(cargo run:*)",
+      "Bash(curl:*)",
+      "Bash(git show:*)"
     ],
     "deny": [],
     "ask": [],
