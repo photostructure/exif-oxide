@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,23 +18,23 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Sony::ExtraInfo3.BatteryVoltage1
 /// - Sony::ExtraInfo3.BatteryVoltage2
-pub fn ast_value_4ffb07b2339cdeec(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / 128)
+pub fn ast_value_4ffb07b2339cdeec(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val / 128i32))
 }
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ s/(\d{2})/$1./; $val
 /// ```
 /// Used by:
 /// - Nikon::MakerNotes0x56.FirmwareVersion56
-pub fn ast_value_4f90f27dec9aa072(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        TagValue::String(crate::fmt::regex_replace(
-            "(\\d{2})",
-            &val.to_string(),
-            "$1.",
-        ));
-        val
-    })
+/// TODO: Add support for this expression pattern
+pub fn ast_value_4f90f27dec9aa072(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }

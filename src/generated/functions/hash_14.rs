@@ -6,16 +6,20 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("%.2f dB", $val)
 /// ```
 /// Used by:
 /// - Sony::rtmd.MasterGainAdjustment
-/// TODO: Add support for this expression pattern
 pub fn ast_print_14c647eac637612a(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "%.2f dB".into(),
+        &[val.clone()],
+    ))
 }

@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,15 +13,14 @@ use crate::types::{TagValue, ExifContext};
 /// ```
 /// Used by:
 /// - Olympus::Main.ISOValue
-pub fn ast_value_a040417283f4e897(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(100 * 2 ** (val - 5))
+pub fn ast_value_a040417283f4e897(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(100i32 * 2i32 ** ((val - 5i32)))
 }
 
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// 
 /// $_ = $val;
 /// if (/^(\d{2})(\d{2})\0\0(\d{2})(\d{2})\0\0(\d{2})(.{2})\0{2}$/) {
 /// my $yr = $1 + ($1 < 70 ? 2000 : 1900);
@@ -32,7 +31,6 @@ pub fn ast_value_a040417283f4e897(val: &TagValue) -> Result<TagValue, crate::typ
 /// }
 /// tr/\0/./;  s/\.+$//;
 /// return "Unknown ($_)";
-/// 
 /// ```
 /// Used by:
 /// - Casio::Main.FirmwareDate

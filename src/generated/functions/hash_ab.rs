@@ -5,9 +5,8 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $$self{TimecodeScale} ? "$val s" : $val
@@ -15,11 +14,8 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - Matroska::Main.BlockDuration
 /// - Matroska::Main.ReferenceBlock
-/// TODO: Add support for this expression pattern
-pub fn ast_print_abb6a96ce6de058d(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+pub fn ast_print_abb6a96ce6de058d(val: &TagValue) -> TagValue {
+    if  { format!("{} s", val).into() } else { val }
 }
 
 

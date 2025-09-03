@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -15,8 +19,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Samsung::PictureWizard.PictureWizardContrast
 /// - Samsung::PictureWizard.PictureWizardSaturation
 /// - Samsung::PictureWizard.PictureWizardSharpness
-pub fn ast_value_25716161e402fefe(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val - 4)
+pub fn ast_value_25716161e402fefe(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val - 4i32))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -27,7 +33,9 @@ pub fn ast_value_25716161e402fefe(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Nintendo::CameraInfo.TimeStamp
 /// TODO: Add support for this expression pattern
-pub fn ast_value_250cc155ed2b25a6(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_250cc155ed2b25a6(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

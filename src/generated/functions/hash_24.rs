@@ -6,26 +6,11 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-///
-/// return 'Off' if $val == 0 ;
-/// my $i = sprintf("Frame %.0f of %.0f",$val, $$self{FocusShiftNumberShots}); # something like Frame 1 of 100"   
-/// if ($$self{PixelShiftActive} and $$self{PixelShiftActive} eq 1) {$i = sprintf("Frame %.0f",$val);}   #for the Z8 fw3 with PixelShift Enabled, the frame count is correct, but the frame total needs to be multiplied by the number of PixelShift frames (which I cannot find)
-/// return "On: $i"
-///
-/// ```
-/// Used by:
-/// - Nikon::SeqInfoZ9.FocusShiftShooting
-/// TODO: Add support for this expression pattern
-pub fn ast_print_24e72f70112b2913(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("%.1fx",$val)
@@ -38,8 +23,25 @@ pub fn ast_print_24e72f70112b2913(val: &TagValue) -> TagValue {
 /// - Canon::CameraInfo5D.MacroMagnification
 /// - Canon::CameraInfo5DmkII.MacroMagnification
 /// - Canon::FileInfo.MacroMagnification
-/// TODO: Add support for this expression pattern
 pub fn ast_print_244597bfb4c5779c(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "%.1fx".into(),
+        &[val.clone()],
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// return 'Off' if $val == 0 ;
+/// my $i = sprintf("Frame %.0f of %.0f",$val, $$self{FocusShiftNumberShots}); # something like Frame 1 of 100"   
+/// if ($$self{PixelShiftActive} and $$self{PixelShiftActive} eq 1) {$i = sprintf("Frame %.0f",$val);}   #for the Z8 fw3 with PixelShift Enabled, the frame count is correct, but the frame total needs to be multiplied by the number of PixelShift frames (which I cannot find)
+/// return "On: $i"
+/// ```
+/// Used by:
+/// - Nikon::SeqInfoZ9.FocusShiftShooting
+/// TODO: Add support for this expression pattern
+pub fn ast_print_24e72f70112b2913(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }

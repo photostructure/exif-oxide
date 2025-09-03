@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -22,52 +22,11 @@ use crate::types::{ExifContext, TagValue};
 /// - Pentax::Main.RedBalance
 /// - QuickTime::MovieHeader.PreferredVolume
 /// - QuickTime::TrackHeader.TrackVolume
-pub fn ast_value_70d1d11e7183127a(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / 256)
+pub fn ast_value_70d1d11e7183127a(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val / 256i32))
 }
 
-/// Original perl expression:
-/// ``` perl
-/// $val =~ s/(\d{2})(\d{2})/$1:$2:/; $val
-/// ```
-/// Used by:
-/// - Red::Main.StorageFormatTime
-/// - Red::Main.TimeCreated
-pub fn ast_value_7004e7ca2c0f515b(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        TagValue::String(crate::fmt::regex_replace(
-            "(\\d{2})(\\d{2})",
-            &val.to_string(),
-            "$1:$2:",
-        ));
-        val
-    })
-}
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-///
-/// my ($a,$b) = split ' ',$val;
-/// return 'Off' unless $a;
-/// my %a = (
-/// 1 => 'Left to Right',
-/// 2 => 'Right to Left',
-/// 3 => 'Bottom to Top',
-/// 4 => 'Top to Bottom',
-/// );
-/// return(($a{$a} || "Unknown ($a)") . ', Shot ' . $b);
-///
-/// ```
-/// Used by:
-/// - Olympus::CameraSettings.PanoramaMode
-/// TODO: Add support for this expression pattern
-pub fn ast_print_70620f00a1c89dd5(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// unpack "H*", pack "C*", split " ", $val
@@ -77,8 +36,47 @@ pub fn ast_print_70620f00a1c89dd5(val: &TagValue) -> TagValue {
 /// - Sony::Tag9050b.InternalSerialNumber
 /// - Sony::Tag9050c.InternalSerialNumber
 /// - Sony::Tag9050d.InternalSerialNumber
-/// TODO: Add support for this expression pattern
 pub fn ast_print_70245c821020ee75(val: &TagValue) -> TagValue {
+    codegen_runtime::unpack_binary("H*".into()", &pack "C*".into() , split " ".into() , val)
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val =~ s/(\d{2})(\d{2})/$1:$2:/; $val
+/// ```
+/// Used by:
+/// - Red::Main.StorageFormatTime
+/// - Red::Main.TimeCreated
+/// TODO: Add support for this expression pattern
+pub fn ast_value_7004e7ca2c0f515b(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// my ($a,$b) = split ' ',$val;
+/// return 'Off' unless $a;
+/// my %a = (
+/// 1 => 'Left to Right',
+/// 2 => 'Right to Left',
+/// 3 => 'Bottom to Top',
+/// 4 => 'Top to Bottom',
+/// );
+/// return(($a{$a} || "Unknown ($a)") . ', Shot ' . $b);
+/// ```
+/// Used by:
+/// - Olympus::CameraSettings.PanoramaMode
+/// TODO: Add support for this expression pattern
+pub fn ast_print_70620f00a1c89dd5(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

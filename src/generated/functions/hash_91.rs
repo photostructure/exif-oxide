@@ -5,25 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// 
-/// sprintf("%.2x%.2x:%.2x:%.2x %.2x:%.2x:%.2x",
-/// split(' ', $val));
-/// 
-/// ```
-/// Used by:
-/// - Ricoh::ImageInfo.RicohDate
-/// TODO: Add support for this expression pattern
-pub fn ast_value_91932b642ff1a16b(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
-
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -39,7 +21,23 @@ pub fn ast_value_91932b642ff1a16b(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Sony::Main.Sony_0x940f
 /// - Sony::Main.Sony_0x9411
 /// TODO: Add support for this expression pattern
-pub fn ast_value_91a40741d32c33dc(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_91a40741d32c33dc(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.2x%.2x:%.2x:%.2x %.2x:%.2x:%.2x",
+/// split(' ', $val));
+/// ```
+/// Used by:
+/// - Ricoh::ImageInfo.RicohDate
+/// TODO: Add support for this expression pattern
+pub fn ast_value_91932b642ff1a16b(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

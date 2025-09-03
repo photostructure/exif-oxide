@@ -5,35 +5,36 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ /\d/ ? "$val C" : $val
 /// ```
 /// Used by:
 /// - Samsung::Type2.CameraTemperature
-pub fn ast_print_2605bce06efb0270(val: &TagValue) -> TagValue {
-    if val =~ /\d/ { format!("{} C", val) } else { val }
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// 
-/// $val =~ s[\s*(\d+):\s*(\d+):\s*(\d+):\s*(\S*)]
-/// [Tagged:$1, ColorClass:$2, Rating:$3, FrameNum:$4];
-/// return $val;
-/// 
-/// ```
-/// Used by:
-/// - IPTC::ApplicationRecord.Prefs
 /// TODO: Add support for this expression pattern
-pub fn ast_print_269538b049d632d7(val: &TagValue) -> TagValue
-{
+pub fn ast_print_2605bce06efb0270(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
 
-
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val =~ s[\s*(\d+):\s*(\d+):\s*(\d+):\s*(\S*)]
+/// [Tagged:$1, ColorClass:$2, Rating:$3, FrameNum:$4];
+/// return $val;
+/// ```
+/// Used by:
+/// - IPTC::ApplicationRecord.Prefs
+/// TODO: Add support for this expression pattern
+pub fn ast_print_269538b049d632d7(val: &TagValue) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
+}

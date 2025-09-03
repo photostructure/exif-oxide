@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -24,7 +28,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::Tag9406b.BatteryLevel
 /// - Sony::Tag9406b.BatteryLevel2
 pub fn ast_print_15d3bbdbc77bdb90(val: &TagValue) -> TagValue {
-    format!("{}%", val)
+    format!("{}%", val).into()
 }
 
 /// Original perl expression:
@@ -34,8 +38,8 @@ pub fn ast_print_15d3bbdbc77bdb90(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Nikon::Main.ShutterCount
 pub fn ast_print_155f09e06c458602(val: &TagValue) -> TagValue {
-    if val == 4294965247 {
-        "n/a"
+    if (val == 4294965247i32) {
+        "n/a".into()
     } else {
         val
     }
@@ -48,13 +52,12 @@ pub fn ast_print_155f09e06c458602(val: &TagValue) -> TagValue {
 /// Used by:
 /// - SigmaRaw::Header.FileVersion
 /// - SigmaRaw::Header4.FileVersion
-pub fn ast_value_15cf16a8ad9f58e5(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(TagValue::String(format!(
-        "{}{}{}",
-        (val >> 16),
-        ".",
-        (val & 0xffff)
-    )))
+pub fn ast_value_15cf16a8ad9f58e5(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(
+        format!("{}{}", (val >> 16i32), "." . ((val & 0xffffu32))),
+    ))
 }
 
 /// Original perl expression:
@@ -63,17 +66,17 @@ pub fn ast_value_15cf16a8ad9f58e5(val: &TagValue) -> Result<TagValue, crate::typ
 /// ```
 /// Used by:
 /// - Pentax::Main.ColorTemperature
-pub fn ast_value_15b61e0dd2629a12(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(53190 - val)
+pub fn ast_value_15b61e0dd2629a12(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((53190i32 - val))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// my @a = split ' ', $val;
 /// return $a[2] ? sprintf('%3dx%3d', $a[0], $a[1]) : 'n/a';
-///
 /// ```
 /// Used by:
 /// - Sony::Main.FocusFrameSize
@@ -91,7 +94,9 @@ pub fn ast_print_15baaa80ffdd285a(val: &TagValue) -> TagValue {
 /// Used by:
 /// - H264::MDPM.TimeCode
 /// TODO: Add support for this expression pattern
-pub fn ast_value_1535cc61d3e15b8b(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_1535cc61d3e15b8b(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

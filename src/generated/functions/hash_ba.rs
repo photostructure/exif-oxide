@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -103,7 +103,7 @@ use crate::types::{TagValue, ExifContext};
 /// - Sony::SRF2.MaxFocalLength
 /// - Sony::SRF2.MinFocalLength
 pub fn ast_print_ba030bb348470426(val: &TagValue) -> TagValue {
-    format!("{} mm", val)
+    format!("{} mm", val).into()
 }
 
 
@@ -114,7 +114,7 @@ pub fn ast_print_ba030bb348470426(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Pentax::AFInfo.AFIntegrationTime
 pub fn ast_print_ba730b85fae6fc80(val: &TagValue) -> TagValue {
-    format!("{} ms", val)
+    format!("{} ms", val).into()
 }
 
 
@@ -126,7 +126,7 @@ pub fn ast_print_ba730b85fae6fc80(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Photoshop::Main.AlphaChannelsNames
 /// TODO: Add support for this expression pattern
-pub fn ast_value_ba39cdf4578ace46(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_ba39cdf4578ace46(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

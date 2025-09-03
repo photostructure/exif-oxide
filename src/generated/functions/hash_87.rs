@@ -5,8 +5,9 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ /^(inf|undef)$/ ? $val : "$val m"
@@ -14,24 +15,25 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - GPS::Main.GPSAltitude
 /// - Pentax::PENT.GPSAltitude
-pub fn ast_print_8764401e4e5a97bf(val: &TagValue) -> TagValue {
-    if val =~ /^(inf|undef)$/ { val } else { format!("{} m", val) }
+/// TODO: Add support for this expression pattern
+pub fn ast_print_8764401e4e5a97bf(val: &TagValue) -> TagValue
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
 }
 
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// 
 /// my $str = sprintf('%.8x', $val);
 /// $str =~ s/(..)(..)(..)(..)/$1:$2:$3:$4/;
 /// return $str;
-/// 
 /// ```
 /// Used by:
 /// - RIFF::Sampler.SMPTEOffset
 /// TODO: Add support for this expression pattern
-pub fn ast_value_879d7ecabc496495(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_879d7ecabc496495(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

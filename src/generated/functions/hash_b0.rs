@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,7 +14,7 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - Olympus::CameraSettings.ManometerPressure
 pub fn ast_print_b0ad9908708bcb9f(val: &TagValue) -> TagValue {
-    format!("{} kPa", val)
+    format!("{} kPa", val).into()
 }
 
 

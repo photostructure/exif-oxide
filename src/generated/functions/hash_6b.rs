@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -15,6 +19,8 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::LensData01.FocusDistance
 /// - Nikon::LensData0204.FocusDistance
 /// - Nikon::LensData0800.FocusDistance
-pub fn ast_value_6baba6a308124f53(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(0.01 * 10 * *(val / 40))
+pub fn ast_value_6baba6a308124f53(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(0.01f64 * 10i32 * *(val / 40i32))
 }

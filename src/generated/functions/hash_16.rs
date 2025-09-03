@@ -6,44 +6,20 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val > 42949 ? "Unknown (Bulb)" : Image::ExifTool::Exif::PrintExposureTime($val)
 /// ```
 /// Used by:
 /// - Pentax::Main.ExposureTime
-pub fn ast_print_1654733938db8225(val: &TagValue) -> TagValue {
-    if val > 42949 {
-        "Unknown (Bulb)"
-    } else {
-        Image::ExifTool::Exif::PrintExposureTime(val)
-    }
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-///
-/// return 'All' if $val eq 255;
-/// $_ = '';
-/// return $_ . Image::ExifTool::DecodeBits($val,
-/// {
-/// 0 => 'Top Left',
-/// 1 => 'Top Right',
-/// 2 => 'Bottom Left',
-/// 3 => 'Bottom Right',
-/// 4 => 'Left',
-/// 5 => 'Right',
-/// 6 => 'Top Center',
-/// 7 => 'Bottom Center',
-/// });
-///
-/// ```
-/// Used by:
-/// - Nikon::AutoCaptureInfo.AutoCaptureCriteriaMotionDirection
 /// TODO: Add support for this expression pattern
-pub fn ast_print_162c0c787a1ce5f3(val: &TagValue) -> TagValue {
+pub fn ast_print_1654733938db8225(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
@@ -70,6 +46,31 @@ pub fn ast_print_16efff3478ac3340(val: &TagValue) -> TagValue {
 /// - Sony::Main.WBShiftAB_GM_Precise
 /// TODO: Add support for this expression pattern
 pub fn ast_print_16125fb69d4cbb0(val: &TagValue) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// return 'All' if $val eq 255;
+/// $_ = '';
+/// return $_ . Image::ExifTool::DecodeBits($val,
+/// {
+/// 0 => 'Top Left',
+/// 1 => 'Top Right',
+/// 2 => 'Bottom Left',
+/// 3 => 'Bottom Right',
+/// 4 => 'Left',
+/// 5 => 'Right',
+/// 6 => 'Top Center',
+/// 7 => 'Bottom Center',
+/// });
+/// ```
+/// Used by:
+/// - Nikon::AutoCaptureInfo.AutoCaptureCriteriaMotionDirection
+/// TODO: Add support for this expression pattern
+pub fn ast_print_162c0c787a1ce5f3(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }

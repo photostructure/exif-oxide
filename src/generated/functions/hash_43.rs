@@ -6,21 +6,25 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// my @a = split ' ', $val;
 /// my @v;
 /// push @v, join('.', map { sprintf('%.2x',$_) } splice(@a,0,8)) while @a >= 8;
 /// join ' ', @v;
-///
 /// ```
 /// Used by:
 /// - Exif::Main.TimeCodes
 /// TODO: Add support for this expression pattern
-pub fn ast_value_43559da6465bfeb3(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_43559da6465bfeb3(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

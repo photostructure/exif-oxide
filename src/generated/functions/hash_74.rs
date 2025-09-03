@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,27 +14,10 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Panasonic::Main.FlashBias
 /// - Panasonic::Main.WhiteBalanceBias
-pub fn ast_value_743cc97ce826a767(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / 3)
+pub fn ast_value_743cc97ce826a767(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val / 3i32))
 }
 
-/// Original perl expression:
-/// ``` perl
-/// ($val =~ s/^-// ? "$val m Below" : "$val m Above") . " Sea Level"
-/// ```
-/// Used by:
-/// - Ricoh::RDTL.GPSAltitude
-pub fn ast_print_74b67b38758b8b7c(val: &TagValue) -> TagValue {
-    TagValue::String(format!(
-        "{}{}",
-        (if TagValue::String(crate::fmt::regex_replace("^-", &val.to_string(), "")) {
-            format!("{} m Below", val)
-        } else {
-            format!("{} m Above", val)
-        }),
-        " Sea Level"
-    ))
-}
 
 /// Original perl expression:
 /// ``` perl
@@ -52,9 +35,10 @@ pub fn ast_print_74b67b38758b8b7c(val: &TagValue) -> TagValue {
 /// - Sony::Tag2010i.StopsAboveBaseISO
 /// - Sony::Tag9405b.StopsAboveBaseISO
 /// - Sony::Tag9416.StopsAboveBaseISO
-pub fn ast_value_743e189656f40f03(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(16 - val / 256)
+pub fn ast_value_743e189656f40f03(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((16i32 - (val / 256i32)))
 }
+
 
 /// Original perl expression:
 /// ``` perl
@@ -62,10 +46,23 @@ pub fn ast_value_743e189656f40f03(val: &TagValue) -> Result<TagValue, crate::typ
 /// ```
 /// Used by:
 /// - CanonRaw::ExposureInfo.ShutterSpeedValue
-pub fn ast_value_742c8e667c350c68(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if abs(val) < 100 {
-        1 / ((2 as f64).powf(val as f64))
-    } else {
-        0
-    })
+pub fn ast_value_742c8e667c350c68(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if (abs((val)) < 100i32) { (1i32 / ((2i32 as f64).powf(val as f64))) } else { 0i32 })
 }
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// ($val =~ s/^-// ? "$val m Below" : "$val m Above") . " Sea Level"
+/// ```
+/// Used by:
+/// - Ricoh::RDTL.GPSAltitude
+/// TODO: Add support for this expression pattern
+pub fn ast_print_74b67b38758b8b7c(val: &TagValue) -> TagValue
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
+}
+
+

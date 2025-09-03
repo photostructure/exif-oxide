@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,8 +13,8 @@ use crate::types::{TagValue, ExifContext};
 /// ```
 /// Used by:
 /// - Canon::ShotInfo.MeasuredEV
-pub fn ast_value_854f4e7992c70b08(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / 32 + 5)
+pub fn ast_value_854f4e7992c70b08(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((val / 32i32) + 5i32))
 }
 
 

@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,8 +17,10 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - Canon::ShotInfo.FlashGuideNumber
-pub fn ast_value_6fe12080b1303132(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / 32)
+pub fn ast_value_6fe12080b1303132(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val / 32i32))
 }
 
 /// Original perl expression:
@@ -23,8 +29,24 @@ pub fn ast_value_6fe12080b1303132(val: &TagValue) -> Result<TagValue, crate::typ
 /// ```
 /// Used by:
 /// - Panasonic::Main.PitchAngle
-pub fn ast_value_6f8795fcde9693b5(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(-val / 10)
+pub fn ast_value_6f8795fcde9693b5(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((0i32 - val) / 10i32))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// uc(unpack("H*",$val))
+/// ```
+/// Used by:
+/// - Exif::Main.RawDataUniqueID
+pub fn ast_value_6f48389e89817069(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(uc(TagValue::String(codegen_runtime::unpack_binary(
+        "H*", &val,
+    ))))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -38,17 +60,4 @@ pub fn ast_value_6f8795fcde9693b5(val: &TagValue) -> Result<TagValue, crate::typ
 pub fn ast_print_6ffb072fa1dfc640(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// uc(unpack("H*",$val))
-/// ```
-/// Used by:
-/// - Exif::Main.RawDataUniqueID
-/// TODO: Add support for this expression pattern
-pub fn ast_value_6f48389e89817069(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
 }

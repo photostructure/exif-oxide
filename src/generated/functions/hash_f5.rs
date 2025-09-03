@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,8 +13,20 @@ use crate::types::{TagValue, ExifContext};
 /// ```
 /// Used by:
 /// - Nikon::MenuSettingsZ9.MonitorBrightness
-pub fn ast_value_f549716a7ec6c29b(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val - 5)
+pub fn ast_value_f549716a7ec6c29b(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val - 5i32))
+}
+
+
+/// Original perl expression:
+/// ``` perl
+/// exp($val/192*log(2))
+/// ```
+/// Used by:
+/// - Canon::CameraInfoPowerShot.FNumber
+/// - Canon::CameraInfoPowerShot2.FNumber
+pub fn ast_value_f5e2fd998937b3b3(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(exp(((val / 192i32) * log((2i32)))))
 }
 
 
@@ -30,22 +42,6 @@ pub fn ast_print_f591611bd0effe85(val: &TagValue) -> TagValue
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// exp($val/192*log(2))
-/// ```
-/// Used by:
-/// - Canon::CameraInfoPowerShot.FNumber
-/// - Canon::CameraInfoPowerShot2.FNumber
-/// TODO: Add support for this expression pattern
-pub fn ast_value_f5e2fd998937b3b3(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
 }
 
 

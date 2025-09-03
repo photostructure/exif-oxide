@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -15,8 +15,8 @@ use crate::types::{TagValue, ExifContext};
 /// - Nikon::LensData01.ExitPupilPosition
 /// - Nikon::LensData0204.ExitPupilPosition
 /// - Nikon::LensData0800.ExitPupilPosition
-pub fn ast_value_9d597eb160959cc5(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if val { 2048 / val } else { val })
+pub fn ast_value_9d597eb160959cc5(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if val { (2048i32 / val) } else { val })
 }
 
 

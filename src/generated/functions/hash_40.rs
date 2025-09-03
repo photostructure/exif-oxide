@@ -6,16 +6,18 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// my $byte = 0;
 /// my @bits = $val =~ /\d+/g;
 /// $byte = ($byte << 1) | ($_ ? 1 : 0) foreach reverse @bits;
 /// return DecodeBits($byte, \%Image::ExifTool::Photoshop::printFlags);
-///
 /// ```
 /// Used by:
 /// - Photoshop::Main.PrintFlags

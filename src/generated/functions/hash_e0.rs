@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -20,19 +20,17 @@ use crate::types::{TagValue, ExifContext};
 /// - Sony::Tag9405b.SonyMaxApertureValue
 /// - Sony::Tag9416.SonyFNumber2
 /// - Sony::Tag9416.SonyMaxApertureValue
-pub fn ast_value_e0b36f169462770c(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((2 as f64).powf(((val / 256 - 16) / 2) as f64))
+pub fn ast_value_e0b36f169462770c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf(((((val / 256i32) - 16i32)) / 2i32) as f64))
 }
 
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// 
 /// my @cols = qw(Red Green Blue Cyan Magenta Yellow White);
 /// my @vals = map { $cols[$_] || "Unknown($_)" } split(' ', $val);
 /// return join(',', @vals);
-/// 
 /// ```
 /// Used by:
 /// - Exif::Main.CFAPlaneColor

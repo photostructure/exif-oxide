@@ -6,7 +6,27 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
+/// Original perl expression:
+/// ``` perl
+/// sprintf("20%.2d", $val)
+/// ```
+/// Used by:
+/// - Sony::Tag9400a.ModelReleaseYear
+/// - Sony::Tag9400b.ModelReleaseYear
+/// - Sony::Tag9400c.ModelReleaseYear
+pub fn ast_print_4e04d6169c18f853(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "20%.2d".into(),
+        &[val.clone()],
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ tr/ /x/; $val
@@ -23,28 +43,19 @@ use crate::types::{ExifContext, TagValue};
 /// - Sigma::Main.PreviewImageSize
 /// - Sony::Main.FullImageSize
 /// - Sony::Main.PreviewImageSize
+/// TODO: Add support for this expression pattern
 pub fn ast_print_4e5e992f9b388e54(val: &TagValue) -> TagValue {
-    {
-        val.to_string()
-            .chars()
-            .map(|c| match c {
-                ' ' => 'x',
-                _ => c,
-            })
-            .collect::<String>();
-        val
-    }
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// my ($unit, $div) = $self->Options('ByteUnit') eq 'Binary' ? ('KiB/s',1024) : ('kB/s',1000);
 /// my $tmp = $val / $div;
 /// $tmp > 9999 and $tmp /= $div, $unit =~ s/^./M/;
 /// sprintf('%.4g %s', $tmp, $unit);
-///
 /// ```
 /// Used by:
 /// - RIFF::AVIHeader.MaxDataRate
@@ -63,21 +74,6 @@ pub fn ast_print_4e32eebd5c55c7ac(val: &TagValue) -> TagValue {
 /// - Nikon::Scan.ColorGain
 /// TODO: Add support for this expression pattern
 pub fn ast_print_4ecd72b99799fca9(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("20%.2d", $val)
-/// ```
-/// Used by:
-/// - Sony::Tag9400a.ModelReleaseYear
-/// - Sony::Tag9400b.ModelReleaseYear
-/// - Sony::Tag9400c.ModelReleaseYear
-/// TODO: Add support for this expression pattern
-pub fn ast_print_4e04d6169c18f853(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }

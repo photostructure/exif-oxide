@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -18,9 +18,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::MenuSettingsZ9.FlashGNDistance
 /// - Nikon::MenuSettingsZ9v3.FlashGNDistance
 /// - Nikon::MenuSettingsZ9v4.FlashGNDistance
-pub fn ast_value_72cc5ff262c4a455(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val + 3)
+pub fn ast_value_72cc5ff262c4a455(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val + 3i32))
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -31,7 +32,10 @@ pub fn ast_value_72cc5ff262c4a455(val: &TagValue) -> Result<TagValue, crate::typ
 /// - QuickTime::MetaData.ModifyDate
 /// - QuickTime::MetaData.ProductionDate
 /// TODO: Add support for this expression pattern
-pub fn ast_value_7240480154508973(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_7240480154508973(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
+

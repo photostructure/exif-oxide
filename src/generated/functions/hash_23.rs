@@ -6,8 +6,11 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val / ($$self{FocalUnits} || 1)
@@ -16,13 +19,12 @@ use crate::types::{ExifContext, TagValue};
 /// - Canon::CameraSettings.MaxFocalLength
 /// - Canon::CameraSettings.MinFocalLength
 /// - Canon::FocalLength.FocalLength
-/// TODO: Add support for this expression pattern
-pub fn ast_value_237333b021276c6e(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+pub fn ast_value_237333b021276c6e(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(val / ())
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// exp(Image::ExifTool::Canon::CanonEv($val)*log(2)/2)
@@ -32,8 +34,8 @@ pub fn ast_value_237333b021276c6e(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Canon::CameraSettings.MinAperture
 /// - Canon::ShotInfo.FNumber
 /// - Canon::ShotInfo.TargetAperture
-/// TODO: Add support for this expression pattern
-pub fn ast_value_23ca0ed710a7de23(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+pub fn ast_value_23ca0ed710a7de23(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(exp(Image::ExifTool::Canon::CanonEv))
 }

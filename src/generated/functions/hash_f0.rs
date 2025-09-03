@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,29 +14,7 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - Canon::ColorData3.FlashOutput
 pub fn ast_print_f0a9b201612fbfd0(val: &TagValue) -> TagValue {
-    if val == 255 { "Strobe or Misfire" } else { sprintf ("%.0f%%" , val * 100) }
-}
-
-
-/// Original perl expression:
-/// ``` perl
-/// $val=~s/ +$//; $val
-/// ```
-/// Used by:
-/// - Exif::Main.SubSecTime
-/// - Exif::Main.SubSecTimeDigitized
-/// - Exif::Main.SubSecTimeOriginal
-/// - Panasonic::Leica6.LensType
-/// - Panasonic::Main.AccessorySerialNumber
-/// - Panasonic::Main.AccessoryType
-/// - Panasonic::Main.LensSerialNumber
-/// - Panasonic::Main.LensType
-pub fn ast_value_f0ad119439d04a33(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        TagValue::String(crate::fmt::regex_replace(" +$", &val.to_string(), "")) ;;
-        val
-    }
-    )
+    if val == 255i32 { "Strobe or Misfire".into() } else { TagValue::String(codegen_runtime::sprintf_perl("%.0f%%", &[val, *, 100])) }
 }
 
 
@@ -58,7 +36,29 @@ pub fn ast_value_f0ad119439d04a33(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Pentax::AEInfo2.AE_ISO
 /// - Pentax::AEInfo3.AE_ISO
 pub fn ast_print_f0406a5cf107f00d(val: &TagValue) -> TagValue {
-    (val.trunc() as i32)
+    int((val + 0.5f64))
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val=~s/ +$//; $val
+/// ```
+/// Used by:
+/// - Exif::Main.SubSecTime
+/// - Exif::Main.SubSecTimeDigitized
+/// - Exif::Main.SubSecTimeOriginal
+/// - Panasonic::Leica6.LensType
+/// - Panasonic::Main.AccessorySerialNumber
+/// - Panasonic::Main.AccessoryType
+/// - Panasonic::Main.LensSerialNumber
+/// - Panasonic::Main.LensType
+/// TODO: Add support for this expression pattern
+pub fn ast_value_f0ad119439d04a33(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }
 
 
@@ -70,7 +70,7 @@ pub fn ast_print_f0406a5cf107f00d(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Pentax::Main.Date
 /// TODO: Add support for this expression pattern
-pub fn ast_value_f0974ef9a0a8813d(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_f0974ef9a0a8813d(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,7 +14,7 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - Sony::Tag940c.LensFirmwareVersion
 pub fn ast_print_c6578bbe163abd7e(val: &TagValue) -> TagValue {
-    TagValue::String(format!("Ver.%.2x.%.3d", val >> 8, val & 0xff))
+    TagValue::String(codegen_runtime::sprintf_perl("Ver.%.2x.%.3d".into(), &[val >> 8i32.clone(), val & 0xffu32.clone()]))
 }
 
 

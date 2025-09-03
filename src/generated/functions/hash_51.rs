@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,13 +18,14 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Panasonic::FocusInfo.FocusDistance
 pub fn ast_print_515ec3f56b990031(val: &TagValue) -> TagValue {
-    if val < 65535 {
-        format!("{} m", val)
+    if (val < 65535i32) {
+        format!("{} m", val).into()
     } else {
-        "inf"
+        "inf".into()
     }
 }
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~s/^.*: //;$val
@@ -40,9 +45,10 @@ pub fn ast_print_515ec3f56b990031(val: &TagValue) -> TagValue {
 /// - Exif::Main.Sharpness
 /// - Exif::Main.Smoothness
 /// - Exif::Main.WhiteBalance
-pub fn ast_value_51b27304e42ac9f0(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        TagValue::String(crate::fmt::regex_replace("^.*: ", &val.to_string(), ""));
-        val
-    })
+/// TODO: Add support for this expression pattern
+pub fn ast_value_51b27304e42ac9f0(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }

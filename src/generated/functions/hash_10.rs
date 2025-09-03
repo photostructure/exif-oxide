@@ -6,11 +6,27 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
+
+/// Original perl expression:
+/// ``` perl
+/// exp(Image::ExifTool::Canon::CanonEv($val*4-32)*log(2)/2)
+/// ```
+/// Used by:
+/// - CanonCustom::PersonalFuncValues.PF5ApertureMax
+/// - CanonCustom::PersonalFuncValues.PF5ApertureMin
+pub fn ast_value_1072171a0b3828b9(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(exp(Image::ExifTool::Canon::CanonEv))
+}
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// my ($a,$b,$c)=split ' ',$val;
 /// if ($self->{Model} =~ /^E-1\b/) {
 /// $a-=$b; $c-=$b;
@@ -18,7 +34,6 @@ use crate::types::{ExifContext, TagValue};
 /// } else {
 /// return "$a (min $b, max $c)";
 /// }
-///
 /// ```
 /// Used by:
 /// - Olympus::CameraSettings.CustomSaturation
@@ -31,30 +46,16 @@ pub fn ast_print_103361d26a5af32d(val: &TagValue) -> TagValue {
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// my @v=split(" ",$val);
 /// return $val / 1000 if @v == 1;
 /// return $v[1] ? "$v[1]-$v[0]" : ($v[0] > 10000 ? $v[0] / 1000 : $v[0]);
-///
 /// ```
 /// Used by:
 /// - Casio::Type2.CaptureFrameRate
 /// TODO: Add support for this expression pattern
-pub fn ast_value_1034313b8375eef0(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// exp(Image::ExifTool::Canon::CanonEv($val*4-32)*log(2)/2)
-/// ```
-/// Used by:
-/// - CanonCustom::PersonalFuncValues.PF5ApertureMax
-/// - CanonCustom::PersonalFuncValues.PF5ApertureMin
-/// TODO: Add support for this expression pattern
-pub fn ast_value_1072171a0b3828b9(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_1034313b8375eef0(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

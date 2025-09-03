@@ -5,21 +5,20 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ s/(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})/$1:$2:$3 $4:$5:/; $val
 /// ```
 /// Used by:
 /// - Red::Main.DateTimeOriginal
-pub fn ast_value_804ed219632737fc(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        TagValue::String(crate::fmt::regex_replace(
-            "(\\d{4})(\\d{2})(\\d{2})(\\d{2})(\\d{2})",
-            &val.to_string(),
-            "$1:$2:$3 $4:$5:",
-        ));
-        val
-    })
+/// TODO: Add support for this expression pattern
+pub fn ast_value_804ed219632737fc(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }
+
+

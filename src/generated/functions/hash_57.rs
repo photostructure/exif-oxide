@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,6 +17,8 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - FujiFilm::RAF.RelativeExposure
-pub fn ast_value_574514e3d36a220e(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(log(val) / log(2))
+pub fn ast_value_574514e3d36a220e(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((log((val)) / log((2i32))))
 }

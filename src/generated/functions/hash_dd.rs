@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -17,22 +17,18 @@ use crate::types::{TagValue, ExifContext};
 /// - GoPro::KBAT.BatteryVoltage3
 /// - GoPro::KBAT.BatteryVoltage4
 pub fn ast_print_dda555683af957b(val: &TagValue) -> TagValue {
-    format!("{} V", val)
+    format!("{} V", val).into()
 }
 
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $$self{SingleFrame} == 0 ? 5 : $val
 /// ```
 /// Used by:
 /// - Nikon::MenuSettingsZ7II.ReleaseMode
-/// TODO: Add support for this expression pattern
-pub fn ast_value_dd0f53a300f2b076(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+pub fn ast_value_dd0f53a300f2b076(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if  { 5i32 } else { val })
 }
 
 

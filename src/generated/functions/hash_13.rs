@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -15,37 +19,9 @@ use crate::types::{ExifContext, TagValue};
 /// - GoPro::KBAT.BatteryLevel
 /// - GoPro::KBAT.KBAT_Unknown9
 pub fn ast_print_139f419a2aaaa1f3(val: &TagValue) -> TagValue {
-    format!("{} %", val)
+    format!("{} %", val).into()
 }
 
-/// Original perl expression:
-/// ``` perl
-/// sprintf("%.2f%%", $val * 100)
-/// ```
-/// Used by:
-/// - QuickTime::MovieHeader.PreferredVolume
-/// - QuickTime::TrackHeader.TrackVolume
-pub fn ast_print_13019bc21b8fe7c4(val: &TagValue) -> TagValue {
-    TagValue::String(format!("%.2f%%", val * 100))
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $val=sprintf("%x",$val);$val=~s/(.{3})$/\.$1/;$val
-/// ```
-/// Used by:
-/// - Olympus::Equipment.BodyFirmwareVersion
-/// - Olympus::Equipment.ExtenderFirmwareVersion
-/// - Olympus::Equipment.FlashFirmwareVersion
-/// - Olympus::Equipment.LensFirmwareVersion
-/// TODO: Add support for this expression pattern
-pub fn ast_print_13c6fe5be8efefda(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// exp(4*log(2)*(1-Image::ExifTool::Canon::CanonEv($val-24)))
@@ -74,8 +50,40 @@ pub fn ast_print_13c6fe5be8efefda(val: &TagValue) -> TagValue {
 /// - Canon::CameraInfo750D.ExposureTime
 /// - Canon::CameraInfo7D.ExposureTime
 /// - Canon::CameraInfo80D.ExposureTime
+pub fn ast_value_13e9fff1dc7b41b2(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(exp(
+        ((4i32 * log((2i32))) * (1i32 - Image::ExifTool::Canon::CanonEv))
+    ))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.2f%%", $val * 100)
+/// ```
+/// Used by:
+/// - QuickTime::MovieHeader.PreferredVolume
+/// - QuickTime::TrackHeader.TrackVolume
+pub fn ast_print_13019bc21b8fe7c4(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "%.2f%%".into(),
+        &[val * 100i32.clone()],
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val=sprintf("%x",$val);$val=~s/(.{3})$/\.$1/;$val
+/// ```
+/// Used by:
+/// - Olympus::Equipment.BodyFirmwareVersion
+/// - Olympus::Equipment.ExtenderFirmwareVersion
+/// - Olympus::Equipment.FlashFirmwareVersion
+/// - Olympus::Equipment.LensFirmwareVersion
 /// TODO: Add support for this expression pattern
-pub fn ast_value_13e9fff1dc7b41b2(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_print_13c6fe5be8efefda(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    val.clone()
 }

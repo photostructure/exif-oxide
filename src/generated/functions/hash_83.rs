@@ -5,7 +5,23 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+
+/// Original perl expression:
+/// ``` perl
+/// $$self{TimecodeScale} ? $val * $$self{TimecodeScale} / 1e9 : $val
+/// ```
+/// Used by:
+/// - Matroska::Main.BlockDuration
+/// - Matroska::Main.CueRefTime
+/// - Matroska::Main.CueTime
+/// - Matroska::Main.Duration
+/// - Matroska::Main.ReferenceBlock
+/// - Matroska::Main.TimeCode
+pub fn ast_value_83f37d90ee875af5(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if  { (val * ) } else { val })
+}
+
 
 /// Original perl expression:
 /// ``` perl
@@ -14,22 +30,7 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - Canon::ShotInfo.OpticalZoomCode
 pub fn ast_print_8388b1ca19272fc5(val: &TagValue) -> TagValue {
-    if val == 8 { "n/a" } else { val }
-}
-
-
-/// Original perl expression:
-/// ``` perl
-/// $val=~tr/\0/\n/; $val
-/// ```
-/// Used by:
-/// - Kodak::IFD.KodakLook
-pub fn ast_value_839cd811382c9525(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        val.to_string().chars().map(|c| match c { '\' => '\', '0' => 'n' , _ => c }).collect::<String>() ;;
-        val
-    }
-    )
+    if (val == 8i32) { "n/a".into() } else { val }
 }
 
 
@@ -42,8 +43,8 @@ pub fn ast_value_839cd811382c9525(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Sony::CameraSettings.FlashExposureCompSet
 /// - Sony::CameraSettings2.ExposureCompensationSet
 /// - Sony::CameraSettings2.FlashExposureCompSet
-pub fn ast_value_8350871c1b6679f7(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((val - 128) / 24)
+pub fn ast_value_8350871c1b6679f7(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((val - 128i32)) / 24i32)
 }
 
 
@@ -70,25 +71,20 @@ pub fn ast_value_8350871c1b6679f7(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Nikon::MenuSettingsZ9v4.ISOAutoHiLimit
 /// - Nikon::MenuSettingsZ9v4.MovieISOAutoHiLimit
 /// - Nikon::MenuSettingsZ9v4.MovieISOAutoManualMode
-pub fn ast_value_8390ff1421e71f53(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((val - 104) / 8)
+pub fn ast_value_8390ff1421e71f53(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((val - 104i32)) / 8i32)
 }
 
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// $$self{TimecodeScale} ? $val * $$self{TimecodeScale} / 1e9 : $val
+/// $val=~tr/\0/\n/; $val
 /// ```
 /// Used by:
-/// - Matroska::Main.BlockDuration
-/// - Matroska::Main.CueRefTime
-/// - Matroska::Main.CueTime
-/// - Matroska::Main.Duration
-/// - Matroska::Main.ReferenceBlock
-/// - Matroska::Main.TimeCode
+/// - Kodak::IFD.KodakLook
 /// TODO: Add support for this expression pattern
-pub fn ast_value_83f37d90ee875af5(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_839cd811382c9525(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

@@ -5,23 +5,24 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ s/\0+/\n/g; $val
 /// ```
 /// Used by:
 /// - IPTC::ApplicationRecord.DocumentHistory
-pub fn ast_value_e82434acf427488(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        TagValue::String(crate::fmt::regex_replace_all("\\0+", &val.to_string(), "\\n")) ;;
-        val
-    }
-    )
+/// TODO: Add support for this expression pattern
+pub fn ast_value_e82434acf427488(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }
 
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~s/\s+$//; $val
@@ -31,12 +32,11 @@ pub fn ast_value_e82434acf427488(val: &TagValue) -> Result<TagValue, crate::type
 /// - Olympus::Equipment.LensSerialNumber
 /// - Olympus::Equipment.SerialNumber
 /// - Olympus::Main.CameraType
-pub fn ast_value_e81a402a310d8ce1(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        TagValue::String(crate::fmt::regex_replace("\\s+$", &val.to_string(), "")) ;;
-        val
-    }
-    )
+/// TODO: Add support for this expression pattern
+pub fn ast_value_e81a402a310d8ce1(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }
 
 

@@ -5,51 +5,45 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
-/// Original perl expression:
-/// ``` perl
-/// $val=~s/mm/mm /; $val
-/// ```
-/// Used by:
-/// - Pentax::LensInfoQ.LensInfo
-pub fn ast_value_e6ee3ce4586918ac(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        TagValue::String(val.to_string().replacen("mm", "mm ", 1)) ;;
-        val
-    }
-    )
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// 
-/// return 'none' if $val eq '16777216 16777216';
-/// my @a = split ' ', $val;
-/// sprintf("%.2g %.2g",@a);
-/// 
-/// ```
-/// Used by:
-/// - Panasonic::Main.AFPointPosition
-/// TODO: Add support for this expression pattern
-pub fn ast_print_e68a5de1ced03867(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("%.1f kPa",$val)
 /// ```
 /// Used by:
 /// - Panasonic::Main.ManometerPressure
+pub fn ast_print_e6621b3e7e35336a(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl("%.1f kPa".into(), &[val.clone()]))
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val=~s/mm/mm /; $val
+/// ```
+/// Used by:
+/// - Pentax::LensInfoQ.LensInfo
 /// TODO: Add support for this expression pattern
-pub fn ast_print_e6621b3e7e35336a(val: &TagValue) -> TagValue
+pub fn ast_value_e6ee3ce4586918ac(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
+}
+
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// return 'none' if $val eq '16777216 16777216';
+/// my @a = split ' ', $val;
+/// sprintf("%.2g %.2g",@a);
+/// ```
+/// Used by:
+/// - Panasonic::Main.AFPointPosition
+/// TODO: Add support for this expression pattern
+pub fn ast_print_e68a5de1ced03867(val: &TagValue) -> TagValue
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()

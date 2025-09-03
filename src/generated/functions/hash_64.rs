@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -18,8 +22,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::CameraSettings2.ColorTemperatureCustom
 /// - Sony::CameraSettings2.ColorTemperatureSet
 /// - Sony::MoreSettings.ColorTemperatureSetting
-pub fn ast_value_647eb869d9cb9ed1(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val * 100)
+pub fn ast_value_647eb869d9cb9ed1(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val * 100i32))
 }
 
 /// Original perl expression:

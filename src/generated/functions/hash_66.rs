@@ -5,38 +5,39 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
-
-/// Original perl expression:
-/// ``` perl
-/// $val !~ /undef/ ?  Image::ExifTool::Exif::PrintFraction($val) : "n/a" 
-/// ```
-/// Used by:
-/// - Nikon::Main.ExposureBracketValue
-pub fn ast_print_66ae134cac9bc85e(val: &TagValue) -> TagValue {
-    if val !~ /undef/ { Image::ExifTool::Exif::PrintFraction (val) } else { "n/a" }
-}
-
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// 
+/// $val !~ /undef/ ?  Image::ExifTool::Exif::PrintFraction($val) : "n/a"
+/// ```
+/// Used by:
+/// - Nikon::Main.ExposureBracketValue
+/// TODO: Add support for this expression pattern
+pub fn ast_print_66ae134cac9bc85e(val: &TagValue) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// return 'Off' if $val eq '0 0' or $val eq '255 255';
 /// my @v = split ' ', $val;
 /// my $brightness = $v[1]==128 ? 'Brightness: Neutral' : sprintf('Brightness: %+.1f',($v[1]-128)/4);
 /// my $color = $v[0]==128 ? 'Color: Neutral' : sprintf('%s: %.1f', $v[0]>128 ? 'Yellow' : 'Magenta', abs($v[0]-128)/4);
 /// # will return something like: 'Magenta: 1.0  Brightness: Neutral'
 /// return "$color $brightness"
-/// 
 /// ```
 /// Used by:
 /// - Nikon::PortraitInfoZ7II.PortraitImpressionBalance
 /// TODO: Add support for this expression pattern
-pub fn ast_print_66fac0cb9a600387(val: &TagValue) -> TagValue
-{
+pub fn ast_print_66fac0cb9a600387(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
-
-

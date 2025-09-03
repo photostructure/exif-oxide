@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,8 +18,8 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Nikon::PictureControl.ToningSaturation
 pub fn ast_print_312840a770399a53(val: &TagValue) -> TagValue {
-    if val == 0x7f {
-        "n/a"
+    if (val == 0x7fu32) {
+        "n/a".into()
     } else {
         val
     }
@@ -24,10 +28,8 @@ pub fn ast_print_312840a770399a53(val: &TagValue) -> TagValue {
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// return 'Off' unless $val;
 /// return (($val&0xfff) / 10) . ' s' . ($val & 0x4000 ? ', Custom' : '');
-///
 /// ```
 /// Used by:
 /// - Canon::CameraSettings.SelfTimer

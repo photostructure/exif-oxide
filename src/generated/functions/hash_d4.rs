@@ -5,7 +5,18 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+
+/// Original perl expression:
+/// ``` perl
+/// $val ? "$val byte" . ($val==1 ? "" : "s") : "Variable"
+/// ```
+/// Used by:
+/// - RIFF::StreamHeader.SampleSize
+pub fn ast_print_d43fd7a703ae1653(val: &TagValue) -> TagValue {
+    if val { TagValue::String(format!("{}{}", format!("{} byte", val).into(), (if (val == 1i32) { "".into() } else { "s".into() }))) } else { "Variable".into() }
+}
+
 
 /// Original perl expression:
 /// ``` perl
@@ -14,22 +25,7 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - Nikon::MenuSettingsZ9v4.ExposureDelay
 pub fn ast_print_d4f2f6797789d4ee(val: &TagValue) -> TagValue {
-    if val { sprintf ("%.1f sec" , val / 1000) } else { "Off" }
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $val ? "$val byte" . ($val==1 ? "" : "s") : "Variable"
-/// ```
-/// Used by:
-/// - RIFF::StreamHeader.SampleSize
-/// TODO: Add support for this expression pattern
-pub fn ast_print_d43fd7a703ae1653(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    if val { TagValue::String(codegen_runtime::sprintf_perl("%.1f sec", &[val, /, 1000])) } else { "Off".into() }
 }
 
 

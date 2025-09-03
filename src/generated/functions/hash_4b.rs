@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -17,19 +21,18 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::CameraSettings2.ApertureSetting
 /// - Sony::CameraSettings2.FNumber
 /// - Sony::MoreSettings.FNumber
-pub fn ast_value_4b2b5b722bdd63f4(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((2 as f64).powf(((val / 8 - 1) / 2) as f64))
+pub fn ast_value_4b2b5b722bdd63f4(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf((((val / 8i32) - 1i32) / 2i32) as f64))
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("%3d",$val)
 /// ```
 /// Used by:
 /// - Sony::Tag9416.Tag9416_0000
-/// TODO: Add support for this expression pattern
 pub fn ast_print_4b6db621edbbac84(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    TagValue::String(codegen_runtime::sprintf_perl("%3d".into(), &[val.clone()]))
 }

@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -16,7 +20,9 @@ use crate::types::{ExifContext, TagValue};
 /// - Matroska::Main.ChapterTimeEnd
 /// - Matroska::Main.ChapterTimeStart
 /// TODO: Add support for this expression pattern
-pub fn ast_value_29b4faab94339ab6(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_29b4faab94339ab6(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
@@ -29,7 +35,9 @@ pub fn ast_value_29b4faab94339ab6(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Red::RED2.FrameRate
 /// TODO: Add support for this expression pattern
-pub fn ast_value_2962d6643d953141(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_2962d6643d953141(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

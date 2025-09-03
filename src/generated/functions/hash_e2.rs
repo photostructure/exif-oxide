@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,22 +14,18 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - Kodak::Main.DateTimeStamp
 pub fn ast_print_e2ddf072b19d8074(val: &TagValue) -> TagValue {
-    if val { format!("Mode {}", val) } else { "Off" }
+    if val { format!("Mode {}", val).into() } else { "Off".into() }
 }
 
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("0x%.8x", $val)
 /// ```
 /// Used by:
 /// - Sony::SR2Private.SR2SubIFDKey
-/// TODO: Add support for this expression pattern
-pub fn ast_print_e265b6e9dae11253(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+pub fn ast_print_e265b6e9dae11253(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl("0x%.8x".into(), &[val.clone()]))
 }
 
 

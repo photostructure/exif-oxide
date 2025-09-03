@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -15,7 +19,9 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - QuickTime::TCMediaInfo.FontName
 /// TODO: Add support for this expression pattern
-pub fn ast_value_4a60469dfc6fd956(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_4a60469dfc6fd956(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
@@ -34,7 +40,9 @@ pub fn ast_value_4a60469dfc6fd956(val: &TagValue) -> Result<TagValue, crate::typ
 /// - QuickTime::TrackHeader.TrackCreateDate
 /// - QuickTime::TrackHeader.TrackModifyDate
 /// TODO: Add support for this expression pattern
-pub fn ast_value_4a9a9258b669d68c(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_4a9a9258b669d68c(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

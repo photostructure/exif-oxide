@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,6 +17,8 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - Nikon::ShotInfoD800.FlashExposureComp2
-pub fn ast_value_4c39f8792bb6ede4(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(-val / 6)
+pub fn ast_value_4c39f8792bb6ede4(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((0i32 - val) / 6i32))
 }

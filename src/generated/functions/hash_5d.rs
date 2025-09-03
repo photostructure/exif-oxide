@@ -5,18 +5,26 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~s/ 1$// ? -$val/10 : "n/a"
 /// ```
 /// Used by:
 /// - Olympus::CameraSettings.RollAngle
-pub fn ast_value_5d1e153d8debf27a(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if val =~ TagValue::String(crate::fmt::regex_replace(" 1$", &val.to_string(), "")) { - val / 10 } else { "n/a" })
+/// TODO: Add support for this expression pattern
+pub fn ast_value_5d1e153d8debf27a(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -26,10 +34,7 @@ pub fn ast_value_5d1e153d8debf27a(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Nikon::PictureControl.HueAdjustment
 /// TODO: Add support for this expression pattern
-pub fn ast_print_5d7bace8d8eb1cfe(val: &TagValue) -> TagValue
-{
+pub fn ast_print_5d7bace8d8eb1cfe(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
-
-

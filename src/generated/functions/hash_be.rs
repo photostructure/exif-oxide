@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -21,8 +21,8 @@ use crate::types::{TagValue, ExifContext};
 /// - Sony::Tag2010g.BrightnessValue
 /// - Sony::Tag2010h.BrightnessValue
 /// - Sony::Tag2010i.BrightnessValue
-pub fn ast_value_be410aac07f2b930(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val / 256 - 56.6)
+pub fn ast_value_be410aac07f2b930(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((val / 256i32) - 56.6f64))
 }
 
 
@@ -42,12 +42,11 @@ pub fn ast_value_be410aac07f2b930(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Nikon::LensData0800.FocalLength
 /// - Nikon::LensData0800.MaxFocalLength
 /// - Nikon::LensData0800.MinFocalLength
-pub fn ast_value_bebb546318de4cc0(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(5 * 2 ** (val / 24))
+pub fn ast_value_bebb546318de4cc0(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(5i32 * 2i32 ** ((val / 24i32)))
 }
 
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// exp(-$val/96*log(2))
@@ -55,15 +54,11 @@ pub fn ast_value_bebb546318de4cc0(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Canon::CameraInfoPowerShot.ExposureTime
 /// - Canon::CameraInfoPowerShot2.ExposureTime
-/// TODO: Add support for this expression pattern
-pub fn ast_value_be1b3eec816c4342(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+pub fn ast_value_be1b3eec816c4342(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(exp((((0i32 - val) / 96i32) * log((2i32)))))
 }
 
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// sprintf("%+.2f", $val)
@@ -80,11 +75,8 @@ pub fn ast_value_be1b3eec816c4342(val: &TagValue) -> Result<TagValue, crate::typ
 /// - DJI::Main.Yaw
 /// - FujiFilm::MRAW.ExposureCompensation
 /// - FujiFilm::MRAW.ExposureCompensation2
-/// TODO: Add support for this expression pattern
-pub fn ast_print_bec70def03ed8463(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+pub fn ast_print_bec70def03ed8463(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl("%+.2f".into(), &[val.clone()]))
 }
 
 

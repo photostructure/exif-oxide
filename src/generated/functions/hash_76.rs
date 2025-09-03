@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,31 +13,24 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - PanasonicRaw::Main.Gamma
-pub fn ast_value_7626d89bf49583a2(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val
-        / (if val.to_string() >= 1024.to_string() {
-            1024
-        } else {
-            (if val.to_string() >= 256.to_string() {
-                256
-            } else {
-                100
-            })
-        }))
+pub fn ast_value_7626d89bf49583a2(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(val / (if (val >= 1024i32) { 1024i32 } else { (if (val >= 256i32) { 256i32 } else { 100i32 }) }))
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// my $on = ((($val >> 8) & 0x0f) == 1) ? 'On' : 'Off';
 /// return sprintf('%s (0x%.4x)', $on, $val);
-///
 /// ```
 /// Used by:
 /// - FujiFilm::Main.FlickerReduction
 /// TODO: Add support for this expression pattern
-pub fn ast_print_76b92beaaba5ca0b(val: &TagValue) -> TagValue {
+pub fn ast_print_76b92beaaba5ca0b(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

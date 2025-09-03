@@ -5,7 +5,18 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.8d",$val)
+/// ```
+/// Used by:
+/// - Sony::Main.SerialNumber
+pub fn ast_print_8f2104934719cb29(val: &TagValue) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl("%.8d".into(), &[val.clone()]))
+}
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -25,21 +36,6 @@ use crate::types::{TagValue, ExifContext};
 /// - Vorbis::Identification.NominalBitrate
 /// TODO: Add support for this expression pattern
 pub fn ast_print_8f60444a6530198d(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("%.8d",$val)
-/// ```
-/// Used by:
-/// - Sony::Main.SerialNumber
-/// TODO: Add support for this expression pattern
-pub fn ast_print_8f2104934719cb29(val: &TagValue) -> TagValue
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()

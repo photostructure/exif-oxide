@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,8 +13,8 @@ use crate::types::{TagValue, ExifContext};
 /// ```
 /// Used by:
 /// - Pentax::Main.AFPointsInFocus
-pub fn ast_value_f810249e3e5ba00e(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val & 0x7ff)
+pub fn ast_value_f810249e3e5ba00e(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val & 0x7ffu32))
 }
 
 
@@ -26,7 +26,7 @@ pub fn ast_value_f810249e3e5ba00e(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Sigma::Main.ExposureTime2
 /// TODO: Add support for this expression pattern
-pub fn ast_value_f87b1058f4dbdeaa(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_f87b1058f4dbdeaa(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,7 +14,7 @@ use crate::types::{TagValue, ExifContext};
 /// Used by:
 /// - Photoshop::JPEG_Quality.PhotoshopQuality
 pub fn ast_print_c7ab2268f0055197(val: &TagValue) -> TagValue {
-    val + 4
+    (val + 4i32)
 }
 
 
@@ -26,8 +26,8 @@ pub fn ast_print_c7ab2268f0055197(val: &TagValue) -> TagValue {
 /// - SonyIDC::Main.ColorNoiseReduction
 /// - SonyIDC::Main.EdgeNoiseReduction
 /// - SonyIDC::Main.NoiseReductionValue
-pub fn ast_value_c7431c5fa598bf69(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((val + 100) / 2)
+pub fn ast_value_c7431c5fa598bf69(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((val + 100i32)) / 2i32)
 }
 
 
@@ -39,7 +39,7 @@ pub fn ast_value_c7431c5fa598bf69(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Pentax::AFInfo.AFPointValues
 /// TODO: Add support for this expression pattern
-pub fn ast_value_c7eada7e0548cfd1(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_c7eada7e0548cfd1(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

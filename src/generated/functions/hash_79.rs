@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -73,25 +73,26 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::MenuSettingsZ9v4.NonCPULens8FocalLength
 /// - Nikon::MenuSettingsZ9v4.NonCPULens9FocalLength
 pub fn ast_print_79f8b183abd6a1b(val: &TagValue) -> TagValue {
-    TagValue::String(format!("%.1fmm", val / 10))
+    TagValue::String(codegen_runtime::sprintf_perl("%.1fmm".into(), &[val / 10i32.clone()]))
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-///
 /// my $len = ord($val);
 /// $val = substr($val, 0, $len+1) if $len < length($val);
 /// return Image::ExifTool::Photoshop::ConvertPascalString($self,$val);
-///
 /// ```
 /// Used by:
 /// - Photoshop::Main.ClippingPathName
 /// TODO: Add support for this expression pattern
-pub fn ast_value_79412c758cdfcf8d(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_79412c758cdfcf8d(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
+
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -105,7 +106,10 @@ pub fn ast_value_79412c758cdfcf8d(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Olympus::CameraSettings.PictureModeSharpness
 /// - Olympus::CameraSettings.SharpnessSetting
 /// TODO: Add support for this expression pattern
-pub fn ast_print_79289c26a24e6f78(val: &TagValue) -> TagValue {
+pub fn ast_print_79289c26a24e6f78(val: &TagValue) -> TagValue
+{
     tracing::warn!("Missing implementation for expression in {}", file!());
     val.clone()
 }
+
+

@@ -5,21 +5,20 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~s/\0\0.*//; $val=~s/\0 */\n/g; $val
 /// ```
 /// Used by:
 /// - Samsung::Type2.LocalLocationName
-pub fn ast_value_a63033e775fcc039(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok({
-        TagValue::String(crate::fmt::regex_replace("\\0\\0.*", &val.to_string(), "")) ;;
-        TagValue::String(crate::fmt::regex_replace_all("\\0 *", &val.to_string(), "\\n")) ;;
-        val
-    }
-    )
+/// TODO: Add support for this expression pattern
+pub fn ast_value_a63033e775fcc039(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
+{
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(val.clone())
 }
 
 

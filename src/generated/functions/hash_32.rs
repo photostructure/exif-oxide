@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -33,7 +37,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::MenuSettingsZ9v4.NonCPULens8MaxAperture
 /// - Nikon::MenuSettingsZ9v4.NonCPULens9MaxAperture
 pub fn ast_print_32d15696c00cf4d1(val: &TagValue) -> TagValue {
-    TagValue::String(format!("f/%.1f", val / 100))
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "f/%.1f".into(),
+        &[val / 100i32.clone()],
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -45,7 +52,9 @@ pub fn ast_print_32d15696c00cf4d1(val: &TagValue) -> TagValue {
 /// - Pentax::AFInfo.AFPointsUnknown1
 /// - Pentax::AFInfo.AFPointsUnknown2
 /// TODO: Add support for this expression pattern
-pub fn ast_value_325ae39bdd3fcbb3(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_325ae39bdd3fcbb3(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }
@@ -58,7 +67,9 @@ pub fn ast_value_325ae39bdd3fcbb3(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Pentax::Main.Time
 /// TODO: Add support for this expression pattern
-pub fn ast_value_32a7e10f5e7f8777(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
+pub fn ast_value_32a7e10f5e7f8777(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
 }

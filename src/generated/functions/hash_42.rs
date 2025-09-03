@@ -6,6 +6,10 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,27 +18,7 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Canon::CameraSettings.FocalUnits
 pub fn ast_print_423da13b81d6bdf1(val: &TagValue) -> TagValue {
-    format!("{}/mm", val)
-}
-
-/// Original perl expression:
-/// ``` perl
-/// $val=~tr/ /:/; $val
-/// ```
-/// Used by:
-/// - FujiFilm::RAF.RawImageAspectRatio
-/// - QuickTime::VideoProf.PixelAspectRatio
-pub fn ast_print_422bfca23e0caff5(val: &TagValue) -> TagValue {
-    {
-        val.to_string()
-            .chars()
-            .map(|c| match c {
-                ' ' => ':',
-                _ => c,
-            })
-            .collect::<String>();
-        val
-    }
+    format!("{}/mm", val).into()
 }
 
 /// Original perl expression:
@@ -43,8 +27,10 @@ pub fn ast_print_422bfca23e0caff5(val: &TagValue) -> TagValue {
 /// ```
 /// Used by:
 /// - Pentax::AEInfo2.AEXv
-pub fn ast_value_42b5da943f4414b1(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok((val - 64) / 8)
+pub fn ast_value_42b5da943f4414b1(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val - 64i32) / 8i32)
 }
 
 /// Original perl expression:
@@ -65,8 +51,27 @@ pub fn ast_value_42b5da943f4414b1(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Exif::Main.ProfileHueSatMapData3
 /// - Exif::Main.ProfileLookTableData
 /// - Exif::Main.ProfileToneCurve
-pub fn ast_value_4262675ed10175b0(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if length(val) > 64 { val } else { val })
+pub fn ast_value_4262675ed10175b0(
+    val: &TagValue,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if (length_i32((val)) > 64i32) {
+    } else {
+        val
+    })
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val=~tr/ /:/; $val
+/// ```
+/// Used by:
+/// - FujiFilm::RAF.RawImageAspectRatio
+/// - QuickTime::VideoProf.PixelAspectRatio
+/// TODO: Add support for this expression pattern
+pub fn ast_print_422bfca23e0caff5(val: &TagValue) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    val.clone()
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

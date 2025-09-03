@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,8 +13,8 @@ use crate::types::{TagValue, ExifContext};
 /// ```
 /// Used by:
 /// - Olympus::Main.ShutterSpeedValue
-pub fn ast_value_ff00b07c5d58863f(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(if abs (val) < 100 { 2 ** (-(val)) } else { 0 })
+pub fn ast_value_ff00b07c5d58863f(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if (abs((val)) < 100i32) { (2i32 as f64).powf(((0i32 - val)) as f64) } else { 0i32 })
 }
 
 
@@ -26,7 +26,7 @@ pub fn ast_value_ff00b07c5d58863f(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Sony::Tag940c.CameraE-mountVersion
 /// - Sony::Tag940c.LensE-mountVersion
 pub fn ast_print_ff580d7a7e7ea714(val: &TagValue) -> TagValue {
-    TagValue::String(format!("%x.%.2x", val >> 8, val & 0xff))
+    TagValue::String(codegen_runtime::sprintf_perl("%x.%.2x".into(), &[val >> 8i32.clone(), val & 0xffu32.clone()]))
 }
 
 
@@ -38,7 +38,7 @@ pub fn ast_print_ff580d7a7e7ea714(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Olympus::Equipment.LensType
 /// TODO: Add support for this expression pattern
-pub fn ast_value_ff5d284655150fa7(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_ff5d284655150fa7(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())

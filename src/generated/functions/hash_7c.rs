@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{ExifContext, TagValue};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -16,6 +16,8 @@ use crate::types::{ExifContext, TagValue};
 /// - GoPro::GPS5.GPSSpeed3D
 /// - GoPro::GPS9.GPSSpeed
 /// - GoPro::GPS9.GPSSpeed3D
-pub fn ast_value_7cdaaed953331e49(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(val * 3.6)
+pub fn ast_value_7cdaaed953331e49(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val * 3.6f64))
 }
+
+

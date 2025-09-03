@@ -5,7 +5,7 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext};
+use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,8 +13,8 @@ use crate::types::{TagValue, ExifContext};
 /// ```
 /// Used by:
 /// - FujiFilm::MOV.ExposureTime
-pub fn ast_value_efb6d499febeaf95(val: &TagValue) -> Result<TagValue, crate::types::ExifError> {
-    Ok(crate::fmt::safe_reciprocal(&val))
+pub fn ast_value_efb6d499febeaf95(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if val { (1i32 / val) } else { 0i32 })
 }
 
 
@@ -26,7 +26,7 @@ pub fn ast_value_efb6d499febeaf95(val: &TagValue) -> Result<TagValue, crate::typ
 /// Used by:
 /// - Nikon::AVIVers.MakerNoteVersion
 /// TODO: Add support for this expression pattern
-pub fn ast_value_efbc21cd45d1f526(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_efbc21cd45d1f526(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
@@ -42,7 +42,7 @@ pub fn ast_value_efbc21cd45d1f526(val: &TagValue) -> Result<TagValue, crate::typ
 /// - Kodak::Main.MonthDayCreated
 /// - Kodak::Type3.MonthDayCreated
 /// TODO: Add support for this expression pattern
-pub fn ast_value_ef515e3e00781660(val: &TagValue) -> Result<TagValue, crate::types::ExifError>
+pub fn ast_value_ef515e3e00781660(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
 {
     tracing::warn!("Missing implementation for expression in {}", file!());
     Ok(val.clone())
