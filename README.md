@@ -21,6 +21,7 @@ ExifTool is the industry standard for metadata extraction, but modern antivirus 
 - **GPS coordinates** - Decimal degree conversion and composite tags
 - **Composite tags** - Advanced calculations like ShutterSpeed
 - **CLI compatibility** - JSON output with -TagName# numeric mode
+- **PPI→AST→Rust pipeline** - Production-ready code generation with precedence climbing
 
 ### 🚧 **In Progress**
 
@@ -55,7 +56,32 @@ ExifTool is the industry standard for metadata extraction, but modern antivirus 
 
 ## How It Works
 
-exif-oxide combines automated code generation with manual translation of ExifTool's complex logic. The hybrid approach extracts simple lookup tables automatically while carefully hand-porting sophisticated processing rules, ensuring perfect compatibility with ExifTool's 25+ years of camera-specific quirks. See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for technical details.
+exif-oxide uses a sophisticated hybrid approach combining automated code generation with manual translation:
+
+### Code Generation Pipeline
+
+The project features a production-ready **PPI→AST→Rust** code generation pipeline that automatically extracts and translates ExifTool's Perl code:
+
+1. **PPI Parser** - Parses ExifTool's Perl source into an abstract syntax tree
+2. **AST Normalization** - Multi-pass normalization using precedence climbing for correct operator handling
+3. **Strategy Pattern** - 9 competing strategies automatically discover and claim ExifTool symbols
+4. **Rust Generation** - Produces type-safe Rust code with full ExifTool compatibility
+
+This pipeline automatically extracts:
+- 3,000+ lookup tables (camera models, lens IDs, white balance settings)
+- Tag definitions with metadata
+- File type detection patterns
+- PrintConv/ValueConv expressions
+
+### Manual Excellence
+
+Complex processing logic is carefully hand-ported with ExifTool source references:
+- Manufacturer-specific quirks (Canon/Nikon/Sony offset calculations)
+- Binary data extraction algorithms
+- Encryption handling
+- Composite tag calculations
+
+This hybrid approach ensures perfect compatibility with ExifTool's 25+ years of camera-specific quirks while maintaining a maintainable codebase that can track ExifTool's monthly updates. See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for technical details.
 
 ## Usage
 
@@ -91,6 +117,8 @@ Dual-licensed under commercial license and GNU Affero General Public License v3.
 
 ## Development
 
+> **Note**: This repository was rebuilt in September 2025 to remove git LFS due to excessive storage costs from our large test image corpus. The previous repository was archived and made private to stem the bleeding. Test images are now stored separately and excluded from version control.
+
 ### Quick Start
 
 1. Clone with submodules:
@@ -113,12 +141,13 @@ Dual-licensed under commercial license and GNU Affero General Public License v3.
    cargo run test-images/canon/Canon_T3i.JPG
    ```
 
-### Architecture
+### Architecture Highlights
 
-- **Code generation**: Automatically extracts 3,000+ lookup tables from ExifTool source
+- **PPI→AST→Rust pipeline**: Production-ready code generation with precedence climbing parser
+- **Strategy pattern**: 9 competing strategies auto-discover ExifTool symbols (no config needed)
+- **Hybrid approach**: Generated static data (3,000+ tables) + manual complex logic
 - **Runtime registries**: PrintConv/ValueConv implementations avoid code bloat
-- **Trust ExifTool**: Every complex feature manually ported with ExifTool source references
-- **Hybrid approach**: Generated static data + manual complex logic
+- **Trust ExifTool**: Every implementation cites ExifTool source line numbers
 
 ### Essential Reading
 
