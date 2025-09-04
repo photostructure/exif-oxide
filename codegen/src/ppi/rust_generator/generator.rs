@@ -269,6 +269,31 @@ impl RustGenerator {
             return Ok(ternary_result);
         }
 
+        // Check for array access pattern BEFORE trying to visit individual nodes
+        // This prevents the subscript from being visited directly which causes errors
+        for i in 0..children.len() {
+            if children[i].class == "PPI::Token::Symbol"
+                && i + 1 < children.len()
+                && children[i + 1].class == "PPI::Structure::Subscript"
+            {
+                let array_name = children[i].content.as_deref().unwrap_or("$val");
+                let rust_array = if array_name == "$val" {
+                    "val"
+                } else {
+                    array_name.trim_start_matches('$')
+                };
+
+                if let Some(index) = self.extract_subscript_index(&children[i + 1])? {
+                    // Generate array access that handles all array types
+                    // This uses the get_array_element helper that handles typed arrays
+                    return Ok(format!(
+                        "codegen_runtime::get_array_element({}, {})",
+                        rust_array, index
+                    ));
+                }
+            }
+        }
+
         // Check for binary operation patterns first
         let parts: Vec<String> = children
             .iter()
@@ -317,6 +342,32 @@ impl RustGenerator {
                 processed.push(func_result);
                 i += 2;
                 continue;
+            }
+
+            // Pattern: array access (Symbol + Subscript for $val[0])
+            if children[i].class == "PPI::Token::Symbol"
+                && i + 1 < children.len()
+                && children[i + 1].class == "PPI::Structure::Subscript"
+            {
+                // Handle array subscript access like $val[0], $val[1]
+                let array_name = children[i].content.as_deref().unwrap_or("$val");
+                let rust_array = if array_name == "$val" {
+                    "val"
+                } else {
+                    array_name.trim_start_matches('$')
+                };
+
+                // Extract the index from the subscript structure
+                if let Some(index) = self.extract_subscript_index(&children[i + 1])? {
+                    // Generate array access that handles all array types
+                    let array_access = format!(
+                        "codegen_runtime::get_array_element({}, {})",
+                        rust_array, index
+                    );
+                    processed.push(array_access);
+                    i += 2;
+                    continue;
+                }
             }
 
             // Pattern: hash dereference (Cast + Symbol + Subscript for $$self{key})
@@ -438,6 +489,30 @@ impl RustGenerator {
     }
 
     /// Extract the key from a subscript structure (e.g., {FocalUnits} -> "FocalUnits")
+    fn extract_subscript_index(
+        &self,
+        subscript_node: &PpiNode,
+    ) -> Result<Option<String>, CodeGenError> {
+        // The subscript should have children that represent the index
+        if subscript_node.children.is_empty() {
+            return Ok(None);
+        }
+
+        // For [0], [1], etc., we expect a single expression child containing the number
+        if subscript_node.children.len() == 1
+            && subscript_node.children[0].class == "PPI::Statement::Expression"
+        {
+            let expr_node = &subscript_node.children[0];
+            if !expr_node.children.is_empty() && expr_node.children[0].class == "PPI::Token::Number" {
+                if let Some(index) = &expr_node.children[0].content {
+                    return Ok(Some(index.clone()));
+                }
+            }
+        }
+
+        Ok(None)
+    }
+
     fn extract_subscript_key(
         &self,
         subscript_node: &PpiNode,

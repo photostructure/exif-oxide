@@ -5,16 +5,9 @@
   "exiftool_reference": "Common for accessing array elements like GPS coordinates",
   "test_cases": [
     {
-      "description": "Access first element of array",
+      "description": "Access first element of U32 array",
       "input": {
-        "Array": [
-          {
-            "U32": 45
-          },
-          {
-            "U32": 30
-          }
-        ]
+        "U32Array": [45, 30, 15]
       },
       "expected": {
         "U32": 45
