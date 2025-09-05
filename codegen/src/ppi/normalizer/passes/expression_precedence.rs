@@ -18,73 +18,124 @@
 use crate::ppi::normalizer::{multi_pass::RewritePass, utils};
 use crate::ppi::types::PpiNode;
 use std::collections::HashMap;
+use std::sync::LazyLock;
 use tracing::{debug, trace};
 
 /// Perl operator precedence table based on perlop documentation
 /// Higher numbers = higher precedence = binds tighter
+/// Reference: perlop.txt lines 129-153
 static PRECEDENCE_TABLE: &[(&str, u8)] = &[
-    // Function calls without parentheses (highest precedence)
-    ("function_call", 100),
+    // Terms and list operators (leftward) - highest precedence
+    ("function_call", 210), // Function calls with parentheses
+    // Arrow operator
+    ("->", 200),
+    // Auto-increment and auto-decrement (nonassoc)
+    ("++", 190),
+    ("--", 190),
     // Exponentiation (right associative)
-    ("**", 85),
+    ("**", 180),
     // Unary operators (right associative)
-    ("unary_-", 80),
-    ("unary_+", 80),
-    ("!", 80),
-    ("~", 80),
-    // Regex binding operators
-    ("=~", 75),
-    ("!~", 75),
+    ("!", 170),
+    ("~", 170),
+    ("~.", 170), // Bitwise string negation
+    ("\\", 170), // Reference operator
+    ("unary_+", 170),
+    ("unary_-", 170),
+    // Binding operators
+    ("=~", 160),
+    ("!~", 160),
     // Multiplicative (left associative)
-    ("*", 70),
-    ("/", 70),
-    ("%", 70),
-    ("x", 70),
+    ("*", 150),
+    ("/", 150),
+    ("%", 150),
+    ("x", 150), // String repetition
     // Additive and string concatenation (left associative)
-    ("+", 65),
-    ("-", 65),
-    (".", 65), // String concatenation same level as addition
-    // Relational operators (chain/non-associative)
-    ("<", 50),
-    (">", 50),
-    ("<=", 50),
-    (">=", 50),
-    ("lt", 50),
-    ("gt", 50),
-    ("le", 50),
-    ("ge", 50),
-    // Equality operators
-    ("==", 45),
-    ("!=", 45),
-    ("eq", 45),
-    ("ne", 45),
-    ("<=>", 45),
-    ("cmp", 45),
-    // Bitwise AND
-    ("&", 40),
-    // Bitwise OR/XOR
-    ("|", 35),
-    ("^", 35),
-    // Logical AND
-    ("&&", 30),
-    ("and", 30),
-    // Logical OR
-    ("||", 25),
-    ("or", 25),
-    ("//", 25),
+    ("+", 140),
+    ("-", 140),
+    (".", 140), // String concatenation
+    // Shift operators (left associative)
+    ("<<", 130),
+    (">>", 130),
+    // Named unary operators
+    ("named_unary", 120),
+    // Class instance operator (nonassoc)
+    ("isa", 110),
+    // Relational operators (chained)
+    ("<", 100),
+    (">", 100),
+    ("<=", 100),
+    (">=", 100),
+    ("lt", 100),
+    ("gt", 100),
+    ("le", 100),
+    ("ge", 100),
+    // Equality operators (chain/na)
+    ("==", 90),
+    ("!=", 90),
+    ("eq", 90),
+    ("ne", 90),
+    ("<=>", 90),
+    ("cmp", 90),
+    ("~~", 90), // Smartmatch
+    // Bitwise AND (left associative)
+    ("&", 80),
+    ("&.", 80), // Bitwise string AND
+    // Bitwise OR/XOR (left associative)
+    ("|", 70),
+    ("|.", 70), // Bitwise string OR
+    ("^", 70),
+    ("^.", 70), // Bitwise string XOR
+    // C-style Logical AND (left associative)
+    ("&&", 60),
+    // C-style Logical OR/XOR/Defined-OR (left associative)
+    ("||", 50),
+    ("^^", 50), // Logical XOR
+    ("//", 50), // Defined-OR
+    // Range operators (nonassoc)
+    ("..", 40),
+    ("...", 40),
     // Ternary conditional (right associative)
-    ("?", 15),
-    (":", 15),
+    ("?", 30),
+    (":", 30),
     // Assignment operators (right associative)
-    ("=", 10),
-    ("+=", 10),
-    ("-=", 10),
-    ("*=", 10),
-    ("/=", 10),
-    // Comma operator (lowest precedence)
-    (",", 5),
-    ("=>", 5),
+    ("=", 20),
+    ("+=", 20),
+    ("-=", 20),
+    ("*=", 20),
+    ("/=", 20),
+    ("%=", 20),
+    ("**=", 20),
+    ("&=", 20),
+    ("|=", 20),
+    ("^=", 20),
+    ("&.=", 20),
+    ("|.=", 20),
+    ("^.=", 20),
+    ("<<=", 20),
+    (">>=", 20),
+    ("&&=", 20),
+    ("||=", 20),
+    ("//=", 20),
+    ("^^=", 20),
+    (".=", 20),
+    ("x=", 20),
+    // Comma and fat comma (left associative)
+    (",", 10),
+    ("=>", 10),
+    // List operators (rightward) - lower than comma
+    ("list_op_right", 8),
+    // Logical not (right associative) - very low precedence
+    ("not", 5),
+    // Logical and (left associative) - very low precedence
+    ("and", 3),
+    // Logical or/xor (left associative) - lowest precedence
+    ("or", 1),
+    ("xor", 1),
 ];
+
+/// Lazily initialized precedence map for efficient lookups
+static PRECEDENCE_MAP: LazyLock<HashMap<&'static str, u8>> =
+    LazyLock::new(|| PRECEDENCE_TABLE.iter().cloned().collect());
 
 /// Expression pattern classification for routing to appropriate handlers
 #[derive(Debug, PartialEq)]
@@ -98,9 +149,7 @@ enum ExpressionPattern {
 }
 
 /// Unified precedence climbing normalizer that consolidates 6 expression normalizers
-pub struct ExpressionPrecedenceNormalizer {
-    precedence_map: HashMap<&'static str, u8>,
-}
+pub struct ExpressionPrecedenceNormalizer;
 
 impl Default for ExpressionPrecedenceNormalizer {
     fn default() -> Self {
@@ -110,13 +159,12 @@ impl Default for ExpressionPrecedenceNormalizer {
 
 impl ExpressionPrecedenceNormalizer {
     pub fn new() -> Self {
-        let precedence_map = PRECEDENCE_TABLE.iter().cloned().collect();
-        Self { precedence_map }
+        Self
     }
 
     /// Get operator precedence, returns None for unknown operators
     fn get_precedence(&self, op: &str) -> Option<u8> {
-        self.precedence_map.get(op).copied()
+        PRECEDENCE_MAP.get(op).copied()
     }
 }
 
@@ -398,12 +446,21 @@ impl ExpressionPrecedenceNormalizer {
         // Extract format string (after unpack)
         let format = self.find_next_non_comma_token(children, unpack_idx + 1, children.len())?;
 
-        // Extract data (after format) - simplified approach
-        let format_pos = children
-            .iter()
-            .skip(unpack_idx + 1)
-            .position(|child| child.content == format.content)?;
-        let format_end = unpack_idx + 1 + format_pos + 1;
+        // Extract data (after format) - simplified approach with proper None handling
+        let format_pos = children.iter().skip(unpack_idx + 1).position(|child| {
+            // Safely compare content, handling None cases
+            format.content.is_some() && child.content == format.content
+        })?;
+
+        // Check bounds before calculating format_end
+        let format_end = unpack_idx
+            .checked_add(1)?
+            .checked_add(format_pos)?
+            .checked_add(1)?;
+
+        if format_end >= children.len() {
+            return None;
+        }
 
         let data = self.find_next_non_comma_token(children, format_end, children.len())?;
 
@@ -442,16 +499,28 @@ impl ExpressionPrecedenceNormalizer {
         let question_pos = tokens
             .iter()
             .position(|t| t.class == "PPI::Token::Operator" && t.content.as_deref() == Some("?"))?;
-        let colon_pos = tokens
+
+        // Find : operator after ?, with overflow protection
+        let skip_count = question_pos.checked_add(1)?;
+        let colon_offset = tokens
             .iter()
-            .skip(question_pos + 1)
+            .skip(skip_count)
             .position(|t| t.class == "PPI::Token::Operator" && t.content.as_deref() == Some(":"))?;
-        let colon_pos = question_pos + 1 + colon_pos;
+        let colon_pos = skip_count.checked_add(colon_offset)?;
 
         // Extract condition, true_expr, false_expr
+        // The condition doesn't need unary preprocessing as it's already a complete expression
         let condition = self.parse_expression_sequence(&tokens[..question_pos]);
-        let true_expr = self.parse_expression_sequence(&tokens[question_pos + 1..colon_pos]);
-        let false_expr = self.parse_expression_sequence(&tokens[colon_pos + 1..]);
+
+        // Preprocess unary operators in true and false branches to handle cases like -$val[0]
+        // This converts unary negation to binary subtraction (0 - $val[0])
+        let true_branch_tokens = tokens[question_pos + 1..colon_pos].to_vec();
+        let preprocessed_true = self.preprocess_unary_operators(true_branch_tokens);
+        let true_expr = self.parse_expression_sequence(&preprocessed_true);
+
+        let false_branch_tokens = tokens[colon_pos + 1..].to_vec();
+        let preprocessed_false = self.preprocess_unary_operators(false_branch_tokens);
+        let false_expr = self.parse_expression_sequence(&preprocessed_false);
 
         Some(PpiNode {
             class: "TernaryOperation".to_string(),
@@ -698,6 +767,23 @@ impl ExpressionPrecedenceNormalizer {
             };
             new_pos += 1; // consume the parentheses token
         }
+        // Handle array subscript: $val[0], $val[1], etc.
+        else if primary.class == "PPI::Token::Symbol"
+            && new_pos < tokens.len()
+            && tokens[new_pos].class == "PPI::Structure::Subscript"
+        {
+            // Create array access node combining symbol + subscript
+            primary = PpiNode {
+                class: "ArrayAccess".to_string(),
+                content: primary.content.clone(),
+                children: vec![tokens[new_pos].clone()],
+                numeric_value: None,
+                symbol_type: primary.symbol_type.clone(),
+                string_value: None,
+                structure_bounds: None,
+            };
+            new_pos += 1; // consume the subscript token
+        }
 
         Some((primary, new_pos))
     }
@@ -821,7 +907,22 @@ impl ExpressionPrecedenceNormalizer {
 
     /// Check if operator is right-associative
     fn is_right_associative(&self, op: &str) -> bool {
-        matches!(op, "**" | "?" | ":" | "=" | "+=" | "-=" | "*=" | "/=")
+        matches!(
+            op,
+            // Exponentiation
+            "**" |
+            // Unary operators
+            "!" | "~" | "~." | "\\" | "unary_+" | "unary_-" |
+            // Ternary conditional
+            "?" | ":" |
+            // Assignment operators
+            "=" | "+=" | "-=" | "*=" | "/=" | "%=" | "**=" |
+            "&=" | "|=" | "^=" | "&.=" | "|.=" | "^.=" |
+            "<<=" | ">>=" | "&&=" | "||=" | "//=" | "^^=" |
+            ".=" | "x=" |
+            // Logical not (low precedence)
+            "not"
+        )
     }
 
     /// Check if this node represents a function call pattern
@@ -1011,31 +1112,51 @@ impl ExpressionPrecedenceNormalizer {
             // Check for unary prefix operator - ONLY if there's no left operand
             if i + 1 < tokens.len()
                 && self.is_unary_prefix_operator(&tokens[i])
-                && !self.is_operator(&tokens[i + 1])
                 && self.is_truly_unary_context(&tokens, i)
             {
+                // Check that the next token is a valid operand (not another operator)
+                // unless it's another unary operator (like --$val or !!$val)
+                let next_is_valid_operand = !self.is_operator(&tokens[i + 1])
+                    || self.is_unary_prefix_operator(&tokens[i + 1]);
+
+                if !next_is_valid_operand {
+                    result.push(tokens[i].clone());
+                    i += 1;
+                    continue;
+                }
                 let operator = tokens[i].content.as_deref().unwrap_or("");
 
-                // Create binary operation: unary_op $val → (0 operator $val)
-                let binary_tokens = match operator {
+                // Collect the complete operand (including array subscripts if present)
+                let mut operand_tokens = vec![tokens[i + 1].clone()];
+                let mut consumed = 2; // operator + first operand token
+
+                // Check if the operand is followed by a subscript (for array access like $val[0])
+                if i + 2 < tokens.len()
+                    && tokens[i + 1].class == "PPI::Token::Symbol"
+                    && tokens[i + 2].class == "PPI::Structure::Subscript"
+                {
+                    // Create ArrayAccess node for the complete expression
+                    operand_tokens = vec![PpiNode {
+                        class: "ArrayAccess".to_string(),
+                        content: tokens[i + 1].content.clone(),
+                        children: vec![tokens[i + 2].clone()],
+                        symbol_type: tokens[i + 1].symbol_type.clone(),
+                        numeric_value: None,
+                        string_value: None,
+                        structure_bounds: None,
+                    }];
+                    consumed = 3; // operator + symbol + subscript
+                }
+
+                // Create unary operation node for better code generation
+                let unary_tokens = match operator {
                     "-" => {
-                        // Unary minus: -$val → create a proper BinaryOperation node directly
-                        // This preserves the high precedence of unary minus
+                        // Unary minus: -$val → create a UnaryNegation node
+                        // This allows the visitor to generate cleaner code using negate() function
                         vec![PpiNode {
-                            class: "BinaryOperation".to_string(),
+                            class: "UnaryNegation".to_string(),
                             content: Some("-".to_string()),
-                            children: vec![
-                                PpiNode {
-                                    class: "PPI::Token::Number".to_string(),
-                                    content: Some("0".to_string()),
-                                    children: vec![],
-                                    symbol_type: None,
-                                    numeric_value: Some(0.0),
-                                    string_value: None,
-                                    structure_bounds: None,
-                                },
-                                tokens[i + 1].clone(),
-                            ],
+                            children: vec![operand_tokens[0].clone()],
                             symbol_type: None,
                             numeric_value: None,
                             string_value: None,
@@ -1057,7 +1178,7 @@ impl ExpressionPrecedenceNormalizer {
                                     string_value: None,
                                     structure_bounds: None,
                                 },
-                                tokens[i + 1].clone(),
+                                operand_tokens[0].clone(),
                             ],
                             symbol_type: None,
                             numeric_value: None,
@@ -1066,14 +1187,16 @@ impl ExpressionPrecedenceNormalizer {
                         }]
                     }
                     _ => {
-                        // For other unary operators, keep original tokens for now
-                        vec![tokens[i].clone(), tokens[i + 1].clone()]
+                        // For other unary operators, keep the operator and complete operand
+                        let mut other_tokens = vec![tokens[i].clone()];
+                        other_tokens.extend(operand_tokens);
+                        other_tokens
                     }
                 };
 
-                debug!("Preprocessed unary {} into binary operation", operator);
-                result.extend(binary_tokens);
-                i += 2; // Skip both operator and operand
+                debug!("Preprocessed unary {} into unary operation", operator);
+                result.extend(unary_tokens);
+                i += consumed; // Skip operator and complete operand
             } else {
                 result.push(tokens[i].clone());
                 i += 1;
@@ -1142,12 +1265,33 @@ mod tests {
 
     #[test]
     fn test_precedence_table() {
-        let normalizer = ExpressionPrecedenceNormalizer::new();
-        assert_eq!(normalizer.get_precedence("*"), Some(70));
-        assert_eq!(normalizer.get_precedence("+"), Some(65));
-        assert_eq!(normalizer.get_precedence("?"), Some(15));
-        assert_eq!(normalizer.get_precedence(","), Some(5));
-        assert_eq!(normalizer.get_precedence("unknown"), None);
+        // Test multiplicative operators
+        assert_eq!(PRECEDENCE_MAP.get("*").copied(), Some(150));
+        assert_eq!(PRECEDENCE_MAP.get("/").copied(), Some(150));
+        assert_eq!(PRECEDENCE_MAP.get("%").copied(), Some(150));
+        assert_eq!(PRECEDENCE_MAP.get("x").copied(), Some(150));
+
+        // Test additive operators
+        assert_eq!(PRECEDENCE_MAP.get("+").copied(), Some(140));
+        assert_eq!(PRECEDENCE_MAP.get("-").copied(), Some(140));
+        assert_eq!(PRECEDENCE_MAP.get(".").copied(), Some(140));
+
+        // Test logical operators - critical fix!
+        assert_eq!(PRECEDENCE_MAP.get("&&").copied(), Some(60));
+        assert_eq!(PRECEDENCE_MAP.get("||").copied(), Some(50));
+        assert_eq!(PRECEDENCE_MAP.get("and").copied(), Some(3)); // Very low!
+        assert_eq!(PRECEDENCE_MAP.get("or").copied(), Some(1)); // Lowest!
+
+        // Test ternary
+        assert_eq!(PRECEDENCE_MAP.get("?").copied(), Some(30));
+        assert_eq!(PRECEDENCE_MAP.get(":").copied(), Some(30));
+
+        // Test comma
+        assert_eq!(PRECEDENCE_MAP.get(",").copied(), Some(10));
+        assert_eq!(PRECEDENCE_MAP.get("=>").copied(), Some(10));
+
+        // Test unknown
+        assert_eq!(PRECEDENCE_MAP.get("unknown").copied(), None);
     }
 
     #[test]
