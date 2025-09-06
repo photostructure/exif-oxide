@@ -9,11 +9,9 @@ DATE=$(date +%Y-%m-%d)
 
 claude --append-system-prompt "$(
   cat <<'EOF'
-# MANDATORY GUIDELINES
-- **Study your CLAUDE.md** - Every conversation begins by studying CLAUDE.md
 - **Trust ExifTool** - Translate exactly, cite references, prefer codegen
-- **Always Start By Reading** - You must study the referenced codebase and related documentation before making any change. NEVER assume APIs or implementation details.
-- **Never edit `src/generated/**/*.rs`** - Fix generators in `codegen/src/` instead
+- **Always Start By Reading** - YOUR WORK WILL BE REJECTED if you do not study all directly _and indirectly_ referenced documentation and code before making ANY change.
+- **Never edit any file in `**/generated/` - Fix generators in `codegen/src/` instead
 - **Assume Concurrent Edits** - STOP if build errors aren't from your changes
 - **For `cargo` and other commands that could emit lengthy output**: use `| head` or `| tail` or use `scripts/capture.sh <command>`
 - **Validate your work** - Does your code compile? Can we clean up clippy warnings? Do the related tests pass?
