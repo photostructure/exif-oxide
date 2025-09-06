@@ -144,11 +144,23 @@ pub trait StringOperationsHandler {
             return self.handle_regex_substitution(left, op, right);
         }
 
-        // Extract the regex pattern from right side (e.g., "/\\d/" -> "\\d")
-        let pattern = if right.starts_with('/') && right.ends_with('/') {
-            &right[1..right.len() - 1]
+        // Extract the regex pattern and flags from right side
+        // Examples: "/Canon/" -> ("Canon", ""), "/^[SW]/i" -> ("^[SW]", "i")
+        let (pattern, flags) = if right.starts_with('/') {
+            let end_slash = right.rfind('/').unwrap_or(right.len() - 1);
+            if end_slash > 0 {
+                let pattern = &right[1..end_slash];
+                let flags = if end_slash < right.len() - 1 {
+                    &right[end_slash + 1..]
+                } else {
+                    ""
+                };
+                (pattern, flags)
+            } else {
+                (right, "")
+            }
         } else {
-            right
+            (right, "")
         };
 
         // Check for capture groups in the pattern
@@ -158,9 +170,9 @@ pub trait StringOperationsHandler {
             return self.generate_regex_capture_code(left, op, pattern);
         }
 
-        // For simple pattern matching, use contains or regex
-        // \d means contains a digit
+        // Handle special simple patterns without regex crate where possible
         if pattern == "\\d" {
+            // Simple digit check
             if op == "=~" {
                 return Ok(format!(
                     "{}.to_string().chars().any(|c| c.is_ascii_digit())",
@@ -174,12 +186,46 @@ pub trait StringOperationsHandler {
             }
         }
 
-        // For other patterns, use a simple contains check
-        // This is a simplification - full regex support would need the regex crate
-        if op == "=~" {
-            return Ok(format!("{}.to_string().contains(r\"{}\")", left, pattern));
+        // Check if pattern needs real regex (has anchors, character classes, etc.)
+        let needs_regex = pattern.contains('^')
+            || pattern.contains('$')
+            || pattern.contains('[')
+            || pattern.contains('\\')
+            || !flags.is_empty();
+
+        if needs_regex {
+            // Generate proper regex matching code for complex patterns
+            // This is especially important for GPS patterns like /^[SW]/i
+            use std::collections::hash_map::DefaultHasher;
+            use std::hash::{Hash, Hasher};
+            let mut hasher = DefaultHasher::new();
+            pattern.hash(&mut hasher);
+            flags.hash(&mut hasher);
+            let regex_id = format!("REGEX_{:x}", hasher.finish());
+
+            // Build regex with flags
+            let regex_flags = if flags.contains('i') { "(?i)" } else { "" };
+            let full_pattern = format!("{}{}", regex_flags, pattern);
+
+            // Generate regex matching code
+            if op == "=~" {
+                Ok(format!(
+                    "{{ use regex::Regex; use std::sync::LazyLock; static {}: LazyLock<Regex> = LazyLock::new(|| Regex::new(r\"{}\").unwrap()); {}.is_match(&{}.to_string()) }}",
+                    regex_id, full_pattern, regex_id, left
+                ))
+            } else {
+                Ok(format!(
+                    "{{ use regex::Regex; use std::sync::LazyLock; static {}: LazyLock<Regex> = LazyLock::new(|| Regex::new(r\"{}\").unwrap()); !{}.is_match(&{}.to_string()) }}",
+                    regex_id, full_pattern, regex_id, left
+                ))
+            }
         } else {
-            return Ok(format!("!{}.to_string().contains(r\"{}\")", left, pattern));
+            // For simple literal patterns, use contains check
+            if op == "=~" {
+                Ok(format!("{}.to_string().contains(r\"{}\")", left, pattern))
+            } else {
+                Ok(format!("!{}.to_string().contains(r\"{}\")", left, pattern))
+            }
         }
     }
 
