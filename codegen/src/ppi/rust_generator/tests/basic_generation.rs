@@ -91,6 +91,6 @@ fn test_signature_generation() {
 
     assert!(signature.contains("pub fn test_condition"));
     assert!(signature.contains("val: &TagValue"));
-    assert!(signature.contains("ctx: &ExifContext"));
+    assert!(signature.contains("ctx: Option<&ExifContext>"));
     assert!(signature.contains("-> bool"));
 }

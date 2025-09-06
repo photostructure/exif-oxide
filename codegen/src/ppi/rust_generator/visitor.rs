@@ -966,6 +966,46 @@ pub trait PpiVisitor {
         }
     }
 
+    /// Visit array access node - handles $val[0], $val[1], etc.
+    fn visit_array_access(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        // The node should have the symbol name in content and subscript in children
+        let var_name = node.content.as_deref().unwrap_or("$val");
+        let rust_name = if var_name == "$val" {
+            "val"
+        } else {
+            var_name.trim_start_matches('$')
+        };
+
+        // Extract the index from the subscript child
+        if let Some(subscript) = node.children.first() {
+            if let Some(index) = self.extract_subscript_index(subscript) {
+                return Ok(format!(
+                    "codegen_runtime::get_array_element({}, {})",
+                    rust_name, index
+                ));
+            }
+        }
+
+        Err(CodeGenError::UnsupportedStructure(
+            "Invalid array access structure".to_string(),
+        ))
+    }
+
+    /// Extract numeric index from subscript node
+    fn extract_subscript_index(&self, subscript: &PpiNode) -> Option<usize> {
+        // Subscript contains Statement::Expression containing the index
+        if let Some(expr) = subscript.children.first() {
+            if let Some(index_node) = expr.children.first() {
+                if index_node.class == "PPI::Token::Number" {
+                    if let Some(numeric_value) = index_node.numeric_value {
+                        return Some(numeric_value as usize);
+                    }
+                }
+            }
+        }
+        None
+    }
+
     /// Visit transliterate node - handles tr/// character replacement operations
     /// PPI::Token::Regexp::Transliterate (likely <100 occurrences) - String character mapping
     fn visit_transliterate(&self, node: &PpiNode) -> Result<String, CodeGenError> {

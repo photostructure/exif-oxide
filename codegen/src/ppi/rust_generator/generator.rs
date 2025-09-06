@@ -264,9 +264,171 @@ impl RustGenerator {
         #[cfg(test)]
         eprintln!("DEBUG process_node_sequence: {} children", children.len());
 
+        // Check for \$val reference pattern - we can't handle references
+        // Pattern: Cast(\) + Symbol($val)
+        // This is used for binary data handling in ExifTool but not needed for our required tags
+        if children.len() >= 2 {
+            #[cfg(debug_assertions)]
+            eprintln!("Checking for reference pattern, first 2 nodes:");
+            #[cfg(debug_assertions)]
+            if !children.is_empty() {
+                eprintln!(
+                    "  [0] class: {}, content: {:?}",
+                    children[0].class, children[0].content
+                );
+            }
+            #[cfg(debug_assertions)]
+            if children.len() > 1 {
+                eprintln!(
+                    "  [1] class: {}, content: {:?}",
+                    children[1].class, children[1].content
+                );
+            }
+
+            if children[0].class == "PPI::Token::Cast"
+                && children[0].content.as_ref() == Some(&"\\".to_string())
+                && children[1].class == "PPI::Token::Symbol"
+            {
+                return Err(CodeGenError::UnsupportedStructure(
+                    "Reference operator (\\$val) requires fallback implementation".to_string(),
+                ));
+            }
+        }
+
+        // Check for join with regex pattern - generates invalid code
+        // Pattern: join ".", $val =~ /../g
+        let mut has_join = false;
+        let mut has_regex_match = false;
+        for child in children {
+            if child.class == "PPI::Token::Word" && child.content.as_deref() == Some("join") {
+                has_join = true;
+            }
+            if child.class == "PPI::Token::Operator" && child.content.as_deref() == Some("=~") {
+                has_regex_match = true;
+            }
+        }
+        if has_join && has_regex_match {
+            return Err(CodeGenError::UnsupportedStructure(
+                "join with regex pattern requires fallback implementation".to_string(),
+            ));
+        }
+
+        // Check for string concatenation with unpack - generates invalid code
+        // Pattern: "0x" . unpack("H*",$val)
+        let mut has_unpack = false;
+        let mut has_concat = false;
+        for child in children {
+            if child.class == "PPI::Token::Word" && child.content.as_deref() == Some("unpack") {
+                has_unpack = true;
+            }
+            if child.class == "PPI::Token::Operator" && child.content.as_deref() == Some(".") {
+                has_concat = true;
+            }
+        }
+        if has_unpack && has_concat {
+            return Err(CodeGenError::UnsupportedStructure(
+                "String concatenation with unpack requires fallback implementation".to_string(),
+            ));
+        }
+
+        // Check for sprintf with binary operations in arguments
+        // This pattern doesn't normalize correctly and generates invalid code
+        let mut has_sprintf = false;
+        let mut has_operator = false;
+        for child in children {
+            if child.class == "PPI::Token::Word" && child.content.as_deref() == Some("sprintf") {
+                has_sprintf = true;
+            }
+            if child.class == "PPI::Token::Operator" && child.content.as_deref() == Some("*") {
+                has_operator = true;
+            }
+        }
+        if has_sprintf && has_operator {
+            return Err(CodeGenError::UnsupportedStructure(
+                "sprintf with binary operations in arguments requires fallback implementation"
+                    .to_string(),
+            ));
+        }
+
+        // Check for complex nested function patterns that we can't handle
+        // Pattern: unpack "H*", pack "C*", split " ", $val
+        if children.len() >= 6 {
+            let mut has_unpack = false;
+            let mut has_pack = false;
+            let mut has_split = false;
+
+            for child in children {
+                if child.class == "PPI::Token::Word" {
+                    if let Some(content) = &child.content {
+                        match content.as_str() {
+                            "unpack" => has_unpack = true,
+                            "pack" => has_pack = true,
+                            "split" => has_split = true,
+                            _ => {}
+                        }
+                    }
+                }
+            }
+
+            // This is a complex nested function pattern we can't handle
+            if has_unpack && has_pack && has_split {
+                return Err(CodeGenError::UnsupportedStructure(
+                    "Complex nested function pattern (unpack/pack/split) requires fallback implementation".to_string()
+                ));
+            }
+        }
+
         // First check for ternary pattern: condition ? true_expr : false_expr
         if let Some(ternary_result) = self.try_process_ternary_pattern(children)? {
             return Ok(ternary_result);
+        }
+
+        // Check for $$self{field} pattern BEFORE other patterns
+        // Pattern: Cast($) + Symbol($self) + Subscript{field}
+        #[cfg(debug_assertions)]
+        {
+            if children.len() >= 3 {
+                eprintln!("Checking for $$self pattern, first 3 nodes:");
+                eprintln!(
+                    "  [0] class: {}, content: {:?}",
+                    children[0].class, children[0].content
+                );
+                eprintln!(
+                    "  [1] class: {}, content: {:?}",
+                    children[1].class, children[1].content
+                );
+                eprintln!(
+                    "  [2] class: {}, content: {:?}",
+                    children[2].class, children[2].content
+                );
+            }
+        }
+
+        if children.len() >= 3
+            && children[0].class == "PPI::Token::Cast"
+            && children[0].content.as_ref() == Some(&"$".to_string())
+            && children[1].class == "PPI::Token::Symbol"
+            && children[1].content.as_ref() == Some(&"$self".to_string())
+            && children[2].class == "PPI::Structure::Subscript"
+        {
+            if let Some(key) = self.extract_subscript_key(&children[2])? {
+                // Generate context access that handles Option<&ExifContext>
+                // For TimeScale specifically, default to 1 to avoid division by zero
+                let default_value = if key == "TimeScale" {
+                    "TagValue::U32(1)"
+                } else {
+                    "TagValue::String(String::new())"
+                };
+                #[cfg(debug_assertions)]
+                eprintln!("Found $$self{{{}}} pattern, generating context access", key);
+                return Ok(format!(
+                    "ctx.and_then(|c| c.get_data_member(\"{}\").cloned()).unwrap_or({})",
+                    key, default_value
+                ));
+            } else {
+                #[cfg(debug_assertions)]
+                eprintln!("Pattern matched but couldn't extract key from subscript");
+            }
         }
 
         // Check for array access pattern BEFORE trying to visit individual nodes
@@ -380,7 +542,17 @@ impl RustGenerator {
             {
                 // Extract the key from the subscript structure
                 if let Some(key) = self.extract_subscript_key(&children[i + 2])? {
-                    let hash_access = format!("ctx.get(\"{}\").unwrap_or_default()", key);
+                    // Generate context access that handles Option<&ExifContext>
+                    // For TimeScale specifically, default to 1 to avoid division by zero
+                    let default_value = if key == "TimeScale" {
+                        "TagValue::U32(1)"
+                    } else {
+                        "TagValue::String(String::new())"
+                    };
+                    let hash_access = format!(
+                        "ctx.and_then(|c| c.get_data_member(\"{}\").cloned()).unwrap_or({})",
+                        key, default_value
+                    );
                     processed.push(hash_access);
                     i += 3;
                     continue;
@@ -519,8 +691,17 @@ impl RustGenerator {
     ) -> Result<Option<String>, CodeGenError> {
         // The subscript should have children that represent the key
         if subscript_node.children.is_empty() {
+            #[cfg(debug_assertions)]
+            eprintln!("extract_subscript_key: No children in subscript");
             return Ok(None);
         }
+
+        #[cfg(debug_assertions)]
+        eprintln!(
+            "extract_subscript_key: {} children, first child class: {}",
+            subscript_node.children.len(),
+            subscript_node.children[0].class
+        );
 
         // For {FocalUnits}, we expect a single expression child containing the word
         if subscript_node.children.len() == 1

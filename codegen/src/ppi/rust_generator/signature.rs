@@ -12,19 +12,19 @@ pub fn generate_signature(expression_type: &ExpressionType, function_name: &str)
     match expression_type {
         ExpressionType::Condition => {
             format!(
-                "pub fn {}(val: &TagValue, ctx: &ExifContext) -> {}",
+                "pub fn {}(val: &TagValue, ctx: Option<&ExifContext>) -> {}",
                 function_name, return_type
             )
         }
         ExpressionType::ValueConv => {
             format!(
-                "pub fn {}(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>",
+                "pub fn {}(val: &TagValue, ctx: Option<&ExifContext>) -> Result<TagValue, codegen_runtime::types::ExifError>",
                 function_name
             )
         }
         ExpressionType::PrintConv => {
             format!(
-                "pub fn {}(val: &TagValue) -> {}",
+                "pub fn {}(val: &TagValue, ctx: Option<&ExifContext>) -> {}",
                 function_name, return_type
             )
         }
