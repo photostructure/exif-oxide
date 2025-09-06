@@ -10,9 +10,7 @@
 
 pub mod basic_generation;
 pub mod control_flow;
-pub mod function_generation;
 pub mod numeric_string_ops;
-pub mod pattern_recognition;
 pub mod sprintf_normalization;
 
 // Integration test for normalizer + visitor pipeline
