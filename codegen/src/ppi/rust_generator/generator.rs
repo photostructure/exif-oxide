@@ -599,6 +599,18 @@ impl RustGenerator {
                 let true_expr_nodes = &children[q_idx + 1..c_idx];
                 let false_expr_nodes = &children[c_idx + 1..];
 
+                // Debug output for condition nodes
+                #[cfg(debug_assertions)]
+                {
+                    eprintln!("Ternary condition has {} nodes:", condition_nodes.len());
+                    for (i, node) in condition_nodes.iter().enumerate() {
+                        eprintln!(
+                            "  [{}] class: {}, content: {:?}",
+                            i, node.class, node.content
+                        );
+                    }
+                }
+
                 // Process each part using the proper expression combiner logic
                 let condition = self.process_node_sequence(condition_nodes)?;
                 let true_expr = self.process_node_sequence(true_expr_nodes)?;
@@ -675,7 +687,8 @@ impl RustGenerator {
             && subscript_node.children[0].class == "PPI::Statement::Expression"
         {
             let expr_node = &subscript_node.children[0];
-            if !expr_node.children.is_empty() && expr_node.children[0].class == "PPI::Token::Number" {
+            if !expr_node.children.is_empty() && expr_node.children[0].class == "PPI::Token::Number"
+            {
                 if let Some(index) = &expr_node.children[0].content {
                     return Ok(Some(index.clone()));
                 }
@@ -710,6 +723,8 @@ impl RustGenerator {
             let expr_node = &subscript_node.children[0];
             if !expr_node.children.is_empty() && expr_node.children[0].class == "PPI::Token::Word" {
                 if let Some(key) = &expr_node.children[0].content {
+                    #[cfg(debug_assertions)]
+                    eprintln!("extract_subscript_key: Found key '{}'", key);
                     return Ok(Some(key.clone()));
                 }
             }
