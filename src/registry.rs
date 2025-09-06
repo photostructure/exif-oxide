@@ -311,7 +311,10 @@ pub fn evaluate_print_conv(print_conv: &str, value: &TagValue) -> Result<TagValu
 
     // Create expression evaluator for processing the PrintConv expression
     use crate::types::binary_data::ExpressionEvaluator;
-    let mut evaluator = ExpressionEvaluator::new(std::collections::HashMap::new(), &std::collections::HashMap::new());
+    let mut evaluator = ExpressionEvaluator::new(
+        std::collections::HashMap::new(),
+        &std::collections::HashMap::new(),
+    );
 
     // TODO: P07 - Full expression evaluation implementation
     // For now, attempt basic evaluation and fall back to original value

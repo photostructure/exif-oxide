@@ -664,7 +664,6 @@ impl BinaryDataTag {
 /// Evaluate a condition string against processor context
 /// ExifTool: Condition evaluation like '$self{Model} =~ /\b(20D|350D)\b/'
 fn evaluate_condition(condition: &str, context: &ProcessorContext) -> bool {
-
     // Create expression evaluator
     let mut evaluator = ExpressionEvaluator::new(HashMap::new(), &HashMap::new());
 

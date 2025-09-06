@@ -45,12 +45,7 @@ where
         ByteOrder,
         Option<&str>,
     ) -> Result<std::collections::HashMap<String, TagValue>>,
-    A: Fn(
-        u32,
-        &TagValue,
-        &mut Vec<String>,
-        &mut Vec<String>,
-    ) -> TagValue,
+    A: Fn(u32, &TagValue, &mut Vec<String>, &mut Vec<String>) -> TagValue,
     F: Fn(&str) -> Option<u32>,
 {
     debug!(
@@ -170,12 +165,8 @@ where
                             let mut warnings = Vec::new();
 
                             // Apply PrintConv using the manufacturer's tag kit system
-                            let result = apply_print_conv_fn(
-                                kit_tag_id,
-                                &value,
-                                &mut errors,
-                                &mut warnings,
-                            );
+                            let result =
+                                apply_print_conv_fn(kit_tag_id, &value, &mut errors, &mut warnings);
 
                             // Log any warnings or errors from PrintConv processing
                             for warning in warnings {

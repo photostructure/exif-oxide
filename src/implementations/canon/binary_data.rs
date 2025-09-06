@@ -1865,8 +1865,7 @@ mod tests {
         use crate::generated::Canon_pm;
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
-        let direct_result =
-            apply_canon_print_conv(1, &raw_value, &mut errors, &mut warnings);
+        let direct_result = apply_canon_print_conv(1, &raw_value, &mut errors, &mut warnings);
         println!(
             "Direct tag ID 1 PrintConv: {:?} -> {:?}",
             raw_value, direct_result

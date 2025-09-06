@@ -172,7 +172,6 @@ fn gps_coordinate_to_dms(val: &TagValue, _include_cardinal: bool) -> TagValue {
     }
 }
 
-
 /// EXIF Flash PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:164-197, %flash hash
 /// Generated lookup: src/generated/exif_pm/flash.rs
