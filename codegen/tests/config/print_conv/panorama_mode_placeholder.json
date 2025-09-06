@@ -1,0 +1,9 @@
+{
+  "expression": "my ($a,$b) = split ' ',$val;\nreturn 'Off' unless $a;\nmy %a = (\n    1 => 'Left to Right',\n    2 => 'Right to Left',\n    3 => 'Bottom to Top',\n    4 => 'Top to Bottom',\n);\nreturn(($a{$a} || \"Unknown ($a)\") . ', Shot ' . $b);",
+  "type": "PrintConv",
+  "description": "Multi-line Perl with hash lookup and conditional returns",
+  "placeholder_expected": true,
+  "usage_examples": [
+    "Olympus::CameraSettings.PanoramaMode"
+  ]
+}

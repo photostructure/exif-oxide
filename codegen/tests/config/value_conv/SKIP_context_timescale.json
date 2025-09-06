@@ -1,0 +1,55 @@
+{
+  "$schema": "../schema.json",
+  "description": "Test $$self{TimeScale} context access for QuickTime duration calculations",
+  "expression": "$$self{TimeScale} ? $val / $$self{TimeScale} : $val",
+  "type": "ValueConv",
+  "exiftool_reference": "lib/Image/ExifTool/QuickTime.pm - Duration/CurrentTime/etc",
+  "test_cases": [
+    {
+      "description": "Divide duration by TimeScale of 1000 (milliseconds to seconds)",
+      "input": {
+        "U32": 5000
+      },
+      "expected": {
+        "U32": 5
+      },
+      "_context": {
+        "TimeScale": 1000
+      }
+    },
+    {
+      "description": "Divide duration by TimeScale of 600 (common QuickTime value)",
+      "input": {
+        "U32": 1200
+      },
+      "expected": {
+        "U32": 2
+      },
+      "_context": {
+        "TimeScale": 600
+      }
+    },
+    {
+      "description": "Return value unchanged when TimeScale is missing (context is None)",
+      "input": {
+        "U32": 5000
+      },
+      "expected": {
+        "U32": 5000
+      },
+      "_context": null
+    },
+    {
+      "description": "Return value unchanged when TimeScale is 0 (avoid division by zero)",
+      "input": {
+        "U32": 5000
+      },
+      "expected": {
+        "U32": 5000
+      },
+      "_context": {
+        "TimeScale": 0
+      }
+    }
+  ]
+}

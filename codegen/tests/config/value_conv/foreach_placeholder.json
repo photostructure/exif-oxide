@@ -1,0 +1,9 @@
+{
+  "expression": "my @a=split(' ',$val); $_/=500 foreach @a; join(' ',@a)",
+  "type": "ValueConv",
+  "description": "Uses Perl foreach loop with implicit $_ variable modification",
+  "placeholder_expected": true,
+  "usage_examples": [
+    "Pentax::Main.SensorSize"
+  ]
+}

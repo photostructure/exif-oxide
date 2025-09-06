@@ -1,0 +1,35 @@
+{
+  "description": "sprintf with multiplication in arguments",
+  "expression": "sprintf(\"%.1f%%\", $val * 100)",
+  "type": "ValueConv",
+  "exiftool_reference": "Common pattern for percentage display",
+  "test_cases": [
+    {
+      "description": "50% case",
+      "input": {
+        "F64": 0.5
+      },
+      "expected": {
+        "String": "50.0%"
+      }
+    },
+    {
+      "description": "100% case",
+      "input": {
+        "F64": 1.0
+      },
+      "expected": {
+        "String": "100.0%"
+      }
+    },
+    {
+      "description": "25.5% case",
+      "input": {
+        "F64": 0.255
+      },
+      "expected": {
+        "String": "25.5%"
+      }
+    }
+  ]
+}

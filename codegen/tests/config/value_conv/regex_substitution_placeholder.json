@@ -1,0 +1,10 @@
+{
+  "expression": "$val =~ s/(\\d{2})(\\d{2})/$1:$2:/g; $val",
+  "type": "ValueConv",
+  "description": "Complex regex substitution with capture groups",
+  "placeholder_expected": true,
+  "usage_examples": [
+    "Red::Main.TimeCreated",
+    "Red::Main.StorageFormatTime"
+  ]
+}

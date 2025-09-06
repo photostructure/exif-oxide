@@ -1,0 +1,9 @@
+{
+  "expression": "my @a = unpack('s*',$val); $_ /= 10 foreach @a; join(' ', @a)",
+  "type": "ValueConv",
+  "description": "Combines unpack with foreach loop",
+  "placeholder_expected": true,
+  "usage_examples": [
+    "Custom sensor data processing"
+  ]
+}

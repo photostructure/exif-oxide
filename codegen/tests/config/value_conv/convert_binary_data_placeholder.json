@@ -1,0 +1,9 @@
+{
+  "expression": "Image::ExifTool::ConvertBinaryData($self, $dirInfo, $tagTablePtr)",
+  "type": "ValueConv",
+  "description": "Binary data conversion with multiple ExifTool-specific parameters",
+  "placeholder_expected": true,
+  "usage_examples": [
+    "Various binary data tags"
+  ]
+}

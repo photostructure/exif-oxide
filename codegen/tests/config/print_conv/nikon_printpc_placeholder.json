@@ -1,0 +1,9 @@
+{
+  "expression": "Image::ExifTool::Nikon::PrintPC($val,\"No Sharpening\",\"%d\")",
+  "type": "PrintConv",
+  "description": "Calls vendor-specific formatting function",
+  "placeholder_expected": true,
+  "usage_examples": [
+    "Nikon::PictureControl.Sharpness"
+  ]
+}

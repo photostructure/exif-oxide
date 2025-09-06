@@ -1,0 +1,10 @@
+{
+  "description": "Unpack with pack and split chaining",
+  "expression": "unpack \"H*\", pack \"C*\", split \" \", $val",
+  "type": "PrintConv",
+  "placeholder_expected": true,
+  "exiftool_reference": "Sony InternalSerialNumber pattern",
+  "usage_examples": [
+    "Sony::Main.InternalSerialNumber"
+  ]
+}

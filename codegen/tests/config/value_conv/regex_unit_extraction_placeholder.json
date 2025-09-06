@@ -1,0 +1,9 @@
+{
+  "expression": "$val =~ /^([+-]?\\d+\\.?\\d*)\\s*(mm|in|ft|m|cm)?$/i ? $1 : undef",
+  "type": "ValueConv",
+  "description": "Complex regex matching with unit extraction",
+  "placeholder_expected": true,
+  "usage_examples": [
+    "Distance measurements"
+  ]
+}

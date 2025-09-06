@@ -1,0 +1,73 @@
+{
+  "expression": "$val[1] =~ /^W/i ? -$val[0] : $val[0]",
+  "type": "ValueConv",
+  "description": "Ternary with unary negation in true branch (GPS sign conversion)",
+  "exiftool_reference": "GPS coordinate sign conversion - West/South are negative",
+  "test_cases": [
+    {
+      "description": "West longitude - should negate",
+      "input": {
+        "Array": [
+          {
+            "F64": 122.4194
+          },
+          {
+            "String": "W"
+          }
+        ]
+      },
+      "expected": {
+        "F64": -122.4194
+      }
+    },
+    {
+      "description": "East longitude - should not negate",
+      "input": {
+        "Array": [
+          {
+            "F64": 139.6917
+          },
+          {
+            "String": "E"
+          }
+        ]
+      },
+      "expected": {
+        "F64": 139.6917
+      }
+    },
+    {
+      "description": "West (lowercase) - case insensitive match",
+      "input": {
+        "Array": [
+          {
+            "F64": 74.0060
+          },
+          {
+            "String": "west"
+          }
+        ]
+      },
+      "expected": {
+        "F64": -74.0060
+      }
+    },
+    {
+      "description": "Not West - no match",
+      "input": {
+        "Array": [
+          {
+            "F64": 51.5074
+          },
+          {
+            "String": "N"
+          }
+        ]
+      },
+      "expected": {
+        "F64": 51.5074
+      }
+    }
+  ],
+  "notes": "Critical for GPS coordinate processing - unary negation in ternary branches must work correctly"
+}

@@ -7,7 +7,11 @@
     {
       "description": "Access first element of U32 array",
       "input": {
-        "U32Array": [45, 30, 15]
+        "U32Array": [
+          45,
+          30,
+          15
+        ]
       },
       "expected": {
         "U32": 45

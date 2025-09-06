@@ -1,0 +1,20 @@
+{
+  "description": "Test that unsupported expressions generate placeholder functions that track missing conversions",
+  "expression": "my @a=split(' ',$val); $_/=500 foreach @a; join(' ',@a)",
+  "type": "ValueConv",
+  "exiftool_reference": "Pentax::Main.SensorSize",
+  "test_mode": "placeholder",
+  "test_cases": [
+    {
+      "description": "Verify placeholder function returns input unchanged and tracks missing conversion",
+      "input": {
+        "String": "1000 2000"
+      },
+      "expected": {
+        "String": "1000 2000"
+      },
+      "expects_missing_conversion": true,
+      "expected_missing_type": "ValueConv"
+    }
+  ]
+}

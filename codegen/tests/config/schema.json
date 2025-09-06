@@ -5,8 +5,7 @@
   "type": "object",
   "required": [
     "expression",
-    "type",
-    "test_cases"
+    "type"
   ],
   "properties": {
     "description": {
@@ -30,10 +29,21 @@
       "type": "string",
       "description": "Source reference in ExifTool (e.g., 'lib/Image/ExifTool/Canon.pm:156')"
     },
+    "placeholder_expected": {
+      "type": "boolean",
+      "description": "If true, expression should generate a placeholder function that tracks missing implementations"
+    },
+    "usage_examples": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of ExifTool tags that use this expression (e.g., 'Canon::Main.WhiteBalance')"
+    },
     "test_cases": {
       "type": "array",
       "minItems": 1,
-      "description": "Test cases with inputs and expected outputs",
+      "description": "Test cases with inputs and expected outputs. Optional when placeholder_expected=true.",
       "items": {
         "type": "object",
         "required": [
@@ -186,6 +196,99 @@
           },
           "required": [
             "Rational"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "Bool": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "Bool"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "Array": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/TagValue"
+              }
+            }
+          },
+          "required": [
+            "Array"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "U8Array": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 255
+              }
+            }
+          },
+          "required": [
+            "U8Array"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "U16Array": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 65535
+              }
+            }
+          },
+          "required": [
+            "U16Array"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "U32Array": {
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 4294967295
+              }
+            }
+          },
+          "required": [
+            "U32Array"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "F64Array": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "required": [
+            "F64Array"
           ],
           "additionalProperties": false
         }

@@ -1,0 +1,11 @@
+{
+  "expression": "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")",
+  "type": "PrintConv",
+  "description": "Calls ExifTool-specific function with $self reference",
+  "placeholder_expected": true,
+  "usage_examples": [
+    "DJI::GPSInfo.GPSLongitude",
+    "GoPro::GPS5.GPSLongitude",
+    "RIFF::UserText.GPSLongitude"
+  ]
+}

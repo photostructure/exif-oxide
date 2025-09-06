@@ -1,0 +1,9 @@
+{
+  "expression": "return 'n/a' if $val eq '0 0 0 0';\nmy @a = split ' ', $val;\nforeach (@a) {\n    $_ = sprintf('%.2f', $_/100);\n}\nreturn join ' ', @a;",
+  "type": "PrintConv",
+  "description": "Multi-line with early return and foreach loop",
+  "placeholder_expected": true,
+  "usage_examples": [
+    "Color balance adjustments"
+  ]
+}

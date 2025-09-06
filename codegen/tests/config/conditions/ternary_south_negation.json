@@ -1,0 +1,73 @@
+{
+  "expression": "$val[1] =~ /^S/i ? -$val[0] : $val[0]",
+  "type": "ValueConv",
+  "description": "Ternary with unary negation for South latitude (GPS sign conversion)",
+  "exiftool_reference": "GPS latitude sign conversion - South is negative",
+  "test_cases": [
+    {
+      "description": "South latitude - should negate",
+      "input": {
+        "Array": [
+          {
+            "F64": 33.8688
+          },
+          {
+            "String": "S"
+          }
+        ]
+      },
+      "expected": {
+        "F64": -33.8688
+      }
+    },
+    {
+      "description": "North latitude - should not negate",
+      "input": {
+        "Array": [
+          {
+            "F64": 40.7128
+          },
+          {
+            "String": "N"
+          }
+        ]
+      },
+      "expected": {
+        "F64": 40.7128
+      }
+    },
+    {
+      "description": "South (lowercase) - case insensitive match",
+      "input": {
+        "Array": [
+          {
+            "F64": 23.1291
+          },
+          {
+            "String": "south"
+          }
+        ]
+      },
+      "expected": {
+        "F64": -23.1291
+      }
+    },
+    {
+      "description": "Integer coordinate with South",
+      "input": {
+        "Array": [
+          {
+            "I32": 45
+          },
+          {
+            "String": "S"
+          }
+        ]
+      },
+      "expected": {
+        "I32": -45
+      }
+    }
+  ],
+  "notes": "Critical for GPS latitude processing - ensures Southern hemisphere coordinates are negative"
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "../schema.json",
+  "description": "Regex substitution in ternary condition (returns boolean in Perl)",
+  "expression": "$val =~ s/ 1$// ? $val / 10 : \"n/a\"",
+  "type": "ValueConv",
+  "exiftool_reference": "Olympus::CameraSettings.PitchAngle",
+  "test_cases": [
+    {
+      "description": "Value ends with ' 1' - substitution occurs, divide by 10",
+      "input": {
+        "String": "450 1"
+      },
+      "expected": {
+        "F64": 45.0
+      }
+    },
+    {
+      "description": "Value doesn't end with ' 1' - no substitution, return n/a",
+      "input": {
+        "String": "450"
+      },
+      "expected": {
+        "String": "n/a"
+      }
+    }
+  ],
+  "notes": "In Perl, s/// returns true if substitution occurred, false otherwise. Need special handling for this boolean context."
+}

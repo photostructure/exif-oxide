@@ -1,0 +1,10 @@
+{
+  "expression": "$val=~tr/ /:/; $val",
+  "type": "PrintConv",
+  "description": "Perl transliteration operator (tr///)",
+  "placeholder_expected": true,
+  "usage_examples": [
+    "FujiFilm::RAF.RawImageAspectRatio",
+    "QuickTime::VideoProf.PixelAspectRatio"
+  ]
+}
