@@ -75,7 +75,9 @@ struct ExpressionTestFile {
     #[serde(rename = "type")]
     expr_type: ExpressionType,
     exiftool_reference: Option<String>,
-    test_cases: Vec<TestCase>,
+    placeholder_expected: Option<bool>,
+    usage_examples: Option<Vec<String>>,
+    test_cases: Option<Vec<TestCase>>,
 }
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
@@ -96,6 +98,8 @@ enum TaggedTagValue {
     I32(i32),
     F64(f64),
     String(String),
+    Bool(bool),
+    Array(Vec<TaggedTagValue>),
     Binary(Vec<u8>),
     Rational(u32, u32),
     SRational(i32, i32),
@@ -119,6 +123,8 @@ impl From<TaggedTagValue> for TagValue {
             TaggedTagValue::I32(v) => TagValue::I32(v),
             TaggedTagValue::F64(v) => TagValue::F64(v),
             TaggedTagValue::String(v) => TagValue::String(v),
+            TaggedTagValue::Bool(v) => TagValue::Bool(v),
+            TaggedTagValue::Array(v) => TagValue::Array(v.into_iter().map(|t| t.into()).collect()),
             TaggedTagValue::Binary(v) => TagValue::Binary(v),
             TaggedTagValue::Rational(n, d) => TagValue::Rational(n, d),
             TaggedTagValue::SRational(n, d) => TagValue::SRational(n, d),
@@ -145,6 +151,11 @@ fn generate_tag_value_constructor(tagged: &TaggedTagValue) -> String {
         TaggedTagValue::F64(v) => format!("TagValue::F64({}f64)", v),
         TaggedTagValue::String(v) => {
             format!("TagValue::String(\"{}\".to_string())", v.escape_default())
+        }
+        TaggedTagValue::Bool(v) => format!("TagValue::Bool({})", v),
+        TaggedTagValue::Array(v) => {
+            let elements: Vec<String> = v.iter().map(generate_tag_value_constructor).collect();
+            format!("TagValue::Array(vec![{}])", elements.join(", "))
         }
         TaggedTagValue::Binary(v) => format!("TagValue::Binary(vec!{:?})", v),
         TaggedTagValue::Rational(n, d) => format!("TagValue::Rational({}, {})", n, d),
@@ -449,6 +460,12 @@ fn generate_test_file_content(processed: &ProcessedTestFile) -> Result<String> {
         String::new()
     };
 
+    let usage_examples_line = if let Some(ref examples) = config.usage_examples {
+        format!("//! Usage examples: {}\n", examples.join(", "))
+    } else {
+        String::new()
+    };
+
     // Import the generated function
     let hash_prefix = func_spec
         .function_name
@@ -457,22 +474,39 @@ fn generate_test_file_content(processed: &ProcessedTestFile) -> Result<String> {
         .and_then(|h| h.get(0..2))
         .unwrap_or("00");
 
+    let is_placeholder = config.placeholder_expected.unwrap_or(false);
+    let imports = if is_placeholder {
+        "use anyhow::Result;\nuse codegen_runtime::{TagValue, ExifContext, missing};\nuse codegen::ppi::ExpressionType;"
+    } else {
+        "use anyhow::Result;\nuse codegen_runtime::{TagValue, ExifContext};"
+    };
+
+    // Properly format multiline expressions in comments
+    let expression_comment = config
+        .expression
+        .lines()
+        .map(|line| format!("//! {}", line))
+        .collect::<Vec<_>>()
+        .join("\n");
+
     let mut content = formatdoc! {r#"
-        //! Generated expression tests for: {}
+        //! Generated expression tests for:
+        {}
         //! Source: {}
-        {}{}//! DO NOT EDIT - Regenerate with: make generate-expression-tests
+        {}{}{}//! DO NOT EDIT - Regenerate with: make generate-expression-tests
 
         #![allow(unused_imports)]
 
-        use anyhow::Result;
-        use codegen_runtime::{{TagValue, ExifContext}};
+        {}
         use super::super::functions::hash_{}::{};
 
     "#, 
-        config.expression,
+        expression_comment,
         processed.json_path.display(),
         description_line,
         reference_line,
+        usage_examples_line,
+        imports,
         hash_prefix,
         func_spec.function_name
     };
@@ -480,8 +514,19 @@ fn generate_test_file_content(processed: &ProcessedTestFile) -> Result<String> {
     let module_name =
         sanitize_identifier(&processed.json_path.file_stem().unwrap().to_string_lossy());
 
+    // Generate test cases - either provided ones or automatic placeholder tests
+    let test_cases = if let Some(ref cases) = config.test_cases {
+        cases.clone()
+    } else if is_placeholder {
+        generate_automatic_placeholder_test_cases(&config.expr_type)
+    } else {
+        return Err(anyhow::anyhow!(
+            "No test cases provided and placeholder_expected is false"
+        ));
+    };
+
     // Generate test for each test case
-    for (i, test_case) in config.test_cases.iter().enumerate() {
+    for (i, test_case) in test_cases.iter().enumerate() {
         let test_num = i + 1;
 
         // Test description
@@ -497,6 +542,19 @@ fn generate_test_file_content(processed: &ProcessedTestFile) -> Result<String> {
             ExpressionType::Condition => "condition",
         };
 
+        // Format expression for single-line comment (escape multiline)
+        let expression_for_comment = config
+            .expression
+            .replace('\n', " ")
+            .chars()
+            .take(100)
+            .collect::<String>();
+        let expression_for_comment = if expression_for_comment.len() < config.expression.len() {
+            format!("{}...", expression_for_comment)
+        } else {
+            expression_for_comment
+        };
+
         content.push_str(&formatdoc! {r#"
             {}
             /// Expression: {}
@@ -508,7 +566,7 @@ fn generate_test_file_content(processed: &ProcessedTestFile) -> Result<String> {
 
         "#,
             test_desc,
-            config.expression,
+            expression_for_comment,
             module_name,
             test_type_suffix,
             test_num,
@@ -517,55 +575,143 @@ fn generate_test_file_content(processed: &ProcessedTestFile) -> Result<String> {
         });
 
         // Call the function and assert based on type
-        match config.expr_type {
-            ExpressionType::ValueConv => {
-                content.push_str(&formatdoc! {r#"
-                        // Execute the generated function
-                        let result = {}(&input)?;
+        if is_placeholder {
+            // For placeholder functions, test that they return input unchanged and track missing conversions
+            match config.expr_type {
+                ExpressionType::ValueConv => {
+                    content.push_str(&formatdoc! {r#"
+                            // Clear any previous conversions for clean test
+                            missing::clear_missing_conversions();
 
-                        // Validate the result
-                        assert_eq!(
-                            result, expected,
-                            "ValueConv failed for input {{:?}}. Got {{:?}}, expected {{:?}}",
-                            input, result, expected
-                        );
-                "#,
-                    func_spec.function_name
-                });
+                            // Execute the generated function (ValueConv returns Result)
+                            let result = {}(&input, None).unwrap_or_else(|_| input.clone());
+
+                            // For ValueConv placeholders, should return input unchanged
+                            assert_eq!(
+                                result, expected,
+                                "ValueConv placeholder should return input unchanged. Got {{:?}}, expected {{:?}}",
+                                result, expected
+                            );
+
+                            // Verify the missing conversion was tracked
+                            let missing_conversions = missing::get_missing_conversions();
+                            assert!(
+                                !missing_conversions.is_empty(),
+                                "ValueConv placeholder should track missing conversion"
+                            );
+                    "#,
+                        func_spec.function_name
+                    });
+                }
+                ExpressionType::PrintConv => {
+                    content.push_str(&formatdoc! {r#"
+                            // Clear any previous conversions for clean test
+                            missing::clear_missing_conversions();
+
+                            // Execute the generated function (PrintConv returns TagValue)
+                            let result = {}(&input, None);
+
+                            // For PrintConv placeholders, should return input unchanged
+                            assert_eq!(
+                                result, expected,
+                                "PrintConv placeholder should return input unchanged. Got {{:?}}, expected {{:?}}",
+                                result, expected
+                            );
+
+                            // Verify the missing conversion was tracked
+                            let missing_conversions = missing::get_missing_conversions();
+                            assert!(
+                                !missing_conversions.is_empty(),
+                                "PrintConv placeholder should track missing conversion"
+                            );
+                    "#,
+                        func_spec.function_name
+                    });
+                }
+                ExpressionType::Condition => {
+                    content.push_str(&formatdoc! {r#"
+                            // Clear any previous conversions for clean test
+                            missing::clear_missing_conversions();
+
+                            // Create context for condition evaluation
+                            let ctx = ExifContext::default();
+
+                            // Execute the generated function (Condition returns bool)
+                            let result = {}(&input, Some(&ctx));
+
+                            // For condition placeholders, should return false
+                            assert_eq!(
+                                result, false,
+                                "Condition placeholder should return false. Got {{:?}}",
+                                result
+                            );
+
+                            // Verify the missing conversion was tracked
+                            let missing_conversions = missing::get_missing_conversions();
+                            assert!(
+                                !missing_conversions.is_empty(),
+                                "Condition placeholder should track missing conversion"
+                            );
+                    "#,
+                        func_spec.function_name
+                    });
+                }
             }
-            ExpressionType::PrintConv => {
-                content.push_str(&formatdoc! {r#"
-                        // Execute the generated function
-                        let result = {}(&input);
+        } else {
+            match config.expr_type {
+                ExpressionType::ValueConv => {
+                    content.push_str(&formatdoc! {r#"
+                            // Execute the generated function (with None for context)
+                            let result = {}(&input, None)?;
 
-                        // Validate the result
-                        assert_eq!(
-                            result, expected,
-                            "PrintConv failed for input {{:?}}. Got {{:?}}, expected {{:?}}",
-                            input, result, expected
-                        );
-                "#,
-                    func_spec.function_name
-                });
-            }
-            ExpressionType::Condition => {
-                content.push_str(&formatdoc! {r#"
-                        // Create context for condition evaluation
-                        let ctx = ExifContext::default();
+                            // Validate the result
+                            assert_eq!(
+                                result, expected,
+                                "ValueConv failed for input {{:?}}. Got {{:?}}, expected {{:?}}",
+                                input, result, expected
+                            );
+                    "#,
+                        func_spec.function_name
+                    });
+                }
+                ExpressionType::PrintConv => {
+                    content.push_str(&formatdoc! {r#"
+                            // Execute the generated function (with None for context)
+                            let result = {}(&input, None);
 
-                        // Execute the generated function
-                        let result = {}(&input, &ctx);
+                            // Validate the result
+                            assert_eq!(
+                                result, expected,
+                                "PrintConv failed for input {{:?}}. Got {{:?}}, expected {{:?}}",
+                                input, result, expected
+                            );
+                    "#,
+                        func_spec.function_name
+                    });
+                }
+                ExpressionType::Condition => {
+                    content.push_str(&formatdoc! {r#"
+                            // Create context for condition evaluation
+                            let ctx = ExifContext::default();
 
-                        // For conditions, expected should be a boolean
-                        let expected_bool = !matches!(expected, TagValue::Empty | TagValue::U32(0));
-                        assert_eq!(
-                            result, expected_bool,
-                            "Condition failed for input {{:?}}. Got {{}}, expected {{}}",
-                            input, result, expected_bool
-                        );
-                "#,
-                    func_spec.function_name
-                });
+                            // Execute the generated function
+                            let result = {}(&input, Some(&ctx));
+
+                            // For conditions, expected should be a boolean
+                            let expected_bool = match expected {{
+                                TagValue::Bool(b) => b,
+                                TagValue::Empty | TagValue::U32(0) => false,
+                                _ => true, // Non-zero/non-empty values are truthy
+                            }};
+                            assert_eq!(
+                                result, expected_bool,
+                                "Condition failed for input {{:?}}. Got {{}}, expected {{}}",
+                                input, result, expected_bool
+                            );
+                    "#,
+                        func_spec.function_name
+                    });
+                }
             }
         }
 
@@ -575,7 +721,7 @@ fn generate_test_file_content(processed: &ProcessedTestFile) -> Result<String> {
             }}
         "#});
 
-        if i < config.test_cases.len() - 1 {
+        if i < test_cases.len() - 1 {
             content.push_str("\n");
         }
     }
@@ -676,6 +822,41 @@ fn generate_mod_files(
     debug!("📄 Generated mod.rs files");
 
     Ok(())
+}
+
+/// Generate automatic test cases for placeholder functions
+fn generate_automatic_placeholder_test_cases(expr_type: &ExpressionType) -> Vec<TestCase> {
+    match expr_type {
+        ExpressionType::ValueConv => vec![
+            TestCase {
+                description: Some("String input should pass through unchanged".to_string()),
+                input: TaggedTagValue::String("test string".to_string()),
+                expected: TaggedTagValue::String("test string".to_string()),
+            },
+            TestCase {
+                description: Some("Numeric input should pass through unchanged".to_string()),
+                input: TaggedTagValue::U32(42),
+                expected: TaggedTagValue::U32(42),
+            },
+        ],
+        ExpressionType::PrintConv => vec![
+            TestCase {
+                description: Some("String input should pass through unchanged".to_string()),
+                input: TaggedTagValue::String("test value".to_string()),
+                expected: TaggedTagValue::String("test value".to_string()),
+            },
+            TestCase {
+                description: Some("Numeric input should pass through unchanged".to_string()),
+                input: TaggedTagValue::F64(123.45),
+                expected: TaggedTagValue::F64(123.45),
+            },
+        ],
+        ExpressionType::Condition => vec![TestCase {
+            description: Some("Condition placeholder should return false".to_string()),
+            input: TaggedTagValue::String("any value".to_string()),
+            expected: TaggedTagValue::Bool(false),
+        }],
+    }
 }
 
 /// Sanitize a string to be a valid Rust identifier
