@@ -213,27 +213,52 @@ impl PpiFunctionRegistry {
         function_spec: &FunctionSpec,
         ast_hash: &str,
     ) -> String {
+        // Escape the original expression for use in a Rust string literal
+        // We need to escape backslashes, quotes, and newlines
+        let escaped_expr = function_spec
+            .original_expression
+            .replace('\\', "\\\\")
+            .replace('"', "\\\"")
+            .replace('\'', "\\'") // Also escape single quotes
+            .replace('\n', "\\n")
+            .replace('\r', "\\r")
+            .replace('\t', "\\t");
+
         let (signature, default_return) = match function_spec.expression_type {
             ExpressionType::Condition => (
                 format!(
-                    "pub fn {}(val: &TagValue, ctx: &ExifContext) -> bool",
+                    "pub fn {}(val: &TagValue, ctx: Option<&ExifContext>) -> bool",
                     function_spec.function_name
                 ),
-                "false",
+                "false".to_string(),
             ),
             ExpressionType::ValueConv => (
                 format!(
-                    "pub fn {}(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>",
+                    "pub fn {}(val: &TagValue, ctx: Option<&ExifContext>) -> Result<TagValue, codegen_runtime::types::ExifError>",
                     function_spec.function_name
                 ),
-                "Ok(val.clone())",
+                // Call missing_value_conv to track this for --show-missing
+                format!(r#"Ok(codegen_runtime::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "{}", // original expression
+                    val
+                ))"#, escaped_expr),
             ),
             ExpressionType::PrintConv => (
                 format!(
-                    "pub fn {}(val: &TagValue) -> TagValue",
+                    "pub fn {}(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue",
                     function_spec.function_name
                 ),
-                "val.clone()",
+                // Call missing_print_conv to track this for --show-missing
+                format!(r#"codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "{}", // original expression
+                    val
+                )"#, escaped_expr),
             ),
         };
 
