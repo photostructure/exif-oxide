@@ -78,17 +78,15 @@ doc:
 	cargo doc --no-deps --open
 
 # Clean build artifacts
-clean:
+clean: clean-generated
 	cargo clean
-	$(MAKE) -C codegen clean
 
 # Clean generated code (use with caution - requires regeneration)
 clean-generated:
-	find src/generated codegen/generated -maxdepth 3 -type f -delete
-	codegen/scripts/exiftool-patcher-undo.sh
+	$(MAKE) -C codegen clean
 
 # Deep clean - removes all build artifacts and generated code
-clean-all: clean clean-generated
+clean-all: clean
 	rm -rf target
 	rm -rf codegen/target
 
