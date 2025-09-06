@@ -1,34 +1,12 @@
 # exif-oxide Architecture
 
-**🚨 CRITICAL: This architecture is built on [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md) - the fundamental law of this project.**
+## 🚨 READ FIRST 🚨
 
-**🚨 READ FIRST**: [ANTI-PATTERNS.md](ANTI-PATTERNS.md) - Critical mistakes that cause PR rejections
+You MUST read these documents before making ANY EDITS.
 
-## 🚨 EMERGENCY WARNING: ARCHITECTURAL VANDALISM PREVENTION 🚨
-
-**THIS PROJECT HAS HAD MULTIPLE EMERGENCY RECOVERIES** due to engineers who ignored architectural guidelines and broke core systems. Most recently, 546 lines of critical ExifTool pattern recognition were deleted, breaking support for Canon/Nikon/Sony cameras and requiring weeks of emergency recovery work.
-
-**YOUR PR WILL BE IMMEDIATELY REJECTED** if you commit any of these violations:
-
-### ❌ BANNED CODE PATTERNS (Instant Rejection)
-```rust
-// ❌ AST STRING PARSING - DESTROYS TYPE SAFETY
-args[1].split_whitespace()           // Taking AST and re-parsing as string
-parts.contains(&"unpack")            // String matching on AST data
-
-// ❌ DELETED EXIFTOOL PATTERNS - BREAKS REAL CAMERA FILES  
-// Any deletion of pattern recognition code without understanding purpose
-
-// ❌ DISABLED INFRASTRUCTURE - CREATES TECHNICAL DEBT
-// let normalized_ast = normalize()  // DISABLED - commenting out working systems
-
-// ❌ MANUAL EXIFTOOL DATA - SILENT BUGS
-match wb_value { 0 => "Auto", 1 => "Daylight" }  // Hand-transcribed lookup tables
-```
-
-**RECOVERY EVIDENCE**: See [P07-emergency-ppi-recovery.md](todo/P07-emergency-ppi-recovery.md) for documentation of the massive cleanup required after these patterns were ignored.
-
-**ENFORCEMENT**: These aren't suggestions - **violations will result in immediate PR rejection and you will be asked to restart your work.**
+- [TRUST-EXIFTOOL.md](./TRUST-EXIFTOOL.md) - the fundamental law of this project
+- [ANTI-PATTERNS.md](./ANTI-PATTERNS.md) - critical mistakes that cause PR rejections
+- [SIMPLE-DESIGN.md](./SIMPLE-DESIGN.md) - follow this, and your PR will get merged. Stray, and your work will be discarded.
 
 ## Overview
 
@@ -65,7 +43,7 @@ exif-oxide is a Rust translation of [ExifTool](https://exiftool.org/), focusing 
 - Manufacturer-specific processors
 - Binary data parsing algorithms
 
-**Why Not Generate Everything**: We tried. Complex Perl expressions like `$val =~ s/(\d+)\.(\d+)\.(\d+)/$1*10000+$2*100+$3/e` are impossible to parse reliably. Manual porting with ExifTool references is more reliable than buggy automatic translation.
+**Why Not Generate Everything**: We'll eventually get there, but manual porting will let us ship sooner. 
 
 ### 3. Strategy Pattern for Code Generation
 

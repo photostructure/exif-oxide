@@ -10,7 +10,7 @@ After updating the TPP, please continue work on the remaining incomplete tasks.
 
 # Handoff (before compaction)
 
-Well done. We need to hand this work to another engineer now. Please update your technical project plan (TPP) using our style guide, @docs/TPP.md. Your goal is to ensure the next engineer succeeds in picking up where you left off. Include: issue description, relevant code/docs to study, new task breakdowns, completed tasks, success criteria, and context needed to complete remaining work. DO NOT overstate task completion status! Correct any inaccuracies you find. Include refactoring ideas as future work. If you don't remember which TPP you're working on, **please ask**.
+Well done. We need to hand this work to another engineer now. Please update your technical project plan (TPP) using our style guide, @docs/TPP-GUIDE.md. Your goal is to ensure the next engineer succeeds in picking up where you left off. Include: issue description, relevant code/docs to study, new task breakdowns, completed tasks, success criteria, and context needed to complete remaining work. DO NOT overstate task completion status! Correct any inaccuracies you find. Include refactoring ideas as future work. If you don't remember which TPP you're working on, **please ask**.
 
 # When the initial plan is hand-wavy
 

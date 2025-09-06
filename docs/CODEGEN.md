@@ -1,12 +1,15 @@
 # ExifTool Integration: Code Generation & Implementation
 
-**🚨 CRITICAL: All integration follows [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md) - we translate ExifTool exactly, never innovate.**
+## 🚨 READ FIRST 🚨
+
+You MUST read these documents before making ANY EDITS.
+
+- [TRUST-EXIFTOOL.md](./TRUST-EXIFTOOL.md) - the fundamental law of this project
+- [ANTI-PATTERNS.md](./ANTI-PATTERNS.md) - critical mistakes that cause PR rejections
+- [SIMPLE-DESIGN.md](./SIMPLE-DESIGN.md) - follow this, and your PR will get merged. Stray, and your work will be discarded.
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - follow this, and your PR will get merged. Stray, and your work will be discarded.
 
 **⚠️ MANUAL PORTING BANNED**: We've had 100+ bugs from manual transcription of ExifTool data. All ExifTool data MUST be extracted automatically.
-
-**🚨 READ FIRST**: [ANTI-PATTERNS.md](ANTI-PATTERNS.md) - Critical mistakes that cause PR rejections
-
-## 🚨 STOP: READ THIS BEFORE ANY PPI/EXPRESSION WORK 🚨
 
 **WE'VE HAD 5+ EMERGENCY RECOVERIES** from engineers who ignored these warnings and committed "architectural vandalism" that broke the entire PPI system. **Your PR WILL BE REJECTED** if you violate these patterns.
 
@@ -16,8 +19,6 @@
 - `args[N].starts_with()` on stringified AST → **BANNED** - violates visitor pattern
 - Manual transcription of ExifTool data → **BANNED** - causes silent bugs
 - Inconsistent binary operations handling → **BANNED** - breaks expression architecture
-
-**READ**: [P07-emergency-ppi-recovery.md](todo/P07-emergency-ppi-recovery.md) shows what happens when these rules are ignored.
 
 ## 5 Critical Principles
 
@@ -29,34 +30,27 @@ Before touching any code, understand these principles that prevent architectural
 4. **Use Generated Tables** - Import from `src/generated/`, never manually transcribe
 5. **Generated Code is Read-Only** - Fix generators in `codegen/src/`, never edit `src/generated/**/*.rs`
 
-## Current Architecture (P02 Completed)
+## Current Architecture
 
-**🎯 UNIFIED PRECEDENCE CLIMBING**: All binary operations use precedence climbing normalization following proven LLVM/Pratt parsing techniques.
+The current perl codegen is driven by the [field_extraction.pl](../codegen/scripts/field_extractor.pl) -- for every field, the strategies in `codegen/src/strategies/*.rs` are requested to handle whatever the payload is. Many fields do not have registered strategies.
 
-**Benefits over previous approach:**
-- **Perl-correct precedence**: Uses actual Perl operator precedence table 
-- **Separation of concerns**: Normalization handles parsing, visitor handles code generation
-- **Architectural consistency**: All binary operations become `BinaryOperation` AST nodes
-- **Massive consolidation**: 8 normalizers → 3 normalizers (75% reduction)
+Many strategies receive simple structures like scalar arrays. 
 
-**Current Pipeline**:
+For the tag_kit, composite (and soon, makernote conditions), the fields contain both scalar values as well as perl expressions, _and that perl expression parsed into an AST by PPI_:
+
+mrm@speedy:~/src/exif-oxide$ codegen/scripts/ppi_ast.pl '$val + 4'
+
+```json
+{ "class" : "PPI::Document", "children" : [
+    { "class" : "PPI::Statement", "children" : [
+        { "class" : "PPI::Token::Symbol", "content" : "$val", "symbol_type" : "scalar" },
+        { "class" : "PPI::Token::Operator", "content" : "+" },
+        { "class" : "PPI::Token::Number", "content" : "4", "numeric_value" : 4 } ] } ] }
 ```
-1. ExpressionPrecedenceNormalizer  (handles all binary ops, strings, ternary, functions)
-2. ConditionalStatementsNormalizer (statement restructuring)  
-3. SneakyConditionalAssignmentNormalizer (multi-statement control flow)
-```
 
-**How it works**:
-```rust
-// 1. PPI parses: $val + 4
-//    Raw tokens: [$val, +, 4] (flat sequence)
+The Perl AST is normalized to make it easier for our rust generator by codegen/src/ppi/normalizer/multi_pass.rs
 
-// 2. ExpressionPrecedenceNormalizer applies precedence climbing
-//    Result: BinaryOperation("+", $val, 4) (structured AST)
-
-// 3. Visitor generates clean Rust code
-//    Output: (val + 4i32) (correct syntax)
-```
+This is driven by process_symbols in codegen/src/strategies/mod.rs, and then the fn_registry DRYs up duplicate perl expressions, and they're written to src/generated/functions/hash_XX.rs based on the hash of the perl expression.
 
 ## Build Commands
 
@@ -192,30 +186,6 @@ pub fn orientation_print_conv(val: &TagValue) -> TagValue {
 cargo run --bin compare-with-exiftool test.jpg EXIF:
 ```
 
-## 🚨 Pre-Commit Validation: Avoid PR Rejection 🚨
-
-**RUN THESE COMMANDS BEFORE SUBMITTING ANY PR**:
-
-```bash
-# Check for banned AST string parsing patterns (MUST return empty)
-rg "split_whitespace|\.join.*split|args\[.*\]\.starts_with" codegen/src/ppi/
-# If this finds matches: YOUR PR WILL BE REJECTED
-
-# Check for bypassed binary operations (MUST return empty)
-rg "children\[.*\]\.class.*Operator.*=~" codegen/src/ppi/rust_generator/
-# Binary operations must go through ExpressionPrecedenceNormalizer
-
-# Check for disabled infrastructure (MUST return empty) 
-rg "DISABLED|TODO.*normalize|//.*normalize" codegen/src/ppi/rust_generator/
-# If this finds disabled code: ENABLE PROPERLY, don't disable working systems
-
-# Verify precedence climbing is working
-cargo run --package codegen --bin debug-ppi -- --verbose '$val * 100'
-# Should show: BinaryOperation("*", $val, 100) in normalized AST
-```
-
-**If any of these checks fail, fix the issues BEFORE submitting your PR.**
-
 ## Troubleshooting
 
 ### Expression Generation Issues
@@ -269,6 +239,47 @@ cargo test -p codegen --test generated_expressions  # Run all expression tests
 - **Type Safety**: Compile-time validation of all keys and values
 - **O(1) Function Dispatch**: HashMap-based registry lookup
 - **Graceful Degradation**: Never panics on missing implementations
+
+## Missing Conversion Tracking (`--show-missing`)
+
+When the PPI generator encounters Perl expressions it cannot translate (e.g., `foreach` loops, complex function calls), it generates placeholder functions that:
+
+1. **Return the value unchanged** - Ensures graceful degradation
+2. **Track the missing implementation** - Records expression details for `--show-missing`
+3. **Preserve the original Perl** - Escapes and embeds the expression for reference
+
+### How It Works
+
+```rust
+// Generated placeholder for untranslatable PrintConv expression
+pub fn ast_print_HASH(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    codegen_runtime::missing::missing_print_conv(
+        0,              // tag_id (filled at runtime)
+        "UnknownTag",   // tag_name (filled at runtime)
+        "UnknownGroup", // group (filled at runtime)
+        "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")", // original Perl
+        val
+    )
+}
+```
+
+### Usage
+
+```bash
+# Show missing implementations for development
+./target/debug/exif-oxide --show-missing image.jpg
+
+# Output includes:
+# "missing_implementations": [
+#   "PrintConv: Image::ExifTool::GPS::ToDMS(...) [used by GPS:GPSLongitude]",
+#   "ValueConv: my @a=split(' ',$val); $_/=500 foreach @a; join(' ',@a) [used by Pentax:SensorSize]"
+# ]
+```
+
+### Testing
+
+See `codegen-runtime/tests/missing_tracking.rs` for unit tests and `codegen/tests/missing_conversions_test.rs` for integration tests.
 
 ## Related Documentation
 
