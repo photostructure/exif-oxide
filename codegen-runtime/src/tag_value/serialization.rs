@@ -75,6 +75,7 @@ impl Serialize for TagValue {
                 // ExifTool: Falls through to string escaping if not numeric
                 serializer.serialize_str(s)
             }
+            TagValue::Bool(b) => serializer.serialize_bool(*b),
             TagValue::U8Array(arr) => arr.serialize(serializer),
             TagValue::U16Array(arr) => arr.serialize(serializer),
             TagValue::U32Array(arr) => arr.serialize(serializer),

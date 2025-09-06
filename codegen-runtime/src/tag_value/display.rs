@@ -14,6 +14,7 @@ impl fmt::Display for TagValue {
             TagValue::I32(v) => write!(f, "{v}"),
             TagValue::F64(v) => write!(f, "{v}"),
             TagValue::String(s) => write!(f, "{s}"),
+            TagValue::Bool(b) => write!(f, "{b}"),
             TagValue::U8Array(arr) => write!(f, "{arr:?}"),
             TagValue::U16Array(arr) => write!(f, "{arr:?}"),
             TagValue::U32Array(arr) => write!(f, "{arr:?}"),

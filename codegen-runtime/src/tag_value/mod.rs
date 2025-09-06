@@ -62,6 +62,8 @@ pub enum TagValue {
     F64(f64),
     /// Text string
     String(String),
+    /// Boolean value
+    Bool(bool),
     /// Array of unsigned 8-bit integers (for binary data)
     U8Array(Vec<u8>),
     /// Array of unsigned 16-bit integers

@@ -14,6 +14,7 @@ pub mod array_helpers;
 pub mod data;
 pub mod fmt;
 pub mod math;
+pub mod missing;
 pub mod string;
 pub mod tag_value;
 pub mod types;
@@ -32,7 +33,7 @@ pub use data::{join_unpack_binary, pack_c_star_bit_extract, unpack_binary};
 pub use fmt::{sprintf_perl, sprintf_split_values, sprintf_with_string_concat_repeat};
 
 // Re-export math functions commonly used by generated code
-pub use math::{abs, atan2, cos, exp, int, log, safe_division, safe_reciprocal, sin, sqrt};
+pub use math::{abs, atan2, cos, exp, int, log, negate, safe_division, safe_reciprocal, sin, sqrt};
 
 // Re-export string functions commonly used by generated code
 pub use string::{

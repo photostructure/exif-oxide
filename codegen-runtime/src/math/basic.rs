@@ -219,6 +219,69 @@ pub fn abs<T: Into<TagValue>>(val: T) -> TagValue {
     }
 }
 
+/// Unary negation operator - returns the negative of a value
+///
+/// This function handles unary negation (-$val) which is converted by the PPI normalizer
+/// from unary minus to a binary operation (0 - $val). This function provides a cleaner
+/// implementation that works directly with TagValue types.
+///
+/// # Arguments
+/// * `val` - Value that can be converted to TagValue
+///
+/// # Returns
+/// TagValue containing the negated value
+///
+/// # Example
+/// ```rust
+/// # use codegen_runtime::{TagValue, negate};
+/// assert_eq!(negate(TagValue::I32(42)), TagValue::I32(-42));
+/// assert_eq!(negate(TagValue::F64(3.14)), TagValue::F64(-3.14));
+/// assert_eq!(negate(-5i32), TagValue::I32(5));  // Also works with literals
+/// ```
+pub fn negate<T: Into<TagValue>>(val: T) -> TagValue {
+    let val = val.into();
+    match val {
+        TagValue::F64(f) => TagValue::F64(-f),
+        TagValue::I32(i) => TagValue::I32(-i),
+        TagValue::I16(i) => TagValue::I16(-i),
+        TagValue::U8(u) => TagValue::I32(-(u as i32)),
+        TagValue::U16(u) => TagValue::I32(-(u as i32)),
+        TagValue::U32(u) => TagValue::F64(-(u as f64)), // Convert large values to F64
+        TagValue::U64(u) => TagValue::F64(-(u as f64)), // Convert large values to F64
+        TagValue::String(s) => {
+            if let Ok(f) = s.parse::<f64>() {
+                TagValue::F64(-f)
+            } else {
+                // Non-numeric string - Perl negation of non-number gives 0
+                TagValue::F64(0.0)
+            }
+        }
+        TagValue::Rational(num, denom) => {
+            if denom != 0 {
+                TagValue::SRational(-(num as i32), denom as i32)
+            } else {
+                TagValue::F64(0.0)
+            }
+        }
+        TagValue::SRational(num, denom) => {
+            if denom != 0 {
+                TagValue::SRational(-num, denom)
+            } else {
+                TagValue::F64(0.0)
+            }
+        }
+        TagValue::Empty => TagValue::F64(0.0),
+        _ => {
+            // For complex types, try converting to string then parsing
+            if let Ok(f) = val.to_string().parse::<f64>() {
+                TagValue::F64(-f)
+            } else {
+                TagValue::F64(0.0)
+            }
+        }
+    }
+}
+
 /// Perl sqrt() function - square root
 pub fn sqrt<T: Into<TagValue>>(val: T) -> TagValue {
     let val = val.into();
@@ -546,5 +609,60 @@ mod tests {
         // Test int() with i32 literals
         assert_eq!(int(42i32), TagValue::F64(42.0));
         assert_eq!(int(-42i32), TagValue::F64(-42.0));
+    }
+
+    #[test]
+    fn test_negate_function() {
+        // Test with different numeric types
+        assert_eq!(negate(TagValue::I32(42)), TagValue::I32(-42));
+        assert_eq!(negate(TagValue::I32(-42)), TagValue::I32(42));
+        assert_eq!(negate(TagValue::F64(3.14)), TagValue::F64(-3.14));
+        assert_eq!(negate(TagValue::F64(-2.5)), TagValue::F64(2.5));
+
+        // Test with unsigned types (should convert to signed)
+        assert_eq!(negate(TagValue::U8(100)), TagValue::I32(-100));
+        assert_eq!(negate(TagValue::U16(1000)), TagValue::I32(-1000));
+        assert_eq!(negate(TagValue::U32(50000)), TagValue::F64(-50000.0));
+
+        // Test with string parsing
+        assert_eq!(
+            negate(TagValue::String("42".to_string())),
+            TagValue::F64(-42.0)
+        );
+        assert_eq!(
+            negate(TagValue::String("-3.14".to_string())),
+            TagValue::F64(3.14)
+        );
+
+        // Non-numeric strings return 0
+        assert_eq!(
+            negate(TagValue::String("hello".to_string())),
+            TagValue::F64(0.0)
+        );
+        assert_eq!(negate(TagValue::String("".to_string())), TagValue::F64(0.0));
+
+        // Test with rational numbers
+        assert_eq!(negate(TagValue::Rational(3, 4)), TagValue::SRational(-3, 4));
+        assert_eq!(
+            negate(TagValue::SRational(-5, 2)),
+            TagValue::SRational(5, 2)
+        );
+        assert_eq!(
+            negate(TagValue::SRational(7, 3)),
+            TagValue::SRational(-7, 3)
+        );
+
+        // Edge cases
+        assert_eq!(negate(TagValue::Empty), TagValue::F64(0.0));
+        assert_eq!(negate(TagValue::Rational(5, 0)), TagValue::F64(0.0)); // Division by zero
+    }
+
+    #[test]
+    fn test_negate_with_generic_input() {
+        // Test negate() with literals (common use case in generated code)
+        assert_eq!(negate(42i32), TagValue::I32(-42));
+        assert_eq!(negate(-5i32), TagValue::I32(5));
+        assert_eq!(negate(3.14f64), TagValue::F64(-3.14));
+        assert_eq!(negate(-2.5f64), TagValue::F64(2.5));
     }
 }
