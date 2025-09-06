@@ -15,7 +15,15 @@
       "Bash(grep:*)",
       "Bash(make:*)",
       "Bash(rustc:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(RUST_BACKTRACE=1 ./target/debug/debug-ppi '$$self{TimeScale} ? $val / $$self{TimeScale} : $val')",
+      "Bash(./target/debug/debug-ppi '$$self{TimeScale} ? $val / $$self{TimeScale} : $val')",
+      "Bash(./codegen/scripts/ppi_ast.pl:*)",
+      "Bash(perl:*)",
+      "Bash(RUST_LOG=debug cargo run --bin debug-ppi -- 'length($val) > 64 ? \\$val : $val')",
+      "Bash(./target/debug/debug-ppi 'length($val) > 64 ? \\$val : $val')",
+      "Bash(./target/debug/debug-ppi:*)",
+      "Bash(./target/debug/generate-expression-tests:*)"
     ],
     "deny": [],
     "additionalDirectories": [
