@@ -3,12 +3,9 @@
 use super::*;
 use crate::ppi::normalizer::multi_pass::RewritePass;
 use crate::ppi::types::PpiNode;
-use binary_operators::BinaryOperatorNormalizer;
 use function_calls::FunctionCallNormalizer;
-use join_unpack::JoinUnpackPass;
 use safe_division::SafeDivisionNormalizer;
 use string_ops::StringOpNormalizer;
-use ternary::TernaryNormalizer;
 
 #[test]
 fn test_safe_division_normalization() {
