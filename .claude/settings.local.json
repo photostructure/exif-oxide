@@ -1,26 +1,27 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git add:*)",
-      "Read(/tmp/**)",
-      "Read(/tmp/**)",
-      "Bash(mv:*)",
-      "Bash(cargo test:*)",
-      "Bash(RUST_LOG=debug cargo run --bin ppi_debugger \"0x100\")",
-      "Bash(env RUST_LOG=debug cargo run --bin ppi_debugger \"0x100\")",
-      "Bash(git log:*)",
-      "Bash(gpg:*)",
-      "Bash(env RUST_LOG=debug cargo run --package codegen --bin debug-ppi \"0x100\")",
+      "Bash(./scripts/ppi_ast.pl:*)",
+      "Bash(./target/debug/exif-oxide:*)",
       "Bash(cargo run:*)",
+      "Bash(cargo test:*)",
+      "Bash(cargo:*)",
       "Bash(curl:*)",
-      "Bash(git show:*)"
+      "Bash(find:*)",
+      "Bash(git add:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(gpg:*)",
+      "Bash(grep:*)",
+      "Bash(make:*)",
+      "Bash(rustc:*)",
+      "WebSearch"
     ],
     "deny": [],
-    "ask": [],
     "additionalDirectories": [
+      "/home/mrm/src/PPI/",
       "/home/mrm/src/test-images/",
-      "/tmp/",
-      "/home/mrm/src/PPI/"
+      "/tmp/"
     ]
   }
 }
