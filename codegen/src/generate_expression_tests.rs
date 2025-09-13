@@ -266,7 +266,7 @@ fn main() -> Result<()> {
     // Phase 2: Generate function files
     info!("🔧 Phase 2: Generating function files...");
     let mut generated_files = registry.generate_function_files_with_imports(
-        "codegen_runtime::{TagValue, ExifContext, int, exp, log, length_string, length_i32}",
+        "codegen_runtime::{TagValue, ExifContext, abs, atan2, cos, exp, int, log, sin, sqrt, length_string, length_i32}",
     )?;
 
     // In debug mode, filter out mod.rs files to avoid breaking other tests
