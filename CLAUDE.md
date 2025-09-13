@@ -18,7 +18,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with ex
 
 **Workarounds**:
 
-- Use `./scripts/with_stderr.sh command args` to capture both stdout and stderr in the terminal
 - Use `./scripts/capture.sh command args` to redirect output to temp files (useful for large outputs) - it will echo the file paths you can then grep/rg/awk through if the stream was non-trivial.
 - Don't use either of these tools if you don't care about stderr and/or the output is expected to be 100 lines or less.
 
