@@ -333,17 +333,7 @@ impl RustGenerator {
 
         // Check for sprintf with binary operations in arguments
         // This pattern doesn't normalize correctly and generates invalid code
-        let mut has_sprintf = false;
-        let mut has_operator = false;
-        for child in children {
-            if child.class == "PPI::Token::Word" && child.content.as_deref() == Some("sprintf") {
-                has_sprintf = true;
-            }
-            if child.class == "PPI::Token::Operator" && child.content.as_deref() == Some("*") {
-                has_operator = true;
-            }
-        }
-        if has_sprintf && has_operator {
+        if self.has_sprintf_with_binary_ops(children) {
             return Err(CodeGenError::UnsupportedStructure(
                 "sprintf with binary operations in arguments requires fallback implementation"
                     .to_string(),
@@ -612,9 +602,43 @@ impl RustGenerator {
                 }
 
                 // Process each part using the proper expression combiner logic
-                let condition = self.process_node_sequence(condition_nodes)?;
-                let true_expr = self.process_node_sequence(true_expr_nodes)?;
-                let false_expr = self.process_node_sequence(false_expr_nodes)?;
+                // Apply normalization to each branch to handle complex expressions properly
+                let condition_ast = PpiNode {
+                    class: "PPI::Statement".to_string(),
+                    content: None,
+                    children: condition_nodes.to_vec(),
+                    symbol_type: None,
+                    numeric_value: None,
+                    string_value: None,
+                    structure_bounds: None,
+                };
+                let normalized_condition =
+                    crate::ppi::normalizer::normalize_multi_pass(condition_ast);
+                let condition = self.process_node_sequence(&normalized_condition.children)?;
+
+                let true_ast = PpiNode {
+                    class: "PPI::Statement".to_string(),
+                    content: None,
+                    children: true_expr_nodes.to_vec(),
+                    symbol_type: None,
+                    numeric_value: None,
+                    string_value: None,
+                    structure_bounds: None,
+                };
+                let normalized_true = crate::ppi::normalizer::normalize_multi_pass(true_ast);
+                let true_expr = self.process_node_sequence(&normalized_true.children)?;
+
+                let false_ast = PpiNode {
+                    class: "PPI::Statement".to_string(),
+                    content: None,
+                    children: false_expr_nodes.to_vec(),
+                    symbol_type: None,
+                    numeric_value: None,
+                    string_value: None,
+                    structure_bounds: None,
+                };
+                let normalized_false = crate::ppi::normalizer::normalize_multi_pass(false_ast);
+                let false_expr = self.process_node_sequence(&normalized_false.children)?;
 
                 // Generate Rust if-else expression
                 let result = format!(
@@ -731,5 +755,35 @@ impl RustGenerator {
         }
 
         Ok(None)
+    }
+
+    /// Check if children contain sprintf with binary operations
+    /// This recursively checks for patterns that generate invalid Rust code
+    fn has_sprintf_with_binary_ops(&self, children: &[PpiNode]) -> bool {
+        let mut has_sprintf = false;
+        let mut has_binary_op = false;
+
+        for child in children {
+            // Check for sprintf function
+            if child.class == "PPI::Token::Word" && child.content.as_deref() == Some("sprintf") {
+                has_sprintf = true;
+            }
+
+            // Check for binary operators (*, /, +, -)
+            if child.class == "PPI::Token::Operator" {
+                if let Some(op) = child.content.as_deref() {
+                    if matches!(op, "*" | "/" | "+" | "-") {
+                        has_binary_op = true;
+                    }
+                }
+            }
+
+            // Recursively check children for nested patterns
+            if self.has_sprintf_with_binary_ops(&child.children) {
+                return true;
+            }
+        }
+
+        has_sprintf && has_binary_op
     }
 }
