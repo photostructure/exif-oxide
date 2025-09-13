@@ -1,6 +1,4 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with exif-oxide.
+# CLAUDE.md - MANDATORY CHECKLIST
 
 ## 🚨 CRITICAL: ALWAYS USE ABSOLUTE PATHS 🚨
 
@@ -12,9 +10,48 @@ This file provides guidance to Claude Code (claude.ai/code) when working with ex
 2. Use absolute paths: `cd /home/mrm/src/exif-oxide` or `cd /home/mrm/src/exif-oxide/codegen`
 3. When in doubt, ask the user to confirm the intended directory
 
+## 🚨 BEFORE ANY CODE CHANGES - RUN THESE CHECKS 🚨
+
+```bash
+# 1. Are you in the right directory?
+pwd  # MUST show /home/mrm/src/exif-oxide or subdirectory
+
+# 2. Are you about to edit generated code?
+echo "Files in src/generated/ are AUTO-GENERATED. Edit codegen/src/ instead."
+
+# 3. Check for forbidden patterns in your changes:
+rg "split_whitespace|\.join.*split" codegen/src/ppi/  # MUST return empty
+```
+
+## 🔴 INSTANT REJECTION TRIGGERS
+
+These will get your PR reverted immediately:
+
+1. **Editing any file in `**/generated/`** → These are generated. Fix `codegen/src/` instead.
+2. **Using `split_whitespace()` on AST nodes** → Breaks Perl parsing
+3. **Deleting ExifTool patterns** → Breaks camera support 
+4. **"Improving" ExifTool logic** → We translate EXACTLY. No optimizations.
+5. **Manual data transcription** → Use codegen for ALL ExifTool data
+
+## ✅ MANDATORY BEFORE EVERY PR
+
+```bash
+make precommit  # MUST pass
+cargo t         # MUST pass (not cargo test - needs test-helpers)
+```
+
+## 📁 Directory Safety
+
+**NEVER** use `cd ..` or relative paths. **ALWAYS** use absolute paths:
+```bash
+cd /home/mrm/src/exif-oxide          # ✅ GOOD
+cd /home/mrm/src/exif-oxide/codegen  # ✅ GOOD  
+cd ../..                              # ❌ WILL CAUSE DISASTERS
+```
+
 ## 🚨 CRITICAL: stderr redirects are broken in the Bash tool 🚨
 
-**You can't use `2>&1` in your bash commands** -- your Bash tool will mangle the stderr redirect and pass a "2" as an arg, and you wont' see stderr.
+**You can't use `2>&1` in your bash commands** -- your Bash tool will mangle the stderr redirect and pass a "2" as an arg, and you won't see stderr.
 
 **Workarounds**:
 
@@ -23,74 +60,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with ex
 
 See https://github.com/anthropics/claude-code/issues/4711 for details.
 
-## Project Overview
+## 📚 Critical Documentation
 
-As much as possible, exif-oxide is a _translation_ of [ExifTool](https://exiftool.org/) from perl to Rust.
-
-The biggest complexifier for this project is that ExifTool has monthly
-releases. New parsers, file types, and bugfixes accompany every new release.
-
-If our codebase is manually ported over, examining thousands of lines of diff to
-keep up to date with releases will become sisyphean and untenable.
-
-This project attempts to balance manually-written components that are stitch
-together code from our automated [docs/CODEGEN.md](docs/CODEGEN.md) ExifTool
-perl-to-rust code generation system. This is discussed in
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
-
-**⚠️ RECENT ARCHITECTURAL DAMAGE**: We've had multiple instances where Claude Code engineers ignored architectural guidelines and broke critical systems, requiring emergency recoveries. The most recent involved deletion of 546 lines of ExifTool pattern recognition that broke camera support. These incidents are documented in [docs/ANTI-PATTERNS.md](docs/ANTI-PATTERNS.md) and [docs/todo/P07-emergency-ppi-recovery.md](docs/todo/P07-emergency-ppi-recovery.md).
-
-## ⚠️ CRITICAL: Trust ExifTool
-
-**This is the #1 rule for all work on exif-oxide.**
-
-See [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md) for the complete guidelines.
-
-## 🚨 EMERGENCY: MANDATORY READING BEFORE ANY CODE CHANGES 🚨
-
-**WE'VE HAD 5+ EMERGENCY RECOVERIES** from Claude Code instances that ignored these warnings and committed "architectural vandalism" that broke the entire system.
-
-**BEFORE TOUCHING ANY CODE, ESPECIALLY PPI/EXPRESSION/CODEGEN WORK:**
-
-**READ THIS IMMEDIATELY**: [ANTI-PATTERNS.md](docs/ANTI-PATTERNS.md) 
-
-**CRITICAL VIOLATIONS THAT CAUSE IMMEDIATE REJECTION:**
-- `split_whitespace()` on AST nodes → **INSTANT PR REJECTION**
-- Deleting ExifTool pattern recognition → **INSTANT PR REJECTION** 
-- Manual transcription of ExifTool data → **INSTANT PR REJECTION**
-- Disabling working infrastructure → **INSTANT PR REJECTION**
-
-**MOST RECENT DISASTER**: 546 lines of critical ExifTool patterns were deleted, breaking Canon/Nikon/Sony support and requiring 3 weeks of emergency recovery.
-
-**MANDATORY PRE-COMMIT VALIDATION**:
-```bash
-# RUN THESE BEFORE ANY PR - if they fail, your PR will be rejected:
-rg "split_whitespace|\.join.*split" codegen/src/ppi/  # MUST return empty
-```
-****
-**IF YOU VIOLATE THESE PATTERNS, YOUR WORK WILL BE REVERTED AND YOU'LL BE ASKED TO START OVER.**
-
-The key principle: **wholly and completely trust the ExifTool implementation.**
-
-Any time we stray from ExifTool's logic and heuristics will introduce defects in real-world tasks.
-
-Almost every task will involve studying some part of the ExifTool codebase and validating that we are doing something exactly equivalent.
-
-**Note on Unknown Tags**: We follow ExifTool's default behavior of omitting tags marked with `Unknown => 1`. These tags are only shown in ExifTool when using the `-u` flag. This keeps our output clean and matches user expectations.
-
-## ⚠️ CRITICAL: Assume Concurrent Edits
-
-There are several other engineers working _on the same copy of the source tree_ at the same time you are. If you ever encounter a build error that you are positive is not a side-effect from code that you've edited, **STOP** and tell the user the issue. The user will fix the build nd tell you when you can resume your work.
-
-## ⚠️ CRITICAL: Always start by reading
-
-This project has many non-intuitive aspects. Before starting any task, **READ THE RELEVANT DOCUMENTATION**.
-
-Unraveling missteps can be much more costly than doing thorough research upfront.
-
-Always study relevant code and documentation for the task at hand -- **never assume APIs or behavior**.
-
-If you skip this step, your work will likely be spurious, wrong, and rejected.
+**READ THESE FIRST:**
+- [ANTI-PATTERNS.md](docs/ANTI-PATTERNS.md) - What NOT to do (with horror stories)
+- [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md) - Core principle: translate EXACTLY
+- [CODEGEN.md](docs/CODEGEN.md) - How code generation works
 
 ### Our Documentation
 
@@ -128,92 +103,21 @@ If you skip this step, your work will likely be spurious, wrong, and rejected.
 - [PRINT_CONV.md](third-party/exiftool/doc/concepts/PRINT_CONV.md) - Human-readable output conversions
 - [PATTERNS.md](third-party/exiftool/doc/concepts/PATTERNS.md) - Common patterns across modules
 
-## ⚠️ CRITICAL: Ask clarifying questions
+## ⚠️ CRITICAL: Assume Concurrent Edits
 
-If you have any clarifying questions for any aspects that are odd, nebulous, confusing, inadequately specific, or otherwise unclear, **please ask the user**.
+There are several other engineers working _on the same copy of the source tree_ at the same time you are. If you ever encounter a build error that you are positive is not a side-effect from code that you've edited, **STOP** and tell the user the issue. The user will fix the build and tell you when you can resume your work.
 
-The user assumes every task will need at least a couple clarifying questions before starting work!
+## ⚠️ IMPORTANT: ExifTool is a Git Submodule
 
-## ⚠️ CRITICAL: Trust ExifTool
+The `third-party/exiftool` directory is a **git submodule**. This means:
 
-READ [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md)
+- **NEVER run `git checkout`, `git add`, or any git commands directly on files in this directory**
+- The submodule tracks a specific commit of the ExifTool repository
+- Any changes to files in `third-party/exiftool/` will affect the submodule state
+- The codegen process may temporarily patch ExifTool files, but these changes should be reverted automatically
+- If you need to update or modify anything in the ExifTool directory, coordinate with the user first
 
-The Trust ExifTool principle is the fundamental law of the exif-oxide project: we translate ExifTool's implementation exactly, never attempting to "improve," "optimize," or "simplify" its logic, because every seemingly odd piece of code exists to handle specific camera quirks discovered over 25 years of development. The only changes allowed are syntax translations required for Rust (like string formatting or type conversions), but the **underlying logic must remain identical**. This principle exists because no camera follows the spec perfectly, and ExifTool's battle-tested code handles millions of real-world files from thousands of camera models with their unique firmware bugs and non-standard behaviors.
-
-Whenever possible, our rust code should include a comment pointing back to the ExifTool source code, function or variable name, and line number range.
-
-Or better: use CODEGEN!
-
-## Only `perl` can parse `perl`
-
-WE CANNOT INTERPRET PERL CODE IN RUST.
-
-The perl interpreter is the only competent perl parser! There are too many gotchas and surprising perl-isms--any perl parser we make in rust needs to be super conservative and strict with its allowed inputs.
-
-## Incremental improvements with a focus on common, mainstream tags
-
-To maintain a manageable scope:
-
-- We are initially targeting support for tags with >80% frequency or marked `mainstream: true` in TagMetadata.json
-- This reduces scope from ExifTool's 15,000+ tags to approximately 500-1000
-- See [TagMetadata.json](docs/tag-metadata.json) for tag popularity data
-
-## Fix technical debt
-
-If you ever see opportunities for simplification, code deduplication: **suggest the improvement**
-
-If you see ANY of these that isn't in `src/generated/**/*.rs` code, immediately suggest codegen extraction:
-
-- Files with hundreds of manual constant definitions
-- Match statements mapping numbers to camera/lens names
-- Static arrays of string literals that look like they came from ExifTool
-- TODO comments about "add more lens types when we have time"
-- Version-specific model lists that need manual updates
-
-**Remember**: Manually translated lookup tables are a minefield of bugs -- they're difficult to compare with the source material, frequently contain subtle translation mistakes, and are a substantial maintenance burden that grows with each ExifTool release. The codegen system automates hundreds of perl-encoded tables with zero ongoing maintenance costs.
-
-## ⚠️ CRITICAL: DO NOT EDIT THE FILES THAT SAY DO NOT EDIT
-
-Everything in `src/generated` **is generated code** and rewritten by our `codegen` module. Fix the generating code in `codegen/src` instead.
-
-### If MultiEdit doesn't work, try rg|sd
-
-`rg -l 'old-pattern' directory | xargs sd 'old-pattern' 'new-pattern'`
-
-### Trace, Don't Assume
-
-When making claims about the codebase, **trace the actual data flow from source to destination**. We're using the `tracing` crate for logging -- feel free to add trace and debug logs. For any architectural conclusions, cite specific file paths and line numbers that prove the requirement exists. Pattern matching ("I see X") is insufficient - if you can't point to exact code that needs your proposed solution, reconsider the conclusion.
-
-### ⚠️ CRITICAL: Bug Fixing
-
-When a bug is discovered, follow the test-driven debugging workflow documented in [TDD.md](docs/TDD.md):
-
-1. **Create a breaking test** that reproduces the issue with minimal test data
-2. **Validate test explodes** - confirm it fails for the exact expected reason
-3. **Address the bug** following "Trust ExifTool" principles (check ExifTool's implementation)
-4. **Validate test passes** and run full test suite (`cargo t`) for regressions
-
-This workflow ensures bugs are properly isolated, fixed at root cause, and protected against future regressions. See [TDD.md](docs/TDD.md) for complete details, examples, and test organization best practices.
-
-### When a task is complete
-
-1. Verify and validate! No task is complete until `make precommit`
-   passes.
-
-2. Concisely update any impacted and related docs, including reference
-   documentation, todo lists, milestone planning, and architectural design.
-
-### The user is a rust newbie...
-
-...so explaining things as we go would be wonderful. We want to make this
-project be as idiomatic rust as possible, so please web search and examine the
-rust language documentation to validate structures, setup, naming conventions,
-module interactions, and any other aspects that the rust community has adopted
-as a best practice, and explain those aspects to the user as we embrace them.
-
-## Development guidance
-
-### Running Tests
+## Running Tests
 
 **Use `cargo t` instead of `cargo test`** - Integration tests require the `test-helpers` feature to access test helper methods like `add_test_tag()`. We've configured a cargo alias for convenience:
 
@@ -225,37 +129,16 @@ The alias is defined in `.cargo/config.toml` and automatically includes `--featu
 
 **Why not regular `cargo test`?** The `test-helpers` feature enables test-only public methods on `ExifReader` that integration tests need, and `integration-tests` enables tests requiring external test assets. We don't include these in default features to keep them out of release builds.
 
-### ⚠️ IMPORTANT: ExifTool is a Git Submodule
+## ⚠️ CRITICAL: Bug Fixing
 
-The `third-party/exiftool` directory is a **git submodule**. This means:
+When a bug is discovered, follow the test-driven debugging workflow documented in [TDD.md](docs/TDD.md):
 
-- **NEVER run `git checkout`, `git add`, or any git commands directly on files in this directory**
-- The submodule tracks a specific commit of the ExifTool repository
-- Any changes to files in `third-party/exiftool/` will affect the submodule state
-- The codegen process may temporarily patch ExifTool files, but these changes should be reverted automatically
-- If you need to update or modify anything in the ExifTool directory, coordinate with the user first
+1. **Create a breaking test** that reproduces the issue with minimal test data
+2. **Validate test explodes** - confirm it fails for the exact expected reason
+3. **Address the bug** following "Trust ExifTool" principles (check ExifTool's implementation)
+4. **Validate test passes** and run full test suite (`cargo t`) for regressions
 
-### Refactor large source files
-
-When working with source files that exceed 500 lines:
-
-1. Suggest refactoring into smaller, focused modules using semantic grouping (completed for generated files in July 2025)
-2. The Read tool will truncate files larger than 2000 lines, which can cause incomplete code analysis
-3. Breaking up large files improves:
-   - Code readability and maintenance
-   - Tool effectiveness for analysis
-   - Module organization and separation of concerns
-   - IDE performance and compile times
-
-### Mark where the code smells
-
-While reviewing or editing code, if there are components that feel like a temporary hack or otherwise have a bad "code smell", add a TODO comment into the code that tersely describes why it smells, along with either a link to a MILESTONES.md stage when it will be fixed, or a terse description of how it should be fixed in the future.
-
-### ⚠️ CRITICAL: Safety rules
-
-- **NEVER use `rm -rf` in scripts** - it's too dangerous and can accidentally delete important files. Use specific file patterns with `rm -f` instead (e.g., `rm -f "$DIR/*.json"`)
-- Always prefer targeted cleanup over recursive deletion
-- **Use existing dependencies** - prefer already-imported crates (like `std::sync::LazyLock`) instead of adding new external dependencies unless really necessary
+This workflow ensures bugs are properly isolated, fixed at root cause, and protected against future regressions. See [TDD.md](docs/TDD.md) for complete details, examples, and test organization best practices.
 
 ### Comparing with ExifTool
 
@@ -286,20 +169,7 @@ This tool:
 - Groups differences into: tags only in ExifTool, tags only in exif-oxide, and tags with different values
 - Handles ExifTool's inconsistent formatting across different modules
 
-### Git commit messages
 
-All commit messages must follow the Conventional Commits specification (https://www.conventionalcommits.org/en/v1.0.0/). Use the format: `<type>[optional scope]: <description>` where type is `feat` (new features, MINOR version), `fix` (bug patches, PATCH version), or other types like `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`. Breaking changes are indicated with `!` after type/scope or with a `BREAKING CHANGE:` footer. The scope should reference the most significant file/module changed. Keep descriptions concise and avoid enumerating every change unless crucial for understanding.
+---
 
-### Is this tag prevalent?
-
-Tag "popularity" ranges widely. First check `docs/tag-metadata.json`, but if it's not there, use `exiftool` to do your own research! For the `ISOSpeed` tag, for example:
-
-```
-exiftool -j -struct -G -r -if '$ISOSpeed' -ISOSpeed test-images/ third-party/exiftool/t/images/ ../test-images/
-```
-
-Which shows it's only in the EXIF group, and in 20/10693 of our sample files.
-
-### Test images
-
-There are many test images in `third-party/exiftool/t/image/` -- but they've all had their image content stripped out, so they're all 8x8. Don't test things like dimensions with those files -- we need proper, original out-of-camera examples to test with. Those live in `test-images/${manufacturer name}`
+**IF YOU IGNORE ANY ASPECT IN THIS DOCUMENT:** Your work will be reverted, and you'll have to start over.
