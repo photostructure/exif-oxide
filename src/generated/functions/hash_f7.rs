@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -15,10 +19,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Sony::ExtraInfo.BatteryTemperature
 /// - Sony::ExtraInfo3.BatteryTemperature
 /// - Sony::Tag9406.BatteryTemperature
-pub fn ast_value_f7873b2dff9e970c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(((val - 32i32)) / 1.8f64)
+pub fn ast_value_f7873b2dff9e970c(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val - 32i32) / 1.8f64)
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -27,8 +33,6 @@ pub fn ast_value_f7873b2dff9e970c(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Sony::Tag9050c.ShutterCount
 /// - Sony::Tag9050d.ShutterCount
-pub fn ast_print_f78c26f012d763ba(val: &TagValue) -> TagValue {
+pub fn ast_print_f78c26f012d763ba(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl("%6d".into(), &[val.clone()]))
 }
-
-

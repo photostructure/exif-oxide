@@ -22,9 +22,16 @@ use codegen_runtime::{
 /// TODO: Add support for this expression pattern
 pub fn ast_value_29b4faab94339ab6(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val / 1e9",   // original expression
+        val,
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -37,9 +44,16 @@ pub fn ast_value_29b4faab94339ab6(
 /// TODO: Add support for this expression pattern
 pub fn ast_value_2962d6643d953141(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                                             // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "my @a = split \" \",$val; ($a[1] * 0x10000 + $a[2]) / $a[0]", // original expression
+        val,
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -50,7 +64,13 @@ pub fn ast_value_2962d6643d953141(
 /// Used by:
 /// - Pentax::SRInfo.SRHalfPressTime
 /// TODO: Add support for this expression pattern
-pub fn ast_print_29f73438895e98(val: &TagValue) -> TagValue {
+pub fn ast_print_29f73438895e98(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "sprintf(\"%.2f s\",$val) . ($val > 254.5/60 ? \" or longer\" : \"\")", // original expression
+        val,
+    )
 }

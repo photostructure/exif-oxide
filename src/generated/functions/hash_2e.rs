@@ -17,7 +17,7 @@ use codegen_runtime::{
 /// ```
 /// Used by:
 /// - Olympus::FocusInfo.FocusDistance
-pub fn ast_print_2e926c6f528517f0(val: &TagValue) -> TagValue {
+pub fn ast_print_2e926c6f528517f0(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val {
         format!("{} m", val).into()
     } else {

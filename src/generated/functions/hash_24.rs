@@ -23,7 +23,7 @@ use codegen_runtime::{
 /// - Canon::CameraInfo5D.MacroMagnification
 /// - Canon::CameraInfo5DmkII.MacroMagnification
 /// - Canon::FileInfo.MacroMagnification
-pub fn ast_print_244597bfb4c5779c(val: &TagValue) -> TagValue {
+pub fn ast_print_244597bfb4c5779c(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
         "%.1fx".into(),
         &[val.clone()],
@@ -41,7 +41,13 @@ pub fn ast_print_244597bfb4c5779c(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Nikon::SeqInfoZ9.FocusShiftShooting
 /// TODO: Add support for this expression pattern
-pub fn ast_print_24e72f70112b2913(val: &TagValue) -> TagValue {
+pub fn ast_print_24e72f70112b2913(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "return \'Off\' if $val == 0 ;\n            my $i = sprintf(\"Frame %.0f of %.0f\",$val, $$self{FocusShiftNumberShots}); # something like Frame 1 of 100\"   \n            if ($$self{PixelShiftActive} and $$self{PixelShiftActive} eq 1) {$i = sprintf(\"Frame %.0f\",$val);}   #for the Z8 fw3 with PixelShift Enabled, the frame count is correct, but the frame total needs to be multiplied by the number of PixelShift frames (which I cannot find)\n            return \"On: $i\"", // original expression
+                    val
+                )
 }

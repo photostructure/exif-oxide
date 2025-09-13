@@ -19,6 +19,7 @@ use codegen_runtime::{
 /// - FujiFilm::RAF.RelativeExposure
 pub fn ast_value_574514e3d36a220e(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((log((val)) / log((2i32))))
 }

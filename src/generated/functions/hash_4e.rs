@@ -19,7 +19,7 @@ use codegen_runtime::{
 /// - Sony::Tag9400a.ModelReleaseYear
 /// - Sony::Tag9400b.ModelReleaseYear
 /// - Sony::Tag9400c.ModelReleaseYear
-pub fn ast_print_4e04d6169c18f853(val: &TagValue) -> TagValue {
+pub fn ast_print_4e04d6169c18f853(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
         "20%.2d".into(),
         &[val.clone()],
@@ -44,9 +44,15 @@ pub fn ast_print_4e04d6169c18f853(val: &TagValue) -> TagValue {
 /// - Sony::Main.FullImageSize
 /// - Sony::Main.PreviewImageSize
 /// TODO: Add support for this expression pattern
-pub fn ast_print_4e5e992f9b388e54(val: &TagValue) -> TagValue {
+pub fn ast_print_4e5e992f9b388e54(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                       // tag_id will be filled at runtime
+        "UnknownTag",            // tag_name will be filled at runtime
+        "UnknownGroup",          // group will be filled at runtime
+        "$val =~ tr/ /x/; $val", // original expression
+        val,
+    )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -60,9 +66,15 @@ pub fn ast_print_4e5e992f9b388e54(val: &TagValue) -> TagValue {
 /// Used by:
 /// - RIFF::AVIHeader.MaxDataRate
 /// TODO: Add support for this expression pattern
-pub fn ast_print_4e32eebd5c55c7ac(val: &TagValue) -> TagValue {
+pub fn ast_print_4e32eebd5c55c7ac(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my ($unit, $div) = $self->Options(\'ByteUnit\') eq \'Binary\' ? (\'KiB/s\',1024) : (\'kB/s\',1000);\n            my $tmp = $val / $div;\n            $tmp > 9999 and $tmp /= $div, $unit =~ s/^./M/;\n            sprintf(\'%.4g %s\', $tmp, $unit);", // original expression
+                    val
+                )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -73,7 +85,13 @@ pub fn ast_print_4e32eebd5c55c7ac(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Nikon::Scan.ColorGain
 /// TODO: Add support for this expression pattern
-pub fn ast_print_4ecd72b99799fca9(val: &TagValue) -> TagValue {
+pub fn ast_print_4ecd72b99799fca9(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                               // tag_id will be filled at runtime
+        "UnknownTag",                                    // tag_name will be filled at runtime
+        "UnknownGroup",                                  // group will be filled at runtime
+        "sprintf(\"%.2f %.2f %.2f\",split(\" \",$val))", // original expression
+        val,
+    )
 }

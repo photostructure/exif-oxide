@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -16,10 +20,9 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - GoPro::KBAT.BatteryVoltage2
 /// - GoPro::KBAT.BatteryVoltage3
 /// - GoPro::KBAT.BatteryVoltage4
-pub fn ast_print_dda555683af957b(val: &TagValue) -> TagValue {
+pub fn ast_print_dda555683af957b(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     format!("{} V", val).into()
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -27,8 +30,18 @@ pub fn ast_print_dda555683af957b(val: &TagValue) -> TagValue {
 /// ```
 /// Used by:
 /// - Nikon::MenuSettingsZ7II.ReleaseMode
-pub fn ast_value_dd0f53a300f2b076(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(if  { 5i32 } else { val })
+pub fn ast_value_dd0f53a300f2b076(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if ctx
+            .and_then(|c| c.get_data_member("TimeScale").cloned())
+            .unwrap_or(TagValue::U32(1))
+        {
+            5i32
+        } else {
+            val
+        },
+    )
 }
-
-

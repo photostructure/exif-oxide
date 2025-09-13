@@ -25,9 +25,16 @@ use codegen_runtime::{
 /// TODO: Add support for this expression pattern
 pub fn ast_value_54193e0c249aa3ab(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                       // tag_id will be filled at runtime
+        "UnknownTag",                            // tag_name will be filled at runtime
+        "UnknownGroup",                          // group will be filled at runtime
+        "Image::ExifTool::Exif::ExifTime($val)", // original expression
+        val,
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -40,7 +47,13 @@ pub fn ast_value_54193e0c249aa3ab(
 /// Used by:
 /// - Panasonic::Leica5.InternalSerialNumber
 /// TODO: Add support for this expression pattern
-pub fn ast_print_5410ebd1831763d8(val: &TagValue) -> TagValue {
+pub fn ast_print_5410ebd1831763d8(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "return $val unless $val=~/^(.{3})(\\d{2})(\\d{2})(\\d{2})(\\d{4})/;\n            my $yr = $2 + ($2 < 70 ? 2000 : 1900);\n            return \"($1) $yr:$3:$4 no. $5\";", // original expression
+                    val
+                )
 }

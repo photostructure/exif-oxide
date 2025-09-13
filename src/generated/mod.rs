@@ -58,5 +58,4 @@ pub mod functions;
 
 /// Initialize all lazy static data structures
 /// This can be called during startup to avoid lazy initialization costs later
-pub fn initialize_all() {
-}
+pub fn initialize_all() {}

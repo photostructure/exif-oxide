@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -15,10 +19,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Olympus::Equipment.MaxAperture
 /// - Olympus::Equipment.MaxApertureAtMaxFocal
 /// - Olympus::Equipment.MaxApertureAtMinFocal
-pub fn ast_value_a702026eef5d42be(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(if val { (sqrt (2i32) as f64).powf(((val / 256i32)) as f64) } else { 0i32 })
+pub fn ast_value_a702026eef5d42be(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if val { sqrt() } else { 0i32 })
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -28,12 +34,16 @@ pub fn ast_value_a702026eef5d42be(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Nikon::Main.MakerNoteVersion
 /// TODO: Add support for this expression pattern
-pub fn ast_print_a7bd7d3f338f7940(val: &TagValue) -> TagValue
-{
+pub fn ast_print_a7bd7d3f338f7940(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                      // tag_id will be filled at runtime
+        "UnknownTag",                           // tag_name will be filled at runtime
+        "UnknownGroup",                         // group will be filled at runtime
+        "$_=$val;s/^(\\d{2})/$1\\./;s/^0//;$_", // original expression
+        val,
+    )
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -46,12 +56,19 @@ pub fn ast_print_a7bd7d3f338f7940(val: &TagValue) -> TagValue
 /// - Sony::FocusInfo.ISO
 /// - Sony::FocusInfo.ISOSetting
 /// TODO: Add support for this expression pattern
-pub fn ast_value_a7fc8acd4df4945(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_a7fc8acd4df4945(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                          // tag_id will be filled at runtime
+        "UnknownTag",                               // tag_name will be filled at runtime
+        "UnknownGroup",                             // group will be filled at runtime
+        "$val ? exp(($val/8-6)*log(2))*100 : $val", // original expression
+        val,
+    ))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -62,10 +79,16 @@ pub fn ast_value_a7fc8acd4df4945(val: &TagValue) -> Result<TagValue, codegen_run
 /// - Canon::CameraInfoPowerShot.ISO
 /// - Canon::CameraInfoPowerShot2.ISO
 /// TODO: Add support for this expression pattern
-pub fn ast_value_a704a838f8b357a7(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_a704a838f8b357a7(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                 // tag_id will be filled at runtime
+        "UnknownTag",                      // tag_name will be filled at runtime
+        "UnknownGroup",                    // group will be filled at runtime
+        "100*exp((($val-411)/96)*log(2))", // original expression
+        val,
+    ))
 }
-
-

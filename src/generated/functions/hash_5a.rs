@@ -17,7 +17,7 @@ use codegen_runtime::{
 /// ```
 /// Used by:
 /// - Sony::Main.ColorTemperature
-pub fn ast_print_5a37abc3eeb8dead(val: &TagValue) -> TagValue {
+pub fn ast_print_5a37abc3eeb8dead(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val {
         (if (val == 0xffffffffu32) {
             "n/a".into()
@@ -39,7 +39,14 @@ pub fn ast_print_5a37abc3eeb8dead(val: &TagValue) -> TagValue {
 /// TODO: Add support for this expression pattern
 pub fn ast_value_5aff1f95e99e78bf(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                           // tag_id will be filled at runtime
+        "UnknownTag",                                // tag_name will be filled at runtime
+        "UnknownGroup",                              // group will be filled at runtime
+        "$_=unpack(\"H*\",$val); s/0{64}$//; uc $_", // original expression
+        val,
+    ))
 }

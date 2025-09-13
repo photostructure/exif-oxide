@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -45,10 +49,9 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Pentax::TempInfo.CameraTemperature5
 /// - Sony::Tag9402.AmbientTemperature
 /// - Sony::Tag9403.CameraTemperature
-pub fn ast_print_d3baecf4975cff4c(val: &TagValue) -> TagValue {
+pub fn ast_print_d3baecf4975cff4c(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     format!("{} C", val).into()
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -58,10 +61,13 @@ pub fn ast_print_d3baecf4975cff4c(val: &TagValue) -> TagValue {
 /// - Kodak::Main.ISOSetting
 /// - MinoltaRaw::RIF.ColorTemperature
 /// - Olympus::CameraSettings.WhiteBalanceTemperature
-pub fn ast_print_d3695e9544e1c996(val: &TagValue) -> TagValue {
-    if val { val } else { "Auto".into() }
+pub fn ast_print_d3695e9544e1c996(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if val {
+        val
+    } else {
+        "Auto".into()
+    }
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -82,10 +88,12 @@ pub fn ast_print_d3695e9544e1c996(val: &TagValue) -> TagValue {
 /// - Nikon::LensData0800.EffectiveMaxAperture
 /// - Nikon::LensData0800.MaxApertureAtMaxFocal
 /// - Nikon::LensData0800.MaxApertureAtMinFocal
-pub fn ast_value_d39b819d3cebc1bf(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf(((val / 24i32)) as f64))
+pub fn ast_value_d39b819d3cebc1bf(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf((val / 24i32) as f64))
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -98,10 +106,9 @@ pub fn ast_value_d39b819d3cebc1bf(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - Nikon::VignetteInfo.VignetteCoefficient1
 /// - Nikon::VignetteInfo.VignetteCoefficient2
 /// - Nikon::VignetteInfo.VignetteCoefficient3
-pub fn ast_print_d37c45a072187ab5(val: &TagValue) -> TagValue {
+pub fn ast_print_d37c45a072187ab5(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl("%.5f".into(), &[val.clone()]))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -117,12 +124,19 @@ pub fn ast_print_d37c45a072187ab5(val: &TagValue) -> TagValue {
 /// - Kodak::SubIFD2.ExposureTime
 /// - Kodak::Type9.ExposureTime
 /// TODO: Add support for this expression pattern
-pub fn ast_value_d37ffb72c49bf107(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_d37ffb72c49bf107(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val / 1e6",   // original expression
+        val,
+    ))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -132,10 +146,13 @@ pub fn ast_value_d37ffb72c49bf107(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Sigma::Main.ExposureCompensation
 /// TODO: Add support for this expression pattern
-pub fn ast_print_d367e2a7f0ec6d0c(val: &TagValue) -> TagValue
-{
+pub fn ast_print_d367e2a7f0ec6d0c(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                        // tag_id will be filled at runtime
+        "UnknownTag",                             // tag_name will be filled at runtime
+        "UnknownGroup",                           // group will be filled at runtime
+        "$val and $val =~ s/^(\\d)/\\+$1/; $val", // original expression
+        val,
+    )
 }
-
-

@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,8 +17,13 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - Nikon::GEM.DigitalGEM
-pub fn ast_value_ce021e4f406e261d(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(if (val < 95i32) { ((val / 20i32) - 1i32) } else { 4i32 })
+pub fn ast_value_ce021e4f406e261d(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if (val < 95i32) {
+        ((val / 20i32) - 1i32)
+    } else {
+        4i32
+    })
 }
-
-

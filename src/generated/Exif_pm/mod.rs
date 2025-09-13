@@ -9,6 +9,7 @@ pub mod light_source;
 pub mod main_tags;
 pub mod orientation;
 pub mod photometric_interpretation;
+pub mod rggb_lookup;
 pub mod rggb_lookup_0;
 pub mod rggb_lookup_1;
 pub mod rggb_lookup_2;

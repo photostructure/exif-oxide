@@ -25,6 +25,7 @@ use codegen_runtime::{
 /// - Sony::MoreSettings.ExposureCompensation2
 pub fn ast_value_6024bbf5fa17668a(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val / 8i32))
 }

@@ -19,7 +19,7 @@ use codegen_runtime::{
 /// - Sony::ExtraInfo.BatteryVoltage
 /// - Sony::ExtraInfo3.BatteryVoltage1
 /// - Sony::ExtraInfo3.BatteryVoltage2
-pub fn ast_print_3b2373f5e3819dad(val: &TagValue) -> TagValue {
+pub fn ast_print_3b2373f5e3819dad(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
         "%.2f V".into(),
         &[val.clone()],
@@ -36,9 +36,16 @@ pub fn ast_print_3b2373f5e3819dad(val: &TagValue) -> TagValue {
 /// TODO: Add support for this expression pattern
 pub fn ast_value_3b77080649d79275(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                         // tag_id will be filled at runtime
+        "UnknownTag",                              // tag_name will be filled at runtime
+        "UnknownGroup",                            // group will be filled at runtime
+        "$val > 1800 and $val -= 3600; $val / 10", // original expression
+        val,
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -59,7 +66,14 @@ pub fn ast_value_3b77080649d79275(
 /// TODO: Add support for this expression pattern
 pub fn ast_value_3be01b4842453c7b(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                             // tag_id will be filled at runtime
+        "UnknownTag",                  // tag_name will be filled at runtime
+        "UnknownGroup",                // group will be filled at runtime
+        "100*exp(($val/12-5)*log(2))", // original expression
+        val,
+    ))
 }

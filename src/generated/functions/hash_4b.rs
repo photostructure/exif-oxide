@@ -23,6 +23,7 @@ use codegen_runtime::{
 /// - Sony::MoreSettings.FNumber
 pub fn ast_value_4b2b5b722bdd63f4(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((2i32 as f64).powf((((val / 8i32) - 1i32) / 2i32) as f64))
 }
@@ -33,6 +34,6 @@ pub fn ast_value_4b2b5b722bdd63f4(
 /// ```
 /// Used by:
 /// - Sony::Tag9416.Tag9416_0000
-pub fn ast_print_4b6db621edbbac84(val: &TagValue) -> TagValue {
+pub fn ast_print_4b6db621edbbac84(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl("%3d".into(), &[val.clone()]))
 }

@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,10 +17,13 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - Panasonic::Main.TravelDay
-pub fn ast_print_dbf94666acbb7012(val: &TagValue) -> TagValue {
-    if (val == 65535i32) { "n/a".into() } else { val }
+pub fn ast_print_dbf94666acbb7012(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if (val == 65535i32) {
+        "n/a".into()
+    } else {
+        val
+    }
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -24,10 +31,16 @@ pub fn ast_print_dbf94666acbb7012(val: &TagValue) -> TagValue {
 /// ```
 /// Used by:
 /// - Olympus::ImageProcessing.CameraTemperature
-pub fn ast_value_db7a59febab7bd3c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(if val { val } else { TagValue::String("".to_string()) })
+pub fn ast_value_db7a59febab7bd3c(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if val {
+        val
+    } else {
+        TagValue::String("".to_string())
+    })
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -46,10 +59,16 @@ pub fn ast_value_db7a59febab7bd3c(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - Pentax::PENT.GPSDateStamp
 /// - Sony::rtmd.GPSDateStamp
 /// TODO: Add support for this expression pattern
-pub fn ast_value_db6d300cf2bc94e2(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_db6d300cf2bc94e2(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                       // tag_id will be filled at runtime
+        "UnknownTag",                            // tag_name will be filled at runtime
+        "UnknownGroup",                          // group will be filled at runtime
+        "Image::ExifTool::Exif::ExifDate($val)", // original expression
+        val,
+    ))
 }
-
-

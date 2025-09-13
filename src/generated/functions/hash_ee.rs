@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -81,21 +85,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Sony::PMP.FNumber
 /// - Sony::PMP.FocalLength
 /// - Sony::rtmd.MasterGainAdjustment
-pub fn ast_value_ee9b0901d11400f9(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+pub fn ast_value_ee9b0901d11400f9(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val / 100i32))
 }
-
-
-/// Original perl expression:
-/// ``` perl
-/// ($val >> 8) + 1
-/// ```
-/// Used by:
-/// - RIFF::VP8X.ImageHeight
-pub fn ast_value_ee373eddfb12a7cf(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((val >> 8i32) + 1i32)
-}
-
 
 /// Original perl expression:
 /// ``` perl
@@ -103,10 +98,34 @@ pub fn ast_value_ee373eddfb12a7cf(val: &TagValue) -> Result<TagValue, codegen_ru
 /// ```
 /// Used by:
 /// - Nikon::LensData0800.FocusDistance
-pub fn ast_value_ee91ddedc5e86fe3(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf((((val - 80i32)) / 12i32) as f64))
+pub fn ast_value_ee91ddedc5e86fe3(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf(((val - 80i32) / 12i32) as f64))
 }
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// ($val >> 8) + 1
+/// ```
+/// Used by:
+/// - RIFF::VP8X.ImageHeight
+/// TODO: Add support for this expression pattern
+pub fn ast_value_ee373eddfb12a7cf(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                 // tag_id will be filled at runtime
+        "UnknownTag",      // tag_name will be filled at runtime
+        "UnknownGroup",    // group will be filled at runtime
+        "($val >> 8) + 1", // original expression
+        val,
+    ))
+}
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -116,12 +135,16 @@ pub fn ast_value_ee91ddedc5e86fe3(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Kodak::Borders.BorderName
 /// TODO: Add support for this expression pattern
-pub fn ast_print_ee86c0adbbb71bec(val: &TagValue) -> TagValue
-{
+pub fn ast_print_ee86c0adbbb71bec(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "Image::ExifTool::Exif::ConvertExifText($self,$val,\"BorderName\")", // original expression
+        val,
+    )
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -134,10 +157,16 @@ pub fn ast_print_ee86c0adbbb71bec(val: &TagValue) -> TagValue
 /// Used by:
 /// - Pentax::LensInfo5.LensType
 /// TODO: Add support for this expression pattern
-pub fn ast_value_ee0ba302040a4bb7(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_ee0ba302040a4bb7(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my @v = split(\' \',$val);\n            $v[0] &= 0x0f;\n            $v[1] = $v[3] * 256 + $v[4]; # (always high byte first)\n            return \"$v[0] $v[1]\";", // original expression
+                    val
+                ))
 }
-
-

@@ -18,7 +18,7 @@ use codegen_runtime::{
 /// Used by:
 /// - GoPro::KBAT.BatteryLevel
 /// - GoPro::KBAT.KBAT_Unknown9
-pub fn ast_print_139f419a2aaaa1f3(val: &TagValue) -> TagValue {
+pub fn ast_print_139f419a2aaaa1f3(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     format!("{} %", val).into()
 }
 
@@ -52,6 +52,7 @@ pub fn ast_print_139f419a2aaaa1f3(val: &TagValue) -> TagValue {
 /// - Canon::CameraInfo80D.ExposureTime
 pub fn ast_value_13e9fff1dc7b41b2(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(exp(
         ((4i32 * log((2i32))) * (1i32 - Image::ExifTool::Canon::CanonEv))
@@ -65,7 +66,7 @@ pub fn ast_value_13e9fff1dc7b41b2(
 /// Used by:
 /// - QuickTime::MovieHeader.PreferredVolume
 /// - QuickTime::TrackHeader.TrackVolume
-pub fn ast_print_13019bc21b8fe7c4(val: &TagValue) -> TagValue {
+pub fn ast_print_13019bc21b8fe7c4(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
         "%.2f%%".into(),
         &[val * 100i32.clone()],
@@ -83,7 +84,13 @@ pub fn ast_print_13019bc21b8fe7c4(val: &TagValue) -> TagValue {
 /// - Olympus::Equipment.FlashFirmwareVersion
 /// - Olympus::Equipment.LensFirmwareVersion
 /// TODO: Add support for this expression pattern
-pub fn ast_print_13c6fe5be8efefda(val: &TagValue) -> TagValue {
+pub fn ast_print_13c6fe5be8efefda(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                                       // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val=sprintf(\"%x\",$val);$val=~s/(.{3})$/\\.$1/;$val", // original expression
+        val,
+    )
 }

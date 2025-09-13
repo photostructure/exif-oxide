@@ -20,6 +20,7 @@ use codegen_runtime::{
 /// - Pentax::AEInfo3.AE_ISO
 pub fn ast_value_6d6b19c587a83655(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(100i32 * exp((val - 32i32) * log(2i32) / 8i32))
 }
@@ -32,9 +33,15 @@ pub fn ast_value_6d6b19c587a83655(
 /// Used by:
 /// - Nikon::Main.ISO
 /// TODO: Add support for this expression pattern
-pub fn ast_print_6d9da87e28213f05(val: &TagValue) -> TagValue {
+pub fn ast_print_6d9da87e28213f05(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                       // tag_id will be filled at runtime
+        "UnknownTag",                            // tag_name will be filled at runtime
+        "UnknownGroup",                          // group will be filled at runtime
+        "$_=$val;s/^0 //;s/^1 (\\d+)/Hi $1/;$_", // original expression
+        val,
+    )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -46,9 +53,15 @@ pub fn ast_print_6d9da87e28213f05(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Olympus::FocusInfo.ImageStabilization
 /// TODO: Add support for this expression pattern
-pub fn ast_print_6de6ff12d32c1902(val: &TagValue) -> TagValue {
+pub fn ast_print_6de6ff12d32c1902(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "$val =~ /^\\0{4}/ ? \'Off\' : \'On, \' .\n            (unpack(\'x44C\',$val) & 0x01 ? \'Mode 1\' : \'Mode 2\')", // original expression
+                    val
+                )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -61,7 +74,14 @@ pub fn ast_print_6de6ff12d32c1902(val: &TagValue) -> TagValue {
 /// TODO: Add support for this expression pattern
 pub fn ast_value_6d72618aafeeb2(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                       // tag_id will be filled at runtime
+        "UnknownTag",            // tag_name will be filled at runtime
+        "UnknownGroup",          // group will be filled at runtime
+        "$val =~ s/^8 //; $val", // original expression
+        val,
+    ))
 }

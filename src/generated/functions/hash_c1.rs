@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -16,10 +20,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Sony::Tag9050a.SonyMinAperture
 /// - Sony::Tag9050b.SonyMaxAperture
 /// - Sony::Tag9050b.SonyMinAperture
-pub fn ast_value_c1d0defaf7444144(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf(((((val / 8i32) - 1.06f64)) / 2i32) as f64))
+pub fn ast_value_c1d0defaf7444144(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf((((val / 8i32) - 1.06f64) / 2i32) as f64))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -46,12 +52,16 @@ pub fn ast_value_c1d0defaf7444144(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - Sony::ExtraInfo.ExtraInfoVersion
 /// - Sony::rtmd.GPSVersionID
 /// TODO: Add support for this expression pattern
-pub fn ast_print_c12c7e50f55cf298(val: &TagValue) -> TagValue
-{
+pub fn ast_print_c12c7e50f55cf298(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                       // tag_id will be filled at runtime
+        "UnknownTag",            // tag_name will be filled at runtime
+        "UnknownGroup",          // group will be filled at runtime
+        "$val =~ tr/ /./; $val", // original expression
+        val,
+    )
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -62,10 +72,13 @@ pub fn ast_print_c12c7e50f55cf298(val: &TagValue) -> TagValue
 /// Used by:
 /// - Apple::Main.FocusDistanceRange
 /// TODO: Add support for this expression pattern
-pub fn ast_print_c1c5cd7f1c4f4d2(val: &TagValue) -> TagValue
-{
+pub fn ast_print_c1c5cd7f1c4f4d2(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my @a = split \' \', $val;\n            sprintf(\'%.2f - %.2f m\', $a[0] <= $a[1] ? @a : reverse @a);", // original expression
+                    val
+                )
 }
-
-

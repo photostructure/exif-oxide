@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -102,10 +106,9 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Sony::SR2SubIFD.MinFocalLength
 /// - Sony::SRF2.MaxFocalLength
 /// - Sony::SRF2.MinFocalLength
-pub fn ast_print_ba030bb348470426(val: &TagValue) -> TagValue {
+pub fn ast_print_ba030bb348470426(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     format!("{} mm", val).into()
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -113,10 +116,9 @@ pub fn ast_print_ba030bb348470426(val: &TagValue) -> TagValue {
 /// ```
 /// Used by:
 /// - Pentax::AFInfo.AFIntegrationTime
-pub fn ast_print_ba730b85fae6fc80(val: &TagValue) -> TagValue {
+pub fn ast_print_ba730b85fae6fc80(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     format!("{} ms", val).into()
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -126,10 +128,16 @@ pub fn ast_print_ba730b85fae6fc80(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Photoshop::Main.AlphaChannelsNames
 /// TODO: Add support for this expression pattern
-pub fn ast_value_ba39cdf4578ace46(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_ba39cdf4578ace46(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                                             // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "Image::ExifTool::Photoshop::ConvertPascalString($self,$val)", // original expression
+        val,
+    ))
 }
-
-

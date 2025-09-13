@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,10 +17,9 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - GoPro::KBAT.BatteryCurrent
-pub fn ast_print_8497b6582cfb6c0a(val: &TagValue) -> TagValue {
+pub fn ast_print_8497b6582cfb6c0a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     format!("{} A", val).into()
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -31,10 +34,12 @@ pub fn ast_print_8497b6582cfb6c0a(val: &TagValue) -> TagValue {
 /// - Pentax::AEInfo3.AEMaxAperture
 /// - Pentax::AEInfo3.AEMaxAperture2
 /// - Pentax::AEInfo3.AEMinAperture
-pub fn ast_value_849772b1a5139524(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(exp(((val - 68i32)) *log (2i32) / 16i32))
+pub fn ast_value_849772b1a5139524(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(exp((val - 68i32) * log(2i32) / 16i32))
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -113,10 +118,9 @@ pub fn ast_value_849772b1a5139524(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - Sony::Tag9405b.SonyMaxApertureValue
 /// - Sony::Tag9416.SonyFNumber2
 /// - Sony::Tag9416.SonyMaxApertureValue
-pub fn ast_print_8470e30e1e5b4729(val: &TagValue) -> TagValue {
+pub fn ast_print_8470e30e1e5b4729(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl("%.1f".into(), &[val.clone()]))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -126,10 +130,16 @@ pub fn ast_print_8470e30e1e5b4729(val: &TagValue) -> TagValue {
 /// Used by:
 /// - RIFF::BroadcastExt.DateTimeOriginal
 /// TODO: Add support for this expression pattern
-pub fn ast_value_84c0b26ba3ca2227(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_84c0b26ba3ca2227(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                                      // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$_=$val; tr/-/:/; s/^(\\d{4}:\\d{2}:\\d{2})/$1 /; $_", // original expression
+        val,
+    ))
 }
-
-

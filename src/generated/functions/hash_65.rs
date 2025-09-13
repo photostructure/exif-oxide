@@ -21,9 +21,16 @@ use codegen_runtime::{
 /// TODO: Add support for this expression pattern
 pub fn ast_value_65de956e2a10c3d6(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$_=$val; /^[\\x00-\\x09]/ and $_=join(\"\",unpack(\"CCCC\",$_)); $_", // original expression
+        val,
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -38,9 +45,16 @@ pub fn ast_value_65de956e2a10c3d6(
 /// TODO: Add support for this expression pattern
 pub fn ast_value_658535e4cd23f2ff(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                       // tag_id will be filled at runtime
+        "UnknownTag",                            // tag_name will be filled at runtime
+        "UnknownGroup",                          // group will be filled at runtime
+        "Image::ExifTool::Canon::CanonEv($val)", // original expression
+        val,
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -53,7 +67,14 @@ pub fn ast_value_658535e4cd23f2ff(
 /// TODO: Add support for this expression pattern
 pub fn ast_value_65c95b46a9fbe1f5(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                                        // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "my ($a,$b,$c)=unpack(\"C3\",$val); $c ? $a*($b/$c) : 0", // original expression
+        val,
+    ))
 }

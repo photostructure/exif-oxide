@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -15,10 +19,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Photoshop::Resolution.XResolution
 /// - Photoshop::Resolution.YResolution
 /// - QuickTime::MovieHeader.PreferredRate
-pub fn ast_value_9ceb49948df11722(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+pub fn ast_value_9ceb49948df11722(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val / 0x10000u32))
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -29,10 +35,12 @@ pub fn ast_value_9ceb49948df11722(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - QuickTime::equi.ProjectionBoundsLeft
 /// - QuickTime::equi.ProjectionBoundsRight
 /// - QuickTime::equi.ProjectionBoundsTop
-pub fn ast_value_9c5fc67951116486(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+pub fn ast_value_9c5fc67951116486(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val / 4294967296i32))
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -41,8 +49,9 @@ pub fn ast_value_9c5fc67951116486(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Nikon::LensData01.FocusPosition
 /// - Nikon::LensData0204.FocusPosition
-pub fn ast_print_9cf1a1875ed5985(val: &TagValue) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("0x%02x".into(), &[val.clone()]))
+pub fn ast_print_9cf1a1875ed5985(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "0x%02x".into(),
+        &[val.clone()],
+    ))
 }
-
-

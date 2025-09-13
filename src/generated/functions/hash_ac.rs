@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,10 +18,13 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// Used by:
 /// - Sony::Tag9400a.SonyImageHeight
 /// - Sony::Tag9400b.SonyImageHeight
-pub fn ast_print_ac819f699b1427c4(val: &TagValue) -> TagValue {
-    if (val > 0i32) { (8i32 * val) } else { "n.a.".into() }
+pub fn ast_print_ac819f699b1427c4(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if (val > 0i32) {
+        (8i32 * val)
+    } else {
+        "n.a.".into()
+    }
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -25,19 +32,31 @@ pub fn ast_print_ac819f699b1427c4(val: &TagValue) -> TagValue {
 /// ```
 /// Used by:
 /// - RIFF::VP8L.ImageWidth
-pub fn ast_value_aca221497f1eb51c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(((val & 0x3fffu32)) + 1i32)
+pub fn ast_value_aca221497f1eb51c(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val & 0x3fffu32) + 1i32)
 }
 
-
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// (($val >> 2) & 0xffff) . " " . ($val & 0x3)
 /// ```
 /// Used by:
 /// - Panasonic::Data1.LensType
-pub fn ast_value_ac0e8b8bbf4b643f(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(TagValue::String(format!("{}{}", ((val >> 2i32) & 0xffffu32), " " . ((val & 0x3u32)))))
+/// TODO: Add support for this expression pattern
+pub fn ast_value_ac0e8b8bbf4b643f(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                               // tag_id will be filled at runtime
+        "UnknownTag",                                    // tag_name will be filled at runtime
+        "UnknownGroup",                                  // group will be filled at runtime
+        "(($val >> 2) & 0xffff) . \" \" . ($val & 0x3)", // original expression
+        val,
+    ))
 }
-
-

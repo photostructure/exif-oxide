@@ -5,18 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
-
-/// Original perl expression:
-/// ``` perl
-/// join ".", $val =~ /../g
-/// ```
-/// Used by:
-/// - Nikon::MakerNotes0x51.FirmwareVersion51
-pub fn ast_value_865f85b3924a28e9(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(join "." , val.to_string().contains(r"."))
-}
-
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -26,8 +19,28 @@ pub fn ast_value_865f85b3924a28e9(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - Nikon::FileInfo.FileNumber
 /// - Olympus::WAV.FileNumber
 /// - Sony::CameraSettings.ImageNumber
-pub fn ast_print_86d069131c594edd(val: &TagValue) -> TagValue {
+pub fn ast_print_86d069131c594edd(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl("%.4d".into(), &[val.clone()]))
 }
 
-
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// join ".", $val =~ /../g
+/// ```
+/// Used by:
+/// - Nikon::MakerNotes0x51.FirmwareVersion51
+/// TODO: Add support for this expression pattern
+pub fn ast_value_865f85b3924a28e9(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                           // tag_id will be filled at runtime
+        "UnknownTag",                // tag_name will be filled at runtime
+        "UnknownGroup",              // group will be filled at runtime
+        "join \".\", $val =~ /../g", // original expression
+        val,
+    ))
+}

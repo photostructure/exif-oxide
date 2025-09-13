@@ -21,9 +21,16 @@ use codegen_runtime::{
 /// TODO: Add support for this expression pattern
 pub fn ast_value_4a60469dfc6fd956(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                                           // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$self->Decode($val, $self->Options(\"CharsetQuickTime\"))", // original expression
+        val,
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -42,7 +49,14 @@ pub fn ast_value_4a60469dfc6fd956(
 /// TODO: Add support for this expression pattern
 pub fn ast_value_4a9a9258b669d68c(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "ConvertUnixTime($val, $self->Options(\"QuickTimeUTC\") || $$self{FileType} eq \"CR3\")", // original expression
+        val,
+    ))
 }

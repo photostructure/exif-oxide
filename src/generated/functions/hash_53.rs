@@ -24,6 +24,7 @@ use codegen_runtime::{
 /// - Sony::Tag9416.SonyExposureTime2
 pub fn ast_value_53ef12641c6719f5(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(if val {
         (2i32 as f64).powf((16i32 - (val / 256i32)) as f64)
@@ -39,7 +40,7 @@ pub fn ast_value_53ef12641c6719f5(
 /// Used by:
 /// - Nikon::AutoCaptureInfo.AutoCaptureDistanceFar
 /// - Nikon::AutoCaptureInfo.AutoCaptureDistanceNear
-pub fn ast_print_53e26bd836197e46(val: &TagValue) -> TagValue {
+pub fn ast_print_53e26bd836197e46(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
         "%.1f m".into(),
         &[val / 10i32.clone()],
@@ -55,7 +56,13 @@ pub fn ast_print_53e26bd836197e46(val: &TagValue) -> TagValue {
 /// - Canon::AFInfo.AFPointsInFocus
 /// - Canon::AFInfo2.AFPointsInFocus
 /// TODO: Add support for this expression pattern
-pub fn ast_print_534d44d0c8f65074(val: &TagValue) -> TagValue {
+pub fn ast_print_534d44d0c8f65074(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                              // tag_id will be filled at runtime
+        "UnknownTag",                                   // tag_name will be filled at runtime
+        "UnknownGroup",                                 // group will be filled at runtime
+        "Image::ExifTool::DecodeBits($val, undef, 16)", // original expression
+        val,
+    )
 }

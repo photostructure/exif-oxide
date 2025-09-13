@@ -24,7 +24,14 @@ use codegen_runtime::{
 /// TODO: Add support for this expression pattern
 pub fn ast_value_43559da6465bfeb3(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my @a = split \' \', $val;\n            my @v;\n            push @v, join(\'.\', map { sprintf(\'%.2x\',$_) } splice(@a,0,8)) while @a >= 8;\n            join \' \', @v;", // original expression
+                    val
+                ))
 }

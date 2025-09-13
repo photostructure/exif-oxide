@@ -19,6 +19,7 @@ use codegen_runtime::{
 /// - Canon::ShotInfo.FlashGuideNumber
 pub fn ast_value_6fe12080b1303132(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val / 32i32))
 }
@@ -31,8 +32,9 @@ pub fn ast_value_6fe12080b1303132(
 /// - Panasonic::Main.PitchAngle
 pub fn ast_value_6f8795fcde9693b5(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(((0i32 - val) / 10i32))
+    Ok((codegen_runtime::negate(val) / 10i32))
 }
 
 /// Original perl expression:
@@ -43,6 +45,7 @@ pub fn ast_value_6f8795fcde9693b5(
 /// - Exif::Main.RawDataUniqueID
 pub fn ast_value_6f48389e89817069(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(uc(TagValue::String(codegen_runtime::unpack_binary(
         "H*", &val,
@@ -57,7 +60,13 @@ pub fn ast_value_6f48389e89817069(
 /// Used by:
 /// - Kodak::SpecialEffects.DigitalEffectsName
 /// TODO: Add support for this expression pattern
-pub fn ast_print_6ffb072fa1dfc640(val: &TagValue) -> TagValue {
+pub fn ast_print_6ffb072fa1dfc640(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "Image::ExifTool::Exif::ConvertExifText($self,$val,\"DigitalEffectsName\")", // original expression
+        val,
+    )
 }

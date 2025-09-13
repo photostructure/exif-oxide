@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -33,10 +37,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Canon::CameraInfo7D.CameraTemperature
 /// - Canon::CameraInfo80D.CameraTemperature
 /// - Canon::ShotInfo.CameraTemperature
-pub fn ast_value_7d55a3546017f4c7(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+pub fn ast_value_7d55a3546017f4c7(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val - 128i32))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -46,12 +52,16 @@ pub fn ast_value_7d55a3546017f4c7(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Exif::Main.CFAPattern
 /// TODO: Add support for this expression pattern
-pub fn ast_print_7d90dbf32d8eb4be(val: &TagValue) -> TagValue
-{
+pub fn ast_print_7d90dbf32d8eb4be(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                              // tag_id will be filled at runtime
+        "UnknownTag",                                   // tag_name will be filled at runtime
+        "UnknownGroup",                                 // group will be filled at runtime
+        "Image::ExifTool::Exif::PrintCFAPattern($val)", // original expression
+        val,
+    )
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -61,10 +71,16 @@ pub fn ast_print_7d90dbf32d8eb4be(val: &TagValue) -> TagValue
 /// Used by:
 /// - Kodak::Type3.TimeCreated
 /// TODO: Add support for this expression pattern
-pub fn ast_value_7d8c182238f51a22(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_7d8c182238f51a22(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                                    // tag_id will be filled at runtime
+        "UnknownTag",                                         // tag_name will be filled at runtime
+        "UnknownGroup",                                       // group will be filled at runtime
+        "sprintf(\"%2d:%.2d:%.2d.%.2d\",split(\" \", $val))", // original expression
+        val,
+    ))
 }
-
-

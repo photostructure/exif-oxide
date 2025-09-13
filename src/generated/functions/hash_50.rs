@@ -19,6 +19,7 @@ use codegen_runtime::{
 /// - Kodak::Type10.ISO
 pub fn ast_value_505555435997e294(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((exp(((val / 3i32) * log((2i32)))) * 25i32))
 }

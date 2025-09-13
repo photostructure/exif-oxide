@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -16,12 +20,16 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Sigma::Main.LensFocalRange
 /// - Sigma::Main.LensMaxApertureRange
 /// TODO: Add support for this expression pattern
-pub fn ast_print_d1ea0bc590f67427(val: &TagValue) -> TagValue
-{
+pub fn ast_print_d1ea0bc590f67427(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                       // tag_id will be filled at runtime
+        "UnknownTag",            // tag_name will be filled at runtime
+        "UnknownGroup",          // group will be filled at runtime
+        "$val=~s/ / to /; $val", // original expression
+        val,
+    )
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -45,10 +53,13 @@ pub fn ast_print_d1ea0bc590f67427(val: &TagValue) -> TagValue
 /// - Canon::ColorCalib2.CameraColorCalibration14
 /// - Canon::ColorCalib2.CameraColorCalibration15
 /// TODO: Add support for this expression pattern
-pub fn ast_print_d1371ccf5a7e3c3e(val: &TagValue) -> TagValue
-{
+pub fn ast_print_d1371ccf5a7e3c3e(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                                       // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "sprintf(\"%4d %4d %4d %4d (%dK)\", split(\" \",$val))", // original expression
+        val,
+    )
 }
-
-

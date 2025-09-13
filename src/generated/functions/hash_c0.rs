@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,10 +17,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - Sony::CameraInfo3.FocalLengthTeleZoom
-pub fn ast_value_c0d22fe788e3b3b6(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+pub fn ast_value_c0d22fe788e3b3b6(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(((val * 2i32) / 3i32))
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -32,10 +38,9 @@ pub fn ast_value_c0d22fe788e3b3b6(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - Red::Main.OriginalFrameRate
 /// - Red::RED1.FrameRate
 /// - Red::RED2.FrameRate
-pub fn ast_print_c0a8bf21acb9deb1(val: &TagValue) -> TagValue {
-    (int((((val * 1000i32) + 0.5f64))) / 1000i32)
+pub fn ast_print_c0a8bf21acb9deb1(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    (int(((val * 1000i32) + 0.5f64)) / 1000i32)
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -46,10 +51,16 @@ pub fn ast_print_c0a8bf21acb9deb1(val: &TagValue) -> TagValue {
 /// - Sony::Main.FullImageSize
 /// - Sony::Main.PreviewImageSize
 /// TODO: Add support for this expression pattern
-pub fn ast_value_c0dee9b600d6a90b(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_c0dee9b600d6a90b(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                         // tag_id will be filled at runtime
+        "UnknownTag",                              // tag_name will be filled at runtime
+        "UnknownGroup",                            // group will be filled at runtime
+        "join(\" \", reverse split(\" \", $val))", // original expression
+        val,
+    ))
 }
-
-

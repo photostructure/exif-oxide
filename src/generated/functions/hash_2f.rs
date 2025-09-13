@@ -19,6 +19,7 @@ use codegen_runtime::{
 /// - Sony::FaceInfoA.FacesDetected
 pub fn ast_value_2f6e191c54ef7f4e(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(if (val > 8i32) { 0i32 } else { val })
 }

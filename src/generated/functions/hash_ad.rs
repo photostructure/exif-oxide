@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -18,10 +22,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Nikon::MenuSettingsZ9.FlashMasterCompensation
 /// - Nikon::MenuSettingsZ9v3.FlashMasterCompensation
 /// - Nikon::MenuSettingsZ9v4.FlashMasterCompensation
-pub fn ast_value_ada28829e28f9303(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+pub fn ast_value_ada28829e28f9303(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val / 6i32))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -45,10 +51,13 @@ pub fn ast_value_ada28829e28f9303(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - Canon::ColorCalib.CameraColorCalibration14
 /// - Canon::ColorCalib.CameraColorCalibration15
 /// TODO: Add support for this expression pattern
-pub fn ast_print_ad5045ef02b4c16f(val: &TagValue) -> TagValue
-{
+pub fn ast_print_ad5045ef02b4c16f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                                   // tag_id will be filled at runtime
+        "UnknownTag",                                        // tag_name will be filled at runtime
+        "UnknownGroup",                                      // group will be filled at runtime
+        "sprintf(\"%4d %4d %4d (%dK)\", split(\" \",$val))", // original expression
+        val,
+    )
 }
-
-

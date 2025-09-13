@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -42,8 +46,6 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - CanonCustom::PersonalFuncValues.PF5ApertureMin
 /// - KyoceraRaw::Main.FNumber
 /// - KyoceraRaw::Main.MaxAperture
-pub fn ast_print_bc983315d45d48a3(val: &TagValue) -> TagValue {
+pub fn ast_print_bc983315d45d48a3(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl("%.2g".into(), &[val.clone()]))
 }
-
-

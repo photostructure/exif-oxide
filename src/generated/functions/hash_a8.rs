@@ -5,16 +5,27 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val ? sprintf("%.2fV", $val * 5 / 186) : "n/a"
 /// ```
 /// Used by:
 /// - Canon::ColorData3.FlashBatteryLevel
-pub fn ast_print_a8b9ab9d001cb5dd(val: &TagValue) -> TagValue {
-    if val { TagValue::String(codegen_runtime::sprintf_perl("%.2fV", &[val, *, 5, /, 186])) } else { "n/a".into() }
+/// TODO: Add support for this expression pattern
+pub fn ast_print_a8b9ab9d001cb5dd(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    codegen_runtime::missing::missing_print_conv(
+        0,                                                     // tag_id will be filled at runtime
+        "UnknownTag",                                          // tag_name will be filled at runtime
+        "UnknownGroup",                                        // group will be filled at runtime
+        "$val ? sprintf(\"%.2fV\", $val * 5 / 186) : \"n/a\"", // original expression
+        val,
+    )
 }
-
-

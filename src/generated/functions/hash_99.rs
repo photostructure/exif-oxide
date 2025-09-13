@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,10 +17,9 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - GoPro::KBAT.BatteryCapacity
-pub fn ast_print_993ce46cc3d936eb(val: &TagValue) -> TagValue {
+pub fn ast_print_993ce46cc3d936eb(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     format!("{} Ah", val).into()
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -25,10 +28,9 @@ pub fn ast_print_993ce46cc3d936eb(val: &TagValue) -> TagValue {
 /// Used by:
 /// - PNG::AnimationControl.AnimationPlays
 /// - RIFF::ANIM.AnimationLoopCount
-pub fn ast_print_9957cfcd700746af(val: &TagValue) -> TagValue {
+pub fn ast_print_9957cfcd700746af(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     (val || "inf".into())
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -36,10 +38,12 @@ pub fn ast_print_9957cfcd700746af(val: &TagValue) -> TagValue {
 /// ```
 /// Used by:
 /// - KyoceraRaw::Main.ExposureTime
-pub fn ast_value_99d1796b50c9db89(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf(((val / 8i32)) / 16000i32 as f64))
+pub fn ast_value_99d1796b50c9db89(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf((val / 8i32) / 16000i32 as f64))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -59,10 +63,13 @@ pub fn ast_value_99d1796b50c9db89(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - FujiFilm::Main.InternalSerialNumber
 /// TODO: Add support for this expression pattern
-pub fn ast_print_99f2663c86a2cff(val: &TagValue) -> TagValue
-{
+pub fn ast_print_99f2663c86a2cff(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "if ($val =~ /^(.*?\\s*)([0-9a-fA-F]*)(\\d{2})(\\d{2})(\\d{2})(.{12})\\s*\\0*$/s\n                and $4 >= 1 and $4 <= 12 and $5 >= 1 and $5 <= 31)\n            {\n                my $yr = $3 + ($3 < 70 ? 2000 : 1900);\n                my $sn = pack \'H*\', $2;\n                return \"$1$sn $yr:$4:$5 $6\";\n            } else {\n                # handle a couple of models which use a slightly different format\n                $val =~ s/\\b(592D(3[0-9])+)/pack(\"H*\",$1).\' \'/e;\n            }\n            return $val;", // original expression
+                    val
+                )
 }
-
-

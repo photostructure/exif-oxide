@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,10 +17,9 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - Photoshop::JPEG_Quality.PhotoshopQuality
-pub fn ast_print_c7ab2268f0055197(val: &TagValue) -> TagValue {
+pub fn ast_print_c7ab2268f0055197(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     (val + 4i32)
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -26,10 +29,12 @@ pub fn ast_print_c7ab2268f0055197(val: &TagValue) -> TagValue {
 /// - SonyIDC::Main.ColorNoiseReduction
 /// - SonyIDC::Main.EdgeNoiseReduction
 /// - SonyIDC::Main.NoiseReductionValue
-pub fn ast_value_c7431c5fa598bf69(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(((val + 100i32)) / 2i32)
+pub fn ast_value_c7431c5fa598bf69(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val + 100i32) / 2i32)
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -39,10 +44,16 @@ pub fn ast_value_c7431c5fa598bf69(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Pentax::AFInfo.AFPointValues
 /// TODO: Add support for this expression pattern
-pub fn ast_value_c7eada7e0548cfd1(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_c7eada7e0548cfd1(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "my @a=split \" \",$val;$_>32767 and $_-=65536 foreach @a;join \" \",@a", // original expression
+        val,
+    ))
 }
-
-

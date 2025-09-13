@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -15,12 +19,16 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// Used by:
 /// - Canon::Main.FileNumber
 /// TODO: Add support for this expression pattern
-pub fn ast_print_bffa130fcb334a97(val: &TagValue) -> TagValue
-{
+pub fn ast_print_bffa130fcb334a97(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                    // tag_id will be filled at runtime
+        "UnknownTag",                         // tag_name will be filled at runtime
+        "UnknownGroup",                       // group will be filled at runtime
+        "$_=$val,s/(\\d+)(\\d{4})/$1-$2/,$_", // original expression
+        val,
+    )
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -31,10 +39,13 @@ pub fn ast_print_bffa130fcb334a97(val: &TagValue) -> TagValue
 /// - Nikon::RotationInfoD500.Interval
 /// - Nikon::RotationInfoD500.IntervalFrame
 /// TODO: Add support for this expression pattern
-pub fn ast_print_bf221c10c194a77e(val: &TagValue) -> TagValue
-{
+pub fn ast_print_bf221c10c194a77e(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                           // tag_id will be filled at runtime
+        "UnknownTag",                                // tag_name will be filled at runtime
+        "UnknownGroup",                              // group will be filled at runtime
+        "$val > 0 ? sprintf(\"%.0f\", $val) : \"\"", // original expression
+        val,
+    )
 }
-
-

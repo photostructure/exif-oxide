@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -15,12 +19,19 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// Used by:
 /// - Photoshop::Main.CopyrightFlag
 /// TODO: Add support for this expression pattern
-pub fn ast_value_e76f84b1ea03c377(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_e76f84b1ea03c377(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                  // tag_id will be filled at runtime
+        "UnknownTag",                       // tag_name will be filled at runtime
+        "UnknownGroup",                     // group will be filled at runtime
+        "join(\" \",unpack(\"C*\", $val))", // original expression
+        val,
+    ))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -34,10 +45,16 @@ pub fn ast_value_e76f84b1ea03c377(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - Sony::Tag2010d.SonyDateTime
 /// - Sony::Tag2010e.SonyDateTime
 /// TODO: Add support for this expression pattern
-pub fn ast_value_e7d9353e489371f5(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_e7d9353e489371f5(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my @v = unpack(\'vC*\', $val);\n        return sprintf(\"%.4d:%.2d:%.2d %.2d:%.2d:%.2d\", @v)", // original expression
+                    val
+                ))
 }
-
-

@@ -19,6 +19,7 @@ use codegen_runtime::{
 /// - Pentax::Main.SensitivityAdjust
 pub fn ast_value_4742ce1aa8d729e3(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val - 50i32) / 10i32)
 }
@@ -37,7 +38,14 @@ pub fn ast_value_4742ce1aa8d729e3(
 /// TODO: Add support for this expression pattern
 pub fn ast_value_473c62936c679f74(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my ($tz, @a) = unpack(\'C*\',$val);\n            return sprintf(\'%.2x%.2x:%.2x:%.2x %.2x:%.2x:%.2x%s%.2d:%s%s\', @a,\n                           $tz & 0x20 ? \'-\' : \'+\', ($tz >> 1) & 0x0f,\n                           $tz & 0x01 ? \'30\' : \'00\',\n                           $tz & 0x40 ? \' DST\' : \'\');", // original expression
+                    val
+                ))
 }

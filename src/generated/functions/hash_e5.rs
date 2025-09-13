@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,8 +17,13 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - Exif::Main.ShutterSpeedValue
-pub fn ast_value_e53323763c41feda(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(if IsFloat (val) && abs (val) < 100i32 { (2i32 as f64).powf(((0i32 - val)) as f64) } else { 0i32 })
+pub fn ast_value_e53323763c41feda(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if IsFloat(val) && abs(val) < 100i32 {
+        (2i32 as f64).powf((codegen_runtime::negate(val)) as f64)
+    } else {
+        0i32
+    })
 }
-
-

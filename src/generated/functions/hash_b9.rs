@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -44,10 +48,13 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Sony::MoreSettings.SaturationSetting
 /// - Sony::MoreSettings.SharpnessSetting
 /// - Sony::Tag9405b.Sharpness
-pub fn ast_print_b93bf01b5173ce30(val: &TagValue) -> TagValue {
-    if (val > 0i32) { format!("+{}", val).into() } else { val }
+pub fn ast_print_b93bf01b5173ce30(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if (val > 0i32) {
+        format!("+{}", val).into()
+    } else {
+        val
+    }
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -55,8 +62,9 @@ pub fn ast_print_b93bf01b5173ce30(val: &TagValue) -> TagValue {
 /// ```
 /// Used by:
 /// - Nikon::ShotInfoD800.RepeatingFlashOutputExternal
-pub fn ast_value_b908b85ef208d53a(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf((((0i32 - val) / 6i32)) as f64))
+pub fn ast_value_b908b85ef208d53a(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf((codegen_runtime::negate(val) / 6i32) as f64))
 }
-
-

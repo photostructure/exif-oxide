@@ -19,6 +19,7 @@ use codegen_runtime::{
 /// - Nikon::ShotInfoD800.FlashExposureComp2
 pub fn ast_value_4c39f8792bb6ede4(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(((0i32 - val) / 6i32))
+    Ok((codegen_runtime::negate(val) / 6i32))
 }

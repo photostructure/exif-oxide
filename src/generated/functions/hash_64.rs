@@ -24,10 +24,12 @@ use codegen_runtime::{
 /// - Sony::MoreSettings.ColorTemperatureSetting
 pub fn ast_value_647eb869d9cb9ed1(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val * 100i32))
 }
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// \$val
@@ -36,8 +38,16 @@ pub fn ast_value_647eb869d9cb9ed1(
 /// - Pentax::Main.DataDump
 /// - Pentax::Main.ToneCurve
 /// - Pentax::Main.ToneCurves
-pub fn ast_print_6486d152488d624b(val: &TagValue) -> TagValue {
-    val
+/// TODO: Add support for this expression pattern
+pub fn ast_print_6486d152488d624b(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    codegen_runtime::missing::missing_print_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "\\$val",       // original expression
+        val,
+    )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -48,7 +58,13 @@ pub fn ast_print_6486d152488d624b(val: &TagValue) -> TagValue {
 /// Used by:
 /// - FujiFilm::Main.WhiteBalanceFineTune
 /// TODO: Add support for this expression pattern
-pub fn ast_print_647e3531415500d9(val: &TagValue) -> TagValue {
+pub fn ast_print_647e3531415500d9(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                                    // tag_id will be filled at runtime
+        "UnknownTag",                                         // tag_name will be filled at runtime
+        "UnknownGroup",                                       // group will be filled at runtime
+        "sprintf(\"Red %+d, Blue %+d\", split(\" \", $val))", // original expression
+        val,
+    )
 }

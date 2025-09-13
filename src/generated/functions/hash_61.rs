@@ -22,7 +22,13 @@ use codegen_runtime::{
 /// Used by:
 /// - Nikon::LensData0800.LensFirmwareVersion
 /// TODO: Add support for this expression pattern
-pub fn ast_print_61d980ad51a1452(val: &TagValue) -> TagValue {
+pub fn ast_print_61d980ad51a1452(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my $version = int($val / 256);\n            my $release =  int(($val - 256 * $version)/16);\n            my $modification = $val - (256 * $version + 16 * $release);\n            return sprintf(\"%.0f.%.0f.%.0f\", $version,$release,$modification);", // original expression
+                    val
+                )
 }

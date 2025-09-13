@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,10 +17,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - DJI::ThermalParams2.ObjectDistance
-pub fn ast_print_ec7bd11b49f50639(val: &TagValue) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.1f m".into(), &[val.clone()]))
+pub fn ast_print_ec7bd11b49f50639(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "%.1f m".into(),
+        &[val.clone()],
+    ))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -26,12 +32,19 @@ pub fn ast_print_ec7bd11b49f50639(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Samsung::Trailer.TimeStamp
 /// TODO: Add support for this expression pattern
-pub fn ast_value_ec4363ad50929239(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_ec4363ad50929239(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                   // tag_id will be filled at runtime
+        "UnknownTag",                        // tag_name will be filled at runtime
+        "UnknownGroup",                      // group will be filled at runtime
+        "ConvertUnixTime($val / 1e3, 1, 3)", // original expression
+        val,
+    ))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -52,10 +65,13 @@ pub fn ast_value_ec4363ad50929239(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - Sony::rtmd.GPSLatitude
 /// - Sony::rtmd.GPSLongitude
 /// TODO: Add support for this expression pattern
-pub fn ast_print_ec01a8049c79f988(val: &TagValue) -> TagValue
-{
+pub fn ast_print_ec01a8049c79f988(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                             // tag_id will be filled at runtime
+        "UnknownTag",                                  // tag_name will be filled at runtime
+        "UnknownGroup",                                // group will be filled at runtime
+        "Image::ExifTool::GPS::ToDMS($self, $val, 1)", // original expression
+        val,
+    )
 }
-
-

@@ -23,6 +23,7 @@ use codegen_runtime::{
 /// - Sony::MoreSettings.ExposureTime
 pub fn ast_value_58f560b2a6e62b0d(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(if val {
         (2i32 as f64).powf((6i32 - (val / 8i32)) as f64)
@@ -41,7 +42,14 @@ pub fn ast_value_58f560b2a6e62b0d(
 /// TODO: Add support for this expression pattern
 pub fn ast_value_58c924c1420b72a1(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                               // tag_id will be filled at runtime
+        "UnknownTag",                                    // tag_name will be filled at runtime
+        "UnknownGroup",                                  // group will be filled at runtime
+        "$val >= 255 ? 255 : exp(($val-200)/16*log(2))", // original expression
+        val,
+    ))
 }

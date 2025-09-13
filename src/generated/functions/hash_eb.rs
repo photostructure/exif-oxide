@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -19,8 +23,9 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Sony::ExtraInfo.BatteryTemperature
 /// - Sony::ExtraInfo3.BatteryTemperature
 /// - Sony::Tag9406.BatteryTemperature
-pub fn ast_print_ebe0a6b7251033b3(val: &TagValue) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.1f C".into(), &[val.clone()]))
+pub fn ast_print_ebe0a6b7251033b3(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "%.1f C".into(),
+        &[val.clone()],
+    ))
 }
-
-

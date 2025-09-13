@@ -5,16 +5,30 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// (($val >> 6) & 0x3fff) + 1
 /// ```
 /// Used by:
 /// - RIFF::VP8L.ImageHeight
-pub fn ast_value_96aef71cc28585a8(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(((val >> 6i32) & 0x3fffu32) + 1i32)
+/// TODO: Add support for this expression pattern
+pub fn ast_value_96aef71cc28585a8(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                            // tag_id will be filled at runtime
+        "UnknownTag",                 // tag_name will be filled at runtime
+        "UnknownGroup",               // group will be filled at runtime
+        "(($val >> 6) & 0x3fff) + 1", // original expression
+        val,
+    ))
 }
-
-

@@ -26,8 +26,9 @@ use codegen_runtime::{
 /// - Sony::Tag2010i.ExposureCompensation
 pub fn ast_value_1f3cbbb3d7cfc943(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(((0i32 - val) / 256i32))
+    Ok((codegen_runtime::negate(val) / 256i32))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -40,7 +41,13 @@ pub fn ast_value_1f3cbbb3d7cfc943(
 /// Used by:
 /// - Jpeg2000::ImageHeader.BitsPerComponent
 /// TODO: Add support for this expression pattern
-pub fn ast_print_1f60a9abccfeb56(val: &TagValue) -> TagValue {
+pub fn ast_print_1f60a9abccfeb56(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "$val == 0xff and return \'Variable\';\n            my $sign = ($val & 0x80) ? \'Signed\' : \'Unsigned\';\n            return (($val & 0x7f) + 1) . \" Bits, $sign\";", // original expression
+                    val
+                )
 }

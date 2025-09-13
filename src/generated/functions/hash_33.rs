@@ -13,6 +13,27 @@ use codegen_runtime::{
 
 /// Original perl expression:
 /// ``` perl
+/// $val =~ s/ 1$// ? $val / 10 : "n/a"
+/// ```
+/// Used by:
+/// - Olympus::CameraSettings.PitchAngle
+pub fn ast_value_33118cafe9fb1cc3(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok({
+        let (success, modified_val) = codegen_runtime::regex_substitute_perl(r" 1$", "", val);
+        if success {
+            let val = &modified_val;
+            (val / 10i32)
+        } else {
+            "n/a".into()
+        }
+    })
+}
+
+/// Original perl expression:
+/// ``` perl
 /// sprintf("%.1fmm",$val/100)
 /// ```
 /// Used by:
@@ -36,7 +57,7 @@ use codegen_runtime::{
 /// - Nikon::MenuSettingsZ8v2.NonCPULens7MaxAperture
 /// - Nikon::MenuSettingsZ8v2.NonCPULens8MaxAperture
 /// - Nikon::MenuSettingsZ8v2.NonCPULens9MaxAperture
-pub fn ast_print_3329592de1a1592(val: &TagValue) -> TagValue {
+pub fn ast_print_3329592de1a1592(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
         "%.1fmm".into(),
         &[val / 100i32.clone()],
@@ -49,24 +70,9 @@ pub fn ast_print_3329592de1a1592(val: &TagValue) -> TagValue {
 /// ```
 /// Used by:
 /// - DJI::ThermalParams2.RelativeHumidity
-pub fn ast_print_339a38d31392b4fd(val: &TagValue) -> TagValue {
+pub fn ast_print_339a38d31392b4fd(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
         "%g %%".into(),
         &[val * 100i32.clone()],
     ))
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $val =~ s/ 1$// ? $val / 10 : "n/a"
-/// ```
-/// Used by:
-/// - Olympus::CameraSettings.PitchAngle
-/// TODO: Add support for this expression pattern
-pub fn ast_value_33118cafe9fb1cc3(
-    val: &TagValue,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
 }

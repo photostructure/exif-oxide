@@ -5,20 +5,28 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ /^4194303.999/ ? "n/a" : $val
 /// ```
 /// Used by:
 /// - Panasonic::Main.AFAreaSize
-/// TODO: Add support for this expression pattern
-pub fn ast_print_dc5fc04fcf3bd8b7(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+pub fn ast_print_dc5fc04fcf3bd8b7(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if {
+        use regex::Regex;
+        use std::sync::LazyLock;
+        static REGEX_d857fece5f4664ce: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new(r"^4194303.999").unwrap());
+        REGEX_d857fece5f4664ce.is_match(&val.to_string())
+    } {
+        "n/a".into()
+    } else {
+        val
+    }
 }
-
-

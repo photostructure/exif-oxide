@@ -19,6 +19,7 @@ use codegen_runtime::{
 /// - Pentax::AEInfo2.AEError
 pub fn ast_value_6875c432d26ce26f(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(-(val - 64i32) / 8i32)
 }

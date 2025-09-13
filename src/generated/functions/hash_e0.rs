@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -20,10 +24,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Sony::Tag9405b.SonyMaxApertureValue
 /// - Sony::Tag9416.SonyFNumber2
 /// - Sony::Tag9416.SonyMaxApertureValue
-pub fn ast_value_e0b36f169462770c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf(((((val / 256i32) - 16i32)) / 2i32) as f64))
+pub fn ast_value_e0b36f169462770c(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf((((val / 256i32) - 16i32) / 2i32) as f64))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -35,10 +41,13 @@ pub fn ast_value_e0b36f169462770c(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Exif::Main.CFAPlaneColor
 /// TODO: Add support for this expression pattern
-pub fn ast_print_e061810051fc636d(val: &TagValue) -> TagValue
-{
+pub fn ast_print_e061810051fc636d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my @cols = qw(Red Green Blue Cyan Magenta Yellow White);\n            my @vals = map { $cols[$_] || \"Unknown($_)\" } split(\' \', $val);\n            return join(\',\', @vals);", // original expression
+                    val
+                )
 }
-
-

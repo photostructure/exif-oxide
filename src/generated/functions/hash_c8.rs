@@ -5,7 +5,33 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
+
+/// Original perl expression:
+/// ``` perl
+/// $$self{FujiLayout} ? ($val / 2) : $val
+/// ```
+/// Used by:
+/// - FujiFilm::RAFData.RawImageWidth
+pub fn ast_value_c8cc976fc4865a7f(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if ctx
+            .and_then(|c| c.get_data_member("FujiLayout").cloned())
+            .unwrap_or(TagValue::String(String::new()))
+        {
+            (val / 2i32)
+        } else {
+            val
+        },
+    )
+}
 
 /// Original perl expression:
 /// ``` perl
@@ -19,25 +45,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Canon::CameraInfo5D.MacroMagnification
 /// - Canon::CameraInfo5DmkII.MacroMagnification
 /// - Canon::FileInfo.MacroMagnification
-pub fn ast_value_c81520c2f48a3e3c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(exp(((75i32 - val)) * log (2i32) * 3i32 / 40i32))
+pub fn ast_value_c81520c2f48a3e3c(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(exp((75i32 - val) * log(2i32) * 3i32 / 40i32))
 }
-
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $$self{FujiLayout} ? ($val / 2) : $val
-/// ```
-/// Used by:
-/// - FujiFilm::RAFData.RawImageWidth
-/// TODO: Add support for this expression pattern
-pub fn ast_value_c8cc976fc4865a7f(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
-}
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -54,12 +67,16 @@ pub fn ast_value_c8cc976fc4865a7f(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - QuickTime::MovieHeader.SelectionTime
 /// - QuickTime::TrackHeader.TrackDuration
 /// TODO: Add support for this expression pattern
-pub fn ast_print_c84ae4fd283ed65e(val: &TagValue) -> TagValue
-{
+pub fn ast_print_c84ae4fd283ed65e(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                                  // tag_id will be filled at runtime
+        "UnknownTag",                                       // tag_name will be filled at runtime
+        "UnknownGroup",                                     // group will be filled at runtime
+        "$$self{TimeScale} ? ConvertDuration($val) : $val", // original expression
+        val,
+    )
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -88,10 +105,16 @@ pub fn ast_print_c84ae4fd283ed65e(val: &TagValue) -> TagValue
 /// - Canon::CameraInfo7D.ISO
 /// - Canon::CameraInfo80D.ISO
 /// TODO: Add support for this expression pattern
-pub fn ast_value_c8722122eace16df(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_c8722122eace16df(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                            // tag_id will be filled at runtime
+        "UnknownTag",                 // tag_name will be filled at runtime
+        "UnknownGroup",               // group will be filled at runtime
+        "100*exp(($val/8-9)*log(2))", // original expression
+        val,
+    ))
 }
-
-

@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,8 +17,10 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - RIFF::StreamHeader.Quality
-pub fn ast_print_f320ceed77e30bb7(val: &TagValue) -> TagValue {
-    if (val.to_string() == 0xffffffffu32.to_string()) { "Default".into() } else { val }
+pub fn ast_print_f320ceed77e30bb7(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if (val.to_string() == 0xffffffffu32.to_string()) {
+        "Default".into()
+    } else {
+        val
+    }
 }
-
-

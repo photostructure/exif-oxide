@@ -11,28 +11,26 @@ use codegen_runtime::{
     string::{length_i32, length_string},
 };
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ /(\d{2})(\d{2})(\d{2})/ ? ($1 * 60 + $2) * 60 + $3 : undef
 /// ```
 /// Used by:
 /// - Olympus::DSS.Duration
+/// TODO: Add support for this expression pattern
 pub fn ast_value_5576e8c123ff3a25(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(
-        if {
-            use regex::Regex;
-            use std::sync::LazyLock;
-            static REGEX_6493a4d1c01aa2d: LazyLock<Regex> =
-                LazyLock::new(|| Regex::new(r"(\d{2})(\d{2})(\d{2})").unwrap());
-            REGEX_6493a4d1c01aa2d.captures(&val.to_string()).is_some()
-        } {
-            ((magic_var_1 * 60i32) + magic_var_2) * 60i32 + magic_var_3
-        } else {
-            TagValue::String("".to_string())
-        },
-    )
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val =~ /(\\d{2})(\\d{2})(\\d{2})/ ? ($1 * 60 + $2) * 60 + $3 : undef", // original expression
+        val,
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -48,7 +46,14 @@ pub fn ast_value_5576e8c123ff3a25(
 /// TODO: Add support for this expression pattern
 pub fn ast_value_55021a595ffa8f71(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "$val =~ /^(\\d{4})(\\d{2})(\\d{2})$/ and return \"$1:$2:$3\";\n            # Optio A10 and A20 leave \"200\" off the year\n            $val =~ /^(\\d)(\\d{2})(\\d{2})$/ and return \"200$1:$2:$3\";\n            return \"Unknown ($val)\";", // original expression
+                    val
+                ))
 }

@@ -5,16 +5,30 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// (IsInt($val) and $val < 4 and $$self{Model} =~ /Optio 555\b/) ? $val + 0.1 : $val
 /// ```
 /// Used by:
 /// - Pentax::Main.PictureMode
-pub fn ast_value_c402fe0c5220435c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(if (IsInt) { val + 0.1f64 } else { val })
+/// TODO: Add support for this expression pattern
+pub fn ast_value_c402fe0c5220435c(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "(IsInt($val) and $val < 4 and $$self{Model} =~ /Optio 555\\b/) ? $val + 0.1 : $val", // original expression
+        val,
+    ))
 }
-
-

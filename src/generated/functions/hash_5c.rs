@@ -18,7 +18,7 @@ use codegen_runtime::{
 /// Used by:
 /// - Nikon::AFTune.AFFineTuneIndex
 /// - Pentax::AEInfo2.AEApertureSteps
-pub fn ast_print_5ce675b536bdc220(val: &TagValue) -> TagValue {
+pub fn ast_print_5ce675b536bdc220(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if (val == 255i32) {
         "n/a".into()
     } else {
@@ -35,7 +35,13 @@ pub fn ast_print_5ce675b536bdc220(val: &TagValue) -> TagValue {
 /// - IPTC::ApplicationRecord.DateCreated
 /// - IPTC::ApplicationRecord.DigitalCreationDate
 /// TODO: Add support for this expression pattern
-pub fn ast_print_5cbd28652a637e12(val: &TagValue) -> TagValue {
+pub fn ast_print_5cbd28652a637e12(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$self->Options(\"DateFormat\") ? $self->ConvertDateTime(\"$val 00:00:00\") : $val", // original expression
+        val,
+    )
 }

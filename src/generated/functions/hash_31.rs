@@ -17,7 +17,7 @@ use codegen_runtime::{
 /// ```
 /// Used by:
 /// - Nikon::PictureControl.ToningSaturation
-pub fn ast_print_312840a770399a53(val: &TagValue) -> TagValue {
+pub fn ast_print_312840a770399a53(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if (val == 0x7fu32) {
         "n/a".into()
     } else {
@@ -34,7 +34,13 @@ pub fn ast_print_312840a770399a53(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Canon::CameraSettings.SelfTimer
 /// TODO: Add support for this expression pattern
-pub fn ast_print_314bc158a5c6c330(val: &TagValue) -> TagValue {
+pub fn ast_print_314bc158a5c6c330(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "return \'Off\' unless $val;\n            return (($val&0xfff) / 10) . \' s\' . ($val & 0x4000 ? \', Custom\' : \'\');", // original expression
+                    val
+                )
 }

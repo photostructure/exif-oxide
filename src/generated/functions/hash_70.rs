@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -22,24 +26,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Pentax::Main.RedBalance
 /// - QuickTime::MovieHeader.PreferredVolume
 /// - QuickTime::TrackHeader.TrackVolume
-pub fn ast_value_70d1d11e7183127a(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+pub fn ast_value_70d1d11e7183127a(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val / 256i32))
 }
-
-
-/// Original perl expression:
-/// ``` perl
-/// unpack "H*", pack "C*", split " ", $val
-/// ```
-/// Used by:
-/// - Sony::Tag9050a.InternalSerialNumber
-/// - Sony::Tag9050b.InternalSerialNumber
-/// - Sony::Tag9050c.InternalSerialNumber
-/// - Sony::Tag9050d.InternalSerialNumber
-pub fn ast_print_70245c821020ee75(val: &TagValue) -> TagValue {
-    codegen_runtime::unpack_binary("H*".into()", &pack "C*".into() , split " ".into() , val)
-}
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -50,12 +42,19 @@ pub fn ast_print_70245c821020ee75(val: &TagValue) -> TagValue {
 /// - Red::Main.StorageFormatTime
 /// - Red::Main.TimeCreated
 /// TODO: Add support for this expression pattern
-pub fn ast_value_7004e7ca2c0f515b(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_7004e7ca2c0f515b(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                          // tag_id will be filled at runtime
+        "UnknownTag",                               // tag_name will be filled at runtime
+        "UnknownGroup",                             // group will be filled at runtime
+        "$val =~ s/(\\d{2})(\\d{2})/$1:$2:/; $val", // original expression
+        val,
+    ))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -73,10 +72,35 @@ pub fn ast_value_7004e7ca2c0f515b(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Olympus::CameraSettings.PanoramaMode
 /// TODO: Add support for this expression pattern
-pub fn ast_print_70620f00a1c89dd5(val: &TagValue) -> TagValue
-{
+pub fn ast_print_70620f00a1c89dd5(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my ($a,$b) = split \' \',$val;\n            return \'Off\' unless $a;\n            my %a = (\n                1 => \'Left to Right\',\n                2 => \'Right to Left\',\n                3 => \'Bottom to Top\',\n                4 => \'Top to Bottom\',\n            );\n            return(($a{$a} || \"Unknown ($a)\") . \', Shot \' . $b);", // original expression
+                    val
+                )
 }
 
-
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// unpack "H*", pack "C*", split " ", $val
+/// ```
+/// Used by:
+/// - Sony::Tag9050a.InternalSerialNumber
+/// - Sony::Tag9050b.InternalSerialNumber
+/// - Sony::Tag9050c.InternalSerialNumber
+/// - Sony::Tag9050d.InternalSerialNumber
+/// TODO: Add support for this expression pattern
+pub fn ast_print_70245c821020ee75(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    codegen_runtime::missing::missing_print_conv(
+        0,                                               // tag_id will be filled at runtime
+        "UnknownTag",                                    // tag_name will be filled at runtime
+        "UnknownGroup",                                  // group will be filled at runtime
+        "unpack \"H*\", pack \"C*\", split \" \", $val", // original expression
+        val,
+    )
+}

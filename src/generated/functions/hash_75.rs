@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,10 +17,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - Sony::PMP.ExposureTime
-pub fn ast_value_7572393db83255de(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf((((0i32 - val) / 100i32)) as f64))
+pub fn ast_value_7572393db83255de(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf((codegen_runtime::negate(val) / 100i32) as f64))
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -25,10 +31,12 @@ pub fn ast_value_7572393db83255de(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - KyoceraRaw::Main.FNumber
 /// - KyoceraRaw::Main.MaxAperture
-pub fn ast_value_759479de720ee9c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf(((val / 16i32)) as f64))
+pub fn ast_value_759479de720ee9c(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf((val / 16i32) as f64))
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -37,8 +45,12 @@ pub fn ast_value_759479de720ee9c(val: &TagValue) -> Result<TagValue, codegen_run
 /// Used by:
 /// - Sony::Tag9050a.LensSpecFeatures
 /// - Sony::Tag9050b.LensSpecFeatures
-pub fn ast_value_75fc706b92c8c4f7(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(TagValue::String(codegen_runtime::join_unpack_binary(" ", &TagValue::String(codegen_runtime::unpack_binary("H2H2", &val)))))
+pub fn ast_value_75fc706b92c8c4f7(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(codegen_runtime::join_unpack_binary(
+        " ",
+        &TagValue::String(codegen_runtime::unpack_binary("H2H2", &val)),
+    )))
 }
-
-

@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,10 +18,9 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// Used by:
 /// - Nikon::ShotInfoD800.RepeatingFlashRateBuilt-in
 /// - Nikon::ShotInfoD800.RepeatingFlashRateExternal
-pub fn ast_print_aabd3f97f7321fbc(val: &TagValue) -> TagValue {
+pub fn ast_print_aabd3f97f7321fbc(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     format!("{} Hz", val).into()
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -27,12 +30,16 @@ pub fn ast_print_aabd3f97f7321fbc(val: &TagValue) -> TagValue {
 /// Used by:
 /// - RIFF::Acidizer.Meter
 /// TODO: Add support for this expression pattern
-pub fn ast_print_aa93afa3ba8c29d4(val: &TagValue) -> TagValue
-{
+pub fn ast_print_aa93afa3ba8c29d4(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                        // tag_id will be filled at runtime
+        "UnknownTag",                             // tag_name will be filled at runtime
+        "UnknownGroup",                           // group will be filled at runtime
+        "$val =~ s/(\\d+) (\\d+)/$2\\/$1/; $val", // original expression
+        val,
+    )
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -45,10 +52,13 @@ pub fn ast_print_aa93afa3ba8c29d4(val: &TagValue) -> TagValue
 /// Used by:
 /// - Matroska::Main.SeekID
 /// TODO: Add support for this expression pattern
-pub fn ast_print_aaf44bf2fde8c749(val: &TagValue) -> TagValue
-{
+pub fn ast_print_aaf44bf2fde8c749(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my $tagInfo = $Image::ExifTool::Matroska::Main{$val};\n            $val = sprintf(\'0x%x\', $val);\n            $val .= \" ($$tagInfo{Name})\" if ref $tagInfo eq \'HASH\' and $$tagInfo{Name};\n            return $val;", // original expression
+                    val
+                )
 }
-
-

@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,10 +17,13 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - Kodak::Main.DateTimeStamp
-pub fn ast_print_e2ddf072b19d8074(val: &TagValue) -> TagValue {
-    if val { format!("Mode {}", val).into() } else { "Off".into() }
+pub fn ast_print_e2ddf072b19d8074(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if val {
+        format!("Mode {}", val).into()
+    } else {
+        "Off".into()
+    }
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -24,8 +31,9 @@ pub fn ast_print_e2ddf072b19d8074(val: &TagValue) -> TagValue {
 /// ```
 /// Used by:
 /// - Sony::SR2Private.SR2SubIFDKey
-pub fn ast_print_e265b6e9dae11253(val: &TagValue) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("0x%.8x".into(), &[val.clone()]))
+pub fn ast_print_e265b6e9dae11253(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "0x%.8x".into(),
+        &[val.clone()],
+    ))
 }
-
-

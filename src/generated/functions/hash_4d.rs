@@ -19,7 +19,7 @@ use codegen_runtime::{
 /// - Olympus::Main.ISOValue
 /// - Photoshop::Resolution.XResolution
 /// - Photoshop::Resolution.YResolution
-pub fn ast_print_4d023868095dfa1c(val: &TagValue) -> TagValue {
+pub fn ast_print_4d023868095dfa1c(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     (int(((val * 100i32) + 0.5f64)) / 100i32)
 }
 
@@ -40,7 +40,14 @@ pub fn ast_print_4d023868095dfa1c(val: &TagValue) -> TagValue {
 /// TODO: Add support for this expression pattern
 pub fn ast_value_4dd64ad8b929982b(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                       // tag_id will be filled at runtime
+        "UnknownTag",                            // tag_name will be filled at runtime
+        "UnknownGroup",                          // group will be filled at runtime
+        "Image::ExifTool::GPS::ToDegrees($val)", // original expression
+        val,
+    ))
 }

@@ -36,9 +36,15 @@ use codegen_runtime::{
 /// Used by:
 /// - Nikon::Main.ShootingMode
 /// TODO: Add support for this expression pattern
-pub fn ast_print_5f0ac2991506bef1(val: &TagValue) -> TagValue {
+pub fn ast_print_5f0ac2991506bef1(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "$_ = \'\';\n            unless ($val & 0x87) {\n                return \'Single-Frame\' unless $val;\n                $_ = \'Single-Frame, \';\n            }\n            return $_ . Image::ExifTool::DecodeBits($val,\n            {\n                0 => \'Continuous\',\n                1 => \'Delay\',\n                2 => \'PC Control\',\n                3 => \'Self-timer\', #forum6281 (NC)\n                4 => \'Exposure Bracketing\',\n                5 => $$self{Model}=~/D70\\b/ ? \'Unused LE-NR Slowdown\' : \'Auto ISO\',\n                6 => \'White-Balance Bracketing\',\n                7 => \'IR Control\',\n                8 => \'D-Lighting Bracketing\', #forum6281 (NC)\n                11 => \'Pre-capture\', #28  Z9 pre-release burst\n            });", // original expression
+                    val
+                )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -51,7 +57,14 @@ pub fn ast_print_5f0ac2991506bef1(val: &TagValue) -> TagValue {
 /// TODO: Add support for this expression pattern
 pub fn ast_value_5f3878bca702b7b7(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                          // tag_id will be filled at runtime
+        "UnknownTag",                               // tag_name will be filled at runtime
+        "UnknownGroup",                             // group will be filled at runtime
+        "$val > 1800 and $val -= 3600; -$val / 10", // original expression
+        val,
+    ))
 }

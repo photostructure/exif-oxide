@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -18,10 +22,23 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Matroska::Main.Duration
 /// - Matroska::Main.ReferenceBlock
 /// - Matroska::Main.TimeCode
-pub fn ast_value_83f37d90ee875af5(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(if  { (val * ) } else { val })
+pub fn ast_value_83f37d90ee875af5(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if ctx
+            .and_then(|c| c.get_data_member("TimeScale").cloned())
+            .unwrap_or(TagValue::U32(1))
+        {
+            (val * ctx
+                .and_then(|c| c.get_data_member("TimeScale").cloned())
+                .unwrap_or(TagValue::U32(1)))
+        } else {
+            val
+        },
+    )
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -29,10 +46,13 @@ pub fn ast_value_83f37d90ee875af5(val: &TagValue) -> Result<TagValue, codegen_ru
 /// ```
 /// Used by:
 /// - Canon::ShotInfo.OpticalZoomCode
-pub fn ast_print_8388b1ca19272fc5(val: &TagValue) -> TagValue {
-    if (val == 8i32) { "n/a".into() } else { val }
+pub fn ast_print_8388b1ca19272fc5(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if (val == 8i32) {
+        "n/a".into()
+    } else {
+        val
+    }
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -43,10 +63,12 @@ pub fn ast_print_8388b1ca19272fc5(val: &TagValue) -> TagValue {
 /// - Sony::CameraSettings.FlashExposureCompSet
 /// - Sony::CameraSettings2.ExposureCompensationSet
 /// - Sony::CameraSettings2.FlashExposureCompSet
-pub fn ast_value_8350871c1b6679f7(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(((val - 128i32)) / 24i32)
+pub fn ast_value_8350871c1b6679f7(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val - 128i32) / 24i32)
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -71,10 +93,12 @@ pub fn ast_value_8350871c1b6679f7(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - Nikon::MenuSettingsZ9v4.ISOAutoHiLimit
 /// - Nikon::MenuSettingsZ9v4.MovieISOAutoHiLimit
 /// - Nikon::MenuSettingsZ9v4.MovieISOAutoManualMode
-pub fn ast_value_8390ff1421e71f53(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(((val - 104i32)) / 8i32)
+pub fn ast_value_8390ff1421e71f53(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((val - 104i32) / 8i32)
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -84,10 +108,16 @@ pub fn ast_value_8390ff1421e71f53(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Kodak::IFD.KodakLook
 /// TODO: Add support for this expression pattern
-pub fn ast_value_839cd811382c9525(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_839cd811382c9525(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                         // tag_id will be filled at runtime
+        "UnknownTag",              // tag_name will be filled at runtime
+        "UnknownGroup",            // group will be filled at runtime
+        "$val=~tr/\\0/\\n/; $val", // original expression
+        val,
+    ))
 }
-
-

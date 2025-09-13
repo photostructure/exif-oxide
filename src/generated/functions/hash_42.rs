@@ -17,7 +17,7 @@ use codegen_runtime::{
 /// ```
 /// Used by:
 /// - Canon::CameraSettings.FocalUnits
-pub fn ast_print_423da13b81d6bdf1(val: &TagValue) -> TagValue {
+pub fn ast_print_423da13b81d6bdf1(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     format!("{}/mm", val).into()
 }
 
@@ -29,10 +29,51 @@ pub fn ast_print_423da13b81d6bdf1(val: &TagValue) -> TagValue {
 /// - Pentax::AEInfo2.AEXv
 pub fn ast_value_42b5da943f4414b1(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val - 64i32) / 8i32)
 }
 
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val=~tr/ /:/; $val
+/// ```
+/// Used by:
+/// - FujiFilm::RAF.RawImageAspectRatio
+/// - QuickTime::VideoProf.PixelAspectRatio
+/// TODO: Add support for this expression pattern
+pub fn ast_print_422bfca23e0caff5(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    codegen_runtime::missing::missing_print_conv(
+        0,                     // tag_id will be filled at runtime
+        "UnknownTag",          // tag_name will be filled at runtime
+        "UnknownGroup",        // group will be filled at runtime
+        "$val=~tr/ /:/; $val", // original expression
+        val,
+    )
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// Image::ExifTool::Nikon::PrintPC($val,"No Sharpening","%d")
+/// ```
+/// Used by:
+/// - Nikon::PictureControl.Sharpness
+/// TODO: Add support for this expression pattern
+pub fn ast_print_42c5dc3d1b33e467(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    codegen_runtime::missing::missing_print_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "Image::ExifTool::Nikon::PrintPC($val,\"No Sharpening\",\"%d\")", // original expression
+        val,
+    )
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// length($val) > 64 ? \$val : $val
@@ -51,38 +92,17 @@ pub fn ast_value_42b5da943f4414b1(
 /// - Exif::Main.ProfileHueSatMapData3
 /// - Exif::Main.ProfileLookTableData
 /// - Exif::Main.ProfileToneCurve
+/// TODO: Add support for this expression pattern
 pub fn ast_value_4262675ed10175b0(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(if (length_i32((val)) > 64i32) {
-    } else {
-        val
-    })
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $val=~tr/ /:/; $val
-/// ```
-/// Used by:
-/// - FujiFilm::RAF.RawImageAspectRatio
-/// - QuickTime::VideoProf.PixelAspectRatio
-/// TODO: Add support for this expression pattern
-pub fn ast_print_422bfca23e0caff5(val: &TagValue) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// Image::ExifTool::Nikon::PrintPC($val,"No Sharpening","%d")
-/// ```
-/// Used by:
-/// - Nikon::PictureControl.Sharpness
-/// TODO: Add support for this expression pattern
-pub fn ast_print_42c5dc3d1b33e467(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                   // tag_id will be filled at runtime
+        "UnknownTag",                        // tag_name will be filled at runtime
+        "UnknownGroup",                      // group will be filled at runtime
+        "length($val) > 64 ? \\$val : $val", // original expression
+        val,
+    ))
 }

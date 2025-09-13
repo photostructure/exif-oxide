@@ -22,6 +22,7 @@ use codegen_runtime::{
 /// - Nikon::LensData0800.LensFStops
 pub fn ast_value_6ec31a66c09b11db(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val / 12i32))
 }

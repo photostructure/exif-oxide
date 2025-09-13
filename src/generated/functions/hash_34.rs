@@ -24,7 +24,14 @@ use codegen_runtime::{
 /// TODO: Add support for this expression pattern
 pub fn ast_value_3477688b3f24ef1e(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val * 1e-9",  // original expression
+        val,
+    ))
 }

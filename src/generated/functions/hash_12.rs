@@ -25,7 +25,14 @@ use codegen_runtime::{
 /// TODO: Add support for this expression pattern
 pub fn ast_value_1278a798296d5090(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "require Image::ExifTool::ASF;\n            $val = Image::ExifTool::ASF::GetGUID($val);\n            # GUID\'s are too long, so remove redundant information\n            $val =~ s/^6fddc324-4e03-4bfe-b185-3d77768dc9//i and $val = hex($val);\n            return $val;", // original expression
+                    val
+                ))
 }

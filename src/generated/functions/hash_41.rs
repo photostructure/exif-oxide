@@ -13,28 +13,35 @@ use codegen_runtime::{
 
 /// Original perl expression:
 /// ``` perl
-/// sprintf("%.1f deg", $val/1000)
-/// ```
-/// Used by:
-/// - SonyIDC::Main.InclinationAngle
-pub fn ast_print_41bf92216501bc5a(val: &TagValue) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl(
-        "%.1f deg".into(),
-        &[val / 1000i32.clone()],
-    ))
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
 /// $val =~ /^(inf|undef)$/ ? $val : "${val} m"
 /// ```
 /// Used by:
 /// - Exif::Main.SubjectDistance
-/// TODO: Add support for this expression pattern
-pub fn ast_print_4186404e3c9fa11a(val: &TagValue) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+pub fn ast_print_4186404e3c9fa11a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if {
+        use regex::Regex;
+        use std::sync::LazyLock;
+        static REGEX_f893aee228dc6318: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new(r"^(inf|undef)$").unwrap());
+        REGEX_f893aee228dc6318.is_match(&val.to_string())
+    } {
+        val
+    } else {
+        "${val} m".into()
+    }
+}
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.1f deg", $val/1000)
+/// ```
+/// Used by:
+/// - SonyIDC::Main.InclinationAngle
+pub fn ast_print_41bf92216501bc5a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "%.1f deg".into(),
+        &[val / 1000i32.clone()],
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -48,7 +55,14 @@ pub fn ast_print_4186404e3c9fa11a(val: &TagValue) -> TagValue {
 /// TODO: Add support for this expression pattern
 pub fn ast_value_41e4bfecd227b921(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                                             // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "exp(-Image::ExifTool::Canon::CanonEv($val*4)*log(2))*1000/8", // original expression
+        val,
+    ))
 }

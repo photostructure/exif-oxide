@@ -17,7 +17,7 @@ use codegen_runtime::{
 /// ```
 /// Used by:
 /// - Sony::rtmd.MasterGainAdjustment
-pub fn ast_print_14c647eac637612a(val: &TagValue) -> TagValue {
+pub fn ast_print_14c647eac637612a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
         "%.2f dB".into(),
         &[val.clone()],

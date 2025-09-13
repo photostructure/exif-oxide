@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,10 +17,17 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - PanasonicRaw::Main.Gamma
-pub fn ast_value_7626d89bf49583a2(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(val / (if (val >= 1024i32) { 1024i32 } else { (if (val >= 256i32) { 256i32 } else { 100i32 }) }))
+pub fn ast_value_7626d89bf49583a2(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(val
+        / (if (val >= 1024i32) {
+            1024i32
+        } else {
+            (if (val >= 256i32) { 256i32 } else { 100i32 })
+        }))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -27,10 +38,13 @@ pub fn ast_value_7626d89bf49583a2(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - FujiFilm::Main.FlickerReduction
 /// TODO: Add support for this expression pattern
-pub fn ast_print_76b92beaaba5ca0b(val: &TagValue) -> TagValue
-{
+pub fn ast_print_76b92beaaba5ca0b(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my $on = ((($val >> 8) & 0x0f) == 1) ? \'On\' : \'Off\';\n            return sprintf(\'%s (0x%.4x)\', $on, $val);", // original expression
+                    val
+                )
 }
-
-

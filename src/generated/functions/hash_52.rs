@@ -27,6 +27,7 @@ use codegen_runtime::{
 /// - Nikon::MenuSettingsZ9v4.FlashOutput
 pub fn ast_value_52696782fcca735b(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf(((0i32 - val) / 3i32) as f64))
+    Ok((2i32 as f64).powf((codegen_runtime::negate(val) / 3i32) as f64))
 }

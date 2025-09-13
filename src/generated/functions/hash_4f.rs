@@ -20,6 +20,7 @@ use codegen_runtime::{
 /// - Sony::ExtraInfo3.BatteryVoltage2
 pub fn ast_value_4ffb07b2339cdeec(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val / 128i32))
 }
@@ -34,7 +35,14 @@ pub fn ast_value_4ffb07b2339cdeec(
 /// TODO: Add support for this expression pattern
 pub fn ast_value_4f90f27dec9aa072(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                               // tag_id will be filled at runtime
+        "UnknownTag",                    // tag_name will be filled at runtime
+        "UnknownGroup",                  // group will be filled at runtime
+        "$val =~ s/(\\d{2})/$1./; $val", // original expression
+        val,
+    ))
 }

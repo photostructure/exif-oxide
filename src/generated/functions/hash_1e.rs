@@ -19,6 +19,7 @@ use codegen_runtime::{
 /// - Panasonic::TimeInfo.PanasonicDateTime
 pub fn ast_value_1ef1bd5c951da1f3(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(TagValue::String(codegen_runtime::sprintf_perl(
         "%s:%s:%s %s:%s:%s.%s",
@@ -43,9 +44,15 @@ pub fn ast_value_1ef1bd5c951da1f3(
 /// Used by:
 /// - Casio::Type2.FirmwareDate
 /// TODO: Add support for this expression pattern
-pub fn ast_print_1eea9199a5407b99(val: &TagValue) -> TagValue {
+pub fn ast_print_1eea9199a5407b99(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "$_ = $val;\n            if (/^(\\d{2})(\\d{2})\\0\\0(\\d{2})(\\d{2})\\0\\0(\\d{2})\\0{4}$/) {\n                my $yr = $1 + ($1 < 70 ? 2000 : 1900);\n                return \"$yr:$2:$3 $4:$5\";\n            }\n            tr/\\0/./;  s/\\.+$//;\n            return \"Unknown ($_)\";", // original expression
+                    val
+                )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -56,7 +63,13 @@ pub fn ast_print_1eea9199a5407b99(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Apple::Main.AFPerformance
 /// TODO: Add support for this expression pattern
-pub fn ast_print_1e6de4de43d39e69(val: &TagValue) -> TagValue {
+pub fn ast_print_1e6de4de43d39e69(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "my @a=split \" \",$val; sprintf(\"%d %d %d\",$a[0],$a[1]>>28,$a[1]&0xfffffff)", // original expression
+        val,
+    )
 }

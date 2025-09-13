@@ -29,6 +29,7 @@ use codegen_runtime::{
 /// - Sony::Tag9416.SonyISO
 pub fn ast_value_3ca782d06a4e1676(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(100i32 * 2i32 * *(16i32 - (val / 256i32)))
 }

@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -29,10 +33,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Canon::CameraInfo70D.DirectoryIndex
 /// - Canon::CameraInfo7D.DirectoryIndex
 /// - Canon::CameraInfo80D.DirectoryIndex
-pub fn ast_value_f10fff6e97e57581(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+pub fn ast_value_f10fff6e97e57581(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val - 1i32))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -42,12 +48,19 @@ pub fn ast_value_f10fff6e97e57581(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Olympus::CameraSettings.AFPointSelected
 /// TODO: Add support for this expression pattern
-pub fn ast_value_f10df04f24c6ec2c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_f10df04f24c6ec2c(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                         // tag_id will be filled at runtime
+        "UnknownTag",              // tag_name will be filled at runtime
+        "UnknownGroup",            // group will be filled at runtime
+        "$val =~ s/\\S* //; $val", // original expression
+        val,
+    ))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -57,10 +70,16 @@ pub fn ast_value_f10df04f24c6ec2c(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Olympus::CameraSettings.ManometerReading
 /// TODO: Add support for this expression pattern
-pub fn ast_value_f1277e290c2a7107(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_f1277e290c2a7107(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                                      // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "my @a=split(\" \",$val); $_ /= 10 foreach @a; \"@a\"", // original expression
+        val,
+    ))
 }
-
-

@@ -18,6 +18,6 @@ use codegen_runtime::{
 /// Used by:
 /// - CanonRaw::Main.SelfTimerTime
 /// - Nikon::AVITags.Duration
-pub fn ast_print_1cf79c06ccd3a2e9(val: &TagValue) -> TagValue {
+pub fn ast_print_1cf79c06ccd3a2e9(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     format!("{} s", val).into()
 }

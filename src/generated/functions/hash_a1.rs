@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -15,12 +19,19 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// Used by:
 /// - Nikon::NCTG.FrameCount
 /// TODO: Add support for this expression pattern
-pub fn ast_value_a140a65a5d8d60f(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_a140a65a5d8d60f(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                       // tag_id will be filled at runtime
+        "UnknownTag",            // tag_name will be filled at runtime
+        "UnknownGroup",          // group will be filled at runtime
+        "$val =~ s/ 0$//; $val", // original expression
+        val,
+    ))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -31,10 +42,16 @@ pub fn ast_value_a140a65a5d8d60f(val: &TagValue) -> Result<TagValue, codegen_run
 /// - Red::Main.DateCreated
 /// - Red::Main.StorageFormatDate
 /// TODO: Add support for this expression pattern
-pub fn ast_value_a1bbe7c476ada4eb(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_a1bbe7c476ada4eb(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                          // tag_id will be filled at runtime
+        "UnknownTag",                               // tag_name will be filled at runtime
+        "UnknownGroup",                             // group will be filled at runtime
+        "$val =~ s/(\\d{4})(\\d{2})/$1:$2:/; $val", // original expression
+        val,
+    ))
 }
-
-

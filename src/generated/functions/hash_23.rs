@@ -21,8 +21,12 @@ use codegen_runtime::{
 /// - Canon::FocalLength.FocalLength
 pub fn ast_value_237333b021276c6e(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(val / ())
+    Ok(val
+        / (ctx
+            .and_then(|c| c.get_data_member("TimeScale").cloned())
+            .unwrap_or(TagValue::U32(1))))
 }
 
 /// Original perl expression:
@@ -36,6 +40,7 @@ pub fn ast_value_237333b021276c6e(
 /// - Canon::ShotInfo.TargetAperture
 pub fn ast_value_23ca0ed710a7de23(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(exp(Image::ExifTool::Canon::CanonEv))
 }

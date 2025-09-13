@@ -17,7 +17,7 @@ use codegen_runtime::{
 /// ```
 /// Used by:
 /// - Panasonic::FocusInfo.FocusDistance
-pub fn ast_print_515ec3f56b990031(val: &TagValue) -> TagValue {
+pub fn ast_print_515ec3f56b990031(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if (val < 65535i32) {
         format!("{} m", val).into()
     } else {
@@ -48,7 +48,14 @@ pub fn ast_print_515ec3f56b990031(val: &TagValue) -> TagValue {
 /// TODO: Add support for this expression pattern
 pub fn ast_value_51b27304e42ac9f0(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                      // tag_id will be filled at runtime
+        "UnknownTag",           // tag_name will be filled at runtime
+        "UnknownGroup",         // group will be filled at runtime
+        "$val=~s/^.*: //;$val", // original expression
+        val,
+    ))
 }

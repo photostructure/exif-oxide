@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -20,8 +24,20 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - QuickTime::MovieHeader.SelectionDuration
 /// - QuickTime::MovieHeader.SelectionTime
 /// - QuickTime::TrackHeader.TrackDuration
-pub fn ast_value_3a525264bc178a3a(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(if  { (val / ) } else { val })
+pub fn ast_value_3a525264bc178a3a(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if ctx
+            .and_then(|c| c.get_data_member("TimeScale").cloned())
+            .unwrap_or(TagValue::U32(1))
+        {
+            (val / ctx
+                .and_then(|c| c.get_data_member("TimeScale").cloned())
+                .unwrap_or(TagValue::U32(1)))
+        } else {
+            val
+        },
+    )
 }
-
-

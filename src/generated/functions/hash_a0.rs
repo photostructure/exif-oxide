@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,10 +17,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - Olympus::Main.ISOValue
-pub fn ast_value_a040417283f4e897(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(100i32 * 2i32 ** ((val - 5i32)))
+pub fn ast_value_a040417283f4e897(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(100i32 * 2i32 * *(val - 5i32))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -35,12 +41,16 @@ pub fn ast_value_a040417283f4e897(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Casio::Main.FirmwareDate
 /// TODO: Add support for this expression pattern
-pub fn ast_print_a04fe08e941ee2d(val: &TagValue) -> TagValue
-{
+pub fn ast_print_a04fe08e941ee2d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "$_ = $val;\n            if (/^(\\d{2})(\\d{2})\\0\\0(\\d{2})(\\d{2})\\0\\0(\\d{2})(.{2})\\0{2}$/) {\n                my $yr = $1 + ($1 < 70 ? 2000 : 1900);\n                my $sec = $6;\n                $val = \"$yr:$2:$3 $4:$5\";\n                $val .= \":$sec\" if $sec=~/^\\d{2}$/;\n                return $val;\n            }\n            tr/\\0/./;  s/\\.+$//;\n            return \"Unknown ($_)\";", // original expression
+                    val
+                )
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -51,10 +61,13 @@ pub fn ast_print_a04fe08e941ee2d(val: &TagValue) -> TagValue
 /// - Nikon::PictureControl2.Brightness
 /// - Nikon::PictureControl3.Brightness
 /// TODO: Add support for this expression pattern
-pub fn ast_print_a08839f93b02bcac(val: &TagValue) -> TagValue
-{
+pub fn ast_print_a08839f93b02bcac(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                                        // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "Image::ExifTool::Nikon::PrintPC($val,undef,\"%.2f\",4)", // original expression
+        val,
+    )
 }
-
-

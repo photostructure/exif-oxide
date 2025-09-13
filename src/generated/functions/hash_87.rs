@@ -5,9 +5,12 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val =~ /^(inf|undef)$/ ? $val : "$val m"
@@ -15,13 +18,19 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// Used by:
 /// - GPS::Main.GPSAltitude
 /// - Pentax::PENT.GPSAltitude
-/// TODO: Add support for this expression pattern
-pub fn ast_print_8764401e4e5a97bf(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+pub fn ast_print_8764401e4e5a97bf(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if {
+        use regex::Regex;
+        use std::sync::LazyLock;
+        static REGEX_f893aee228dc6318: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new(r"^(inf|undef)$").unwrap());
+        REGEX_f893aee228dc6318.is_match(&val.to_string())
+    } {
+        val
+    } else {
+        format!("{} m", val).into()
+    }
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -33,10 +42,16 @@ pub fn ast_print_8764401e4e5a97bf(val: &TagValue) -> TagValue
 /// Used by:
 /// - RIFF::Sampler.SMPTEOffset
 /// TODO: Add support for this expression pattern
-pub fn ast_value_879d7ecabc496495(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_879d7ecabc496495(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my $str = sprintf(\'%.8x\', $val);\n            $str =~ s/(..)(..)(..)(..)/$1:$2:$3:$4/;\n            return $str;", // original expression
+                    val
+                ))
 }
-
-

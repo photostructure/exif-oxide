@@ -13,28 +13,13 @@ use codegen_runtime::{
 
 /// Original perl expression:
 /// ``` perl
-/// "0x" . unpack("H*",$val)
-/// ```
-/// Used by:
-/// - Nintendo::CameraInfo.InternalSerialNumber
-pub fn ast_value_1aa8084d7d68c73f(
-    val: &TagValue,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(TagValue::String(format!(
-        "{}{}",
-        "0x",
-        unpack(TagValue::String(format!("H*", val)))
-    )))
-}
-
-/// Original perl expression:
-/// ``` perl
 /// 2 ** (8-$val/8192)
 /// ```
 /// Used by:
 /// - Sony::rtmd.FNumber
 pub fn ast_value_1a943147cffc80a4(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((2i32 as f64).powf((8i32 - (val / 8192i32)) as f64))
 }
@@ -83,6 +68,28 @@ pub fn ast_value_1a943147cffc80a4(
 /// - Sony::Tag9405b.BaseISO
 /// - Sony::Tag9405b.SonyISO
 /// - Sony::Tag9416.SonyISO
-pub fn ast_print_1ade125dab246be4(val: &TagValue) -> TagValue {
+pub fn ast_print_1ade125dab246be4(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl("%.0f".into(), &[val.clone()]))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// "0x" . unpack("H*",$val)
+/// ```
+/// Used by:
+/// - Nintendo::CameraInfo.InternalSerialNumber
+/// TODO: Add support for this expression pattern
+pub fn ast_value_1aa8084d7d68c73f(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                              // tag_id will be filled at runtime
+        "UnknownTag",                   // tag_name will be filled at runtime
+        "UnknownGroup",                 // group will be filled at runtime
+        "\"0x\" . unpack(\"H*\",$val)", // original expression
+        val,
+    ))
 }

@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -15,12 +19,19 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// Used by:
 /// - IPTC::ApplicationRecord.DocumentHistory
 /// TODO: Add support for this expression pattern
-pub fn ast_value_e82434acf427488(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_e82434acf427488(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                            // tag_id will be filled at runtime
+        "UnknownTag",                 // tag_name will be filled at runtime
+        "UnknownGroup",               // group will be filled at runtime
+        "$val =~ s/\\0+/\\n/g; $val", // original expression
+        val,
+    ))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -33,10 +44,16 @@ pub fn ast_value_e82434acf427488(val: &TagValue) -> Result<TagValue, codegen_run
 /// - Olympus::Equipment.SerialNumber
 /// - Olympus::Main.CameraType
 /// TODO: Add support for this expression pattern
-pub fn ast_value_e81a402a310d8ce1(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_e81a402a310d8ce1(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                       // tag_id will be filled at runtime
+        "UnknownTag",            // tag_name will be filled at runtime
+        "UnknownGroup",          // group will be filled at runtime
+        "$val=~s/\\s+$//; $val", // original expression
+        val,
+    ))
 }
-
-

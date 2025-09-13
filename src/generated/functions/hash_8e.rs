@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,10 +17,13 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - Casio::Type2.ObjectDistance
-pub fn ast_print_8eb189bdce07b25f(val: &TagValue) -> TagValue {
-    if (val.to_string() == "inf".into().to_string()) { val } else { format!("{} m", val).into() }
+pub fn ast_print_8eb189bdce07b25f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if (val.to_string() == "inf".into().to_string()) {
+        val
+    } else {
+        format!("{} m", val).into()
+    }
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -42,12 +49,16 @@ pub fn ast_print_8eb189bdce07b25f(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Nikon::Main.LensType
 /// TODO: Add support for this expression pattern
-pub fn ast_print_8e2bf26a3866c12f(val: &TagValue) -> TagValue
-{
+pub fn ast_print_8e2bf26a3866c12f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "$_ = $val ? Image::ExifTool::DecodeBits($val,\n            {\n                0 => \'MF\',\n                1 => \'D\',\n                2 => \'G\',\n                3 => \'VR\',\n                4 => \'1\', #PH\n                5 => \'FT-1\', #PH/IB\n                6 => \'E\', #PH (electromagnetic aperture mechanism)\n                7 => \'AF-P\', #PH/IB\n            }) : \'AF\';\n            # remove commas and change \"D G\" to just \"G\"\n            s/,//g; s/\\bD G\\b/G/;\n            s/ E\\b// and s/^(G )?/E /;      # put \"E\" at the start instead of \"G\"\n            s/ 1// and $_ = \"1 $_\";         # put \"1\" at start\n            s/FT-1 // and $_ .= \' FT-1\';    # put \"FT-1\" at end\n            return $_;", // original expression
+                    val
+                )
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -57,10 +68,16 @@ pub fn ast_print_8e2bf26a3866c12f(val: &TagValue) -> TagValue
 /// Used by:
 /// - JPEG::NITF.NITFVersion
 /// TODO: Add support for this expression pattern
-pub fn ast_value_8ef6bad16279ca65(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_8ef6bad16279ca65(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                         // tag_id will be filled at runtime
+        "UnknownTag",                              // tag_name will be filled at runtime
+        "UnknownGroup",                            // group will be filled at runtime
+        "sprintf(\"%d.%.2d\", split(\" \",$val))", // original expression
+        val,
+    ))
 }
-
-

@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -15,10 +19,13 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// Used by:
 /// - Exif::Main.ISO
 /// TODO: Add support for this expression pattern
-pub fn ast_print_d8a29c30d565fdb7(val: &TagValue) -> TagValue
-{
+pub fn ast_print_d8a29c30d565fdb7(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                         // tag_id will be filled at runtime
+        "UnknownTag",              // tag_name will be filled at runtime
+        "UnknownGroup",            // group will be filled at runtime
+        "$val=~s/\\s+/, /g; $val", // original expression
+        val,
+    )
 }
-
-

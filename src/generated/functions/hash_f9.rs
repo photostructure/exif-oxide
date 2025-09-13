@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -17,10 +21,13 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// Used by:
 /// - Casio::Type2.AFPointPosition
 /// TODO: Add support for this expression pattern
-pub fn ast_print_f99f157f7be94989(val: &TagValue) -> TagValue
-{
+pub fn ast_print_f99f157f7be94989(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my @v = split \' \', $val;\n            return \'n/a\' if $v[0] == 65535 or not $v[1] or not $v[3];\n            sprintf \"%.2g %.2g\", $v[0]/$v[1], $v[2]/$v[3];", // original expression
+                    val
+                )
 }
-
-

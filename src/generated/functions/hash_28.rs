@@ -70,6 +70,7 @@ use codegen_runtime::{
 /// - Sony::Tag9416.MinFocalLength
 pub fn ast_value_28edfda19b0d16dd(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val / 10i32))
 }

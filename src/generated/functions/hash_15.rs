@@ -27,7 +27,7 @@ use codegen_runtime::{
 /// - Sony::Tag9406.BatteryLevelGrip2
 /// - Sony::Tag9406b.BatteryLevel
 /// - Sony::Tag9406b.BatteryLevel2
-pub fn ast_print_15d3bbdbc77bdb90(val: &TagValue) -> TagValue {
+pub fn ast_print_15d3bbdbc77bdb90(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     format!("{}%", val).into()
 }
 
@@ -37,27 +37,12 @@ pub fn ast_print_15d3bbdbc77bdb90(val: &TagValue) -> TagValue {
 /// ```
 /// Used by:
 /// - Nikon::Main.ShutterCount
-pub fn ast_print_155f09e06c458602(val: &TagValue) -> TagValue {
+pub fn ast_print_155f09e06c458602(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if (val == 4294965247i32) {
         "n/a".into()
     } else {
         val
     }
-}
-
-/// Original perl expression:
-/// ``` perl
-/// ($val >> 16) . "." . ($val & 0xffff)
-/// ```
-/// Used by:
-/// - SigmaRaw::Header.FileVersion
-/// - SigmaRaw::Header4.FileVersion
-pub fn ast_value_15cf16a8ad9f58e5(
-    val: &TagValue,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(TagValue::String(
-        format!("{}{}", (val >> 16i32), "." . ((val & 0xffffu32))),
-    ))
 }
 
 /// Original perl expression:
@@ -68,8 +53,32 @@ pub fn ast_value_15cf16a8ad9f58e5(
 /// - Pentax::Main.ColorTemperature
 pub fn ast_value_15b61e0dd2629a12(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((53190i32 - val))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// ($val >> 16) . "." . ($val & 0xffff)
+/// ```
+/// Used by:
+/// - SigmaRaw::Header.FileVersion
+/// - SigmaRaw::Header4.FileVersion
+/// TODO: Add support for this expression pattern
+pub fn ast_value_15cf16a8ad9f58e5(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                        // tag_id will be filled at runtime
+        "UnknownTag",                             // tag_name will be filled at runtime
+        "UnknownGroup",                           // group will be filled at runtime
+        "($val >> 16) . \".\" . ($val & 0xffff)", // original expression
+        val,
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -81,9 +90,15 @@ pub fn ast_value_15b61e0dd2629a12(
 /// Used by:
 /// - Sony::Main.FocusFrameSize
 /// TODO: Add support for this expression pattern
-pub fn ast_print_15baaa80ffdd285a(val: &TagValue) -> TagValue {
+pub fn ast_print_15baaa80ffdd285a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my @a = split \' \', $val;\n            return $a[2] ? sprintf(\'%3dx%3d\', $a[0], $a[1]) : \'n/a\';", // original expression
+                    val
+                )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -96,7 +111,14 @@ pub fn ast_print_15baaa80ffdd285a(val: &TagValue) -> TagValue {
 /// TODO: Add support for this expression pattern
 pub fn ast_value_1535cc61d3e15b8b(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                                              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "sprintf(\"%.2x:%.2x:%.2x:%.2x\",reverse unpack(\"C*\",$val))", // original expression
+        val,
+    ))
 }

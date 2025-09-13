@@ -36,7 +36,7 @@ use codegen_runtime::{
 /// - Nikon::MenuSettingsZ9v4.NonCPULens7MaxAperture
 /// - Nikon::MenuSettingsZ9v4.NonCPULens8MaxAperture
 /// - Nikon::MenuSettingsZ9v4.NonCPULens9MaxAperture
-pub fn ast_print_32d15696c00cf4d1(val: &TagValue) -> TagValue {
+pub fn ast_print_32d15696c00cf4d1(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
         "f/%.1f".into(),
         &[val / 100i32.clone()],
@@ -54,9 +54,16 @@ pub fn ast_print_32d15696c00cf4d1(val: &TagValue) -> TagValue {
 /// TODO: Add support for this expression pattern
 pub fn ast_value_325ae39bdd3fcbb3(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                                   // tag_id will be filled at runtime
+        "UnknownTag",                                        // tag_name will be filled at runtime
+        "UnknownGroup",                                      // group will be filled at runtime
+        "$self->Options(\"Unknown\") ? $val : $val & 0x7ff", // original expression
+        val,
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -69,7 +76,14 @@ pub fn ast_value_325ae39bdd3fcbb3(
 /// TODO: Add support for this expression pattern
 pub fn ast_value_32a7e10f5e7f8777(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "length($val)>=3 ? sprintf(\"%.2d:%.2d:%.2d\",unpack(\"C3\",$val)) : \"Unknown ($val)\"", // original expression
+        val,
+    ))
 }

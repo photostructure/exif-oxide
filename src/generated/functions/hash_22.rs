@@ -39,7 +39,14 @@ use codegen_runtime::{
 /// TODO: Add support for this expression pattern
 pub fn ast_value_22aa2ef47b11cd7c(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                                 // tag_id will be filled at runtime
+        "UnknownTag",                                      // tag_name will be filled at runtime
+        "UnknownGroup",                                    // group will be filled at runtime
+        "my @a=split \" \",$val;$a[0]*=2;$a[3]*=2;\"@a\"", // original expression
+        val,
+    ))
 }

@@ -19,6 +19,7 @@ use codegen_runtime::{
 /// - Casio::Type2.ObjectDistance
 pub fn ast_value_182eb86db93049bd(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(if (val >= 0x20000000u32) {
         "inf"

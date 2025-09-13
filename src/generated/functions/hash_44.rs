@@ -22,9 +22,15 @@ use codegen_runtime::{
 /// - Pentax::PENT.GPSTimeStamp
 /// - Sony::rtmd.GPSTimeStamp
 /// TODO: Add support for this expression pattern
-pub fn ast_print_449352809d0c73f5(val: &TagValue) -> TagValue {
+pub fn ast_print_449352809d0c73f5(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                            // tag_id will be filled at runtime
+        "UnknownTag",                                 // tag_name will be filled at runtime
+        "UnknownGroup",                               // group will be filled at runtime
+        "Image::ExifTool::GPS::PrintTimeStamp($val)", // original expression
+        val,
+    )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -40,7 +46,13 @@ pub fn ast_print_449352809d0c73f5(val: &TagValue) -> TagValue {
 /// - GoPro::GPS9.GPSLatitude
 /// - RIFF::UserText.GPSLatitude
 /// TODO: Add support for this expression pattern
-pub fn ast_print_44f685eba6f9412f(val: &TagValue) -> TagValue {
+pub fn ast_print_44f685eba6f9412f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                                    // tag_id will be filled at runtime
+        "UnknownTag",                                         // tag_name will be filled at runtime
+        "UnknownGroup",                                       // group will be filled at runtime
+        "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")", // original expression
+        val,
+    )
 }

@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -21,10 +25,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Sony::Tag2010g.BrightnessValue
 /// - Sony::Tag2010h.BrightnessValue
 /// - Sony::Tag2010i.BrightnessValue
-pub fn ast_value_be410aac07f2b930(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+pub fn ast_value_be410aac07f2b930(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(((val / 256i32) - 56.6f64))
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -42,10 +48,12 @@ pub fn ast_value_be410aac07f2b930(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - Nikon::LensData0800.FocalLength
 /// - Nikon::LensData0800.MaxFocalLength
 /// - Nikon::LensData0800.MinFocalLength
-pub fn ast_value_bebb546318de4cc0(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(5i32 * 2i32 ** ((val / 24i32)))
+pub fn ast_value_bebb546318de4cc0(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(5i32 * 2i32 * *(val / 24i32))
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -54,10 +62,12 @@ pub fn ast_value_bebb546318de4cc0(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Canon::CameraInfoPowerShot.ExposureTime
 /// - Canon::CameraInfoPowerShot2.ExposureTime
-pub fn ast_value_be1b3eec816c4342(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(exp((((0i32 - val) / 96i32) * log((2i32)))))
+pub fn ast_value_be1b3eec816c4342(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(exp(((codegen_runtime::negate(val) / 96i32) * log((2i32)))))
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -75,8 +85,9 @@ pub fn ast_value_be1b3eec816c4342(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - DJI::Main.Yaw
 /// - FujiFilm::MRAW.ExposureCompensation
 /// - FujiFilm::MRAW.ExposureCompensation2
-pub fn ast_print_bec70def03ed8463(val: &TagValue) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%+.2f".into(), &[val.clone()]))
+pub fn ast_print_bec70def03ed8463(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "%+.2f".into(),
+        &[val.clone()],
+    ))
 }
-
-

@@ -40,7 +40,13 @@ use codegen_runtime::{
 /// - Olympus::WAV.Index16
 /// - RIFF::ANMF.Duration
 /// TODO: Add support for this expression pattern
-pub fn ast_print_487657613095a4c6(val: &TagValue) -> TagValue {
+pub fn ast_print_487657613095a4c6(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                       // tag_id will be filled at runtime
+        "UnknownTag",            // tag_name will be filled at runtime
+        "UnknownGroup",          // group will be filled at runtime
+        "ConvertDuration($val)", // original expression
+        val,
+    )
 }

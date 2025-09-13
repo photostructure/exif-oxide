@@ -11,19 +11,25 @@ use codegen_runtime::{
     string::{length_i32, length_string},
 };
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~s/ 1$// ? -$val/10 : "n/a"
 /// ```
 /// Used by:
 /// - Olympus::CameraSettings.RollAngle
-/// TODO: Add support for this expression pattern
 pub fn ast_value_5d1e153d8debf27a(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok({
+        let (success, modified_val) = codegen_runtime::regex_substitute_perl(r" 1$", "", val);
+        if success {
+            let val = &modified_val;
+            (codegen_runtime::negate(val) / 10i32)
+        } else {
+            "n/a".into()
+        }
+    })
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -34,7 +40,13 @@ pub fn ast_value_5d1e153d8debf27a(
 /// Used by:
 /// - Nikon::PictureControl.HueAdjustment
 /// TODO: Add support for this expression pattern
-pub fn ast_print_5d7bace8d8eb1cfe(val: &TagValue) -> TagValue {
+pub fn ast_print_5d7bace8d8eb1cfe(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                                // tag_id will be filled at runtime
+        "UnknownTag",                                     // tag_name will be filled at runtime
+        "UnknownGroup",                                   // group will be filled at runtime
+        "Image::ExifTool::Nikon::PrintPC($val,\"None\")", // original expression
+        val,
+    )
 }

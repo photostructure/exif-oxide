@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,22 +17,28 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - CanonRaw::TimeStamp.TimeZoneCode
-pub fn ast_value_36edbc9980448bd8(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+pub fn ast_value_36edbc9980448bd8(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val / 3600i32))
 }
 
-
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~/\./ or $val.=".0"; $val
 /// ```
 /// Used by:
 /// - Olympus::Main.DigitalZoom
-pub fn ast_print_36fdfc46408f209a(val: &TagValue) -> TagValue {
-    {
-        { use regex::Regex; use std::sync::LazyLock; static REGEX_c3fd015cb7dd6e3a: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"/\./ || val .= ".0".into() ;").unwrap()); REGEX_c3fd015cb7dd6e3a.captures(&val.to_string()).is_some() };
-        val
-    }
+/// TODO: Add support for this expression pattern
+pub fn ast_print_36fdfc46408f209a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    codegen_runtime::missing::missing_print_conv(
+        0,                                   // tag_id will be filled at runtime
+        "UnknownTag",                        // tag_name will be filled at runtime
+        "UnknownGroup",                      // group will be filled at runtime
+        "$val=~/\\./ or $val.=\".0\"; $val", // original expression
+        val,
+    )
 }
-
-

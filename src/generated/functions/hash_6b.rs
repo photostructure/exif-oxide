@@ -21,6 +21,7 @@ use codegen_runtime::{
 /// - Nikon::LensData0800.FocusDistance
 pub fn ast_value_6baba6a308124f53(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(0.01f64 * 10i32 * *(val / 40i32))
 }

@@ -21,6 +21,7 @@ use codegen_runtime::{
 /// - Samsung::PictureWizard.PictureWizardSharpness
 pub fn ast_value_25716161e402fefe(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val - 4i32))
 }
@@ -35,9 +36,16 @@ pub fn ast_value_25716161e402fefe(
 /// TODO: Add support for this expression pattern
 pub fn ast_value_250cc155ed2b25a6(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                           // tag_id will be filled at runtime
+        "UnknownTag",                                // tag_name will be filled at runtime
+        "UnknownGroup",                              // group will be filled at runtime
+        "ConvertUnixTime($val + 10957 * 24 * 3600)", // original expression
+        val,
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -48,7 +56,13 @@ pub fn ast_value_250cc155ed2b25a6(
 /// Used by:
 /// - Olympus::CameraSettings.AFAreas
 /// TODO: Add support for this expression pattern
-pub fn ast_print_252e55dbb07a94df(val: &TagValue) -> TagValue {
+pub fn ast_print_252e55dbb07a94df(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                              // tag_id will be filled at runtime
+        "UnknownTag",                                   // tag_name will be filled at runtime
+        "UnknownGroup",                                 // group will be filled at runtime
+        "Image::ExifTool::Olympus::PrintAFAreas($val)", // original expression
+        val,
+    )
 }

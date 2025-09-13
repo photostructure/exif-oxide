@@ -24,7 +24,14 @@ use codegen_runtime::{
 /// TODO: Add support for this expression pattern
 pub fn ast_value_2a663a50a009bfa(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "return undef unless $val =~ /^(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})(\\d{2})$/;\n            my $y = $1 < 70 ? \"20$1\" : \"19$1\";\n            return \"$y:$2:$3 $4:$5:$6\";", // original expression
+                    val
+                ))
 }

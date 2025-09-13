@@ -19,9 +19,15 @@ use codegen_runtime::{
 /// Used by:
 /// - Nikon::Main.ExposureBracketValue
 /// TODO: Add support for this expression pattern
-pub fn ast_print_66ae134cac9bc85e(val: &TagValue) -> TagValue {
+pub fn ast_print_66ae134cac9bc85e(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val !~ /undef/ ?  Image::ExifTool::Exif::PrintFraction($val) : \"n/a\"", // original expression
+        val,
+    )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -37,7 +43,13 @@ pub fn ast_print_66ae134cac9bc85e(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Nikon::PortraitInfoZ7II.PortraitImpressionBalance
 /// TODO: Add support for this expression pattern
-pub fn ast_print_66fac0cb9a600387(val: &TagValue) -> TagValue {
+pub fn ast_print_66fac0cb9a600387(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "return \'Off\' if $val eq \'0 0\' or $val eq \'255 255\';\n            my @v = split \' \', $val;\n            my $brightness = $v[1]==128 ? \'Brightness: Neutral\' : sprintf(\'Brightness: %+.1f\',($v[1]-128)/4);\n            my $color = $v[0]==128 ? \'Color: Neutral\' : sprintf(\'%s: %.1f\', $v[0]>128 ? \'Yellow\' : \'Magenta\', abs($v[0]-128)/4);\n            # will return something like: \'Magenta: 1.0  Brightness: Neutral\'\n            return \"$color $brightness\"", // original expression
+                    val
+                )
 }

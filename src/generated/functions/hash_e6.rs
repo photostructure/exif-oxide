@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,10 +17,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - Panasonic::Main.ManometerPressure
-pub fn ast_print_e6621b3e7e35336a(val: &TagValue) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.1f kPa".into(), &[val.clone()]))
+pub fn ast_print_e6621b3e7e35336a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "%.1f kPa".into(),
+        &[val.clone()],
+    ))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -26,12 +32,19 @@ pub fn ast_print_e6621b3e7e35336a(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Pentax::LensInfoQ.LensInfo
 /// TODO: Add support for this expression pattern
-pub fn ast_value_e6ee3ce4586918ac(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_e6ee3ce4586918ac(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                       // tag_id will be filled at runtime
+        "UnknownTag",            // tag_name will be filled at runtime
+        "UnknownGroup",          // group will be filled at runtime
+        "$val=~s/mm/mm /; $val", // original expression
+        val,
+    ))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -43,10 +56,13 @@ pub fn ast_value_e6ee3ce4586918ac(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Panasonic::Main.AFPointPosition
 /// TODO: Add support for this expression pattern
-pub fn ast_print_e68a5de1ced03867(val: &TagValue) -> TagValue
-{
+pub fn ast_print_e68a5de1ced03867(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "return \'none\' if $val eq \'16777216 16777216\';\n            my @a = split \' \', $val;\n            sprintf(\"%.2g %.2g\",@a);", // original expression
+                    val
+                )
 }
-
-

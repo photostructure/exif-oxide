@@ -19,9 +19,15 @@ use codegen_runtime::{
 /// Used by:
 /// - Pentax::Main.ExposureTime
 /// TODO: Add support for this expression pattern
-pub fn ast_print_1654733938db8225(val: &TagValue) -> TagValue {
+pub fn ast_print_1654733938db8225(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val > 42949 ? \"Unknown (Bulb)\" : Image::ExifTool::Exif::PrintExposureTime($val)", // original expression
+        val,
+    )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -32,9 +38,15 @@ pub fn ast_print_1654733938db8225(val: &TagValue) -> TagValue {
 /// Used by:
 /// - IPTC::NewsPhoto.IPTCPictureNumber
 /// TODO: Add support for this expression pattern
-pub fn ast_print_16efff3478ac3340(val: &TagValue) -> TagValue {
+pub fn ast_print_16efff3478ac3340(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                                   // tag_id will be filled at runtime
+        "UnknownTag",                                        // tag_name will be filled at runtime
+        "UnknownGroup",                                      // group will be filled at runtime
+        "Image::ExifTool::IPTC::ConvertPictureNumber($val)", // original expression
+        val,
+    )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -45,9 +57,15 @@ pub fn ast_print_16efff3478ac3340(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Sony::Main.WBShiftAB_GM_Precise
 /// TODO: Add support for this expression pattern
-pub fn ast_print_16125fb69d4cbb0(val: &TagValue) -> TagValue {
+pub fn ast_print_16125fb69d4cbb0(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "my @v=split(\" \",$val); $_/=1000 foreach @v; sprintf(\"%.2f %.2f\",$v[0],$v[1])", // original expression
+        val,
+    )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -70,7 +88,13 @@ pub fn ast_print_16125fb69d4cbb0(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Nikon::AutoCaptureInfo.AutoCaptureCriteriaMotionDirection
 /// TODO: Add support for this expression pattern
-pub fn ast_print_162c0c787a1ce5f3(val: &TagValue) -> TagValue {
+pub fn ast_print_162c0c787a1ce5f3(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "return \'All\' if $val eq 255;\n            $_ = \'\';\n            return $_ . Image::ExifTool::DecodeBits($val,\n            {\n                0 => \'Top Left\',\n                1 => \'Top Right\',\n                2 => \'Bottom Left\',\n                3 => \'Bottom Right\',\n                4 => \'Left\',\n                5 => \'Right\',\n                6 => \'Top Center\',\n                7 => \'Bottom Center\',\n            });", // original expression
+                    val
+                )
 }

@@ -5,8 +5,31 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
+/// Original perl expression:
+/// ``` perl
+/// 2 ** ($val / 2)
+/// ```
+/// Used by:
+/// - CanonRaw::ExposureInfo.ApertureValue
+/// - Exif::Main.ApertureValue
+/// - Exif::Main.MaxApertureValue
+/// - H264::MDPM.MaxApertureValue
+/// - Nikon::AVITags.MaxApertureValue
+/// - Olympus::Main.ApertureValue
+pub fn ast_value_6cb46ed7ea997c8d(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok((2i32 as f64).powf((val / 2i32) as f64))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val>0.99 ? "Full" : sprintf("%.1f%%",$val*100)
@@ -21,26 +44,17 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Nikon::MenuSettingsZ9.FlashOutput
 /// - Nikon::MenuSettingsZ9v3.FlashOutput
 /// - Nikon::MenuSettingsZ9v4.FlashOutput
-pub fn ast_print_6c62520a706b493(val: &TagValue) -> TagValue {
-    if val > 0.99f64 { "Full".into() } else { TagValue::String(codegen_runtime::sprintf_perl("%.1f%%", &[val, *, 100])) }
+/// TODO: Add support for this expression pattern
+pub fn ast_print_6c62520a706b493(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    codegen_runtime::missing::missing_print_conv(
+        0,                                                     // tag_id will be filled at runtime
+        "UnknownTag",                                          // tag_name will be filled at runtime
+        "UnknownGroup",                                        // group will be filled at runtime
+        "$val>0.99 ? \"Full\" : sprintf(\"%.1f%%\",$val*100)", // original expression
+        val,
+    )
 }
-
-
-/// Original perl expression:
-/// ``` perl
-/// 2 ** ($val / 2)
-/// ```
-/// Used by:
-/// - CanonRaw::ExposureInfo.ApertureValue
-/// - Exif::Main.ApertureValue
-/// - Exif::Main.MaxApertureValue
-/// - H264::MDPM.MaxApertureValue
-/// - Nikon::AVITags.MaxApertureValue
-/// - Olympus::Main.ApertureValue
-pub fn ast_value_6cb46ed7ea997c8d(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf(((val / 2i32)) as f64))
-}
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -55,12 +69,16 @@ pub fn ast_value_6cb46ed7ea997c8d(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - GoPro::GPS9.GPSLongitude
 /// - RIFF::UserText.GPSLongitude
 /// TODO: Add support for this expression pattern
-pub fn ast_print_6cee0408ed0783c7(val: &TagValue) -> TagValue
-{
+pub fn ast_print_6cee0408ed0783c7(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                                    // tag_id will be filled at runtime
+        "UnknownTag",                                         // tag_name will be filled at runtime
+        "UnknownGroup",                                       // group will be filled at runtime
+        "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")", // original expression
+        val,
+    )
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -70,10 +88,16 @@ pub fn ast_print_6cee0408ed0783c7(val: &TagValue) -> TagValue
 /// Used by:
 /// - Pentax::Main.SensorSize
 /// TODO: Add support for this expression pattern
-pub fn ast_value_6c25803f7a885741(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_6c25803f7a885741(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                                             // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "my @a=split(\" \",$val); $_/=500 foreach @a; join(\" \",@a)", // original expression
+        val,
+    ))
 }
-
-

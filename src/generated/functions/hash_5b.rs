@@ -44,6 +44,7 @@ use codegen_runtime::{
 /// - Red::Main.FocusDistance
 pub fn ast_value_5b2c41e400f339d0(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val / 1000i32))
 }
@@ -63,6 +64,7 @@ pub fn ast_value_5b2c41e400f339d0(
 /// - Sanyo::MOV.ExposureTime
 pub fn ast_value_5b997436cb4c4a4f(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(if val { (10i32 / val) } else { 0i32 })
 }
@@ -73,6 +75,6 @@ pub fn ast_value_5b997436cb4c4a4f(
 /// ```
 /// Used by:
 /// - Panasonic::Leica2.SerialNumber
-pub fn ast_print_5bf8478023213c9(val: &TagValue) -> TagValue {
+pub fn ast_print_5bf8478023213c9(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl("%.7d".into(), &[val.clone()]))
 }

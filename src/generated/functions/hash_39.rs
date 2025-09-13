@@ -11,19 +11,26 @@ use codegen_runtime::{
     string::{length_i32, length_string},
 };
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $$self{FujiLayout} ? ($val * 2) : $val
 /// ```
 /// Used by:
 /// - FujiFilm::RAFData.RawImageHeight
-/// TODO: Add support for this expression pattern
 pub fn ast_value_393186b6faed2a8e(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(
+        if ctx
+            .and_then(|c| c.get_data_member("FujiLayout").cloned())
+            .unwrap_or(TagValue::String(String::new()))
+        {
+            (val * 2i32)
+        } else {
+            val
+        },
+    )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -34,9 +41,15 @@ pub fn ast_value_393186b6faed2a8e(
 /// Used by:
 /// - Nikon::LensData0800.FocusDistance
 /// TODO: Add support for this expression pattern
-pub fn ast_print_397064182f359f5a(val: &TagValue) -> TagValue {
+pub fn ast_print_397064182f359f5a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "(defined $$self{FocusStepsFromInfinity} and $$self{FocusStepsFromInfinity} eq 0) ? \"Inf\" : $val < 100 ? $val < 10 ? $val < 1 ? $val < 0.35 ? sprintf(\"%.4f m\", $val): sprintf(\"%.3f m\", $val): sprintf(\"%.2f m\", $val) : sprintf(\"%.1f m\", $val) : sprintf(\"%.0f m\", $val),", // original expression
+                    val
+                )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -49,7 +62,13 @@ pub fn ast_print_397064182f359f5a(val: &TagValue) -> TagValue {
 /// - Samsung::sec.Make
 /// - Sanyo::MP4.Make
 /// TODO: Add support for this expression pattern
-pub fn ast_print_39aa319f5a5c55eb(val: &TagValue) -> TagValue {
+pub fn ast_print_39aa319f5a5c55eb(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                   // tag_id will be filled at runtime
+        "UnknownTag",        // tag_name will be filled at runtime
+        "UnknownGroup",      // group will be filled at runtime
+        "ucfirst(lc($val))", // original expression
+        val,
+    )
 }

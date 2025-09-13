@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -33,10 +37,9 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Panasonic::Leica9.MeasuredLV
 /// - Panasonic::Subdir.ExternalSensorBrightnessValue
 /// - Panasonic::Subdir.MeasuredLV
-pub fn ast_print_bb744a13f82c4cd2(val: &TagValue) -> TagValue {
+pub fn ast_print_bb744a13f82c4cd2(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl("%.2f".into(), &[val.clone()]))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -46,12 +49,19 @@ pub fn ast_print_bb744a13f82c4cd2(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Pentax::Main.ExposureTime
 /// TODO: Add support for this expression pattern
-pub fn ast_value_bbb807c14c3cf509(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_bbb807c14c3cf509(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val * 1e-5",  // original expression
+        val,
+    ))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -73,12 +83,16 @@ pub fn ast_value_bbb807c14c3cf509(val: &TagValue) -> Result<TagValue, codegen_ru
 /// - Sony::Tag9416.ExposureTime
 /// - Sony::Tag9416.SonyExposureTime2
 /// TODO: Add support for this expression pattern
-pub fn ast_print_bb36ed62e5a52a4(val: &TagValue) -> TagValue
-{
+pub fn ast_print_bb36ed62e5a52a4(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val ? Image::ExifTool::Exif::PrintExposureTime($val) : \"Bulb\"", // original expression
+        val,
+    )
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -106,10 +120,13 @@ pub fn ast_print_bb36ed62e5a52a4(val: &TagValue) -> TagValue
 /// - Panasonic::Main.WhiteBalanceBias
 /// - Sanyo::MOV.ExposureCompensation
 /// TODO: Add support for this expression pattern
-pub fn ast_print_bba76882980e1e1a(val: &TagValue) -> TagValue
-{
+pub fn ast_print_bba76882980e1e1a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                            // tag_id will be filled at runtime
+        "UnknownTag",                                 // tag_name will be filled at runtime
+        "UnknownGroup",                               // group will be filled at runtime
+        "Image::ExifTool::Exif::PrintFraction($val)", // original expression
+        val,
+    )
 }
-
-

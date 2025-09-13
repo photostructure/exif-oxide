@@ -20,6 +20,7 @@ use codegen_runtime::{
 /// - CanonCustom::PersonalFuncValues.PF5ApertureMin
 pub fn ast_value_1072171a0b3828b9(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(exp(Image::ExifTool::Canon::CanonEv))
 }
@@ -38,9 +39,15 @@ pub fn ast_value_1072171a0b3828b9(
 /// Used by:
 /// - Olympus::CameraSettings.CustomSaturation
 /// TODO: Add support for this expression pattern
-pub fn ast_print_103361d26a5af32d(val: &TagValue) -> TagValue {
+pub fn ast_print_103361d26a5af32d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my ($a,$b,$c)=split \' \',$val;\n            if ($self->{Model} =~ /^E-1\\b/) {\n                $a-=$b; $c-=$b;\n                return \"CS$a (min CS0, max CS$c)\";\n            } else {\n                return \"$a (min $b, max $c)\";\n            }", // original expression
+                    val
+                )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -55,7 +62,14 @@ pub fn ast_print_103361d26a5af32d(val: &TagValue) -> TagValue {
 /// TODO: Add support for this expression pattern
 pub fn ast_value_1034313b8375eef0(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my @v=split(\" \",$val);\n            return $val / 1000 if @v == 1;\n            return $v[1] ? \"$v[1]-$v[0]\" : ($v[0] > 10000 ? $v[0] / 1000 : $v[0]);", // original expression
+                    val
+                ))
 }

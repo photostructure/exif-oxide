@@ -20,8 +20,9 @@ use codegen_runtime::{
 /// - Pentax::LevelInfoK3III.RollAngle
 pub fn ast_value_3ee5ea531e525a5e(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(((0i32 - val) / 2i32))
+    Ok((codegen_runtime::negate(val) / 2i32))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -34,7 +35,14 @@ pub fn ast_value_3ee5ea531e525a5e(
 /// TODO: Add support for this expression pattern
 pub fn ast_value_3e1220cade8783d3(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                       // tag_id will be filled at runtime
+        "UnknownTag",            // tag_name will be filled at runtime
+        "UnknownGroup",          // group will be filled at runtime
+        "$val =~ s/ *$//; $val", // original expression
+        val,
+    ))
 }

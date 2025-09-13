@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,10 +17,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - Canon::ShotInfo.BaseISO
-pub fn ast_value_b74a49b788fbe61c(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(((exp((((val / 32i32) * log((2i32))))) * 100i32) / 32i32))
+pub fn ast_value_b74a49b788fbe61c(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(((exp(((val / 32i32) * log((2i32)))) * 100i32) / 32i32))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -26,12 +32,16 @@ pub fn ast_value_b74a49b788fbe61c(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Nikon::Main.ISOSetting
 /// TODO: Add support for this expression pattern
-pub fn ast_print_b777f2fa21c400c(val: &TagValue) -> TagValue
-{
+pub fn ast_print_b777f2fa21c400c(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                    // tag_id will be filled at runtime
+        "UnknownTag",         // tag_name will be filled at runtime
+        "UnknownGroup",       // group will be filled at runtime
+        "$_=$val;s/^0 //;$_", // original expression
+        val,
+    )
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -70,12 +80,16 @@ pub fn ast_print_b777f2fa21c400c(val: &TagValue) -> TagValue
 /// - Sony::Tag2010h.ExposureCompensation
 /// - Sony::Tag2010i.ExposureCompensation
 /// TODO: Add support for this expression pattern
-pub fn ast_print_b75f5f46a9f320cf(val: &TagValue) -> TagValue
-{
+pub fn ast_print_b75f5f46a9f320cf(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                     // tag_id will be filled at runtime
+        "UnknownTag",                          // tag_name will be filled at runtime
+        "UnknownGroup",                        // group will be filled at runtime
+        "$val ? sprintf(\"%+.1f\", $val) : 0", // original expression
+        val,
+    )
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -85,10 +99,16 @@ pub fn ast_print_b75f5f46a9f320cf(val: &TagValue) -> TagValue
 /// Used by:
 /// - Panasonic::Main.FirmwareVersion
 /// TODO: Add support for this expression pattern
-pub fn ast_value_b7b5c432b9d85328(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_b7b5c432b9d85328(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                                              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val=~/[\\0-\\x2f]/ ? join(\" \",unpack(\"C*\",$val)) : $val", // original expression
+        val,
+    ))
 }
-
-

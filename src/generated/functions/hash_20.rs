@@ -19,7 +19,13 @@ use codegen_runtime::{
 /// Used by:
 /// - Exif::Main.TStop
 /// TODO: Add support for this expression pattern
-pub fn ast_print_2098e9c22eb4e03d(val: &TagValue) -> TagValue {
+pub fn ast_print_2098e9c22eb4e03d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                                             // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "join(\"-\", map { sprintf(\"%.2f\",$_) } split \" \", $val)", // original expression
+        val,
+    )
 }

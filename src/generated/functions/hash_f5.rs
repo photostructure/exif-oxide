@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,10 +17,12 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - Nikon::MenuSettingsZ9.MonitorBrightness
-pub fn ast_value_f549716a7ec6c29b(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+pub fn ast_value_f549716a7ec6c29b(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val - 5i32))
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -25,10 +31,12 @@ pub fn ast_value_f549716a7ec6c29b(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Canon::CameraInfoPowerShot.FNumber
 /// - Canon::CameraInfoPowerShot2.FNumber
-pub fn ast_value_f5e2fd998937b3b3(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+pub fn ast_value_f5e2fd998937b3b3(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(exp(((val / 192i32) * log((2i32)))))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -38,10 +46,13 @@ pub fn ast_value_f5e2fd998937b3b3(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - FujiFilm::RAF.XTransLayout
 /// TODO: Add support for this expression pattern
-pub fn ast_print_f591611bd0effe85(val: &TagValue) -> TagValue
-{
+pub fn ast_print_f591611bd0effe85(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                                      // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val =~ tr/012 /RGB/d; join \" \", $val =~ /....../g", // original expression
+        val,
+    )
 }
-
-

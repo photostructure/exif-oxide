@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -14,10 +18,16 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// Used by:
 /// - Matroska::Main.BlockDuration
 /// - Matroska::Main.ReferenceBlock
-pub fn ast_print_abb6a96ce6de058d(val: &TagValue) -> TagValue {
-    if  { format!("{} s", val).into() } else { val }
+pub fn ast_print_abb6a96ce6de058d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if ctx
+        .and_then(|c| c.get_data_member("TimeScale").cloned())
+        .unwrap_or(TagValue::U32(1))
+    {
+        format!("{} s", val).into()
+    } else {
+        val
+    }
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -33,10 +43,13 @@ pub fn ast_print_abb6a96ce6de058d(val: &TagValue) -> TagValue {
 /// - Nikon::MenuSettingsZ9v3.FocusShiftInterval
 /// - Nikon::MenuSettingsZ9v4.FocusShiftInterval
 /// TODO: Add support for this expression pattern
-pub fn ast_print_ab0e6c517653bb46(val: &TagValue) -> TagValue
-{
+pub fn ast_print_ab0e6c517653bb46(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                                          // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val == 1? \"1 Second\" : sprintf(\"%.0f Seconds\",$val)", // original expression
+        val,
+    )
 }
-
-

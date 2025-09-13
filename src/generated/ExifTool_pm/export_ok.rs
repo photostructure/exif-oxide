@@ -4,14 +4,6 @@
 
 /// EXPORT_OK array from ExifTool
 pub static EXPORT_OK: [&'static str; 45] = [
-    "GetTagTable",
-    "TagTableKeys",
-    "GetTagInfoList",
-    "AddTagToTable",
-    "HexDump",
-    "%allTables",
-    "@tableOrder",
-    "@fileTypes",
     "ReadValue",
     "GetByteOrder",
     "SetByteOrder",
@@ -36,6 +28,11 @@ pub static EXPORT_OK: [&'static str; 45] = [
     "Set32u",
     "Set64u",
     "Set64s",
+    "GetTagTable",
+    "TagTableKeys",
+    "GetTagInfoList",
+    "AddTagToTable",
+    "HexDump",
     "ImageInfo",
     "AvailableOptions",
     "GetTagName",
@@ -49,4 +46,7 @@ pub static EXPORT_OK: [&'static str; 45] = [
     "CanCreate",
     "AddUserDefinedTags",
     "OrderedKeys",
+    "%allTables",
+    "@tableOrder",
+    "@fileTypes",
 ];

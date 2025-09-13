@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,10 +17,16 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - Olympus::Main.ShutterSpeedValue
-pub fn ast_value_ff00b07c5d58863f(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(if (abs((val)) < 100i32) { (2i32 as f64).powf(((0i32 - val)) as f64) } else { 0i32 })
+pub fn ast_value_ff00b07c5d58863f(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if (abs((val)) < 100i32) {
+        (2i32 as f64).powf((codegen_runtime::negate(val)) as f64)
+    } else {
+        0i32
+    })
 }
-
 
 /// Original perl expression:
 /// ``` perl
@@ -25,10 +35,12 @@ pub fn ast_value_ff00b07c5d58863f(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Sony::Tag940c.CameraE-mountVersion
 /// - Sony::Tag940c.LensE-mountVersion
-pub fn ast_print_ff580d7a7e7ea714(val: &TagValue) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%x.%.2x".into(), &[val >> 8i32.clone(), val & 0xffu32.clone()]))
+pub fn ast_print_ff580d7a7e7ea714(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    TagValue::String(codegen_runtime::sprintf_perl(
+        "%x.%.2x".into(),
+        &[val >> 8i32.clone(), val & 0xffu32.clone()],
+    ))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -38,10 +50,16 @@ pub fn ast_print_ff580d7a7e7ea714(val: &TagValue) -> TagValue {
 /// Used by:
 /// - Olympus::Equipment.LensType
 /// TODO: Add support for this expression pattern
-pub fn ast_value_ff5d284655150fa7(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_ff5d284655150fa7(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                                              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "my @a=split(\" \",$val); sprintf(\"%x %.2x %.2x\",@a[0,2,3])", // original expression
+        val,
+    ))
 }
-
-

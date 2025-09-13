@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// Original perl expression:
 /// ``` perl
@@ -13,23 +17,29 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// ```
 /// Used by:
 /// - H264::MDPM.GPSAltitudeRef
-pub fn ast_value_9ead6fbe543c3486(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError> {
+pub fn ast_value_9ead6fbe543c3486(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(if val { 1i32 } else { 0i32 })
 }
 
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// $val=~/^8\./ ? "$val (camera has been serviced)" : $val
 /// ```
 /// Used by:
 /// - Pentax::CameraInfo.ProductionCode
-/// TODO: Add support for this expression pattern
-pub fn ast_print_9eb71f80f01c13ad(val: &TagValue) -> TagValue
-{
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+pub fn ast_print_9eb71f80f01c13ad(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if {
+        use regex::Regex;
+        use std::sync::LazyLock;
+        static REGEX_4a685b95e07900ea: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new(r"^8\.").unwrap());
+        REGEX_4a685b95e07900ea.is_match(&val.to_string())
+    } {
+        format!("{} (camera has been serviced)", val).into()
+    } else {
+        val
+    }
 }
-
-

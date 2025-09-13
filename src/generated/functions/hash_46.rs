@@ -19,6 +19,7 @@ use codegen_runtime::{
 /// - Pentax::SRInfo.SRFocalLength
 pub fn ast_value_46ca3f250be86611(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(if (val & 0x01u32) {
         (val * 4i32)
@@ -33,7 +34,7 @@ pub fn ast_value_46ca3f250be86611(
 /// ```
 /// Used by:
 /// - Panasonic::Leica6.LensSerialNumber
-pub fn ast_print_46a2e64bb40e5c4a(val: &TagValue) -> TagValue {
+pub fn ast_print_46a2e64bb40e5c4a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
         "%.10d".into(),
         &[val.clone()],
@@ -69,7 +70,14 @@ pub fn ast_print_46a2e64bb40e5c4a(val: &TagValue) -> TagValue {
 /// TODO: Add support for this expression pattern
 pub fn ast_value_462402e4c245880c(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "my @v=split(\" \",$val); $_*=15 foreach @v; \"$v[1] $v[0] $v[3] $v[2]\"", // original expression
+        val,
+    ))
 }

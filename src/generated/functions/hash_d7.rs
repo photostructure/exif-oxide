@@ -5,7 +5,11 @@
 
 #![allow(dead_code, unused_variables, unreachable_code)]
 
-use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}};
+use crate::types::{ExifContext, TagValue};
+use codegen_runtime::{
+    math::{exp, int, log},
+    string::{length_i32, length_string},
+};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -16,12 +20,19 @@ use crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp
 /// - Pentax::Main.ColorMatrixA
 /// - Pentax::Main.ColorMatrixB
 /// TODO: Add support for this expression pattern
-pub fn ast_value_d7759f03b97f918d(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_d7759f03b97f918d(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                                // tag_id will be filled at runtime
+        "UnknownTag",                                     // tag_name will be filled at runtime
+        "UnknownGroup",                                   // group will be filled at runtime
+        "join(\" \",map({ $_/8192 } split(\" \",$val)))", // original expression
+        val,
+    ))
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -34,12 +45,16 @@ pub fn ast_value_d7759f03b97f918d(val: &TagValue) -> Result<TagValue, codegen_ru
 /// Used by:
 /// - Olympus::FocusInfo.ManualFlash
 /// TODO: Add support for this expression pattern
-pub fn ast_print_d7861faba23a3afc(val: &TagValue) -> TagValue
-{
+pub fn ast_print_d7861faba23a3afc(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my ($a,$b) = split \' \',$val;\n            return \'Off\' unless $a;\n            $b = ($b == 1) ? \'Full\' : \"1/$b\";\n            return \"On ($b strength)\";", // original expression
+                    val
+                )
 }
-
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -50,10 +65,16 @@ pub fn ast_print_d7861faba23a3afc(val: &TagValue) -> TagValue
 /// - Jpeg2000::FileType.MinorVersion
 /// - QuickTime::FileType.MinorVersion
 /// TODO: Add support for this expression pattern
-pub fn ast_value_d7fdacd2543c3a55(val: &TagValue) -> Result<TagValue, codegen_runtime::types::ExifError>
-{
+pub fn ast_value_d7fdacd2543c3a55(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                              // tag_id will be filled at runtime
+        "UnknownTag",                                   // tag_name will be filled at runtime
+        "UnknownGroup",                                 // group will be filled at runtime
+        "sprintf(\"%x.%x.%x\", unpack(\"nCC\", $val))", // original expression
+        val,
+    ))
 }
-
-

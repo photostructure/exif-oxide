@@ -19,6 +19,7 @@ use codegen_runtime::{
 /// - Canon::ExposureInfo.ISO
 pub fn ast_value_2c6b83cffd1363b8(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val & 0x7fffffffu32))
 }
@@ -35,7 +36,14 @@ pub fn ast_value_2c6b83cffd1363b8(
 /// TODO: Add support for this expression pattern
 pub fn ast_value_2c10be511c94be8f(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my @v = unpack(\'C*\', $val);\n            return undef unless $v[0] > 0;\n            return sprintf(\"20%.2d:%.2d:%.2d %.2d:%.2d:%.2d\", @v)", // original expression
+                    val
+                ))
 }

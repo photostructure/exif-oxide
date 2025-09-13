@@ -18,7 +18,7 @@ use codegen_runtime::{
 /// Used by:
 /// - Nikon::FileInfo.DirectoryNumber
 /// - Sony::CameraSettings.FolderNumber
-pub fn ast_print_45502c266bb9ea6b(val: &TagValue) -> TagValue {
+pub fn ast_print_45502c266bb9ea6b(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl("%.3d".into(), &[val.clone()]))
 }
 
@@ -32,9 +32,16 @@ pub fn ast_print_45502c266bb9ea6b(val: &TagValue) -> TagValue {
 /// TODO: Add support for this expression pattern
 pub fn ast_value_45e5361ebf476759(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                         // tag_id will be filled at runtime
+        "UnknownTag",              // tag_name will be filled at runtime
+        "UnknownGroup",            // group will be filled at runtime
+        "$val =~ tr/\\0//d; $val", // original expression
+        val,
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -55,9 +62,15 @@ pub fn ast_value_45e5361ebf476759(
 /// - Sony::Tag9405b.StopsAboveBaseISO
 /// - Sony::Tag9416.StopsAboveBaseISO
 /// TODO: Add support for this expression pattern
-pub fn ast_print_45145cdaaff93e23(val: &TagValue) -> TagValue {
+pub fn ast_print_45145cdaaff93e23(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                      // tag_id will be filled at runtime
+        "UnknownTag",                           // tag_name will be filled at runtime
+        "UnknownGroup",                         // group will be filled at runtime
+        "$val ? sprintf(\"%.1f\",$val) : $val", // original expression
+        val,
+    )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -70,9 +83,16 @@ pub fn ast_print_45145cdaaff93e23(val: &TagValue) -> TagValue {
 /// TODO: Add support for this expression pattern
 pub fn ast_value_45fef045148be706(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "($val < 0x400 or $val == 0x7fff) ? $val : pack \"C*\", map { (($val>>$_)&0x1f)+0x60 } 10, 5, 0", // original expression
+                    val
+                ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -83,9 +103,15 @@ pub fn ast_value_45fef045148be706(
 /// Used by:
 /// - Sigma::Main.SensorTemperature
 /// TODO: Add support for this expression pattern
-pub fn ast_print_45781a09f536a8e0(val: &TagValue) -> TagValue {
+pub fn ast_print_45781a09f536a8e0(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    val.clone()
+    codegen_runtime::missing::missing_print_conv(
+        0,                                 // tag_id will be filled at runtime
+        "UnknownTag",                      // tag_name will be filled at runtime
+        "UnknownGroup",                    // group will be filled at runtime
+        "IsInt($val) ? \"$val C\" : $val", // original expression
+        val,
+    )
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -100,9 +126,16 @@ pub fn ast_print_45781a09f536a8e0(val: &TagValue) -> TagValue {
 /// TODO: Add support for this expression pattern
 pub fn ast_value_45f64f13ca77f48e(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my ($n, @a) = unpack(\"nN*\",$val);\n            $#a = $n - 1 if $n > @a;\n            return join(\' \', @a);", // original expression
+                    val
+                ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -119,7 +152,14 @@ pub fn ast_value_45f64f13ca77f48e(
 /// TODO: Add support for this expression pattern
 pub fn ast_value_4564b55cdb8716ed(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(val.clone())
+    Ok(codegen_runtime::missing::missing_value_conv(
+        0,                                        // tag_id will be filled at runtime
+        "UnknownTag",                             // tag_name will be filled at runtime
+        "UnknownGroup",                           // group will be filled at runtime
+        "my @v=reverse split(\" \",$val);\"@v\"", // original expression
+        val,
+    ))
 }

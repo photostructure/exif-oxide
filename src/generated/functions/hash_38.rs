@@ -38,6 +38,7 @@ use codegen_runtime::{
 /// - Canon::CameraInfo80D.FNumber
 pub fn ast_value_380417f4c177add7(
     val: &TagValue,
+    ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(exp((val - 8i32) / 16i32 * log(2i32)))
 }
