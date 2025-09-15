@@ -28,7 +28,7 @@ jsonschema = "0.32"
 regex = "1.11"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-tempfile = "3.20"
+tempfile = "3.22"
 base64 = "0.22"
 glob = "0.3"
 
