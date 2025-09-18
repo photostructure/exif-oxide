@@ -43,24 +43,17 @@ pub trait BinaryOperationsHandler {
     ) -> Result<String, CodeGenError> {
         // Handle power operator specially
         if op == "**" {
-            // Perl's ** operator is exponentiation, use powf in Rust
-            return Ok(format!("({} as f64).powf({} as f64)", left, right));
+            // Use cleaner power function
+            return Ok(format!("power({}, {})", left, right));
         }
 
         // Handle string concatenation operator
         if op == "." {
-            // Perl's . operator is string concatenation, use format! in Rust
-            match self.expression_type() {
-                ExpressionType::PrintConv | ExpressionType::ValueConv => {
-                    return Ok(format!(
-                        "TagValue::String(format!(\"{{}}{{}}\", {}, {}))",
-                        left, right
-                    ));
-                }
-                _ => {
-                    return Ok(format!("format!(\"{{}}{{}}\", {}, {})", left, right));
-                }
-            }
+            // Use cleaner concat function
+            return Ok(format!(
+                "codegen_runtime::string::concat(&{}, &{})",
+                left, right
+            ));
         }
 
         // Handle regex match operators
@@ -83,14 +76,14 @@ pub trait BinaryOperationsHandler {
             };
 
             // Smart conversion: only add .to_string() to non-string-literal operands
-            let left_converted = if left.starts_with('"') && left.ends_with('"') {
-                left.to_string()
+            let left_converted = if self.is_string_literal_or_wrapped(left) {
+                self.extract_string_literal(left)
             } else {
                 format!("{}.to_string()", left)
             };
 
-            let right_converted = if right.starts_with('"') && right.ends_with('"') {
-                right.to_string()
+            let right_converted = if self.is_string_literal_or_wrapped(right) {
+                self.extract_string_literal(right)
             } else {
                 format!("{}.to_string()", right)
             };
@@ -108,14 +101,14 @@ pub trait BinaryOperationsHandler {
             && self.is_string_comparison(left, right)
         {
             // Smart conversion: only add .to_string() to non-string-literal operands
-            let left_converted = if left.starts_with('"') && left.ends_with('"') {
-                left.to_string()
+            let left_converted = if self.is_string_literal_or_wrapped(left) {
+                self.extract_string_literal(left)
             } else {
                 format!("{}.to_string()", left)
             };
 
-            let right_converted = if right.starts_with('"') && right.ends_with('"') {
-                right.to_string()
+            let right_converted = if self.is_string_literal_or_wrapped(right) {
+                self.extract_string_literal(right)
             } else {
                 format!("{}.to_string()", right)
             };
@@ -201,4 +194,39 @@ pub trait BinaryOperationsHandler {
         op: &str,
         right: &str,
     ) -> Result<String, CodeGenError>;
+
+    /// Check if a string is a string literal or TagValue-wrapped string literal
+    fn is_string_literal_or_wrapped(&self, s: &str) -> bool {
+        // Direct string literal
+        if s.starts_with('"') && s.ends_with('"') {
+            return true;
+        }
+
+        // TagValue-wrapped string literal: Into::<TagValue>::into("literal")
+        if s.starts_with("Into::<TagValue>::into(") && s.ends_with(")") {
+            let inner = &s[23..s.len() - 1]; // Extract content between ( and )
+            return inner.starts_with('"') && inner.ends_with('"');
+        }
+
+        false
+    }
+
+    /// Extract string literal from either direct form or TagValue wrapper
+    fn extract_string_literal(&self, s: &str) -> String {
+        // Direct string literal
+        if s.starts_with('"') && s.ends_with('"') {
+            return s.to_string();
+        }
+
+        // TagValue-wrapped string literal: Into::<TagValue>::into("literal")
+        if s.starts_with("Into::<TagValue>::into(") && s.ends_with(")") {
+            let inner = &s[23..s.len() - 1]; // Extract "literal" from ( "literal" )
+            if inner.starts_with('"') && inner.ends_with('"') {
+                return inner.to_string();
+            }
+        }
+
+        // Fallback - shouldn't happen if is_string_literal_or_wrapped returned true
+        s.to_string()
+    }
 }

@@ -66,7 +66,7 @@ pub trait NormalizedAstHandler {
             }
             "log" => {
                 let args = self.process_function_args(&node.children)?;
-                Ok(format!("({} as f64).ln()", args[0]))
+                Ok(format!("log({})", args[0]))
             }
             "length" => {
                 let args = self.process_function_args(&node.children)?;

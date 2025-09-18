@@ -154,12 +154,22 @@ impl TagKitStrategy {
 
         // Add imports for conversion functions (after processing tags)
         if !self.imports.is_empty() {
+            tracing::debug!(
+                "📋 TagKit: Generating {} imports for table {}",
+                self.imports.len(),
+                symbol.table_name
+            );
             code.push('\n');
             code.push_str("// Generated imports for conversion functions\n");
             let mut imports_by_module: std::collections::BTreeMap<String, Vec<String>> =
                 std::collections::BTreeMap::new();
 
             for (module_path, function_name) in &self.imports {
+                tracing::debug!(
+                    "📥 TagKit: Adding import {}::{}",
+                    module_path,
+                    function_name
+                );
                 imports_by_module
                     .entry(module_path.clone())
                     .or_default()
@@ -220,7 +230,7 @@ impl TagKitStrategy {
                     if let Some(ref value_conv) = tag_def.value_conv {{
                         match value_conv {{
                             ValueConv::None => Ok(value.clone()),
-                            ValueConv::Function(func) => func(value),
+                            ValueConv::Function(func) => func(value, None),
                             ValueConv::Expression(_expr) => {{
                                 // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                                 Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
@@ -251,7 +261,7 @@ impl TagKitStrategy {
                     if let Some(ref print_conv) = tag_def.print_conv {{
                         match print_conv {{
                             PrintConv::None => value.clone(),
-                            PrintConv::Function(func) => func(value),
+                            PrintConv::Function(func) => func(value, None),
                             PrintConv::Expression(_expr) => {{
                                 // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                                 value.clone() // Fallback to original value when expression not handled by PPI
@@ -499,6 +509,11 @@ impl TagKitStrategy {
         )?;
 
         // Register the import for this file
+        tracing::debug!(
+            "📦 TagKit: Registering import module={} function={}",
+            function_spec.module_path,
+            function_spec.function_name
+        );
         self.register_import(&function_spec.module_path, &function_spec.function_name);
 
         // Return just the function name

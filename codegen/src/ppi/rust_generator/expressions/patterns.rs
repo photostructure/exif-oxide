@@ -61,7 +61,7 @@ pub trait ComplexPatternHandler {
     fn try_log_pattern(&self, parts: &[String]) -> Result<Option<String>, CodeGenError> {
         if parts.len() == 2 && parts[0] == "log" {
             let var = &parts[1];
-            let result = format!("({} as f64).ln()", var);
+            let result = format!("log({})", var);
             return Ok(Some(result));
         }
         Ok(None)

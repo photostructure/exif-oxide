@@ -168,13 +168,10 @@ pub trait FunctionGenerator: PpiVisitor {
             }
             "int" => Ok(format!("({}).trunc() as i32", arg)),
             "abs" => Ok(format!("({}).abs()", arg)),
-            "log" => Ok(format!("({} as f64).ln()", arg)),
+            "log" => Ok(format!("log({})", arg)),
             "defined" => {
-                // Check if value is defined (not None/null)
-                Ok(format!(
-                    "match {} {{ TagValue::String(s) => !s.is_empty(), _ => true }}",
-                    arg
-                ))
+                // Use the cleaner runtime helper
+                Ok(format!("codegen_runtime::string::is_defined(&{})", arg))
             }
             _ => Err(CodeGenError::UnsupportedFunction(function_name.to_string())),
         }
@@ -261,7 +258,7 @@ pub trait FunctionGenerator: PpiVisitor {
                 } else {
                     "val".to_string()
                 };
-                Ok(format!("({} as f64).ln()", first_arg))
+                Ok(format!("(Into::<f64>::into({})).ln()", first_arg))
             }
             "length" => {
                 // Perl length function - get string length
@@ -399,7 +396,10 @@ pub trait FunctionGenerator: PpiVisitor {
                 if div_parts.len() == 2 {
                     let left = div_parts[0].trim().replace("$val", "val");
                     let right = div_parts[1].trim();
-                    format!("({} as f64) / ({} as f64)", left, right)
+                    format!(
+                        "(Into::<f64>::into({})) / (Into::<f64>::into({}))",
+                        left, right
+                    )
                 } else {
                     arg.replace("$val", "val")
                 }
