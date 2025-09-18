@@ -281,6 +281,97 @@ pub fn ast_print_HASH(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
 
 See `codegen-runtime/tests/missing_tracking.rs` for unit tests and `codegen/tests/missing_conversions_test.rs` for integration tests.
 
+## Consistency Best Practices
+
+**TL;DR**: Use the same approach for the same problem. Follow these patterns to avoid TIMTOWTDI (There Is More Than One Way To Do It).
+
+### TagValue Construction
+
+**✅ DO**:
+```rust
+TagValue::String(String::new())              // Empty strings
+TagValue::String(s.into())                   // Convert to string
+TagValue::Empty                              // Default fallback
+```
+
+**❌ DON'T**:
+```rust
+TagValue::String("".to_string())             // Unnecessary allocation
+TagValue::String(String::from(""))           // Verbose
+TagValue::U32(1)                             // Inconsistent defaults
+```
+
+### Function Call Generation
+
+**✅ DO** - Use runtime helpers consistently:
+```rust
+codegen_runtime::math::abs(val)              // Mathematical functions
+codegen_runtime::sprintf_perl(fmt, args)     // String formatting
+codegen_runtime::string::length_string(val)  // String operations
+```
+
+**❌ DON'T** - Mix patterns arbitrarily:
+```rust
+log(val)           // Bare function (old pattern)
+val.abs()          // Method call (inconsistent)
+format!("{}", val) // Native Rust (breaks compatibility)
+```
+
+### String/Code Generation
+
+**✅ DO** - Use formatdoc! for templates:
+```rust
+let code = formatdoc! {r#"
+    pub fn {name}(val: &TagValue) -> TagValue {{
+        // Generated function body
+        {body}
+    }}
+"#, name = func_name, body = body_code};
+```
+
+**❌ DON'T** - Chain format! + push_str:
+```rust
+code.push_str(&format!("pub fn {}(", name));
+code.push_str(&format!("val: &TagValue"));
+code.push_str(") -> TagValue {\n");
+```
+
+### String Escaping
+
+**✅ DO** - Use utility function:
+```rust
+use crate::common::utils::escape_for_rust_string;
+format!("\"{}\"", escape_for_rust_string(value))
+```
+
+**❌ DON'T** - Manual replace chains:
+```rust
+value.replace('\\', "\\\\").replace('"', "\\\"")  // Incomplete, error-prone
+```
+
+### Error Handling
+
+**✅ DO** - Consistent error types:
+```rust
+Result<String, CodeGenError>                 // Code generation errors
+anyhow::Result<T>                           // General operations
+```
+
+**❌ DON'T** - Mix error patterns:
+```rust
+Result<T, Box<dyn std::error::Error>>       // Verbose
+unwrap()                                    // In non-test code
+```
+
+### Architecture Guidelines
+
+- **Single Visitor**: Use one visitor pattern, not multiple implementations
+- **No Circular Traits**: Avoid traits that delegate back to the same struct
+- **Focused Traits**: 1-2 traits max, each with clear responsibility
+- **Consistent Imports**: Either fully qualified or imported, not mixed
+
+See [P09-no-timtowdi.md](todo/P09-no-timtowdi.md) for detailed refactoring plan and alternatives analysis.
+
 ## Related Documentation
 
 ### Essential Reading
