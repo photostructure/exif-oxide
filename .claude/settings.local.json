@@ -1,11 +1,16 @@
 {
   "permissions": {
     "allow": [
+      "Bash(./codegen/scripts/ppi_ast.pl:*)",
+      "Bash(./scripts/capture.sh cargo:*)",
+      "Bash(./scripts/capture.sh make:*)",
       "Bash(./scripts/ppi_ast.pl:*)",
+      "Bash(./target/debug/debug-ppi:*)",
       "Bash(./target/debug/exif-oxide:*)",
-      "Bash(cargo run:*)",
-      "Bash(cargo test:*)",
+      "Bash(./target/debug/generate-expression-tests:*)",
+      "Bash(awk:*)",
       "Bash(cargo:*)",
+      "Bash(cat:*)",
       "Bash(curl:*)",
       "Bash(find:*)",
       "Bash(git add:*)",
@@ -14,21 +19,15 @@
       "Bash(gpg:*)",
       "Bash(grep:*)",
       "Bash(make:*)",
-      "Bash(rustc:*)",
-      "WebSearch",
-      "Bash(RUST_BACKTRACE=1 ./target/debug/debug-ppi '$$self{TimeScale} ? $val / $$self{TimeScale} : $val')",
-      "Bash(./target/debug/debug-ppi '$$self{TimeScale} ? $val / $$self{TimeScale} : $val')",
-      "Bash(./codegen/scripts/ppi_ast.pl:*)",
       "Bash(perl:*)",
-      "Bash(RUST_LOG=debug cargo run --bin debug-ppi -- 'length($val) > 64 ? \\$val : $val')",
-      "Bash(./target/debug/debug-ppi 'length($val) > 64 ? \\$val : $val')",
-      "Bash(./target/debug/debug-ppi:*)",
-      "Bash(./target/debug/generate-expression-tests:*)"
+      "Bash(rustc:*)",
+      "Bash(sed:*)",
+      "WebSearch"
     ],
     "deny": [],
     "additionalDirectories": [
-      "/home/mrm/src/PPI/",
-      "/home/mrm/src/test-images/",
+      "../PPI/",
+      "../test-images/",
       "/tmp/"
     ]
   }
