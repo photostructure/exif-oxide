@@ -22,17 +22,11 @@
 //! → Rust implementation dispatch
 
 // This entire module is currently only used in tests
-// TODO: Remove #[cfg(test)] when this registry is used in actual codegen
-
-#[cfg(test)]
 use std::collections::HashMap;
-#[cfg(test)]
 use std::sync::LazyLock;
-#[cfg(test)]
 use tracing::trace;
 
 /// Function implementation types for different categories of function calls
-#[cfg(test)]
 #[derive(Debug, Clone)]
 pub enum FunctionImplementation {
     /// Perl builtin functions (sprintf, substr, etc.)
@@ -45,7 +39,6 @@ pub enum FunctionImplementation {
 
 /// Builtin Perl function mappings to Rust implementations
 #[derive(Debug, Clone)]
-#[cfg(test)]
 pub struct BuiltinFunction {
     pub module_path: &'static str,
     pub function_name: &'static str,
@@ -54,7 +47,6 @@ pub struct BuiltinFunction {
 
 /// ExifTool module function mappings
 #[derive(Debug, Clone)]
-#[cfg(test)]
 pub struct ModuleFunction {
     pub module_path: &'static str,
     pub function_name: &'static str,
@@ -63,7 +55,6 @@ pub struct ModuleFunction {
 
 /// Custom script function mappings for complex multi-line expressions
 #[derive(Debug, Clone)]
-#[cfg(test)]
 pub struct ScriptFunction {
     pub module_path: &'static str,
     pub function_name: &'static str,
@@ -71,7 +62,6 @@ pub struct ScriptFunction {
 }
 
 // Registry for function call lookups
-#[cfg(test)]
 static FUNCTION_CALL_REGISTRY: LazyLock<HashMap<&'static str, FunctionImplementation>> =
     LazyLock::new(|| {
         let mut m = HashMap::new();
@@ -249,7 +239,6 @@ static FUNCTION_CALL_REGISTRY: LazyLock<HashMap<&'static str, FunctionImplementa
 
 // Registry for function signature patterns (for more flexible matching)
 // Key: normalized function pattern, Value: function name for main registry lookup
-#[cfg(test)]
 static FUNCTION_PATTERN_REGISTRY: LazyLock<HashMap<&'static str, &'static str>> =
     LazyLock::new(|| {
         let mut m = HashMap::new();
@@ -278,7 +267,6 @@ static FUNCTION_PATTERN_REGISTRY: LazyLock<HashMap<&'static str, &'static str>> 
     });
 
 /// Look up a function implementation by exact function name or call pattern
-#[cfg(test)]
 pub fn lookup_function(function_call: &str) -> Option<&'static FunctionImplementation> {
     trace!("🔍 Function lookup for: '{}'", function_call);
 

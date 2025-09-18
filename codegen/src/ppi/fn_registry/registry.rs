@@ -42,6 +42,8 @@ pub struct FunctionSpec {
     pub expression_type: ExpressionType,
     /// Original Perl expression for documentation
     pub original_expression: String,
+    /// Module name for registry lookup (e.g., "Canon_pm", "Exif_pm")
+    pub source_module: Option<String>,
 }
 
 /// PPI function registry for AST-based deduplication
@@ -88,8 +90,23 @@ impl PpiFunctionRegistry {
         // Generate hash from AST structure (not expression text)
         let ast_hash = self.hash_ast_structure(ppi_ast)?;
 
+        tracing::debug!(
+            "🔗 PPI Registry: Registering AST hash={} type={:?} expr='{}'",
+            ast_hash,
+            expression_type,
+            original_expression
+        );
+
+        // Capture module from usage context before moving it
+        let source_module = usage_context.as_ref().map(|ctx| ctx.module.clone());
+
         // Add usage context if provided
         if let Some(context) = usage_context {
+            tracing::debug!(
+                "📍 PPI Registry: Adding usage context for hash={} context={}",
+                ast_hash,
+                context
+            );
             self.usage_contexts
                 .entry(ast_hash.clone())
                 .or_insert_with(BTreeSet::new)
@@ -98,12 +115,28 @@ impl PpiFunctionRegistry {
 
         // Check if we already have this AST registered
         if let Some(existing_spec) = self.ast_to_function.get(&ast_hash) {
+            tracing::debug!(
+                "♻️  PPI Registry: Reusing existing function hash={} name={}",
+                ast_hash,
+                existing_spec.function_name
+            );
             return Ok(existing_spec.clone());
         }
 
         // Generate new function for this AST
-        let function_spec =
-            self.create_function_spec(&ast_hash, expression_type, original_expression);
+        let function_spec = self.create_function_spec(
+            &ast_hash,
+            expression_type,
+            original_expression,
+            source_module,
+        );
+
+        tracing::debug!(
+            "✨ PPI Registry: Creating new function hash={} name={} module={}",
+            ast_hash,
+            function_spec.function_name,
+            function_spec.module_path
+        );
 
         // Store the spec and the AST for later code generation
         self.ast_to_function
@@ -130,6 +163,7 @@ impl PpiFunctionRegistry {
         ast_hash: &str,
         expression_type: ExpressionType,
         original_expression: &str,
+        source_module: Option<String>,
     ) -> FunctionSpec {
         let hash_prefix = ast_hash.chars().take(2).collect::<String>();
         let function_name = match expression_type {
@@ -146,6 +180,7 @@ impl PpiFunctionRegistry {
             hash_prefix,
             expression_type,
             original_expression: original_expression.to_string(),
+            source_module,
         }
     }
 

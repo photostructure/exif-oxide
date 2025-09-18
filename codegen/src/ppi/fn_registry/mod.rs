@@ -7,7 +7,11 @@
 mod registry;
 mod stats;
 
+#[cfg(test)]
+mod integration_tests;
+
 pub use registry::{FunctionSpec, PpiFunctionRegistry, UsageContext};
+pub use stats::{ConversionStats, RegistryStats};
 
 use anyhow::Result;
 use indoc::formatdoc;
@@ -22,7 +26,7 @@ use crate::strategies::GeneratedFile;
 impl PpiFunctionRegistry {
     /// Generate all function files after all modules have been processed
     pub fn generate_function_files(&mut self) -> Result<Vec<GeneratedFile>> {
-        self.generate_function_files_with_imports("crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{int, exp, log}, string::{length_string, length_i32}}")
+        self.generate_function_files_with_imports("crate::types::{TagValue, ExifContext}; use codegen_runtime::{math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat}, string::{length_string, length_i32, chr, uc}}")
     }
 
     /// Generate all function files with custom imports (for test environment)
@@ -42,10 +46,37 @@ impl PpiFunctionRegistry {
 
         // Generate function code with usage contexts now that all registrations are complete
         let mut generated_functions: HashMap<String, String> = HashMap::new();
+        tracing::debug!(
+            "🏭 PPI Registry: Starting function generation for {} registered ASTs",
+            ast_function_data.len()
+        );
+
         for (ast_hash, function_spec, ppi_ast) in ast_function_data {
-            let function_code =
-                self.generate_function_code_with_stats(&ppi_ast, &function_spec, &ast_hash)?;
-            generated_functions.insert(ast_hash, function_code);
+            tracing::debug!(
+                "🔨 PPI Registry: Generating function hash={} name={}",
+                ast_hash,
+                function_spec.function_name
+            );
+
+            match self.generate_function_code_with_stats(&ppi_ast, &function_spec, &ast_hash) {
+                Ok(function_code) => {
+                    tracing::debug!(
+                        "✅ PPI Registry: Successfully generated function hash={} ({} chars)",
+                        ast_hash,
+                        function_code.len()
+                    );
+                    generated_functions.insert(ast_hash, function_code);
+                }
+                Err(e) => {
+                    tracing::error!(
+                        "❌ PPI Registry: Failed to generate function hash={} name={} error={}",
+                        ast_hash,
+                        function_spec.function_name,
+                        e
+                    );
+                    return Err(e);
+                }
+            }
         }
 
         // Group functions by their two-character hash prefix
@@ -103,7 +134,7 @@ impl PpiFunctionRegistry {
             Ok(code) => {
                 // PPI generation succeeded - record the success
                 self.conversion_stats_mut()
-                    .record_success(function_spec.expression_type);
+                    .record_ppi_success(function_spec.expression_type);
                 code
             }
             Err(e) => {
@@ -113,7 +144,7 @@ impl PpiFunctionRegistry {
                     function_spec.original_expression, e
                 );
 
-                self.generate_fallback_function(function_spec, ast_hash)?
+                self.generate_registry_or_placeholder_function(function_spec, ast_hash)?
             }
         };
 
@@ -196,14 +227,35 @@ impl PpiFunctionRegistry {
         })
     }
 
-    /// Generate fallback function using impl_registry when PPI generation fails
-    fn generate_fallback_function(
-        &self,
+    /// Generate registry or placeholder function when PPI generation fails
+    ///
+    /// Implements three-tier fallback system:
+    /// 1. PPI generation (already failed)
+    /// 2. Registry lookup (try here)
+    /// 3. Placeholder fallback (final fallback)
+    fn generate_registry_or_placeholder_function(
+        &mut self,
         function_spec: &FunctionSpec,
         ast_hash: &str,
     ) -> Result<String> {
-        // For now, just generate a placeholder function
-        // TODO: Add impl_registry integration later
+        // Try registry lookup first
+        if let Some(source_module) = &function_spec.source_module {
+            if let Some(registry_code) = crate::impl_registry::try_registry_lookup(
+                function_spec.expression_type,
+                &function_spec.original_expression,
+                source_module,
+                &function_spec.function_name,
+            ) {
+                // Registry fallback succeeded
+                self.conversion_stats_mut()
+                    .record_registry_success(function_spec.expression_type);
+                return Ok(registry_code);
+            }
+        }
+
+        // Registry lookup failed or no source module - fall back to placeholder
+        self.conversion_stats_mut()
+            .record_placeholder_fallback(function_spec.expression_type);
         Ok(self.generate_placeholder_function(function_spec, ast_hash))
     }
 
@@ -224,42 +276,40 @@ impl PpiFunctionRegistry {
             .replace('\r', "\\r")
             .replace('\t', "\\t");
 
-        let (signature, default_return) = match function_spec.expression_type {
-            ExpressionType::Condition => (
-                format!(
-                    "pub fn {}(val: &TagValue, ctx: Option<&ExifContext>) -> bool",
-                    function_spec.function_name
-                ),
-                "false".to_string(),
-            ),
-            ExpressionType::ValueConv => (
-                format!(
-                    "pub fn {}(val: &TagValue, ctx: Option<&ExifContext>) -> Result<TagValue, codegen_runtime::types::ExifError>",
-                    function_spec.function_name
-                ),
+        // Use the unified signature generation
+        let signature = crate::ppi::rust_generator::signature::generate_signature(
+            &function_spec.expression_type,
+            &function_spec.function_name,
+        );
+
+        let default_return = match function_spec.expression_type {
+            ExpressionType::Condition => "false".to_string(),
+            ExpressionType::ValueConv => {
                 // Call missing_value_conv to track this for --show-missing
-                format!(r#"Ok(codegen_runtime::missing::missing_value_conv(
-                    0, // tag_id will be filled at runtime
-                    "UnknownTag", // tag_name will be filled at runtime
-                    "UnknownGroup", // group will be filled at runtime
-                    "{}", // original expression
-                    val
-                ))"#, escaped_expr),
-            ),
-            ExpressionType::PrintConv => (
                 format!(
-                    "pub fn {}(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue",
-                    function_spec.function_name
-                ),
-                // Call missing_print_conv to track this for --show-missing
-                format!(r#"codegen_runtime::missing::missing_print_conv(
+                    r#"Ok(codegen_runtime::missing::missing_value_conv(
                     0, // tag_id will be filled at runtime
                     "UnknownTag", // tag_name will be filled at runtime
                     "UnknownGroup", // group will be filled at runtime
                     "{}", // original expression
                     val
-                )"#, escaped_expr),
-            ),
+                ))"#,
+                    escaped_expr
+                )
+            }
+            ExpressionType::PrintConv => {
+                // Call missing_print_conv to track this for --show-missing
+                format!(
+                    r#"codegen_runtime::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "{}", // original expression
+                    val
+                )"#,
+                    escaped_expr
+                )
+            }
         };
 
         // Add usage context if available

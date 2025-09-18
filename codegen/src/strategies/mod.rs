@@ -450,7 +450,7 @@ impl StrategyDispatcher {
         log_content.push_str(&format!(
             "PrintConv: {:.1}% ({}/{}) processed by PPI\n",
             print_conv_rate,
-            conversion_stats.print_conv_successes,
+            conversion_stats.print_conv_ppi_successes,
             conversion_stats.print_conv_attempts
         ));
 
@@ -459,7 +459,7 @@ impl StrategyDispatcher {
         log_content.push_str(&format!(
             "ValueConv: {:.1}% ({}/{}) processed by PPI\n",
             value_conv_rate,
-            conversion_stats.value_conv_successes,
+            conversion_stats.value_conv_ppi_successes,
             conversion_stats.value_conv_attempts
         ));
 
@@ -468,7 +468,7 @@ impl StrategyDispatcher {
         log_content.push_str(&format!(
             "Condition: {:.1}% ({}/{}) processed by PPI\n",
             condition_rate,
-            conversion_stats.condition_successes,
+            conversion_stats.condition_ppi_successes,
             conversion_stats.condition_attempts
         ));
 
@@ -476,9 +476,9 @@ impl StrategyDispatcher {
         let total_attempts = conversion_stats.print_conv_attempts
             + conversion_stats.value_conv_attempts
             + conversion_stats.condition_attempts;
-        let total_successes = conversion_stats.print_conv_successes
-            + conversion_stats.value_conv_successes
-            + conversion_stats.condition_successes;
+        let total_successes = conversion_stats.print_conv_ppi_successes
+            + conversion_stats.value_conv_ppi_successes
+            + conversion_stats.condition_ppi_successes;
 
         if total_attempts > 0 {
             let overall_rate = (total_successes as f64 / total_attempts as f64) * 100.0;

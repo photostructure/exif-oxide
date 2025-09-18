@@ -18,6 +18,10 @@ path = "src/debug_ppi.rs"
 name = "generate-expression-tests"
 path = "src/generate_expression_tests.rs"
 
+[[bin]]
+name = "debug-stats"
+path = "src/debug_stats.rs"
+
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"

@@ -603,6 +603,14 @@ impl RustGenerator {
 
                 // Process each part using the proper expression combiner logic
                 // Apply normalization to each branch to handle complex expressions properly
+                //
+                // CRITICAL: Each branch of a ternary operator must be normalized separately
+                // because complex expressions (arithmetic, function calls, etc.) within ternary
+                // branches may not be properly parsed without normalization. This ensures:
+                // - Operator precedence is correctly handled in all branches
+                // - Function calls are properly recognized and structured
+                // - String operations are normalized consistently
+                // - Complex nested expressions are properly bracketed
                 let condition_ast = PpiNode {
                     class: "PPI::Statement".to_string(),
                     content: None,
@@ -785,5 +793,216 @@ impl RustGenerator {
         }
 
         has_sprintf && has_binary_op
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::ppi::{ExpressionType, PpiNode};
+
+    fn create_test_generator() -> RustGenerator {
+        RustGenerator::new(
+            ExpressionType::PrintConv,
+            "test_function".to_string(),
+            "test expression".to_string(),
+        )
+    }
+
+    #[test]
+    fn test_has_sprintf_with_binary_ops_basic() {
+        let generator = create_test_generator();
+
+        // Test case with sprintf and multiplication
+        let children_with_sprintf_and_mult = vec![
+            PpiNode {
+                class: "PPI::Token::Word".to_string(),
+                content: Some("sprintf".to_string()),
+                children: vec![],
+                symbol_type: None,
+                numeric_value: None,
+                string_value: None,
+                structure_bounds: None,
+            },
+            PpiNode {
+                class: "PPI::Token::Operator".to_string(),
+                content: Some("*".to_string()),
+                children: vec![],
+                symbol_type: None,
+                numeric_value: None,
+                string_value: None,
+                structure_bounds: None,
+            },
+        ];
+
+        assert!(generator.has_sprintf_with_binary_ops(&children_with_sprintf_and_mult));
+    }
+
+    #[test]
+    fn test_has_sprintf_with_binary_ops_all_operators() {
+        let generator = create_test_generator();
+
+        let sprintf_node = PpiNode {
+            class: "PPI::Token::Word".to_string(),
+            content: Some("sprintf".to_string()),
+            children: vec![],
+            symbol_type: None,
+            numeric_value: None,
+            string_value: None,
+            structure_bounds: None,
+        };
+
+        // Test each binary operator
+        for op in &["*", "/", "+", "-"] {
+            let children = vec![
+                sprintf_node.clone(),
+                PpiNode {
+                    class: "PPI::Token::Operator".to_string(),
+                    content: Some(op.to_string()),
+                    children: vec![],
+                    symbol_type: None,
+                    numeric_value: None,
+                    string_value: None,
+                    structure_bounds: None,
+                },
+            ];
+
+            assert!(
+                generator.has_sprintf_with_binary_ops(&children),
+                "Should detect sprintf with '{}' operator",
+                op
+            );
+        }
+    }
+
+    #[test]
+    fn test_has_sprintf_with_binary_ops_false_cases() {
+        let generator = create_test_generator();
+
+        // Test case with sprintf but no binary operators
+        let sprintf_only = vec![
+            PpiNode {
+                class: "PPI::Token::Word".to_string(),
+                content: Some("sprintf".to_string()),
+                children: vec![],
+                symbol_type: None,
+                numeric_value: None,
+                string_value: None,
+                structure_bounds: None,
+            },
+            PpiNode {
+                class: "PPI::Token::Quote::Double".to_string(),
+                content: Some("\"format\"".to_string()),
+                children: vec![],
+                symbol_type: None,
+                numeric_value: None,
+                string_value: None,
+                structure_bounds: None,
+            },
+        ];
+
+        assert!(!generator.has_sprintf_with_binary_ops(&sprintf_only));
+
+        // Test case with binary ops but no sprintf
+        let binary_only = vec![
+            PpiNode {
+                class: "PPI::Token::Symbol".to_string(),
+                content: Some("$val".to_string()),
+                children: vec![],
+                symbol_type: Some("scalar".to_string()),
+                numeric_value: None,
+                string_value: None,
+                structure_bounds: None,
+            },
+            PpiNode {
+                class: "PPI::Token::Operator".to_string(),
+                content: Some("*".to_string()),
+                children: vec![],
+                symbol_type: None,
+                numeric_value: None,
+                string_value: None,
+                structure_bounds: None,
+            },
+        ];
+
+        assert!(!generator.has_sprintf_with_binary_ops(&binary_only));
+
+        // Test empty children
+        assert!(!generator.has_sprintf_with_binary_ops(&[]));
+    }
+
+    #[test]
+    fn test_has_sprintf_with_binary_ops_nested() {
+        let generator = create_test_generator();
+
+        // Test nested structure where sprintf and operator are in child nodes
+        let nested_children = vec![PpiNode {
+            class: "PPI::Structure::List".to_string(),
+            content: Some("(".to_string()),
+            children: vec![
+                PpiNode {
+                    class: "PPI::Token::Word".to_string(),
+                    content: Some("sprintf".to_string()),
+                    children: vec![],
+                    symbol_type: None,
+                    numeric_value: None,
+                    string_value: None,
+                    structure_bounds: None,
+                },
+                PpiNode {
+                    class: "PPI::Token::Operator".to_string(),
+                    content: Some("*".to_string()),
+                    children: vec![],
+                    symbol_type: None,
+                    numeric_value: None,
+                    string_value: None,
+                    structure_bounds: None,
+                },
+            ],
+            symbol_type: None,
+            numeric_value: None,
+            string_value: None,
+            structure_bounds: None,
+        }];
+
+        assert!(generator.has_sprintf_with_binary_ops(&nested_children));
+    }
+
+    #[test]
+    fn test_has_sprintf_with_binary_ops_ignores_other_operators() {
+        let generator = create_test_generator();
+
+        // Test that non-binary operators are ignored
+        let children_with_other_ops = vec![
+            PpiNode {
+                class: "PPI::Token::Word".to_string(),
+                content: Some("sprintf".to_string()),
+                children: vec![],
+                symbol_type: None,
+                numeric_value: None,
+                string_value: None,
+                structure_bounds: None,
+            },
+            PpiNode {
+                class: "PPI::Token::Operator".to_string(),
+                content: Some(",".to_string()),
+                children: vec![],
+                symbol_type: None,
+                numeric_value: None,
+                string_value: None,
+                structure_bounds: None,
+            },
+            PpiNode {
+                class: "PPI::Token::Operator".to_string(),
+                content: Some(".".to_string()),
+                children: vec![],
+                symbol_type: None,
+                numeric_value: None,
+                string_value: None,
+                structure_bounds: None,
+            },
+        ];
+
+        assert!(!generator.has_sprintf_with_binary_ops(&children_with_other_ops));
     }
 }

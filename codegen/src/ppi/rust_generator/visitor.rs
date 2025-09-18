@@ -4,6 +4,7 @@
 //! PPI AST nodes and generating Rust code from them.
 
 use super::errors::CodeGenError;
+use crate::impl_registry::lookup_function;
 use crate::ppi::types::*;
 use indoc::formatdoc;
 
@@ -239,7 +240,7 @@ pub trait PpiVisitor {
 
             // In PrintConv context, wrap in TagValue::String or use .into()
             match self.expression_type() {
-                ExpressionType::PrintConv => Ok(format!("{}.into()", format_expr)),
+                ExpressionType::PrintConv => Ok(format!("Into::<TagValue>::into({})", format_expr)),
                 _ => Ok(format_expr),
             }
         } else {
@@ -248,7 +249,9 @@ pub trait PpiVisitor {
 
             // In PrintConv context, wrap string literals with .into()
             match self.expression_type() {
-                ExpressionType::PrintConv => Ok(format!("{}.into()", string_literal)),
+                ExpressionType::PrintConv => {
+                    Ok(format!("Into::<TagValue>::into({})", string_literal))
+                }
                 _ => Ok(string_literal),
             }
         }
@@ -275,7 +278,24 @@ pub trait PpiVisitor {
                     ExpressionType::Condition => Ok("false".to_string()),
                 }
             }
-            _ => Ok(word.clone()),
+            _ => {
+                // Check for ExifTool namespace references that should be treated as placeholders
+                if word.starts_with("Image::ExifTool::") {
+                    // ExifTool namespace references aren't supported in Rust
+                    // Return a placeholder value that will be handled by the conservative fallback
+                    tracing::warn!("Unsupported ExifTool namespace reference: {}", word);
+                    match self.expression_type() {
+                        ExpressionType::PrintConv => Ok(
+                            "codegen_runtime::fmt::conservative_fallback(\"\".into(), val)"
+                                .to_string(),
+                        ),
+                        ExpressionType::ValueConv => Ok("val.clone()".to_string()),
+                        ExpressionType::Condition => Ok("false".to_string()),
+                    }
+                } else {
+                    Ok(word.clone())
+                }
+            }
         }
     }
 
@@ -425,7 +445,22 @@ pub trait PpiVisitor {
                         "sprintf requires at least a format string".to_string(),
                     ));
                 }
+
+                // Special handling for format string to avoid TagValue wrapping
                 let format_str = &args[0];
+
+                // For simple string literals, unwrap the TagValue conversion
+                let format_str = if format_str.starts_with("Into::<TagValue>::into(")
+                    && format_str.ends_with(")")
+                {
+                    // Extract the inner string literal from Into::<TagValue>::into("string")
+                    let inner = &format_str[23..format_str.len() - 1]; // Remove wrapper
+                    inner.to_string()
+                } else {
+                    // For complex expressions, use as-is
+                    format_str.clone()
+                };
+
                 let sprintf_args = if args.len() > 1 {
                     let cloned_args = args[1..]
                         .iter()
@@ -535,8 +570,40 @@ pub trait PpiVisitor {
                 Ok(format!("if {} {{ {} }}", condition, statement))
             }
             _ => {
-                // Generic function call
-                Ok(format!("{}({})", func_name, args.join(", ")))
+                // Check if this is an ExifTool function that needs registry lookup
+                if func_name.starts_with("Image::ExifTool::") {
+                    if let Some(func_impl) = lookup_function(func_name) {
+                        match func_impl {
+                            crate::impl_registry::FunctionImplementation::ExifToolModule(
+                                module_func,
+                            ) => {
+                                // Call the registered implementation
+                                let args_str = args.join(", ");
+                                Ok(format!(
+                                    "{}::{}({})",
+                                    module_func.module_path, module_func.function_name, args_str
+                                ))
+                            }
+                            _ => {
+                                // Other function types (e.g., Builtin) - handle as needed
+                                Ok(format!("{}({})", func_name, args.join(", ")))
+                            }
+                        }
+                    } else {
+                        // ExifTool function not found in registry - this indicates missing implementation
+                        // Generate a placeholder that will fail compilation with a clear error message
+                        tracing::warn!("Unknown ExifTool function: {}", func_name);
+                        Ok(format!(
+                            "/* MISSING EXIFTOOL FUNCTION: {} */ {}({})",
+                            func_name,
+                            func_name,
+                            args.join(", ")
+                        ))
+                    }
+                } else {
+                    // Generic function call
+                    Ok(format!("{}({})", func_name, args.join(", ")))
+                }
             }
         }
     }
@@ -1242,7 +1309,7 @@ pub trait PpiVisitor {
         // Check if this looks like a bare string literal
         if value.starts_with('"') && value.ends_with('"') && !value.contains("TagValue") {
             // It's a bare string literal, add .into()
-            format!("{}.into()", value)
+            format!("Into::<TagValue>::into({})", value)
         } else {
             // Already has proper type or is an expression
             value
@@ -1454,22 +1521,20 @@ pub trait PpiVisitor {
         // Generate appropriate Rust code for the binary operation
         match operator.as_str() {
             "*" | "/" | "+" | "-" | "%" => {
-                // Arithmetic operations - clean and simple with complete operator trait coverage
+                // Arithmetic operations - ensure proper TagValue operations
+                // The TagValue ops crate handles all these operations correctly
                 Ok(format!("({} {} {})", left, operator, right))
             }
             "**" => {
-                // Power operator -> powf method
-                Ok(format!("({} as f64).powf({} as f64)", left, right))
+                // Power operator -> use cleaner power function
+                Ok(format!("power({}, {})", left, right))
             }
             "." => {
-                // String concatenation
-                match self.expression_type() {
-                    ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::String(format!(\"{{}}{{}}\", {}, {}))",
-                        left, right
-                    )),
-                    _ => Ok(format!("format!(\"{{}}{{}}\", {}, {})", left, right)),
-                }
+                // String concatenation - use cleaner concat function
+                Ok(format!(
+                    "codegen_runtime::string::concat(&{}, &{})",
+                    left, right
+                ))
             }
             "=~" | "!~" => {
                 // Regex operations - but check what kind of right operand we have
@@ -1566,15 +1631,15 @@ pub trait PpiVisitor {
                     _ => operator, // shouldn't happen
                 };
 
-                // Convert to string for comparison
-                let left_str = if left.starts_with('"') && left.ends_with('"') {
-                    left
+                // Convert to string for comparison - handle both direct and TagValue-wrapped literals
+                let left_str = if self.is_string_literal_or_wrapped(&left) {
+                    self.extract_string_literal(&left)
                 } else {
                     format!("{}.to_string()", left)
                 };
 
-                let right_str = if right.starts_with('"') && right.ends_with('"') {
-                    right
+                let right_str = if self.is_string_literal_or_wrapped(&right) {
+                    self.extract_string_literal(&right)
                 } else {
                     format!("{}.to_string()", right)
                 };
@@ -1605,5 +1670,40 @@ pub trait PpiVisitor {
                 )))
             }
         }
+    }
+
+    /// Check if a string is a string literal or TagValue-wrapped string literal
+    fn is_string_literal_or_wrapped(&self, s: &str) -> bool {
+        // Direct string literal
+        if s.starts_with('"') && s.ends_with('"') {
+            return true;
+        }
+
+        // TagValue-wrapped string literal: Into::<TagValue>::into("literal")
+        if s.starts_with("Into::<TagValue>::into(") && s.ends_with(")") {
+            let inner = &s[23..s.len() - 1]; // Extract content between ( and )
+            return inner.starts_with('"') && inner.ends_with('"');
+        }
+
+        false
+    }
+
+    /// Extract string literal from either direct form or TagValue wrapper
+    fn extract_string_literal(&self, s: &str) -> String {
+        // Direct string literal
+        if s.starts_with('"') && s.ends_with('"') {
+            return s.to_string();
+        }
+
+        // TagValue-wrapped string literal: Into::<TagValue>::into("literal")
+        if s.starts_with("Into::<TagValue>::into(") && s.ends_with(")") {
+            let inner = &s[23..s.len() - 1]; // Extract "literal" from ( "literal" )
+            if inner.starts_with('"') && inner.ends_with('"') {
+                return inner.to_string();
+            }
+        }
+
+        // Fallback - shouldn't happen if is_string_literal_or_wrapped returned true
+        s.to_string()
     }
 }
