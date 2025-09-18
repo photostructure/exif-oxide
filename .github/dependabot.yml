@@ -1,34 +1,28 @@
+# https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+
 version: 2
 updates:
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "chore(ci)"
+      include: "scope"
+    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 8
+
   # Rust dependencies
   - package-ecosystem: "cargo"
     directory: "/"
     schedule:
       interval: "weekly"
-      day: "monday"
-      time: "09:00"
-    reviewers:
-      - "photostructure/exif-oxide"
-    assignees:
-      - "photostructure/exif-oxide"
     commit-message:
       prefix: "chore(deps)"
       prefix-development: "chore(dev-deps)"
       include: "scope"
     open-pull-requests-limit: 10
-
-  # GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-    reviewers:
-      - "photostructure/exif-oxide"
-    assignees:
-      - "photostructure/exif-oxide"
-    commit-message:
-      prefix: "chore(ci)"
-      include: "scope"
-    open-pull-requests-limit: 5
+    cooldown:
+      default-days: 8
