@@ -67,7 +67,7 @@ indexmap = { version = "2.10", features = [
 [dev-dependencies]
 criterion = "0.7" # Benchmarking
 pretty_assertions = "1.4" # Better test assertions
-tempfile = "3.20" # Temporary files for testing
+tempfile = "3.22" # Temporary files for testing
 clap = { version = "4.5", features = [
     "derive",
 ] } # CLI argument parsing for analysis tools
