@@ -9,6 +9,10 @@ mod display;
 mod ops;
 mod serialization;
 
+// Re-export operation traits so they're automatically available
+// This makes arithmetic operations work on TagValue without explicit imports
+pub use ops::*;
+
 #[cfg(test)]
 mod tests;
 

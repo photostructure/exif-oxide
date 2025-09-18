@@ -117,3 +117,50 @@ mod tests {
         assert_eq!(result, "hello world");
     }
 }
+
+/// Convert ASCII value to character (Perl chr function)
+///
+/// In Perl: chr(65) returns 'A', chr(0) returns null byte
+/// Values outside 0-255 are truncated to 8-bit range
+///
+/// # Arguments
+/// * `code_point` - ASCII/byte value to convert to character
+///
+/// # Returns
+/// String containing the character (or empty for invalid input)
+pub fn chr<T: Into<TagValue>>(code_point: T) -> String {
+    let val = code_point.into();
+
+    match val.to_numeric() {
+        Some(num) => {
+            let byte_val = (num as u32) & 0xFF; // Truncate to 8-bit
+            if byte_val <= 127 {
+                // ASCII range
+                char::from(byte_val as u8).to_string()
+            } else {
+                // Extended ASCII - convert byte to string
+                vec![byte_val as u8].iter().map(|&b| b as char).collect()
+            }
+        }
+        None => String::new(), // Invalid input returns empty string
+    }
+}
+
+/// Convert string to uppercase (Perl uc function)
+///
+/// In Perl: uc("hello") returns "HELLO", uc(undef) returns ""
+///
+/// # Arguments
+/// * `input` - String value to convert to uppercase
+///
+/// # Returns
+/// Uppercase version of the string
+pub fn uc<T: Into<TagValue>>(input: T) -> String {
+    let val = input.into();
+
+    match val {
+        TagValue::String(s) => s.to_uppercase(),
+        TagValue::Empty => String::new(),
+        _ => val.to_string().to_uppercase(),
+    }
+}

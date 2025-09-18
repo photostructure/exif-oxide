@@ -446,6 +446,33 @@ pub fn atan2<T: Into<TagValue>>(y: T, x: T) -> TagValue {
     TagValue::F64(y_f.atan2(x_f))
 }
 
+/// Check if a value is a floating point number (Perl IsFloat function)
+///
+/// This checks if the value is stored as or represents a floating point number.
+/// In Perl context, this would return true for values that are floats.
+///
+/// # Arguments
+/// * `val` - Value that can be converted to TagValue
+///
+/// # Returns
+/// true if the value is a floating point number, false otherwise
+pub fn IsFloat<T: Into<TagValue>>(val: T) -> bool {
+    let val = val.into();
+    match val {
+        TagValue::F64(_) => true,
+        TagValue::Rational(_, _) => true,
+        TagValue::SRational(_, _) => true,
+        TagValue::F64Array(_) => true,
+        TagValue::RationalArray(_) => true,
+        TagValue::SRationalArray(_) => true,
+        TagValue::String(s) => {
+            // Check if the string represents a float
+            s.parse::<f64>().is_ok() && s.contains('.')
+        }
+        _ => false,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -33,12 +33,15 @@ pub use data::{join_unpack_binary, pack_c_star_bit_extract, unpack_binary};
 pub use fmt::{sprintf_perl, sprintf_split_values, sprintf_with_string_concat_repeat};
 
 // Re-export math functions commonly used by generated code
-pub use math::{abs, atan2, cos, exp, int, log, negate, safe_division, safe_reciprocal, sin, sqrt};
+pub use math::{
+    abs, atan2, cos, exp, int, log, negate, power, safe_division, safe_reciprocal, sin, sqrt,
+    IsFloat,
+};
 
 // Re-export string functions commonly used by generated code
 pub use string::{
-    index_2arg, index_3arg, length_i32, length_string, regex_replace, regex_substitute_perl,
-    substr_2arg, substr_3arg,
+    chr, index_2arg, index_3arg, length_i32, length_string, regex_replace, regex_substitute_perl,
+    substr_2arg, substr_3arg, uc,
 };
 
 // Test support module - only available with test-helpers feature

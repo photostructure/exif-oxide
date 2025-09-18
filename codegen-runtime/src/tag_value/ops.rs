@@ -4,7 +4,8 @@
 //! Follows ExifTool's type coercion rules for numeric operations.
 
 use super::TagValue;
-use std::ops::{Add, Div, Mul, Sub};
+use std::cmp::Ordering;
+use std::ops::{Add, BitAnd, Div, Mul, Neg, Shr, Sub};
 
 // Helper macro to implement arithmetic ops for TagValue
 macro_rules! impl_arithmetic_op {
@@ -86,6 +87,30 @@ macro_rules! impl_arithmetic_op {
             }
         }
 
+        // Implement for u32 literals (e.g., val * 2u32)
+        impl $trait<u32> for &TagValue {
+            type Output = TagValue;
+
+            fn $method(self, rhs: u32) -> Self::Output {
+                match self {
+                    TagValue::U8(a) if rhs <= 255 => TagValue::U8(a $op (rhs as u8)),
+                    TagValue::U16(a) if rhs <= 65535 => TagValue::U16(a $op (rhs as u16)),
+                    TagValue::U32(a) => TagValue::U32(a $op rhs),
+                    TagValue::U64(a) => TagValue::U64(a $op (rhs as u64)),
+                    TagValue::I32(a) if rhs <= i32::MAX as u32 => TagValue::I32(a $op (rhs as i32)),
+                    TagValue::F64(a) => TagValue::F64(a $op (rhs as f64)),
+                    // Type promotion needed
+                    TagValue::U8(a) => TagValue::U32((*a as u32) $op rhs),
+                    TagValue::U16(a) => TagValue::U32((*a as u32) $op rhs),
+                    TagValue::I32(a) => TagValue::F64((*a as f64) $op (rhs as f64)),
+                    _ => {
+                        let val = self.to_numeric().unwrap_or(0.0);
+                        TagValue::F64(val $op (rhs as f64))
+                    }
+                }
+            }
+        }
+
         // Implement for float literals (e.g., val * 2.5)
         impl $trait<f64> for &TagValue {
             type Output = TagValue;
@@ -137,6 +162,42 @@ impl Add<&TagValue> for f64 {
     }
 }
 
+impl Mul<&TagValue> for u32 {
+    type Output = TagValue;
+
+    fn mul(self, rhs: &TagValue) -> Self::Output {
+        rhs * self // Delegate to the implementation above
+    }
+}
+
+impl Add<&TagValue> for u32 {
+    type Output = TagValue;
+
+    fn add(self, rhs: &TagValue) -> Self::Output {
+        rhs + self
+    }
+}
+
+impl Sub<&TagValue> for u32 {
+    type Output = TagValue;
+
+    fn sub(self, rhs: &TagValue) -> Self::Output {
+        match rhs {
+            TagValue::U8(v) => TagValue::U32(self - (*v as u32)),
+            TagValue::U16(v) => TagValue::U32(self - (*v as u32)),
+            TagValue::U32(v) => TagValue::U32(self - v),
+            TagValue::U64(v) => TagValue::U64((self as u64) - v),
+            TagValue::I32(v) if *v >= 0 => TagValue::U32(self - (*v as u32)),
+            TagValue::I32(v) => TagValue::I32((self as i32) - v),
+            TagValue::F64(v) => TagValue::F64((self as f64) - v),
+            _ => {
+                let val = rhs.to_numeric().unwrap_or(0.0);
+                TagValue::F64((self as f64) - val)
+            }
+        }
+    }
+}
+
 impl Sub<&TagValue> for i32 {
     type Output = TagValue;
 
@@ -163,6 +224,158 @@ impl Sub<&TagValue> for f64 {
     fn sub(self, rhs: &TagValue) -> Self::Output {
         let val = rhs.to_numeric().unwrap_or(0.0);
         TagValue::F64(self - val)
+    }
+}
+
+// Operations for i32 with owned TagValue (not just borrowed)
+impl Mul<TagValue> for i32 {
+    type Output = TagValue;
+
+    fn mul(self, rhs: TagValue) -> Self::Output {
+        self * (&rhs)
+    }
+}
+
+impl Add<TagValue> for i32 {
+    type Output = TagValue;
+
+    fn add(self, rhs: TagValue) -> Self::Output {
+        self + (&rhs)
+    }
+}
+
+impl Sub<TagValue> for i32 {
+    type Output = TagValue;
+
+    fn sub(self, rhs: TagValue) -> Self::Output {
+        self - (&rhs)
+    }
+}
+
+impl Div<TagValue> for i32 {
+    type Output = TagValue;
+
+    fn div(self, rhs: TagValue) -> Self::Output {
+        match rhs {
+            TagValue::I32(v) => TagValue::I32(self / v),
+            TagValue::F64(v) => TagValue::F64((self as f64) / v),
+            _ => {
+                let val = rhs.to_numeric().unwrap_or(1.0);
+                TagValue::F64((self as f64) / val)
+            }
+        }
+    }
+}
+
+// Operations for f64 with owned TagValue (not just borrowed)
+impl Mul<TagValue> for f64 {
+    type Output = TagValue;
+
+    fn mul(self, rhs: TagValue) -> Self::Output {
+        self * (&rhs)
+    }
+}
+
+impl Add<TagValue> for f64 {
+    type Output = TagValue;
+
+    fn add(self, rhs: TagValue) -> Self::Output {
+        self + (&rhs)
+    }
+}
+
+impl Sub<TagValue> for f64 {
+    type Output = TagValue;
+
+    fn sub(self, rhs: TagValue) -> Self::Output {
+        self - (&rhs)
+    }
+}
+
+impl Div<TagValue> for f64 {
+    type Output = TagValue;
+
+    fn div(self, rhs: TagValue) -> Self::Output {
+        let val = rhs.to_numeric().unwrap_or(1.0);
+        TagValue::F64(self / val)
+    }
+}
+
+impl Div<&TagValue> for i32 {
+    type Output = TagValue;
+
+    fn div(self, rhs: &TagValue) -> Self::Output {
+        match rhs {
+            TagValue::I32(v) if *v != 0 => TagValue::I32(self / v),
+            TagValue::U32(v) if *v != 0 => TagValue::I32(self / (*v as i32)),
+            TagValue::F64(v) if *v != 0.0 => TagValue::F64((self as f64) / v),
+            _ => {
+                let val = rhs.to_numeric().unwrap_or(1.0);
+                if val != 0.0 {
+                    TagValue::F64((self as f64) / val)
+                } else {
+                    TagValue::F64(f64::INFINITY)
+                }
+            }
+        }
+    }
+}
+
+impl Div<&TagValue> for f64 {
+    type Output = TagValue;
+
+    fn div(self, rhs: &TagValue) -> Self::Output {
+        let val = rhs.to_numeric().unwrap_or(1.0);
+        if val != 0.0 {
+            TagValue::F64(self / val)
+        } else {
+            TagValue::F64(f64::INFINITY)
+        }
+    }
+}
+
+impl Div<&TagValue> for u32 {
+    type Output = TagValue;
+
+    fn div(self, rhs: &TagValue) -> Self::Output {
+        match rhs {
+            TagValue::U32(v) if *v != 0 => TagValue::U32(self / v),
+            TagValue::I32(v) if *v > 0 => TagValue::U32(self / (*v as u32)),
+            TagValue::F64(v) if *v > 0.0 => TagValue::F64((self as f64) / v),
+            _ => {
+                let val = rhs.to_numeric().unwrap_or(1.0);
+                if val > 0.0 {
+                    TagValue::F64((self as f64) / val)
+                } else {
+                    TagValue::F64(f64::INFINITY)
+                }
+            }
+        }
+    }
+}
+
+// Operations for u32 with owned TagValue (not just borrowed)
+impl Mul<TagValue> for u32 {
+    type Output = TagValue;
+
+    fn mul(self, rhs: TagValue) -> Self::Output {
+        self * (&rhs)
+    }
+}
+
+impl Add<TagValue> for u32 {
+    type Output = TagValue;
+
+    fn add(self, rhs: TagValue) -> Self::Output {
+        self + (&rhs)
+    }
+}
+
+impl Sub<TagValue> for u32 {
+    type Output = TagValue;
+
+    fn sub(self, rhs: TagValue) -> Self::Output {
+        self - (&rhs)
     }
 }
 
@@ -231,6 +444,39 @@ impl Div<f64> for TagValue {
     }
 }
 
+// Implement owned TagValue operations for u32
+impl Add<u32> for TagValue {
+    type Output = TagValue;
+
+    fn add(self, rhs: u32) -> Self::Output {
+        (&self) + rhs
+    }
+}
+
+impl Sub<u32> for TagValue {
+    type Output = TagValue;
+
+    fn sub(self, rhs: u32) -> Self::Output {
+        (&self) - rhs
+    }
+}
+
+impl Mul<u32> for TagValue {
+    type Output = TagValue;
+
+    fn mul(self, rhs: u32) -> Self::Output {
+        (&self) * rhs
+    }
+}
+
+impl Div<u32> for TagValue {
+    type Output = TagValue;
+
+    fn div(self, rhs: u32) -> Self::Output {
+        (&self) / rhs
+    }
+}
+
 // Implement TagValue op TagValue (owned values) by delegating to borrowed operations
 impl Add for TagValue {
     type Output = TagValue;
@@ -264,6 +510,71 @@ impl Div for TagValue {
     }
 }
 
+// Mixed reference combinations for all operations
+impl Add<TagValue> for &TagValue {
+    type Output = TagValue;
+
+    fn add(self, rhs: TagValue) -> Self::Output {
+        self + (&rhs)
+    }
+}
+
+impl Add<&TagValue> for TagValue {
+    type Output = TagValue;
+
+    fn add(self, rhs: &TagValue) -> Self::Output {
+        (&self) + rhs
+    }
+}
+
+impl Sub<TagValue> for &TagValue {
+    type Output = TagValue;
+
+    fn sub(self, rhs: TagValue) -> Self::Output {
+        self - (&rhs)
+    }
+}
+
+impl Sub<&TagValue> for TagValue {
+    type Output = TagValue;
+
+    fn sub(self, rhs: &TagValue) -> Self::Output {
+        (&self) - rhs
+    }
+}
+
+impl Mul<TagValue> for &TagValue {
+    type Output = TagValue;
+
+    fn mul(self, rhs: TagValue) -> Self::Output {
+        self * (&rhs)
+    }
+}
+
+impl Mul<&TagValue> for TagValue {
+    type Output = TagValue;
+
+    fn mul(self, rhs: &TagValue) -> Self::Output {
+        (&self) * rhs
+    }
+}
+
+impl Div<TagValue> for &TagValue {
+    type Output = TagValue;
+
+    fn div(self, rhs: TagValue) -> Self::Output {
+        self / (&rhs)
+    }
+}
+
+impl Div<&TagValue> for TagValue {
+    type Output = TagValue;
+
+    fn div(self, rhs: &TagValue) -> Self::Output {
+        (&self) / rhs
+    }
+}
+
 // Helper methods for TagValue
 impl TagValue {
     /// Convert to numeric value (f64) if possible
@@ -281,6 +592,254 @@ impl TagValue {
             TagValue::String(s) => s.parse::<f64>().ok(),
             _ => None,
         }
+    }
+}
+
+// Comparison operators for TagValue with numeric types
+impl PartialEq<i32> for TagValue {
+    fn eq(&self, other: &i32) -> bool {
+        match self {
+            TagValue::I32(v) => *v == *other,
+            TagValue::U32(v) if *other >= 0 => *v == (*other as u32),
+            _ => {
+                if let Some(val) = self.to_numeric() {
+                    val == (*other as f64)
+                } else {
+                    false
+                }
+            }
+        }
+    }
+}
+
+impl PartialEq<u32> for TagValue {
+    fn eq(&self, other: &u32) -> bool {
+        match self {
+            TagValue::U32(v) => *v == *other,
+            TagValue::I32(v) if *v >= 0 => (*v as u32) == *other,
+            _ => {
+                if let Some(val) = self.to_numeric() {
+                    val == (*other as f64)
+                } else {
+                    false
+                }
+            }
+        }
+    }
+}
+
+impl PartialOrd<i32> for TagValue {
+    fn partial_cmp(&self, other: &i32) -> Option<Ordering> {
+        match self {
+            TagValue::I32(v) => v.partial_cmp(other),
+            TagValue::U32(v) if *other >= 0 => (*v as f64).partial_cmp(&(*other as f64)),
+            _ => {
+                if let Some(val) = self.to_numeric() {
+                    val.partial_cmp(&(*other as f64))
+                } else {
+                    None
+                }
+            }
+        }
+    }
+}
+
+impl PartialOrd<u32> for TagValue {
+    fn partial_cmp(&self, other: &u32) -> Option<Ordering> {
+        match self {
+            TagValue::U32(v) => v.partial_cmp(other),
+            TagValue::I32(v) if *v >= 0 => (*v as u32).partial_cmp(other),
+            _ => {
+                if let Some(val) = self.to_numeric() {
+                    val.partial_cmp(&(*other as f64))
+                } else {
+                    None
+                }
+            }
+        }
+    }
+}
+
+// Also implement for borrowed TagValue
+impl PartialEq<i32> for &TagValue {
+    fn eq(&self, other: &i32) -> bool {
+        (*self).eq(other)
+    }
+}
+
+impl PartialEq<u32> for &TagValue {
+    fn eq(&self, other: &u32) -> bool {
+        (*self).eq(other)
+    }
+}
+
+impl PartialOrd<i32> for &TagValue {
+    fn partial_cmp(&self, other: &i32) -> Option<Ordering> {
+        (*self).partial_cmp(other)
+    }
+}
+
+impl PartialOrd<u32> for &TagValue {
+    fn partial_cmp(&self, other: &u32) -> Option<Ordering> {
+        (*self).partial_cmp(other)
+    }
+}
+
+// Bitwise operations for TagValue
+impl BitAnd<u32> for &TagValue {
+    type Output = TagValue;
+
+    fn bitand(self, rhs: u32) -> Self::Output {
+        match self {
+            TagValue::U8(v) => TagValue::U8(v & (rhs as u8)),
+            TagValue::U16(v) => TagValue::U16(v & (rhs as u16)),
+            TagValue::U32(v) => TagValue::U32(v & rhs),
+            TagValue::U64(v) => TagValue::U64(v & (rhs as u64)),
+            TagValue::I32(v) if *v >= 0 => TagValue::U32((*v as u32) & rhs),
+            _ => {
+                // For other types, convert to integer if possible
+                if let Some(val) = self.to_numeric() {
+                    let int_val = val as u32;
+                    TagValue::U32(int_val & rhs)
+                } else {
+                    TagValue::U32(0)
+                }
+            }
+        }
+    }
+}
+
+impl BitAnd<i32> for &TagValue {
+    type Output = TagValue;
+
+    fn bitand(self, rhs: i32) -> Self::Output {
+        if rhs >= 0 {
+            self & (rhs as u32)
+        } else {
+            // Handle negative values by converting to i32
+            match self {
+                TagValue::I32(v) => TagValue::I32(v & rhs),
+                _ => {
+                    if let Some(val) = self.to_numeric() {
+                        TagValue::I32((val as i32) & rhs)
+                    } else {
+                        TagValue::I32(0)
+                    }
+                }
+            }
+        }
+    }
+}
+
+impl Shr<i32> for &TagValue {
+    type Output = TagValue;
+
+    fn shr(self, rhs: i32) -> Self::Output {
+        if rhs < 0 {
+            // Right shift by negative is left shift
+            return self.shl(-rhs);
+        }
+
+        match self {
+            TagValue::U8(v) => TagValue::U8(v >> rhs),
+            TagValue::U16(v) => TagValue::U16(v >> rhs),
+            TagValue::U32(v) => TagValue::U32(v >> rhs),
+            TagValue::U64(v) => TagValue::U64(v >> rhs),
+            TagValue::I32(v) => TagValue::I32(v >> rhs),
+            _ => {
+                if let Some(val) = self.to_numeric() {
+                    let int_val = val as u32;
+                    TagValue::U32(int_val >> rhs)
+                } else {
+                    TagValue::U32(0)
+                }
+            }
+        }
+    }
+}
+
+// Helper for left shift (used by right shift with negative values)
+impl TagValue {
+    fn shl(&self, rhs: i32) -> TagValue {
+        if rhs < 0 {
+            return (&self).shr(-rhs);
+        }
+
+        match self {
+            TagValue::U8(v) => TagValue::U8(v << rhs),
+            TagValue::U16(v) => TagValue::U16(v << rhs),
+            TagValue::U32(v) => TagValue::U32(v << rhs),
+            TagValue::U64(v) => TagValue::U64(v << rhs),
+            TagValue::I32(v) => TagValue::I32(v << rhs),
+            _ => {
+                if let Some(val) = self.to_numeric() {
+                    let int_val = val as u32;
+                    TagValue::U32(int_val << rhs)
+                } else {
+                    TagValue::U32(0)
+                }
+            }
+        }
+    }
+}
+
+// Implement owned versions by delegating to borrowed ones
+impl BitAnd<u32> for TagValue {
+    type Output = TagValue;
+
+    fn bitand(self, rhs: u32) -> Self::Output {
+        (&self) & rhs
+    }
+}
+
+impl BitAnd<i32> for TagValue {
+    type Output = TagValue;
+
+    fn bitand(self, rhs: i32) -> Self::Output {
+        (&self) & rhs
+    }
+}
+
+impl Shr<i32> for TagValue {
+    type Output = TagValue;
+
+    fn shr(self, rhs: i32) -> Self::Output {
+        (&self) >> rhs
+    }
+}
+
+// Unary negation operator
+impl Neg for TagValue {
+    type Output = TagValue;
+
+    fn neg(self) -> Self::Output {
+        match self {
+            TagValue::U8(v) => TagValue::I32(-(v as i32)),
+            TagValue::U16(v) => TagValue::I32(-(v as i32)),
+            TagValue::U32(v) if v <= (i32::MAX as u32) => TagValue::I32(-(v as i32)),
+            TagValue::U32(v) => TagValue::F64(-(v as f64)),
+            TagValue::U64(v) => TagValue::F64(-(v as f64)),
+            TagValue::I16(v) => TagValue::I16(-v),
+            TagValue::I32(v) => TagValue::I32(-v),
+            TagValue::F64(v) => TagValue::F64(-v),
+            TagValue::Rational(n, d) => TagValue::SRational(-(n as i32), d as i32),
+            TagValue::SRational(n, d) => TagValue::SRational(-n, d),
+            _ => {
+                if let Some(val) = self.to_numeric() {
+                    TagValue::F64(-val)
+                } else {
+                    self // Return unchanged for non-numeric types
+                }
+            }
+        }
+    }
+}
+
+impl Neg for &TagValue {
+    type Output = TagValue;
+
+    fn neg(self) -> Self::Output {
+        self.clone().neg()
     }
 }
 

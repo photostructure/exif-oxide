@@ -72,8 +72,14 @@ pub enum ExifError {
     #[error("IO error: {0}")]
     IoError(String),
 
+    #[error("Invalid file format: {0}")]
+    InvalidFormat(String),
+
     #[error("Format error: {0}")]
     FormatError(String),
+
+    #[error("Unsupported feature: {0}")]
+    Unsupported(String),
 
     #[error("Not implemented: {0}")]
     NotImplemented(String),
