@@ -78,7 +78,7 @@ doc:
 	cargo doc --no-deps --open
 
 # Clean build artifacts
-clean: clean-generated
+clean:
 	cargo clean
 
 # Clean generated code (use with caution - requires regeneration)
@@ -86,7 +86,7 @@ clean-generated:
 	$(MAKE) -C codegen clean
 
 # Deep clean - removes all build artifacts and generated code
-clean-all: clean
+clean-all: clean clean-generated
 	rm -rf target
 	rm -rf codegen/target
 
