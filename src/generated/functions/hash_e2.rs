@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -19,9 +19,9 @@ use codegen_runtime::{
 /// - Kodak::Main.DateTimeStamp
 pub fn ast_print_e2ddf072b19d8074(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val {
-        format!("Mode {}", val).into()
+        Into::<TagValue>::into(format!("Mode {}", val))
     } else {
-        "Off".into()
+        Into::<TagValue>::into("Off")
     }
 }
 
@@ -32,8 +32,5 @@ pub fn ast_print_e2ddf072b19d8074(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// Used by:
 /// - Sony::SR2Private.SR2SubIFDKey
 pub fn ast_print_e265b6e9dae11253(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl(
-        "0x%.8x".into(),
-        &[val.clone()],
-    ))
+    TagValue::String(codegen_runtime::sprintf_perl("0x%.8x", &[val.clone()]))
 }

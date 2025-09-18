@@ -7,11 +7,11 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Registry fallback: PrintConv implementation found
 /// Original perl expression:
 /// ``` perl
 /// Image::ExifTool::Exif::PrintFNumber($val)
@@ -31,14 +31,6 @@ use codegen_runtime::{
 /// - Sony::CameraSettings2.FNumber
 /// - Sony::MoreSettings.FNumber
 /// - Sony::rtmd.FNumber
-/// TODO: Add support for this expression pattern
 pub fn ast_print_634937674bb4dcf3(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
-        0,                                           // tag_id will be filled at runtime
-        "UnknownTag",                                // tag_name will be filled at runtime
-        "UnknownGroup",                              // group will be filled at runtime
-        "Image::ExifTool::Exif::PrintFNumber($val)", // original expression
-        val,
-    )
+    crate::implementations::print_conv::fnumber_print_conv(val)
 }

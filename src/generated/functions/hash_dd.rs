@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -21,7 +21,7 @@ use codegen_runtime::{
 /// - GoPro::KBAT.BatteryVoltage3
 /// - GoPro::KBAT.BatteryVoltage4
 pub fn ast_print_dda555683af957b(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("{} V", val).into()
+    Into::<TagValue>::into(format!("{} V", val))
 }
 
 /// Original perl expression:

@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -18,7 +18,7 @@ use codegen_runtime::{
 /// Used by:
 /// - Canon::CameraSettings.FocalUnits
 pub fn ast_print_423da13b81d6bdf1(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("{}/mm", val).into()
+    Into::<TagValue>::into(format!("{}/mm", val))
 }
 
 /// Original perl expression:
@@ -73,10 +73,10 @@ pub fn ast_print_42c5dc3d1b33e467(val: &TagValue, ctx: Option<&ExifContext>) -> 
     )
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Registry fallback: ValueConv implementation found
 /// Original perl expression:
 /// ``` perl
-/// length($val) > 64 ? \$val : $val
+/// length($val) > 64 ? \\$val : $val
 /// ```
 /// Used by:
 /// - Canon::Main.SharpnessFreqTable
@@ -92,17 +92,9 @@ pub fn ast_print_42c5dc3d1b33e467(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Exif::Main.ProfileHueSatMapData3
 /// - Exif::Main.ProfileLookTableData
 /// - Exif::Main.ProfileToneCurve
-/// TODO: Add support for this expression pattern
 pub fn ast_value_4262675ed10175b0(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
-        0,                                   // tag_id will be filled at runtime
-        "UnknownTag",                        // tag_name will be filled at runtime
-        "UnknownGroup",                      // group will be filled at runtime
-        "length($val) > 64 ? \\$val : $val", // original expression
-        val,
-    ))
+    Ok(crate::implementations::value_conv::reference_very_long_string_value_conv(val))
 }

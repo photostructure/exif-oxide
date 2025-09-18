@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -23,7 +23,7 @@ pub fn ast_print_abb6a96ce6de058d(val: &TagValue, ctx: Option<&ExifContext>) -> 
         .and_then(|c| c.get_data_member("TimeScale").cloned())
         .unwrap_or(TagValue::U32(1))
     {
-        format!("{} s", val).into()
+        Into::<TagValue>::into(format!("{} s", val))
     } else {
         val
     }

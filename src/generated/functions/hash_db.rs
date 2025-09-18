@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -19,7 +19,7 @@ use codegen_runtime::{
 /// - Panasonic::Main.TravelDay
 pub fn ast_print_dbf94666acbb7012(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if (val == 65535i32) {
-        "n/a".into()
+        Into::<TagValue>::into("n/a")
     } else {
         val
     }
@@ -42,7 +42,7 @@ pub fn ast_value_db7a59febab7bd3c(
     })
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Registry fallback: ValueConv implementation found
 /// Original perl expression:
 /// ``` perl
 /// Image::ExifTool::Exif::ExifDate($val)
@@ -58,17 +58,11 @@ pub fn ast_value_db7a59febab7bd3c(
 /// - IPTC::EnvelopeRecord.DateSent
 /// - Pentax::PENT.GPSDateStamp
 /// - Sony::rtmd.GPSDateStamp
-/// TODO: Add support for this expression pattern
 pub fn ast_value_db6d300cf2bc94e2(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
-        0,                                       // tag_id will be filled at runtime
-        "UnknownTag",                            // tag_name will be filled at runtime
-        "UnknownGroup",                          // group will be filled at runtime
-        "Image::ExifTool::Exif::ExifDate($val)", // original expression
+    Ok(crate::implementations::value_conv::exif_date_value_conv(
         val,
     ))
 }

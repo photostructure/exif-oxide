@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -19,9 +19,9 @@ use codegen_runtime::{
 /// - Panasonic::FocusInfo.FocusDistance
 pub fn ast_print_515ec3f56b990031(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if (val < 65535i32) {
-        format!("{} m", val).into()
+        Into::<TagValue>::into(format!("{} m", val))
     } else {
-        "inf".into()
+        Into::<TagValue>::into("inf")
     }
 }
 

@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -35,10 +35,7 @@ pub fn ast_value_46ca3f250be86611(
 /// Used by:
 /// - Panasonic::Leica6.LensSerialNumber
 pub fn ast_print_46a2e64bb40e5c4a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl(
-        "%.10d".into(),
-        &[val.clone()],
-    ))
+    TagValue::String(codegen_runtime::sprintf_perl("%.10d", &[val.clone()]))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -38,7 +38,7 @@ pub fn ast_print_9eb71f80f01c13ad(val: &TagValue, ctx: Option<&ExifContext>) -> 
             LazyLock::new(|| Regex::new(r"^8\.").unwrap());
         REGEX_4a685b95e07900ea.is_match(&val.to_string())
     } {
-        format!("{} (camera has been serviced)", val).into()
+        Into::<TagValue>::into(format!("{} (camera has been serviced)", val))
     } else {
         val
     }

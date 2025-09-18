@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -86,8 +86,5 @@ pub fn ast_value_be1b3eec816c4342(
 /// - FujiFilm::MRAW.ExposureCompensation
 /// - FujiFilm::MRAW.ExposureCompensation2
 pub fn ast_print_bec70def03ed8463(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl(
-        "%+.2f".into(),
-        &[val.clone()],
-    ))
+    TagValue::String(codegen_runtime::sprintf_perl("%+.2f", &[val.clone()]))
 }

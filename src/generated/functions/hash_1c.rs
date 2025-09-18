@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -19,5 +19,5 @@ use codegen_runtime::{
 /// - CanonRaw::Main.SelfTimerTime
 /// - Nikon::AVITags.Duration
 pub fn ast_print_1cf79c06ccd3a2e9(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("{} s", val).into()
+    Into::<TagValue>::into(format!("{} s", val))
 }

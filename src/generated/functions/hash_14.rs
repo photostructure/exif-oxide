@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -18,8 +18,5 @@ use codegen_runtime::{
 /// Used by:
 /// - Sony::rtmd.MasterGainAdjustment
 pub fn ast_print_14c647eac637612a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl(
-        "%.2f dB".into(),
-        &[val.clone()],
-    ))
+    TagValue::String(codegen_runtime::sprintf_perl("%.2f dB", &[val.clone()]))
 }

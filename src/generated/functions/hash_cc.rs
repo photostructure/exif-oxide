@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -39,6 +39,7 @@ use codegen_runtime::{
 /// - Canon::CameraInfo7D.FileIndex
 /// - Canon::CameraInfo80D.FileIndex
 /// - Canon::CameraInfoG5XII.FileIndex
+/// - Pentax::TempInfo.ShotNumber
 /// - Sony::Tag2010b.SequenceFileNumber
 /// - Sony::Tag2010b.SequenceImageNumber
 /// - Sony::Tag2010c.SequenceFileNumber
@@ -73,7 +74,7 @@ pub fn ast_value_ccebb986d6453c97(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf(((val / 384i32) - 1i32) as f64))
+    Ok(power(2i32, ((val / 384i32) - 1i32)))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

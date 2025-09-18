@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -20,7 +20,7 @@ use codegen_runtime::{
 /// - GoPro::GLPI.GPSSpeedY
 /// - GoPro::GLPI.GPSSpeedZ
 pub fn ast_print_fcbf0919480e8f99(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("{} m/s", val).into()
+    Into::<TagValue>::into(format!("{} m/s", val))
 }
 
 /// Original perl expression:

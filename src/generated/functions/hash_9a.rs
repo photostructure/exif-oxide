@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -18,5 +18,5 @@ use codegen_runtime::{
 /// Used by:
 /// - GoPro::KBAT.KBAT_Unknown2
 pub fn ast_print_9a8d70b79f825503(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("{} J", val).into()
+    Into::<TagValue>::into(format!("{} J", val))
 }

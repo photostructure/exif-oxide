@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -32,19 +32,18 @@ pub fn ast_value_743cc97ce826a767(
 /// Used by:
 /// - Ricoh::RDTL.GPSAltitude
 pub fn ast_print_74b67b38758b8b7c(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(format!(
-        "{}{}",
-        ({
+    codegen_runtime::string::concat(
+        &({
             let (success, modified_val) = codegen_runtime::regex_substitute_perl(r"^-", "", val);
             if success {
                 let val = &modified_val;
-                format!("{} m Below", val).into()
+                Into::<TagValue>::into(format!("{} m Below", val))
             } else {
-                format!("{} m Above", val).into()
+                Into::<TagValue>::into(format!("{} m Above", val))
             }
         }),
-        " Sea Level".into()
-    ))
+        &Into::<TagValue>::into(" Sea Level"),
+    )
 }
 
 /// Original perl expression:
@@ -81,7 +80,7 @@ pub fn ast_value_742c8e667c350c68(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(if (abs((val)) < 100i32) {
-        (1i32 / ((2i32 as f64).powf(val as f64)))
+        (1i32 / (power(2i32, val)))
     } else {
         0i32
     })

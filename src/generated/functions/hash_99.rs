@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -18,7 +18,7 @@ use codegen_runtime::{
 /// Used by:
 /// - GoPro::KBAT.BatteryCapacity
 pub fn ast_print_993ce46cc3d936eb(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("{} Ah", val).into()
+    Into::<TagValue>::into(format!("{} Ah", val))
 }
 
 /// Original perl expression:
@@ -29,7 +29,7 @@ pub fn ast_print_993ce46cc3d936eb(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - PNG::AnimationControl.AnimationPlays
 /// - RIFF::ANIM.AnimationLoopCount
 pub fn ast_print_9957cfcd700746af(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    (val || "inf".into())
+    (val || Into::<TagValue>::into("inf"))
 }
 
 /// Original perl expression:
@@ -42,7 +42,7 @@ pub fn ast_value_99d1796b50c9db89(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf((val / 8i32) / 16000i32 as f64))
+    Ok(power(2i32, (val / 8i32) / 16000i32))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

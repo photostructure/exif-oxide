@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -25,7 +25,7 @@ pub fn ast_print_dc5fc04fcf3bd8b7(val: &TagValue, ctx: Option<&ExifContext>) -> 
             LazyLock::new(|| Regex::new(r"^4194303.999").unwrap());
         REGEX_d857fece5f4664ce.is_match(&val.to_string())
     } {
-        "n/a".into()
+        Into::<TagValue>::into("n/a")
     } else {
         val
     }

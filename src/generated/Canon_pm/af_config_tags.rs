@@ -8,7 +8,6 @@ use std::sync::LazyLock;
 
 // Generated imports for conversion functions
 use crate::generated::functions::hash_cc::ast_value_cc6d20d1f05f91ec;
-use crate::generated::functions::hash_e4::ast_print_e4d3ea89ebf53701;
 
 /// Tag definitions for Canon::AFConfig table
 pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -18,8 +17,17 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AFConfigTool",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_e4d3ea89ebf53701)),
+                print_conv: Some(PrintConv::Complex),
                 value_conv: Some(ValueConv::Function(ast_value_cc6d20d1f05f91ec)),
+            },
+        ),
+        (
+            2,
+            TagInfo {
+                name: "AFTrackingSensitivity",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
             },
         ),
         (
@@ -27,7 +35,16 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AFAccelDecelTracking",
                 format: "unknown",
-                print_conv: None,
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4,
+            TagInfo {
+                name: "AFPointSwitching",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
                 value_conv: None,
             },
         ),
@@ -167,6 +184,15 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             },
         ),
         (
+            21,
+            TagInfo {
+                name: "SubjectSwitching",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
             24,
             TagInfo {
                 name: "EyeDetection",
@@ -189,7 +215,7 @@ pub fn apply_value_conv(
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value),
+                ValueConv::Function(func) => func(value, None),
                 ValueConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
@@ -219,7 +245,7 @@ pub fn apply_print_conv(
         if let Some(ref print_conv) = tag_def.print_conv {
             match print_conv {
                 PrintConv::None => value.clone(),
-                PrintConv::Function(func) => func(value),
+                PrintConv::Function(func) => func(value, None),
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

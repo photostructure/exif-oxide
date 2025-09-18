@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -23,7 +23,7 @@ pub fn ast_print_4d023868095dfa1c(val: &TagValue, ctx: Option<&ExifContext>) -> 
     (int(((val * 100i32) + 0.5f64)) / 100i32)
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Registry fallback: ValueConv implementation found
 /// Original perl expression:
 /// ``` perl
 /// Image::ExifTool::GPS::ToDegrees($val)
@@ -37,17 +37,9 @@ pub fn ast_print_4d023868095dfa1c(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - H264::MDPM.GPSLongitude
 /// - Pentax::PENT.GPSLatitude
 /// - Pentax::PENT.GPSLongitude
-/// TODO: Add support for this expression pattern
 pub fn ast_value_4dd64ad8b929982b(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
-        0,                                       // tag_id will be filled at runtime
-        "UnknownTag",                            // tag_name will be filled at runtime
-        "UnknownGroup",                          // group will be filled at runtime
-        "Image::ExifTool::GPS::ToDegrees($val)", // original expression
-        val,
-    ))
+    Ok(crate::implementations::value_conv::gps_coordinate_value_conv(val))
 }

@@ -8,12 +8,22 @@ use std::sync::LazyLock;
 
 // Generated imports for conversion functions
 use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
+use crate::generated::functions::hash_cc::ast_value_cc6d20d1f05f91ec;
 use crate::generated::functions::hash_d3::ast_print_d3baecf4975cff4c;
 use crate::generated::functions::hash_eb::ast_print_ebe0a6b7251033b3;
 
 /// Tag definitions for Pentax::TempInfo table
 pub static PENTAX_TEMPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
+        (
+            10,
+            TagInfo {
+                name: "ShotNumber",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_cc6d20d1f05f91ec)),
+            },
+        ),
         (
             12,
             TagInfo {
@@ -73,7 +83,7 @@ pub fn apply_value_conv(
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value),
+                ValueConv::Function(func) => func(value, None),
                 ValueConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
@@ -103,7 +113,7 @@ pub fn apply_print_conv(
         if let Some(ref print_conv) = tag_def.print_conv {
             match print_conv {
                 PrintConv::None => value.clone(),
-                PrintConv::Function(func) => func(value),
+                PrintConv::Function(func) => func(value, None),
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

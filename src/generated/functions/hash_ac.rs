@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -22,7 +22,7 @@ pub fn ast_print_ac819f699b1427c4(val: &TagValue, ctx: Option<&ExifContext>) -> 
     if (val > 0i32) {
         (8i32 * val)
     } else {
-        "n.a.".into()
+        Into::<TagValue>::into("n.a.")
     }
 }
 

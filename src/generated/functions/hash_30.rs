@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -84,8 +84,5 @@ pub fn ast_value_30791c0bd9d5eab2(
 /// - Sony::Tag9416.MaxFocalLength
 /// - Sony::Tag9416.MinFocalLength
 pub fn ast_print_30c6ff66128b242c(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl(
-        "%.1f mm".into(),
-        &[val.clone()],
-    ))
+    TagValue::String(codegen_runtime::sprintf_perl("%.1f mm", &[val.clone()]))
 }

@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -27,7 +27,7 @@ pub fn ast_value_33118cafe9fb1cc3(
             let val = &modified_val;
             (val / 10i32)
         } else {
-            "n/a".into()
+            Into::<TagValue>::into("n/a")
         }
     })
 }
@@ -59,7 +59,7 @@ pub fn ast_value_33118cafe9fb1cc3(
 /// - Nikon::MenuSettingsZ8v2.NonCPULens9MaxAperture
 pub fn ast_print_3329592de1a1592(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
-        "%.1fmm".into(),
+        "%.1fmm",
         &[val / 100i32.clone()],
     ))
 }
@@ -72,7 +72,7 @@ pub fn ast_print_3329592de1a1592(val: &TagValue, ctx: Option<&ExifContext>) -> T
 /// - DJI::ThermalParams2.RelativeHumidity
 pub fn ast_print_339a38d31392b4fd(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
-        "%g %%".into(),
+        "%g %%",
         &[val * 100i32.clone()],
     ))
 }

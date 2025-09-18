@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -34,26 +34,4 @@ pub fn ast_value_c7431c5fa598bf69(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok((val + 100i32) / 2i32)
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// my @a=split " ",$val;$_>32767 and $_-=65536 foreach @a;join " ",@a
-/// ```
-/// Used by:
-/// - Pentax::AFInfo.AFPointValues
-/// TODO: Add support for this expression pattern
-pub fn ast_value_c7eada7e0548cfd1(
-    val: &TagValue,
-    ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
-        0,              // tag_id will be filled at runtime
-        "UnknownTag",   // tag_name will be filled at runtime
-        "UnknownGroup", // group will be filled at runtime
-        "my @a=split \" \",$val;$_>32767 and $_-=65536 foreach @a;join \" \",@a", // original expression
-        val,
-    ))
 }

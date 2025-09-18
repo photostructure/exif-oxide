@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -27,7 +27,7 @@ pub fn ast_value_53ef12641c6719f5(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(if val {
-        (2i32 as f64).powf((16i32 - (val / 256i32)) as f64)
+        power(2i32, (16i32 - (val / 256i32)))
     } else {
         0i32
     })
@@ -42,7 +42,7 @@ pub fn ast_value_53ef12641c6719f5(
 /// - Nikon::AutoCaptureInfo.AutoCaptureDistanceNear
 pub fn ast_print_53e26bd836197e46(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
-        "%.1f m".into(),
+        "%.1f m",
         &[val / 10i32.clone()],
     ))
 }

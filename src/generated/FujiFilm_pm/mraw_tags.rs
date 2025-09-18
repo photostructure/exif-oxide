@@ -15,7 +15,7 @@ use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
 pub static FUJI_FILM_MRAW_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
         (
-            1,
+            8193,
             TagInfo {
                 name: "RawImageNumber",
                 format: "int32u",
@@ -24,7 +24,7 @@ pub static FUJI_FILM_MRAW_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             },
         ),
         (
-            3,
+            8195,
             TagInfo {
                 name: "ExposureCompensation",
                 format: "rational32s",
@@ -33,7 +33,7 @@ pub static FUJI_FILM_MRAW_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             },
         ),
         (
-            4,
+            8196,
             TagInfo {
                 name: "ExposureCompensation2",
                 format: "rational32s",
@@ -42,7 +42,7 @@ pub static FUJI_FILM_MRAW_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             },
         ),
         (
-            5,
+            8197,
             TagInfo {
                 name: "ExposureTime",
                 format: "rational64u",
@@ -51,7 +51,7 @@ pub static FUJI_FILM_MRAW_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             },
         ),
         (
-            6,
+            8198,
             TagInfo {
                 name: "FNumber",
                 format: "rational64u",
@@ -73,7 +73,7 @@ pub fn apply_value_conv(
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value),
+                ValueConv::Function(func) => func(value, None),
                 ValueConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
@@ -103,7 +103,7 @@ pub fn apply_print_conv(
         if let Some(ref print_conv) = tag_def.print_conv {
             match print_conv {
                 PrintConv::None => value.clone(),
-                PrintConv::Function(func) => func(value),
+                PrintConv::Function(func) => func(value, None),
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

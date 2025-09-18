@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -18,5 +18,5 @@ use codegen_runtime::{
 /// Used by:
 /// - Olympus::CameraSettings.ManometerPressure
 pub fn ast_print_b0ad9908708bcb9f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("{} kPa", val).into()
+    Into::<TagValue>::into(format!("{} kPa", val))
 }

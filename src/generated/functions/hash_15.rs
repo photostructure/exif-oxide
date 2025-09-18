@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -28,7 +28,7 @@ use codegen_runtime::{
 /// - Sony::Tag9406b.BatteryLevel
 /// - Sony::Tag9406b.BatteryLevel2
 pub fn ast_print_15d3bbdbc77bdb90(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("{}%", val).into()
+    Into::<TagValue>::into(format!("{}%", val))
 }
 
 /// Original perl expression:
@@ -39,7 +39,7 @@ pub fn ast_print_15d3bbdbc77bdb90(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Nikon::Main.ShutterCount
 pub fn ast_print_155f09e06c458602(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if (val == 4294965247i32) {
-        "n/a".into()
+        Into::<TagValue>::into("n/a")
     } else {
         val
     }

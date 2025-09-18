@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -18,7 +18,7 @@ use codegen_runtime::{
 /// Used by:
 /// - GoPro::KBAT.BatteryCurrent
 pub fn ast_print_8497b6582cfb6c0a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("{} A", val).into()
+    Into::<TagValue>::into(format!("{} A", val))
 }
 
 /// Original perl expression:
@@ -119,7 +119,7 @@ pub fn ast_value_849772b1a5139524(
 /// - Sony::Tag9416.SonyFNumber2
 /// - Sony::Tag9416.SonyMaxApertureValue
 pub fn ast_print_8470e30e1e5b4729(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.1f".into(), &[val.clone()]))
+    TagValue::String(codegen_runtime::sprintf_perl("%.1f", &[val.clone()]))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

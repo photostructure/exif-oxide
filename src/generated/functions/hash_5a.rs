@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -20,12 +20,12 @@ use codegen_runtime::{
 pub fn ast_print_5a37abc3eeb8dead(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val {
         (if (val == 0xffffffffu32) {
-            "n/a".into()
+            Into::<TagValue>::into("n/a")
         } else {
             val
         })
     } else {
-        "Auto".into()
+        Into::<TagValue>::into("Auto")
     }
 }
 

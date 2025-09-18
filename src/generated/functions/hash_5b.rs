@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -76,5 +76,5 @@ pub fn ast_value_5b997436cb4c4a4f(
 /// Used by:
 /// - Panasonic::Leica2.SerialNumber
 pub fn ast_print_5bf8478023213c9(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.7d".into(), &[val.clone()]))
+    TagValue::String(codegen_runtime::sprintf_perl("%.7d", &[val.clone()]))
 }

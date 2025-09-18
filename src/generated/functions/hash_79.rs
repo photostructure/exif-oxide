@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -78,7 +78,7 @@ use codegen_runtime::{
 /// - Nikon::MenuSettingsZ9v4.NonCPULens9FocalLength
 pub fn ast_print_79f8b183abd6a1b(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
-        "%.1fmm".into(),
+        "%.1fmm",
         &[val / 10i32.clone()],
     ))
 }

@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -22,7 +22,7 @@ pub fn ast_value_e53323763c41feda(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(if IsFloat(val) && abs(val) < 100i32 {
-        (2i32 as f64).powf((codegen_runtime::negate(val)) as f64)
+        power(2i32, (codegen_runtime::negate(val)))
     } else {
         0i32
     })

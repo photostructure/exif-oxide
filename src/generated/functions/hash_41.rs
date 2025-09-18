@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -27,7 +27,7 @@ pub fn ast_print_4186404e3c9fa11a(val: &TagValue, ctx: Option<&ExifContext>) -> 
     } {
         val
     } else {
-        "${val} m".into()
+        Into::<TagValue>::into("${val} m")
     }
 }
 
@@ -39,7 +39,7 @@ pub fn ast_print_4186404e3c9fa11a(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - SonyIDC::Main.InclinationAngle
 pub fn ast_print_41bf92216501bc5a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
-        "%.1f deg".into(),
+        "%.1f deg",
         &[val / 1000i32.clone()],
     ))
 }

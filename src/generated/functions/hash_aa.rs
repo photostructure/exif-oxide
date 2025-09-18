@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -19,7 +19,7 @@ use codegen_runtime::{
 /// - Nikon::ShotInfoD800.RepeatingFlashRateBuilt-in
 /// - Nikon::ShotInfoD800.RepeatingFlashRateExternal
 pub fn ast_print_aabd3f97f7321fbc(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("{} Hz", val).into()
+    Into::<TagValue>::into(format!("{} Hz", val))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

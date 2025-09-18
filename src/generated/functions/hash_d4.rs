@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -19,13 +19,16 @@ use codegen_runtime::{
 /// - RIFF::StreamHeader.SampleSize
 pub fn ast_print_d43fd7a703ae1653(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val {
-        TagValue::String(format!(
-            "{}{}",
-            format!("{} byte", val).into(),
-            (if (val == 1i32) { "".into() } else { "s".into() })
-        ))
+        codegen_runtime::string::concat(
+            &Into::<TagValue>::into(format!("{} byte", val)),
+            &(if (val == 1i32) {
+                Into::<TagValue>::into("")
+            } else {
+                Into::<TagValue>::into("s")
+            }),
+        )
     } else {
-        "Variable".into()
+        Into::<TagValue>::into("Variable")
     }
 }
 

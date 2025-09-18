@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -26,7 +26,7 @@ pub fn ast_value_6cb46ed7ea997c8d(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf((val / 2i32) as f64))
+    Ok(power(2i32, (val / 2i32)))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

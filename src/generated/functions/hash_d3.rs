@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -50,7 +50,7 @@ use codegen_runtime::{
 /// - Sony::Tag9402.AmbientTemperature
 /// - Sony::Tag9403.CameraTemperature
 pub fn ast_print_d3baecf4975cff4c(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("{} C", val).into()
+    Into::<TagValue>::into(format!("{} C", val))
 }
 
 /// Original perl expression:
@@ -65,7 +65,7 @@ pub fn ast_print_d3695e9544e1c996(val: &TagValue, ctx: Option<&ExifContext>) -> 
     if val {
         val
     } else {
-        "Auto".into()
+        Into::<TagValue>::into("Auto")
     }
 }
 
@@ -92,7 +92,7 @@ pub fn ast_value_d39b819d3cebc1bf(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf((val / 24i32) as f64))
+    Ok(power(2i32, (val / 24i32)))
 }
 
 /// Original perl expression:
@@ -107,7 +107,7 @@ pub fn ast_value_d39b819d3cebc1bf(
 /// - Nikon::VignetteInfo.VignetteCoefficient2
 /// - Nikon::VignetteInfo.VignetteCoefficient3
 pub fn ast_print_d37c45a072187ab5(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.5f".into(), &[val.clone()]))
+    TagValue::String(codegen_runtime::sprintf_perl("%.5f", &[val.clone()]))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

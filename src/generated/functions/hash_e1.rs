@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -28,7 +28,7 @@ use codegen_runtime::{
 /// - Nikon::BarometerInfo.Altitude
 /// - Red::Main.FocusDistance
 pub fn ast_print_e1b9c18c6fb887af(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("{} m", val).into()
+    Into::<TagValue>::into(format!("{} m", val))
 }
 
 /// Original perl expression:
@@ -39,7 +39,7 @@ pub fn ast_print_e1b9c18c6fb887af(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - SonyIDC::Main.BrightnessAdj
 pub fn ast_print_e168284515af79a7(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
-        "%.2f".into(),
+        "%.2f",
         &[val / 300i32.clone()],
     ))
 }

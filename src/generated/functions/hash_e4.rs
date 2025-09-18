@@ -7,19 +7,9 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
-
-/// Original perl expression:
-/// ``` perl
-/// "Case $val"
-/// ```
-/// Used by:
-/// - Canon::AFConfig.AFConfigTool
-pub fn ast_print_e4d3ea89ebf53701(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("Case {}", val).into()
-}
 
 /// Original perl expression:
 /// ``` perl
@@ -49,7 +39,7 @@ pub fn ast_value_e42dee863566f395(
 /// - JPEG::NITF.Flags
 /// - Olympus::Equipment.LensProperties
 pub fn ast_print_e4e23da0cd5e8937(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("0x%x".into(), &[val.clone()]))
+    TagValue::String(codegen_runtime::sprintf_perl("0x%x", &[val.clone()]))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

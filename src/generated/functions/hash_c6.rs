@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -19,12 +19,12 @@ use codegen_runtime::{
 /// - Sony::Tag940c.LensFirmwareVersion
 pub fn ast_print_c6578bbe163abd7e(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
-        "Ver.%.2x.%.3d".into(),
+        "Ver.%.2x.%.3d",
         &[val >> 8i32.clone(), val & 0xffu32.clone()],
     ))
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Registry fallback: PrintConv implementation found
 /// Original perl expression:
 /// ``` perl
 /// Image::ExifTool::Exif::PrintExposureTime($val)
@@ -100,14 +100,6 @@ pub fn ast_print_c6578bbe163abd7e(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Sigma::Main.ExposureTime2
 /// - Sony::PMP.ExposureTime
 /// - Sony::rtmd.ExposureTime
-/// TODO: Add support for this expression pattern
 pub fn ast_print_c60ce4347d672501(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
-        0,                                                // tag_id will be filled at runtime
-        "UnknownTag",                                     // tag_name will be filled at runtime
-        "UnknownGroup",                                   // group will be filled at runtime
-        "Image::ExifTool::Exif::PrintExposureTime($val)", // original expression
-        val,
-    )
+    crate::implementations::print_conv::exposuretime_print_conv(val)
 }

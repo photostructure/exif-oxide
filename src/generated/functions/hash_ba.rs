@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -107,17 +107,7 @@ use codegen_runtime::{
 /// - Sony::SRF2.MaxFocalLength
 /// - Sony::SRF2.MinFocalLength
 pub fn ast_print_ba030bb348470426(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("{} mm", val).into()
-}
-
-/// Original perl expression:
-/// ``` perl
-/// "$val ms"
-/// ```
-/// Used by:
-/// - Pentax::AFInfo.AFIntegrationTime
-pub fn ast_print_ba730b85fae6fc80(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("{} ms", val).into()
+    Into::<TagValue>::into(format!("{} mm", val))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

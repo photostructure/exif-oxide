@@ -188,6 +188,7 @@ static CANON_MODEL_ID_DATA: &[(u32, &'static str)] = &[
     (2147484817, "PowerShot V10"),
     (2147484821, "EOS R1"),
     (2147484822, "R5 Mark II"),
+    (2147484823, "PowerShot V1"),
     (2147484824, "EOS R100"),
     (2147484950, "EOS R50 V"),
     (2147484960, "EOS D2000C"),

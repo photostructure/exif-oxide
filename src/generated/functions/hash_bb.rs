@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -38,7 +38,7 @@ use codegen_runtime::{
 /// - Panasonic::Subdir.ExternalSensorBrightnessValue
 /// - Panasonic::Subdir.MeasuredLV
 pub fn ast_print_bb744a13f82c4cd2(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.2f".into(), &[val.clone()]))
+    TagValue::String(codegen_runtime::sprintf_perl("%.2f", &[val.clone()]))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -94,7 +94,7 @@ pub fn ast_print_bb36ed62e5a52a4(val: &TagValue, ctx: Option<&ExifContext>) -> T
     )
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Registry fallback: PrintConv implementation found
 /// Original perl expression:
 /// ``` perl
 /// Image::ExifTool::Exif::PrintFraction($val)
@@ -119,14 +119,6 @@ pub fn ast_print_bb36ed62e5a52a4(val: &TagValue, ctx: Option<&ExifContext>) -> T
 /// - Panasonic::Main.FlashBias
 /// - Panasonic::Main.WhiteBalanceBias
 /// - Sanyo::MOV.ExposureCompensation
-/// TODO: Add support for this expression pattern
 pub fn ast_print_bba76882980e1e1a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
-        0,                                            // tag_id will be filled at runtime
-        "UnknownTag",                                 // tag_name will be filled at runtime
-        "UnknownGroup",                               // group will be filled at runtime
-        "Image::ExifTool::Exif::PrintFraction($val)", // original expression
-        val,
-    )
+    crate::implementations::print_conv::print_fraction(val)
 }

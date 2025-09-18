@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -27,7 +27,7 @@ pub fn ast_value_5d1e153d8debf27a(
             let val = &modified_val;
             (codegen_runtime::negate(val) / 10i32)
         } else {
-            "n/a".into()
+            Into::<TagValue>::into("n/a")
         }
     })
 }

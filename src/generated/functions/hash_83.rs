@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -48,7 +48,7 @@ pub fn ast_value_83f37d90ee875af5(
 /// - Canon::ShotInfo.OpticalZoomCode
 pub fn ast_print_8388b1ca19272fc5(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if (val == 8i32) {
-        "n/a".into()
+        Into::<TagValue>::into("n/a")
     } else {
         val
     }

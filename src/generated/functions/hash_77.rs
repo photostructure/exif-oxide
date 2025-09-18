@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -18,8 +18,8 @@ use codegen_runtime::{
 /// Used by:
 /// - Panasonic::Main.BabyAge
 pub fn ast_print_77deeeaf9630ea8f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    if (val.to_string() == "9999:99:99 00:00:00".into().to_string()) {
-        "(not set)".into()
+    if (val.to_string() == "9999:99:99 00:00:00") {
+        Into::<TagValue>::into("(not set)")
     } else {
         val
     }

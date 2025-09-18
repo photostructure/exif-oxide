@@ -12,6 +12,7 @@ pub static KNOWN_PROTOCOL: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     set.insert("dvtm_Mini4_Pro.proto");
     set.insert("dvtm_ac203.proto");
     set.insert("dvtm_ac204.proto");
+    set.insert("dvtm_dji_neo.proto");
     set.insert("dvtm_pm320.proto");
     set.insert("dvtm_wm265e.proto");
     set

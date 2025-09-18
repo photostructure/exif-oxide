@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -21,7 +21,7 @@ pub fn ast_value_1a943147cffc80a4(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf((8i32 - (val / 8192i32)) as f64))
+    Ok(power(2i32, (8i32 - (val / 8192i32))))
 }
 
 /// Original perl expression:
@@ -69,7 +69,7 @@ pub fn ast_value_1a943147cffc80a4(
 /// - Sony::Tag9405b.SonyISO
 /// - Sony::Tag9416.SonyISO
 pub fn ast_print_1ade125dab246be4(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.0f".into(), &[val.clone()]))
+    TagValue::String(codegen_runtime::sprintf_perl("%.0f", &[val.clone()]))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

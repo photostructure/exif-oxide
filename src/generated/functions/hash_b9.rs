@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -50,7 +50,7 @@ use codegen_runtime::{
 /// - Sony::Tag9405b.Sharpness
 pub fn ast_print_b93bf01b5173ce30(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if (val > 0i32) {
-        format!("+{}", val).into()
+        Into::<TagValue>::into(format!("+{}", val))
     } else {
         val
     }
@@ -66,5 +66,5 @@ pub fn ast_value_b908b85ef208d53a(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((2i32 as f64).powf((codegen_runtime::negate(val) / 6i32) as f64))
+    Ok(power(2i32, (codegen_runtime::negate(val) / 6i32)))
 }

@@ -1245,6 +1245,7 @@ static NIKON_LENS_IDS_DATA: &[(&str, &'static str)] = &[
     ),
     ("9F 48 48 48 24 24 A1 06", "Yongnuo YN40mm F2.8N"),
     ("9F 4C 44 44 18 18 A1 06", "Yongnuo YN35mm F2"),
+    ("9F 4D 50 50 14 14 A0 06", "Yongnuo YN50mm F1.8N"),
     ("9F 54 68 68 18 18 A2 06", "Yongnuo YN100mm F2N"),
     ("9F 58 44 44 14 14 A1 06", "AF-S DX Nikkor 35mm f/1.8G"),
     ("A0 37 5C 8E 34 3C A2 06", "Sony FE 70-300mm F4.5-5.6 G OSS"),
@@ -1526,6 +1527,10 @@ static NIKON_LENS_IDS_DATA: &[(&str, &'static str)] = &[
     (
         "CD 3D 2D 70 2E 3C 4B 0E",
         "Sigma 18-125mm F3.8-5.6 DC OS HSM",
+    ),
+    (
+        "CE 00 37 5C 25 25 DF 4E",
+        "Tamron SP 24-70mm f/2.8 Di VC USD G2 (A032)",
     ),
     (
         "CE 34 76 A0 38 40 4B 0E",

@@ -262,6 +262,15 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             },
         ),
         (
+            4151,
+            TagInfo {
+                name: "MultipleExposure",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
             4160,
             TagInfo {
                 name: "ShadowTone",
@@ -406,6 +415,15 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             },
         ),
         (
+            4354,
+            TagInfo {
+                name: "WhiteBalanceBracketing",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
             4355,
             TagInfo {
                 name: "DriveSettings",
@@ -427,6 +445,33 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             4358,
             TagInfo {
                 name: "PixelShiftOffset",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4432,
+            TagInfo {
+                name: "CompositeImageMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            4433,
+            TagInfo {
+                name: "CompositeImageCount1",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4434,
+            TagInfo {
+                name: "CompositeImageCount2",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -896,7 +941,7 @@ pub fn apply_value_conv(
         if let Some(ref value_conv) = tag_def.value_conv {
             match value_conv {
                 ValueConv::None => Ok(value.clone()),
-                ValueConv::Function(func) => func(value),
+                ValueConv::Function(func) => func(value, None),
                 ValueConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     Err(crate::types::ExifError::NotImplemented("Runtime expression evaluation not supported - should be handled by PPI at build time".to_string()))
@@ -926,7 +971,7 @@ pub fn apply_print_conv(
         if let Some(ref print_conv) = tag_def.print_conv {
             match print_conv {
                 PrintConv::None => value.clone(),
-                PrintConv::Function(func) => func(value),
+                PrintConv::Function(func) => func(value, None),
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

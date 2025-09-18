@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -19,7 +19,7 @@ use codegen_runtime::{
 /// - GoPro::KBAT.BatteryLevel
 /// - GoPro::KBAT.KBAT_Unknown9
 pub fn ast_print_139f419a2aaaa1f3(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    format!("{} %", val).into()
+    Into::<TagValue>::into(format!("{} %", val))
 }
 
 /// Original perl expression:
@@ -54,9 +54,7 @@ pub fn ast_value_13e9fff1dc7b41b2(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(exp(
-        ((4i32 * log((2i32))) * (1i32 - Image::ExifTool::Canon::CanonEv))
-    ))
+    Ok(exp(((4i32 * log((2i32))) * (1i32 - val.clone()))))
 }
 
 /// Original perl expression:
@@ -68,7 +66,7 @@ pub fn ast_value_13e9fff1dc7b41b2(
 /// - QuickTime::TrackHeader.TrackVolume
 pub fn ast_print_13019bc21b8fe7c4(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
-        "%.2f%%".into(),
+        "%.2f%%",
         &[val * 100i32.clone()],
     ))
 }

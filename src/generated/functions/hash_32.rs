@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -38,31 +38,8 @@ use codegen_runtime::{
 /// - Nikon::MenuSettingsZ9v4.NonCPULens9MaxAperture
 pub fn ast_print_32d15696c00cf4d1(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
-        "f/%.1f".into(),
+        "f/%.1f",
         &[val / 100i32.clone()],
-    ))
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $self->Options("Unknown") ? $val : $val & 0x7ff
-/// ```
-/// Used by:
-/// - Pentax::AFInfo.AFPointsUnknown1
-/// - Pentax::AFInfo.AFPointsUnknown2
-/// TODO: Add support for this expression pattern
-pub fn ast_value_325ae39bdd3fcbb3(
-    val: &TagValue,
-    ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
-        0,                                                   // tag_id will be filled at runtime
-        "UnknownTag",                                        // tag_name will be filled at runtime
-        "UnknownGroup",                                      // group will be filled at runtime
-        "$self->Options(\"Unknown\") ? $val : $val & 0x7ff", // original expression
-        val,
     ))
 }
 

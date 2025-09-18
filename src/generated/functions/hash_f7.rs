@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -34,5 +34,5 @@ pub fn ast_value_f7873b2dff9e970c(
 /// - Sony::Tag9050c.ShutterCount
 /// - Sony::Tag9050d.ShutterCount
 pub fn ast_print_f78c26f012d763ba(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%6d".into(), &[val.clone()]))
+    TagValue::String(codegen_runtime::sprintf_perl("%6d", &[val.clone()]))
 }

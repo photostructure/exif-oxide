@@ -28,6 +28,9 @@ pub static EXPORT_OK: [&'static str; 45] = [
     "Set32u",
     "Set64u",
     "Set64s",
+    "%allTables",
+    "@tableOrder",
+    "@fileTypes",
     "GetTagTable",
     "TagTableKeys",
     "GetTagInfoList",
@@ -46,7 +49,4 @@ pub static EXPORT_OK: [&'static str; 45] = [
     "CanCreate",
     "AddUserDefinedTags",
     "OrderedKeys",
-    "%allTables",
-    "@tableOrder",
-    "@fileTypes",
 ];

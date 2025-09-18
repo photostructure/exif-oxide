@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -77,9 +77,9 @@ pub fn ast_value_da95df81681cbeeb(
 /// - Canon::ShotInfo.FocusDistanceUpper
 pub fn ast_print_dad6b5d4251a08c7(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if (val > 655.345f64) {
-        "inf".into()
+        Into::<TagValue>::into("inf")
     } else {
-        format!("{} m", val).into()
+        Into::<TagValue>::into(format!("{} m", val))
     }
 }
 
@@ -109,7 +109,7 @@ pub fn ast_value_da79bd1c8902b829(
 /// - Sony::Tag9405b.LensZoomPosition
 pub fn ast_print_da1eca5e0712c7b0(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
-        "%.0f%%".into(),
+        "%.0f%%",
         &[val / 10.24f64.clone()],
     ))
 }

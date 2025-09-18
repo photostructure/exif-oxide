@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -18,10 +18,10 @@ use codegen_runtime::{
 /// Used by:
 /// - Casio::Type2.ObjectDistance
 pub fn ast_print_8eb189bdce07b25f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    if (val.to_string() == "inf".into().to_string()) {
+    if (val.to_string() == "inf") {
         val
     } else {
-        format!("{} m", val).into()
+        Into::<TagValue>::into(format!("{} m", val))
     }
 }
 

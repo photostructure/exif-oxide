@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -20,7 +20,7 @@ use codegen_runtime::{
 /// - Olympus::WAV.FileNumber
 /// - Sony::CameraSettings.ImageNumber
 pub fn ast_print_86d069131c594edd(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.4d".into(), &[val.clone()]))
+    TagValue::String(codegen_runtime::sprintf_perl("%.4d", &[val.clone()]))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

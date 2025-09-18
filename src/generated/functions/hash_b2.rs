@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -22,7 +22,7 @@ pub fn ast_value_b2f81fafd2d2443b(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(if (abs((val / 256i32)) < 100i32) {
-        (2i32 as f64).powf((codegen_runtime::negate(val) / 256i32) as f64)
+        power(2i32, (codegen_runtime::negate(val) / 256i32))
     } else {
         0i32
     })
@@ -36,7 +36,7 @@ pub fn ast_value_b2f81fafd2d2443b(
 /// - SonyIDC::Main.PxShiftPeriphEdgeNRValue
 pub fn ast_print_b22e140fc097672a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
-        "%.1f".into(),
+        "%.1f",
         &[val / 10i32.clone()],
     ))
 }

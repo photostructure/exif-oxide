@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -44,33 +44,6 @@ pub fn ast_value_b39416bae8717543(
         "UnknownTag",   // tag_name will be filled at runtime
         "UnknownGroup", // group will be filled at runtime
         "$val =~ s/(\\d{4})_(\\d{2})_/$1:$2:/; $val =~ tr/_/ /; $val", // original expression
-        val,
-    ))
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// length($val) > 32 ? \$val : $val
-/// ```
-/// Used by:
-/// - Exif::Main.FreeByteCounts
-/// - Exif::Main.FreeOffsets
-/// - Exif::Main.TileByteCounts
-/// - Exif::Main.TileOffsets
-/// - PanasonicRaw::Main.StripByteCounts
-/// - PanasonicRaw::Main.StripOffsets
-/// TODO: Add support for this expression pattern
-pub fn ast_value_b3bc420d22d07d89(
-    val: &TagValue,
-    ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
-        0,                                   // tag_id will be filled at runtime
-        "UnknownTag",                        // tag_name will be filled at runtime
-        "UnknownGroup",                      // group will be filled at runtime
-        "length($val) > 32 ? \\$val : $val", // original expression
         val,
     ))
 }
@@ -120,4 +93,23 @@ pub fn ast_value_b3b6ac1021ca87a1(
         "sprintf(\"%.2d:%.2d:%.2d.%.2d\",split(\" \", $val))", // original expression
         val,
     ))
+}
+
+/// Registry fallback: ValueConv implementation found
+/// Original perl expression:
+/// ``` perl
+/// length($val) > 32 ? \\$val : $val
+/// ```
+/// Used by:
+/// - Exif::Main.FreeByteCounts
+/// - Exif::Main.FreeOffsets
+/// - Exif::Main.TileByteCounts
+/// - Exif::Main.TileOffsets
+/// - PanasonicRaw::Main.StripByteCounts
+/// - PanasonicRaw::Main.StripOffsets
+pub fn ast_value_b3bc420d22d07d89(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(crate::implementations::value_conv::reference_long_string_value_conv(val))
 }

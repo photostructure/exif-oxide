@@ -7,8 +7,8 @@
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{
-    math::{exp, int, log},
-    string::{length_i32, length_string},
+    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
+    string::{chr, length_i32, length_string, uc},
 };
 
 /// Original perl expression:
@@ -50,8 +50,5 @@ pub fn ast_value_9c5fc67951116486(
 /// - Nikon::LensData01.FocusPosition
 /// - Nikon::LensData0204.FocusPosition
 pub fn ast_print_9cf1a1875ed5985(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl(
-        "0x%02x".into(),
-        &[val.clone()],
-    ))
+    TagValue::String(codegen_runtime::sprintf_perl("0x%02x", &[val.clone()]))
 }
