@@ -60,7 +60,7 @@ tracing-subscriber = { version = "0.3", features = [
 chrono = { version = "0.4", features = [
     "serde",
 ] } # Date and time handling for File:FileModifyDate
-indexmap = { version = "2.10", features = [
+indexmap = { version = "2.11", features = [
     "serde",
 ] } # Preserves insertion order for tag output
 
