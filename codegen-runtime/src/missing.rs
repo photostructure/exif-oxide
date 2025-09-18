@@ -5,8 +5,8 @@
 //! implemented for better compatibility when using the --show-missing flag.
 
 use crate::tag_value::TagValue;
-use std::collections::HashSet;
 use std::cell::RefCell;
+use std::collections::HashSet;
 
 #[derive(Debug, Clone)]
 pub struct MissingConversion {
@@ -55,7 +55,7 @@ pub fn missing_print_conv(
 ) -> TagValue {
     MISSING_CONVERSIONS.with(|cell| {
         let mut state = cell.borrow_mut();
-        
+
         // Only record each unique expression once (per type)
         let key = (expr.to_string(), true); // true = PrintConv
         if !state.seen_expressions.contains(&key) {
@@ -86,7 +86,7 @@ pub fn missing_value_conv(
 ) -> TagValue {
     MISSING_CONVERSIONS.with(|cell| {
         let mut state = cell.borrow_mut();
-        
+
         // Only record each unique expression once (per type)
         let key = (expr.to_string(), false); // false = ValueConv
         if !state.seen_expressions.contains(&key) {
@@ -106,9 +106,7 @@ pub fn missing_value_conv(
 
 /// Get all missing conversions for --show-missing
 pub fn get_missing_conversions() -> Vec<MissingConversion> {
-    MISSING_CONVERSIONS.with(|cell| {
-        cell.borrow().conversions.clone()
-    })
+    MISSING_CONVERSIONS.with(|cell| cell.borrow().conversions.clone())
 }
 
 /// Clear missing conversions (useful for testing)
