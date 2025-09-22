@@ -58,6 +58,14 @@ fn parse_canon_lens_model(raw_data: &[u8]) -> Result<LensModel, ParseError> { ..
 
 **Pitfall**: Don't over-apply this rule—necessary complexity is still necessary.
 
+## Rule 5: No bogus guardrails or defaults
+
+When key assumptions that your code relies upon to work appear to be broken, fail early and visibly, rather than attempting to patch things up. In particular:
+
+- Lean towards propagating errors up to callers, instead of silently "warning" about them inside of try/catch blocks.
+- If you are fairly certain data should always exist, assume it does, rather than producing code with unnecessary guardrails or existence checks (esp. if such checks might mislead other programmers)
+- Never use 'defaults' as a result of errors, either for users, or downstream callers.
+
 ## Priority and Conflicts
 
 **When rules conflict, higher numbers win:**
