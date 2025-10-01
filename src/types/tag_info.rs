@@ -68,7 +68,9 @@ pub enum PrintConv {
     Expression(String),
 
     /// Direct function call (zero-overhead)
-    Function(fn(&crate::types::TagValue) -> crate::types::TagValue),
+    Function(
+        fn(&crate::types::TagValue, Option<&crate::types::ExifContext>) -> crate::types::TagValue,
+    ),
 
     /// Complex conversion requiring custom logic
     Complex,
@@ -88,7 +90,10 @@ pub enum ValueConv {
 
     /// Direct function call (zero-overhead)
     Function(
-        fn(&crate::types::TagValue) -> Result<crate::types::TagValue, crate::types::ExifError>,
+        fn(
+            &crate::types::TagValue,
+            Option<&crate::types::ExifContext>,
+        ) -> Result<crate::types::TagValue, crate::types::ExifError>,
     ),
 
     /// Complex conversion requiring custom logic
