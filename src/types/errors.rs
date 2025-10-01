@@ -32,5 +32,20 @@ pub enum ExifError {
     NotImplemented(String),
 }
 
+impl From<codegen_runtime::types::ExifError> for ExifError {
+    fn from(err: codegen_runtime::types::ExifError) -> Self {
+        match err {
+            codegen_runtime::types::ExifError::ParseError(msg) => ExifError::ParseError(msg),
+            codegen_runtime::types::ExifError::IoError(msg) => ExifError::ParseError(msg),
+            codegen_runtime::types::ExifError::InvalidFormat(msg) => ExifError::InvalidFormat(msg),
+            codegen_runtime::types::ExifError::FormatError(msg) => ExifError::ParseError(msg),
+            codegen_runtime::types::ExifError::Unsupported(msg) => ExifError::Unsupported(msg),
+            codegen_runtime::types::ExifError::NotImplemented(msg) => {
+                ExifError::NotImplemented(msg)
+            }
+        }
+    }
+}
+
 /// Result type alias for convenience
 pub type Result<T> = std::result::Result<T, ExifError>;
