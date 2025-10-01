@@ -22,7 +22,8 @@
       "Bash(perl:*)",
       "Bash(rustc:*)",
       "Bash(sed:*)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(./scripts/field_extractor.pl:*)"
     ],
     "deny": [],
     "additionalDirectories": [
