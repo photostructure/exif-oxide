@@ -111,7 +111,7 @@ impl ExifContext {
 
     /// Push directory to path stack (corresponds to $$self{PATH})
     pub fn push_path(&mut self, dir: String) {
-        self.path.push(dir);
+        self.path.push(dir.clone());
         // Update DIR_NAME state to current directory
         self.set_state("DIR_NAME".to_string(), dir);
     }
