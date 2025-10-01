@@ -130,6 +130,20 @@ sub extract_array_symbol {
     # Filter out function references
     my $filtered_data = filter_code_refs($array_ref);
 
+    # Sort array elements for deterministic output if they are all strings
+    if ( ref $filtered_data eq 'ARRAY' && @$filtered_data > 0 ) {
+        my $all_strings = 1;
+        for my $element (@$filtered_data) {
+            if ( ref $element || ( defined $element && $element =~ /^\d+$/ ) ) {
+                $all_strings = 0;
+                last;
+            }
+        }
+        if ($all_strings) {
+            $filtered_data = [ sort @$filtered_data ];
+        }
+    }
+
     # Add inline AST to any hash elements that have expressions
     add_inline_ast_to_data($filtered_data);
 
