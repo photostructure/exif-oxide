@@ -6,10 +6,7 @@
 #![allow(dead_code, unused_variables, unreachable_code)]
 
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{
-    math::{abs, atan2, cos, exp, int, log, sin, sqrt, IsFloat},
-    string::{chr, length_i32, length_string, uc},
-};
+use codegen_runtime::*;
 
 /// Registry fallback: PrintConv implementation found
 /// Original perl expression:
