@@ -9,6 +9,7 @@ use std::sync::LazyLock;
 static CANON_MODEL_ID_DATA: &[(u32, &'static str)] = &[
     (100925440, "PowerShot S100 / Digital IXUS / IXY Digital"),
     (1042, "EOS M50 / Kiss M"),
+    (1073742375, "EOS C50"),
     (1074255475, "DC19/DC21/DC22"),
     (1074255476, "XH A1"),
     (1074255477, "HV10"),

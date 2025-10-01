@@ -201,6 +201,51 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 value_conv: None,
             },
         ),
+        (
+            26,
+            TagInfo {
+                name: "WholeAreaTracking",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            27,
+            TagInfo {
+                name: "ServoAFCharacteristics",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            28,
+            TagInfo {
+                name: "CaseAutoSetting",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            29,
+            TagInfo {
+                name: "ActionPriority",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
+            30,
+            TagInfo {
+                name: "SportEvents",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
     ])
 });
 

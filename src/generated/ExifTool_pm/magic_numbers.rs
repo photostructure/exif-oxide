@@ -203,6 +203,14 @@ pub static REGEX_MAGIC_NUMBERS: LazyLock<HashMap<&'static str, Regex>> = LazyLoc
         map.insert("DR4", regex);
     }
 
+    // Pattern: DSD \\x1c\\0{7}.{16}fmt
+    if let Ok(regex) = RegexBuilder::new(r"DSD \x1c\0{7}.{16}fmt ")
+        .unicode(false)
+        .build()
+    {
+        map.insert("DSF", regex);
+    }
+
     // Pattern: (\\x02dss|\\x03ds2)
     if let Ok(regex) = RegexBuilder::new(r"(\x02dss|\x03ds2)")
         .unicode(false)
@@ -372,8 +380,11 @@ pub static REGEX_MAGIC_NUMBERS: LazyLock<HashMap<&'static str, Regex>> = LazyLoc
         map.insert("LNK", regex);
     }
 
-    // Pattern: (....)?\\x47
-    if let Ok(regex) = RegexBuilder::new(r"(....)?\x47").unicode(false).build() {
+    // Pattern: .{0,191}?\\x47(.{187}|.{191})\\x47(.{187}|.{191})\\x47
+    if let Ok(regex) = RegexBuilder::new(r".{0,191}?\x47(.{187}|.{191})\x47(.{187}|.{191})\x47")
+        .unicode(false)
+        .build()
+    {
         map.insert("M2TS", regex);
     }
 

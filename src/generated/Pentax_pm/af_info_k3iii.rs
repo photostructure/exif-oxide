@@ -11,7 +11,7 @@ static AF_INFO_K3III_DATA: &[(&str, &'static str)] = &[
     ("FORMAT", "int16u"),
     (
         "NOTES",
-        "AF tags written by the K-3 Mark III, GR III and GR IIIx.",
+        "AF tags written by the K-3 Mark III, GR III, GR IIIx and GR IV.",
     ),
     (
         "PROCESS_PROC",

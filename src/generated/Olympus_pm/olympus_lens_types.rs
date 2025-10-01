@@ -80,6 +80,10 @@ static OLYMPUS_LENS_TYPES_DATA: &[(&str, &'static str)] = &[
         "Olympus M.Zuiko Digital ED 90mm F3.5 Macro IS Pro",
     ),
     ("0 40 10", "Olympus M.Zuiko Digital ED 150-600mm F5.0-6.3"),
+    (
+        "0 41 10",
+        "OM System M.Zuiko Digital ED 50-200mm F2.8 IS Pro",
+    ),
     ("1 01 00", "Sigma 18-50mm F3.5-5.6 DC"),
     ("1 01 10", "Sigma 30mm F2.8 EX DN"),
     ("1 02 00", "Sigma 55-200mm F4.0-5.6 DC"),

@@ -4,13 +4,13 @@
 
 /// defaultWriteGroups array from ExifTool
 pub static DEFAULT_WRITE_GROUPS: [&'static str; 9] = [
-    "EXIF",
-    "IPTC",
-    "XMP",
-    "MakerNotes",
-    "QuickTime",
-    "Photoshop",
-    "ICC_Profile",
-    "CanonVRD",
     "Adobe",
+    "CanonVRD",
+    "EXIF",
+    "ICC_Profile",
+    "IPTC",
+    "MakerNotes",
+    "Photoshop",
+    "QuickTime",
+    "XMP",
 ];

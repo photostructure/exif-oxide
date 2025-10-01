@@ -64,6 +64,7 @@ static MIME_TYPE_MAP: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::
     map.insert("DPX", "image/x-dpx");
     map.insert("DR4", "application/octet-stream");
     map.insert("DS2", "audio/x-ds2");
+    map.insert("DSF", "audio/x-dsf");
     map.insert("DSS", "audio/x-dss");
     map.insert("DV", "video/x-dv");
     map.insert("DVR-MS", "video/x-ms-dvr");
@@ -254,6 +255,7 @@ static MIME_TYPE_MAP: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::
     map.insert("WMV", "video/x-ms-wmv");
     map.insert("WPG", "image/x-wpg");
     map.insert("WTV", "video/x-ms-wtv");
+    map.insert("WV", "audio/x-wavpack");
     map.insert("X3F", "image/x-sigma-x3f");
     map.insert("XCF", "image/x-xcf");
     map.insert("XISF", "image/x-xisf");

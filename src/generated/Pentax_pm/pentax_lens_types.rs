@@ -131,6 +131,8 @@ static PENTAX_LENS_TYPES_DATA: &[(&str, &'static str)] = &[
     ("3 53", "smc PENTAX-FA 28-80mm F3.5-5.6 AL"),
     ("31 1", "18.3mm F2.8"),
     ("31 4", "26.1mm F2.8"),
+    ("31 5", "26.1mm F2.8 GT-2 TC"),
+    ("31 8", "18.3mm F2.8"),
     ("4 1", "smc PENTAX-FA SOFT 28mm F2.8"),
     ("4 10", "Irix 15mm F2.4"),
     ("4 12", "smc PENTAX-FA 50mm F1.4"),

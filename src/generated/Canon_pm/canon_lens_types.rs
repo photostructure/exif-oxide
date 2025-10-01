@@ -560,6 +560,7 @@ static CANON_LENS_TYPES_DATA: &[(&str, &'static str)] = &[
     ("61182.62", "Canon RF 50mm F1.4 L VCM"),
     ("61182.63", "Canon RF 24mm F1.4 L VCM"),
     ("61182.64", "Canon RF 20mm F1.4 L VCM"),
+    ("61182.65", "Canon RF 85mm F1.4 L VCM"),
     ("61182.7", "Canon RF 15-35mm F2.8L IS USM"),
     ("61182.8", "Canon RF 24-240mm F4-6.3 IS USM"),
     ("61182.9", "Canon RF 70-200mm F2.8L IS USM"),
@@ -574,6 +575,7 @@ static CANON_LENS_TYPES_DATA: &[(&str, &'static str)] = &[
     ),
     ("624.1", "Sigma 150-600mm f/5-6.3 | C"),
     ("63", "Irix 30mm F1.4 Dragonfly"),
+    ("6512", "Sigma 12mm F1.4 DC | C"),
     ("65535", "n/a"),
     ("7", "Canon EF 100-300mm f/5.6L"),
     (

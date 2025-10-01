@@ -4,7 +4,7 @@
 
 /// writeTypes array from ExifTool
 pub static WRITE_TYPES: [&'static str; 30] = [
-    "JPEG", "TIFF", "GIF", "CRW", "MRW", "ORF", "RAF", "RAW", "PNG", "MIE", "PSD", "XMP", "PPM",
-    "EPS", "X3F", "PS", "PDF", "ICC", "VRD", "DR4", "JP2", "JXL", "EXIF", "AI", "AIT", "IND",
-    "MOV", "EXV", "FLIF", "RIFF",
+    "AI", "AIT", "CRW", "DR4", "EPS", "EXIF", "EXV", "FLIF", "GIF", "ICC", "IND", "JP2", "JPEG",
+    "JXL", "MIE", "MOV", "MRW", "ORF", "PDF", "PNG", "PPM", "PS", "PSD", "RAF", "RAW", "RIFF",
+    "TIFF", "VRD", "X3F", "XMP",
 ];

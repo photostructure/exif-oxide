@@ -499,6 +499,15 @@ pub static SONY_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            8284,
+            TagInfo {
+                name: "StepCropShooting",
+                format: "unknown",
+                print_conv: Some(PrintConv::Complex),
+                value_conv: None,
+            },
+        ),
+        (
             12288,
             TagInfo {
                 name: "ShotInfo",

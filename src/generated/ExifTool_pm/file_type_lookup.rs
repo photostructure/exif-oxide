@@ -62,6 +62,7 @@ static EXTENSION_ALIASES: LazyLock<HashMap<&'static str, &'static str>> = LazyLo
     map.insert("TS", "M2TS");
     map.insert("TUB", "PSP");
     map.insert("VCF", "VCARD");
+    map.insert("WVP", "WV");
     map
 });
 
@@ -168,6 +169,7 @@ static FILE_TYPE_FORMATS: LazyLock<HashMap<&'static str, (Vec<&'static str>, &'s
         map.insert("DPX", (vec!["DPX"], "Digital Picture Exchange"));
         map.insert("DR4", (vec!["DR4"], "Canon VRD version 4 Recipe"));
         map.insert("DS2", (vec!["DSS"], "Digital Speech Standard 2"));
+        map.insert("DSF", (vec!["DSF"], "DSF Stream File"));
         map.insert("DSS", (vec!["DSS"], "Digital Speech Standard"));
         map.insert("DV", (vec!["DV"], "Digital Video"));
         map.insert("DVB", (vec!["MOV"], "Digital Video Broadcasting"));
@@ -447,7 +449,7 @@ static FILE_TYPE_FORMATS: LazyLock<HashMap<&'static str, (Vec<&'static str>, &'s
         map.insert("WOFF2", (vec!["Font"], "Web Open Font Format 2"));
         map.insert("WPG", (vec!["WPG"], "WordPerfect Graphics"));
         map.insert("WTV", (vec!["WTV"], "Windows recorded TV show"));
-        map.insert("WV", (vec!["RIFF"], "WavePack lossless audio"));
+        map.insert("WV", (vec!["WV"], "WavPack Audio"));
         map.insert("X3F", (vec!["X3F"], "Sigma RAW format"));
         map.insert("XCF", (vec!["XCF"], "GIMP native image format"));
         map.insert(
