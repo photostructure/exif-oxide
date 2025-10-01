@@ -92,5 +92,11 @@ impl ExifError {
     }
 }
 
+impl From<std::io::Error> for ExifError {
+    fn from(err: std::io::Error) -> Self {
+        ExifError::IoError(err.to_string())
+    }
+}
+
 /// Result type alias for convenience
 pub type Result<T> = std::result::Result<T, ExifError>;
