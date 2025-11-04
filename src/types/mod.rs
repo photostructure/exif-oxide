@@ -4,7 +4,7 @@
 //! used throughout the library.
 
 // Re-export core types from codegen-runtime for API compatibility
-pub use codegen_runtime::{ExifContext, ExifError, TagValue};
+pub use codegen_runtime::{ExifContext, TagValue};
 
 pub mod binary_data;
 mod context;

@@ -220,40 +220,13 @@ impl<'a> ExpressionEvaluator<'a> {
 
     /// Evaluate expression using unified expression system
     /// Attempts to use the unified ExpressionEvaluator before falling back to specialized logic
+    /// TODO: Implement when unified expression system is complete
     fn evaluate_with_unified_system(&self, expr: &str) -> std::result::Result<usize, ExifError> {
-        let mut evaluator = ExpressionEvaluator::new(HashMap::new(), &HashMap::new());
-        let mut processor_context = ProcessorContext::default();
-
-        // Add val_hash values to processor context
-        for (index, value) in &self.val_hash {
-            // Convert DataMemberValue to TagValue
-            if let Ok(tag_value) = self.data_member_to_tag_value(value) {
-                processor_context
-                    .parent_tags
-                    .insert(format!("val{{{index}}}"), tag_value);
-            }
-        }
-
-        // Add data_members to processor context
-        for (name, value) in self.data_members.iter() {
-            if let Ok(tag_value) = self.data_member_to_tag_value(value) {
-                processor_context
-                    .parent_tags
-                    .insert(name.clone(), tag_value);
-            }
-        }
-
-        // Try to evaluate the expression
-        match evaluator.evaluate_context_condition(&processor_context, expr) {
-            Ok(true) => Ok(1),  // Boolean true -> count of 1
-            Ok(false) => Ok(0), // Boolean false -> count of 0
-            Err(_) => {
-                // Try as a numeric expression (this would need extension to ExpressionEvaluator)
-                Err(ExifError::ParseError(format!(
-                    "Unified expression evaluation failed for: {expr}"
-                )))
-            }
-        }
+        // Unified expression system not yet implemented
+        // This will cause the caller to fall back to specialized logic
+        Err(ExifError::NotImplemented(format!(
+            "Unified expression evaluation not yet implemented for: {expr}"
+        )))
     }
 
     /// Convert DataMemberValue to TagValue for unified expression system
@@ -663,19 +636,15 @@ impl BinaryDataTag {
 
 /// Evaluate a condition string against processor context
 /// ExifTool: Condition evaluation like '$self{Model} =~ /\b(20D|350D)\b/'
+/// TODO: Implement when unified expression system is complete
 fn evaluate_condition(condition: &str, context: &ProcessorContext) -> bool {
-    // Create expression evaluator
-    let mut evaluator = ExpressionEvaluator::new(HashMap::new(), &HashMap::new());
-
-    // Try to evaluate as boolean condition
-    match evaluator.evaluate_context_condition(context, condition) {
-        Ok(result) => result,
-        Err(_) => {
-            // If evaluation fails, log a warning and return false
-            tracing::debug!("Failed to evaluate condition: {}", condition);
-            false
-        }
-    }
+    // Unified expression system not yet implemented
+    // For now, return false and log the condition
+    tracing::debug!(
+        "Condition evaluation not yet implemented: {}. Returning false.",
+        condition
+    );
+    false
 }
 
 #[cfg(test)]
