@@ -103,9 +103,6 @@ See https://github.com/anthropics/claude-code/issues/4711 for details.
 - [PRINT_CONV.md](third-party/exiftool/doc/concepts/PRINT_CONV.md) - Human-readable output conversions
 - [PATTERNS.md](third-party/exiftool/doc/concepts/PATTERNS.md) - Common patterns across modules
 
-## ⚠️ CRITICAL: Assume Concurrent Edits
-
-There are several other engineers working _on the same copy of the source tree_ at the same time you are. If you ever encounter a build error that you are positive is not a side-effect from code that you've edited, **STOP** and tell the user the issue. The user will fix the build and tell you when you can resume your work.
 
 ## ⚠️ IMPORTANT: ExifTool is a Git Submodule
 
