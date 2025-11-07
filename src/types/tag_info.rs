@@ -93,7 +93,7 @@ pub enum ValueConv {
         fn(
             &crate::types::TagValue,
             Option<&crate::types::ExifContext>,
-        ) -> Result<crate::types::TagValue, crate::types::ExifError>,
+        ) -> Result<crate::types::TagValue, codegen_runtime::types::ExifError>,
     ),
 
     /// Complex conversion requiring custom logic
