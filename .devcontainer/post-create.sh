@@ -6,6 +6,29 @@ echo "🚀 Setting up exif-oxide development environment..."
 # Ensure we're in the workspace directory
 cd /workspace
 
+# Verify critical tools are available
+echo "🔍 Verifying tools..."
+check_tool() {
+  if ! command -v "$1" &>/dev/null; then
+    echo "❌ Missing: $1"
+    return 1
+  fi
+  return 0
+}
+
+MISSING=0
+for tool in git cargo rustc perl python3 jq rg sd shfmt yamllint exiftool; do
+  if ! check_tool "$tool"; then
+    MISSING=1
+  fi
+done
+
+if [ $MISSING -eq 1 ]; then
+  echo "⚠️  Some tools are missing. Container may need rebuild."
+else
+  echo "✅ All tools verified"
+fi
+
 # Fix any remaining permission issues
 if [ -d "/usr/local/cargo/registry" ]; then
   sudo chown -R $(whoami):$(whoami) /usr/local/cargo/registry 2>/dev/null || true
@@ -42,15 +65,9 @@ cargo fetch
 echo "🏗️ Running code generation..."
 make codegen
 
-# Create a welcome message
-echo "✅ Development environment setup complete!"
+# Done
 echo ""
-echo "Welcome to exif-oxide development!"
+echo "✅ exif-oxide devcontainer ready!"
 echo ""
-echo "Quick start commands:"
-echo "  make precommit    - Run all pre-commit checks"
-echo "  make test         - Run all tests"
-echo "  make codegen      - Regenerate code from ExifTool"
-echo "  make compat-test  - Run compatibility tests"
-echo ""
-echo "See docs/GETTING-STARTED.md for more information."
+echo "Quick commands: make precommit | make test | make codegen"
+echo "Full docs: docs/GETTING-STARTED.md"

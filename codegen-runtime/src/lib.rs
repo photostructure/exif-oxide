@@ -40,8 +40,8 @@ pub use math::{
 
 // Re-export string functions commonly used by generated code
 pub use string::{
-    chr, index_2arg, index_3arg, length_i32, length_string, regex_replace, regex_substitute_perl,
-    substr_2arg, substr_3arg, uc,
+    chr, concat, index_2arg, index_3arg, length_i32, length_string, regex_replace,
+    regex_substitute_perl, substr_2arg, substr_3arg, uc,
 };
 
 // Test support module - only available with test-helpers feature
