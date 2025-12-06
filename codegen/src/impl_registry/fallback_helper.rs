@@ -85,7 +85,7 @@ fn generate_printconv_function(
         /// {}
         /// ```
         pub fn {}(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {{
-            {}(val)
+            {}(val, ctx)
         }}
     "#, escaped_expr, function_name, function_path}
 }
@@ -109,7 +109,7 @@ fn generate_valueconv_function(
         /// {}
         /// ```
         pub fn {}(val: &TagValue, ctx: Option<&ExifContext>) -> Result<TagValue, codegen_runtime::types::ExifError> {{
-            Ok({}(val))
+            {}(val, ctx)
         }}
     "#, escaped_expr, function_name, function_path}
 }
@@ -146,7 +146,7 @@ fn generate_condition_function(
         /// {}
         /// ```
         pub fn {}(val: &TagValue, ctx: Option<&ExifContext>) -> bool {{
-            {}(val)
+            {}(val, ctx)
         }}
     "#, escaped_expr, function_name, function_path}
 }

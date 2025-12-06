@@ -49,7 +49,7 @@ pub struct PpiNode {
 }
 
 /// Expression type classification for code generation
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum ExpressionType {
     /// Boolean conditions for tag variants ($$self{Make} =~ /Canon/)
     Condition,

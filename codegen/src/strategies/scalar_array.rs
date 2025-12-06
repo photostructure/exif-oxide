@@ -178,13 +178,11 @@ impl ScalarArrayStrategy {
     }
 
     /// Format array elements into Rust code
-    fn format_array_elements(
-        &self,
-        code: &mut String,
-        values: &[ScalarValue],
-        _element_type: &str,
-    ) {
+    fn format_array_elements(&self, code: &mut String, values: &[ScalarValue], element_type: &str) {
         const ELEMENTS_PER_LINE: usize = 16;
+
+        // If element type is string, all values need to be formatted as strings
+        let format_as_string = element_type == "&'static str";
 
         for (i, value) in values.iter().enumerate() {
             if i % ELEMENTS_PER_LINE == 0 {
@@ -193,10 +191,20 @@ impl ScalarArrayStrategy {
 
             match value {
                 ScalarValue::Integer(n) => {
-                    code.push_str(&n.to_string());
+                    if format_as_string {
+                        // Convert integer to string literal for mixed-type arrays
+                        code.push_str(&format!("\"{}\"", n));
+                    } else {
+                        code.push_str(&n.to_string());
+                    }
                 }
                 ScalarValue::Float(f) => {
-                    code.push_str(&f.to_string());
+                    if format_as_string {
+                        // Convert float to string literal for mixed-type arrays
+                        code.push_str(&format!("\"{}\"", f));
+                    } else {
+                        code.push_str(&f.to_string());
+                    }
                 }
                 ScalarValue::String(s) => {
                     let escaped = s.replace('\\', "\\\\").replace('"', "\\\"");

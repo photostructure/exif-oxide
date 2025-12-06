@@ -578,10 +578,16 @@ pub trait PpiVisitor {
                                 module_func,
                             ) => {
                                 // Call the registered implementation
+                                // Implementation functions now take (val, ctx) parameters
                                 let args_str = args.join(", ");
+                                let full_args = if args_str.is_empty() {
+                                    "ctx".to_string()
+                                } else {
+                                    format!("{}, ctx", args_str)
+                                };
                                 Ok(format!(
                                     "{}::{}({})",
-                                    module_func.module_path, module_func.function_name, args_str
+                                    module_func.module_path, module_func.function_name, full_args
                                 ))
                             }
                             _ => {

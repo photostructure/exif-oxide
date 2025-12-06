@@ -87,8 +87,9 @@ impl PpiFunctionRegistry {
         original_expression: &str,
         usage_context: Option<UsageContext>,
     ) -> Result<FunctionSpec> {
-        // Generate hash from AST structure (not expression text)
-        let ast_hash = self.hash_ast_structure(ppi_ast)?;
+        // Generate hash from AST structure AND expression type
+        // (same expression needs different functions for PrintConv vs ValueConv)
+        let ast_hash = self.hash_ast_structure(ppi_ast, expression_type)?;
 
         tracing::debug!(
             "🔗 PPI Registry: Registering AST hash={} type={:?} expr='{}'",
@@ -148,11 +149,22 @@ impl PpiFunctionRegistry {
         Ok(function_spec)
     }
 
-    /// Generate hash from AST structure for deduplication
-    fn hash_ast_structure(&self, ppi_ast: &PpiNode) -> Result<String> {
+    /// Generate hash from AST structure and expression type for deduplication
+    ///
+    /// The hash includes expression_type because PrintConv and ValueConv
+    /// have different return types (TagValue vs Result<TagValue, ExifError>),
+    /// so the same Perl expression needs different Rust functions.
+    fn hash_ast_structure(
+        &self,
+        ppi_ast: &PpiNode,
+        expression_type: ExpressionType,
+    ) -> Result<String> {
         let json_str = serde_json::to_string(ppi_ast)?;
         let mut hasher = DefaultHasher::new();
         json_str.hash(&mut hasher);
+        // Include expression type in hash so PrintConv and ValueConv
+        // of the same expression get different functions
+        expression_type.hash(&mut hasher);
         let hash = hasher.finish();
         Ok(format!("{:x}", hash))
     }
