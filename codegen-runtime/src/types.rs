@@ -72,6 +72,9 @@ pub enum ExifError {
     #[error("IO error: {0}")]
     IoError(String),
 
+    #[error("IO error: {0}")]
+    Io(#[from] std::io::Error),
+
     #[error("Invalid file format: {0}")]
     InvalidFormat(String),
 
@@ -83,6 +86,9 @@ pub enum ExifError {
 
     #[error("Not implemented: {0}")]
     NotImplemented(String),
+
+    #[error("File detection error: {0}")]
+    FileDetection(String),
 }
 
 impl ExifError {
@@ -92,11 +98,7 @@ impl ExifError {
     }
 }
 
-impl From<std::io::Error> for ExifError {
-    fn from(err: std::io::Error) -> Self {
-        ExifError::IoError(err.to_string())
-    }
-}
+// Note: From<std::io::Error> is automatically derived via #[from] on ExifError::Io
 
 /// Result type alias for convenience
 pub type Result<T> = std::result::Result<T, ExifError>;
