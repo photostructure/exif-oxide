@@ -6,12 +6,12 @@
 //! All implementations are direct translations from ExifTool source code,
 //! with comments pointing back to the original ExifTool references.
 
-use crate::types::TagValue;
+use crate::types::{ExifContext, TagValue};
 
 /// EXIF Orientation PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:281-290 (%orientation hash)
 /// Generated table: src/generated/exif_pm/mod.rs
-pub fn orientation_print_conv(val: &TagValue) -> TagValue {
+pub fn orientation_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     use crate::generated::Exif_pm::orientation::lookup_orientation;
 
     // Handle both u8 and u16 types - orientation values are 1-8 so fit in u8
@@ -35,7 +35,7 @@ pub fn orientation_print_conv(val: &TagValue) -> TagValue {
 
 /// EXIF ResolutionUnit PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2778-2782
-pub fn resolutionunit_print_conv(val: &TagValue) -> TagValue {
+pub fn resolutionunit_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val.as_u16() {
         Some(1) => "None".into(),
         Some(2) => "inches".into(),
@@ -46,7 +46,7 @@ pub fn resolutionunit_print_conv(val: &TagValue) -> TagValue {
 
 /// EXIF YCbCrPositioning PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2802-2805
-pub fn ycbcrpositioning_print_conv(val: &TagValue) -> TagValue {
+pub fn ycbcrpositioning_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val.as_u16() {
         Some(1) => "Centered".into(),
         Some(2) => "Co-sited".into(),
@@ -57,7 +57,7 @@ pub fn ycbcrpositioning_print_conv(val: &TagValue) -> TagValue {
 /// GPS Altitude PrintConv - formats altitude with Above/Below Sea Level based on sign
 /// ExifTool: lib/Image/ExifTool/GPS.pm:423-431 composite GPSAltitude PrintConv
 /// Format: "X.X m Above/Below Sea Level" based on positive/negative value
-pub fn gpsaltitude_print_conv(val: &TagValue) -> TagValue {
+pub fn gpsaltitude_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val.as_f64() {
         Some(v) if v.is_infinite() => "inf".into(),
         Some(v) if v.is_nan() => "undef".into(),
@@ -77,7 +77,7 @@ pub fn gpsaltitude_print_conv(val: &TagValue) -> TagValue {
 
 /// GPS AltitudeRef PrintConv
 /// ExifTool: lib/Image/ExifTool/GPS.pm GPSAltitudeRef tag definition
-pub fn gpsaltituderef_print_conv(val: &TagValue) -> TagValue {
+pub fn gpsaltituderef_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val.as_u8() {
         Some(0) => "Above Sea Level".into(),
         Some(1) => "Below Sea Level".into(),
@@ -87,7 +87,7 @@ pub fn gpsaltituderef_print_conv(val: &TagValue) -> TagValue {
 
 /// GPS LatitudeRef PrintConv
 /// ExifTool: lib/Image/ExifTool/GPS.pm GPSLatitudeRef tag definition
-pub fn gpslatituderef_print_conv(val: &TagValue) -> TagValue {
+pub fn gpslatituderef_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val.as_string() {
         Some("N") => "North".into(),
         Some("S") => "South".into(),
@@ -97,7 +97,7 @@ pub fn gpslatituderef_print_conv(val: &TagValue) -> TagValue {
 
 /// GPS LongitudeRef PrintConv  
 /// ExifTool: lib/Image/ExifTool/GPS.pm GPSLongitudeRef tag definition
-pub fn gpslongituderef_print_conv(val: &TagValue) -> TagValue {
+pub fn gpslongituderef_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val.as_string() {
         Some("E") => "East".into(),
         Some("W") => "West".into(),
@@ -108,26 +108,26 @@ pub fn gpslongituderef_print_conv(val: &TagValue) -> TagValue {
 /// GPS Latitude PrintConv - formats decimal degrees as degree/minute/second string WITHOUT direction
 /// ExifTool: lib/Image/ExifTool/GPS.pm:20 PrintConv: 'Image::ExifTool::GPS::ToDMS($self, $val, 1)'
 /// Format: "%d deg %d' %.2f\"" without direction suffix (raw EXIF tag)
-pub fn gpslatitude_print_conv(val: &TagValue) -> TagValue {
+pub fn gpslatitude_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     gps_coordinate_to_dms(val, false) // false = no direction included
 }
 
 /// GPS Longitude PrintConv - formats decimal degrees as degree/minute/second string WITHOUT direction
 /// ExifTool: lib/Image/ExifTool/GPS.pm:20 PrintConv: 'Image::ExifTool::GPS::ToDMS($self, $val, 1)'
 /// Format: "%d deg %d' %.2f\"" without direction suffix (raw EXIF tag)
-pub fn gpslongitude_print_conv(val: &TagValue) -> TagValue {
+pub fn gpslongitude_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     gps_coordinate_to_dms(val, false) // false = no direction included
 }
 
 /// GPS DestLatitude PrintConv - formats decimal degrees as degree/minute/second string
 /// ExifTool: lib/Image/ExifTool/GPS.pm lines 237-320 (ToDMS function)
-pub fn gpsdestlatitude_print_conv(val: &TagValue) -> TagValue {
+pub fn gpsdestlatitude_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     gps_coordinate_to_dms(val, false)
 }
 
 /// GPS DestLongitude PrintConv - formats decimal degrees as degree/minute/second string
 /// ExifTool: lib/Image/ExifTool/GPS.pm lines 237-320 (ToDMS function)
-pub fn gpsdestlongitude_print_conv(val: &TagValue) -> TagValue {
+pub fn gpsdestlongitude_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     gps_coordinate_to_dms(val, false)
 }
 
@@ -176,7 +176,7 @@ fn gps_coordinate_to_dms(val: &TagValue, _include_cardinal: bool) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/Exif.pm:164-197, %flash hash
 /// Generated lookup: src/generated/exif_pm/flash.rs
 /// NOTE: This is NOT a bitmask conversion - ExifTool uses direct hash lookup for specific combined values
-pub fn flash_print_conv(val: &TagValue) -> TagValue {
+pub fn flash_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     use crate::generated::Exif_pm::flash::lookup_flash;
 
     match val.as_u16() {
@@ -194,7 +194,7 @@ pub fn flash_print_conv(val: &TagValue) -> TagValue {
 
 /// EXIF ColorSpace PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2620-2638
-pub fn colorspace_print_conv(val: &TagValue) -> TagValue {
+pub fn colorspace_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     TagValue::string(match val.as_u16() {
         Some(1) => "sRGB".to_string(),
         Some(2) => "Adobe RGB".to_string(),
@@ -216,7 +216,7 @@ pub fn colorspace_print_conv(val: &TagValue) -> TagValue {
 /// EXIF WhiteBalance PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2809-2821
 // TODO: Add manufacturer-specific handling - Canon uses "Evaluative" vs "Multi-segment" for MeteringMode
-pub fn whitebalance_print_conv(val: &TagValue) -> TagValue {
+pub fn whitebalance_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     TagValue::string(match val.as_u16() {
         Some(0) => "Auto".to_string(),
         Some(1) => "Manual".to_string(),
@@ -227,7 +227,7 @@ pub fn whitebalance_print_conv(val: &TagValue) -> TagValue {
 /// EXIF MeteringMode PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2357-2371
 // TODO: Add manufacturer-specific handling - Canon uses "Evaluative" instead of "Multi-segment"
-pub fn meteringmode_print_conv(val: &TagValue) -> TagValue {
+pub fn meteringmode_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     TagValue::string(match val.as_u16() {
         Some(0) => "Unknown".to_string(),
         Some(1) => "Average".to_string(),
@@ -244,7 +244,7 @@ pub fn meteringmode_print_conv(val: &TagValue) -> TagValue {
 /// EXIF ExposureProgram PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2082-2097
 /// NOTE: Value 9 is not standard EXIF but used by some Canon models
-pub fn exposureprogram_print_conv(val: &TagValue) -> TagValue {
+pub fn exposureprogram_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     TagValue::string(match val.as_u16() {
         Some(0) => "Not Defined".to_string(),
         Some(1) => "Manual".to_string(),
@@ -264,7 +264,7 @@ pub fn exposureprogram_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/Exif.pm PrintFNumber function (lines 5607-5615)
 /// Uses 2 decimal places for values < 1.0, 1 decimal place for values >= 1.0
 /// NOTE: This returns a numeric TagValue to preserve JSON numeric serialization
-pub fn fnumber_print_conv(val: &TagValue) -> TagValue {
+pub fn fnumber_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val.as_f64() {
         Some(f_number) => {
             if f_number > 0.0 {
@@ -304,7 +304,7 @@ pub fn fnumber_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/Exif.pm:5595-5605 PrintExposureTime
 /// Converts decimal seconds to fractional notation (e.g., 0.0005 -> "1/2000")
 /// NOTE: Returns numeric TagValue for simple numbers to preserve JSON numeric serialization
-pub fn exposuretime_print_conv(val: &TagValue) -> TagValue {
+pub fn exposuretime_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val.as_f64() {
         Some(secs) => {
             // ExifTool: return $secs unless Image::ExifTool::IsFloat($secs);
@@ -372,7 +372,7 @@ pub fn exposuretime_print_conv(val: &TagValue) -> TagValue {
 /// FocalLength PrintConv - formats focal length with "mm" unit
 /// ExifTool: lib/Image/ExifTool/Exif.pm lines 2387-2393
 /// Note: We normalize ExifTool's inconsistent formatting to show integers without decimals
-pub fn focallength_print_conv(val: &TagValue) -> TagValue {
+pub fn focallength_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     TagValue::string(match val.as_f64() {
         Some(focal_length) => {
             // Round to 1 decimal place like ExifTool, but remove .0 for integers
@@ -404,7 +404,10 @@ pub fn focallength_print_conv(val: &TagValue) -> TagValue {
 /// FocalLengthIn35mmFormat PrintConv - formats 35mm equivalent focal length
 /// ExifTool: lib/Image/ExifTool/Exif.pm lines 2827-2834
 /// PrintConv => '"$val mm"',
-pub fn focallength_in_35mm_format_print_conv(val: &TagValue) -> TagValue {
+pub fn focallength_in_35mm_format_print_conv(
+    val: &TagValue,
+    _ctx: Option<&ExifContext>,
+) -> TagValue {
     TagValue::string(match val.as_u16() {
         Some(focal_length) => {
             // Format as integer with no decimal places to match ExifTool
@@ -417,7 +420,7 @@ pub fn focallength_in_35mm_format_print_conv(val: &TagValue) -> TagValue {
 /// Canon Focal Length PrintConv - simple "XX.X mm" formatting
 /// ExifTool: lib/Image/ExifTool/Canon.pm PrintConv: '"$val mm"'
 /// Used for Canon CameraSettings MinFocalLength and MaxFocalLength
-pub fn focal_length_mm_print_conv(val: &TagValue) -> TagValue {
+pub fn focal_length_mm_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     TagValue::string(match val.as_f64() {
         Some(focal_length) => {
             // Format with 1 decimal place like ExifTool, but remove .0 for integers
@@ -435,7 +438,10 @@ pub fn focal_length_mm_print_conv(val: &TagValue) -> TagValue {
 /// Composite GPS Altitude PrintConv
 /// ExifTool: lib/Image/ExifTool/GPS.pm:423-431
 /// Formats GPS altitude with "Above/Below Sea Level" based on sign
-pub fn composite_gps_gpsaltitude_print_conv(val: &TagValue) -> TagValue {
+pub fn composite_gps_gpsaltitude_print_conv(
+    val: &TagValue,
+    _ctx: Option<&ExifContext>,
+) -> TagValue {
     TagValue::string(
         // Handle numeric value
         if let Some(v) = val.as_f64() {
@@ -482,7 +488,7 @@ pub fn composite_gps_gpsaltitude_print_conv(val: &TagValue) -> TagValue {
 /// ISO PrintConv - passthrough numeric value
 /// ExifTool outputs ISO as a JSON number, not a string
 /// This is a simple passthrough that preserves the numeric type
-pub fn iso_print_conv(val: &TagValue) -> TagValue {
+pub fn iso_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     // ISO values should remain numeric in JSON output
     val.clone()
 }
@@ -490,7 +496,7 @@ pub fn iso_print_conv(val: &TagValue) -> TagValue {
 /// EXIF LensInfo PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm PrintLensInfo function
 /// Converts 4 rational values to form "12-20mm f/3.8-4.5" or "50mm f/1.4"
-pub fn lensinfo_print_conv(val: &TagValue) -> TagValue {
+pub fn lensinfo_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     // LensInfo should contain 4 rational values
     let vals = match val {
         TagValue::RationalArray(array) => {
@@ -611,7 +617,7 @@ pub fn lensinfo_print_conv(val: &TagValue) -> TagValue {
 /// Generic decimal formatting functions for sprintf patterns
 /// Complex expression placeholder - delegates to appropriate function
 /// This is used when tag_kit.pl can't determine the exact function
-pub fn complex_expression_print_conv(val: &TagValue) -> TagValue {
+pub fn complex_expression_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     // For now, return the value unchanged
     // In the future, we could use context to determine the right function
     val.clone()
@@ -677,7 +683,7 @@ pub fn print_fraction(val: &TagValue) -> TagValue {
 /// Composite ImageSize PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:4641-4660 ImageSize PrintConv
 /// PrintConv: '$val =~ tr/ /x/; $val' - replaces space with 'x' separator
-pub fn imagesize_print_conv(val: &TagValue) -> TagValue {
+pub fn imagesize_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     if let Some(size_str) = val.as_string() {
         // ExifTool: $val =~ tr/ /x/; $val
         // Replace space with 'x' to convert "1920 1080" to "1920x1080"
@@ -690,7 +696,7 @@ pub fn imagesize_print_conv(val: &TagValue) -> TagValue {
 /// EXIF ExifVersion PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2203-2209
 /// Converts undef bytes to ASCII string (e.g., [48, 50, 50, 48] -> "0220")
-pub fn exifversion_print_conv(val: &TagValue) -> TagValue {
+pub fn exifversion_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val {
         TagValue::U8Array(bytes) | TagValue::Binary(bytes) => {
             // Convert byte array to ASCII string
@@ -709,7 +715,7 @@ pub fn exifversion_print_conv(val: &TagValue) -> TagValue {
 /// EXIF FlashpixVersion PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2613-2619
 /// Converts undef bytes to ASCII string (e.g., [48, 48, 49, 48] -> "0100")
-pub fn flashpixversion_print_conv(val: &TagValue) -> TagValue {
+pub fn flashpixversion_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val {
         TagValue::U8Array(bytes) | TagValue::Binary(bytes) => {
             // Convert byte array to ASCII string
@@ -728,7 +734,7 @@ pub fn flashpixversion_print_conv(val: &TagValue) -> TagValue {
 /// EXIF InteropVersion PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2850-2856 (InteropIFD definition)
 /// Converts undef bytes to ASCII string (e.g., [48, 49, 48, 48] -> "0100")
-pub fn interopversion_print_conv(val: &TagValue) -> TagValue {
+pub fn interopversion_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val {
         TagValue::U8Array(bytes) | TagValue::Binary(bytes) => {
             // Convert byte array to ASCII string
@@ -747,7 +753,7 @@ pub fn interopversion_print_conv(val: &TagValue) -> TagValue {
 /// EXIF ComponentsConfiguration PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2262-2300
 /// Converts component array to "Y, Cb, Cr, -" format
-pub fn componentsconfiguration_print_conv(val: &TagValue) -> TagValue {
+pub fn componentsconfiguration_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val {
         TagValue::U8Array(components) | TagValue::Binary(components) => {
             let component_names: Vec<&str> = components
@@ -773,7 +779,7 @@ pub fn componentsconfiguration_print_conv(val: &TagValue) -> TagValue {
 /// EXIF FileSource PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2313-2320
 /// Converts FileSource byte value to descriptive string
-pub fn filesource_print_conv(val: &TagValue) -> TagValue {
+pub fn filesource_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val {
         TagValue::U8Array(bytes) | TagValue::Binary(bytes) => {
             if let Some(&first_byte) = bytes.first() {
@@ -800,7 +806,7 @@ pub fn filesource_print_conv(val: &TagValue) -> TagValue {
 /// EXIF CompressedBitsPerPixel PrintConv
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2301-2305
 /// Standard rational64u conversion to decimal
-pub fn compressedbitsperpixel_print_conv(val: &TagValue) -> TagValue {
+pub fn compressedbitsperpixel_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val {
         TagValue::RationalArray(rationals) if rationals.len() == 1 => {
             let (num, den) = rationals[0];
@@ -825,7 +831,7 @@ pub fn compressedbitsperpixel_print_conv(val: &TagValue) -> TagValue {
 /// ExifTool: lib/Image/ExifTool/Canon.pm:1229
 /// PrintConv: '$_=$val,s/(\d+)(\d{4})/$1-$2/,$_'
 /// Converts numeric FileNumber to "directory-file" format (e.g., 1181861 -> "118-1861")
-pub fn canon_filenumber_print_conv(val: &TagValue) -> TagValue {
+pub fn canon_filenumber_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     // Convert value to string representation
     let val_str = match val {
         TagValue::U32(v) => v.to_string(),
@@ -848,7 +854,7 @@ pub fn canon_filenumber_print_conv(val: &TagValue) -> TagValue {
 
 /// Canon SelfTimer PrintConv
 /// ExifTool: lib/Image/ExifTool/Canon.pm:2182-2184 (SelfTimer Print)
-pub fn canon_selftimer_print_conv(val: &TagValue) -> TagValue {
+pub fn canon_selftimer_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     if let Some(timer_val) = val.as_u16() {
         let timer_val = timer_val as i16; // Convert u16 to i16 for signed operations
 

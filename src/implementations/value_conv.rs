@@ -6,7 +6,7 @@
 //!
 //! All implementations are direct translations from ExifTool source code.
 
-use crate::types::{ExifError, Result, TagValue};
+use crate::types::{ExifContext, ExifError, Result, TagValue};
 
 /// GPS coordinate conversion to decimal degrees (unsigned)
 ///
@@ -17,7 +17,7 @@ use crate::types::{ExifError, Result, TagValue};
 /// Converts rational array [degrees, minutes, seconds] to decimal degrees
 /// NOTE: This produces UNSIGNED decimal degrees - hemisphere sign is applied
 /// in Composite tags that combine coordinate + ref (e.g., Composite:GPSLatitude)
-pub fn gps_coordinate_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn gps_coordinate_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     match value {
         TagValue::RationalArray(coords) if coords.len() >= 3 => {
             // ExifTool's ToDegrees extracts 3 numeric values using regex:
@@ -62,7 +62,10 @@ pub fn gps_coordinate_value_conv(value: &TagValue) -> Result<TagValue> {
 /// ExifTool: lib/Image/ExifTool/Exif.pm line 3826
 /// ShutterSpeedValue is stored as APEX value where actual_speed = 2^(-apex_value)
 /// ExifTool ValueConv: 'IsFloat($val) && abs($val)<100 ? 2**(-$val) : 0'
-pub fn apex_shutter_speed_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn apex_shutter_speed_value_conv(
+    value: &TagValue,
+    _ctx: Option<&ExifContext>,
+) -> Result<TagValue> {
     match value.as_f64() {
         Some(apex_val) => {
             // Trust ExifTool: boundary check prevents computing 2^(very_large_number)
@@ -85,7 +88,7 @@ pub fn apex_shutter_speed_value_conv(value: &TagValue) -> Result<TagValue> {
 ///
 /// ExifTool: lib/Image/ExifTool/Exif.pm line 3827  
 /// ApertureValue is stored as APEX value where f_number = 2^(apex_value/2)
-pub fn apex_aperture_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn apex_aperture_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     match value.as_f64() {
         Some(apex_val) => {
             let f_number = (apex_val / 2.0).exp2(); // 2^(val/2)
@@ -101,7 +104,10 @@ pub fn apex_aperture_value_conv(value: &TagValue) -> Result<TagValue> {
 ///
 /// ExifTool: lib/Image/ExifTool/Exif.pm ExposureCompensation
 /// Usually no conversion needed - value is already in EV stops
-pub fn apex_exposure_compensation_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn apex_exposure_compensation_value_conv(
+    value: &TagValue,
+    _ctx: Option<&ExifContext>,
+) -> Result<TagValue> {
     // Most exposure compensation values are already in the correct format
     // Just ensure we have a consistent numeric representation
     match value.as_f64() {
@@ -114,7 +120,7 @@ pub fn apex_exposure_compensation_value_conv(value: &TagValue) -> Result<TagValu
 ///
 /// ExifTool: lib/Image/ExifTool/Exif.pm FNumber
 /// Converts rational like [4, 1] to decimal 4.0 for f/4.0 display
-pub fn fnumber_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn fnumber_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     match value {
         TagValue::Rational(num, denom) => {
             if *denom != 0 {
@@ -135,7 +141,7 @@ pub fn fnumber_value_conv(value: &TagValue) -> Result<TagValue> {
 ///
 /// ExifTool: lib/Image/ExifTool/GPS.pm GPSTimeStamp
 /// Converts rational array [hours/1, minutes/1, seconds/100] to "HH:MM:SS" format
-pub fn gpstimestamp_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn gpstimestamp_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     match value {
         TagValue::RationalArray(rationals) if rationals.len() >= 3 => {
             let hours = if rationals[0].1 != 0 {
@@ -170,7 +176,7 @@ pub fn gpstimestamp_value_conv(value: &TagValue) -> Result<TagValue> {
 ///
 /// ExifTool: lib/Image/ExifTool/GPS.pm GPSDateStamp
 /// TODO: Implement date parsing when we encounter actual GPS date formats
-pub fn gpsdatestamp_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn gpsdatestamp_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     // For now, pass through - implement when we see actual GPS date formats
     Ok(value.clone())
 }
@@ -179,7 +185,7 @@ pub fn gpsdatestamp_value_conv(value: &TagValue) -> Result<TagValue> {
 ///
 /// ExifTool: lib/Image/ExifTool/Canon.pm AutoISO ValueConv
 /// Formula: exp($val/32*log(2))*100
-pub fn canon_auto_iso_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn canon_auto_iso_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     match value.as_f64() {
         Some(val) => {
             // exp($val/32*log(2))*100 = exp($val * ln(2) / 32) * 100 = 2^($val/32) * 100
@@ -196,7 +202,7 @@ pub fn canon_auto_iso_value_conv(value: &TagValue) -> Result<TagValue> {
 ///
 /// ExifTool: lib/Image/ExifTool/Canon.pm BaseISO ValueConv
 /// Formula: exp($val/32*log(2))*100/32
-pub fn canon_base_iso_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn canon_base_iso_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     match value.as_f64() {
         Some(val) => {
             // exp($val/32*log(2))*100/32 = 2^($val/32) * 100 / 32
@@ -213,7 +219,10 @@ pub fn canon_base_iso_value_conv(value: &TagValue) -> Result<TagValue> {
 ///
 /// ExifTool: lib/Image/ExifTool/Canon.pm FileNumber ValueConv
 /// Formula: ($val>>16)|(($val&0xffff)<<16) - swaps 16-bit halves
-pub fn canon_file_number_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn canon_file_number_value_conv(
+    value: &TagValue,
+    _ctx: Option<&ExifContext>,
+) -> Result<TagValue> {
     match value.as_u32() {
         Some(val) => {
             let result = (val >> 16) | ((val & 0xffff) << 16);
@@ -229,7 +238,10 @@ pub fn canon_file_number_value_conv(value: &TagValue) -> Result<TagValue> {
 ///
 /// ExifTool: lib/Image/ExifTool/Canon.pm DirectoryNumber ValueConv
 /// Complex bit manipulation for directory numbers
-pub fn canon_directory_number_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn canon_directory_number_value_conv(
+    value: &TagValue,
+    _ctx: Option<&ExifContext>,
+) -> Result<TagValue> {
     match value.as_u32() {
         Some(val) => {
             // (($val&0xffc0)>>6)*10000+(($val>>16)&0xff)+(($val&0x3f)<<8)
@@ -246,14 +258,14 @@ pub fn canon_directory_number_value_conv(value: &TagValue) -> Result<TagValue> {
 ///
 /// ExifTool: lib/Image/ExifTool/Exif.pm WhiteBalance
 /// TODO: Implement white balance conversion when we encounter specific formats
-pub fn whitebalance_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn whitebalance_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     // For now, pass through - implement when we see actual white balance formats needing conversion
     Ok(value.clone())
 }
 
 /// ExposureTime ValueConv - converts rational to decimal seconds
 /// ExifTool: lib/Image/ExifTool/Exif.pm ExposureTime ValueConv
-pub fn exposuretime_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn exposuretime_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     match value {
         TagValue::Rational(num, denom) => {
             if *denom != 0 {
@@ -272,7 +284,7 @@ pub fn exposuretime_value_conv(value: &TagValue) -> Result<TagValue> {
 
 /// FocalLength ValueConv - converts rational to decimal millimeters
 /// ExifTool: lib/Image/ExifTool/Exif.pm FocalLength ValueConv
-pub fn focallength_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn focallength_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     match value {
         TagValue::Rational(num, denom) => {
             if *denom != 0 {
@@ -291,7 +303,10 @@ pub fn focallength_value_conv(value: &TagValue) -> Result<TagValue> {
 
 /// Trim trailing whitespace from string values
 /// ExifTool pattern: $val=~s/ +$//; $val
-pub fn trim_whitespace_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn trim_whitespace_value_conv(
+    value: &TagValue,
+    _ctx: Option<&ExifContext>,
+) -> Result<TagValue> {
     match value {
         TagValue::String(s) => Ok(TagValue::String(s.trim_end().to_string())),
         _ => Ok(value.clone()),
@@ -300,7 +315,10 @@ pub fn trim_whitespace_value_conv(value: &TagValue) -> Result<TagValue> {
 
 /// Power function: 2 ** (-$val/3)
 /// ExifTool pattern: 2 ** (-$val/3)
-pub fn power_neg_div_3_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn power_neg_div_3_value_conv(
+    value: &TagValue,
+    _ctx: Option<&ExifContext>,
+) -> Result<TagValue> {
     match value.as_f64() {
         Some(val) => Ok(TagValue::F64(2.0_f64.powf(-val / 3.0))),
         None => Ok(value.clone()),
@@ -309,7 +327,7 @@ pub fn power_neg_div_3_value_conv(value: &TagValue) -> Result<TagValue> {
 
 /// Reciprocal multiplied by 10: $val ? 10 / $val : 0
 /// ExifTool pattern: $val ? 10 / $val : 0
-pub fn reciprocal_10_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn reciprocal_10_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     match value.as_f64() {
         Some(val) if val != 0.0 => Ok(TagValue::F64(10.0 / val)),
         _ => Ok(TagValue::F64(0.0)),
@@ -318,7 +336,10 @@ pub fn reciprocal_10_value_conv(value: &TagValue) -> Result<TagValue> {
 
 /// Sony exposure time conversion: $val ? 2 ** (6 - $val/8) : 0
 /// ExifTool pattern: $val ? 2 ** (6 - $val/8) : 0
-pub fn sony_exposure_time_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn sony_exposure_time_value_conv(
+    value: &TagValue,
+    _ctx: Option<&ExifContext>,
+) -> Result<TagValue> {
     match value.as_f64() {
         Some(val) if val != 0.0 => Ok(TagValue::F64(2.0_f64.powf(6.0 - val / 8.0))),
         _ => Ok(TagValue::F64(0.0)),
@@ -327,7 +348,7 @@ pub fn sony_exposure_time_value_conv(value: &TagValue) -> Result<TagValue> {
 
 /// Sony ISO conversion: $val ? exp(($val/8-6)*log(2))*100 : $val
 /// ExifTool pattern: $val ? exp(($val/8-6)*log(2))*100 : $val
-pub fn sony_iso_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn sony_iso_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     match value.as_f64() {
         Some(val) if val != 0.0 => {
             let result = ((val / 8.0 - 6.0) * 2.0_f64.ln()).exp() * 100.0;
@@ -339,7 +360,7 @@ pub fn sony_iso_value_conv(value: &TagValue) -> Result<TagValue> {
 
 /// Sony FNumber conversion: 2 ** (($val/8 - 1) / 2)
 /// ExifTool pattern: 2 ** (($val/8 - 1) / 2)
-pub fn sony_fnumber_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn sony_fnumber_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     match value.as_f64() {
         Some(val) => Ok(TagValue::F64(2.0_f64.powf((val / 8.0 - 1.0) / 2.0))),
         None => Ok(value.clone()),
@@ -348,21 +369,24 @@ pub fn sony_fnumber_value_conv(value: &TagValue) -> Result<TagValue> {
 
 /// EXIF date conversion
 /// ExifTool pattern: Image::ExifTool::Exif::ExifDate($val)
-pub fn exif_date_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn exif_date_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     // For now, pass through - implement specific date conversion when needed
     Ok(value.clone())
 }
 
 /// XMP date conversion
 /// ExifTool pattern: require Image::ExifTool::XMP; return Image::ExifTool::XMP::ConvertXMPDate($val);
-pub fn xmp_date_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn xmp_date_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     // For now, pass through - implement specific XMP date conversion when needed
     Ok(value.clone())
 }
 
 /// Reference long strings (> 32 chars) to avoid duplication
 /// ExifTool pattern: length($val) > 32 ? \$val : $val
-pub fn reference_long_string_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn reference_long_string_value_conv(
+    value: &TagValue,
+    _ctx: Option<&ExifContext>,
+) -> Result<TagValue> {
     match value {
         TagValue::String(s) if s.len() > 32 => {
             // In Rust, we don't have references like Perl, so just return the string
@@ -374,7 +398,10 @@ pub fn reference_long_string_value_conv(value: &TagValue) -> Result<TagValue> {
 
 /// Reference very long strings (> 64 chars) to avoid duplication
 /// ExifTool pattern: length($val) > 64 ? \$val : $val
-pub fn reference_very_long_string_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn reference_very_long_string_value_conv(
+    value: &TagValue,
+    _ctx: Option<&ExifContext>,
+) -> Result<TagValue> {
     match value {
         TagValue::String(s) if s.len() > 64 => {
             // In Rust, we don't have references like Perl, so just return the string
@@ -386,7 +413,10 @@ pub fn reference_very_long_string_value_conv(value: &TagValue) -> Result<TagValu
 
 /// Remove prefix up to ": " from string values
 /// ExifTool pattern: $val=~s/^.*: //;$val
-pub fn remove_prefix_colon_value_conv(value: &TagValue) -> Result<TagValue> {
+pub fn remove_prefix_colon_value_conv(
+    value: &TagValue,
+    _ctx: Option<&ExifContext>,
+) -> Result<TagValue> {
     match value {
         TagValue::String(s) => {
             if let Some(pos) = s.find(": ") {
