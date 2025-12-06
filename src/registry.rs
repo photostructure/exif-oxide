@@ -4,7 +4,7 @@
 //! of conversion functions rather than generating thousands of stub functions.
 //! This approach keeps the codebase manageable while providing flexibility.
 
-use crate::types::{Result, TagValue};
+use crate::types::{ExifContext, ExifError, Result, TagValue};
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, LazyLock, RwLock};
 
@@ -17,19 +17,29 @@ use std::sync::{Arc, LazyLock, RwLock};
 ///
 /// This design allows PrintConv to control JSON serialization type directly,
 /// avoiding ExifTool's regex-based type guessing.
-pub type PrintConvFn = fn(&TagValue) -> TagValue;
+///
+/// The optional ExifContext provides access to other tag values when needed
+/// for context-dependent conversions.
+pub type PrintConvFn = fn(&TagValue, Option<&ExifContext>) -> TagValue;
 
 /// Function signature for ValueConv implementations
 ///
 /// ValueConv functions convert raw values to logical values.
 /// For example: APEX values to actual f-stop numbers
-pub type ValueConvFn = fn(&TagValue) -> Result<TagValue>;
+///
+/// The optional ExifContext provides access to other tag values when needed
+/// for context-dependent conversions.
+pub type ValueConvFn =
+    fn(&TagValue, Option<&ExifContext>) -> std::result::Result<TagValue, ExifError>;
 
 /// Function signature for RawConv implementations
 ///
 /// RawConv functions are applied first to raw tag values before ValueConv/PrintConv.
 /// Used for decoding or special processing of raw data (e.g., UserComment character encoding)
-pub type RawConvFn = fn(&TagValue) -> Result<TagValue>;
+///
+/// The optional ExifContext provides access to other tag values when needed.
+pub type RawConvFn =
+    fn(&TagValue, Option<&ExifContext>) -> std::result::Result<TagValue, ExifError>;
 
 // Global registry instance - uses LazyLock to create a singleton registry that can be
 // accessed from anywhere in the application. RwLock allows concurrent reads while protecting writes.
@@ -114,11 +124,16 @@ impl Registry {
     ///
     /// # Returns
     /// Converted value (string or numeric), or the original value if not found
-    pub fn apply_print_conv(&mut self, name: &str, value: &TagValue) -> TagValue {
+    pub fn apply_print_conv(
+        &mut self,
+        name: &str,
+        value: &TagValue,
+        ctx: Option<&ExifContext>,
+    ) -> TagValue {
         if let Some(func) = self.print_conv.get(name) {
             // Track successful hit
             *self.print_conv_hits.entry(name.to_string()).or_insert(0) += 1;
-            func(value)
+            func(value, ctx)
         } else {
             // Track miss and return original value
             *self.print_conv_misses.entry(name.to_string()).or_insert(0) += 1;
@@ -130,14 +145,20 @@ impl Registry {
     /// Look up and execute a ValueConv function
     ///
     /// # Arguments
-    /// * `name` - Function name to look up  
+    /// * `name` - Function name to look up
     /// * `value` - Value to convert
+    /// * `ctx` - Optional evaluation context
     ///
     /// # Returns
     /// Converted value, or original value if not found or conversion failed
-    pub fn apply_value_conv(&mut self, name: &str, value: &TagValue) -> TagValue {
+    pub fn apply_value_conv(
+        &mut self,
+        name: &str,
+        value: &TagValue,
+        ctx: Option<&ExifContext>,
+    ) -> TagValue {
         if let Some(func) = self.value_conv.get(name) {
-            match func(value) {
+            match func(value, ctx) {
                 Ok(converted) => converted,
                 Err(_) => {
                     // Log error but don't crash - return original value
@@ -154,14 +175,20 @@ impl Registry {
     /// Look up and execute a RawConv function
     ///
     /// # Arguments
-    /// * `name` - Function name to look up  
+    /// * `name` - Function name to look up
     /// * `value` - Value to convert
+    /// * `ctx` - Optional evaluation context
     ///
     /// # Returns
     /// Converted value, or original value if not found or conversion failed
-    pub fn apply_raw_conv(&mut self, name: &str, value: &TagValue) -> TagValue {
+    pub fn apply_raw_conv(
+        &mut self,
+        name: &str,
+        value: &TagValue,
+        ctx: Option<&ExifContext>,
+    ) -> TagValue {
         if let Some(func) = self.raw_conv.get(name) {
-            match func(value) {
+            match func(value, ctx) {
                 Ok(converted) => converted,
                 Err(_) => {
                     // Log error but don't crash - return original value
