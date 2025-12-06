@@ -35,6 +35,56 @@ Read [guides/EXIFTOOL-GUIDE.md](guides/EXIFTOOL-GUIDE.md) sections 1-3:
 - `make check-deps` verifies that all linting, compiling, and codegen tooling is installed
 - All non-trivial development should start by creating a Technical Project Plan using our [TPP.md](TPP.md) style guide
 
+## Current Project State (December 2025)
+
+### Why This Project Exists
+
+**PhotoStructure** uses ExifTool (Perl) for metadata extraction. ExifTool is slow (~50-150ms startup per file) and requires Perl. exif-oxide translates ExifTool into Rust for 10-100x faster extraction with native library integration.
+
+**Current baseline**: Node.js ExifTool wrapper. exif-oxide must beat this or provide no value.
+
+### The Scope: 125 Required Tags
+
+PhotoStructure needs exactly **125 tags** defined in `docs/required-tags.json`:
+
+| Group | Count | Status |
+|-------|-------|--------|
+| XMP | 49 | Mostly working |
+| Composite | 37 | Partial |
+| MakerNotes | 37 | Partial (Canon/Nikon/Sony exist) |
+| EXIF | 36 | Mostly working |
+| QuickTime | 18 | **NOT IMPLEMENTED** (video) |
+| File | 14 | Working |
+| IPTC/RIFF/Other | 12 | Partial |
+
+**What's NOT in scope**: Write support, tags not in required-tags.json, full ExifTool parity.
+
+### Expression Scope
+
+Analysis at `docs/analysis/expressions/required-expressions-analysis.json` shows only **67 unique expressions** needed:
+
+| Type | Unique | Total Usage |
+|------|--------|-------------|
+| ValueConv | 41 | 55 |
+| PrintConv | 25 | 71 |
+| Condition | 1 | 1 |
+
+### What's Working
+
+- 76 completed milestones
+- JPEG/TIFF/basic RAW parsing
+- Canon/Nikon/Sony MakerNotes
+- XMP metadata extraction
+- 122/122 MIME type detection (100% ExifTool compat)
+- Composite tags with multi-pass resolution
+
+### Current Priority
+
+Check `docs/todo/` for active TPPs. The immediate focus is:
+1. Fix any build issues (`make precommit` must pass)
+2. Audit required tags against current implementation
+3. Fill critical gaps for PhotoStructure integration
+
 ## Choose Your Learning Path
 
 After the 15-minute foundation, pick your path based on your task:
