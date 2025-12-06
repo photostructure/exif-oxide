@@ -47,15 +47,15 @@ Read [guides/EXIFTOOL-GUIDE.md](guides/EXIFTOOL-GUIDE.md) sections 1-3:
 
 PhotoStructure needs exactly **125 tags** defined in `docs/required-tags.json`:
 
-| Group | Count | Status |
-|-------|-------|--------|
-| XMP | 49 | Mostly working |
-| Composite | 37 | Partial |
-| MakerNotes | 37 | Partial (Canon/Nikon/Sony exist) |
-| EXIF | 36 | Mostly working |
-| QuickTime | 18 | **NOT IMPLEMENTED** (video) |
-| File | 14 | Working |
-| IPTC/RIFF/Other | 12 | Partial |
+| Group           | Count | Status                           |
+| --------------- | ----- | -------------------------------- |
+| XMP             | 49    | Mostly working                   |
+| Composite       | 37    | Partial                          |
+| MakerNotes      | 37    | Partial (Canon/Nikon/Sony exist) |
+| EXIF            | 36    | Mostly working                   |
+| QuickTime       | 18    | **NOT IMPLEMENTED** (video)      |
+| File            | 14    | Working                          |
+| IPTC/RIFF/Other | 12    | Partial                          |
 
 **What's NOT in scope**: Write support, tags not in required-tags.json, full ExifTool parity.
 
@@ -63,11 +63,11 @@ PhotoStructure needs exactly **125 tags** defined in `docs/required-tags.json`:
 
 Analysis at `docs/analysis/expressions/required-expressions-analysis.json` shows only **67 unique expressions** needed:
 
-| Type | Unique | Total Usage |
-|------|--------|-------------|
-| ValueConv | 41 | 55 |
-| PrintConv | 25 | 71 |
-| Condition | 1 | 1 |
+| Type      | Unique | Total Usage |
+| --------- | ------ | ----------- |
+| ValueConv | 41     | 55          |
+| PrintConv | 25     | 71          |
+| Condition | 1      | 1           |
 
 ### What's Working
 
@@ -81,6 +81,7 @@ Analysis at `docs/analysis/expressions/required-expressions-analysis.json` shows
 ### Current Priority
 
 Check `docs/todo/` for active TPPs. The immediate focus is:
+
 1. Fix any build issues (`make precommit` must pass)
 2. Audit required tags against current implementation
 3. Fill critical gaps for PhotoStructure integration
@@ -174,7 +175,7 @@ make clean-all codegen
 - **Commit**: Generated Rust code in `src/generated/`
 - **Ignore**: Temporary extraction files
 
-**When to regenerate**: After editing codegen/src/**/*.rs or new ExifTool releases. The system handles all discovery and processing automatically.
+**When to regenerate**: After editing codegen/src/\*_/_.rs or new ExifTool releases. The system handles all discovery and processing automatically.
 
 ## Getting Help
 
