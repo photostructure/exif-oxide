@@ -125,32 +125,32 @@ clean() {
 COMMAND="${1:-run}"
 
 case "$COMMAND" in
-  build)
-    build
-    ;;
-  run)
-    build
-    run_interactive
-    ;;
-  start)
-    build
-    start_persistent
-    ;;
-  exec)
-    exec_shell
-    ;;
-  stop)
-    stop_container
-    ;;
-  clean)
-    clean
-    ;;
-  help|--help|-h)
-    usage
-    ;;
-  *)
-    echo "❌ Unknown command: $COMMAND"
-    echo ""
-    usage
-    ;;
+build)
+  build
+  ;;
+run)
+  build
+  run_interactive
+  ;;
+start)
+  build
+  start_persistent
+  ;;
+exec)
+  exec_shell
+  ;;
+stop)
+  stop_container
+  ;;
+clean)
+  clean
+  ;;
+help | --help | -h)
+  usage
+  ;;
+*)
+  echo "❌ Unknown command: $COMMAND"
+  echo ""
+  usage
+  ;;
 esac
