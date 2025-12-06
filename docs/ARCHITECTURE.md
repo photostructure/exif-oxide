@@ -373,6 +373,42 @@ RUST_LOG=debug cargo run --bin debug-ppi -- '$val * 100 + 50'
 2. **Precedence Bugs**: `$val + 4 * 2` must generate `(val + (4i32 * 2i32))`, not `((val + 4i32) * 2i32)`
 3. **Token Position Tracking**: Parser position bugs cause operations to be silently dropped
 
+## Defensive Programming
+
+We apply [defensive programming principles](https://corrode.dev/blog/defensive-programming/) to leverage the compiler for correctness:
+
+### Core Maxim
+
+> "Ask 'How would the compiler enforce this?'" — Turn implicit invariants into explicit compiler checks.
+
+### Applied Principles
+
+1. **`#[must_use]` for important return values** — Error types, builders, and functions where ignoring the result is likely a bug should be marked `#[must_use]`.
+
+2. **`TryFrom` over `From` for fallible conversions** — If a conversion can fail, use `TryFrom`. The `fallible_impl_from` lint enforces this.
+
+3. **Enums over booleans for API clarity** — Prefer `enum ByteOrder { Little, Big }` over `is_little_endian: bool`. Call sites become self-documenting.
+
+4. **Slice patterns over indexing** — When extracting fixed elements:
+   ```rust
+   // Prefer this (compiler-checked)
+   let [first, second, ..] = slice else { return Err(...) };
+
+   // Over this (runtime panic risk)
+   let first = slice[0];
+   let second = slice[1];
+   ```
+
+5. **Explicit struct initialization** — Avoid `..Default::default()` catch-alls that hide new fields. List fields explicitly or destructure defaults with oversight.
+
+6. **Exhaustive enum matching** — In handwritten code, prefer listing all variants over `_ =>` wildcards. The compiler then warns when variants are added. (Generated code may use wildcards for practicality.)
+
+### Clippy Enforcement
+
+These lints are enabled in `Cargo.toml`:
+- `fallible_impl_from = "warn"` — Catches `From` impls that should be `TryFrom`
+- `must_use_candidate = "warn"` — Suggests `#[must_use]` where appropriate
+
 ## Conclusion
 
 This architecture embraces ExifTool's complexity rather than fighting it. The design decisions exist to prevent the specific mistakes that have caused PR rejections and architectural damage in the past.
