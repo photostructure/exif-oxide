@@ -23,6 +23,15 @@ exclude = [
 ]
 
 [lints.clippy]
+# === Defensive Programming Lints ===
+# See https://corrode.dev/blog/defensive-programming/
+
+# Prefer TryFrom over From for fallible conversions
+fallible_impl_from = "warn"
+# Catch functions returning important values that callers might ignore
+must_use_candidate = "warn"
+
+# === Generated Code Compatibility ===
 # Allow explicit 'static lifetimes in generated code
 # This is good practice for public APIs where lifetime guarantees matter
 redundant_static_lifetimes = "allow"
