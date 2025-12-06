@@ -4,6 +4,9 @@
 //! PPI AST nodes and generating Rust code from them.
 
 use super::errors::CodeGenError;
+use super::expressions::{
+    wrap_branch_for_owned, wrap_condition_for_bool, wrap_literal_for_tagvalue,
+};
 use crate::impl_registry::lookup_function;
 use crate::ppi::types::*;
 use indoc::formatdoc;
@@ -1460,9 +1463,14 @@ pub trait PpiVisitor {
         let true_branch = self.visit_node(&node.children[1])?;
         let false_branch = self.visit_node(&node.children[2])?;
 
+        // Wrap condition for bool conversion and branches for ownership
+        let condition_wrapped = wrap_condition_for_bool(&condition);
+        let true_branch_wrapped = wrap_branch_for_owned(&true_branch);
+        let false_branch_wrapped = wrap_branch_for_owned(&false_branch);
+
         Ok(format!(
             "if {} {{ {} }} else {{ {} }}",
-            condition, true_branch, false_branch
+            condition_wrapped, true_branch_wrapped, false_branch_wrapped
         ))
     }
 
@@ -1532,8 +1540,10 @@ pub trait PpiVisitor {
                 Ok(format!("({} {} {})", left, operator, right))
             }
             "**" => {
-                // Power operator -> use cleaner power function
-                Ok(format!("power({}, {})", left, right))
+                // Power operator -> use power function which takes TagValue args
+                let left_wrapped = wrap_literal_for_tagvalue(&left);
+                let right_wrapped = wrap_literal_for_tagvalue(&right);
+                Ok(format!("power({}, {})", left_wrapped, right_wrapped))
             }
             "." => {
                 // String concatenation - use cleaner concat function

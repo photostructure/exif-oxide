@@ -10,7 +10,9 @@ use std::fmt::Write;
 
 use crate::ppi::rust_generator::{
     errors::CodeGenError,
-    expressions::{BinaryOperationsHandler, ExpressionCombiner},
+    expressions::{
+        wrap_branch_for_owned, wrap_condition_for_bool, BinaryOperationsHandler, ExpressionCombiner,
+    },
     functions::FunctionGenerator,
     pattern_matching, signature,
     visitor::PpiVisitor,
@@ -648,10 +650,15 @@ impl RustGenerator {
                 let normalized_false = crate::ppi::normalizer::normalize_multi_pass(false_ast);
                 let false_expr = self.process_node_sequence(&normalized_false.children)?;
 
+                // Wrap condition for bool conversion and branches for ownership
+                let condition_wrapped = wrap_condition_for_bool(&condition);
+                let true_expr_wrapped = wrap_branch_for_owned(&true_expr);
+                let false_expr_wrapped = wrap_branch_for_owned(&false_expr);
+
                 // Generate Rust if-else expression
                 let result = format!(
                     "if {} {{ {} }} else {{ {} }}",
-                    condition, true_expr, false_expr
+                    condition_wrapped, true_expr_wrapped, false_expr_wrapped
                 );
                 return Ok(Some(result));
             }

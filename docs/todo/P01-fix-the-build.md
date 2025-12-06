@@ -152,7 +152,8 @@ From previous build fixes:
 ### Current Error State
 
 **Before**: 280+ compilation errors
-**After**: 117 compilation errors (58% reduction)
+**After Phase 1**: 117 compilation errors (58% reduction)
+**After Phase 2**: 41 compilation errors (65% total reduction from 117)
 
 ```bash
 # Run to see current state
@@ -160,70 +161,108 @@ From previous build fixes:
 grep "^error\[" /tmp/stderr_*.txt | sort | uniq -c | sort -rn
 ```
 
-Current breakdown:
-- 100 `error[E0308]: mismatched types`
-- 4 `error[E0614]: type TagValue cannot be dereferenced`
-- 3 `error[E0061]: this method takes 3 arguments but 2 arguments were supplied`
-- Various other minor errors
+Current breakdown (as of Dec 2025, Phase 2):
+- 23 `error[E0308]: mismatched types`
+- 7 `error[E0283/E0284]: type annotations needed`
+- 7 `error[E0061]: argument count mismatches`
+- 3 `error[E0599]: method not found`
+- 1 `error[E0277]: comparison type mismatch`
+
+#### 8. TagValue Truthiness Support (Phase 2)
+**Problem**: Perl ternary expressions like `$val ? ... : ...` need bool conversion.
+
+**Fix**: Added `is_truthy()` method to TagValue in `codegen-runtime/src/tag_value/conversion.rs:127-153`:
+- Follows Perl semantics: 0, "", "0", empty arrays are false
+- All other values are truthy
+
+#### 9. Ternary Expression Handling (Phase 2)
+**Problem**: Generated ternary expressions had multiple issues:
+- Conditions using `val` directly (not bool)
+- Branches returning bare `val` (not owned TagValue)
+- Integer/string literals not wrapped
+
+**Fix**: Created shared helper functions in `codegen/src/ppi/rust_generator/expressions/binary_ops.rs`:
+- `wrap_condition_for_bool()` - Adds `.is_truthy()` for TagValue conditions
+- `wrap_branch_for_owned()` - Adds `.clone()` for `val`, `.into()` for literals
+- `is_boolean_expression()` - Detects existing comparisons to avoid double-wrapping
+
+Updated both `generator.rs` and `visitor.rs` to use these helpers (DRY).
+
+#### 10. Power Operator Handling (Phase 2)
+**Problem**: Perl `**` operator was either:
+- Left as `**` in generated code (invalid Rust)
+- Parsed incorrectly as `* *` (multiply + dereference) in expressions like `100 * 2**(16 - $val/256)`
+
+**Fix**:
+- `wrap_literal_for_tagvalue()` - Wraps bare integers with `.into()` for `power()` function
+- Added `get_operator_precedence()` for proper operator splitting
+- `try_binary_operation_pattern()` now splits on LOWEST precedence first
+- `generate_binary_operation_from_parts()` recursively processes operands
+
+Example: `100 * 2**(16 - $val/256)` now generates:
+```rust
+100i32 * power(2i32.into(), ((16i32.into()) - (val / 256i32)))
+```
 
 ---
 
-## Part 4: Remaining Work
+## Part 4: Remaining Work (41 errors)
 
-### Task 1: Fix Generated Expression Type Issues
+### Task 1: Type Annotation Ambiguity (7 errors)
 
-**Problem**: The PPI code generator produces expressions with wrong types.
+**Problem**: `.into()` calls on literals inside expressions create type inference ambiguity.
 
-**Error patterns** (run `grep -E "expected.*found" /tmp/stderr_*.txt | sort | uniq -c | sort -rn`):
-
-| Count | Error Pattern | Root Cause |
-|-------|--------------|------------|
-| ~28 | `expected TagValue, found &TagValue` | Return statements missing `.clone()` |
-| ~25 | `expected TagValue, found i32` | Integer literals not wrapped in `TagValue::I32()` |
-| ~18 | `expected bool, found &TagValue/TagValue` | Conditions using `val` where bool expected |
-
-**Where to fix**: `codegen/src/ppi/rust_generator/`
-
-**Specific files to investigate**:
-```bash
-# Find where return statements are generated
-rg "Ok\(val\)|val\.clone\(\)" codegen/src/ppi/rust_generator/
-
-# Find where integer literals are generated
-rg "i32\)" codegen/src/ppi/rust_generator/
-
-# Find where conditions are generated
-rg "if.*val" codegen/src/ppi/rust_generator/
+**Example** (hash_16.rs line 31):
+```rust
+Ok(100i32 * power(2i32.into(), ((16i32.into()) - (val / 256i32))))
+//                              ^^^^^^^^^^^^^^ - type annotations needed
 ```
 
 **Fix approach**:
-1. In `generator.rs` around line 100-130, check the return wrapping logic
-2. Integer literals need `TagValue::I32(N)` wrapper, not bare `Ni32`
-3. Boolean conditions need proper conversion: `val.as_bool()` or similar
+Either use explicit type: `Into::<TagValue>::into(16i32)` or redesign `power()` to accept generic types.
 
-### Task 2: Fix Dereference Errors
+**Files to check**: `codegen/src/ppi/rust_generator/expressions/binary_ops.rs` - the `wrap_literal_for_tagvalue()` function.
 
-**Problem**: 4 errors of `type TagValue cannot be dereferenced`
+### Task 2: Function Argument Mismatches (7 errors)
+
+**Problem**: Several generated function calls have wrong argument counts.
+
+| Function | Issue |
+|----------|-------|
+| `sqrt()` | Called with 0 args, needs 1 |
+| `chr()` | Returns String, expected TagValue |
+| `unpack_binary()` | Returns `Vec<TagValue>`, sometimes expected String |
+| Various methods | Take 3 args, called with 2 |
+
+**Fix approach**:
+- Fix `sqrt()` generation to pass `val` argument
+- Wrap `chr()` return in `TagValue::String(...)`
+- Handle `unpack_binary()` return type correctly (join or index)
+
+**Files to check**:
+- `codegen/src/ppi/rust_generator/visitor.rs` - function call generation
+- `codegen-runtime/src/math/` - function signatures
+
+### Task 3: Missing ExpressionEvaluator Methods (3 errors)
+
+**Problem**: Generated code calls methods that don't exist:
+- `evaluate_context_condition`
+- `evaluate_expression`
 
 **To investigate**:
 ```bash
-grep -B 5 "cannot be dereferenced" /tmp/stderr_*.txt
+grep -rn "evaluate_context_condition\|evaluate_expression" src/
 ```
 
-Likely cause: Generated code tries to dereference TagValue with `*val` somewhere.
+**Fix approach**: Either add these methods to `ExpressionEvaluator` or update codegen to not generate these calls.
 
-### Task 3: Fix Method Call Errors
+### Task 4: Mixed-Type Array Issues (2 errors)
 
-**Problem**: `evaluate_context_condition` and `evaluate_expression` methods not found
+**Problem**: `available_options.rs` and `rggb_lookup.rs` still have integers in `[&'static str; N]` arrays.
 
-**To investigate**:
-```bash
-grep -B 5 "evaluate_context_condition\|evaluate_expression" /tmp/stderr_*.txt
-```
+**Files to check**: `codegen/src/strategies/scalar_array.rs` - the type detection and element formatting may need refinement.
 
-These methods may need to be added to `ExpressionEvaluator` or the calls need updating.
-
-### Task 4: Verify Full Build
+### Task 5: Verify Full Build
 
 After fixing remaining issues:
 ```bash
@@ -232,6 +271,28 @@ make codegen
 cargo check           # Should have 0 errors
 cargo t               # Tests should pass
 make precommit        # Full validation
+```
+
+---
+
+## Key Files Modified in Phase 2
+
+```bash
+# New/modified codegen helpers
+codegen/src/ppi/rust_generator/expressions/binary_ops.rs
+  - wrap_literal_for_tagvalue()
+  - wrap_condition_for_bool()
+  - wrap_branch_for_owned()
+  - get_operator_precedence()
+  - process_expression_recursively()
+
+# Updated to use shared helpers
+codegen/src/ppi/rust_generator/generator.rs
+codegen/src/ppi/rust_generator/visitor.rs
+
+# New TagValue method
+codegen-runtime/src/tag_value/conversion.rs
+  - is_truthy()
 ```
 
 ---
@@ -263,9 +324,15 @@ make codegen && cargo check
 - [x] Registry type aliases updated with ctx parameter
 - [x] Fallback helper passes ctx to implementations
 - [x] Visitor passes ctx to ExifTool function calls
-- [ ] Generated expressions return correct types (TagValue vs i32)
-- [ ] Generated expressions handle references correctly (&TagValue vs TagValue)
-- [ ] Generated conditions produce bool (not TagValue)
+- [x] TagValue has `is_truthy()` for Perl truthiness semantics
+- [x] Ternary conditions wrapped with `.is_truthy()`
+- [x] Ternary branches handle ownership (`.clone()`, `.into()`)
+- [x] Power operator generates `power()` function call
+- [x] Operator precedence handled for complex expressions
+- [x] DRYed up helper functions between generator and visitor
+- [ ] Type annotation ambiguity for `.into()` in expressions
+- [ ] Function argument counts correct (sqrt, chr, etc.)
+- [ ] ExpressionEvaluator methods exist or calls removed
 - [ ] Error count reduced to 0
 - [ ] `make precommit` passes
 - [ ] No manual edits to `src/generated/`

@@ -115,6 +115,43 @@ impl TagValue {
             _ => None,
         }
     }
+
+    /// Check if value is "truthy" following Perl semantics
+    ///
+    /// In Perl:
+    /// - Numbers: 0 is false, everything else is true
+    /// - Strings: "" (empty) and "0" are false, everything else is true
+    /// - Arrays: empty is false, non-empty is true
+    ///
+    /// This is used for ternary expressions like `$val ? "yes" : "no"`
+    pub fn is_truthy(&self) -> bool {
+        match self {
+            TagValue::Empty => false,
+            TagValue::U8(v) => *v != 0,
+            TagValue::U16(v) => *v != 0,
+            TagValue::U32(v) => *v != 0,
+            TagValue::U64(v) => *v != 0,
+            TagValue::I16(v) => *v != 0,
+            TagValue::I32(v) => *v != 0,
+            TagValue::F64(v) => *v != 0.0,
+            TagValue::Bool(b) => *b,
+            TagValue::String(s) => !s.is_empty() && s != "0",
+            TagValue::Array(arr) => !arr.is_empty(),
+            TagValue::Object(map) => !map.is_empty(),
+            // Rational types: check if numerator is non-zero (0/x = 0 = false)
+            TagValue::Rational(num, _) => *num != 0,
+            TagValue::SRational(num, _) => *num != 0,
+            // Binary data is truthy if non-empty
+            TagValue::Binary(data) => !data.is_empty(),
+            // TypedArray variants: truthy if non-empty
+            TagValue::U8Array(arr) => !arr.is_empty(),
+            TagValue::U16Array(arr) => !arr.is_empty(),
+            TagValue::U32Array(arr) => !arr.is_empty(),
+            TagValue::F64Array(arr) => !arr.is_empty(),
+            TagValue::RationalArray(arr) => !arr.is_empty(),
+            TagValue::SRationalArray(arr) => !arr.is_empty(),
+        }
+    }
 }
 
 // Convenience implementations for easier TagValue creation
