@@ -1,385 +1,395 @@
-# ExifTool Integration: Code Generation & Implementation
+# Code Generation System
 
-## 🚨 READ FIRST 🚨
+## READ FIRST
 
-You MUST read these documents before making ANY EDITS.
+Before making ANY edits to codegen or codegen-runtime:
 
-- [TRUST-EXIFTOOL.md](./TRUST-EXIFTOOL.md) - the fundamental law of this project
-- [ANTI-PATTERNS.md](./ANTI-PATTERNS.md) - critical mistakes that cause PR rejections
-- [SIMPLE-DESIGN.md](./SIMPLE-DESIGN.md) - follow this, and your PR will get merged. Stray, and your work will be discarded.
-- [ARCHITECTURE.md](./ARCHITECTURE.md) - follow this, and your PR will get merged. Stray, and your work will be discarded.
+- [TRUST-EXIFTOOL.md](./TRUST-EXIFTOOL.md) - fundamental project law
+- [ANTI-PATTERNS.md](./ANTI-PATTERNS.md) - mistakes causing PR rejections
+- [SIMPLE-DESIGN.md](./SIMPLE-DESIGN.md) - design principles
+- [ARCHITECTURE.md](./ARCHITECTURE.md) - system overview
 
-**⚠️ MANUAL PORTING BANNED**: We've had 100+ bugs from manual transcription of ExifTool data. All ExifTool data MUST be extracted automatically.
+**INSTANT REJECTION TRIGGERS**:
 
-**WE'VE HAD 5+ EMERGENCY RECOVERIES** from engineers who ignored these warnings and committed "architectural vandalism" that broke the entire PPI system. **Your PR WILL BE REJECTED** if you violate these patterns.
+- `split_whitespace()` on AST nodes - destroys type safety
+- Editing `src/generated/**/*.rs` - fix `codegen/src/` instead
+- Manual ExifTool data transcription - 100+ bugs from this mistake
+- Bypassing `ExpressionPrecedenceNormalizer` for operators
 
-**SPECIFIC VIOLATIONS THAT CAUSE IMMEDIATE REJECTION**:
-- `split_whitespace()` on AST nodes → **BANNED** - destroys type safety 
-- Deleting pattern recognition code → **BANNED** - breaks real camera files
-- `args[N].starts_with()` on stringified AST → **BANNED** - violates visitor pattern
-- Manual transcription of ExifTool data → **BANNED** - causes silent bugs
-- Inconsistent binary operations handling → **BANNED** - breaks expression architecture
+## Two-Crate Architecture
 
-## 5 Critical Principles
+The code generation system has two distinct crates:
 
-Before touching any code, understand these principles that prevent architectural vandalism:
+| Crate               | Purpose                                         | When Used         |
+| ------------------- | ----------------------------------------------- | ----------------- |
+| **codegen**         | CLI tool that generates Rust from ExifTool Perl | Build time only   |
+| **codegen-runtime** | Runtime library that generated code imports     | Compile + runtime |
 
-1. **Trust ExifTool** - Translate exactly, never manually port or "improve" ExifTool logic
-2. **Use Strategy Pattern** - Current system auto-discovers symbols, no config files needed
-3. **Use AST Patterns** - Work with structured data, never stringify and re-parse
-4. **Use Generated Tables** - Import from `src/generated/`, never manually transcribe
-5. **Generated Code is Read-Only** - Fix generators in `codegen/src/`, never edit `src/generated/**/*.rs`
+```
+ExifTool Perl → [codegen] → src/generated/*.rs → [uses codegen-runtime] → exif-oxide binary
+```
 
-## Current Architecture
+## Data Flow Overview
 
-The current perl codegen is driven by the [field_extraction.pl](../codegen/scripts/field_extractor.pl) -- for every field, the strategies in `codegen/src/strategies/*.rs` are requested to handle whatever the payload is. Many fields do not have registered strategies.
+```
+third-party/exiftool/lib/Image/ExifTool/*.pm
+                    ↓
+        exiftool-patcher.sh (converts `my` → `our` for introspection)
+                    ↓
+        field_extractor.pl (Perl symbol table introspection + PPI parsing)
+                    ↓
+        JSON Lines (one symbol per line, includes inline AST)
+                    ↓
+        Rust: field_extractor.rs (spawns Perl, captures JSON)
+                    ↓
+        Vec<FieldSymbol>
+                    ↓
+        StrategyDispatcher (pattern matching → strategy selection)
+                    ↓
+        Strategy.extract() → PPI normalization → Rust code generation
+                    ↓
+        src/generated/**/*.rs (1,300+ files across 50 modules)
+```
 
-Many strategies receive simple structures like scalar arrays. 
+## codegen Module Structure
 
-For the tag_kit, composite (and soon, makernote conditions), the fields contain both scalar values as well as perl expressions, _and that perl expression parsed into an AST by PPI_:
+```
+codegen/
+├── src/
+│   ├── main.rs                    # Entry point: extraction → strategies → output
+│   ├── field_extractor.rs         # Spawns Perl, parses JSON Lines output
+│   ├── strategies/                # Pattern-based symbol handlers
+│   │   ├── mod.rs                 # StrategyDispatcher + ExtractionStrategy trait
+│   │   ├── tag_kit.rs             # Tag tables (PrintConv/ValueConv)
+│   │   ├── composite_tag.rs       # Composite tag definitions
+│   │   ├── simple_table.rs        # Key-value lookup tables
+│   │   ├── scalar_array.rs        # Primitive arrays
+│   │   ├── binary_data.rs         # ProcessBinaryData tables
+│   │   ├── file_type_lookup.rs    # File type detection
+│   │   ├── magic_numbers.rs       # Binary magic patterns
+│   │   ├── mime_type.rs           # MIME type mappings
+│   │   └── boolean_set.rs         # Membership sets
+│   ├── ppi/                       # Perl AST → Rust code pipeline
+│   │   ├── types.rs               # PpiNode structure
+│   │   ├── parser.rs              # JSON → PpiNode
+│   │   ├── normalizer/            # Multi-pass AST transformation
+│   │   │   └── passes/            # Individual rewrite passes
+│   │   ├── rust_generator/        # PpiNode → Rust code
+│   │   └── fn_registry/           # Function deduplication by hash
+│   └── common/utils.rs            # String escaping, formatting
+├── scripts/
+│   ├── field_extractor.pl         # Core extraction via Perl introspection
+│   ├── ppi_ast.pl                 # Standalone expression → AST tool
+│   ├── exiftool-patcher.pl        # Converts `my` → `our` declarations
+│   └── PPI/Simple.pm              # Custom JSON serializer for PPI
+└── config/
+    └── exiftool_modules.json      # Modules to process (~50 total)
+```
 
-mrm@speedy:~/src/exif-oxide$ codegen/scripts/ppi_ast.pl '$val + 4'
+## Strategy System (Duck-Typing Pattern Matching)
+
+Each symbol from `field_extractor.pl` is routed to the first matching strategy:
+
+| Priority | Strategy       | Detects                | Example Symbol                  |
+| -------- | -------------- | ---------------------- | ------------------------------- |
+| 1        | CompositeTag   | `is_composite_table=1` | `%Composite`                    |
+| 2        | FileTypeLookup | File type patterns     | `%fileTypeLookup`               |
+| 3        | MagicNumber    | Magic byte patterns    | `%magicNumber`                  |
+| 4        | MimeType       | MIME mappings          | `%mimeType`                     |
+| 5        | SimpleTable    | String key-value pairs | `%canonWhiteBalance`            |
+| 6        | ScalarArray    | Primitive arrays       | `@fileTypes`                    |
+| 7        | TagKit         | Tag definitions        | `%Image::ExifTool::Canon::Main` |
+| 8        | BinaryData     | Binary processing      | `%processBinaryData`            |
+| 9        | BooleanSet     | Membership tests       | `%isDat`                        |
+
+**No configuration files needed** - strategies use pattern recognition via `can_handle()`.
+
+## PPI Pipeline (Perl Expression → Rust Code)
+
+For expressions like `PrintConv => '$val + 4'`, the pipeline:
+
+1. **Perl → JSON AST** (via `ppi_ast.pl`):
 
 ```json
-{ "class" : "PPI::Document", "children" : [
-    { "class" : "PPI::Statement", "children" : [
-        { "class" : "PPI::Token::Symbol", "content" : "$val", "symbol_type" : "scalar" },
-        { "class" : "PPI::Token::Operator", "content" : "+" },
-        { "class" : "PPI::Token::Number", "content" : "4", "numeric_value" : 4 } ] } ] }
+{
+  "class": "PPI::Statement",
+  "children": [
+    { "class": "PPI::Token::Symbol", "content": "$val" },
+    { "class": "PPI::Token::Operator", "content": "+" },
+    { "class": "PPI::Token::Number", "content": "4", "numeric_value": 4 }
+  ]
+}
 ```
 
-The Perl AST is normalized to make it easier for our rust generator by codegen/src/ppi/normalizer/multi_pass.rs
+2. **Normalization** (multi-pass AST rewriting):
 
-This is driven by process_symbols in codegen/src/strategies/mod.rs, and then the fn_registry DRYs up duplicate perl expressions, and they're written to src/generated/functions/hash_XX.rs based on the hash of the perl expression.
+   - `ExpressionPrecedenceNormalizer` - operator precedence (ALL binary ops go here)
+   - Ternary, conditional, join/unpack pattern handlers
 
-## Build Commands
-
-### Primary Commands
-```bash
-make codegen                    # Full pipeline - processes all modules automatically
-cd codegen && cargo run --release  # Direct execution with debug output
-make clean                      # Clean generated files
-```
-
-### Development & Debugging
-```bash
-cd codegen && RUST_LOG=debug cargo run     # Verbose strategy selection logs
-cd codegen && cargo run -- --module Canon  # Process single module
-make check-perl                             # Validate Perl scripts
-```
-
-### Testing
-```bash
-cargo test                      # Full test suite
-make compat-test               # ExifTool compatibility tests
-make precommit                 # Full validation before commit
-```
-
-## PPI Expression Debugging
-
-**Essential Tools** for debugging complex expression generation:
-
-**1. Complete Pipeline Debugging**
-```bash
-# Shows: Original Expression → Raw PPI AST → Normalized AST → Generated Rust
-cargo run --package codegen --bin debug-ppi -- --verbose 'expression_here'
-
-# Example:
-cargo run --package codegen --bin debug-ppi -- --verbose '$val + 4'
-cargo run --package codegen --bin debug-ppi -- --verbose 'sprintf("%s:%s", unpack "H4H2", $val)'
-```
-
-**2. Expression Test Framework** (for rapid iteration)
-```bash
-# Generate tests from JSON configs and run
-make generate-expression-tests
-cargo test -p codegen --test generated_expressions
-
-# Test specific expression file
-make test-expression-file FILE=tests/config/value_conv/basic_addition.json
-
-# Debug single expression
-make debug-expression EXPR='$$val * 25'
-```
-
-**3. Raw AST Structure Analysis**
-```bash
-# Parse Perl expression and show raw PPI AST structure
-cd codegen && ./scripts/ppi_ast.pl 'sprintf("%.2f", $val / 100)'
-```
-
-## Extension Points
-
-### ✅ CORRECT: Add New Expression Patterns
-
-When adding support for new operators or patterns:
-
-1. **For binary operations** (`+`, `-`, `*`, `=~`, etc.): Add to precedence table in `ExpressionPrecedenceNormalizer::get_precedence()`
-2. **For string operations** (regex, concatenation): Add to `StringOperationsHandler::handle_regex_operation()` 
-3. **For function patterns** (`sprintf`, `unpack`): Add to `ComplexPatternHandler::try_*_pattern()`
-
-### ❌ BANNED: Bypassing Precedence Climbing Architecture
-
-**NEVER handle binary operations outside the normalization pipeline**:
+3. **Code Generation** (visitor pattern → Rust):
 
 ```rust
-// ❌ BANNED - Bypasses precedence climbing normalization
-if child.class == "PPI::Token::Operator" && child.content == "*" {
-    // Manual operator handling in visitor - creates precedence bugs
-}
-
-// ❌ BANNED - String parsing binary operations
-if parts.join(" ").contains(" * ") {
-    // Destroys AST structure and precedence information  
+pub fn ast_value_10ca38d8(val: &TagValue, ctx: Option<&ExifContext>) -> Result<TagValue, ExifError> {
+    Ok((val + 4i32))
 }
 ```
 
-**THE RULE**: ALL binary operations MUST be processed by `ExpressionPrecedenceNormalizer` during AST normalization.
+4. **Deduplication** (hash-based registry):
+   - Functions grouped by 2-char hash prefix: `functions/hash_XX.rs`
+   - Identical expressions share one function
 
 ## Generated Code Structure
 
-The system organizes generated code into focused modules:
-
 ```
 src/generated/
-├── Canon_pm/                  # Canon-specific tables
-│   ├── white_balance.rs       # White balance lookup
-│   └── lens_types.rs          # Lens type lookup
-├── functions/                 # PPI-generated functions
-│   ├── hash_c7.rs             # Arithmetic: $val + 4 → (val + 4i32)
-│   └── hash_ef.rs             # Complex: ($val + 100) / 2
-└── ExifTool_pm/              # Core ExifTool tables
-    └── magic_numbers.rs       # File detection
+├── mod.rs                         # Re-exports all modules
+├── functions/                     # PPI-generated functions (194 files)
+│   ├── hash_10.rs ... hash_ff.rs  # Grouped by AST hash prefix
+│   └── mod.rs
+├── Canon_pm/                      # Manufacturer module (100+ files)
+│   ├── mod.rs
+│   ├── main_tags.rs               # Tag definitions
+│   ├── lens_types.rs              # Lookup table
+│   └── ...
+├── Nikon_pm/, Sony_pm/, ...       # 48 manufacturer modules
+└── ExifTool_pm/                   # Cross-cutting utilities
+    ├── mime_type.rs
+    ├── magic_numbers.rs
+    └── file_type_lookup.rs
 ```
 
-**Generated vs Manual Code**:
-- **Generated**: Lookup tables, tag definitions, arithmetic functions from PPI expressions
-- **Manual**: Complex PrintConv/ValueConv logic, manufacturer-specific processors
+### Generated Code Examples
 
-## Daily Development Workflow
+**Tag Definition** (from TagKitStrategy):
 
-### Adding PrintConv/ValueConv Functions
-
-**Step 1: Check for Generated Table**
-```bash
-find src/generated -name "*orientation*" -o -name "*white_balance*"
-```
-
-**Step 2: Implement Using Generated Table**
 ```rust
-/// EXIF Orientation PrintConv
-/// ExifTool: lib/Image/ExifTool/Exif.pm:281-290 (%orientation hash)
-pub fn orientation_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::exif::lookup_orientation;
-    
-    if let Some(orientation_val) = val.as_u8() {
-        if let Some(description) = lookup_orientation(orientation_val) {
-            return TagValue::string(description);
-        }
-    }
-    TagValue::string(format!("Unknown ({val})"))
+pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
+    HashMap::from([
+        (8, TagInfo {
+            name: "FileNumber",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_c033b0a1)),
+            value_conv: None,
+        }),
+    ])
+});
+```
+
+**Lookup Table** (from SimpleTableStrategy):
+
+```rust
+static OFF_ON_DATA: &[(u8, &str)] = &[(0, "Off"), (1, "On")];
+pub static OFF_ON: LazyLock<HashMap<u8, &str>> = LazyLock::new(|| OFF_ON_DATA.iter().copied().collect());
+pub fn lookup_off_on(key: u8) -> Option<&'static str> { OFF_ON.get(&key).copied() }
+```
+
+**Arithmetic Function** (from PPI):
+
+```rust
+/// Original perl: $val / 100
+pub fn ast_value_fd4074b6(val: &TagValue, ctx: Option<&ExifContext>) -> Result<TagValue, ExifError> {
+    Ok(val / 100i32)
 }
 ```
 
-**Step 3: Test Against ExifTool**
-```bash
-cargo run --bin compare-with-exiftool test.jpg EXIF:
+**Complex Function** (from PPI):
+
+```rust
+/// Original perl: 100 * 2**(16 - $val/256)
+pub fn ast_value_161c6918(val: &TagValue, ctx: Option<&ExifContext>) -> Result<TagValue, ExifError> {
+    Ok(100i32 * power(2i32.into(), (16i32 - (val / 256i32)).into()))
+}
 ```
 
-## Troubleshooting
+## codegen-runtime Module Structure
 
-### Expression Generation Issues
+The runtime library provides all helpers that generated code imports:
 
-**Problem**: Binary operation not generating expected Rust code
-**Solution**: Check debug-ppi output - ensure operation creates `BinaryOperation` node in normalized AST
+```
+codegen-runtime/src/
+├── lib.rs                    # Re-exports for `use codegen_runtime::*;`
+├── types.rs                  # ExifContext, ExifError
+├── missing.rs                # Missing implementation tracking
+├── tag_value/
+│   ├── mod.rs                # TagValue enum (U8, U16, String, Rational, etc.)
+│   ├── ops.rs                # Arithmetic operators (+, -, *, /, >>, &)
+│   ├── conversion.rs         # as_u8(), as_f64(), is_truthy()
+│   └── display.rs            # Display formatting
+├── math/
+│   ├── basic.rs              # exp, log, sin, cos, sqrt, abs, int
+│   ├── safe.rs               # safe_division (returns 0 for /0)
+│   └── camera.rs             # Photographic: aperture, ISO, shutter
+├── string/
+│   ├── extraction.rs         # substr_2arg, substr_3arg, index_*
+│   ├── transform.rs          # chr, uc, regex_replace
+│   └── format.rs             # concat, repeat_string
+├── data/
+│   └── unpack.rs             # Binary unpacking (Perl pack formats)
+└── fmt/
+    └── sprintf.rs            # Perl-compatible sprintf
+```
 
-**Problem**: Arithmetic expressions return original value unchanged (e.g., `$val + 4` returns `val`)
-**Solution**: Bug in precedence climbing - verify `ExpressionPrecedenceNormalizer` is creating proper binary operations
+### Key Runtime Functions
 
-**Problem**: Complex expressions like `($val + 100) / 2` only partially work
-**Solution**: Precedence climbing bug - check operator precedence tables and token consumption logic
+| Category   | Function                            | Perl Equivalent                  |
+| ---------- | ----------------------------------- | -------------------------------- |
+| **Math**   | `safe_division(a, b)`               | Safe `$a / $b`                   |
+| **Math**   | `power(base, exp)`                  | `$base ** $exp`                  |
+| **Math**   | `int(val)`                          | `int($val)`                      |
+| **String** | `substr_3arg(s, off, len)`          | `substr($s, $off, $len)`         |
+| **String** | `uc(val)`                           | `uc($val)`                       |
+| **String** | `chr(code)`                         | `chr($code)`                     |
+| **Data**   | `unpack_binary(spec, val)`          | `unpack($spec, $val)`            |
+| **Data**   | `join_unpack_binary(sep, fmt, val)` | `join($sep, unpack($fmt, $val))` |
+| **Format** | `sprintf_perl(fmt, args)`           | `sprintf($fmt, @args)`           |
 
-### Build Failures
+### TagValue Arithmetic
+
+Generated code uses TagValue operators directly:
+
+```rust
+// Generated code uses these patterns:
+Ok((val + 5i32))           // Addition
+Ok(val / 100i32)           // Division
+Ok(100i32 * power(...))    // Complex expressions
+```
+
+The `ops.rs` module implements `Add`, `Sub`, `Mul`, `Div` for TagValue with smart type coercion.
+
+## Build Commands
+
 ```bash
-# Check Perl syntax
-make check-perl
+make codegen                    # Full pipeline (patches ExifTool, runs codegen, formats)
+make clean && make codegen      # Clean rebuild
+make precommit                  # Full validation before commit
+cargo t                         # Run tests (includes test-helpers feature)
+```
+
+### Debugging
+
+```bash
+# Debug single expression through full pipeline
+cargo run -p codegen --bin debug-ppi -- --verbose '$val + 4'
 
 # Debug strategy selection
-cd codegen && RUST_LOG=trace cargo run
+cd /home/mrm/src/exif-oxide/codegen && RUST_LOG=debug cargo run
 
-# Clean and rebuild
-make clean && make codegen
+# Raw PPI AST (Perl only)
+codegen/scripts/ppi_ast.pl 'sprintf("%.2f", $val)'
 ```
 
-### Expression Test Development
+### Expression Tests
 
-**Create new test configs** in `codegen/tests/config/` following the JSON schema:
-```json
-{
-    "expression": "$val + 4",
-    "type": "ValueConv", 
-    "description": "Simple addition by 4",
-    "exiftool_reference": "common arithmetic pattern",
-    "test_cases": [
-        {"input": {"U32": 10}, "expected": {"U32": 14}},
-        {"input": {"U32": 0}, "expected": {"U32": 4}}
-    ]
-}
-```
-
-**Run tests**:
 ```bash
-make generate-expression-tests    # Generate from JSON configs
-cargo test -p codegen --test generated_expressions  # Run all expression tests
+make generate-expression-tests                    # Generate test files
+cargo test -p codegen --test generated_expressions  # Run expression tests
+make debug-expression EXPR='$val * 25'            # Debug single expression
 ```
 
-## Performance Characteristics
+## Missing Implementation Tracking
 
-- **Zero Runtime Cost**: LazyLock static tables with HashMap lookups
-- **Type Safety**: Compile-time validation of all keys and values
-- **O(1) Function Dispatch**: HashMap-based registry lookup
-- **Graceful Degradation**: Never panics on missing implementations
-
-## Missing Conversion Tracking (`--show-missing`)
-
-When the PPI generator encounters Perl expressions it cannot translate (e.g., `foreach` loops, complex function calls), it generates placeholder functions that:
-
-1. **Return the value unchanged** - Ensures graceful degradation
-2. **Track the missing implementation** - Records expression details for `--show-missing`
-3. **Preserve the original Perl** - Escapes and embeds the expression for reference
-
-### How It Works
+When expressions can't be translated, placeholder functions are generated:
 
 ```rust
-// Generated placeholder for untranslatable PrintConv expression
-pub fn ast_print_HASH(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+pub fn ast_print_c033b0a1(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
     codegen_runtime::missing::missing_print_conv(
-        0,              // tag_id (filled at runtime)
-        "UnknownTag",   // tag_name (filled at runtime)
-        "UnknownGroup", // group (filled at runtime)
-        "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")", // original Perl
-        val
+        0, "UnknownTag", "UnknownGroup",
+        "$_=$val,s/(\\d+)(\\d{4})/$1-$2/,$_",  // Original Perl
+        val,
     )
 }
 ```
 
-### Usage
+Usage:
 
 ```bash
-# Show missing implementations for development
 ./target/debug/exif-oxide --show-missing image.jpg
-
-# Output includes:
-# "missing_implementations": [
-#   "PrintConv: Image::ExifTool::GPS::ToDMS(...) [used by GPS:GPSLongitude]",
-#   "ValueConv: my @a=split(' ',$val); $_/=500 foreach @a; join(' ',@a) [used by Pentax:SensorSize]"
-# ]
 ```
 
-### Testing
+## Extension Points
 
-See `codegen-runtime/tests/missing_tracking.rs` for unit tests and `codegen/tests/missing_conversions_test.rs` for integration tests.
+### Adding New Expression Patterns
 
-## Consistency Best Practices
+1. **Binary operators**: Add to `ExpressionPrecedenceNormalizer::get_precedence()`
+2. **String operations**: Add to `StringOperationsHandler`
+3. **Function patterns**: Add to `ComplexPatternHandler::try_*_pattern()`
 
-**TL;DR**: Use the same approach for the same problem. Follow these patterns to avoid TIMTOWTDI (There Is More Than One Way To Do It).
+### Adding New Runtime Functions
 
-### TagValue Construction
+1. Add function to appropriate `codegen-runtime/src/` module
+2. Re-export from `lib.rs` for `use codegen_runtime::*;` access
+3. Update generator to emit calls to new function
 
-**✅ DO**:
+### Adding New Strategies
+
+Implement `ExtractionStrategy` trait:
+
 ```rust
-TagValue::String(String::new())              // Empty strings
-TagValue::String(s.into())                   // Convert to string
-TagValue::Empty                              // Default fallback
+pub trait ExtractionStrategy: Send + Sync {
+    fn name(&self) -> &'static str;
+    fn can_handle(&self, symbol: &FieldSymbol) -> bool;  // Duck-typing
+    fn extract(&mut self, symbol: &FieldSymbol, ctx: &mut ExtractionContext) -> Result<()>;
+    fn finish_module(&mut self, module_name: &str) -> Result<()>;
+    fn finish_extraction(&mut self, ctx: &mut ExtractionContext) -> Result<Vec<GeneratedFile>>;
+}
 ```
 
-**❌ DON'T**:
+Register in `all_strategies()` with appropriate priority.
+
+## Troubleshooting
+
+### Expression Not Generating Correct Code
+
+```bash
+cargo run -p codegen --bin debug-ppi -- --verbose 'YOUR_EXPRESSION'
+```
+
+Check that normalized AST shows `BinaryOperation` nodes for operators.
+
+### Strategy Not Claiming Symbol
+
+```bash
+cd /home/mrm/src/exif-oxide/codegen && RUST_LOG=trace cargo run
+```
+
+Look for "Strategy X can_handle returned false for symbol Y" messages.
+
+### Build Failures
+
+```bash
+make check-perl              # Validate Perl scripts
+make clean && make codegen   # Clean rebuild
+```
+
+## Code Style Consistency
+
+**TagValue Construction**:
+
 ```rust
-TagValue::String("".to_string())             // Unnecessary allocation
-TagValue::String(String::from(""))           // Verbose
-TagValue::U32(1)                             // Inconsistent defaults
+TagValue::String(String::new())   // Empty string
+TagValue::String(s.into())        // Convert to string
+TagValue::Empty                   // Default fallback
 ```
 
-### Function Call Generation
+**Runtime Function Calls**:
 
-**✅ DO** - Use runtime helpers consistently:
 ```rust
-codegen_runtime::math::abs(val)              // Mathematical functions
-codegen_runtime::sprintf_perl(fmt, args)     // String formatting
-codegen_runtime::string::length_string(val)  // String operations
+codegen_runtime::sprintf_perl(fmt, args)    // Correct
+codegen_runtime::math::abs(val)             // Correct
+format!("{}", val)                          // WRONG - breaks Perl compat
 ```
 
-**❌ DON'T** - Mix patterns arbitrarily:
-```rust
-log(val)           // Bare function (old pattern)
-val.abs()          // Method call (inconsistent)
-format!("{}", val) // Native Rust (breaks compatibility)
-```
+## Performance
 
-### String/Code Generation
-
-**✅ DO** - Use formatdoc! for templates:
-```rust
-let code = formatdoc! {r#"
-    pub fn {name}(val: &TagValue) -> TagValue {{
-        // Generated function body
-        {body}
-    }}
-"#, name = func_name, body = body_code};
-```
-
-**❌ DON'T** - Chain format! + push_str:
-```rust
-code.push_str(&format!("pub fn {}(", name));
-code.push_str(&format!("val: &TagValue"));
-code.push_str(") -> TagValue {\n");
-```
-
-### String Escaping
-
-**✅ DO** - Use utility function:
-```rust
-use crate::common::utils::escape_for_rust_string;
-format!("\"{}\"", escape_for_rust_string(value))
-```
-
-**❌ DON'T** - Manual replace chains:
-```rust
-value.replace('\\', "\\\\").replace('"', "\\\"")  // Incomplete, error-prone
-```
-
-### Error Handling
-
-**✅ DO** - Consistent error types:
-```rust
-Result<String, CodeGenError>                 // Code generation errors
-anyhow::Result<T>                           // General operations
-```
-
-**❌ DON'T** - Mix error patterns:
-```rust
-Result<T, Box<dyn std::error::Error>>       // Verbose
-unwrap()                                    // In non-test code
-```
-
-### Architecture Guidelines
-
-- **Single Visitor**: Use one visitor pattern, not multiple implementations
-- **No Circular Traits**: Avoid traits that delegate back to the same struct
-- **Focused Traits**: 1-2 traits max, each with clear responsibility
-- **Consistent Imports**: Either fully qualified or imported, not mixed
-
-See [P09-no-timtowdi.md](todo/P09-no-timtowdi.md) for detailed refactoring plan and alternatives analysis.
+- **LazyLock**: All static tables initialized once on first access
+- **HashMap O(1)**: Function and table lookups
+- **Hash-based deduplication**: Identical expressions generate one function
+- **Zero runtime parsing**: All Perl→Rust translation at build time
 
 ## Related Documentation
 
-### Essential Reading
-- [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md) - Core principle for all integration work
-- [ANTI-PATTERNS.md](ANTI-PATTERNS.md) - Critical mistakes that cause PR rejections
-- [GETTING-STARTED.md](GETTING-STARTED.md) - Practical implementation guide
-
-### Detailed References
-- [STRATEGY-DEVELOPMENT.md](STRATEGY-DEVELOPMENT.md) - Adding new symbol pattern support
-- [ARCHITECTURE.md](ARCHITECTURE.md) - High-level system overview
-- [API-DESIGN.md](design/API-DESIGN.md) - Public API structure and TagValue design
+- [TRUST-EXIFTOOL.md](TRUST-EXIFTOOL.md) - Core principle
+- [ANTI-PATTERNS.md](ANTI-PATTERNS.md) - What not to do
+- [ARCHITECTURE.md](ARCHITECTURE.md) - System overview
+- [GETTING-STARTED.md](GETTING-STARTED.md) - Quick start
