@@ -218,10 +218,41 @@ impl<'a> ExpressionEvaluator<'a> {
         }
     }
 
+    /// Evaluate a context condition expression
+    ///
+    /// TODO: P07 - Full expression evaluation implementation
+    /// For now, returns error to trigger fallback behavior
+    pub fn evaluate_context_condition(
+        &self,
+        _processor_context: &ProcessorContext,
+        _expr: &str,
+    ) -> std::result::Result<bool, ExifError> {
+        // Placeholder - always return error to trigger fallback
+        Err(ExifError::ParseError(
+            "Expression evaluation not yet implemented".to_string(),
+        ))
+    }
+
+    /// Evaluate a print/value conversion expression
+    ///
+    /// TODO: P07 - Full expression evaluation implementation
+    /// For now, returns error to trigger fallback behavior
+    pub fn evaluate_expression(
+        &self,
+        _expr: &str,
+        _value: &TagValue,
+    ) -> std::result::Result<TagValue, ExifError> {
+        // Placeholder - always return error to trigger fallback
+        Err(ExifError::ParseError(
+            "Expression evaluation not yet implemented".to_string(),
+        ))
+    }
+
     /// Evaluate expression using unified expression system
     /// Attempts to use the unified ExpressionEvaluator before falling back to specialized logic
     fn evaluate_with_unified_system(&self, expr: &str) -> std::result::Result<usize, ExifError> {
-        let mut evaluator = ExpressionEvaluator::new(HashMap::new(), &HashMap::new());
+        let empty_data_members = HashMap::new();
+        let evaluator = ExpressionEvaluator::new(HashMap::new(), &empty_data_members);
         let mut processor_context = ProcessorContext::default();
 
         // Add val_hash values to processor context
@@ -665,7 +696,8 @@ impl BinaryDataTag {
 /// ExifTool: Condition evaluation like '$self{Model} =~ /\b(20D|350D)\b/'
 fn evaluate_condition(condition: &str, context: &ProcessorContext) -> bool {
     // Create expression evaluator
-    let mut evaluator = ExpressionEvaluator::new(HashMap::new(), &HashMap::new());
+    let empty_data_members = HashMap::new();
+    let evaluator = ExpressionEvaluator::new(HashMap::new(), &empty_data_members);
 
     // Try to evaluate as boolean condition
     match evaluator.evaluate_context_condition(context, condition) {
