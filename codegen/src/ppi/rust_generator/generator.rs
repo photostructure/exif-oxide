@@ -7,6 +7,7 @@
 
 use indoc::formatdoc;
 use std::fmt::Write;
+use tracing::trace;
 
 use crate::ppi::rust_generator::{
     errors::CodeGenError,
@@ -263,29 +264,17 @@ impl RustGenerator {
             return self.visit_node(&children[0]);
         }
 
-        #[cfg(test)]
-        eprintln!("DEBUG process_node_sequence: {} children", children.len());
+        trace!("process_node_sequence: {} children", children.len());
 
         // Check for \$val reference pattern - we can't handle references
         // Pattern: Cast(\) + Symbol($val)
         // This is used for binary data handling in ExifTool but not needed for our required tags
         if children.len() >= 2 {
-            #[cfg(debug_assertions)]
-            eprintln!("Checking for reference pattern, first 2 nodes:");
-            #[cfg(debug_assertions)]
-            if !children.is_empty() {
-                eprintln!(
-                    "  [0] class: {}, content: {:?}",
-                    children[0].class, children[0].content
-                );
-            }
-            #[cfg(debug_assertions)]
-            if children.len() > 1 {
-                eprintln!(
-                    "  [1] class: {}, content: {:?}",
-                    children[1].class, children[1].content
-                );
-            }
+            trace!(
+                "Checking for reference pattern: [0] class={}, content={:?}; [1] class={}, content={:?}",
+                children[0].class, children[0].content,
+                children[1].class, children[1].content
+            );
 
             if children[0].class == "PPI::Token::Cast"
                 && children[0].content.as_ref() == Some(&"\\".to_string())
@@ -333,6 +322,30 @@ impl RustGenerator {
             ));
         }
 
+        // Check for comma operator at statement level - Perl returns last value
+        // Pattern: $val =~ s/.../, $val  (do substitution, return $val)
+        // This generates invalid Rust like Ok(expr1, expr2) which doesn't compile
+        let has_top_level_comma = children.iter().any(|child| {
+            child.class == "PPI::Token::Operator" && child.content.as_deref() == Some(",")
+        });
+        if has_top_level_comma {
+            return Err(CodeGenError::UnsupportedStructure(
+                "Comma operator at statement level requires fallback implementation".to_string(),
+            ));
+        }
+
+        // Check for sprintf with unpack without parentheses
+        // Pattern: sprintf "%s", unpack "H4", $val
+        // The unpack args get mis-parsed when not in parentheses
+        let has_sprintf = children
+            .iter()
+            .any(|c| c.class == "PPI::Token::Word" && c.content.as_deref() == Some("sprintf"));
+        if has_sprintf && has_unpack {
+            return Err(CodeGenError::UnsupportedStructure(
+                "sprintf with unpack requires fallback implementation".to_string(),
+            ));
+        }
+
         // Check for sprintf with binary operations in arguments
         // This pattern doesn't normalize correctly and generates invalid code
         if self.has_sprintf_with_binary_ops(children) {
@@ -377,23 +390,13 @@ impl RustGenerator {
 
         // Check for $$self{field} pattern BEFORE other patterns
         // Pattern: Cast($) + Symbol($self) + Subscript{field}
-        #[cfg(debug_assertions)]
-        {
-            if children.len() >= 3 {
-                eprintln!("Checking for $$self pattern, first 3 nodes:");
-                eprintln!(
-                    "  [0] class: {}, content: {:?}",
-                    children[0].class, children[0].content
-                );
-                eprintln!(
-                    "  [1] class: {}, content: {:?}",
-                    children[1].class, children[1].content
-                );
-                eprintln!(
-                    "  [2] class: {}, content: {:?}",
-                    children[2].class, children[2].content
-                );
-            }
+        if children.len() >= 3 {
+            trace!(
+                "Checking for $$self pattern: [0] class={}, content={:?}; [1] class={}, content={:?}; [2] class={}, content={:?}",
+                children[0].class, children[0].content,
+                children[1].class, children[1].content,
+                children[2].class, children[2].content
+            );
         }
 
         if children.len() >= 3
@@ -411,15 +414,13 @@ impl RustGenerator {
                 } else {
                     "TagValue::String(String::new())"
                 };
-                #[cfg(debug_assertions)]
-                eprintln!("Found $$self{{{}}} pattern, generating context access", key);
+                trace!("Found $$self{{{}}} pattern, generating context access", key);
                 return Ok(format!(
                     "ctx.and_then(|c| c.get_data_member(\"{}\").cloned()).unwrap_or({})",
                     key, default_value
                 ));
             } else {
-                #[cfg(debug_assertions)]
-                eprintln!("Pattern matched but couldn't extract key from subscript");
+                trace!("Pattern matched but couldn't extract key from subscript");
             }
         }
 
@@ -592,16 +593,14 @@ impl RustGenerator {
                 let false_expr_nodes = &children[c_idx + 1..];
 
                 // Debug output for condition nodes
-                #[cfg(debug_assertions)]
-                {
-                    eprintln!("Ternary condition has {} nodes:", condition_nodes.len());
-                    for (i, node) in condition_nodes.iter().enumerate() {
-                        eprintln!(
-                            "  [{}] class: {}, content: {:?}",
-                            i, node.class, node.content
-                        );
-                    }
-                }
+                trace!(
+                    "Ternary condition has {} nodes: {:?}",
+                    condition_nodes.len(),
+                    condition_nodes
+                        .iter()
+                        .map(|n| (&n.class, &n.content))
+                        .collect::<Vec<_>>()
+                );
 
                 // Process each part using the proper expression combiner logic
                 // Apply normalization to each branch to handle complex expressions properly
@@ -743,13 +742,11 @@ impl RustGenerator {
     ) -> Result<Option<String>, CodeGenError> {
         // The subscript should have children that represent the key
         if subscript_node.children.is_empty() {
-            #[cfg(debug_assertions)]
-            eprintln!("extract_subscript_key: No children in subscript");
+            trace!("extract_subscript_key: No children in subscript");
             return Ok(None);
         }
 
-        #[cfg(debug_assertions)]
-        eprintln!(
+        trace!(
             "extract_subscript_key: {} children, first child class: {}",
             subscript_node.children.len(),
             subscript_node.children[0].class
@@ -762,8 +759,7 @@ impl RustGenerator {
             let expr_node = &subscript_node.children[0];
             if !expr_node.children.is_empty() && expr_node.children[0].class == "PPI::Token::Word" {
                 if let Some(key) = &expr_node.children[0].content {
-                    #[cfg(debug_assertions)]
-                    eprintln!("extract_subscript_key: Found key '{}'", key);
+                    trace!("extract_subscript_key: Found key '{}'", key);
                     return Ok(Some(key.clone()));
                 }
             }
