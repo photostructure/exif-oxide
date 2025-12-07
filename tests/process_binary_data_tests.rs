@@ -141,7 +141,7 @@ fn test_extract_binary_value_string() {
         0,
     )
     .unwrap();
-    assert_eq!(value, "Hello".into());
+    assert_eq!(value, TagValue::string("Hello"));
 
     // Extract second string
     let value2 = exif_oxide::implementations::canon::extract_binary_value(
@@ -151,7 +151,7 @@ fn test_extract_binary_value_string() {
         0,
     )
     .unwrap();
-    assert_eq!(value2, "World".into());
+    assert_eq!(value2, TagValue::string("World"));
 }
 
 #[test]
@@ -170,7 +170,7 @@ fn test_extract_binary_value_pstring() {
         1,
     )
     .unwrap();
-    assert_eq!(value, "Hello".into());
+    assert_eq!(value, TagValue::string("Hello"));
 
     // Extract second Pascal string
     let value2 = exif_oxide::implementations::canon::extract_binary_value(
@@ -180,7 +180,7 @@ fn test_extract_binary_value_pstring() {
         1,
     )
     .unwrap();
-    assert_eq!(value2, "Foo".into());
+    assert_eq!(value2, TagValue::string("Foo"));
 }
 
 #[test]

@@ -14,7 +14,7 @@ fn test_gps_coordinate_decimal_conversion() {
     let coords = vec![(40, 1), (26, 1), (468, 10)];
     let coord_value = TagValue::RationalArray(coords);
 
-    let result = gps_coordinate_value_conv(&coord_value).unwrap();
+    let result = gps_coordinate_value_conv(&coord_value, None).unwrap();
     if let TagValue::F64(decimal) = result {
         assert!((decimal - 40.446333333).abs() < 0.000001);
     } else {
@@ -29,7 +29,7 @@ fn test_gps_coordinate_unsigned_values() {
     let coords = vec![(45, 1), (30, 1), (0, 1)]; // 45° 30' 0"
     let coord_value = TagValue::RationalArray(coords);
 
-    let result = gps_coordinate_value_conv(&coord_value).unwrap();
+    let result = gps_coordinate_value_conv(&coord_value, None).unwrap();
     if let TagValue::F64(decimal) = result {
         assert!(decimal > 0.0); // Always positive from ValueConv
         assert!((decimal - 45.5).abs() < 0.001);
@@ -42,7 +42,7 @@ fn test_gps_coordinate_unsigned_values() {
 fn test_apex_shutter_speed_valid() {
     // Normal APEX values
     let apex_value = TagValue::F64(5.0);
-    let result = apex_shutter_speed_value_conv(&apex_value).unwrap();
+    let result = apex_shutter_speed_value_conv(&apex_value, None).unwrap();
     if let TagValue::F64(speed) = result {
         let expected = 2.0_f64.powf(-5.0); // 2^(-5) = 1/32
         assert!((speed - expected).abs() < 0.000001);
@@ -52,7 +52,7 @@ fn test_apex_shutter_speed_valid() {
 
     // Zero APEX value
     let apex_value = TagValue::F64(0.0);
-    let result = apex_shutter_speed_value_conv(&apex_value).unwrap();
+    let result = apex_shutter_speed_value_conv(&apex_value, None).unwrap();
     if let TagValue::F64(speed) = result {
         assert_eq!(speed, 1.0); // 2^0 = 1
     } else {
@@ -61,7 +61,7 @@ fn test_apex_shutter_speed_valid() {
 
     // Negative APEX value (slower shutter speeds)
     let apex_value = TagValue::F64(-2.0);
-    let result = apex_shutter_speed_value_conv(&apex_value).unwrap();
+    let result = apex_shutter_speed_value_conv(&apex_value, None).unwrap();
     if let TagValue::F64(speed) = result {
         assert_eq!(speed, 4.0); // 2^(-(-2)) = 2^2 = 4
     } else {
@@ -73,7 +73,7 @@ fn test_apex_shutter_speed_valid() {
 fn test_apex_shutter_speed_edge_cases() {
     // Very large positive APEX (very fast shutter)
     let apex_value = TagValue::F64(20.0);
-    let result = apex_shutter_speed_value_conv(&apex_value).unwrap();
+    let result = apex_shutter_speed_value_conv(&apex_value, None).unwrap();
     if let TagValue::F64(speed) = result {
         let expected = 2.0_f64.powf(-20.0); // Very small number
         assert!(speed > 0.0 && speed < 0.000001);
@@ -84,7 +84,7 @@ fn test_apex_shutter_speed_edge_cases() {
 
     // Very large negative APEX (very slow shutter)
     let apex_value = TagValue::F64(-10.0);
-    let result = apex_shutter_speed_value_conv(&apex_value).unwrap();
+    let result = apex_shutter_speed_value_conv(&apex_value, None).unwrap();
     if let TagValue::F64(speed) = result {
         assert_eq!(speed, 1024.0); // 2^10
     } else {
@@ -96,12 +96,12 @@ fn test_apex_shutter_speed_edge_cases() {
 fn test_apex_shutter_speed_invalid() {
     // Non-numeric values
     let value = "5.0".into();
-    let result = apex_shutter_speed_value_conv(&value);
+    let result = apex_shutter_speed_value_conv(&value, None);
     assert!(matches!(result, Err(ExifError::ParseError(_))));
 
     // Array value
     let value = TagValue::U16Array(vec![5, 0]);
-    let result = apex_shutter_speed_value_conv(&value);
+    let result = apex_shutter_speed_value_conv(&value, None);
     assert!(matches!(result, Err(ExifError::ParseError(_))));
 }
 
@@ -109,7 +109,7 @@ fn test_apex_shutter_speed_invalid() {
 fn test_apex_aperture_valid() {
     // Normal APEX aperture values
     let apex_value = TagValue::F64(4.0);
-    let result = apex_aperture_value_conv(&apex_value).unwrap();
+    let result = apex_aperture_value_conv(&apex_value, None).unwrap();
     if let TagValue::F64(f_number) = result {
         assert_eq!(f_number, 4.0); // 2^(4/2) = 2^2 = 4
     } else {
@@ -118,7 +118,7 @@ fn test_apex_aperture_valid() {
 
     // Zero APEX value
     let apex_value = TagValue::F64(0.0);
-    let result = apex_aperture_value_conv(&apex_value).unwrap();
+    let result = apex_aperture_value_conv(&apex_value, None).unwrap();
     if let TagValue::F64(f_number) = result {
         assert_eq!(f_number, 1.0); // 2^(0/2) = 2^0 = 1
     } else {
@@ -127,7 +127,7 @@ fn test_apex_aperture_valid() {
 
     // Odd APEX values
     let apex_value = TagValue::F64(3.0);
-    let result = apex_aperture_value_conv(&apex_value).unwrap();
+    let result = apex_aperture_value_conv(&apex_value, None).unwrap();
     if let TagValue::F64(f_number) = result {
         let expected = 2.0_f64.powf(1.5); // 2^(3/2) ≈ 2.828
         assert!((f_number - expected).abs() < 0.001);
@@ -140,7 +140,7 @@ fn test_apex_aperture_valid() {
 fn test_apex_aperture_edge_cases() {
     // Large APEX value (very small aperture/large f-number)
     let apex_value = TagValue::F64(12.0);
-    let result = apex_aperture_value_conv(&apex_value).unwrap();
+    let result = apex_aperture_value_conv(&apex_value, None).unwrap();
     if let TagValue::F64(f_number) = result {
         assert_eq!(f_number, 64.0); // 2^(12/2) = 2^6 = 64
     } else {
@@ -149,7 +149,7 @@ fn test_apex_aperture_edge_cases() {
 
     // Negative APEX value (very large aperture/small f-number)
     let apex_value = TagValue::F64(-2.0);
-    let result = apex_aperture_value_conv(&apex_value).unwrap();
+    let result = apex_aperture_value_conv(&apex_value, None).unwrap();
     if let TagValue::F64(f_number) = result {
         assert_eq!(f_number, 0.5); // 2^(-2/2) = 2^(-1) = 0.5
     } else {
@@ -161,7 +161,7 @@ fn test_apex_aperture_edge_cases() {
 fn test_fnumber_valid() {
     // Standard f-numbers
     let fnumber = TagValue::Rational(4, 1);
-    let result = fnumber_value_conv(&fnumber).unwrap();
+    let result = fnumber_value_conv(&fnumber, None).unwrap();
     if let TagValue::F64(f) = result {
         assert_eq!(f, 4.0);
     } else {
@@ -170,7 +170,7 @@ fn test_fnumber_valid() {
 
     // Fractional f-numbers
     let fnumber = TagValue::Rational(28, 10);
-    let result = fnumber_value_conv(&fnumber).unwrap();
+    let result = fnumber_value_conv(&fnumber, None).unwrap();
     if let TagValue::F64(f) = result {
         assert_eq!(f, 2.8);
     } else {
@@ -179,7 +179,7 @@ fn test_fnumber_valid() {
 
     // Large denominator
     let fnumber = TagValue::Rational(560, 100);
-    let result = fnumber_value_conv(&fnumber).unwrap();
+    let result = fnumber_value_conv(&fnumber, None).unwrap();
     if let TagValue::F64(f) = result {
         assert_eq!(f, 5.6);
     } else {
@@ -191,7 +191,7 @@ fn test_fnumber_valid() {
 fn test_fnumber_edge_cases() {
     // Zero numerator
     let fnumber = TagValue::Rational(0, 1);
-    let result = fnumber_value_conv(&fnumber).unwrap();
+    let result = fnumber_value_conv(&fnumber, None).unwrap();
     if let TagValue::F64(f) = result {
         assert_eq!(f, 0.0);
     } else {
@@ -200,12 +200,12 @@ fn test_fnumber_edge_cases() {
 
     // Zero denominator
     let fnumber = TagValue::Rational(4, 0);
-    let result = fnumber_value_conv(&fnumber);
+    let result = fnumber_value_conv(&fnumber, None);
     assert!(matches!(result, Err(ExifError::ParseError(_))));
 
     // Very large values
     let fnumber = TagValue::Rational(1000000, 10000);
-    let result = fnumber_value_conv(&fnumber).unwrap();
+    let result = fnumber_value_conv(&fnumber, None).unwrap();
     if let TagValue::F64(f) = result {
         assert_eq!(f, 100.0);
     } else {
@@ -217,7 +217,7 @@ fn test_fnumber_edge_cases() {
 fn test_fnumber_passthrough() {
     // Already converted F64
     let fnumber = TagValue::F64(2.8);
-    let result = fnumber_value_conv(&fnumber).unwrap();
+    let result = fnumber_value_conv(&fnumber, None).unwrap();
     if let TagValue::F64(f) = result {
         assert_eq!(f, 2.8);
     } else {
@@ -226,7 +226,7 @@ fn test_fnumber_passthrough() {
 
     // String value (should pass through)
     let fnumber = "f/2.8".into();
-    let result = fnumber_value_conv(&fnumber).unwrap();
+    let result = fnumber_value_conv(&fnumber, None).unwrap();
     if let TagValue::String(s) = result {
         assert_eq!(s, "f/2.8");
     } else {
@@ -240,7 +240,7 @@ fn test_gps_timestamp_valid() {
     let rationals = vec![(14, 1), (30, 1), (45, 1)];
     let time_value = TagValue::RationalArray(rationals);
 
-    let result = gpstimestamp_value_conv(&time_value).unwrap();
+    let result = gpstimestamp_value_conv(&time_value, None).unwrap();
     if let TagValue::String(time_str) = result {
         assert_eq!(time_str, "14:30:45");
     } else {
@@ -251,7 +251,7 @@ fn test_gps_timestamp_valid() {
     let rationals = vec![(14, 1), (30, 1), (455, 10)];
     let time_value = TagValue::RationalArray(rationals);
 
-    let result = gpstimestamp_value_conv(&time_value).unwrap();
+    let result = gpstimestamp_value_conv(&time_value, None).unwrap();
     if let TagValue::String(time_str) = result {
         assert_eq!(time_str, "14:30:45");
     } else {
@@ -265,7 +265,7 @@ fn test_gps_timestamp_edge_cases() {
     let rationals = vec![(0, 1), (0, 1), (0, 1)];
     let time_value = TagValue::RationalArray(rationals);
 
-    let result = gpstimestamp_value_conv(&time_value).unwrap();
+    let result = gpstimestamp_value_conv(&time_value, None).unwrap();
     if let TagValue::String(time_str) = result {
         assert_eq!(time_str, "00:00:00");
     } else {
@@ -276,7 +276,7 @@ fn test_gps_timestamp_edge_cases() {
     let rationals = vec![(23, 1), (59, 1), (59, 1)];
     let time_value = TagValue::RationalArray(rationals);
 
-    let result = gpstimestamp_value_conv(&time_value).unwrap();
+    let result = gpstimestamp_value_conv(&time_value, None).unwrap();
     if let TagValue::String(time_str) = result {
         assert_eq!(time_str, "23:59:59");
     } else {
@@ -287,7 +287,7 @@ fn test_gps_timestamp_edge_cases() {
     let rationals = vec![(14, 0), (30, 0), (45, 0)];
     let time_value = TagValue::RationalArray(rationals);
 
-    let result = gpstimestamp_value_conv(&time_value).unwrap();
+    let result = gpstimestamp_value_conv(&time_value, None).unwrap();
     if let TagValue::String(time_str) = result {
         assert_eq!(time_str, "00:00:00");
     } else {
@@ -299,19 +299,19 @@ fn test_gps_timestamp_edge_cases() {
 fn test_gps_timestamp_invalid() {
     // Wrong type
     let value = "14:30:45".into();
-    let result = gpstimestamp_value_conv(&value);
+    let result = gpstimestamp_value_conv(&value, None);
     assert!(matches!(result, Err(ExifError::ParseError(_))));
 
     // Too few elements
     let rationals = vec![(14, 1), (30, 1)];
     let time_value = TagValue::RationalArray(rationals);
-    let result = gpstimestamp_value_conv(&time_value);
+    let result = gpstimestamp_value_conv(&time_value, None);
     assert!(matches!(result, Err(ExifError::ParseError(_))));
 
     // Empty array
     let rationals = vec![];
     let time_value = TagValue::RationalArray(rationals);
-    let result = gpstimestamp_value_conv(&time_value);
+    let result = gpstimestamp_value_conv(&time_value, None);
     assert!(matches!(result, Err(ExifError::ParseError(_))));
 }
 
@@ -319,7 +319,7 @@ fn test_gps_timestamp_invalid() {
 fn test_exposure_time_valid() {
     // Standard exposure times
     let exposure = TagValue::Rational(1, 60);
-    let result = exposuretime_value_conv(&exposure).unwrap();
+    let result = exposuretime_value_conv(&exposure, None).unwrap();
     if let TagValue::F64(time) = result {
         assert!((time - 1.0 / 60.0).abs() < 0.00001);
     } else {
@@ -328,7 +328,7 @@ fn test_exposure_time_valid() {
 
     // Long exposure
     let exposure = TagValue::Rational(30, 1);
-    let result = exposuretime_value_conv(&exposure).unwrap();
+    let result = exposuretime_value_conv(&exposure, None).unwrap();
     if let TagValue::F64(time) = result {
         assert_eq!(time, 30.0);
     } else {
@@ -337,7 +337,7 @@ fn test_exposure_time_valid() {
 
     // Very short exposure
     let exposure = TagValue::Rational(1, 8000);
-    let result = exposuretime_value_conv(&exposure).unwrap();
+    let result = exposuretime_value_conv(&exposure, None).unwrap();
     if let TagValue::F64(time) = result {
         assert!((time - 1.0 / 8000.0).abs() < 0.0000001);
     } else {
@@ -349,7 +349,7 @@ fn test_exposure_time_valid() {
 fn test_exposure_time_edge_cases() {
     // Zero exposure (shouldn't happen but handle gracefully)
     let exposure = TagValue::Rational(0, 1);
-    let result = exposuretime_value_conv(&exposure).unwrap();
+    let result = exposuretime_value_conv(&exposure, None).unwrap();
     if let TagValue::F64(time) = result {
         assert_eq!(time, 0.0);
     } else {
@@ -358,12 +358,12 @@ fn test_exposure_time_edge_cases() {
 
     // Zero denominator
     let exposure = TagValue::Rational(1, 0);
-    let result = exposuretime_value_conv(&exposure);
+    let result = exposuretime_value_conv(&exposure, None);
     assert!(matches!(result, Err(ExifError::ParseError(_))));
 
     // Already converted
     let exposure = TagValue::F64(0.5);
-    let result = exposuretime_value_conv(&exposure).unwrap();
+    let result = exposuretime_value_conv(&exposure, None).unwrap();
     if let TagValue::F64(time) = result {
         assert_eq!(time, 0.5);
     } else {
@@ -375,7 +375,7 @@ fn test_exposure_time_edge_cases() {
 fn test_focal_length_valid() {
     // Standard focal lengths
     let focal = TagValue::Rational(50, 1);
-    let result = focallength_value_conv(&focal).unwrap();
+    let result = focallength_value_conv(&focal, None).unwrap();
     if let TagValue::F64(length) = result {
         assert_eq!(length, 50.0);
     } else {
@@ -384,7 +384,7 @@ fn test_focal_length_valid() {
 
     // Zoom lens at intermediate position
     let focal = TagValue::Rational(185, 10);
-    let result = focallength_value_conv(&focal).unwrap();
+    let result = focallength_value_conv(&focal, None).unwrap();
     if let TagValue::F64(length) = result {
         assert_eq!(length, 18.5);
     } else {
@@ -393,7 +393,7 @@ fn test_focal_length_valid() {
 
     // Telephoto
     let focal = TagValue::Rational(400, 1);
-    let result = focallength_value_conv(&focal).unwrap();
+    let result = focallength_value_conv(&focal, None).unwrap();
     if let TagValue::F64(length) = result {
         assert_eq!(length, 400.0);
     } else {
@@ -405,7 +405,7 @@ fn test_focal_length_valid() {
 fn test_focal_length_edge_cases() {
     // Zero focal length (shouldn't happen)
     let focal = TagValue::Rational(0, 1);
-    let result = focallength_value_conv(&focal).unwrap();
+    let result = focallength_value_conv(&focal, None).unwrap();
     if let TagValue::F64(length) = result {
         assert_eq!(length, 0.0);
     } else {
@@ -414,12 +414,12 @@ fn test_focal_length_edge_cases() {
 
     // Zero denominator
     let focal = TagValue::Rational(50, 0);
-    let result = focallength_value_conv(&focal);
+    let result = focallength_value_conv(&focal, None);
     assert!(matches!(result, Err(ExifError::ParseError(_))));
 
     // Already converted
     let focal = TagValue::F64(85.0);
-    let result = focallength_value_conv(&focal).unwrap();
+    let result = focallength_value_conv(&focal, None).unwrap();
     if let TagValue::F64(length) = result {
         assert_eq!(length, 85.0);
     } else {
@@ -431,7 +431,7 @@ fn test_focal_length_edge_cases() {
 fn test_apex_exposure_compensation() {
     // Standard EV values
     let ev = TagValue::F64(1.5);
-    let result = apex_exposure_compensation_value_conv(&ev).unwrap();
+    let result = apex_exposure_compensation_value_conv(&ev, None).unwrap();
     if let TagValue::F64(value) = result {
         assert_eq!(value, 1.5);
     } else {
@@ -440,7 +440,7 @@ fn test_apex_exposure_compensation() {
 
     // Negative compensation
     let ev = TagValue::F64(-2.0);
-    let result = apex_exposure_compensation_value_conv(&ev).unwrap();
+    let result = apex_exposure_compensation_value_conv(&ev, None).unwrap();
     if let TagValue::F64(value) = result {
         assert_eq!(value, -2.0);
     } else {
@@ -449,7 +449,7 @@ fn test_apex_exposure_compensation() {
 
     // Zero compensation
     let ev = TagValue::F64(0.0);
-    let result = apex_exposure_compensation_value_conv(&ev).unwrap();
+    let result = apex_exposure_compensation_value_conv(&ev, None).unwrap();
     if let TagValue::F64(value) = result {
         assert_eq!(value, 0.0);
     } else {
@@ -458,7 +458,7 @@ fn test_apex_exposure_compensation() {
 
     // Non-numeric passthrough
     let ev = "+1.5 EV".into();
-    let result = apex_exposure_compensation_value_conv(&ev).unwrap();
+    let result = apex_exposure_compensation_value_conv(&ev, None).unwrap();
     if let TagValue::String(s) = result {
         assert_eq!(s, "+1.5 EV");
     } else {
@@ -470,7 +470,7 @@ fn test_apex_exposure_compensation() {
 fn test_placeholder_functions() {
     // Test GPSDateStamp passthrough
     let date = "2024:01:15".into();
-    let result = gpsdatestamp_value_conv(&date).unwrap();
+    let result = gpsdatestamp_value_conv(&date, None).unwrap();
     if let TagValue::String(s) = result {
         assert_eq!(s, "2024:01:15");
     } else {
@@ -479,7 +479,7 @@ fn test_placeholder_functions() {
 
     // Test WhiteBalance passthrough
     let wb = TagValue::U16(1);
-    let result = whitebalance_value_conv(&wb).unwrap();
+    let result = whitebalance_value_conv(&wb, None).unwrap();
     if let TagValue::U16(val) = result {
         assert_eq!(val, 1);
     } else {
@@ -514,20 +514,20 @@ fn test_no_panics_on_any_input() {
     // None should panic - they should either succeed or return an error
     for value in &test_values {
         // GPS conversions
-        let _ = gps_coordinate_value_conv(value);
-        let _ = gpstimestamp_value_conv(value);
-        let _ = gpsdatestamp_value_conv(value);
+        let _ = gps_coordinate_value_conv(value, None);
+        let _ = gpstimestamp_value_conv(value, None);
+        let _ = gpsdatestamp_value_conv(value, None);
 
         // APEX conversions
-        let _ = apex_shutter_speed_value_conv(value);
-        let _ = apex_aperture_value_conv(value);
-        let _ = apex_exposure_compensation_value_conv(value);
+        let _ = apex_shutter_speed_value_conv(value, None);
+        let _ = apex_aperture_value_conv(value, None);
+        let _ = apex_exposure_compensation_value_conv(value, None);
 
         // Other conversions
-        let _ = fnumber_value_conv(value);
-        let _ = exposuretime_value_conv(value);
-        let _ = focallength_value_conv(value);
-        let _ = whitebalance_value_conv(value);
+        let _ = fnumber_value_conv(value, None);
+        let _ = exposuretime_value_conv(value, None);
+        let _ = focallength_value_conv(value, None);
+        let _ = whitebalance_value_conv(value, None);
     }
 }
 
@@ -539,7 +539,7 @@ fn test_value_conv_to_print_conv_chaining() {
 
     // Test APEX aperture -> f-number -> formatted string
     let apex_value = TagValue::F64(5.0);
-    let f_number_result = apex_aperture_value_conv(&apex_value).unwrap();
+    let f_number_result = apex_aperture_value_conv(&apex_value, None).unwrap();
 
     if let TagValue::F64(f_num) = f_number_result {
         // Would be formatted as "f/5.7" by PrintConv
@@ -557,10 +557,10 @@ fn test_extreme_values() {
 
     // Test APEX with extreme values
     let extreme_apex = TagValue::F64(50.0);
-    let result = apex_shutter_speed_value_conv(&extreme_apex);
+    let result = apex_shutter_speed_value_conv(&extreme_apex, None);
     assert!(result.is_ok());
 
     let extreme_apex = TagValue::F64(-50.0);
-    let result = apex_shutter_speed_value_conv(&extreme_apex);
+    let result = apex_shutter_speed_value_conv(&extreme_apex, None);
     assert!(result.is_ok());
 }

@@ -1,5 +1,4 @@
 use exif_oxide::exif::ExifReader;
-use exif_oxide::*;
 
 #[test]
 fn test_canon_lens_lookup() {

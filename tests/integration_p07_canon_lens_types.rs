@@ -5,8 +5,6 @@
 //! This test specifically validates that canonLensTypes lookup functionality works,
 //! which was identified as the critical blocking issue that needed to be resolved.
 
-use std::collections::HashMap;
-
 #[test]
 fn test_canon_lens_lookup_functionality() {
     // Test that canonLensTypes lookup works for the specific example mentioned in TPP

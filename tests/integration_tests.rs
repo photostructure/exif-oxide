@@ -269,13 +269,13 @@ fn test_different_file_formats() {
 #[test]
 fn test_registry_functions() {
     use exif_oxide::registry::{apply_print_conv, clear_missing_tracking, register_print_conv};
-    use exif_oxide::types::TagValue;
+    use exif_oxide::types::{ExifContext, TagValue};
 
     // Clear any previous state
     clear_missing_tracking();
 
     // Register a test function
-    fn test_converter(val: &TagValue) -> TagValue {
+    fn test_converter(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
         TagValue::string(format!("Converted: {val}"))
     }
 
@@ -284,7 +284,7 @@ fn test_registry_functions() {
     // Test it works
     let value = TagValue::U16(42);
     let result = apply_print_conv("test_function", &value);
-    assert_eq!(result, "Converted: 42".into());
+    assert_eq!(result, TagValue::string("Converted: 42"));
 
     // Test missing function fallback
     let missing_result = apply_print_conv("nonexistent_function", &value);

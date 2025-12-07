@@ -24,7 +24,7 @@ mod tests {
         // This test ensures the entire codebase compiles without errors
 
         let output = Command::new("cargo")
-            .args(&["check", "--quiet"])
+            .args(["check", "--quiet"])
             .current_dir(env!("CARGO_MANIFEST_DIR"))
             .output()
             .expect("Failed to execute cargo check");
@@ -58,7 +58,7 @@ mod tests {
         // This test documents the specific issues P07c must fix
         // It always passes but serves as documentation
 
-        let documented_issues = vec![
+        let documented_issues = [
             "UTF-8 encoding error: null byte in regex_patterns.rs:30",
             "Missing composite_tags module - no composite tag generation",
             "Module naming mismatch: generated snake_case vs expected _pm suffix",

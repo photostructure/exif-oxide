@@ -168,7 +168,7 @@ fn test_scalar_array_strategy_handles_xlat() {
 
     // Test generation
     let files = strategy
-        .finish_extraction()
+        .finish_extraction(&mut context)
         .expect("Should be able to generate xlat files");
 
     assert_eq!(

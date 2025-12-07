@@ -8,7 +8,6 @@
 
 use codegen::ppi::{ExpressionType, RustGenerator};
 use serde_json::json;
-use std::collections::HashMap;
 
 /// Test that measures PPI coverage improvement across enhancement phases
 #[test]
