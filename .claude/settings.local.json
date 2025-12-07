@@ -4,6 +4,7 @@
       "Bash(./codegen/scripts/ppi_ast.pl:*)",
       "Bash(./scripts/capture.sh cargo:*)",
       "Bash(./scripts/capture.sh make:*)",
+      "Bash(./scripts/field_extractor.pl:*)",
       "Bash(./scripts/ppi_ast.pl:*)",
       "Bash(./target/debug/debug-ppi:*)",
       "Bash(./target/debug/exif-oxide:*)",
@@ -18,12 +19,14 @@
       "Bash(git show:*)",
       "Bash(gpg:*)",
       "Bash(grep:*)",
+      "Bash(ls:*)",
       "Bash(make:*)",
       "Bash(perl:*)",
       "Bash(rustc:*)",
       "Bash(sed:*)",
-      "WebSearch",
-      "Bash(./scripts/field_extractor.pl:*)"
+      "Bash(wc:*)",
+      "Bash(while read tag)",
+      "WebSearch"
     ],
     "deny": [],
     "additionalDirectories": [
