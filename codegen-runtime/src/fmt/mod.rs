@@ -30,11 +30,11 @@ pub fn sprintf_split_values(format_str: &str, values: &[TagValue]) -> String {
             TagValue::F64(f) => {
                 // Check what precision is needed based on format string
                 if format_str.contains("%.3f") {
-                    format!("{:.3}", f)
+                    format!("{f:.3}")
                 } else if format_str.contains("%.2f") {
-                    format!("{:.2}", f)
+                    format!("{f:.2}")
                 } else if format_str.contains("%.1f") {
-                    format!("{:.1}", f)
+                    format!("{f:.1}")
                 } else {
                     f.to_string()
                 }
