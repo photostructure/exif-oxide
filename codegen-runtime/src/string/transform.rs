@@ -127,22 +127,23 @@ mod tests {
 /// * `code_point` - ASCII/byte value to convert to character
 ///
 /// # Returns
-/// String containing the character (or empty for invalid input)
-pub fn chr<T: Into<TagValue>>(code_point: T) -> String {
+/// TagValue::String containing the character (or empty for invalid input)
+pub fn chr<T: Into<TagValue>>(code_point: T) -> TagValue {
     let val = code_point.into();
 
     match val.to_numeric() {
         Some(num) => {
             let byte_val = (num as u32) & 0xFF; // Truncate to 8-bit
-            if byte_val <= 127 {
+            let s = if byte_val <= 127 {
                 // ASCII range
                 char::from(byte_val as u8).to_string()
             } else {
                 // Extended ASCII - convert byte to string
                 vec![byte_val as u8].iter().map(|&b| b as char).collect()
-            }
+            };
+            TagValue::String(s)
         }
-        None => String::new(), // Invalid input returns empty string
+        None => TagValue::String(String::new()), // Invalid input returns empty string
     }
 }
 
@@ -154,13 +155,14 @@ pub fn chr<T: Into<TagValue>>(code_point: T) -> String {
 /// * `input` - String value to convert to uppercase
 ///
 /// # Returns
-/// Uppercase version of the string
-pub fn uc<T: Into<TagValue>>(input: T) -> String {
+/// TagValue::String containing uppercase version of the string
+pub fn uc<T: Into<TagValue>>(input: T) -> TagValue {
     let val = input.into();
 
-    match val {
+    let s = match val {
         TagValue::String(s) => s.to_uppercase(),
         TagValue::Empty => String::new(),
         _ => val.to_string().to_uppercase(),
-    }
+    };
+    TagValue::String(s)
 }
