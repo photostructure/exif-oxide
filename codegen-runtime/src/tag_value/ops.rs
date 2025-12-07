@@ -111,6 +111,17 @@ macro_rules! impl_arithmetic_op {
             }
         }
 
+        // Implement for i64 literals (e.g., val / 4294967296i64 for large values)
+        impl $trait<i64> for &TagValue {
+            type Output = TagValue;
+
+            fn $method(self, rhs: i64) -> Self::Output {
+                // For large i64 values, use f64 arithmetic to avoid overflow
+                let val = self.to_numeric().unwrap_or(0.0);
+                TagValue::F64(val $op (rhs as f64))
+            }
+        }
+
         // Implement for float literals (e.g., val * 2.5)
         impl $trait<f64> for &TagValue {
             type Output = TagValue;
@@ -477,6 +488,39 @@ impl Div<u32> for TagValue {
     }
 }
 
+// Implement owned TagValue operations for i64 (for large literals like 4294967296)
+impl Add<i64> for TagValue {
+    type Output = TagValue;
+
+    fn add(self, rhs: i64) -> Self::Output {
+        (&self) + rhs
+    }
+}
+
+impl Sub<i64> for TagValue {
+    type Output = TagValue;
+
+    fn sub(self, rhs: i64) -> Self::Output {
+        (&self) - rhs
+    }
+}
+
+impl Mul<i64> for TagValue {
+    type Output = TagValue;
+
+    fn mul(self, rhs: i64) -> Self::Output {
+        (&self) * rhs
+    }
+}
+
+impl Div<i64> for TagValue {
+    type Output = TagValue;
+
+    fn div(self, rhs: i64) -> Self::Output {
+        (&self) / rhs
+    }
+}
+
 // Implement TagValue op TagValue (owned values) by delegating to borrowed operations
 impl Add for TagValue {
     type Output = TagValue;
@@ -634,6 +678,17 @@ impl PartialEq<f64> for TagValue {
     }
 }
 
+impl PartialEq<i64> for TagValue {
+    fn eq(&self, other: &i64) -> bool {
+        // For large i64 values (outside i32 range), compare as f64
+        if let Some(val) = self.to_numeric() {
+            val == (*other as f64)
+        } else {
+            false
+        }
+    }
+}
+
 impl PartialOrd<i32> for TagValue {
     fn partial_cmp(&self, other: &i32) -> Option<Ordering> {
         match self {
@@ -681,6 +736,12 @@ impl PartialEq<u32> for &TagValue {
 
 impl PartialEq<f64> for &TagValue {
     fn eq(&self, other: &f64) -> bool {
+        (*self).eq(other)
+    }
+}
+
+impl PartialEq<i64> for &TagValue {
+    fn eq(&self, other: &i64) -> bool {
         (*self).eq(other)
     }
 }
