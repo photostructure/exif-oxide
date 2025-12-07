@@ -628,6 +628,12 @@ impl PartialEq<u32> for TagValue {
     }
 }
 
+impl PartialEq<f64> for TagValue {
+    fn eq(&self, other: &f64) -> bool {
+        self.to_numeric().map(|val| val == *other).unwrap_or(false)
+    }
+}
+
 impl PartialOrd<i32> for TagValue {
     fn partial_cmp(&self, other: &i32) -> Option<Ordering> {
         match self {
@@ -673,6 +679,12 @@ impl PartialEq<u32> for &TagValue {
     }
 }
 
+impl PartialEq<f64> for &TagValue {
+    fn eq(&self, other: &f64) -> bool {
+        (*self).eq(other)
+    }
+}
+
 impl PartialOrd<i32> for &TagValue {
     fn partial_cmp(&self, other: &i32) -> Option<Ordering> {
         (*self).partial_cmp(other)
@@ -681,6 +693,18 @@ impl PartialOrd<i32> for &TagValue {
 
 impl PartialOrd<u32> for &TagValue {
     fn partial_cmp(&self, other: &u32) -> Option<Ordering> {
+        (*self).partial_cmp(other)
+    }
+}
+
+impl PartialOrd<f64> for TagValue {
+    fn partial_cmp(&self, other: &f64) -> Option<Ordering> {
+        self.to_numeric().and_then(|val| val.partial_cmp(other))
+    }
+}
+
+impl PartialOrd<f64> for &TagValue {
+    fn partial_cmp(&self, other: &f64) -> Option<Ordering> {
         (*self).partial_cmp(other)
     }
 }
