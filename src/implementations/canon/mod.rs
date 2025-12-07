@@ -29,12 +29,56 @@ pub use offset_schemes::{detect_canon_signature, detect_offset_scheme, CanonOffs
 pub use tags::get_canon_tag_name;
 
 use crate::tiff_types::ByteOrder;
-use crate::types::Result;
+use crate::types::{ExifContext, Result, TagValue};
 use tracing::debug;
 
 // CameraSettings functions are provided by the binary_data module
 
 // extract_camera_settings function is provided by the binary_data module
+
+/// Convert Canon hex-based EV (modulo 0x20) to real number
+/// ExifTool: lib/Image/ExifTool/Canon.pm line 10478 sub CanonEv
+///
+/// Examples:
+/// - 0x00 -> 0
+/// - 0x0c -> 0.33333 (1/3)
+/// - 0x10 -> 0.5
+/// - 0x14 -> 0.66666 (2/3)
+/// - 0x20 -> 1
+#[allow(dead_code)]
+pub fn canon_ev(val: TagValue, _ctx: Option<&ExifContext>) -> TagValue {
+    let val_i64 = match &val {
+        TagValue::I16(v) => *v as i64,
+        TagValue::I32(v) => *v as i64,
+        TagValue::U8(v) => *v as i64,
+        TagValue::U16(v) => *v as i64,
+        TagValue::U32(v) => *v as i64,
+        TagValue::U64(v) => *v as i64,
+        TagValue::F64(v) => *v as i64,
+        _ => return val.clone(),
+    };
+
+    // Temporarily make the number positive
+    let sign = if val_i64 < 0 { -1.0 } else { 1.0 };
+    let abs_val = val_i64.abs();
+
+    // Extract fractional part (bottom 5 bits = modulo 0x20)
+    let frac_code = abs_val & 0x1f;
+    let int_part = abs_val - frac_code;
+
+    // Convert 1/3 and 2/3 codes
+    // ExifTool: Canon.pm line 10492-10496
+    let frac = if frac_code == 0x0c {
+        0x20 as f64 / 3.0 // 1/3 EV
+    } else if frac_code == 0x14 {
+        0x40 as f64 / 3.0 // 2/3 EV
+    } else {
+        frac_code as f64
+    };
+
+    let result = sign * (int_part as f64 + frac) / 0x20 as f64;
+    TagValue::F64(result)
+}
 
 /// Process Canon MakerNotes data
 /// ExifTool: lib/Image/ExifTool/Canon.pm Canon MakerNote processing
