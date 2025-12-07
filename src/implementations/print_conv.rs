@@ -37,9 +37,9 @@ pub fn orientation_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> Tag
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2778-2782
 pub fn resolutionunit_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val.as_u16() {
-        Some(1) => "None".into(),
-        Some(2) => "inches".into(),
-        Some(3) => "cm".into(),
+        Some(1) => TagValue::string("None"),
+        Some(2) => TagValue::string("inches"),
+        Some(3) => TagValue::string("cm"),
         _ => TagValue::string(format!("Unknown ({val})")),
     }
 }
@@ -48,8 +48,8 @@ pub fn resolutionunit_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> 
 /// ExifTool: lib/Image/ExifTool/Exif.pm:2802-2805
 pub fn ycbcrpositioning_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val.as_u16() {
-        Some(1) => "Centered".into(),
-        Some(2) => "Co-sited".into(),
+        Some(1) => TagValue::string("Centered"),
+        Some(2) => TagValue::string("Co-sited"),
         _ => TagValue::string(format!("Unknown ({val})")),
     }
 }
@@ -59,8 +59,8 @@ pub fn ycbcrpositioning_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -
 /// Format: "X.X m Above/Below Sea Level" based on positive/negative value
 pub fn gpsaltitude_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val.as_f64() {
-        Some(v) if v.is_infinite() => "inf".into(),
-        Some(v) if v.is_nan() => "undef".into(),
+        Some(v) if v.is_infinite() => TagValue::string("inf"),
+        Some(v) if v.is_nan() => TagValue::string("undef"),
         Some(v) => {
             let rounded = (v * 10.0).round() / 10.0; // Round to 1 decimal place
             let abs_alt = rounded.abs();
@@ -79,8 +79,8 @@ pub fn gpsaltitude_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> Tag
 /// ExifTool: lib/Image/ExifTool/GPS.pm GPSAltitudeRef tag definition
 pub fn gpsaltituderef_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val.as_u8() {
-        Some(0) => "Above Sea Level".into(),
-        Some(1) => "Below Sea Level".into(),
+        Some(0) => TagValue::string("Above Sea Level"),
+        Some(1) => TagValue::string("Below Sea Level"),
         _ => TagValue::string(format!("Unknown ({val})")),
     }
 }
@@ -89,8 +89,8 @@ pub fn gpsaltituderef_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> 
 /// ExifTool: lib/Image/ExifTool/GPS.pm GPSLatitudeRef tag definition
 pub fn gpslatituderef_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val.as_string() {
-        Some("N") => "North".into(),
-        Some("S") => "South".into(),
+        Some("N") => TagValue::string("North"),
+        Some("S") => TagValue::string("South"),
         _ => TagValue::string(format!("Unknown ({val})")),
     }
 }
@@ -99,8 +99,8 @@ pub fn gpslatituderef_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> 
 /// ExifTool: lib/Image/ExifTool/GPS.pm GPSLongitudeRef tag definition
 pub fn gpslongituderef_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val.as_string() {
-        Some("E") => "East".into(),
-        Some("W") => "West".into(),
+        Some("E") => TagValue::string("East"),
+        Some("W") => TagValue::string("West"),
         _ => TagValue::string(format!("Unknown ({val})")),
     }
 }
@@ -627,7 +627,7 @@ pub fn complex_expression_print_conv(val: &TagValue, _ctx: Option<&ExifContext>)
 /// ExifTool: lib/Image/ExifTool/Exif.pm PrintFraction sub
 /// Converts a floating point value to a fractional representation with sign
 /// Used for exposure compensation and similar values
-pub fn print_fraction(val: &TagValue) -> TagValue {
+pub fn print_fraction(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     // Get floating point value
     let f_val = match val {
         TagValue::F64(v) => Some(*v),
@@ -883,190 +883,244 @@ mod tests {
     #[test]
     fn test_orientation_print_conv() {
         assert_eq!(
-            orientation_print_conv(&TagValue::U16(1)),
-            "Horizontal (normal)".into()
+            orientation_print_conv(&TagValue::U16(1), None),
+            TagValue::string("Horizontal (normal)")
         );
         assert_eq!(
-            orientation_print_conv(&TagValue::U16(8)),
-            "Rotate 270 CW".into()
+            orientation_print_conv(&TagValue::U16(8), None),
+            TagValue::string("Rotate 270 CW")
         );
         assert_eq!(
-            orientation_print_conv(&TagValue::U16(99)),
-            "Unknown (99)".into()
+            orientation_print_conv(&TagValue::U16(99), None),
+            TagValue::string("Unknown (99)")
         );
     }
 
     #[test]
     fn test_resolutionunit_print_conv() {
-        assert_eq!(resolutionunit_print_conv(&TagValue::U16(1)), "None".into());
         assert_eq!(
-            resolutionunit_print_conv(&TagValue::U16(2)),
-            "inches".into()
+            resolutionunit_print_conv(&TagValue::U16(1), None),
+            TagValue::string("None")
         );
-        assert_eq!(resolutionunit_print_conv(&TagValue::U16(3)), "cm".into());
         assert_eq!(
-            resolutionunit_print_conv(&TagValue::U16(99)),
-            "Unknown (99)".into()
+            resolutionunit_print_conv(&TagValue::U16(2), None),
+            TagValue::string("inches")
+        );
+        assert_eq!(
+            resolutionunit_print_conv(&TagValue::U16(3), None),
+            TagValue::string("cm")
+        );
+        assert_eq!(
+            resolutionunit_print_conv(&TagValue::U16(99), None),
+            TagValue::string("Unknown (99)")
         );
     }
 
     #[test]
     fn test_ycbcrpositioning_print_conv() {
         assert_eq!(
-            ycbcrpositioning_print_conv(&TagValue::U16(1)),
-            "Centered".into()
+            ycbcrpositioning_print_conv(&TagValue::U16(1), None),
+            TagValue::string("Centered")
         );
         assert_eq!(
-            ycbcrpositioning_print_conv(&TagValue::U16(2)),
-            "Co-sited".into()
+            ycbcrpositioning_print_conv(&TagValue::U16(2), None),
+            TagValue::string("Co-sited")
         );
         assert_eq!(
-            ycbcrpositioning_print_conv(&TagValue::U16(99)),
-            "Unknown (99)".into()
+            ycbcrpositioning_print_conv(&TagValue::U16(99), None),
+            TagValue::string("Unknown (99)")
         );
     }
 
     #[test]
     fn test_flash_print_conv() {
         // Test standard values
-        assert_eq!(flash_print_conv(&TagValue::U16(0x00)), "No Flash".into());
-        assert_eq!(flash_print_conv(&TagValue::U16(0x01)), "Fired".into());
-        assert_eq!(flash_print_conv(&TagValue::U16(0x19)), "Auto, Fired".into());
         assert_eq!(
-            flash_print_conv(&TagValue::U16(0x20)),
-            "No flash function".into()
+            flash_print_conv(&TagValue::U16(0x00), None),
+            TagValue::string("No Flash")
+        );
+        assert_eq!(
+            flash_print_conv(&TagValue::U16(0x01), None),
+            TagValue::string("Fired")
+        );
+        assert_eq!(
+            flash_print_conv(&TagValue::U16(0x19), None),
+            TagValue::string("Auto, Fired")
+        );
+        assert_eq!(
+            flash_print_conv(&TagValue::U16(0x20), None),
+            TagValue::string("No flash function")
         );
 
         // Test red-eye reduction values
         assert_eq!(
-            flash_print_conv(&TagValue::U16(0x41)),
-            "Fired, Red-eye reduction".into()
+            flash_print_conv(&TagValue::U16(0x41), None),
+            TagValue::string("Fired, Red-eye reduction")
         );
         assert_eq!(
-            flash_print_conv(&TagValue::U16(0x59)),
-            "Auto, Fired, Red-eye reduction".into()
+            flash_print_conv(&TagValue::U16(0x59), None),
+            TagValue::string("Auto, Fired, Red-eye reduction")
         );
 
         // Test unknown value
         assert_eq!(
-            flash_print_conv(&TagValue::U16(0x99)),
-            "Unknown (153)".into()
+            flash_print_conv(&TagValue::U16(0x99), None),
+            TagValue::string("Unknown (153)")
         );
     }
 
     #[test]
     fn test_colorspace_print_conv() {
-        assert_eq!(colorspace_print_conv(&TagValue::U16(1)), "sRGB".into());
-        assert_eq!(colorspace_print_conv(&TagValue::U16(2)), "Adobe RGB".into());
         assert_eq!(
-            colorspace_print_conv(&TagValue::U16(0xffff)),
-            "Uncalibrated".into()
+            colorspace_print_conv(&TagValue::U16(1), None),
+            TagValue::string("sRGB")
+        );
+        assert_eq!(
+            colorspace_print_conv(&TagValue::U16(2), None),
+            TagValue::string("Adobe RGB")
+        );
+        assert_eq!(
+            colorspace_print_conv(&TagValue::U16(0xffff), None),
+            TagValue::string("Uncalibrated")
         );
 
         // Test Sony-specific values
         assert_eq!(
-            colorspace_print_conv(&TagValue::U16(0xfffe)),
-            "ICC Profile".into()
+            colorspace_print_conv(&TagValue::U16(0xfffe), None),
+            TagValue::string("ICC Profile")
         );
         assert_eq!(
-            colorspace_print_conv(&TagValue::U16(0xfffd)),
-            "Wide Gamut RGB".into()
+            colorspace_print_conv(&TagValue::U16(0xfffd), None),
+            TagValue::string("Wide Gamut RGB")
         );
 
         // Test unknown value
         assert_eq!(
-            colorspace_print_conv(&TagValue::U16(0x99)),
-            "Unknown (153)".into()
+            colorspace_print_conv(&TagValue::U16(0x99), None),
+            TagValue::string("Unknown (153)")
         );
     }
 
     #[test]
     fn test_whitebalance_print_conv() {
-        assert_eq!(whitebalance_print_conv(&TagValue::U16(0)), "Auto".into());
-        assert_eq!(whitebalance_print_conv(&TagValue::U16(1)), "Manual".into());
         assert_eq!(
-            whitebalance_print_conv(&TagValue::U16(99)),
-            "Unknown (99)".into()
+            whitebalance_print_conv(&TagValue::U16(0), None),
+            TagValue::string("Auto")
+        );
+        assert_eq!(
+            whitebalance_print_conv(&TagValue::U16(1), None),
+            TagValue::string("Manual")
+        );
+        assert_eq!(
+            whitebalance_print_conv(&TagValue::U16(99), None),
+            TagValue::string("Unknown (99)")
         );
     }
 
     #[test]
     fn test_meteringmode_print_conv() {
-        assert_eq!(meteringmode_print_conv(&TagValue::U16(0)), "Unknown".into());
-        assert_eq!(meteringmode_print_conv(&TagValue::U16(1)), "Average".into());
         assert_eq!(
-            meteringmode_print_conv(&TagValue::U16(2)),
-            "Center-weighted average".into()
+            meteringmode_print_conv(&TagValue::U16(0), None),
+            TagValue::string("Unknown")
         );
-        assert_eq!(meteringmode_print_conv(&TagValue::U16(3)), "Spot".into());
         assert_eq!(
-            meteringmode_print_conv(&TagValue::U16(5)),
-            "Multi-segment".into()
+            meteringmode_print_conv(&TagValue::U16(1), None),
+            TagValue::string("Average")
         );
-        assert_eq!(meteringmode_print_conv(&TagValue::U16(255)), "Other".into());
         assert_eq!(
-            meteringmode_print_conv(&TagValue::U16(99)),
-            "Unknown (99)".into()
+            meteringmode_print_conv(&TagValue::U16(2), None),
+            TagValue::string("Center-weighted average")
+        );
+        assert_eq!(
+            meteringmode_print_conv(&TagValue::U16(3), None),
+            TagValue::string("Spot")
+        );
+        assert_eq!(
+            meteringmode_print_conv(&TagValue::U16(5), None),
+            TagValue::string("Multi-segment")
+        );
+        assert_eq!(
+            meteringmode_print_conv(&TagValue::U16(255), None),
+            TagValue::string("Other")
+        );
+        assert_eq!(
+            meteringmode_print_conv(&TagValue::U16(99), None),
+            TagValue::string("Unknown (99)")
         );
     }
 
     #[test]
     fn test_exposureprogram_print_conv() {
         assert_eq!(
-            exposureprogram_print_conv(&TagValue::U16(0)),
-            "Not Defined".into()
+            exposureprogram_print_conv(&TagValue::U16(0), None),
+            TagValue::string("Not Defined")
         );
         assert_eq!(
-            exposureprogram_print_conv(&TagValue::U16(1)),
-            "Manual".into()
+            exposureprogram_print_conv(&TagValue::U16(1), None),
+            TagValue::string("Manual")
         );
         assert_eq!(
-            exposureprogram_print_conv(&TagValue::U16(2)),
-            "Program AE".into()
+            exposureprogram_print_conv(&TagValue::U16(2), None),
+            TagValue::string("Program AE")
         );
         assert_eq!(
-            exposureprogram_print_conv(&TagValue::U16(3)),
-            "Aperture-priority AE".into()
+            exposureprogram_print_conv(&TagValue::U16(3), None),
+            TagValue::string("Aperture-priority AE")
         );
         assert_eq!(
-            exposureprogram_print_conv(&TagValue::U16(7)),
-            "Portrait".into()
+            exposureprogram_print_conv(&TagValue::U16(7), None),
+            TagValue::string("Portrait")
         );
 
         // Test Canon-specific non-standard value
-        assert_eq!(exposureprogram_print_conv(&TagValue::U16(9)), "Bulb".into());
+        assert_eq!(
+            exposureprogram_print_conv(&TagValue::U16(9), None),
+            TagValue::string("Bulb")
+        );
 
         assert_eq!(
-            exposureprogram_print_conv(&TagValue::U16(99)),
-            "Unknown (99)".into()
+            exposureprogram_print_conv(&TagValue::U16(99), None),
+            TagValue::string("Unknown (99)")
         );
     }
 
     #[test]
     fn test_fnumber_print_conv() {
         // Values >= 1.0 get 1 decimal place
-        assert_eq!(fnumber_print_conv(&TagValue::F64(4.0)), TagValue::F64(4.0));
-        assert_eq!(fnumber_print_conv(&TagValue::F64(2.8)), TagValue::F64(2.8));
-        assert_eq!(fnumber_print_conv(&TagValue::F64(1.4)), TagValue::F64(1.4));
         assert_eq!(
-            fnumber_print_conv(&TagValue::F64(11.0)),
+            fnumber_print_conv(&TagValue::F64(4.0), None),
+            TagValue::F64(4.0)
+        );
+        assert_eq!(
+            fnumber_print_conv(&TagValue::F64(2.8), None),
+            TagValue::F64(2.8)
+        );
+        assert_eq!(
+            fnumber_print_conv(&TagValue::F64(1.4), None),
+            TagValue::F64(1.4)
+        );
+        assert_eq!(
+            fnumber_print_conv(&TagValue::F64(11.0), None),
             TagValue::F64(11.0)
         );
         assert_eq!(
-            fnumber_print_conv(&TagValue::F64(0.640234375)),
+            fnumber_print_conv(&TagValue::F64(0.640234375), None),
             TagValue::F64(0.64)
         );
 
         // Values < 1.0 get 2 decimal places
         assert_eq!(
-            fnumber_print_conv(&TagValue::F64(0.95)),
+            fnumber_print_conv(&TagValue::F64(0.95), None),
             TagValue::F64(0.95)
         );
-        assert_eq!(fnumber_print_conv(&TagValue::F64(0.7)), TagValue::F64(0.7));
+        assert_eq!(
+            fnumber_print_conv(&TagValue::F64(0.7), None),
+            TagValue::F64(0.7)
+        );
 
         // Test with rational input
         assert_eq!(
-            fnumber_print_conv(&TagValue::Rational(4, 1)),
+            fnumber_print_conv(&TagValue::Rational(4, 1), None),
             TagValue::F64(4.0)
         );
     }
@@ -1075,93 +1129,117 @@ mod tests {
     fn test_exposuretime_print_conv() {
         // Test fractional exposures < 0.25001
         assert_eq!(
-            exposuretime_print_conv(&TagValue::F64(0.0005)),
-            "1/2000".into()
+            exposuretime_print_conv(&TagValue::F64(0.0005), None),
+            TagValue::string("1/2000")
         );
         assert_eq!(
-            exposuretime_print_conv(&TagValue::F64(0.01)),
-            "1/100".into()
+            exposuretime_print_conv(&TagValue::F64(0.01), None),
+            TagValue::string("1/100")
         );
-        assert_eq!(exposuretime_print_conv(&TagValue::F64(0.125)), "1/8".into());
-        assert_eq!(exposuretime_print_conv(&TagValue::F64(0.25)), "1/4".into());
+        assert_eq!(
+            exposuretime_print_conv(&TagValue::F64(0.125), None),
+            TagValue::string("1/8")
+        );
+        assert_eq!(
+            exposuretime_print_conv(&TagValue::F64(0.25), None),
+            TagValue::string("1/4")
+        );
 
         // Test exposures >= 0.25001
         assert_eq!(
-            exposuretime_print_conv(&TagValue::F64(0.0)),
+            exposuretime_print_conv(&TagValue::F64(0.0), None),
             TagValue::I32(0)
         ); // Zero becomes number (like ExifTool)
-        assert_eq!(exposuretime_print_conv(&TagValue::F64(0.5)), "0.5".into()); // Decimal stays string
         assert_eq!(
-            exposuretime_print_conv(&TagValue::F64(1.0)),
+            exposuretime_print_conv(&TagValue::F64(0.5), None),
+            TagValue::string("0.5")
+        ); // Decimal stays string
+        assert_eq!(
+            exposuretime_print_conv(&TagValue::F64(1.0), None),
             TagValue::I32(1)
         ); // Integer becomes number
         assert_eq!(
-            exposuretime_print_conv(&TagValue::F64(2.0)),
+            exposuretime_print_conv(&TagValue::F64(2.0), None),
             TagValue::I32(2)
         ); // Integer becomes number
-        assert_eq!(exposuretime_print_conv(&TagValue::F64(2.5)), "2.5".into()); // Decimal stays string
+        assert_eq!(
+            exposuretime_print_conv(&TagValue::F64(2.5), None),
+            TagValue::string("2.5")
+        ); // Decimal stays string
 
         // Test with rational input
         assert_eq!(
-            exposuretime_print_conv(&TagValue::Rational(1, 2000)),
-            "1/2000".into()
+            exposuretime_print_conv(&TagValue::Rational(1, 2000), None),
+            TagValue::string("1/2000")
         );
         assert_eq!(
-            exposuretime_print_conv(&TagValue::Rational(1, 100)),
-            "1/100".into()
+            exposuretime_print_conv(&TagValue::Rational(1, 100), None),
+            TagValue::string("1/100")
         );
         assert_eq!(
-            exposuretime_print_conv(&TagValue::Rational(1, 2)),
-            "0.5".into()
+            exposuretime_print_conv(&TagValue::Rational(1, 2), None),
+            TagValue::string("0.5")
         );
     }
 
     #[test]
     fn test_focallength_print_conv() {
         // Integers should not show decimal places
-        assert_eq!(focallength_print_conv(&TagValue::F64(24.0)), "24 mm".into());
-        assert_eq!(focallength_print_conv(&TagValue::F64(50.0)), "50 mm".into());
         assert_eq!(
-            focallength_print_conv(&TagValue::F64(200.0)),
-            "200 mm".into()
+            focallength_print_conv(&TagValue::F64(24.0), None),
+            TagValue::string("24 mm")
         );
-        assert_eq!(focallength_print_conv(&TagValue::F64(0.0)), "0 mm".into());
+        assert_eq!(
+            focallength_print_conv(&TagValue::F64(50.0), None),
+            TagValue::string("50 mm")
+        );
+        assert_eq!(
+            focallength_print_conv(&TagValue::F64(200.0), None),
+            TagValue::string("200 mm")
+        );
+        assert_eq!(
+            focallength_print_conv(&TagValue::F64(0.0), None),
+            TagValue::string("0 mm")
+        );
 
         // Decimals should be rounded to 1 decimal place like ExifTool
         assert_eq!(
-            focallength_print_conv(&TagValue::F64(4.67)),
-            "4.7 mm".into()
+            focallength_print_conv(&TagValue::F64(4.67), None),
+            TagValue::string("4.7 mm")
         ); // 4.67 -> 4.7
         assert_eq!(
-            focallength_print_conv(&TagValue::F64(42.3)),
-            "42.3 mm".into()
+            focallength_print_conv(&TagValue::F64(42.3), None),
+            TagValue::string("42.3 mm")
         );
         assert_eq!(
-            focallength_print_conv(&TagValue::F64(105.5)),
-            "105.5 mm".into()
+            focallength_print_conv(&TagValue::F64(105.5), None),
+            TagValue::string("105.5 mm")
         );
-        assert_eq!(focallength_print_conv(&TagValue::F64(5.7)), "5.7 mm".into());
         assert_eq!(
-            focallength_print_conv(&TagValue::F64(1.56)),
-            "1.6 mm".into()
+            focallength_print_conv(&TagValue::F64(5.7), None),
+            TagValue::string("5.7 mm")
+        );
+        assert_eq!(
+            focallength_print_conv(&TagValue::F64(1.56), None),
+            TagValue::string("1.6 mm")
         ); // 1.56 -> 1.6 (round up)
         assert_eq!(
-            focallength_print_conv(&TagValue::F64(1.54)),
-            "1.5 mm".into()
+            focallength_print_conv(&TagValue::F64(1.54), None),
+            TagValue::string("1.5 mm")
         ); // 1.54 -> 1.5 (round down)
         assert_eq!(
-            focallength_print_conv(&TagValue::F64(1.57)),
-            "1.6 mm".into()
+            focallength_print_conv(&TagValue::F64(1.57), None),
+            TagValue::string("1.6 mm")
         ); // iPhone case: 1.57 -> 1.6
 
         // Test with rational input
         assert_eq!(
-            focallength_print_conv(&TagValue::Rational(24, 1)),
-            "24 mm".into()
+            focallength_print_conv(&TagValue::Rational(24, 1), None),
+            TagValue::string("24 mm")
         );
         assert_eq!(
-            focallength_print_conv(&TagValue::Rational(57, 10)),
-            "5.7 mm".into()
+            focallength_print_conv(&TagValue::Rational(57, 10), None),
+            TagValue::string("5.7 mm")
         );
     }
 
@@ -1169,26 +1247,26 @@ mod tests {
     fn test_focallength_in_35mm_format_print_conv() {
         // Values should be formatted as integers with no decimal places
         assert_eq!(
-            focallength_in_35mm_format_print_conv(&TagValue::U16(28)),
-            "28 mm".into()
+            focallength_in_35mm_format_print_conv(&TagValue::U16(28), None),
+            TagValue::string("28 mm")
         );
         assert_eq!(
-            focallength_in_35mm_format_print_conv(&TagValue::U16(50)),
-            "50 mm".into()
+            focallength_in_35mm_format_print_conv(&TagValue::U16(50), None),
+            TagValue::string("50 mm")
         );
         assert_eq!(
-            focallength_in_35mm_format_print_conv(&TagValue::U16(167)),
-            "167 mm".into()
+            focallength_in_35mm_format_print_conv(&TagValue::U16(167), None),
+            TagValue::string("167 mm")
         );
         assert_eq!(
-            focallength_in_35mm_format_print_conv(&TagValue::U16(400)),
-            "400 mm".into()
+            focallength_in_35mm_format_print_conv(&TagValue::U16(400), None),
+            TagValue::string("400 mm")
         );
 
         // Test with non-U16 value
         assert_eq!(
-            focallength_in_35mm_format_print_conv(&"invalid".into()),
-            "Unknown (invalid)".into()
+            focallength_in_35mm_format_print_conv(&TagValue::string("invalid"), None),
+            TagValue::string("Unknown (invalid)")
         );
     }
 
@@ -1196,18 +1274,18 @@ mod tests {
     fn test_gps_altitude_ref_print_conv() {
         // Test numeric values
         assert_eq!(
-            gpsaltituderef_print_conv(&TagValue::U8(0)),
-            "Above Sea Level".into()
+            gpsaltituderef_print_conv(&TagValue::U8(0), None),
+            TagValue::string("Above Sea Level")
         );
         assert_eq!(
-            gpsaltituderef_print_conv(&TagValue::U8(1)),
-            "Below Sea Level".into()
+            gpsaltituderef_print_conv(&TagValue::U8(1), None),
+            TagValue::string("Below Sea Level")
         );
 
         // Test unknown values
         assert_eq!(
-            gpsaltituderef_print_conv(&TagValue::U8(99)),
-            "Unknown (99)".into()
+            gpsaltituderef_print_conv(&TagValue::U8(99), None),
+            TagValue::string("Unknown (99)")
         );
     }
 
@@ -1215,18 +1293,18 @@ mod tests {
     fn test_gps_latitude_ref_print_conv() {
         // Test string values
         assert_eq!(
-            gpslatituderef_print_conv(&TagValue::String("N".to_string())),
-            "North".into()
+            gpslatituderef_print_conv(&TagValue::String("N".to_string()), None),
+            TagValue::string("North")
         );
         assert_eq!(
-            gpslatituderef_print_conv(&TagValue::String("S".to_string())),
-            "South".into()
+            gpslatituderef_print_conv(&TagValue::String("S".to_string()), None),
+            TagValue::string("South")
         );
 
         // Test unknown values
         assert_eq!(
-            gpslatituderef_print_conv(&TagValue::String("X".to_string())),
-            "Unknown (X)".into()
+            gpslatituderef_print_conv(&TagValue::String("X".to_string()), None),
+            TagValue::string("Unknown (X)")
         );
     }
 
@@ -1234,29 +1312,32 @@ mod tests {
     fn test_gps_longitude_ref_print_conv() {
         // Test string values
         assert_eq!(
-            gpslongituderef_print_conv(&TagValue::String("E".to_string())),
-            "East".into()
+            gpslongituderef_print_conv(&TagValue::String("E".to_string()), None),
+            TagValue::string("East")
         );
         assert_eq!(
-            gpslongituderef_print_conv(&TagValue::String("W".to_string())),
-            "West".into()
+            gpslongituderef_print_conv(&TagValue::String("W".to_string()), None),
+            TagValue::string("West")
         );
 
         // Test unknown values
         assert_eq!(
-            gpslongituderef_print_conv(&TagValue::String("Z".to_string())),
-            "Unknown (Z)".into()
+            gpslongituderef_print_conv(&TagValue::String("Z".to_string()), None),
+            TagValue::string("Unknown (Z)")
         );
     }
 
     #[test]
     fn test_print_fraction() {
         // Test zero value
-        assert_eq!(print_fraction(&TagValue::F64(0.0)), TagValue::F64(0.0));
+        assert_eq!(
+            print_fraction(&TagValue::F64(0.0), None),
+            TagValue::F64(0.0)
+        );
 
         // Test SRational zero (like ExposureCompensation 0/3)
         assert_eq!(
-            print_fraction(&TagValue::SRational(0, 3)),
+            print_fraction(&TagValue::SRational(0, 3), None),
             TagValue::F64(0.0)
         );
 
@@ -1268,25 +1349,25 @@ mod tests {
         // Test Canon FileNumber PrintConv
         // ExifTool: converts 1181861 -> "118-1861"
         assert_eq!(
-            canon_filenumber_print_conv(&TagValue::U32(1181861)),
+            canon_filenumber_print_conv(&TagValue::U32(1181861), None),
             TagValue::String("118-1861".to_string())
         );
 
         // Test other formats
         assert_eq!(
-            canon_filenumber_print_conv(&TagValue::U16(12345)),
+            canon_filenumber_print_conv(&TagValue::U16(12345), None),
             TagValue::String("1-2345".to_string())
         );
 
         // Test edge cases
         assert_eq!(
-            canon_filenumber_print_conv(&TagValue::U32(1000)),
+            canon_filenumber_print_conv(&TagValue::U32(1000), None),
             TagValue::String("1000".to_string()) // Less than 5 digits, return as-is
         );
 
         // Test string format
         assert_eq!(
-            canon_filenumber_print_conv(&TagValue::String("1181861".to_string())),
+            canon_filenumber_print_conv(&TagValue::String("1181861".to_string()), None),
             TagValue::String("118-1861".to_string())
         );
     }
@@ -1296,37 +1377,37 @@ mod tests {
         // Test conversion from decimal degrees to degree/minute/second format
         // Example from iPhone 13 Pro: 40.5935972222 -> "40 deg 35' 36.95\""
         assert_eq!(
-            gpslatitude_print_conv(&TagValue::F64(40.5935972222)),
+            gpslatitude_print_conv(&TagValue::F64(40.5935972222), None),
             TagValue::string("40 deg 35' 36.95\"")
         );
 
         // Test longitude: 122.38015 -> "122 deg 22' 48.54\""
         assert_eq!(
-            gpslongitude_print_conv(&TagValue::F64(122.38015)),
+            gpslongitude_print_conv(&TagValue::F64(122.38015), None),
             TagValue::string("122 deg 22' 48.54\"")
         );
 
         // Test negative coordinates (absolute value should be used)
         assert_eq!(
-            gpslatitude_print_conv(&TagValue::F64(-40.5935972222)),
+            gpslatitude_print_conv(&TagValue::F64(-40.5935972222), None),
             TagValue::string("40 deg 35' 36.95\"")
         );
 
         // Test exact degrees (no minutes/seconds)
         assert_eq!(
-            gpslatitude_print_conv(&TagValue::F64(45.0)),
+            gpslatitude_print_conv(&TagValue::F64(45.0), None),
             TagValue::string("45 deg 0' 0.00\"")
         );
 
         // Test exact degrees and minutes (no seconds)
         assert_eq!(
-            gpslatitude_print_conv(&TagValue::F64(45.5)),
+            gpslatitude_print_conv(&TagValue::F64(45.5), None),
             TagValue::string("45 deg 30' 0.00\"")
         );
 
         // Test zero coordinates
         assert_eq!(
-            gpslatitude_print_conv(&TagValue::F64(0.0)),
+            gpslatitude_print_conv(&TagValue::F64(0.0), None),
             TagValue::string("0 deg 0' 0.00\"")
         );
     }
