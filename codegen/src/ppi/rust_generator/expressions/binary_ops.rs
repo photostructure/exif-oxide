@@ -30,18 +30,19 @@ fn get_operator_precedence(op: &str) -> i32 {
     }
 }
 
-/// Wrap bare integer/float literals with .into() for TagValue conversion.
-/// Used when calling functions that expect TagValue arguments.
+/// Wrap bare integer/float literals with explicit TagValue conversion.
+/// Uses turbofish syntax `Into::<TagValue>::into()` to avoid type inference ambiguity
+/// when `.into()` could resolve to multiple types (TagValue, f64, i128, etc.).
 pub fn wrap_literal_for_tagvalue(s: &str) -> String {
     if s.ends_with("i32") || s.ends_with("f64") || s.ends_with("u32") {
-        format!("{}.into()", s)
+        format!("Into::<TagValue>::into({})", s)
     } else {
         s.to_string()
     }
 }
 
 /// Check if a condition string is already a boolean expression (comparison, etc.)
-fn is_boolean_expression(s: &str) -> bool {
+pub fn is_boolean_expression(s: &str) -> bool {
     s.contains("==")
         || s.contains("!=")
         || s.contains("<=")
@@ -72,22 +73,28 @@ pub fn wrap_condition_for_bool(condition: &str) -> String {
         return format!("({}).is_truthy()", condition);
     }
 
+    // Context lookups ($$self{Field}) return TagValue, need is_truthy()
+    if condition.contains("ctx.and_then") || condition.contains("get_data_member") {
+        return format!("({}).is_truthy()", condition);
+    }
+
     condition.to_string()
 }
 
 /// Wrap a ternary branch with appropriate conversion for ownership.
 /// - Bare variable references need .clone()
-/// - Bare integer/float literals need .into() for TagValue conversion
-/// - String literals need .into() for TagValue conversion
+/// - Bare integer/float literals need explicit TagValue conversion
+/// - String literals need explicit TagValue conversion
+/// Uses turbofish syntax to avoid type inference ambiguity.
 pub fn wrap_branch_for_owned(branch: &str) -> String {
     if branch == "val" || branch == "val_pt" {
         format!("{}.clone()", branch)
     } else if branch.ends_with("i32") || branch.ends_with("u32") || branch.ends_with("f64") {
-        // Bare integer/float literal - wrap with .into() for TagValue conversion
-        format!("{}.into()", branch)
+        // Bare integer/float literal - use explicit TagValue conversion
+        format!("Into::<TagValue>::into({})", branch)
     } else if branch.starts_with('"') && branch.ends_with('"') {
-        // String literal - wrap with .into() for TagValue conversion
-        format!("{}.into()", branch)
+        // String literal - use explicit TagValue conversion
+        format!("Into::<TagValue>::into({})", branch)
     } else {
         branch.to_string()
     }
@@ -214,29 +221,6 @@ pub trait BinaryOperationsHandler {
 
         let rust_op = self.perl_to_rust_operator(op)?;
 
-        // Handle converted Perl string comparisons (== != < > <= >=) when involving TagValues
-        if matches!(op, "==" | "!=" | "<" | ">" | "<=" | ">=")
-            && self.is_string_comparison(&left_processed, &right_processed)
-        {
-            // Smart conversion: only add .to_string() to non-string-literal operands
-            let left_converted = if self.is_string_literal_or_wrapped(&left_processed) {
-                self.extract_string_literal(&left_processed)
-            } else {
-                format!("{}.to_string()", left_processed)
-            };
-
-            let right_converted = if self.is_string_literal_or_wrapped(&right_processed) {
-                self.extract_string_literal(&right_processed)
-            } else {
-                format!("{}.to_string()", right_processed)
-            };
-
-            return Ok(format!(
-                "{} {} {}",
-                left_converted, rust_op, right_converted
-            ));
-        }
-
         Ok(format!(
             "{} {} {}",
             left_processed, rust_op, right_processed
@@ -316,6 +300,9 @@ pub trait BinaryOperationsHandler {
         right: &str,
     ) -> Result<String, CodeGenError>;
 
+    /// Prefix for TagValue-wrapped literals: `Into::<TagValue>::into(`
+    const TAGVALUE_INTO_PREFIX: &'static str = "Into::<TagValue>::into(";
+
     /// Check if a string is a string literal or TagValue-wrapped string literal
     fn is_string_literal_or_wrapped(&self, s: &str) -> bool {
         // Direct string literal
@@ -324,8 +311,8 @@ pub trait BinaryOperationsHandler {
         }
 
         // TagValue-wrapped string literal: Into::<TagValue>::into("literal")
-        if s.starts_with("Into::<TagValue>::into(") && s.ends_with(")") {
-            let inner = &s[23..s.len() - 1]; // Extract content between ( and )
+        if s.starts_with(Self::TAGVALUE_INTO_PREFIX) && s.ends_with(')') {
+            let inner = &s[Self::TAGVALUE_INTO_PREFIX.len()..s.len() - 1];
             return inner.starts_with('"') && inner.ends_with('"');
         }
 
@@ -340,8 +327,8 @@ pub trait BinaryOperationsHandler {
         }
 
         // TagValue-wrapped string literal: Into::<TagValue>::into("literal")
-        if s.starts_with("Into::<TagValue>::into(") && s.ends_with(")") {
-            let inner = &s[23..s.len() - 1]; // Extract "literal" from ( "literal" )
+        if s.starts_with(Self::TAGVALUE_INTO_PREFIX) && s.ends_with(')') {
+            let inner = &s[Self::TAGVALUE_INTO_PREFIX.len()..s.len() - 1];
             if inner.starts_with('"') && inner.ends_with('"') {
                 return inner.to_string();
             }
