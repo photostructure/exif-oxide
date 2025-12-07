@@ -221,6 +221,16 @@ impl ExpressionPrecedenceNormalizer {
                 .any(|child| child.class == "PPI::Structure::List");
 
             if has_structure_list {
+                // Always process ternary expressions, even if they contain function calls
+                // e.g., $val ? sqrt(2)**($val/256) : 0
+                if self.has_ternary_pattern(&node.children) {
+                    trace!(
+                        "should_process: Processing {} - ternary with Structure::List",
+                        node.class
+                    );
+                    return true;
+                }
+
                 // Check if this is a function call - precedence climbing should handle it
                 if let Some(first_child) = node.children.first() {
                     if first_child.class == "PPI::Token::Word" {
@@ -747,13 +757,11 @@ impl ExpressionPrecedenceNormalizer {
         let mut new_pos = pos + 1;
 
         // Handle compound primaries: function_name(args)
+        // Any word followed by parentheses is a function call, not just known functions
+        // This handles ExifTool-specific functions like ConvertDuration, IsInt, etc.
         if primary.class == "PPI::Token::Word"
             && new_pos < tokens.len()
             && tokens[new_pos].class == "PPI::Structure::List"
-            && primary
-                .content
-                .as_ref()
-                .map_or(false, |name| self.is_known_function(name))
         {
             // Create function call node combining name + parentheses
             primary = PpiNode {
