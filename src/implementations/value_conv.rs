@@ -442,7 +442,7 @@ mod tests {
         let coords = vec![(40, 1), (26, 1), (468, 10)]; // 46.8 seconds as 468/10
         let coord_value = TagValue::RationalArray(coords);
 
-        let result = gps_coordinate_value_conv(&coord_value).unwrap();
+        let result = gps_coordinate_value_conv(&coord_value, None).unwrap();
         if let TagValue::F64(decimal) = result {
             // 40 + 26/60 + 46.8/3600 = 40.446333...
             assert!((decimal - 40.446333333).abs() < 0.000001);
@@ -457,7 +457,7 @@ mod tests {
         let coords = vec![(12, 1), (34, 1), (56789, 1000)]; // 56.789 seconds
         let coord_value = TagValue::RationalArray(coords);
 
-        let result = gps_coordinate_value_conv(&coord_value).unwrap();
+        let result = gps_coordinate_value_conv(&coord_value, None).unwrap();
         if let TagValue::F64(decimal) = result {
             // 12 + 34/60 + 56.789/3600 = 12.582441388...
             let expected = 12.0 + 34.0 / 60.0 + 56.789 / 3600.0;
@@ -473,7 +473,7 @@ mod tests {
         let coords = vec![(0, 1), (0, 1), (0, 1)];
         let coord_value = TagValue::RationalArray(coords);
 
-        let result = gps_coordinate_value_conv(&coord_value).unwrap();
+        let result = gps_coordinate_value_conv(&coord_value, None).unwrap();
         if let TagValue::F64(decimal) = result {
             assert_eq!(decimal, 0.0);
         } else {
@@ -487,7 +487,7 @@ mod tests {
         let coords = vec![(45, 1), (0, 1), (0, 1)];
         let coord_value = TagValue::RationalArray(coords);
 
-        let result = gps_coordinate_value_conv(&coord_value).unwrap();
+        let result = gps_coordinate_value_conv(&coord_value, None).unwrap();
         if let TagValue::F64(decimal) = result {
             assert_eq!(decimal, 45.0);
         } else {
@@ -501,7 +501,7 @@ mod tests {
         let coords = vec![(40, 1), (30, 0), (45, 1)]; // minutes has zero denominator
         let coord_value = TagValue::RationalArray(coords);
 
-        let result = gps_coordinate_value_conv(&coord_value).unwrap();
+        let result = gps_coordinate_value_conv(&coord_value, None).unwrap();
         if let TagValue::F64(decimal) = result {
             // 40 + 0/60 + 45/3600 = 40.0125
             assert!((decimal - 40.0125).abs() < 0.0001);
@@ -514,19 +514,19 @@ mod tests {
     fn test_gps_coordinate_invalid_input() {
         // Test with wrong type
         let value = TagValue::String("40.446333".to_string());
-        let result = gps_coordinate_value_conv(&value);
+        let result = gps_coordinate_value_conv(&value, None);
         assert!(matches!(result, Err(ExifError::ParseError(_))));
 
         // Test with too few elements
         let coords = vec![(40, 1), (26, 1)]; // Only 2 elements instead of 3
         let coord_value = TagValue::RationalArray(coords);
-        let result = gps_coordinate_value_conv(&coord_value);
+        let result = gps_coordinate_value_conv(&coord_value, None);
         assert!(matches!(result, Err(ExifError::ParseError(_))));
 
         // Test with empty array
         let coords = vec![];
         let coord_value = TagValue::RationalArray(coords);
-        let result = gps_coordinate_value_conv(&coord_value);
+        let result = gps_coordinate_value_conv(&coord_value, None);
         assert!(matches!(result, Err(ExifError::ParseError(_))));
     }
 
@@ -534,7 +534,7 @@ mod tests {
     fn test_apex_shutter_speed() {
         // APEX value 11 should give shutter speed of 2^(-11) = 1/2048 ≈ 0.00048828125
         let apex_value = TagValue::F64(11.0);
-        let result = apex_shutter_speed_value_conv(&apex_value).unwrap();
+        let result = apex_shutter_speed_value_conv(&apex_value, None).unwrap();
 
         if let TagValue::F64(speed) = result {
             assert!((speed - 0.00048828125).abs() < 0.000001);
@@ -547,7 +547,7 @@ mod tests {
     fn test_apex_aperture() {
         // APEX aperture value 4 should give f-number of 2^(4/2) = 2^2 = 4.0
         let apex_value = TagValue::F64(4.0);
-        let result = apex_aperture_value_conv(&apex_value).unwrap();
+        let result = apex_aperture_value_conv(&apex_value, None).unwrap();
 
         if let TagValue::F64(f_number) = result {
             assert!((f_number - 4.0).abs() < 0.001);
@@ -560,7 +560,7 @@ mod tests {
     fn test_fnumber_conversion() {
         // Rational [4, 1] should convert to 4.0
         let fnumber_rational = TagValue::Rational(4, 1);
-        let result = fnumber_value_conv(&fnumber_rational).unwrap();
+        let result = fnumber_value_conv(&fnumber_rational, None).unwrap();
 
         if let TagValue::F64(f_number) = result {
             assert!((f_number - 4.0).abs() < 0.001);
