@@ -279,7 +279,7 @@ pub fn apply_print_conv_with_tag_id(tag_id: Option<u32>, name: &str, value: &Tag
 
     // Fall back to manual registry lookup by function name
     let mut registry = GLOBAL_REGISTRY.write().unwrap();
-    registry.apply_print_conv(name, value)
+    registry.apply_print_conv(name, value, None)
 }
 
 /// Try to apply PrintConv using tag kit system
@@ -311,16 +311,16 @@ fn try_tag_kit_print_conv(tag_id: u32, value: &TagValue) -> Option<TagValue> {
     }
 }
 
-/// Apply ValueConv globally  
+/// Apply ValueConv globally
 pub fn apply_value_conv(name: &str, value: &TagValue) -> TagValue {
     let mut registry = GLOBAL_REGISTRY.write().unwrap();
-    registry.apply_value_conv(name, value)
+    registry.apply_value_conv(name, value, None)
 }
 
-/// Apply RawConv globally  
+/// Apply RawConv globally
 pub fn apply_raw_conv(name: &str, value: &TagValue) -> TagValue {
     let mut registry = GLOBAL_REGISTRY.write().unwrap();
-    registry.apply_raw_conv(name, value)
+    registry.apply_raw_conv(name, value, None)
 }
 
 /// Evaluate print conversion expression for composite tags
@@ -338,10 +338,8 @@ pub fn evaluate_print_conv(print_conv: &str, value: &TagValue) -> Result<TagValu
 
     // Create expression evaluator for processing the PrintConv expression
     use crate::types::binary_data::ExpressionEvaluator;
-    let mut evaluator = ExpressionEvaluator::new(
-        std::collections::HashMap::new(),
-        &std::collections::HashMap::new(),
-    );
+    let empty_tags = std::collections::HashMap::new();
+    let mut evaluator = ExpressionEvaluator::new(std::collections::HashMap::new(), &empty_tags);
 
     // TODO: P07 - Full expression evaluation implementation
     // For now, attempt basic evaluation and fall back to original value
@@ -391,18 +389,18 @@ mod tests {
         let mut registry = Registry::new();
 
         // Test PrintConv registration and lookup
-        fn test_print_conv(val: &TagValue) -> TagValue {
+        fn test_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
             TagValue::String(format!("Test: {val}"))
         }
 
         registry.register_print_conv("test", test_print_conv);
 
         let value = TagValue::U16(42);
-        let result = registry.apply_print_conv("test", &value);
+        let result = registry.apply_print_conv("test", &value, None);
         assert_eq!(result, TagValue::String("Test: 42".to_string()));
 
         // Test missing function fallback
-        let missing_result = registry.apply_print_conv("missing", &value);
+        let missing_result = registry.apply_print_conv("missing", &value, None);
         assert_eq!(missing_result, TagValue::U16(42));
 
         // Test missing tracking
@@ -416,7 +414,7 @@ mod tests {
         clear_missing_tracking();
 
         // Test global registration
-        fn test_global(val: &TagValue) -> TagValue {
+        fn test_global(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
             TagValue::String(format!("Global: {val}"))
         }
 
