@@ -763,11 +763,15 @@ impl ExpressionPrecedenceNormalizer {
             && new_pos < tokens.len()
             && tokens[new_pos].class == "PPI::Structure::List"
         {
-            // Create function call node combining name + parentheses
+            // Extract and process arguments from the parentheses
+            // This properly handles comma-separated arguments like sprintf("%.1f%%", $val * 100)
+            let args = self.extract_and_process_parenthesized_args(&tokens[new_pos]);
+
+            // Create function call node with extracted arguments
             primary = PpiNode {
                 class: "FunctionCall".to_string(),
                 content: primary.content.clone(),
-                children: vec![tokens[new_pos].clone()],
+                children: args,
                 numeric_value: None,
                 symbol_type: None,
                 string_value: None,
