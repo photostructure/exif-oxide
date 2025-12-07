@@ -3,7 +3,7 @@
 //! RawConv functions are applied to raw tag values before ValueConv/PrintConv,
 //! typically used for decoding or special processing of raw data.
 
-use crate::types::{Result, TagValue};
+use crate::types::{ExifContext, Result, TagValue};
 use tracing::debug;
 
 /// Convert EXIF text with character encoding prefix to UTF-8 string
@@ -14,7 +14,7 @@ use tracing::debug;
 /// - "UNICODE\0" - UTF-16 text (byte order must be guessed)
 /// - "JIS\0\0\0\0\0" - JIS encoding
 /// - "\0\0\0\0\0\0\0\0" - Undefined encoding (treat as ASCII)
-pub fn convert_exif_text(value: &TagValue) -> Result<TagValue> {
+pub fn convert_exif_text(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     match value {
         TagValue::Binary(data) => {
             if data.len() < 8 {
