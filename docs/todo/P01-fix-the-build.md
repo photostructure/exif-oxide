@@ -154,6 +154,7 @@ From previous build fixes:
 **Before**: 280+ compilation errors
 **After Phase 1**: 117 compilation errors (58% reduction)
 **After Phase 2**: 41 compilation errors (65% total reduction from 117)
+**After Phase 3**: 16 compilation errors (61% reduction from Phase 2)
 
 ```bash
 # Run to see current state
@@ -161,12 +162,9 @@ From previous build fixes:
 grep "^error\[" /tmp/stderr_*.txt | sort | uniq -c | sort -rn
 ```
 
-Current breakdown (as of Dec 2025, Phase 2):
-- 23 `error[E0308]: mismatched types`
-- 7 `error[E0283/E0284]: type annotations needed`
-- 7 `error[E0061]: argument count mismatches`
-- 3 `error[E0599]: method not found`
-- 1 `error[E0277]: comparison type mismatch`
+Current breakdown (as of Dec 2025, Phase 3):
+- 14 `error[E0308]: mismatched types`
+- 2 `error[E0061]: argument count mismatches`
 
 #### 8. TagValue Truthiness Support (Phase 2)
 **Problem**: Perl ternary expressions like `$val ? ... : ...` need bool conversion.
@@ -204,67 +202,186 @@ Example: `100 * 2**(16 - $val/256)` now generates:
 100i32 * power(2i32.into(), ((16i32.into()) - (val / 256i32)))
 ```
 
----
-
-## Part 4: Remaining Work (41 errors)
-
-### Task 1: Type Annotation Ambiguity (7 errors)
-
+#### 11. Type Annotation Ambiguity Fix (Phase 3)
 **Problem**: `.into()` calls on literals inside expressions create type inference ambiguity.
 
-**Example** (hash_16.rs line 31):
+**Fix**: Updated `codegen/src/ppi/rust_generator/expressions/binary_ops.rs`:
+- `wrap_literal_for_tagvalue()` now uses `Into::<TagValue>::into()` turbofish syntax
+- `wrap_branch_for_owned()` also updated for consistency
+
+#### 12. chr() and uc() Return Types (Phase 3)
+**Problem**: `chr()` and `uc()` returned `String` but generated code expected `TagValue`.
+
+**Fix**: Updated `codegen-runtime/src/string/transform.rs`:
+- `chr()` now returns `TagValue::String(...)` directly
+- `uc()` now returns `TagValue::String(...)` directly
+
+#### 13. Join/Unpack Pattern Handling (Phase 3)
+**Problem**: `join " ", unpack "FORMAT", $val` generated incorrect nested calls with wrong arg counts.
+
+**Fix**: Updated `codegen/src/ppi/rust_generator/visitor.rs`:
+- `join` handler now detects when second child is `unpack` FunctionCall
+- Generates `join_unpack_binary(separator, format, &data)` directly for this pattern
+- Added `join_vec()` fallback function for other join cases
+- `unpack` standalone now wraps result in `TagValue::Array(...)`
+
+Added `codegen-runtime/src/data/mod.rs`:
+- New `join_vec(separator, &[TagValue])` function for non-unpack joins
+
+#### 14. Missing ExpressionEvaluator Methods (Phase 3)
+**Problem**: `evaluate_context_condition` and `evaluate_expression` methods didn't exist.
+
+**Fix**: Added stub implementations to `src/types/binary_data.rs`:
+- Both methods return `Err(...)` to trigger fallback behavior
+- Marked as TODO: P07 for full implementation later
+
+#### 15. Registry Global Wrapper Functions (Phase 3)
+**Problem**: `apply_value_conv()`, `apply_raw_conv()`, `apply_print_conv_with_tag_id()` were called with 2 args but methods needed 3.
+
+**Fix**: Updated `src/registry.rs`:
+- All global wrapper functions now pass `None` as ctx parameter
+
+#### 16. print_fraction Signature (Phase 3)
+**Problem**: Generated code called `print_fraction(val, ctx)` but function only took 1 arg.
+
+**Fix**: Updated `src/implementations/print_conv.rs`:
+- `print_fraction()` now takes `(val: &TagValue, _ctx: Option<&ExifContext>)`
+
+#### 17. Temporary HashMap Borrow Issues (Phase 3)
+**Problem**: `HashMap::new()` passed as reference created temporaries dropped while borrowed.
+
+**Fix**: Updated `src/registry.rs` and `src/types/binary_data.rs`:
+- Store `HashMap::new()` in named variable before passing reference to `ExpressionEvaluator::new()`
+
+#### 18. TagValue Comparison with f64 (Phase 3)
+**Problem**: Generated code `val > 655.345f64` had no `PartialOrd<f64>` implementation.
+
+**Fix**: Added to `codegen-runtime/src/tag_value/ops.rs`:
+- `impl PartialEq<f64> for TagValue` and `impl PartialEq<f64> for &TagValue`
+- `impl PartialOrd<f64> for TagValue` and `impl PartialOrd<f64> for &TagValue`
+
+---
+
+## Part 4: Remaining Work (16 errors)
+
+### Task 1: TagValue as Bool Condition (6 errors)
+
+**Problem**: Context-based conditions return `TagValue` but are used in `if` statements.
+
+**Affected files**: `hash_39.rs`, `hash_8f.rs`, `hash_be.rs`, `hash_d7.rs`, `hash_d9.rs`
+
+**Example** (hash_39.rs):
 ```rust
-Ok(100i32 * power(2i32.into(), ((16i32.into()) - (val / 256i32))))
-//                              ^^^^^^^^^^^^^^ - type annotations needed
+if ctx
+    .and_then(|c| c.get_data_member("TimeScale").cloned())
+    .unwrap_or(TagValue::U32(1))  // <-- This is TagValue, not bool!
+{
 ```
 
-**Fix approach**:
-Either use explicit type: `Into::<TagValue>::into(16i32)` or redesign `power()` to accept generic types.
+**Root cause**: The visitor generates context lookups but doesn't add `.is_truthy()` to convert to bool.
 
-**Files to check**: `codegen/src/ppi/rust_generator/expressions/binary_ops.rs` - the `wrap_literal_for_tagvalue()` function.
-
-### Task 2: Function Argument Mismatches (7 errors)
-
-**Problem**: Several generated function calls have wrong argument counts.
-
-| Function | Issue |
-|----------|-------|
-| `sqrt()` | Called with 0 args, needs 1 |
-| `chr()` | Returns String, expected TagValue |
-| `unpack_binary()` | Returns `Vec<TagValue>`, sometimes expected String |
-| Various methods | Take 3 args, called with 2 |
-
-**Fix approach**:
-- Fix `sqrt()` generation to pass `val` argument
-- Wrap `chr()` return in `TagValue::String(...)`
-- Handle `unpack_binary()` return type correctly (join or index)
-
-**Files to check**:
-- `codegen/src/ppi/rust_generator/visitor.rs` - function call generation
-- `codegen-runtime/src/math/` - function signatures
-
-### Task 3: Missing ExpressionEvaluator Methods (3 errors)
-
-**Problem**: Generated code calls methods that don't exist:
-- `evaluate_context_condition`
-- `evaluate_expression`
-
-**To investigate**:
-```bash
-grep -rn "evaluate_context_condition\|evaluate_expression" src/
+**Fix approach**: In `codegen/src/ppi/rust_generator/visitor.rs`, when generating context-based conditions, wrap the result with `.is_truthy()`:
+```rust
+ctx.and_then(|c| c.get_data_member("TimeScale").cloned())
+   .unwrap_or(TagValue::U32(1))
+   .is_truthy()  // <-- Add this
 ```
 
-**Fix approach**: Either add these methods to `ExpressionEvaluator` or update codegen to not generate these calls.
+**Files to modify**: `codegen/src/ppi/rust_generator/visitor.rs` - look for `get_data_member` generation.
 
-### Task 4: Mixed-Type Array Issues (2 errors)
+### Task 2: Perl || Operator (3 errors)
 
-**Problem**: `available_options.rs` and `rggb_lookup.rs` still have integers in `[&'static str; N]` arrays.
+**Problem**: Perl's `$val || "inf"` doesn't translate to Rust's `||`.
 
-**Files to check**: `codegen/src/strategies/scalar_array.rs` - the type detection and element formatting may need refinement.
+**Affected file**: `hash_cb.rs`
 
-### Task 5: Verify Full Build
+**Current broken output**:
+```rust
+(val || Into::<TagValue>::into("inf"))  // Rust || expects bools!
+```
 
-After fixing remaining issues:
+**Correct output should be**:
+```rust
+if val.is_truthy() { val.clone() } else { Into::<TagValue>::into("inf") }
+```
+
+**Root cause**: The binary operator handler treats `||` as Rust's boolean OR, not Perl's "return first truthy value" operator.
+
+**Fix approach**: In `codegen/src/ppi/rust_generator/expressions/binary_ops.rs` or the visitor, detect `||` operator and generate ternary-like code instead.
+
+### Task 3: sqrt() Missing Argument (1 error)
+
+**Problem**: Expression `$val ? sqrt(2)**($val/256) : 0` generates `sqrt()` with no arguments.
+
+**Affected file**: `hash_4d.rs`
+
+**Current broken output**:
+```rust
+if val.is_truthy() {
+    sqrt()  // <-- Missing argument!
+} else {
+    Into::<TagValue>::into(0i32)
+}
+```
+
+**Root cause**: The power operator `**` parsing is consuming `sqrt(2)` incorrectly, treating `sqrt` as a standalone call instead of `sqrt(2)` as the base.
+
+**Fix approach**: Debug with `cargo run --bin debug-ppi -- --verbose '$val ? sqrt(2)**($val/256) : 0'` to see how the AST is structured. The issue is likely in how `BinaryOperation` nodes with `**` handle function call children.
+
+### Task 4: power() Argument Reference (1 error)
+
+**Problem**: `power(base, val)` passes `&TagValue` where `TagValue` expected.
+
+**Affected file**: `hash_cf.rs`
+
+**Current broken output**:
+```rust
+(1i32 / (power(Into::<TagValue>::into(2i32), val)))
+//                                           ^^^ &TagValue
+```
+
+**Fix approach**: Either:
+1. Change `power()` signature to accept `&TagValue`
+2. Add `.clone()` to `val` in the generated code when it's used as power exponent
+
+### Task 5: Ok() Extra Argument (1 error)
+
+**Problem**: Comma operator in Perl generates extra argument to `Ok()`.
+
+**Affected file**: `hash_c9.rs`
+
+**Current broken output**:
+```rust
+Ok(regex_substitute_perl(...), val)  // Ok takes 1 arg, not 2!
+```
+
+**Root cause**: Perl comma operator `(expr1, expr2)` is being interpreted as tuple construction. The last value in a comma sequence is the result in Perl.
+
+**Fix approach**: Detect comma operators and only use the final value:
+```rust
+{
+    let _ = regex_substitute_perl(...);
+    Ok(val.clone())
+}
+```
+
+### Task 6: Mixed-Type Array Issues (2 errors after regen)
+
+**Problem**: `available_options.rs` and `rggb_lookup.rs` have integers in `[&'static str; N]` arrays.
+
+**Note**: These files were deleted and will be regenerated by `make codegen`. If they still have the issue after regeneration, check `codegen/src/strategies/scalar_array.rs`:
+- The `format_array_elements()` function should stringify integers when `element_type == "&'static str"`
+
+### Task 7: unpack_binary Not Wrapped (1 error)
+
+**Problem**: Some `unpack_binary()` calls are still not wrapped in `TagValue::Array()`.
+
+**Affected file**: `hash_4c.rs`
+
+**Root cause**: The visitor fix for `unpack` may not cover all code paths. Check if there's a different code path generating unpack calls.
+
+### Verification After Fixes
+
 ```bash
 rm -rf src/generated/functions
 make codegen
@@ -272,6 +389,19 @@ cargo check           # Should have 0 errors
 cargo t               # Tests should pass
 make precommit        # Full validation
 ```
+
+### Golden Rule Reminder
+
+If a codegen pattern can't be fixed correctly, emit a **placeholder** instead:
+
+```rust
+// In the visitor, when encountering unsupported patterns:
+return Err(CodeGenError::UnsupportedStructure(
+    format!("Unsupported pattern: {}", description)
+));
+```
+
+This triggers the fallback placeholder generator which produces compiling (though non-functional) code. A placeholder that compiles is infinitely better than broken syntax.
 
 ---
 
@@ -295,6 +425,49 @@ codegen-runtime/src/tag_value/conversion.rs
   - is_truthy()
 ```
 
+## Key Files Modified in Phase 3
+
+```bash
+# Type annotation fix (turbofish syntax)
+codegen/src/ppi/rust_generator/expressions/binary_ops.rs
+  - wrap_literal_for_tagvalue() → Into::<TagValue>::into()
+  - wrap_branch_for_owned() → Into::<TagValue>::into()
+
+# Return type fixes
+codegen-runtime/src/string/transform.rs
+  - chr() → returns TagValue
+  - uc() → returns TagValue
+
+# Join/unpack pattern handling
+codegen/src/ppi/rust_generator/visitor.rs
+  - join handler detects unpack child, generates join_unpack_binary()
+  - unpack handler wraps in TagValue::Array()
+
+codegen-runtime/src/data/mod.rs
+  - New join_vec() function
+
+codegen-runtime/src/lib.rs
+  - Export join_vec
+
+# Stub methods for expression evaluation
+src/types/binary_data.rs
+  - evaluate_context_condition() stub
+  - evaluate_expression() stub
+
+# Registry and signature fixes
+src/registry.rs
+  - Global wrappers pass None for ctx
+  - Fixed temporary HashMap borrow
+
+src/implementations/print_conv.rs
+  - print_fraction() takes ctx parameter
+
+# TagValue trait implementations
+codegen-runtime/src/tag_value/ops.rs
+  - PartialEq<f64> for TagValue and &TagValue
+  - PartialOrd<f64> for TagValue and &TagValue
+```
+
 ---
 
 ## Emergency Recovery
@@ -316,6 +489,7 @@ make codegen && cargo check
 
 ## Quality Checklist
 
+### Phase 1-2 (Complete)
 - [x] ExifError type unified across crates
 - [x] PrintConv/ValueConv slot mismatches fixed (expression type in hash)
 - [x] Lookup table mixed-type arrays fixed
@@ -330,9 +504,28 @@ make codegen && cargo check
 - [x] Power operator generates `power()` function call
 - [x] Operator precedence handled for complex expressions
 - [x] DRYed up helper functions between generator and visitor
-- [ ] Type annotation ambiguity for `.into()` in expressions
-- [ ] Function argument counts correct (sqrt, chr, etc.)
-- [ ] ExpressionEvaluator methods exist or calls removed
+
+### Phase 3 (Complete)
+- [x] Type annotation ambiguity fixed with `Into::<TagValue>::into()` turbofish
+- [x] `chr()` returns TagValue instead of String
+- [x] `uc()` returns TagValue instead of String
+- [x] `join unpack` pattern generates `join_unpack_binary()` directly
+- [x] Standalone `unpack` wraps in `TagValue::Array()`
+- [x] `join_vec()` function added for non-unpack joins
+- [x] ExpressionEvaluator stub methods added (evaluate_context_condition, evaluate_expression)
+- [x] Registry global wrappers pass `None` for ctx
+- [x] `print_fraction()` accepts ctx parameter
+- [x] Temporary HashMap borrow issues fixed
+- [x] `PartialEq<f64>` and `PartialOrd<f64>` added for TagValue
+
+### Phase 4 (Remaining - 16 errors)
+- [ ] TagValue as bool conditions need `.is_truthy()` (6 errors)
+- [ ] Perl `||` operator generates ternary-like code (3 errors)
+- [ ] `sqrt()` argument preserved through power parsing (1 error)
+- [ ] `power()` val argument cloned (1 error)
+- [ ] Comma operator returns final value only (1 error)
+- [ ] Mixed-type arrays regenerate correctly (2 errors after regen)
+- [ ] All `unpack_binary()` calls wrapped (1 error)
 - [ ] Error count reduced to 0
 - [ ] `make precommit` passes
 - [ ] No manual edits to `src/generated/`
