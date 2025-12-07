@@ -637,8 +637,19 @@ pub trait PpiVisitor {
                                 module_func,
                             ) => {
                                 // Call the registered implementation
-                                // Implementation functions now take (val, ctx) parameters
-                                let args_str = args.join(", ");
+                                // Implementation functions take (val: TagValue, ctx: Option<&ExifContext>) parameters
+                                // Since val is &TagValue but the function expects owned TagValue, clone it
+                                let cloned_args: Vec<String> = args
+                                    .iter()
+                                    .map(|arg| {
+                                        if arg == "val" {
+                                            "val.clone()".to_string()
+                                        } else {
+                                            arg.clone()
+                                        }
+                                    })
+                                    .collect();
+                                let args_str = cloned_args.join(", ");
                                 let full_args = if args_str.is_empty() {
                                     "ctx".to_string()
                                 } else {
