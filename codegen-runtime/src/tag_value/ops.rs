@@ -64,8 +64,8 @@ macro_rules! impl_arithmetic_op {
 
             fn $method(self, rhs: i32) -> Self::Output {
                 match self {
-                    TagValue::U8(a) if rhs >= 0 && rhs <= 255 => TagValue::U8(a $op (rhs as u8)),
-                    TagValue::U16(a) if rhs >= 0 && rhs <= 65535 => TagValue::U16(a $op (rhs as u16)),
+                    TagValue::U8(a) if (0..=255).contains(&rhs) => TagValue::U8(a $op (rhs as u8)),
+                    TagValue::U16(a) if (0..=65535).contains(&rhs) => TagValue::U16(a $op (rhs as u16)),
                     TagValue::U32(a) if rhs >= 0 => TagValue::U32(a $op (rhs as u32)),
                     TagValue::I32(a) => TagValue::I32(a $op rhs),
                     TagValue::F64(a) => TagValue::F64(a $op (rhs as f64)),
@@ -847,7 +847,7 @@ impl Shr<i32> for &TagValue {
 impl TagValue {
     fn shl(&self, rhs: i32) -> TagValue {
         if rhs < 0 {
-            return (&self).shr(-rhs);
+            return self.shr(-rhs);
         }
 
         match self {
