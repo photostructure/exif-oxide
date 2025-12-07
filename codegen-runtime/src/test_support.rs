@@ -25,7 +25,7 @@ pub fn test_tag_value(input: &str) -> TagValue {
         "bytes" => TagValue::Binary(vec![0x12, 0x34, 0x56, 0x78]),
         "string" => TagValue::string("test string"),
         "number" => TagValue::U32(42),
-        "float" => TagValue::F64(3.14159),
+        "float" => TagValue::F64(std::f64::consts::PI),
         _ => TagValue::string(input),
     }
 }
