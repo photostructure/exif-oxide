@@ -9,6 +9,27 @@ pub use unpack::unpack_binary;
 
 use crate::TagValue;
 
+/// Join a vector of TagValues with a separator
+///
+/// Implements: join "separator", @array
+/// This joins a list of values with the given separator.
+///
+/// # Arguments
+/// * `separator` - String to join results with (e.g., " ", "-")
+/// * `values` - Slice of TagValues to join
+///
+/// # Example
+/// ```rust
+/// # use codegen_runtime::{TagValue, join_vec};
+/// let values = vec![TagValue::String("a".into()), TagValue::String("b".into())];
+/// let result = join_vec(" ", &values);
+/// // Returns: TagValue::String("a b")
+/// ```
+pub fn join_vec(separator: &str, values: &[TagValue]) -> TagValue {
+    let strings: Vec<String> = values.iter().map(|v| v.to_string()).collect();
+    TagValue::String(strings.join(separator))
+}
+
 /// Pack "C*" with bit extraction pattern
 ///
 /// Implements: pack "C*", map { (($val>>$_)&mask)+offset } shifts...

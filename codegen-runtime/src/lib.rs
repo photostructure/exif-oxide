@@ -27,7 +27,7 @@ pub use types::{ExifContext, ExifError};
 pub use array_helpers::get_array_element;
 
 // Re-export data functions commonly used by generated code
-pub use data::{join_unpack_binary, pack_c_star_bit_extract, unpack_binary};
+pub use data::{join_unpack_binary, join_vec, pack_c_star_bit_extract, unpack_binary};
 
 // Re-export fmt functions commonly used by generated code
 pub use fmt::{sprintf_perl, sprintf_split_values, sprintf_with_string_concat_repeat};
