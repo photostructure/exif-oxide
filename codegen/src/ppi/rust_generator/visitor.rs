@@ -223,9 +223,14 @@ pub trait PpiVisitor {
             // Add f64 suffix for floats
             Ok(format!("{}f64", raw_number))
         } else {
-            // For integers, use i32 suffix since that's what the operators support
-            // (codegen-runtime only implements Mul<i32> and Mul<f64>, not Mul<u32>)
-            Ok(format!("{}i32", raw_number))
+            // For integers, check if they fit in i32 range before using i32 suffix
+            // Large literals like 4294967296 need i64 suffix
+            let num: i64 = raw_number.parse().unwrap_or(0);
+            if num >= i32::MIN as i64 && num <= i32::MAX as i64 {
+                Ok(format!("{}i32", raw_number))
+            } else {
+                Ok(format!("{}i64", raw_number))
+            }
         }
     }
 
@@ -469,6 +474,8 @@ pub trait PpiVisitor {
                 // The unpack results should be passed directly as sprintf args (splatted)
                 if node.children.len() >= 2 {
                     let second_child = &node.children[1];
+
+                    // Check for normalized FunctionCall
                     if second_child.class == "FunctionCall"
                         && second_child.content.as_deref() == Some("unpack")
                         && second_child.children.len() == 2
@@ -496,6 +503,21 @@ pub trait PpiVisitor {
                                 format_str, unpack_format, data
                             )),
                         };
+                    }
+
+                    // Check for un-normalized expression containing unpack word
+                    // Pattern: PPI::Statement::Expression with [Word("unpack"), Quote(format)]
+                    // followed by a third child which is the data
+                    if second_child.class == "PPI::Statement::Expression"
+                        && second_child.children.len() >= 2
+                        && second_child.children[0].class == "PPI::Token::Word"
+                        && second_child.children[0].content.as_deref() == Some("unpack")
+                        && node.children.len() >= 3
+                    {
+                        // This pattern can't be reliably handled - trigger fallback
+                        return Err(CodeGenError::UnsupportedStructure(
+                            "sprintf with unpack without parentheses requires fallback".to_string(),
+                        ));
                     }
                 }
 
@@ -1604,9 +1626,20 @@ pub trait PpiVisitor {
         // Generate appropriate Rust code for the binary operation
         match operator.as_str() {
             "*" | "/" | "+" | "-" | "%" => {
-                // Arithmetic operations - ensure proper TagValue operations
-                // The TagValue ops crate handles all these operations correctly
-                Ok(format!("({} {} {})", left, operator, right))
+                // Arithmetic operations with TagValue - ops crate handles these.
+                // For pure numeric literal division (254.5 / 60), Rust requires matching
+                // types. Cast integers to f64 when mixed with floats.
+                let is_float = |s: &str| s.contains('.') || s.ends_with("f64");
+                let is_int = |s: &str| s.ends_with("i32") || s.ends_with("u32");
+
+                let (l, r) = if operator == "/" && is_float(&left) && is_int(&right) {
+                    (left.clone(), format!("{} as f64", right))
+                } else if operator == "/" && is_int(&left) && is_float(&right) {
+                    (format!("{} as f64", left), right.clone())
+                } else {
+                    (left, right)
+                };
+                Ok(format!("({} {} {})", l, operator, r))
             }
             "**" => {
                 // Power operator -> use power function which takes TagValue args (owned)
