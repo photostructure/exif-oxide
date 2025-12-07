@@ -10,12 +10,18 @@ all: codegen
 codegen:
 	@flock --exclusive --timeout=30 .make.flock $(MAKE) --no-print-directory codegen-flocked
 
-# We can't have codegen-flocked depend on `clean`, as that breaks concurrent builds. 
+# We can't have codegen-flocked depend on `clean`, as that breaks concurrent builds.
+# TODO: When codegen is stable, switch to `cargo run --release` for faster execution.
+#
+# HOWTO control verbosity:
+#   RUST_LOG=warn make codegen   # quiet: warnings only
+#   RUST_LOG=debug make codegen  # verbose: per-module details
+#   RUST_LOG=trace make codegen  # very verbose: PPI node inspection
 codegen-flocked:
 	@echo "🔧 Applying universal ExifTool patching..." ; \
 	./scripts/exiftool-patcher.sh ; \
 	echo "🚀 Running Rust codegen..." ; \
-	RUST_LOG=info cargo run ; ret=$$? ; \
+	RUST_LOG=warn cargo run ; ret=$$? ; \
 	if [ $$ret -eq 0 ]; then \
 		echo "🔧 Reformatting generated Rust code..." ; \
 		cd .. && cargo fmt -- src/generated/**/*.rs 2>/dev/null ; \

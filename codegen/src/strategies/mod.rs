@@ -379,7 +379,7 @@ impl StrategyDispatcher {
         } else {
             // No strategy could handle this symbol
             let total_time = single_symbol_start.elapsed();
-            warn!(
+            info!(
                 "⚠️  No strategy found for symbol: {} (type: {}, module: {}) after {:.2}ms",
                 symbol.name,
                 symbol.symbol_type,
