@@ -49,6 +49,10 @@ pub fn is_boolean_expression(s: &str) -> bool {
         || s.contains(">=")
         || s.contains(".is_truthy()")
         || s.contains(".is_empty()")
+        || s.contains(".contains(")
+        || s.contains(".is_match(")
+        || s.starts_with('!')      // Negation: !expr
+        || s.starts_with("(!")     // Negation in parens: (!expr)
         // Simple < and > need special handling to avoid matching << and >>
         || (s.contains('<') && !s.contains("<<") && !s.contains("<="))
         || (s.contains('>') && !s.contains(">>") && !s.contains(">="))
