@@ -50,11 +50,12 @@ fn unpack_bytes(spec: &str, bytes: &[u8]) -> Vec<TagValue> {
                     2 // Default to 2 hex digits
                 };
 
-                let byte_count = (hex_count + 1) / 2; // Round up
+                let byte_count = hex_count.div_ceil(2);
                 let mut hex_str = String::new();
                 for _ in 0..byte_count {
                     if byte_index < bytes.len() {
-                        hex_str.push_str(&format!("{:02x}", bytes[byte_index]));
+                        let b = bytes[byte_index];
+                        hex_str.push_str(&format!("{b:02x}"));
                         byte_index += 1;
                     } else {
                         hex_str.push_str("00");
