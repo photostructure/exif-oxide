@@ -465,6 +465,40 @@ pub trait PpiVisitor {
                     format_str.clone()
                 };
 
+                // Special handling for "sprintf FORMAT, unpack SPEC, DATA" pattern
+                // The unpack results should be passed directly as sprintf args (splatted)
+                if node.children.len() >= 2 {
+                    let second_child = &node.children[1];
+                    if second_child.class == "FunctionCall"
+                        && second_child.content.as_deref() == Some("unpack")
+                        && second_child.children.len() == 2
+                    {
+                        // Extract unpack's format and data directly
+                        let unpack_format = self.visit_node(&second_child.children[0])?;
+                        // Unwrap TagValue conversion for unpack format string too
+                        let unpack_format = if unpack_format.starts_with("Into::<TagValue>::into(")
+                            && unpack_format.ends_with(")")
+                        {
+                            let inner = &unpack_format[23..unpack_format.len() - 1];
+                            inner.to_string()
+                        } else {
+                            unpack_format
+                        };
+                        let data = self.visit_node(&second_child.children[1])?;
+                        // Pass unpack result directly as &[TagValue] slice
+                        return match self.expression_type() {
+                            ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
+                                "TagValue::String(codegen_runtime::sprintf_perl({}, &codegen_runtime::unpack_binary({}, &{})))",
+                                format_str, unpack_format, data
+                            )),
+                            _ => Ok(format!(
+                                "codegen_runtime::sprintf_perl({}, &codegen_runtime::unpack_binary({}, &{}))",
+                                format_str, unpack_format, data
+                            )),
+                        };
+                    }
+                }
+
                 let sprintf_args = if args.len() > 1 {
                     let cloned_args = args[1..]
                         .iter()
@@ -563,7 +597,17 @@ pub trait PpiVisitor {
                         "unpack requires exactly 2 arguments (format, data)".to_string(),
                     ));
                 }
+                // Unwrap TagValue conversion for format string (same as sprintf)
                 let format_str = &args[0];
+                let format_str = if format_str.starts_with("Into::<TagValue>::into(")
+                    && format_str.ends_with(")")
+                {
+                    // Extract the inner string literal from Into::<TagValue>::into("string")
+                    let inner = &format_str[23..format_str.len() - 1];
+                    inner.to_string()
+                } else {
+                    format_str.clone()
+                };
                 let data = &args[1];
                 // unpack_binary returns Vec<TagValue>, wrap in TagValue::Array
                 Ok(format!(
@@ -1554,9 +1598,22 @@ pub trait PpiVisitor {
                 Ok(format!("({} {} {})", left, operator, right))
             }
             "**" => {
-                // Power operator -> use power function which takes TagValue args
-                let left_wrapped = wrap_literal_for_tagvalue(&left);
-                let right_wrapped = wrap_literal_for_tagvalue(&right);
+                // Power operator -> use power function which takes TagValue args (owned)
+                // power() takes TagValue, not &TagValue, so we need to:
+                // 1. Wrap literals with Into::<TagValue>::into()
+                // 2. Clone references like 'val' to make them owned
+                let wrap_for_power = |s: &str| -> String {
+                    if s.ends_with("i32") || s.ends_with("f64") || s.ends_with("u32") {
+                        format!("Into::<TagValue>::into({})", s)
+                    } else if s == "val" {
+                        // Clone the reference to get owned TagValue
+                        "val.clone()".to_string()
+                    } else {
+                        s.to_string()
+                    }
+                };
+                let left_wrapped = wrap_for_power(&left);
+                let right_wrapped = wrap_for_power(&right);
                 Ok(format!("power({}, {})", left_wrapped, right_wrapped))
             }
             "." => {
