@@ -5,7 +5,8 @@
 
 use super::errors::CodeGenError;
 use super::expressions::{
-    wrap_branch_for_owned, wrap_condition_for_bool, wrap_literal_for_tagvalue,
+    is_boolean_expression, wrap_branch_for_owned, wrap_condition_for_bool,
+    wrap_literal_for_tagvalue,
 };
 use crate::impl_registry::lookup_function;
 use crate::ppi::types::*;
@@ -522,6 +523,27 @@ pub trait PpiVisitor {
                 Ok(format!("codegen_runtime::{}({})", func_name, args_str))
             }
             "join" => {
+                // Special handling for "join SEP, unpack FORMAT, DATA" pattern
+                // Check if second child (before visiting) is an unpack FunctionCall
+                if node.children.len() >= 2 {
+                    let second_child = &node.children[1];
+                    if second_child.class == "FunctionCall"
+                        && second_child.content.as_deref() == Some("unpack")
+                        && second_child.children.len() == 2
+                    {
+                        // Extract unpack's format and data directly
+                        let separator = &args[0]; // Already visited
+                        let format_str = self.visit_node(&second_child.children[0])?;
+                        let data = self.visit_node(&second_child.children[1])?;
+                        // join_unpack_binary already returns TagValue
+                        return Ok(format!(
+                            "codegen_runtime::join_unpack_binary({}, {}, &{})",
+                            separator, format_str, data
+                        ));
+                    }
+                }
+
+                // Fallback for other join patterns (joining arrays, etc.)
                 if args.len() != 2 {
                     return Err(CodeGenError::UnsupportedStructure(
                         "join requires exactly 2 arguments (separator, list)".to_string(),
@@ -529,16 +551,11 @@ pub trait PpiVisitor {
                 }
                 let separator = &args[0];
                 let list = &args[1];
-                match self.expression_type() {
-                    ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::String(codegen_runtime::join_unpack_binary({}, &{}))",
-                        separator, list
-                    )),
-                    _ => Ok(format!(
-                        "codegen_runtime::join_unpack_binary({}, &{})",
-                        separator, list
-                    )),
-                }
+                // Use join_vec for non-unpack cases
+                Ok(format!(
+                    "codegen_runtime::join_vec({}, &{})",
+                    separator, list
+                ))
             }
             "unpack" => {
                 if args.len() != 2 {
@@ -548,16 +565,11 @@ pub trait PpiVisitor {
                 }
                 let format_str = &args[0];
                 let data = &args[1];
-                match self.expression_type() {
-                    ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::String(codegen_runtime::unpack_binary({}, &{}))",
-                        format_str, data
-                    )),
-                    _ => Ok(format!(
-                        "codegen_runtime::unpack_binary({}, &{})",
-                        format_str, data
-                    )),
-                }
+                // unpack_binary returns Vec<TagValue>, wrap in TagValue::Array
+                Ok(format!(
+                    "TagValue::Array(codegen_runtime::unpack_binary({}, &{}))",
+                    format_str, data
+                ))
             }
             "if" => {
                 // Handle conditional statements created by ConditionalStatementsNormalizer
@@ -599,19 +611,21 @@ pub trait PpiVisitor {
                             }
                         }
                     } else {
-                        // ExifTool function not found in registry - this indicates missing implementation
-                        // Generate a placeholder that will fail compilation with a clear error message
+                        // ExifTool function not found in registry - trigger fallback
+                        // Per P01: "If codegen can't generate valid Rust, throw UnsupportedStructure"
                         tracing::warn!("Unknown ExifTool function: {}", func_name);
-                        Ok(format!(
-                            "/* MISSING EXIFTOOL FUNCTION: {} */ {}({})",
-                            func_name,
-                            func_name,
-                            args.join(", ")
-                        ))
+                        Err(CodeGenError::UnsupportedStructure(format!(
+                            "ExifTool function '{}' not implemented - requires fallback",
+                            func_name
+                        )))
                     }
                 } else {
-                    // Generic function call
-                    Ok(format!("{}({})", func_name, args.join(", ")))
+                    // Unknown function - trigger fallback to placeholder
+                    // Per P01: "If codegen can't generate valid Rust, throw UnsupportedStructure"
+                    Err(CodeGenError::UnsupportedStructure(format!(
+                        "Unknown function '{}' requires fallback implementation",
+                        func_name
+                    )))
                 }
             }
         }
@@ -1666,9 +1680,30 @@ pub trait PpiVisitor {
                 // Numeric comparisons
                 Ok(format!("({} {} {})", left, operator, right))
             }
-            "&&" | "||" => {
-                // Logical operations
-                Ok(format!("({} {} {})", left, operator, right))
+            "&&" => {
+                // Logical AND - in Perl returns first falsy or last value
+                // For simplicity, we treat as boolean when both sides are comparisons
+                if is_boolean_expression(&left) && is_boolean_expression(&right) {
+                    Ok(format!("({} && {})", left, right))
+                } else {
+                    // Perl semantics: return left if falsy, else right
+                    Ok(format!(
+                        "if ({}).is_truthy() {{ {} }} else {{ {}.clone() }}",
+                        left,
+                        wrap_branch_for_owned(&right),
+                        left
+                    ))
+                }
+            }
+            "||" => {
+                // Perl || returns first truthy value or last value
+                // NOT a boolean OR - it returns the actual value
+                Ok(format!(
+                    "if ({}).is_truthy() {{ {}.clone() }} else {{ {} }}",
+                    left,
+                    left,
+                    wrap_branch_for_owned(&right)
+                ))
             }
             "&" | "|" | "^" => {
                 // Bitwise operations
