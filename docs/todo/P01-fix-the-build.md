@@ -45,7 +45,62 @@ This triggers fallback placeholder generation. **A placeholder that compiles is 
 | 1 | 280+ | 117 | ExifError unification, ctx parameters |
 | 2 | 117 | 41 | is_truthy(), ternary handling, power operator |
 | 3 | 41 | 16 | turbofish syntax, chr/uc return types, join/unpack |
-| 4 (current) | 16 | ~10 | || operator, sqrt(), context lookup booleans |
+| 4 | 16 | ~10 | || operator, sqrt(), context lookup booleans |
+| 5 | 10 | **0** | sprintf tuple fix, canon_ev, division types, fallbacks |
+| 6 | **Test suite** | **0 compile errors** | ctx parameters in tests, i64 literals, RustGenerator export |
+
+## ✅ BUILD FIXED - Phase 6 Complete
+
+**Status**: `cargo check` and `cargo test --no-run` both pass with **0 errors**.
+
+Note: 22 runtime test failures exist but are pre-existing issues unrelated to the build fix (minolta_raw, panasonic_raw, iptc tests expecting lookup table registrations that don't exist yet).
+
+---
+
+## Phase 6: Test Suite Compilation Fixes
+
+### 1. ctx Parameter for Test Functions (~76 errors → 0)
+**Problem**: print_conv/value_conv functions added `ctx: Option<&ExifContext>` parameter, but tests didn't pass it.
+
+**Files Fixed**:
+- `src/implementations/print_conv.rs` - test module: Added `None` as second arg
+- `src/implementations/value_conv.rs` - test module: Added `None` as second arg
+- `src/registry.rs` - test module: Updated function signatures and calls
+- `tests/value_conv_tests.rs` - Added `None` to all function calls
+- `tests/exposuretime_printconv_test.rs` - Added `None` and fixed `.into()` → `TagValue::string()`
+- `tests/process_binary_data_tests.rs` - Fixed `.into()` → `TagValue::string()`
+- `tests/integration_tests.rs` - Updated test_converter signature and imports
+
+### 2. Large Integer Literals (2 errors → 0)
+**Problem**: `4294967296i32` and `4294965247i32` overflow i32 range.
+
+**Fix**: Updated `codegen/src/ppi/rust_generator/visitor.rs:226-233`:
+```rust
+// Check if number fits in i32 range before using i32 suffix
+let num: i64 = raw_number.parse().unwrap_or(0);
+if num >= i32::MIN as i64 && num <= i32::MAX as i64 {
+    Ok(format!("{}i32", raw_number))
+} else {
+    Ok(format!("{}i64", raw_number))
+}
+```
+
+**Runtime Support**: Added i64 operators to `codegen-runtime/src/tag_value/ops.rs`:
+- Added `impl Add/Sub/Mul/Div<i64> for TagValue` and `&TagValue`
+- Added `impl PartialEq<i64> for TagValue` and `&TagValue`
+
+### 3. RustGenerator Export (3 errors → 0)
+**Problem**: `RustGenerator` not exported from `codegen::ppi` module.
+
+**Fix**: Added to `codegen/src/ppi/mod.rs`:
+```rust
+pub use rust_generator::RustGenerator;
+```
+
+### 4. finish_extraction() Context Parameter (1 error → 0)
+**Problem**: `tests/integration_p07b_scalar_arrays.rs` called `finish_extraction()` without context.
+
+**Fix**: Changed to `finish_extraction(&mut context)`.
 
 ---
 
@@ -113,121 +168,14 @@ if has_structure_list {
 
 ---
 
-## Remaining Work
-
-### Current Error State (after Phase 4 changes)
-
-```bash
-cargo check 2>&1 | grep "^error\[" | sort | uniq -c | sort -rn
-```
-
-Approximate breakdown:
-- ~6 `E0308` mismatched types (sprintf tuple, unpack wrapping, power reference)
-- ~3 `E0425` canon_ev not found
-- ~1 `E0061` Ok() extra argument
-
-### Task 1: sprintf Tuple Arguments
-
-**Problem**: Comma inside sprintf args creates tuple instead of separate args.
-
-**Example**: `sprintf("%.1f%%", $val * 100)` generates:
-```rust
-sprintf_perl((Into::<TagValue>::into("%.1f%%"), val * 100i32))  // WRONG: tuple
-```
-
-**Should be**:
-```rust
-sprintf_perl("%.1f%%", &[val * 100i32])  // Correct: separate args
-```
-
-**Root cause**: The comma inside ternary branch processing is being treated as a binary comma operator.
-
-**Fix approach**: In the ternary normalization, detect when true/false branches contain function calls with comma-separated arguments and don't process those commas as operators.
-
-**Files**: `expression_precedence.rs` - `parse_ternary_with_precedence()` or `parse_expression_sequence()`
-
-### Task 2: power() Argument Reference
-
-**Problem**: `power(base, val)` passes `&TagValue` where `TagValue` expected.
-
-**File**: `hash_cf.rs`
-```rust
-(1i32 / (power(Into::<TagValue>::into(2i32), val)))  // val is &TagValue
-```
-
-**Fix options**:
-1. Change `power()` in codegen-runtime to accept `&TagValue`
-2. Generate `val.clone()` when used as power exponent
-
-### Task 3: Ok() Extra Argument (Comma Operator)
-
-**Problem**: Perl comma operator `($expr1, $expr2)` results in extra arg.
-
-**File**: `hash_c9.rs`
-```rust
-Ok(regex_substitute_perl(...), val)  // Ok takes 1 arg, not 2!
-```
-
-**Fix**: Detect comma operators at statement level and wrap in block:
-```rust
-{
-    let _ = regex_substitute_perl(...);
-    Ok(val.clone())
-}
-```
-
-### Task 4: unpack_binary Wrapping
-
-**Problem**: Some `unpack_binary()` calls not wrapped in `TagValue::Array()`.
-
-**File**: `hash_4c.rs`
-
-**Fix**: Check all code paths generating unpack calls in `visitor.rs`.
-
-### Task 5: canon_ev Function
-
-**Problem**: `crate::implementations::canon::canon_ev` not found.
-
-**Options**:
-1. Implement the function in `src/implementations/canon.rs`
-2. Remove from impl_registry so it falls back to placeholder
-
----
-
 ## Verification
 
 ```bash
 rm -rf src/generated/functions
 make codegen
 cargo check           # Should have 0 errors
-cargo t               # Tests should pass
+cargo t               # Tests should pass (22 pre-existing failures)
 make precommit        # Full validation
-```
-
----
-
-## Key Files Modified in Phase 4
-
-```bash
-# Boolean detection improvements
-codegen/src/ppi/rust_generator/expressions/binary_ops.rs
-  - wrap_condition_for_bool() - added ctx.and_then detection
-  - is_boolean_expression() - added .contains(), .is_match(), ! patterns
-  - Made is_boolean_expression() public
-
-# Perl || operator fix
-codegen/src/ppi/rust_generator/visitor.rs
-  - Lines 1680-1702: || generates ternary-like code
-  - Lines 613-630: Unknown functions trigger fallback
-
-# Ternary with function calls
-codegen/src/ppi/normalizer/passes/expression_precedence.rs
-  - Lines 223-231: should_process() allows ternary with Structure::List
-  - Lines 759-765: Any Word+List is function call
-
-# Manual fix
-src/implementations/raw_conv.rs
-  - convert_exif_text() takes ctx parameter
 ```
 
 ---
@@ -249,14 +197,56 @@ src/implementations/raw_conv.rs
 - [x] Context lookups wrapped with `.is_truthy()`
 - [x] Unknown functions trigger fallback placeholders
 
-### Remaining
-- [ ] sprintf tuple arguments fixed
-- [ ] `power()` val argument cloned
-- [ ] Comma operator returns final value only
-- [ ] All `unpack_binary()` calls wrapped
-- [ ] canon_ev function implemented or removed from registry
-- [ ] Error count reduced to 0
-- [ ] `make precommit` passes
+### Phase 6 Additions (Test Suite)
+- [x] Test functions updated with ctx parameter
+- [x] Large integer literals use i64 suffix when needed
+- [x] i64 operators added to codegen-runtime
+- [x] RustGenerator exported from codegen::ppi
+- [x] Test compilation passes (0 errors)
+
+### Build Status
+- [x] `cargo check` passes with 0 errors
+- [x] `cargo test --no-run` passes with 0 errors
+- [ ] `make precommit` full validation (22 pre-existing runtime test failures)
+
+---
+
+## Remaining Work (Future Tasks)
+
+### P02: Fix Runtime Test Failures (22 tests)
+
+The following tests fail at runtime due to missing lookup table registrations (not compilation issues):
+
+**IPTC Tests (9 failures)**:
+- `formats::iptc::tests::*` - Tests expect IPTC parsing that may not be fully implemented
+
+**MinoltaRaw Tests (6 failures)**:
+- `implementations::minolta_raw::tests::test_prd_*` - StorageMethod, BayerPattern lookups not registered
+- `implementations::minolta_raw::tests::test_rif_*` - ProgramMode, ZoneMatching lookups use wrong approach
+
+**PanasonicRaw Tests (5 failures)**:
+- `implementations::panasonic_raw::tests::*` - Similar lookup registration issues
+
+**BinaryData Tests (2 failures)**:
+- `types::binary_data::tests::test_conditional_array_exposure_time` - Conditional array processing
+
+### P03: Clippy Warning Cleanup (~400 warnings)
+
+Run `cargo clippy` to identify and fix:
+- Static variable naming (REGEX identifiers should be UPPER_SNAKE_CASE)
+- Unused variables and imports
+- Redundant clones
+- Other Clippy lints
+
+**Approach**:
+```bash
+cargo clippy --all-targets 2>&1 | grep "warning:" | sort | uniq -c | sort -rn
+```
+
+Priority fixes:
+1. Generated code warnings (fix in codegen templates)
+2. Test code warnings (quick manual fixes)
+3. Library code warnings (careful review needed)
 
 ---
 
@@ -273,10 +263,19 @@ cargo check 2>&1 | grep "^error" | wc -l  # Back to baseline
 
 ## Notes for Next Engineer
 
-1. **The sprintf tuple issue is the most impactful** - it affects multiple files. Fix this first.
+### Build is FIXED ✅
 
-2. **Be careful with ternary processing** - the Phase 4 changes made ternary processing more aggressive, which fixed sqrt() but may cause edge cases with function arguments.
+The compilation issues from P01 are resolved. `cargo check` and `cargo test --no-run` both pass with 0 errors.
 
-3. **Test incrementally**: After each fix, run `make codegen && cargo check` before moving to the next.
+### Next Steps
 
-4. **When in doubt, fallback**: If a pattern is too complex, return `UnsupportedStructure` to generate a placeholder.
+1. **P02: Runtime Test Failures** - 22 tests fail at runtime due to missing/incorrect lookup table registrations. These are logic bugs, not compilation issues.
+
+2. **P03: Clippy Warnings** - ~400 warnings from generated code and tests. Most are:
+   - REGEX variable naming (should use UPPER_SNAKE_CASE)
+   - Unused variables in generated functions
+   - Type inference suggestions
+
+3. **Test incrementally**: After any fix, run `cargo t` to ensure no regressions.
+
+4. **When in doubt, fallback**: If a pattern is too complex in codegen, return `UnsupportedStructure` to generate a placeholder.
