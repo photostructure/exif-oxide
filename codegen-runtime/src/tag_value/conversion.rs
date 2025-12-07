@@ -230,15 +230,15 @@ impl From<&TagValue> for TagValue {
 
 /// Convert TagValue to f64 for numeric operations
 /// Provides a convenient cast for math operations in generated code
-impl Into<f64> for &TagValue {
-    fn into(self) -> f64 {
-        self.as_f64().unwrap_or(0.0)
+impl From<&TagValue> for f64 {
+    fn from(val: &TagValue) -> Self {
+        val.as_f64().unwrap_or(0.0)
     }
 }
 
-impl Into<f64> for TagValue {
-    fn into(self) -> f64 {
-        self.as_f64().unwrap_or(0.0)
+impl From<TagValue> for f64 {
+    fn from(val: TagValue) -> Self {
+        val.as_f64().unwrap_or(0.0)
     }
 }
 
