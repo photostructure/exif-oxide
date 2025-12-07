@@ -91,10 +91,10 @@ pub fn join_unpack_binary(separator: &str, format: &str, val: &TagValue) -> TagV
         .iter()
         .map(|v| match v {
             TagValue::String(s) => s.clone(),
-            TagValue::U8(n) => format!("{:02x}", n),
-            TagValue::U16(n) => format!("{:04x}", n),
-            TagValue::U32(n) => format!("{:08x}", n),
-            TagValue::I32(n) => format!("{:02x}", *n as u8),
+            TagValue::U8(n) => format!("{n:02x}"),
+            TagValue::U16(n) => format!("{n:04x}"),
+            TagValue::U32(n) => format!("{n:08x}"),
+            TagValue::I32(n) => { let b = *n as u8; format!("{b:02x}") }
             _ => v.to_string(),
         })
         .collect();
