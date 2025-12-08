@@ -483,8 +483,7 @@ impl StrategyDispatcher {
         if total_attempts > 0 {
             let overall_rate = (total_successes as f64 / total_attempts as f64) * 100.0;
             log_content.push_str(&format!(
-                "\nOverall: {:.1}% ({}/{}) conversions processed by PPI\n",
-                overall_rate, total_successes, total_attempts
+                "\nOverall: {overall_rate:.1}% ({total_successes}/{total_attempts}) conversions processed by PPI\n"
             ));
         }
 
