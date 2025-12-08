@@ -378,7 +378,7 @@ mod tests {
         assert!(CANON_MAIN_TAGS.get(&0x9999).is_none());
 
         // Test that all tags have valid IDs and names
-        for (_id, tag) in &*CANON_MAIN_TAGS {
+        for tag in (*CANON_MAIN_TAGS).values() {
             assert!(!tag.name.is_empty());
         }
     }
