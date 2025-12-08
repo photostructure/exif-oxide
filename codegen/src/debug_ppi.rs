@@ -15,7 +15,9 @@ use anyhow::Result;
 use clap::Parser;
 use serde_json;
 
-use codegen::ppi::shared_pipeline::{process_perl_expression, process_perl_expression_with_context};
+use codegen::ppi::shared_pipeline::{
+    process_perl_expression, process_perl_expression_with_context,
+};
 use codegen::ppi::types::{ExpressionContext, ExpressionType, PpiNode};
 
 #[derive(Parser)]
