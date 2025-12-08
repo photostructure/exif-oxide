@@ -247,13 +247,14 @@ fn test_gps_timestamp_valid() {
         panic!("Expected String result");
     }
 
-    // Timestamp with fractional seconds (should truncate)
+    // Timestamp with fractional seconds (should preserve per ExifTool behavior)
+    // ExifTool: GPS.pm:459-475 ConvertTimeStamp preserves fractional seconds
     let rationals = vec![(14, 1), (30, 1), (455, 10)];
     let time_value = TagValue::RationalArray(rationals);
 
     let result = gpstimestamp_value_conv(&time_value, None).unwrap();
     if let TagValue::String(time_str) = result {
-        assert_eq!(time_str, "14:30:45");
+        assert_eq!(time_str, "14:30:45.5");
     } else {
         panic!("Expected String result");
     }
