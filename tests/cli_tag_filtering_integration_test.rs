@@ -348,38 +348,52 @@ fn test_no_matches_wildcard() {
 
 #[test]
 fn test_multiple_glob_patterns() {
-    // Test multiple glob patterns: -GPS* -Composite*
+    // Test multiple glob patterns: -*Date* -*Width*
+    // Note: We use patterns that match tags exif-oxide actually produces
+    // (Composite tags are not yet implemented)
     let filter = FilterOptions {
         requested_tags: vec![],
         requested_groups: vec![],
         group_all_patterns: vec![],
         extract_all: false,
         numeric_tags: HashSet::new(),
-        glob_patterns: vec!["GPS*".to_string(), "Composite*".to_string()],
+        glob_patterns: vec!["*Date*".to_string(), "*Width*".to_string()],
     };
 
     let result = extract_metadata(Path::new(TEST_IMAGE_CANON), false, false, Some(filter)).unwrap();
 
-    // Should contain both GPS and Composite tags
-    let _gps_count = result
+    // Should contain both Date and Width tags
+    let date_count = result
         .tags
         .iter()
-        .filter(|t| t.name.starts_with("GPS"))
+        .filter(|t| t.name.to_lowercase().contains("date"))
         .count();
-    let composite_count = result
+    let width_count = result
         .tags
         .iter()
-        .filter(|t| t.group == "Composite")
+        .filter(|t| t.name.to_lowercase().contains("width"))
         .count();
 
-    // Canon T3i should have Composite tags but no GPS
+    // Canon T3i has multiple date tags (CreateDate, DateTimeOriginal, ModifyDate, FileModifyDate, etc.)
     assert!(
-        composite_count > 0,
-        "Expected Composite tags, found {} composite tags, {} total tags",
-        composite_count,
+        date_count >= 3,
+        "Expected at least 3 date tags, found {} date tags, {} total tags",
+        date_count,
         result.tags.len()
     );
-    // Note: eos_rebel_t3i.jpg doesn't have GPS data, so gps_count may be 0
+    // Canon T3i has width tags (ImageWidth, ExifImageWidth)
+    assert!(
+        width_count >= 2,
+        "Expected at least 2 width tags, found {} width tags, {} total tags",
+        width_count,
+        result.tags.len()
+    );
+    // Combined count should be meaningful
+    assert!(
+        result.tags.len() >= 5,
+        "Expected at least 5 tags total from multiple patterns, got {}",
+        result.tags.len()
+    );
 }
 
 #[test]
