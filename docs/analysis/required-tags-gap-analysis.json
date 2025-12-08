@@ -273,38 +273,61 @@
         "XMP_cc": {
           "file": "lib/Image/ExifTool/XMP2.pl",
           "lines": "1420-1470",
-          "tags": ["License", "AttributionName", "AttributionURL", "UseGuidelines", "Permits", "Requires", "Prohibits", "Jurisdiction"]
+          "tags": [
+            "License",
+            "AttributionName",
+            "AttributionURL",
+            "UseGuidelines",
+            "Permits",
+            "Requires",
+            "Prohibits",
+            "Jurisdiction"
+          ]
         },
         "XMP_mwg_rs": {
           "file": "lib/Image/ExifTool/MWG.pm",
           "lines": "473-481",
-          "tags": ["RegionList"]
+          "tags": [
+            "RegionList"
+          ]
         },
         "XMP_mwg_kw": {
           "file": "lib/Image/ExifTool/MWG.pm",
           "lines": "499-523",
-          "tags": ["KeywordInfo", "HierarchicalKeywords"]
+          "tags": [
+            "KeywordInfo",
+            "HierarchicalKeywords"
+          ]
         },
         "XMP_Iptc4xmpExt": {
           "file": "lib/Image/ExifTool/XMP2.pl",
           "lines": "619-640",
-          "tags": ["PersonInImageWDetails", "PersonInImageName"]
+          "tags": [
+            "PersonInImageWDetails",
+            "PersonInImageName"
+          ]
         },
         "XMP_xmpMM": {
           "file": "lib/Image/ExifTool/XMP.pm",
           "line": "341",
-          "tags": ["HistoryWhen"]
+          "tags": [
+            "HistoryWhen"
+          ]
         },
         "XMP_mediapro": {
           "file": "lib/Image/ExifTool/XMP2.pl",
           "line": "1523",
-          "tags": ["People"]
+          "tags": [
+            "People"
+          ]
         },
         "EXIF_DNG": {
           "file": "lib/Image/ExifTool/Exif.pm",
           "lines": "3475-3483",
           "tag_id": "0xc630",
-          "tags": ["DNGLensInfo"]
+          "tags": [
+            "DNGLensInfo"
+          ]
         }
       },
       "removed_tags": {
