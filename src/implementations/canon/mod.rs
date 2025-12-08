@@ -986,33 +986,12 @@ pub fn apply_camera_settings_print_conv(
     // Get the tag kit ID for this tag name
     if let Some(tag_id) = get_canon_camera_settings_tag_id(tag_name) {
         debug!("Found tag kit ID {} for tag {}", tag_id, tag_name);
-        // Use unified tag kit system for PrintConv
-        let _errors: Vec<String> = Vec::new();
-        let _warnings: Vec<String> = Vec::new();
-
         // TODO: Task E - Replace tag_kit::apply_print_conv with Canon-specific implementation
-        // let result = tag_kit::apply_print_conv(
-        //     tag_id,
-        //     tag_value,
-        //     &mut evaluator,
-        //     &mut errors,
-        //     &mut warnings,
-        // );
         let result = tag_value.clone();
 
-        // Log any warnings from tag kit processing
-        for warning in warnings {
-            debug!("Canon tag kit warning: {}", warning);
-        }
-
-        // Log any errors from tag kit processing
-        for error in errors {
-            debug!("Canon tag kit error: {}", error);
-        }
-
         debug!(
-            "Tag kit PrintConv result for {}: {:?} -> {:?}",
-            tag_name, tag_value, result
+            "Tag kit PrintConv result for {} (tag_id={}): {:?} -> {:?}",
+            tag_name, tag_id, tag_value, result
         );
         return result;
     }
