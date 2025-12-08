@@ -139,7 +139,7 @@ pub fn chr<T: Into<TagValue>>(code_point: T) -> TagValue {
                 char::from(byte_val as u8).to_string()
             } else {
                 // Extended ASCII - convert byte to string
-                vec![byte_val as u8].iter().map(|&b| b as char).collect()
+                [byte_val as u8].iter().map(|&b| b as char).collect()
             };
             TagValue::String(s)
         }
