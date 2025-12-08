@@ -5,6 +5,7 @@ mod simple_array_integration_tests {
     use super::*;
 
     #[test]
+    #[ignore = "Requires codegen/scripts/validate_arrays.pl which is not present"]
     fn test_nikon_xlat_arrays_match_exiftool() {
         // Run the validation script and check exit code
         let output = Command::new("perl")

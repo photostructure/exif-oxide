@@ -39,7 +39,8 @@ fn test_nikon_xlat_arrays_generated() {
         "mod.rs should exist in src/generated/Nikon_pm/"
     );
 
-    let mod_content = fs::read_to_string(&mod_path).expect("Should be able to read Nikon_pm/mod.rs");
+    let mod_content =
+        fs::read_to_string(&mod_path).expect("Should be able to read Nikon_pm/mod.rs");
 
     assert!(
         mod_content.contains("pub mod xlat_0;"),
@@ -178,27 +179,33 @@ fn test_scalar_array_strategy_handles_xlat() {
         "Should generate 2 files for nested xlat array"
     );
 
-    // Verify file names
+    // Verify file names (using Nikon_pm naming convention matching ExifTool module)
     let filenames: Vec<&str> = files.iter().map(|f| f.path.as_str()).collect();
     assert!(
-        filenames.contains(&"nikon/xlat_0.rs"),
-        "Should generate nikon/xlat_0.rs. Generated: {:?}",
+        filenames.contains(&"Nikon_pm/xlat_0.rs"),
+        "Should generate Nikon_pm/xlat_0.rs. Generated: {:?}",
         filenames
     );
     assert!(
-        filenames.contains(&"nikon/xlat_1.rs"),
-        "Should generate nikon/xlat_1.rs. Generated: {:?}",
+        filenames.contains(&"Nikon_pm/xlat_1.rs"),
+        "Should generate Nikon_pm/xlat_1.rs. Generated: {:?}",
         filenames
     );
 
     // Verify content contains expected constants
-    let xlat_0_file = files.iter().find(|f| f.path == "nikon/xlat_0.rs").unwrap();
+    let xlat_0_file = files
+        .iter()
+        .find(|f| f.path == "Nikon_pm/xlat_0.rs")
+        .unwrap();
     assert!(
         xlat_0_file.content.contains("pub static XLAT_0: [u8; 4]"),
         "xlat_0.rs should contain proper constant declaration"
     );
 
-    let xlat_1_file = files.iter().find(|f| f.path == "nikon/xlat_1.rs").unwrap();
+    let xlat_1_file = files
+        .iter()
+        .find(|f| f.path == "Nikon_pm/xlat_1.rs")
+        .unwrap();
     assert!(
         xlat_1_file.content.contains("pub static XLAT_1: [u8; 4]"),
         "xlat_1.rs should contain proper constant declaration"
