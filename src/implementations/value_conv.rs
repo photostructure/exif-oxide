@@ -140,30 +140,57 @@ pub fn fnumber_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Resul
 /// GPS timestamp conversion
 ///
 /// ExifTool: lib/Image/ExifTool/GPS.pm GPSTimeStamp
-/// Converts rational array [hours/1, minutes/1, seconds/100] to "HH:MM:SS" format
+/// ExifTool: lib/Image/ExifTool/GPS.pm:459-475 ConvertTimeStamp
+/// Converts rational array [hours, minutes, seconds] to "HH:MM:SS.xx" format
+/// preserving fractional seconds when present
 pub fn gpstimestamp_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     match value {
         TagValue::RationalArray(rationals) if rationals.len() >= 3 => {
-            let hours = if rationals[0].1 != 0 {
-                rationals[0].0 / rationals[0].1
+            // Convert rationals to floats (hours and minutes are typically whole numbers)
+            let h = if rationals[0].1 != 0 {
+                rationals[0].0 as f64 / rationals[0].1 as f64
             } else {
-                0
+                0.0
             };
 
-            let minutes = if rationals[1].1 != 0 {
-                rationals[1].0 / rationals[1].1
+            let m = if rationals[1].1 != 0 {
+                rationals[1].0 as f64 / rationals[1].1 as f64
             } else {
-                0
+                0.0
             };
 
-            let seconds = if rationals[2].1 != 0 {
-                rationals[2].0 / rationals[2].1
+            let s = if rationals[2].1 != 0 {
+                rationals[2].0 as f64 / rationals[2].1 as f64
             } else {
-                0
+                0.0
             };
 
-            // Format as "HH:MM:SS"
-            let time_string = format!("{hours:02}:{minutes:02}:{seconds:02}");
+            // ExifTool: normalize into H:M:S with any overflow
+            // my $f = (($h || 0) * 60 + ($m || 0)) * 60 + ($s || 0);
+            let mut f = (h * 60.0 + m) * 60.0 + s;
+            let hours = (f / 3600.0) as u32;
+            f -= hours as f64 * 3600.0;
+            let minutes = (f / 60.0) as u32;
+            f -= minutes as f64 * 60.0;
+
+            // Format seconds, preserving fractional part if present
+            // ExifTool: sprintf('%012.9f', $f) then trims trailing zeros
+            let time_string = if f.fract() == 0.0 {
+                // Whole seconds - no decimal point
+                format!("{:02}:{:02}:{:02}", hours, minutes, f as u32)
+            } else {
+                // Has fractional seconds - format and trim trailing zeros
+                let ss = format!("{:.9}", f);
+                let ss = ss.trim_end_matches('0').trim_end_matches('.');
+                // Pad single digit seconds with leading zero
+                let ss = if f < 10.0 && !ss.starts_with('0') {
+                    format!("0{}", ss)
+                } else {
+                    ss.to_string()
+                };
+                format!("{:02}:{:02}:{}", hours, minutes, ss)
+            };
+
             Ok(TagValue::String(time_string))
         }
         _ => Err(ExifError::ParseError(
