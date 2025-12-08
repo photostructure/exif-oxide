@@ -1748,14 +1748,14 @@ pub trait PpiVisitor {
                 Ok(format!("({left_str} {rust_op} {right_str})"))
             }
             "==" | "!=" | "<" | ">" | "<=" | ">=" => {
-                // Numeric comparisons
-                Ok(format!("({left} {operator} {right})"))
+                // Numeric comparisons - no parentheses needed
+                Ok(format!("{left} {operator} {right}"))
             }
             "&&" => {
                 // Logical AND - in Perl returns first falsy or last value
                 // For simplicity, we treat as boolean when both sides are comparisons
                 if is_boolean_expression(&left) && is_boolean_expression(&right) {
-                    Ok(format!("({left} && {right})"))
+                    Ok(format!("{left} && {right}"))
                 } else {
                     // Perl semantics: return left if falsy, else right
                     Ok(format!(
@@ -1777,7 +1777,8 @@ pub trait PpiVisitor {
                 ))
             }
             "&" | "|" | "^" => {
-                // Bitwise operations
+                // Bitwise operations - keep parentheses since these might be used
+                // in conditions and need to preserve precedence with comparisons
                 Ok(format!("({left} {operator} {right})"))
             }
             "x" => {
