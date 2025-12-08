@@ -134,10 +134,7 @@ pub fn sprintf_with_string_concat_repeat(
 /// The original value with a warning comment in debug builds
 pub fn conservative_fallback(original_expression: &str, val: &TagValue) -> TagValue {
     #[cfg(debug_assertions)]
-    eprintln!(
-        "FALLBACK: Complex expression not fully parsed: {}",
-        original_expression
-    );
+    eprintln!("FALLBACK: Complex expression not fully parsed: {original_expression}");
 
     // Conservative approach: return the original value unchanged
     val.clone()
