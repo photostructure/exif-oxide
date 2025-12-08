@@ -417,6 +417,26 @@ pub fn focallength_in_35mm_format_print_conv(
     })
 }
 
+/// Canon FileNumber PrintConv - inserts hyphen before last 4 digits
+/// ExifTool: lib/Image/ExifTool/Canon.pm FileNumber PrintConv
+/// Perl: $_=$val,s/(\d+)(\d{4})/$1-$2/,$_
+/// Example: 1181861 -> "118-1861"
+pub fn canon_file_number_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
+    let s = val.to_string();
+
+    // ExifTool regex: s/(\d+)(\d{4})/$1-$2/
+    // Match any digits followed by exactly 4 digits at end, insert hyphen
+    if s.len() > 4 && s.chars().all(|c| c.is_ascii_digit()) {
+        let split_pos = s.len() - 4;
+        let prefix = &s[..split_pos];
+        let suffix = &s[split_pos..];
+        TagValue::string(format!("{prefix}-{suffix}"))
+    } else {
+        // If not matching pattern, return as-is
+        TagValue::string(s)
+    }
+}
+
 /// Canon Focal Length PrintConv - simple "XX.X mm" formatting
 /// ExifTool: lib/Image/ExifTool/Canon.pm PrintConv: '"$val mm"'
 /// Used for Canon CameraSettings MinFocalLength and MaxFocalLength
