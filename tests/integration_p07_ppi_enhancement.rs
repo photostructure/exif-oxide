@@ -118,6 +118,7 @@ fn test_ppi_coverage_improvement() {
 
 /// Test expression with metadata for coverage analysis
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 struct TestExpression {
     expression: &'static str,
     description: &'static str,
@@ -183,7 +184,7 @@ fn measure_ppi_coverage(expressions: &[TestExpression]) -> CoverageResults {
 }
 
 /// Create synthetic PPI AST for testing (mimics field_extractor.pl output)
-fn create_synthetic_ppi_ast(expression: &str, expr_type: ExpressionType) -> codegen::ppi::PpiNode {
+fn create_synthetic_ppi_ast(expression: &str, _expr_type: ExpressionType) -> codegen::ppi::PpiNode {
     // Create synthetic AST structures that exercise the missing tokens
     // This simulates what we'd get from real Perl PPI parsing
 
@@ -314,6 +315,7 @@ fn json_to_ppi_node(json_value: &serde_json::Value) -> codegen::ppi::PpiNode {
 }
 
 /// Verify that failures are due to expected missing tokens
+#[allow(dead_code)]
 fn verify_expected_token_failures(results: &CoverageResults, expressions: &[TestExpression]) {
     let mut missing_token_failures = 0;
 

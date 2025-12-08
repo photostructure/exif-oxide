@@ -33,5 +33,5 @@ fn test_compilation_succeeds() {
     let _reader = ExifReader::new();
 
     // If we can construct it without panicking, compilation worked
-    assert!(true);
+    // The test passes simply by reaching this point without error
 }

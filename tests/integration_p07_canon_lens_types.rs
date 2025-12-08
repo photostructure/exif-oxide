@@ -39,10 +39,10 @@ fn test_canon_lens_types_module_accessible() {
     use exif_oxide::generated::Canon_pm::canon_lens_types;
 
     // Test that we can call the lookup function at all
-    let _result = canon_lens_types::lookup_canon_lens_types("1");
-
-    // If we get here, the module structure is working
-    assert!(true);
+    // The result may or may not have a value, but the call should succeed
+    let result = canon_lens_types::lookup_canon_lens_types("1");
+    // Assert that we got some option back (either Some or None)
+    let _ = result; // Use result to verify module works
 }
 
 #[test]

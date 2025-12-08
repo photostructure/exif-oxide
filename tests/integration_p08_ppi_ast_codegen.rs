@@ -269,6 +269,7 @@ fn test_ppi_performance_impact() {
 
 // Test helper structures and functions
 
+#[allow(dead_code)]
 struct TestCase {
     expression: &'static str,
     input_value: TagValue,
@@ -278,13 +279,15 @@ struct TestCase {
 
 /// Generate Rust code from PPI AST parsing
 /// This will be implemented as part of Task B
-fn generate_rust_code_from_ppi_ast(expression: &str) -> Result<String, String> {
+#[allow(dead_code)]
+fn generate_rust_code_from_ppi_ast(_expression: &str) -> Result<String, String> {
     // TODO: This is the main function that needs to be implemented
     // Should call field_extractor.pl and then convert PPI AST to Rust
     Err("PPI AST parsing not implemented yet".to_string())
 }
 
 /// Evaluate generated Rust code (placeholder)
+#[allow(dead_code)]
 fn evaluate_generated_code(_generated_code: &str, _input_value: &TagValue) -> TagValue {
     // TODO: Implement evaluation of generated Rust code
     // For now, return a placeholder to make tests compile
