@@ -1811,18 +1811,30 @@ fn is_gps_coordinate_tag(tag_name: &str) -> bool {
     matches!(tag_name, "GPSLatitude" | "GPSLongitude" | "GPSAltitude")
 }
 
-/// Get ExifTool-style priority for a tag based on its group
+/// Get priority for a tag based on its group
 /// Higher numbers = higher priority (will override lower priority tags)
+///
+/// ExifTool's priority system (README lines 499-508, ExifTool.pm:9479):
+/// - Default priority is 1 for all tags
+/// - When priorities are EQUAL, the LATER tag wins (`$priority >= $oldPriority`)
+/// - Some EXIF tags have explicit Priority=>0 to let MakerNotes override them
+///   (e.g., Exif.pm:2813-2816 WhiteBalance: "MakerNotes WhiteBalance is more accurate")
+/// - XMP tables have PRIORITY=>0 ("not as reliable as actual EXIF/TIFF tags")
+///
+/// Our implementation gives MakerNotes higher priority than EXIF to approximate
+/// ExifTool's behavior where manufacturer-specific values are preferred.
 fn get_tag_priority(group: &str, tag_name: &str) -> u8 {
     match group {
         // File group has highest priority (cannot be overridden)
         "File" => 10,
 
-        // EXIF groups have high priority (Priority 1 in ExifTool)
-        "EXIF" | "ExifIFD" | "IFD0" | "IFD1" => 5,
+        // MakerNotes have high priority - manufacturer-specific values are more accurate
+        // ExifTool: many EXIF tags have Priority=>0 specifically so MakerNotes wins
+        "MakerNotes" | "Canon" | "Nikon" | "Sony" | "Olympus" | "Panasonic" => 6,
 
-        // MakerNotes have high priority
-        "MakerNotes" | "Canon" | "Nikon" | "Sony" | "Olympus" | "Panasonic" => 5,
+        // EXIF groups have moderate-high priority
+        // ExifTool: some tags (like WhiteBalance) have Priority=>0 to defer to MakerNotes
+        "EXIF" | "ExifIFD" | "IFD0" | "IFD1" => 5,
 
         // Composite tags have variable priority - most are high
         "Composite" => 4,
@@ -1980,6 +1992,10 @@ mod tests {
         assert!(get_tag_priority("EXIF", "Make") > get_tag_priority("XMP", "Make"));
         assert!(get_tag_priority("Canon", "LensModel") > get_tag_priority("XMP", "LensModel"));
         assert!(get_tag_priority("Composite", "Aperture") > get_tag_priority("XMP", "Aperture"));
+
+        // MakerNotes > EXIF (matches ExifTool behavior where manufacturer values are preferred)
+        assert!(get_tag_priority("Canon", "WhiteBalance") > get_tag_priority("EXIF", "WhiteBalance"));
+        assert!(get_tag_priority("Nikon", "LensID") > get_tag_priority("EXIF", "LensID"));
 
         // Test XMP high priority tags
         assert!(get_tag_priority("XMP", "License") > get_tag_priority("XMP", "CreateDate"));
