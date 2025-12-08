@@ -4,7 +4,6 @@
 //! logical, and bitwise operators.
 
 use crate::ppi::rust_generator::errors::CodeGenError;
-use crate::ppi::types::*;
 
 /// Get the precedence of an operator (lower number = lower precedence, splits first)
 /// Based on Perl operator precedence table
@@ -35,8 +34,28 @@ fn get_operator_precedence(op: &str) -> i32 {
 /// when `.into()` could resolve to multiple types (TagValue, f64, i128, etc.).
 pub fn wrap_literal_for_tagvalue(s: &str) -> String {
     if s.ends_with("i32") || s.ends_with("f64") || s.ends_with("u32") {
-        format!("Into::<TagValue>::into({})", s)
+        format!("Into::<TagValue>::into({s})")
     } else {
+        s.to_string()
+    }
+}
+
+/// Wrap literals for string concatenation - both numeric and string literals need TagValue conversion.
+/// For concat(), both operands must be &TagValue, so we need to wrap:
+/// - String literals like "0x" -> TagValue::string("0x")
+/// - Numeric literals like 100i32 -> Into::<TagValue>::into(100i32)
+pub fn wrap_for_string_concat(s: &str) -> String {
+    let trimmed = s.trim();
+    // String literals (surrounded by quotes)
+    if trimmed.starts_with('"') && trimmed.ends_with('"') {
+        format!("TagValue::string({})", trimmed)
+    }
+    // Numeric literals
+    else if trimmed.ends_with("i32") || trimmed.ends_with("f64") || trimmed.ends_with("u32") {
+        format!("Into::<TagValue>::into({trimmed})")
+    }
+    // Already a complex expression or TagValue - use as-is
+    else {
         s.to_string()
     }
 }
@@ -69,17 +88,17 @@ pub fn wrap_condition_for_bool(condition: &str) -> String {
 
     // Bare variable reference
     if condition == "val" || condition == "val_pt" {
-        return format!("{}.is_truthy()", condition);
+        return format!("{condition}.is_truthy()");
     }
 
     // Expressions involving val that produce TagValue need is_truthy()
     if condition.contains("val") || condition.contains("val_pt") {
-        return format!("({}).is_truthy()", condition);
+        return format!("({condition}).is_truthy()");
     }
 
     // Context lookups ($$self{Field}) return TagValue, need is_truthy()
     if condition.contains("ctx.and_then") || condition.contains("get_data_member") {
-        return format!("({}).is_truthy()", condition);
+        return format!("({condition}).is_truthy()");
     }
 
     condition.to_string()
@@ -92,13 +111,13 @@ pub fn wrap_condition_for_bool(condition: &str) -> String {
 /// Uses turbofish syntax to avoid type inference ambiguity.
 pub fn wrap_branch_for_owned(branch: &str) -> String {
     if branch == "val" || branch == "val_pt" {
-        format!("{}.clone()", branch)
+        format!("{branch}.clone()")
     } else if branch.ends_with("i32") || branch.ends_with("u32") || branch.ends_with("f64") {
         // Bare integer/float literal - use explicit TagValue conversion
-        format!("Into::<TagValue>::into({})", branch)
+        format!("Into::<TagValue>::into({branch})")
     } else if branch.starts_with('"') && branch.ends_with('"') {
         // String literal - use explicit TagValue conversion
-        format!("Into::<TagValue>::into({})", branch)
+        format!("Into::<TagValue>::into({branch})")
     } else {
         branch.to_string()
     }
@@ -106,8 +125,6 @@ pub fn wrap_branch_for_owned(branch: &str) -> String {
 
 /// Trait for handling binary operations
 pub trait BinaryOperationsHandler {
-    fn expression_type(&self) -> &ExpressionType;
-
     /// Try to handle binary operation pattern
     /// Uses precedence-aware splitting to correctly handle expressions like `a * b ** c`
     fn try_binary_operation_pattern(
@@ -173,15 +190,18 @@ pub trait BinaryOperationsHandler {
             // Power function takes TagValue args - wrap bare integer/float literals
             let left_wrapped = wrap_literal_for_tagvalue(&left_processed);
             let right_wrapped = wrap_literal_for_tagvalue(&right_processed);
-            return Ok(format!("power({}, {})", left_wrapped, right_wrapped));
+            return Ok(format!(
+                "codegen_runtime::power({left_wrapped}, {right_wrapped})"
+            ));
         }
 
         // Handle string concatenation operator
         if op == "." {
-            // Use cleaner concat function
+            // Use cleaner concat function - wrap literals appropriately
+            let left_wrapped = wrap_for_string_concat(&left_processed);
+            let right_wrapped = wrap_for_string_concat(&right_processed);
             return Ok(format!(
-                "codegen_runtime::string::concat(&{}, &{})",
-                left_processed, right_processed
+                "codegen_runtime::string::concat(&{left_wrapped}, &{right_wrapped})"
             ));
         }
 
@@ -208,27 +228,21 @@ pub trait BinaryOperationsHandler {
             let left_converted = if self.is_string_literal_or_wrapped(&left_processed) {
                 self.extract_string_literal(&left_processed)
             } else {
-                format!("{}.to_string()", left_processed)
+                format!("{left_processed}.to_string()")
             };
 
             let right_converted = if self.is_string_literal_or_wrapped(&right_processed) {
                 self.extract_string_literal(&right_processed)
             } else {
-                format!("{}.to_string()", right_processed)
+                format!("{right_processed}.to_string()")
             };
 
-            return Ok(format!(
-                "{} {} {}",
-                left_converted, rust_op, right_converted
-            ));
+            return Ok(format!("{left_converted} {rust_op} {right_converted}"));
         }
 
         let rust_op = self.perl_to_rust_operator(op)?;
 
-        Ok(format!(
-            "{} {} {}",
-            left_processed, rust_op, right_processed
-        ))
+        Ok(format!("{left_processed} {rust_op} {right_processed}"))
     }
 
     /// Check if a string is a binary operator
