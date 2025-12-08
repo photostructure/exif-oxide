@@ -14,7 +14,8 @@ fn test_nikon_xlat_arrays_generated() {
     // This test requires the codegen to have been run
     // In CI, this would be guaranteed by build dependencies
 
-    let nikon_dir = Path::new("src/generated/nikon");
+    // Directory naming convention: Nikon_pm (matching ExifTool module name)
+    let nikon_dir = Path::new("src/generated/Nikon_pm");
     let xlat_0_path = nikon_dir.join("xlat_0.rs");
     let xlat_1_path = nikon_dir.join("xlat_1.rs");
     let mod_path = nikon_dir.join("mod.rs");
@@ -22,33 +23,33 @@ fn test_nikon_xlat_arrays_generated() {
     // Check that xlat files exist
     assert!(
         xlat_0_path.exists(),
-        "xlat_0.rs should be generated in src/generated/nikon/. \
+        "xlat_0.rs should be generated in src/generated/Nikon_pm/. \
          Run 'make clean-all codegen' to regenerate."
     );
 
     assert!(
         xlat_1_path.exists(),
-        "xlat_1.rs should be generated in src/generated/nikon/. \
+        "xlat_1.rs should be generated in src/generated/Nikon_pm/. \
          Run 'make clean-all codegen' to regenerate."
     );
 
     // Check that mod.rs exists and declares the xlat modules
     assert!(
         mod_path.exists(),
-        "mod.rs should exist in src/generated/nikon/"
+        "mod.rs should exist in src/generated/Nikon_pm/"
     );
 
-    let mod_content = fs::read_to_string(&mod_path).expect("Should be able to read nikon/mod.rs");
+    let mod_content = fs::read_to_string(&mod_path).expect("Should be able to read Nikon_pm/mod.rs");
 
     assert!(
         mod_content.contains("pub mod xlat_0;"),
-        "nikon/mod.rs should declare 'pub mod xlat_0;'. Found content:\n{}",
+        "Nikon_pm/mod.rs should declare 'pub mod xlat_0;'. Found content:\n{}",
         mod_content
     );
 
     assert!(
         mod_content.contains("pub mod xlat_1;"),
-        "nikon/mod.rs should declare 'pub mod xlat_1;'. Found content:\n{}",
+        "Nikon_pm/mod.rs should declare 'pub mod xlat_1;'. Found content:\n{}",
         mod_content
     );
 

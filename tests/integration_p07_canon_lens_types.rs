@@ -18,9 +18,10 @@ fn test_canon_lens_lookup_functionality() {
     assert_eq!(result, Some("Sigma 24mm f/2.8 Super Wide II"));
 
     // Test a few more entries to ensure the lookup table is properly populated
+    // ExifTool: Canon.pm line 100: 2 => 'Canon EF 28mm f/2.8 or Sigma Lens'
     assert_eq!(
         exif_oxide::generated::Canon_pm::canon_lens_types::lookup_canon_lens_types("2"),
-        Some("Canon EF 28mm f/2.8 or 28mm f/2.8 IS USM")
+        Some("Canon EF 28mm f/2.8 or Sigma Lens")
     );
 
     // Test that unknown keys return None

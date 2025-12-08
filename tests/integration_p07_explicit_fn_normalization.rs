@@ -77,29 +77,24 @@ fn test_join_unpack_normalization() {
 
     let generated_code = generator.generate_function(&ppi_ast);
 
-    // This test demonstrates the current malformed generation
-    // Before P07 fixes, this should generate malformed code like:
-    // join(" ", ,, unpack, "H2H2", ,, val)
+    // P07 fix: join/unpack now generates clean code using join_unpack_binary helper
     match generated_code {
         Ok(code) => {
             println!("Generated code:\n{}", code);
 
-            // Check for malformed comma patterns that indicate string parsing problems
-            if code.contains(",,") || code.contains("join(\" \", unpack") {
-                println!("✅ Current test shows malformed generation as expected");
-                // This is currently expected behavior - malformed generation
-                // The test passes showing the problem exists
-            } else {
-                // Fails until P07 complete - requires function call normalization
-                panic!("Expected malformed generation showing architectural problem, but got clean code: {}", code);
-            }
+            // After P07 fixes, code should be clean without malformed comma patterns
+            assert!(
+                !code.contains(",,"),
+                "Code should not contain malformed ',,' patterns"
+            );
+            assert!(
+                code.contains("join_unpack_binary"),
+                "Code should use join_unpack_binary helper function"
+            );
+            println!("✅ P07 fix verified: clean code generation for join/unpack pattern");
         }
         Err(e) => {
-            println!(
-                "Generation failed with error (also demonstrates the issue): {}",
-                e
-            );
-            // Generation failure is also acceptable - shows the architectural problem
+            panic!("Generation should succeed after P07 fix, but failed: {}", e);
         }
     }
 }
