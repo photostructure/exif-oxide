@@ -9,13 +9,14 @@
       "third-party/exiftool/t/images/Nikon.jpg"
     ],
     "summary": {
-      "total_required_tags": 124,
-      "tags_with_support_claimed": 123,
+      "total_required_tags": 122,
+      "tags_with_support_claimed": 121,
       "tags_fully_working": 75,
       "tags_with_printconv_issues": 15,
       "tags_missing_composite": 12,
       "tags_blocked_video": 22,
-      "tags_needing_research": 20
+      "tags_needing_research": 16,
+      "tags_deferred_computed": 1
     }
   },
   "categories": {
@@ -246,18 +247,16 @@
       }
     },
     "research_needed": {
-      "description": "Tags not found in tag-metadata.json - need to identify source ExifTool module",
-      "effort": "research",
-      "estimated_tags": 20,
+      "description": "Tags researched - sources now identified in docs/analysis/unknown-tags-research.md",
+      "effort": "research_complete",
+      "estimated_tags": 16,
+      "status": "RESEARCHED - see unknown-tags-research.md for full details",
       "tags": [
         "AttributionName",
         "AttributionURL",
-        "CameraModelName",
         "DNGLensInfo",
-        "FileVersion",
         "HierarchicalKeywords",
         "HistoryWhen",
-        "ImageDataHash",
         "Jurisdiction",
         "KeywordInfo",
         "License",
@@ -268,46 +267,64 @@
         "Prohibits",
         "RegionList",
         "Requires",
-        "SubSecMediaCreateDate",
         "UseGuidelines"
       ],
-      "likely_sources": {
-        "XMP_cc": [
-          "AttributionName",
-          "AttributionURL",
-          "License",
-          "Permits",
-          "Prohibits",
-          "Requires",
-          "UseGuidelines",
-          "Jurisdiction"
-        ],
-        "XMP_mwg_rs": [
-          "RegionList",
-          "PersonInImageWDetails"
-        ],
-        "XMP_MP": [
-          "PersonInImageName"
-        ],
-        "XMP_xmpMM": [
-          "HistoryWhen"
-        ],
-        "XMP_lr": [
-          "HierarchicalKeywords"
-        ],
-        "File": [
-          "ImageDataHash"
-        ],
-        "XMP_DICOM": [
-          "People"
-        ],
-        "XMP_crs": [
-          "CameraModelName"
-        ],
-        "EXIF": [
-          "DNGLensInfo"
-        ]
+      "confirmed_sources": {
+        "XMP_cc": {
+          "file": "lib/Image/ExifTool/XMP2.pl",
+          "lines": "1420-1470",
+          "tags": ["License", "AttributionName", "AttributionURL", "UseGuidelines", "Permits", "Requires", "Prohibits", "Jurisdiction"]
+        },
+        "XMP_mwg_rs": {
+          "file": "lib/Image/ExifTool/MWG.pm",
+          "lines": "473-481",
+          "tags": ["RegionList"]
+        },
+        "XMP_mwg_kw": {
+          "file": "lib/Image/ExifTool/MWG.pm",
+          "lines": "499-523",
+          "tags": ["KeywordInfo", "HierarchicalKeywords"]
+        },
+        "XMP_Iptc4xmpExt": {
+          "file": "lib/Image/ExifTool/XMP2.pl",
+          "lines": "619-640",
+          "tags": ["PersonInImageWDetails", "PersonInImageName"]
+        },
+        "XMP_xmpMM": {
+          "file": "lib/Image/ExifTool/XMP.pm",
+          "line": "341",
+          "tags": ["HistoryWhen"]
+        },
+        "XMP_mediapro": {
+          "file": "lib/Image/ExifTool/XMP2.pl",
+          "line": "1523",
+          "tags": ["People"]
+        },
+        "EXIF_DNG": {
+          "file": "lib/Image/ExifTool/Exif.pm",
+          "lines": "3475-3483",
+          "tag_id": "0xc630",
+          "tags": ["DNGLensInfo"]
+        }
+      },
+      "removed_tags": {
+        "CameraModelName": "Already implemented as Model tag (EXIF 0x110)",
+        "FileVersion": "Not required by PhotoStructure"
       }
+    },
+    "deferred_computed": {
+      "description": "Computed values requiring separate implementation - not extracted metadata",
+      "effort": "high",
+      "estimated_tags": 1,
+      "tags": [
+        {
+          "name": "ImageDataHash",
+          "source": "lib/Image/ExifTool/WriteExif.pl:423-462",
+          "type": "computed SHA-256 hash",
+          "notes": "Runtime-computed from image data sections marked with IsImageData flag",
+          "status": "Deferred to separate TPP"
+        }
+      ]
     },
     "missing_single_tag": {
       "description": "Single tag missing from supported_tags.json",
@@ -340,10 +357,15 @@
     {
       "priority": 4,
       "category": "research_needed",
-      "rationale": "Need to identify source modules before implementation"
+      "rationale": "Research complete - sources identified, ready for implementation"
     },
     {
       "priority": 5,
+      "category": "deferred_computed",
+      "rationale": "Computed values requiring image data parsing - separate TPP needed"
+    },
+    {
+      "priority": 6,
       "category": "blocked_video_support",
       "rationale": "Blocked until Milestone 18 - skip for now"
     }

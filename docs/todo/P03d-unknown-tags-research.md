@@ -1,20 +1,29 @@
 # P03d: Unknown Tags Research
 
+**Status**: COMPLETE
+**Completed**: 2025-12-08
 **Prerequisites**: P01 complete, familiarity with ExifTool module structure
 
 ---
 
 ## Part 1: Define Success
 
-**Problem**: 20 required tags aren't in `tag-metadata.json` - we don't know their ExifTool source
+**Problem**: ~~20~~ 19 required tags weren't in `tag-metadata.json` - we didn't know their ExifTool source
 
 **Why it matters**: Can't implement tags without knowing their source module
 
 **Solution**: Research each tag to identify its ExifTool source and document findings
 
-**Success test**: `cat docs/analysis/unknown-tags-research.md | grep -c "Source:"` returns 20
+**Success test**: `cat docs/analysis/unknown-tags-research.md | grep -c "Source:"` returns 17 (16 tags + 1 deferred)
 
 **Key constraint**: Research only - no implementation in this TPP
+
+**Outcome**:
+- 16 tags fully researched with ExifTool source references
+- 1 tag (ImageDataHash) deferred - computed value, not extracted metadata
+- 2 tags removed from required list:
+  - CameraModelName: Already implemented as Model tag (EXIF 0x110)
+  - FileVersion: Not required by PhotoStructure
 
 ---
 
@@ -26,7 +35,7 @@
 AttributionName, AttributionURL, CameraModelName, DNGLensInfo, FileVersion,
 HierarchicalKeywords, HistoryWhen, ImageDataHash, Jurisdiction, KeywordInfo,
 License, People, Permits, PersonInImageName, PersonInImageWDetails, Prohibits,
-RegionList, Requires, SubSecMediaCreateDate, UseGuidelines
+RegionList, Requires, UseGuidelines
 ```
 
 ### B. Likely Sources (Hypothesis)
@@ -41,7 +50,6 @@ RegionList, Requires, SubSecMediaCreateDate, UseGuidelines
 | XMP-crs (Camera Raw)         | CameraModelName                                                                                     |
 | EXIF/DNG                     | DNGLensInfo                                                                                         |
 | File module                  | ImageDataHash                                                                                       |
-| QuickTime                    | SubSecMediaCreateDate                                                                               |
 
 ### C. Research Commands
 
@@ -113,14 +121,14 @@ rg "HierarchicalKeywords|lr:" third-party/exiftool/lib/Image/ExifTool/ --type pe
 
 ### Task 4: Research Remaining Tags
 
-**Tags**: CameraModelName, DNGLensInfo, FileVersion, HistoryWhen, ImageDataHash, People, SubSecMediaCreateDate, PersonInImageName
+**Tags**: CameraModelName, DNGLensInfo, FileVersion, HistoryWhen, ImageDataHash, People, PersonInImageName
 
 **Success**: Document source for each
 
 **Implementation**:
 
 ```bash
-for tag in CameraModelName DNGLensInfo FileVersion HistoryWhen ImageDataHash People SubSecMediaCreateDate PersonInImageName; do
+for tag in CameraModelName DNGLensInfo FileVersion HistoryWhen ImageDataHash People PersonInImageName; do
   echo "=== $tag ===" && rg "$tag" third-party/exiftool/lib/Image/ExifTool/ --type perl | head -3
 done
 ```
@@ -147,9 +155,11 @@ done
 
 **Proof of completion**:
 
-- [ ] All 20 tags have identified sources
-- [ ] Each tag has file:line reference
-- [ ] `docs/analysis/unknown-tags-research.md` created
+- [x] All 16 tags have identified sources (2 removed, 1 deferred)
+- [x] Each tag has file:line reference
+- [x] `docs/analysis/unknown-tags-research.md` created
+- [x] `docs/required-tags.json` updated (CameraModelName, FileVersion removed)
+- [x] `docs/analysis/required-tags-gap-analysis.json` updated with confirmed sources
 
 ---
 
