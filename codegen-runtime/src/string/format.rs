@@ -37,7 +37,7 @@ pub fn stringify(val: &TagValue) -> String {
 pub fn concat(left: &TagValue, right: &TagValue) -> TagValue {
     let left_str = stringify(left);
     let right_str = stringify(right);
-    TagValue::String(format!("{}{}", left_str, right_str))
+    TagValue::String(format!("{left_str}{right_str}"))
 }
 
 /// Repeat a string n times
