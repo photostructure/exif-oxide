@@ -18,12 +18,12 @@ That's really great analysis! Since this touches core architecture, it needs tho
 
 # Refining an unsaved TPP
 
-That sounds great. This is critical infrastructure for this project, so let's do another iteration of research, analysis, and planning. Re-analyze and re-plan the TPP using the @docs/TPP.md style guide. Read and study **all** referenced documentation and source code before making any changes. Anything that we can clarify and discover at this point, especially if it is currently hand-wavy or nebulous, will save us time and effort in the future.  As @CLAUDE.md states, ask clarifying questions for anything odd, confusing, nebulous, or to help decide between alternative strategies. Ultrathink.
+That sounds great. This is critical infrastructure for this project, so let's do another iteration of research, analysis, and planning. Re-analyze and re-plan the TPP using the @docs/TPP.md style guide. Read and study **all** referenced documentation and source code before making any changes. Anything that we can clarify and discover at this point, especially if it is currently hand-wavy or nebulous, will save us time and effort in the future. As @CLAUDE.md states, ask clarifying questions for anything odd, confusing, nebulous, or to help decide between alternative strategies. Ultrathink.
 
 # Ultraplan
 
-1. You have been asked to design a plan. You are going to **ultraplan**! 
-2. This is critical infrastructure for this project, so let's do another iteration of research, analysis, and planning. 
+1. You have been asked to design a plan. You are going to **ultraplan**!
+2. This is critical infrastructure for this project, so let's do another iteration of research, analysis, and planning.
 3. Re-analyze and re-plan using our style guide, @docs/TPP.md to drive your Technical Project Plan, which we will hand over to another team to implement.
 4. As you design your plan, carefully consider the requirements, constraints, and existing solutions in this project. If there are any clarifying questions for the user, or there are any assumptive statements that you are making, state them and ask the user for clarification.
 5. Once you have your initial plan, generate a series of thorough critiques of your plan. These critiques should be applied to ensure the project balances simplicity with good software engineering practices, is maintainable, testable, DRY, scalable, and meets user requirements. Ensure any assumptions are validated by examining all elements of all code paths involved, and if any development is novel, validate APIs and libraries with web searches. For novel libraries and APIs, write HOWTO guides and documentation to $PROJECT_ROOT/docs
@@ -38,13 +38,13 @@ That sounds great. This is critical infrastructure for this project, so let's do
 
 ✏️ is a technical project plan: but it needs more due diligence research, analysis, and planning. Re-analyze and re-plan the TPP using the @docs/TPP.md style guide. Read and study **all** referenced documentation and source code before making any changes. This is critical infrastructure for this project, so we have a large time budget for research, planning, analysis, and validation for this work. As @CLAUDE.md states, ask clarifying questions for anything odd, confusing, nebulous, or to help decide between alternative strategies. Ultrathink.
 
-# Work on a TPP 
+# Work on a TPP
 
-✏️ is a technical project plan: we're going to work on the remaining incomplete tasks. This represents critical work for our project, and requires comprehensive prerequisite research to be done by you before you start work. Read every referenced source and doc, and carefully validate the current situation, problem, and that the currently planned solution is still the best way forward. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. @CLAUDE.md @docs/CODEGEN.md @docs/ARCHITECTURE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. Ultrathink.
+✏️ is a technical project plan: we're going to work on the remaining incomplete tasks. This represents critical work for our project, and requires comprehensive prerequisite research to be done by you before you start work. Read every referenced source and doc, and carefully validate the current situation, problem, and that the currently planned solution is still the best way forward. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. Prerequisite study material: @CLAUDE.md , @third-party/exiftool/doc/concepts/COMPOSITE_TAGS.md @docs/CODEGEN.md @docs/guides/PRINTCONV-VALUECONV-GUIDE.md @docs/TRUST-EXIFTOOL.md Ultrathink.
 
 # Validating a TPP
 
-✏️ is a technical project plan: we're going to carefully validate every task to see if it is actually complete. Prior engineers may have incorrectly stated that tasks were complete when they are not, so verify everything carefully. This is critical work for our project, and requires extensive and exhaustive prerequisite research. Read every referenced source and doc. Run relevant tooling and tests and study existing source to validate current code state. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. 
+✏️ is a technical project plan: we're going to carefully validate every task to see if it is actually complete. Prior engineers may have incorrectly stated that tasks were complete when they are not, so verify everything carefully. This is critical work for our project, and requires extensive and exhaustive prerequisite research. Read every referenced source and doc. Run relevant tooling and tests and study existing source to validate current code state. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines.
 
 # When the robots need a reminder
 
@@ -52,7 +52,7 @@ Remember: do not invent heuristics! @docs/TRUST-EXIFTOOL.md !
 
 **Use rg|sd instead of the default MultiEdit tool**: This is extremely quick and efficient: `rg -l 'old-pattern' src/ | xargs sd 'old-pattern' 'new-pattern'`
 
-Remember: do not edit, add, or delete files in @src/generated/** -- the `codegen` system completely overwrites all files in that directory. If you need any edits made, fix the generator.
+Remember: do not edit, add, or delete files in @src/generated/\*\* -- the `codegen` system completely overwrites all files in that directory. If you need any edits made, fix the generator.
 
 ---
 
@@ -61,12 +61,15 @@ Remember: do not edit, add, or delete files in @src/generated/** -- the `codegen
 /compact Emit the following context for the next engineer so they can successfully complete your unfinished tasks. Focus on preventing confident but uninformed changes by emphasizing prerequisite knowledge:
 
 ## CRITICAL: MANDATORY READING BEFORE ANY CHANGES
+
 The next engineer MUST read these files completely before making changes:
+
 - List specific file paths with 1-2 sentence rationale for why each is essential
 - Include core docs: `@docs/TRUST-EXIFTOOL.md`, `@docs/ARCHITECTURE.md`, `@docs/CODEGEN.md`, `@CLAUDE.md`
 - If TPP active: the specific TPP file path in `docs/todo/`
 
 ## WORK CONTEXT
+
 1. **TPP Status**: Current TPP file, completed vs incomplete tasks, required updates to TPP
 2. **Technical State**: Exact files/functions being worked on, current implementation status
 3. **Failed Attempts**: What was tried, why it failed, what constraints were discovered
@@ -74,7 +77,9 @@ The next engineer MUST read these files completely before making changes:
 5. **Next Actions**: Specific file locations, function names, TPP task references
 
 ## CODE CONTEXT
+
 Include relevant code snippets that show:
+
 - Current implementation state
 - Key patterns/constraints in the codebase that must be followed
 - Specific ExifTool behavior that drives the implementation
@@ -90,7 +95,6 @@ Fixing this bug will require in-depth understanding of both how our code and Exi
 # Let me rethink this...
 
 Whenever you say "let me rethink this approach" it makes me think that either 1: the architecture is convoluted 2: the code isn't consistently following a coherent architecture or 3: the architecture wasn't really designed to gracefully/intuitively deal with this use case. Let's take a couple steps back here. Can you describe to me what the problem that we're trying to solve is here? What caused you to doubt your prior plan? Are you sure you have a deep understanding of both the problem we're solving and the different ways our current codebase could address it? Ultrathink.
-
 
 # Validate git diffs
 
