@@ -106,14 +106,46 @@ impl RustGenerator {
                 if code == "val" {
                     Ok("Ok(val.clone())".to_string())
                 } else {
-                    // All other expressions: binary operations, function calls, etc.
-                    // Trust that the visitor pattern has generated correct code.
-                    Ok(format!("Ok({})", code))
+                    // Strip unnecessary outer parentheses before wrapping in Ok()
+                    // This avoids clippy warnings about double parentheses: Ok((expr))
+                    let unwrapped = Self::strip_outer_parens(&code);
+                    Ok(format!("Ok({unwrapped})"))
                 }
             }
             ExpressionType::PrintConv => Ok(code),
             ExpressionType::Condition => Ok(code),
         }
+    }
+
+    /// Strip unnecessary outer parentheses from an expression.
+    /// Only strips if the entire expression is wrapped in matching parens
+    /// with nothing after the closing paren (no method calls, etc.)
+    fn strip_outer_parens(expr: &str) -> &str {
+        let expr = expr.trim();
+        if !expr.starts_with('(') || !expr.ends_with(')') {
+            return expr;
+        }
+
+        // Find where the first '(' closes
+        let mut depth = 0;
+        for (i, c) in expr.chars().enumerate() {
+            match c {
+                '(' => depth += 1,
+                ')' => {
+                    depth -= 1;
+                    if depth == 0 {
+                        // If the first ( closes at the last position, we can strip
+                        if i == expr.len() - 1 {
+                            return &expr[1..expr.len() - 1];
+                        }
+                        // Otherwise there's something after, keep the parens
+                        return expr;
+                    }
+                }
+                _ => {}
+            }
+        }
+        expr
     }
 
     /// Check if AST represents a standalone literal (no operations)
@@ -152,7 +184,7 @@ impl RustGenerator {
                     if num.fract() == 0.0 && num.abs() < i32::MAX as f64 {
                         Ok(format!("TagValue::I32({})", num as i32))
                     } else {
-                        Ok(format!("TagValue::F64({})", num))
+                        Ok(format!("TagValue::F64({num})"))
                     }
                 } else {
                     Err(CodeGenError::MissingContent("number".to_string()))
@@ -189,7 +221,7 @@ impl RustGenerator {
         // For multi-statement documents, check if they contain complex constructs
         // that we cannot reliably translate to Rust
         for child in &node.children {
-            if let Err(_) = pattern_matching::check_node_complexity(child) {
+            if pattern_matching::check_node_complexity(child).is_err() {
                 return Err(CodeGenError::UnsupportedStructure(
                     "Multi-statement block contains complex Perl constructs that cannot be translated".to_string()
                 ));
@@ -416,8 +448,7 @@ impl RustGenerator {
                 };
                 trace!("Found $$self{{{}}} pattern, generating context access", key);
                 return Ok(format!(
-                    "ctx.and_then(|c| c.get_data_member(\"{}\").cloned()).unwrap_or({})",
-                    key, default_value
+                    "ctx.and_then(|c| c.get_data_member(\"{key}\").cloned()).unwrap_or({default_value})"
                 ));
             } else {
                 trace!("Pattern matched but couldn't extract key from subscript");
@@ -442,8 +473,7 @@ impl RustGenerator {
                     // Generate array access that handles all array types
                     // This uses the get_array_element helper that handles typed arrays
                     return Ok(format!(
-                        "codegen_runtime::get_array_element({}, {})",
-                        rust_array, index
+                        "codegen_runtime::get_array_element({rust_array}, {index})"
                     ));
                 }
             }
@@ -483,8 +513,7 @@ impl RustGenerator {
                 let symbol = children[i].content.as_deref().unwrap_or("unknown");
                 let method = children[i + 2].content.as_deref().unwrap_or("unknown");
                 return Err(CodeGenError::UnsupportedStructure(format!(
-                    "Method call '{}->{}()' is not supported in standalone functions",
-                    symbol, method
+                    "Method call '{symbol}->{method}()' is not supported in standalone functions"
                 )));
             }
 
@@ -515,10 +544,8 @@ impl RustGenerator {
                 // Extract the index from the subscript structure
                 if let Some(index) = self.extract_subscript_index(&children[i + 1])? {
                     // Generate array access that handles all array types
-                    let array_access = format!(
-                        "codegen_runtime::get_array_element({}, {})",
-                        rust_array, index
-                    );
+                    let array_access =
+                        format!("codegen_runtime::get_array_element({rust_array}, {index})");
                     processed.push(array_access);
                     i += 2;
                     continue;
@@ -543,8 +570,7 @@ impl RustGenerator {
                         "TagValue::String(String::new())"
                     };
                     let hash_access = format!(
-                        "ctx.and_then(|c| c.get_data_member(\"{}\").cloned()).unwrap_or({})",
-                        key, default_value
+                        "ctx.and_then(|c| c.get_data_member(\"{key}\").cloned()).unwrap_or({default_value})"
                     );
                     processed.push(hash_access);
                     i += 3;
@@ -656,8 +682,7 @@ impl RustGenerator {
 
                 // Generate Rust if-else expression
                 let result = format!(
-                    "if {} {{ {} }} else {{ {} }}",
-                    condition_wrapped, true_expr_wrapped, false_expr_wrapped
+                    "if {condition_wrapped} {{ {true_expr_wrapped} }} else {{ {false_expr_wrapped} }}"
                 );
                 return Ok(Some(result));
             }
