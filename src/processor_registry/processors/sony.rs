@@ -83,6 +83,7 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
         if data.len() >= 0x20 {
             let af_point_raw = u16::from_le_bytes([data[0x1e], data[0x1f]]);
 
+            #[allow(unused_imports)]
             use crate::generated::Sony_pm::main_tags;
 
             let mut errors = Vec::new();
@@ -111,6 +112,7 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
         if data.len() >= 0x22 {
             let focus_mode_raw = u16::from_le_bytes([data[0x20], data[0x21]]);
 
+            #[allow(unused_imports)]
             use crate::generated::Sony_pm::main_tags;
 
             let mut errors = Vec::new();
@@ -136,6 +138,7 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor {
         if data.len() >= 0x24 {
             let focus_status_raw = u16::from_le_bytes([data[0x22], data[0x23]]);
 
+            #[allow(unused_imports)]
             use crate::generated::Sony_pm::main_tags;
 
             let mut errors = Vec::new();

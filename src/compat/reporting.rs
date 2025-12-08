@@ -365,14 +365,15 @@ pub fn analyze_tag_differences(
 
 /// Check if a composite tag has unmet dependencies
 /// Returns true if the tag is a composite tag and its required dependencies are not available
-fn is_composite_dependency_failure(tag: &str, our_obj: &serde_json::Map<String, Value>) -> bool {
+#[allow(dead_code)]
+fn is_composite_dependency_failure(tag: &str, _our_obj: &serde_json::Map<String, Value>) -> bool {
     // Only check composite tags
     if !tag.starts_with("Composite:") {
         return false;
     }
 
     // Strip the "Composite:" prefix to get the tag name
-    let tag_name = &tag[10..];
+    let _tag_name = &tag[10..];
 
     // Look up the composite tag definition
     // TODO: Re-enable when composite_tags is generated

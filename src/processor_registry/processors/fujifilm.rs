@@ -70,7 +70,7 @@ impl BinaryDataProcessor for FujiFilmFFMVProcessor {
 
         // Process data using generated table offsets and formats
         for offset in 0..data.len() {
-            let table_offset = offset as u16;
+            let _table_offset = offset as u16;
 
             // TODO P07: Look up tag name and format from generated table when ffmv_binary_data is available
             // if let Some(tag_name) = self.table.get_tag_name(table_offset) {

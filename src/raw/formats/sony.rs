@@ -36,6 +36,7 @@ use crate::generated::Sony_pm::{
 };
 
 // Import generated Sony lookup tables and ProcessBinaryData processors
+#[allow(unused_imports)]
 use crate::generated::Sony_pm;
 // TODO: Uncomment when Sony tag structure is generated
 // pub use crate::generated::Sony_pm::tag_structure::SonyDataType;

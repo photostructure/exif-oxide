@@ -14,6 +14,7 @@ mod tag_info;
 
 // Re-export everything for backwards compatibility
 pub use binary_data::*;
+#[allow(unused_imports)]
 pub use context::*;
 pub use errors::{ExifError, Result}; // ExifError comes from codegen_runtime via errors module
 pub use metadata::*;

@@ -322,7 +322,7 @@ impl BinaryDataProcessor for CanonMainProcessor {
         let mut result = ProcessorResult::new();
 
         // Use generic tag kit integration for Canon MakerNotes
-        let byte_order = context
+        let _byte_order = context
             .byte_order
             .unwrap_or(crate::tiff_types::ByteOrder::LittleEndian);
         // TEMPORARILY COMMENTED OUT - process_subdirectory not yet generated
@@ -497,8 +497,8 @@ fn extract_makernotes_via_tag_kit(
                 // ExifTool: lib/Image/ExifTool/Canon.pm PrintConv handling for scalar tags
                 let final_value = if manufacturer == "Canon" {
                     // Apply Canon-specific PrintConv using the tag kit system
-                    let mut errors: Vec<String> = Vec::new();
-                    let mut warnings: Vec<String> = Vec::new();
+                    let _errors: Vec<String> = Vec::new();
+                    let warnings: Vec<String> = Vec::new();
 
                     // TEMPORARILY COMMENTED OUT - apply_print_conv not yet generated
                     // let print_value =

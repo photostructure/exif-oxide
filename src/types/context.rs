@@ -3,6 +3,7 @@
 //! This module provides the ExifContext type that gives generated expression functions
 //! access to tag values, processing state, and options during evaluation.
 
+#[allow(unused_imports)]
 use crate::types::{DataMemberValue, TagValue};
 use std::collections::HashMap;
 

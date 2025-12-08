@@ -2,6 +2,11 @@
 //!
 //! This module contains the specific computation functions for each composite tag,
 //! translating ExifTool's Perl ValueConv expressions to Rust.
+//!
+//! NOTE: Many functions in this module are implemented but not yet wired up to the
+//! composite tag evaluation system. They will be connected as the system matures.
+
+#![allow(dead_code)]
 
 use regex::Regex;
 use std::collections::HashMap;
@@ -1401,6 +1406,7 @@ pub fn compute_lens_id(available_tags: &HashMap<String, TagValue>) -> Option<Tag
             // that should be converted to hex key format: sprintf("%x %.2x %.2x", @a[0,2,3])
             // For now, check if we can find the lens name in the olympusLensTypes table
 
+            #[allow(unused_imports)]
             use crate::generated::Olympus_pm::olympus_lens_types::lookup_olympus_lens_types;
 
             if let Some(lens_string) = lens_type.as_string() {

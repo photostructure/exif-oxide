@@ -45,9 +45,12 @@ use std::collections::HashMap;
 
 // use crate::types::CompositeTagInfo;
 // use crate::registry;
+
+#[allow(unused_imports)]
 use crate::types::TagValue;
 
 /// Temporary trait to abstract over CompositeTagDef until P07 build is resolved
+#[allow(dead_code)]
 pub trait CompositeTagDefLike {
     fn name(&self) -> &str;
     fn require(&self) -> &[&str];

@@ -285,12 +285,13 @@ pub fn apply_print_conv_with_tag_id(tag_id: Option<u32>, name: &str, value: &Tag
 /// Try to apply PrintConv using tag kit system
 fn try_tag_kit_print_conv(tag_id: u32, value: &TagValue) -> Option<TagValue> {
     // For now, try EXIF tag kit (we can extend this to other modules later)
+    #[allow(unused_imports)]
     use crate::generated::Exif_pm::main_tags;
 
     // Create temporary containers for errors/warnings
     // TODO: These should be passed through the API to collect for the user
-    let mut errors: Vec<String> = Vec::new();
-    let mut warnings: Vec<String> = Vec::new();
+    let _errors: Vec<String> = Vec::new();
+    let _warnings: Vec<String> = Vec::new();
 
     // TODO: Replace with proper registry-based print conversion
     // For now, return the original value since tag_kit::apply_print_conv is unavailable
@@ -339,7 +340,7 @@ pub fn evaluate_print_conv(print_conv: &str, value: &TagValue) -> Result<TagValu
     // Create expression evaluator for processing the PrintConv expression
     use crate::types::binary_data::ExpressionEvaluator;
     let empty_tags = std::collections::HashMap::new();
-    let mut evaluator = ExpressionEvaluator::new(std::collections::HashMap::new(), &empty_tags);
+    let evaluator = ExpressionEvaluator::new(std::collections::HashMap::new(), &empty_tags);
 
     // TODO: P07 - Full expression evaluation implementation
     // For now, attempt basic evaluation and fall back to original value
