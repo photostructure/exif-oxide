@@ -20,7 +20,7 @@ pub trait StringOperationsHandler {
         for child in &node.children {
             let part = if let Some(ref content) = child.content {
                 // Simple content - check if it's a function like sprintf
-                if content == "sprintf" && child.children.len() > 0 {
+                if content == "sprintf" && !child.children.is_empty() {
                     // This is a sprintf function call with arguments
                     self.handle_sprintf_function_call(child)?
                 } else {
@@ -28,7 +28,7 @@ pub trait StringOperationsHandler {
                 }
             } else if let Some(ref string_value) = child.string_value {
                 // String literal
-                format!("\"{}\"", string_value)
+                format!("\"{string_value}\"")
             } else {
                 // Check if this is a function call with structure
                 if child.class == "PPI::Statement" && child.children.len() >= 2 {
@@ -90,10 +90,9 @@ pub trait StringOperationsHandler {
 
         match self.expression_type() {
             ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                "TagValue::String({}.repeat({} as usize))",
-                string_part, count
+                "TagValue::String({string_part}.repeat({count} as usize))"
             )),
-            _ => Ok(format!("{}.repeat({} as usize)", string_part, count)),
+            _ => Ok(format!("{string_part}.repeat({count} as usize)")),
         }
     }
 
@@ -111,10 +110,9 @@ pub trait StringOperationsHandler {
                 // Generate string concatenation using format!
                 let result = match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => format!(
-                        "TagValue::String(format!(\"{{}}{{}}\", {}, {}))",
-                        left_expr, right_expr
+                        "TagValue::String(format!(\"{{}}{{}}\", {left_expr}, {right_expr}))"
                     ),
-                    _ => format!("format!(\"{{}}{{}}\", {}, {})", left_expr, right_expr),
+                    _ => format!("format!(\"{{}}{{}}\", {left_expr}, {right_expr})"),
                 };
                 return Ok(Some(result));
             }
@@ -175,13 +173,11 @@ pub trait StringOperationsHandler {
             // Simple digit check
             if op == "=~" {
                 return Ok(format!(
-                    "{}.to_string().chars().any(|c| c.is_ascii_digit())",
-                    left
+                    "{left}.to_string().chars().any(|c| c.is_ascii_digit())"
                 ));
             } else {
                 return Ok(format!(
-                    "!{}.to_string().chars().any(|c| c.is_ascii_digit())",
-                    left
+                    "!{left}.to_string().chars().any(|c| c.is_ascii_digit())"
                 ));
             }
         }
@@ -205,26 +201,24 @@ pub trait StringOperationsHandler {
 
             // Build regex with flags
             let regex_flags = if flags.contains('i') { "(?i)" } else { "" };
-            let full_pattern = format!("{}{}", regex_flags, pattern);
+            let full_pattern = format!("{regex_flags}{pattern}");
 
             // Generate regex matching code
             if op == "=~" {
                 Ok(format!(
-                    "{{ use regex::Regex; use std::sync::LazyLock; static {}: LazyLock<Regex> = LazyLock::new(|| Regex::new(r\"{}\").unwrap()); {}.is_match(&{}.to_string()) }}",
-                    regex_id, full_pattern, regex_id, left
+                    "{{ use regex::Regex; use std::sync::LazyLock; static {regex_id}: LazyLock<Regex> = LazyLock::new(|| Regex::new(r\"{full_pattern}\").unwrap()); {regex_id}.is_match(&{left}.to_string()) }}"
                 ))
             } else {
                 Ok(format!(
-                    "{{ use regex::Regex; use std::sync::LazyLock; static {}: LazyLock<Regex> = LazyLock::new(|| Regex::new(r\"{}\").unwrap()); !{}.is_match(&{}.to_string()) }}",
-                    regex_id, full_pattern, regex_id, left
+                    "{{ use regex::Regex; use std::sync::LazyLock; static {regex_id}: LazyLock<Regex> = LazyLock::new(|| Regex::new(r\"{full_pattern}\").unwrap()); !{regex_id}.is_match(&{left}.to_string()) }}"
                 ))
             }
         } else {
             // For simple literal patterns, use contains check
             if op == "=~" {
-                Ok(format!("{}.to_string().contains(r\"{}\")", left, pattern))
+                Ok(format!("{left}.to_string().contains(r\"{pattern}\")"))
             } else {
-                Ok(format!("!{}.to_string().contains(r\"{}\")", left, pattern))
+                Ok(format!("!{left}.to_string().contains(r\"{pattern}\")"))
             }
         }
     }
@@ -258,14 +252,12 @@ pub trait StringOperationsHandler {
             // Note: This generates a boolean result for truthiness testing
             // The actual capture extraction happens in the ternary context
             Ok(format!(
-                "{{ use regex::Regex; use std::sync::LazyLock; static {}: LazyLock<Regex> = LazyLock::new(|| Regex::new(r\"{}\").unwrap()); {}.captures(&{}.to_string()).is_some() }}",
-                regex_id, rust_pattern, regex_id, left
+                "{{ use regex::Regex; use std::sync::LazyLock; static {regex_id}: LazyLock<Regex> = LazyLock::new(|| Regex::new(r\"{rust_pattern}\").unwrap()); {regex_id}.captures(&{left}.to_string()).is_some() }}"
             ))
         } else {
             // Negative match (!~)
             Ok(format!(
-                "{{ use regex::Regex; use std::sync::LazyLock; static {}: LazyLock<Regex> = LazyLock::new(|| Regex::new(r\"{}\").unwrap()); {}.captures(&{}.to_string()).is_none() }}",
-                regex_id, rust_pattern, regex_id, left
+                "{{ use regex::Regex; use std::sync::LazyLock; static {regex_id}: LazyLock<Regex> = LazyLock::new(|| Regex::new(r\"{rust_pattern}\").unwrap()); {regex_id}.captures(&{left}.to_string()).is_none() }}"
             ))
         }
     }
@@ -281,8 +273,7 @@ pub trait StringOperationsHandler {
         // Parse s/pattern/replacement/flags
         if !substitution.starts_with("s/") && !substitution.starts_with("s#") {
             return Err(CodeGenError::UnsupportedStructure(format!(
-                "Invalid substitution pattern: {}",
-                substitution
+                "Invalid substitution pattern: {substitution}"
             )));
         }
 
@@ -296,8 +287,7 @@ pub trait StringOperationsHandler {
 
         if parts.len() < 2 {
             return Err(CodeGenError::UnsupportedStructure(format!(
-                "Invalid substitution format: {}",
-                substitution
+                "Invalid substitution format: {substitution}"
             )));
         }
 
@@ -315,15 +305,9 @@ pub trait StringOperationsHandler {
         {
             // Simple string replacement
             if is_global {
-                format!(
-                    "{}.to_string().replace(\"{}\", \"{}\")",
-                    left, pattern, replacement
-                )
+                format!("{left}.to_string().replace(\"{pattern}\", \"{replacement}\")")
             } else {
-                format!(
-                    "{}.to_string().replacen(\"{}\", \"{}\", 1)",
-                    left, pattern, replacement
-                )
+                format!("{left}.to_string().replacen(\"{pattern}\", \"{replacement}\", 1)")
             }
         } else {
             // Complex pattern - use regex replacement functions
@@ -332,13 +316,11 @@ pub trait StringOperationsHandler {
 
             if is_global {
                 format!(
-                    "codegen_runtime::regex_replace(\"{}\", \"{}\", &{}.to_string())",
-                    safe_pattern, left, escaped_replacement
+                    "codegen_runtime::regex_replace(\"{safe_pattern}\", \"{left}\", &{escaped_replacement}.to_string())"
                 )
             } else {
                 format!(
-                    "codegen_runtime::regex_replace(\"{}\", &{}.to_string(), \"{}\")",
-                    safe_pattern, left, escaped_replacement
+                    "codegen_runtime::regex_replace(\"{safe_pattern}\", &{left}.to_string(), \"{escaped_replacement}\")"
                 )
             }
         };
@@ -347,7 +329,7 @@ pub trait StringOperationsHandler {
         // The caller should handle whether to wrap in TagValue or not
         match self.expression_type() {
             ExpressionType::PrintConv | ExpressionType::ValueConv => {
-                Ok(format!("TagValue::String({})", substitution_result))
+                Ok(format!("TagValue::String({substitution_result})"))
             }
             _ => Ok(substitution_result),
         }
@@ -385,7 +367,7 @@ pub trait StringOperationsHandler {
                             if format_str.is_empty() {
                                 format_str = string_value.clone();
                             } else {
-                                args.push(format!("\"{}\"", string_value));
+                                args.push(format!("\"{string_value}\""));
                             }
                         } else if let Some(ref content) = child.content {
                             if content != "," && !format_str.is_empty() {
@@ -401,7 +383,7 @@ pub trait StringOperationsHandler {
                         args.join(", ")
                     };
 
-                    return Ok(format!("format!(\"{}\", {})", format_str, args_str));
+                    return Ok(format!("format!(\"{format_str}\", {args_str})"));
                 }
             }
         }
@@ -454,7 +436,7 @@ pub trait StringOperationsHandler {
                         if let Some(ref content) = child.content {
                             args.push(content.clone());
                         } else if let Some(ref string_value) = child.string_value {
-                            args.push(format!("\"{}\"", string_value));
+                            args.push(format!("\"{string_value}\""));
                         }
                     }
                 }
@@ -469,7 +451,7 @@ pub trait StringOperationsHandler {
                 // Convert Perl format to Rust format
                 let rust_format = self.convert_perl_sprintf_format(&format_str);
 
-                return Ok(format!("format!(\"{}\", {})", rust_format, args_str));
+                return Ok(format!("format!(\"{rust_format}\", {args_str})"));
             }
         }
 
@@ -501,7 +483,7 @@ pub trait StringOperationsHandler {
             "val".to_string()
         };
 
-        Ok(format!("format!({}, {})", format_str, format_args))
+        Ok(format!("format!({format_str}, {format_args})"))
     }
 
     /// Check if a list of children contains ternary operators (? and :)
@@ -548,8 +530,7 @@ pub trait StringOperationsHandler {
                 let false_branch = false_parts.join(" ");
 
                 return Ok(format!(
-                    "if {} {{ {} }} else {{ {} }}",
-                    condition, true_branch, false_branch
+                    "if {condition} {{ {true_branch} }} else {{ {false_branch} }}"
                 ));
             }
         }
@@ -563,7 +544,7 @@ pub trait StringOperationsHandler {
         if let Some(ref content) = node.content {
             Ok(content.clone())
         } else if let Some(ref string_value) = node.string_value {
-            Ok(format!("\"{}\"", string_value))
+            Ok(format!("\"{string_value}\""))
         } else if let Some(num) = node.numeric_value {
             Ok(num.to_string())
         } else {
@@ -593,26 +574,26 @@ pub trait StringOperationsHandler {
 
         // Float precision: %.3f -> {:.3}, %.2f -> {:.2}, %.0f -> {:.0}
         for precision in (0..=10).rev() {
-            let perl_pattern = format!("%.{}f", precision);
-            let rust_pattern = format!("{{:.{}}}", precision);
+            let perl_pattern = format!("%.{precision}f");
+            let rust_pattern = format!("{{:.{precision}}}");
             rust_format = rust_format.replace(&perl_pattern, &rust_pattern);
         }
 
         // Integer padding: %.3d -> {:03}, %.5d -> {:05}
         for width in (1..=10).rev() {
-            let perl_pattern = format!("%.{}d", width);
-            let rust_pattern = format!("{{:0{}}}", width);
+            let perl_pattern = format!("%.{width}d");
+            let rust_pattern = format!("{{:0{width}}}");
             rust_format = rust_format.replace(&perl_pattern, &rust_pattern);
         }
 
         // Hex with padding: %.8x -> {:08x}, %.4X -> {:04X}
         for width in (1..=10).rev() {
-            let perl_pattern_lower = format!("%.{}x", width);
-            let rust_pattern_lower = format!("{{:0{}x}}", width);
+            let perl_pattern_lower = format!("%.{width}x");
+            let rust_pattern_lower = format!("{{:0{width}x}}");
             rust_format = rust_format.replace(&perl_pattern_lower, &rust_pattern_lower);
 
-            let perl_pattern_upper = format!("%.{}X", width);
-            let rust_pattern_upper = format!("{{:0{}X}}", width);
+            let perl_pattern_upper = format!("%.{width}X");
+            let rust_pattern_upper = format!("{{:0{width}X}}");
             rust_format = rust_format.replace(&perl_pattern_upper, &rust_pattern_upper);
         }
 
