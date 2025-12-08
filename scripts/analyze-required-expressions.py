@@ -50,15 +50,32 @@ def load_composite_dependencies() -> Dict[str, List[str]]:
 
 def load_required_tags_with_dependencies() -> Set[str]:
     """Load required tags and their transitive dependencies."""
-    with open('docs/tag-metadata.json', 'r') as f:
-        metadata = json.load(f)
-    
-    # Start with directly required tags
     required_tags = set()
-    for tag_name, info in metadata.items():
-        if info.get('required', False):
-            required_tags.add(tag_name)
-    
+
+    # First try to load from required-tags.json (list of tag names)
+    required_tags_file = Path('docs/required-tags.json')
+    if required_tags_file.exists():
+        try:
+            with open(required_tags_file, 'r') as f:
+                required_list = json.load(f)
+            if isinstance(required_list, list):
+                required_tags.update(required_list)
+                print(f"Loaded {len(required_tags)} tags from {required_tags_file}", file=sys.stderr)
+        except (json.JSONDecodeError, KeyError) as e:
+            print(f"Error loading {required_tags_file}: {e}", file=sys.stderr)
+
+    # Fall back to / supplement from tag-metadata.json required field
+    metadata_file = Path('docs/tag-metadata.json')
+    if metadata_file.exists():
+        try:
+            with open(metadata_file, 'r') as f:
+                metadata = json.load(f)
+            for tag_name, info in metadata.items():
+                if info.get('required', False):
+                    required_tags.add(tag_name)
+        except (json.JSONDecodeError, KeyError) as e:
+            print(f"Error loading {metadata_file}: {e}", file=sys.stderr)
+
     print(f"Found {len(required_tags)} directly required tags", file=sys.stderr)
     
     # Load composite dependencies
@@ -227,8 +244,8 @@ def analyze_expression_patterns(expressions: List[Dict]) -> Dict[str, Any]:
         if expr.count('(') > 3 or len(expr) > 100:
             patterns['complex'].append(tag)
     
-    # Deduplicate and count
-    return {k: (list(set(v)), len(set(v))) for k, v in patterns.items() if v}
+    # Deduplicate, sort, and count (sorting ensures deterministic output)
+    return {k: (sorted(set(v)), len(set(v))) for k, v in patterns.items() if v}
 
 def main():
     """Main entry point."""
@@ -324,9 +341,9 @@ def main():
         if len(types_used) > 1:
             shared.append({
                 'expression': expr,
-                'used_in': types_used,
+                'used_in': sorted(types_used),
                 'tags': {
-                    expr_type: all_expressions[expr_type].get(expr, [])
+                    expr_type: sorted(all_expressions[expr_type].get(expr, []))
                     for expr_type in types_used
                 }
             })
@@ -335,8 +352,8 @@ def main():
                                          key=lambda x: sum(len(x['tags'][t]) for t in x['used_in']),
                                          reverse=True)[:20]
     
-    # Output as JSON
-    print(json.dumps(output, indent=2))
+    # Output as JSON (sort_keys for deterministic output)
+    print(json.dumps(output, indent=2, sort_keys=True))
     
     # Print summary to stderr
     print("\n=== Summary ===", file=sys.stderr)

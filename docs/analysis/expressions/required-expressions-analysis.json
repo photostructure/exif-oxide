@@ -1,485 +1,1009 @@
 {
-  "summary": {
-    "total_required_tags": 178,
-    "modules_processed": 49
-  },
   "expressions": {
-    "ValueConv": {
-      "unique_count": 41,
-      "total_usage": 55,
-      "top_expressions": [
+    "Condition": {
+      "all_expressions": [
         {
-          "expression": "\"$val[0] $val[1]\"",
-          "count": 4,
-          "tags": [
-            "IPTC.DateTimeCreated",
-            "IPTC.DigitalCreationDateTime",
-            "Nikon.LensSpec",
-            "Olympus.LensType"
-          ]
-        },
-        {
-          "expression": "ConvertUnixTime($val,1)",
-          "count": 3,
-          "tags": [
-            "ExifTool.FileAccessDate",
-            "ExifTool.FileInodeChangeDate",
-            "ExifTool.FileModifyDate"
-          ]
-        },
-        {
-          "expression": "$val",
-          "count": 2,
-          "tags": [
-            "Exif.LensID",
-            "XMP.LensID"
-          ]
-        },
-        {
-          "expression": "\"$val[0] $val[1]Z\"",
-          "count": 2,
-          "tags": [
-            "GPS.GPSDateTime",
-            "Sony.GPSDateTime"
-          ]
-        },
-        {
-          "expression": "$val[1] =~ /^S/i ? -$val[0] : $val[0]",
-          "count": 2,
-          "tags": [
-            "GPS.GPSLatitude",
-            "Sony.GPSLatitude"
-          ]
-        },
-        {
-          "expression": "$val[1] =~ /^W/i ? -$val[0] : $val[0]",
-          "count": 2,
-          "tags": [
-            "GPS.GPSLongitude",
-            "Sony.GPSLongitude"
-          ]
-        },
-        {
-          "expression": "require Image::ExifTool::XMP; Image::ExifTool::XMP::ConvertXMPDate($val)",
-          "count": 2,
-          "tags": [
-            "PNG.create-date",
-            "PNG.modify-date"
-          ]
-        },
-        {
-          "expression": "my $val=Image::ExifTool::XMP::DecodeBase64($val);\n        my $saveOrder = GetByteOrder();\n        SetByteOrder('II');\n        $val = GetDouble($val,0) + GetDouble($val,8)/60 + GetDouble($val,16)/3600;\n        SetByteOrder($saveOrder);\n        return $val;",
-          "count": 2,
-          "tags": [
-            "Nikon.GPSLatitude",
-            "Nikon.GPSLongitude"
-          ]
-        },
-        {
-          "expression": "my $val=Image::ExifTool::XMP::DecodeBase64($val); unpack(\"V\",$$val)",
-          "count": 2,
-          "tags": [
-            "Nikon.GPSLatitudeRef",
-            "Nikon.GPSLongitudeRef"
-          ]
-        },
-        {
-          "expression": "$val[1] - $val[0]",
-          "count": 2,
-          "tags": [
-            "PanasonicRaw.ImageHeight",
-            "PanasonicRaw.ImageWidth"
-          ]
-        },
-        {
-          "expression": "Image::ExifTool::GPS::ToDegrees($val, 1)",
-          "count": 2,
-          "tags": [
-            "XMP.GPSLatitude",
-            "XMP.GPSLongitude"
-          ]
-        },
-        {
-          "expression": "$^O eq \"darwin\" ? $val : ConvertUnixTime($val,1)",
           "count": 1,
-          "tags": [
-            "ExifTool.FileCreateDate"
-          ]
-        },
-        {
-          "expression": "sprintf(\"%.3o\", $val)",
-          "count": 1,
-          "tags": [
-            "ExifTool.FilePermissions"
-          ]
-        },
-        {
-          "expression": "$val[0] || $val[1]",
-          "count": 1,
-          "tags": [
-            "Exif.Aperture"
-          ]
-        },
-        {
-          "expression": "return $val[0] if $val[0] and $val[0]=~/ /;\n            return \"$val[1] $val[2]\";",
-          "count": 1,
+          "expression": "not defined $$self{VALUE}{DateTimeOriginal}",
           "tags": [
             "Exif.DateTimeOriginal"
-          ]
-        },
-        {
-          "expression": "(length($val[0]) or length($val[1])) ? \"$val[0] $val[1]\" : undef",
-          "count": 1,
-          "tags": [
-            "Exif.GPSPosition"
-          ]
-        },
-        {
-          "expression": "return $val[4] if $val[4];\n            return \"$val[2] $val[3]\" if $val[2] and $val[3] and\n                    $$self{TIFF_TYPE} =~ /^(CR2|Canon 1D RAW|IIQ|EIP)$/;\n            return \"$val[0] $val[1]\" if IsFloat($val[0]) and IsFloat($val[1]);\n            return undef;",
-          "count": 1,
-          "tags": [
-            "Exif.ImageSize"
-          ]
-        },
-        {
-          "expression": "my @d = ($val =~ /\\d+/g); $d[0] * $d[1] / 1000000",
-          "count": 1,
-          "tags": [
-            "Exif.Megapixels"
-          ]
-        },
-        {
-          "expression": "($val[2] and $val[2]>0) ? $val[2] : (defined($val[0]) ? $val[0] : $val[1])",
-          "count": 1,
-          "tags": [
-            "Exif.ShutterSpeed"
-          ]
-        },
-        {
-          "expression": "foreach (0,2) {\n                next unless defined $val[$_] and IsFloat($val[$_]) and defined $val[$_+1];\n                return $val[$_+1] ? -abs($val[$_]) : $val[$_];\n            }\n            return undef;",
-          "count": 1,
-          "tags": [
-            "GPS.GPSAltitude"
           ]
         }
       ],
+      "patterns": {
+        "hash_lookups": [
+          [
+            "Exif.DateTimeOriginal"
+          ],
+          1
+        ]
+      },
+      "top_expressions": [
+        {
+          "count": 1,
+          "expression": "not defined $$self{VALUE}{DateTimeOriginal}",
+          "tags": [
+            "Exif.DateTimeOriginal"
+          ]
+        }
+      ],
+      "total_usage": 1,
+      "unique_count": 1
+    },
+    "PrintConv": {
       "all_expressions": [
         {
-          "expression": "\"$val[0] $val[1]\"",
-          "count": 4,
+          "count": 28,
+          "expression": "$self->ConvertDateTime($val)",
           "tags": [
+            "Exif.DateTimeOriginal",
+            "Exif.SubSecCreateDate",
+            "Exif.SubSecDateTimeOriginal",
+            "Exif.SubSecModifyDate",
+            "ExifTool.FileAccessDate",
+            "ExifTool.FileCreateDate",
+            "ExifTool.FileInodeChangeDate",
+            "ExifTool.FileModifyDate",
+            "GPS.GPSDateTime",
             "IPTC.DateTimeCreated",
             "IPTC.DigitalCreationDateTime",
-            "Nikon.LensSpec",
-            "Olympus.LensType"
-          ]
-        },
-        {
-          "expression": "ConvertUnixTime($val,1)",
-          "count": 3,
-          "tags": [
-            "ExifTool.FileAccessDate",
-            "ExifTool.FileInodeChangeDate",
-            "ExifTool.FileModifyDate"
-          ]
-        },
-        {
-          "expression": "$val",
-          "count": 2,
-          "tags": [
-            "Exif.LensID",
-            "XMP.LensID"
-          ]
-        },
-        {
-          "expression": "\"$val[0] $val[1]Z\"",
-          "count": 2,
-          "tags": [
-            "GPS.GPSDateTime",
-            "Sony.GPSDateTime"
-          ]
-        },
-        {
-          "expression": "$val[1] =~ /^S/i ? -$val[0] : $val[0]",
-          "count": 2,
-          "tags": [
-            "GPS.GPSLatitude",
-            "Sony.GPSLatitude"
-          ]
-        },
-        {
-          "expression": "$val[1] =~ /^W/i ? -$val[0] : $val[0]",
-          "count": 2,
-          "tags": [
-            "GPS.GPSLongitude",
-            "Sony.GPSLongitude"
-          ]
-        },
-        {
-          "expression": "require Image::ExifTool::XMP; Image::ExifTool::XMP::ConvertXMPDate($val)",
-          "count": 2,
-          "tags": [
+            "MIE.CreateDate",
+            "MIE.DateTime",
+            "MIE.ModifyDate",
             "PNG.create-date",
-            "PNG.modify-date"
+            "PNG.modify-date",
+            "QuickTime.creationdate",
+            "Sony.GPSDateTime",
+            "XMP.CreateDate",
+            "XMP.CreationDate",
+            "XMP.DateCreated",
+            "XMP.DateTime",
+            "XMP.DateTimeDigitized",
+            "XMP.DateTimeOriginal",
+            "XMP.GPSTimeStamp",
+            "XMP.MetadataDate",
+            "XMP.ModifyDate",
+            "XMP.modifyDate"
           ]
         },
         {
-          "expression": "my $val=Image::ExifTool::XMP::DecodeBase64($val);\n        my $saveOrder = GetByteOrder();\n        SetByteOrder('II');\n        $val = GetDouble($val,0) + GetDouble($val,8)/60 + GetDouble($val,16)/3600;\n        SetByteOrder($saveOrder);\n        return $val;",
+          "count": 5,
+          "expression": "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")",
+          "tags": [
+            "DJI.GpsLatitude",
+            "GPS.GPSLatitude",
+            "QuickTime.GPSLatitude",
+            "Sony.GPSLatitude",
+            "XMP.GPSLatitude"
+          ]
+        },
+        {
+          "count": 5,
+          "expression": "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")",
+          "tags": [
+            "DJI.GpsLongitude",
+            "GPS.GPSLongitude",
+            "QuickTime.GPSLongitude",
+            "Sony.GPSLongitude",
+            "XMP.GPSLongitude"
+          ]
+        },
+        {
+          "count": 4,
+          "expression": "Image::ExifTool::Exif::PrintExposureTime($val)",
+          "tags": [
+            "Exif.ShutterSpeed",
+            "MIE.ExposureTime",
+            "XMP.ExposureTime",
+            "XMP.ShutterSpeedValue"
+          ]
+        },
+        {
+          "count": 3,
+          "expression": "ConvertDuration($val)",
+          "tags": [
+            "MIE.Duration",
+            "MIE.Duration",
+            "RIFF.Duration"
+          ]
+        },
+        {
+          "count": 3,
+          "expression": "$val=~tr/ /x/;$val",
+          "tags": [
+            "MIE.ImageSize",
+            "MIE.ImageSize",
+            "MIE.ImageSize"
+          ]
+        },
+        {
           "count": 2,
+          "expression": "Image::ExifTool::Exif::PrintFNumber($val)",
+          "tags": [
+            "Exif.Aperture",
+            "XMP.FNumber"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "\"$val m\"",
+          "tags": [
+            "Nikon.GPSAltitude",
+            "QuickTime.GPSAltitude"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "Image::ExifTool::GPS::ToDMS($self, $val, 1)",
           "tags": [
             "Nikon.GPSLatitude",
             "Nikon.GPSLongitude"
           ]
         },
         {
-          "expression": "my $val=Image::ExifTool::XMP::DecodeBase64($val); unpack(\"V\",$$val)",
           "count": 2,
+          "expression": "sprintf(\"%.1f\",$val)",
           "tags": [
-            "Nikon.GPSLatitudeRef",
-            "Nikon.GPSLongitudeRef"
+            "SigmaRaw.APERTURE",
+            "XMP.ApertureValue"
           ]
         },
         {
-          "expression": "$val[1] - $val[0]",
-          "count": 2,
-          "tags": [
-            "PanasonicRaw.ImageHeight",
-            "PanasonicRaw.ImageWidth"
-          ]
-        },
-        {
-          "expression": "Image::ExifTool::GPS::ToDegrees($val, 1)",
-          "count": 2,
-          "tags": [
-            "XMP.GPSLatitude",
-            "XMP.GPSLongitude"
-          ]
-        },
-        {
-          "expression": "$^O eq \"darwin\" ? $val : ConvertUnixTime($val,1)",
           "count": 1,
+          "expression": "lc $val",
           "tags": [
-            "ExifTool.FileCreateDate"
+            "ExifTool.FileTypeExtension"
           ]
         },
         {
-          "expression": "sprintf(\"%.3o\", $val)",
           "count": 1,
-          "tags": [
-            "ExifTool.FilePermissions"
-          ]
-        },
-        {
-          "expression": "$val[0] || $val[1]",
-          "count": 1,
-          "tags": [
-            "Exif.Aperture"
-          ]
-        },
-        {
-          "expression": "return $val[0] if $val[0] and $val[0]=~/ /;\n            return \"$val[1] $val[2]\";",
-          "count": 1,
-          "tags": [
-            "Exif.DateTimeOriginal"
-          ]
-        },
-        {
-          "expression": "(length($val[0]) or length($val[1])) ? \"$val[0] $val[1]\" : undef",
-          "count": 1,
+          "expression": "\"$prt[0], $prt[1]\"",
           "tags": [
             "Exif.GPSPosition"
           ]
         },
         {
-          "expression": "return $val[4] if $val[4];\n            return \"$val[2] $val[3]\" if $val[2] and $val[3] and\n                    $$self{TIFF_TYPE} =~ /^(CR2|Canon 1D RAW|IIQ|EIP)$/;\n            return \"$val[0] $val[1]\" if IsFloat($val[0]) and IsFloat($val[1]);\n            return undef;",
           "count": 1,
+          "expression": "$val =~ tr/ /x/; $val",
           "tags": [
             "Exif.ImageSize"
           ]
         },
         {
-          "expression": "my @d = ($val =~ /\\d+/g); $d[0] * $d[1] / 1000000",
           "count": 1,
+          "expression": "my $pcv;\n            # use LensType2 instead of LensType if available and valid (Sony E-mount lenses)\n            # (0x8000 or greater; 0 for several older/3rd-party E-mount lenses)\n            if (defined $val[9] and ($val[9] & 0x8000 or $val[9] == 0)) {\n                $val[0] = $val[9];\n                $prt[0] = $prt[9];\n                # Particularly GM lenses: often LensType2=0 but LensType3 is available and valid: use LensType3.\n                if ($val[9] == 0 and $val[10] & 0x8000) {\n                   $val[0] = $val[10];\n                   $prt[0] = $prt[10];\n                }\n                $pcv = $$self{TAG_INFO}{LensType2}{PrintConv};\n            }\n            # use Canon RFLensType if available\n            if ($val[12]) {\n                $val[0] = $val[12];\n                $prt[0] = $prt[12];\n                $pcv = $$self{TAG_INFO}{RFLensType}{PrintConv};\n            }\n            my $lens = Image::ExifTool::Exif::PrintLensID($self, $prt[0], $pcv, $prt[8], @val);\n            # check for use of lens converter (Pentax K-3)\n            if ($val[11] and $val[1] and $lens) {\n                my $conv = $val[1] / $val[11];\n                $lens .= sprintf(' + %.1fx converter', $conv) if $conv > 1.1;\n            }\n            return $lens;",
+          "tags": [
+            "Exif.LensID"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "sprintf(\"%.*f\", ($val >= 1 ? 1 : ($val >= 0.001 ? 3 : 6)), $val)",
           "tags": [
             "Exif.Megapixels"
           ]
         },
         {
-          "expression": "($val[2] and $val[2]>0) ? $val[2] : (defined($val[0]) ? $val[0] : $val[1])",
           "count": 1,
-          "tags": [
-            "Exif.ShutterSpeed"
-          ]
-        },
-        {
-          "expression": "foreach (0,2) {\n                next unless defined $val[$_] and IsFloat($val[$_]) and defined $val[$_+1];\n                return $val[$_+1] ? -abs($val[$_]) : $val[$_];\n            }\n            return undef;",
-          "count": 1,
+          "expression": "foreach (0,2) {\n                next unless defined $val[$_] and IsFloat($val[$_]);\n                next unless defined $prt[$_+1] and $prt[$_+1] =~ /Sea/;\n                return((int($val[$_]*10)/10) . ' m ' . $prt[$_+1]);\n            }\n            $val = int($val * 10) / 10;\n            return(($val =~ s/^-// ? \"$val m Below\" : \"$val m Above\") . \" Sea Level\");",
           "tags": [
             "GPS.GPSAltitude"
           ]
         },
         {
-          "expression": "# fix the funny things that these numbers do when they wrap over 9999\n            # (it seems that FileIndex and DirectoryIndex actually store the\n            #  numbers from the previous image, so we need special logic\n            #  to handle the FileIndex wrap properly)\n            $val[1] == 10000 and $val[1] = 1, ++$val[0];\n            return sprintf(\"%.3d%.4d\",@val);",
           "count": 1,
+          "expression": "$_=$val;s/(\\d+)(\\d{4})/$1-$2/;$_",
           "tags": [
             "Canon.FileNumber"
           ]
         },
         {
-          "expression": "return $val[0] if $val[0] and $val[0] =~ /^\\d+$/;\n            return undef unless $val[1] and $val[2];\n            return $val[1] * $val[2] / 100;",
           "count": 1,
+          "expression": "sprintf(\"%.0f\",$val)",
           "tags": [
             "Canon.ISO"
           ]
         },
         {
-          "expression": "$val[0]",
           "count": 1,
+          "expression": "Image::ExifTool::Canon::PrintFocalRange(@val)",
           "tags": [
             "Canon.Lens"
           ]
         },
         {
-          "expression": "\"$val[0]:$val[1]\"",
           "count": 1,
+          "expression": "\"$val mm\"",
+          "tags": [
+            "Kodak.Focal Length"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "\"$prt[0] $prt[1]\"",
+          "tags": [
+            "Nikon.LensSpec"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "ConvertDuration($val) . \" (approx)\"",
+          "tags": [
+            "Vorbis.Duration"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "Image::ExifTool::XMP::PrintLensID($self, @val)",
+          "tags": [
+            "XMP.LensID"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "sprintf(\"%.1f mm\",$val)",
+          "tags": [
+            "XMP.FocalLength"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "$val =~ /^(inf|undef)$/ ? $val : \"$val m\"",
+          "tags": [
+            "XMP.GPSAltitude"
+          ]
+        }
+      ],
+      "patterns": {
+        "arithmetic": [
+          [
+            "Canon.FileNumber",
+            "Canon.ISO",
+            "Exif.DateTimeOriginal",
+            "Exif.ImageSize",
+            "Exif.LensID",
+            "Exif.Megapixels",
+            "Exif.SubSecCreateDate",
+            "Exif.SubSecDateTimeOriginal",
+            "Exif.SubSecModifyDate",
+            "ExifTool.FileAccessDate",
+            "ExifTool.FileCreateDate",
+            "ExifTool.FileInodeChangeDate",
+            "ExifTool.FileModifyDate",
+            "GPS.GPSAltitude",
+            "GPS.GPSDateTime",
+            "IPTC.DateTimeCreated",
+            "IPTC.DigitalCreationDateTime",
+            "MIE.CreateDate",
+            "MIE.DateTime",
+            "MIE.ImageSize",
+            "MIE.ModifyDate",
+            "PNG.create-date",
+            "PNG.modify-date",
+            "QuickTime.creationdate",
+            "SigmaRaw.APERTURE",
+            "Sony.GPSDateTime",
+            "XMP.ApertureValue",
+            "XMP.CreateDate",
+            "XMP.CreationDate",
+            "XMP.DateCreated",
+            "XMP.DateTime",
+            "XMP.DateTimeDigitized",
+            "XMP.DateTimeOriginal",
+            "XMP.FocalLength",
+            "XMP.GPSAltitude",
+            "XMP.GPSTimeStamp",
+            "XMP.MetadataDate",
+            "XMP.ModifyDate",
+            "XMP.modifyDate"
+          ],
+          39
+        ],
+        "complex": [
+          [
+            "Exif.LensID",
+            "GPS.GPSAltitude"
+          ],
+          2
+        ],
+        "function_calls": [
+          [
+            "Canon.ISO",
+            "Canon.Lens",
+            "DJI.GpsLatitude",
+            "DJI.GpsLongitude",
+            "Exif.Aperture",
+            "Exif.DateTimeOriginal",
+            "Exif.LensID",
+            "Exif.Megapixels",
+            "Exif.ShutterSpeed",
+            "Exif.SubSecCreateDate",
+            "Exif.SubSecDateTimeOriginal",
+            "Exif.SubSecModifyDate",
+            "ExifTool.FileAccessDate",
+            "ExifTool.FileCreateDate",
+            "ExifTool.FileInodeChangeDate",
+            "ExifTool.FileModifyDate",
+            "GPS.GPSAltitude",
+            "GPS.GPSDateTime",
+            "GPS.GPSLatitude",
+            "GPS.GPSLongitude",
+            "IPTC.DateTimeCreated",
+            "IPTC.DigitalCreationDateTime",
+            "MIE.CreateDate",
+            "MIE.DateTime",
+            "MIE.Duration",
+            "MIE.ExposureTime",
+            "MIE.ModifyDate",
+            "Nikon.GPSLatitude",
+            "Nikon.GPSLongitude",
+            "PNG.create-date",
+            "PNG.modify-date",
+            "QuickTime.GPSLatitude",
+            "QuickTime.GPSLongitude",
+            "QuickTime.creationdate",
+            "RIFF.Duration",
+            "SigmaRaw.APERTURE",
+            "Sony.GPSDateTime",
+            "Sony.GPSLatitude",
+            "Sony.GPSLongitude",
+            "Vorbis.Duration",
+            "XMP.ApertureValue",
+            "XMP.CreateDate",
+            "XMP.CreationDate",
+            "XMP.DateCreated",
+            "XMP.DateTime",
+            "XMP.DateTimeDigitized",
+            "XMP.DateTimeOriginal",
+            "XMP.ExposureTime",
+            "XMP.FNumber",
+            "XMP.FocalLength",
+            "XMP.GPSLatitude",
+            "XMP.GPSLongitude",
+            "XMP.GPSTimeStamp",
+            "XMP.LensID",
+            "XMP.MetadataDate",
+            "XMP.ModifyDate",
+            "XMP.ShutterSpeedValue",
+            "XMP.modifyDate"
+          ],
+          58
+        ],
+        "hash_lookups": [
+          [
+            "Canon.FileNumber",
+            "Exif.LensID",
+            "GPS.GPSAltitude"
+          ],
+          3
+        ],
+        "regex_match": [
+          [
+            "Exif.ImageSize",
+            "MIE.ImageSize",
+            "XMP.GPSAltitude"
+          ],
+          3
+        ],
+        "regex_substitute": [
+          [
+            "GPS.GPSAltitude"
+          ],
+          1
+        ],
+        "sprintf": [
+          [
+            "Canon.ISO",
+            "Exif.LensID",
+            "Exif.Megapixels",
+            "SigmaRaw.APERTURE",
+            "XMP.ApertureValue",
+            "XMP.FocalLength"
+          ],
+          6
+        ],
+        "string_concat": [
+          [
+            "Canon.ISO",
+            "Exif.Megapixels",
+            "GPS.GPSAltitude",
+            "SigmaRaw.APERTURE",
+            "Vorbis.Duration",
+            "XMP.ApertureValue",
+            "XMP.FocalLength"
+          ],
+          7
+        ],
+        "ternary": [
+          [
+            "Exif.Megapixels",
+            "GPS.GPSAltitude",
+            "XMP.GPSAltitude"
+          ],
+          3
+        ]
+      },
+      "top_expressions": [
+        {
+          "count": 28,
+          "expression": "$self->ConvertDateTime($val)",
+          "tags": [
+            "Exif.DateTimeOriginal",
+            "Exif.SubSecCreateDate",
+            "Exif.SubSecDateTimeOriginal",
+            "Exif.SubSecModifyDate",
+            "ExifTool.FileAccessDate",
+            "ExifTool.FileCreateDate",
+            "ExifTool.FileInodeChangeDate",
+            "ExifTool.FileModifyDate",
+            "GPS.GPSDateTime",
+            "IPTC.DateTimeCreated",
+            "IPTC.DigitalCreationDateTime",
+            "MIE.CreateDate",
+            "MIE.DateTime",
+            "MIE.ModifyDate",
+            "PNG.create-date",
+            "PNG.modify-date",
+            "QuickTime.creationdate",
+            "Sony.GPSDateTime",
+            "XMP.CreateDate",
+            "XMP.CreationDate",
+            "XMP.DateCreated",
+            "XMP.DateTime",
+            "XMP.DateTimeDigitized",
+            "XMP.DateTimeOriginal",
+            "XMP.GPSTimeStamp",
+            "XMP.MetadataDate",
+            "XMP.ModifyDate",
+            "XMP.modifyDate"
+          ]
+        },
+        {
+          "count": 5,
+          "expression": "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")",
+          "tags": [
+            "DJI.GpsLatitude",
+            "GPS.GPSLatitude",
+            "QuickTime.GPSLatitude",
+            "Sony.GPSLatitude",
+            "XMP.GPSLatitude"
+          ]
+        },
+        {
+          "count": 5,
+          "expression": "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")",
+          "tags": [
+            "DJI.GpsLongitude",
+            "GPS.GPSLongitude",
+            "QuickTime.GPSLongitude",
+            "Sony.GPSLongitude",
+            "XMP.GPSLongitude"
+          ]
+        },
+        {
+          "count": 4,
+          "expression": "Image::ExifTool::Exif::PrintExposureTime($val)",
+          "tags": [
+            "Exif.ShutterSpeed",
+            "MIE.ExposureTime",
+            "XMP.ExposureTime",
+            "XMP.ShutterSpeedValue"
+          ]
+        },
+        {
+          "count": 3,
+          "expression": "ConvertDuration($val)",
+          "tags": [
+            "MIE.Duration",
+            "MIE.Duration",
+            "RIFF.Duration"
+          ]
+        },
+        {
+          "count": 3,
+          "expression": "$val=~tr/ /x/;$val",
+          "tags": [
+            "MIE.ImageSize",
+            "MIE.ImageSize",
+            "MIE.ImageSize"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "Image::ExifTool::Exif::PrintFNumber($val)",
+          "tags": [
+            "Exif.Aperture",
+            "XMP.FNumber"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "\"$val m\"",
+          "tags": [
+            "Nikon.GPSAltitude",
+            "QuickTime.GPSAltitude"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "Image::ExifTool::GPS::ToDMS($self, $val, 1)",
+          "tags": [
+            "Nikon.GPSLatitude",
+            "Nikon.GPSLongitude"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "sprintf(\"%.1f\",$val)",
+          "tags": [
+            "SigmaRaw.APERTURE",
+            "XMP.ApertureValue"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "lc $val",
+          "tags": [
+            "ExifTool.FileTypeExtension"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "\"$prt[0], $prt[1]\"",
+          "tags": [
+            "Exif.GPSPosition"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "$val =~ tr/ /x/; $val",
+          "tags": [
+            "Exif.ImageSize"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "my $pcv;\n            # use LensType2 instead of LensType if available and valid (Sony E-mount lenses)\n            # (0x8000 or greater; 0 for several older/3rd-party E-mount lenses)\n            if (defined $val[9] and ($val[9] & 0x8000 or $val[9] == 0)) {\n                $val[0] = $val[9];\n                $prt[0] = $prt[9];\n                # Particularly GM lenses: often LensType2=0 but LensType3 is available and valid: use LensType3.\n                if ($val[9] == 0 and $val[10] & 0x8000) {\n                   $val[0] = $val[10];\n                   $prt[0] = $prt[10];\n                }\n                $pcv = $$self{TAG_INFO}{LensType2}{PrintConv};\n            }\n            # use Canon RFLensType if available\n            if ($val[12]) {\n                $val[0] = $val[12];\n                $prt[0] = $prt[12];\n                $pcv = $$self{TAG_INFO}{RFLensType}{PrintConv};\n            }\n            my $lens = Image::ExifTool::Exif::PrintLensID($self, $prt[0], $pcv, $prt[8], @val);\n            # check for use of lens converter (Pentax K-3)\n            if ($val[11] and $val[1] and $lens) {\n                my $conv = $val[1] / $val[11];\n                $lens .= sprintf(' + %.1fx converter', $conv) if $conv > 1.1;\n            }\n            return $lens;",
+          "tags": [
+            "Exif.LensID"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "sprintf(\"%.*f\", ($val >= 1 ? 1 : ($val >= 0.001 ? 3 : 6)), $val)",
+          "tags": [
+            "Exif.Megapixels"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "foreach (0,2) {\n                next unless defined $val[$_] and IsFloat($val[$_]);\n                next unless defined $prt[$_+1] and $prt[$_+1] =~ /Sea/;\n                return((int($val[$_]*10)/10) . ' m ' . $prt[$_+1]);\n            }\n            $val = int($val * 10) / 10;\n            return(($val =~ s/^-// ? \"$val m Below\" : \"$val m Above\") . \" Sea Level\");",
+          "tags": [
+            "GPS.GPSAltitude"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "$_=$val;s/(\\d+)(\\d{4})/$1-$2/;$_",
+          "tags": [
+            "Canon.FileNumber"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "sprintf(\"%.0f\",$val)",
+          "tags": [
+            "Canon.ISO"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "Image::ExifTool::Canon::PrintFocalRange(@val)",
+          "tags": [
+            "Canon.Lens"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "\"$val mm\"",
+          "tags": [
+            "Kodak.Focal Length"
+          ]
+        }
+      ],
+      "total_usage": 71,
+      "unique_count": 25
+    },
+    "ValueConv": {
+      "all_expressions": [
+        {
+          "count": 4,
+          "expression": "\"$val[0] $val[1]\"",
+          "tags": [
+            "IPTC.DateTimeCreated",
+            "IPTC.DigitalCreationDateTime",
+            "Nikon.LensSpec",
+            "Olympus.LensType"
+          ]
+        },
+        {
+          "count": 3,
+          "expression": "ConvertUnixTime($val,1)",
+          "tags": [
+            "ExifTool.FileAccessDate",
+            "ExifTool.FileInodeChangeDate",
+            "ExifTool.FileModifyDate"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "$val",
+          "tags": [
+            "Exif.LensID",
+            "XMP.LensID"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "\"$val[0] $val[1]Z\"",
+          "tags": [
+            "GPS.GPSDateTime",
+            "Sony.GPSDateTime"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "$val[1] =~ /^S/i ? -$val[0] : $val[0]",
+          "tags": [
+            "GPS.GPSLatitude",
+            "Sony.GPSLatitude"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "$val[1] =~ /^W/i ? -$val[0] : $val[0]",
+          "tags": [
+            "GPS.GPSLongitude",
+            "Sony.GPSLongitude"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "require Image::ExifTool::XMP; Image::ExifTool::XMP::ConvertXMPDate($val)",
+          "tags": [
+            "PNG.create-date",
+            "PNG.modify-date"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "my $val=Image::ExifTool::XMP::DecodeBase64($val);\n        my $saveOrder = GetByteOrder();\n        SetByteOrder('II');\n        $val = GetDouble($val,0) + GetDouble($val,8)/60 + GetDouble($val,16)/3600;\n        SetByteOrder($saveOrder);\n        return $val;",
+          "tags": [
+            "Nikon.GPSLatitude",
+            "Nikon.GPSLongitude"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "my $val=Image::ExifTool::XMP::DecodeBase64($val); unpack(\"V\",$$val)",
+          "tags": [
+            "Nikon.GPSLatitudeRef",
+            "Nikon.GPSLongitudeRef"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "$val[1] - $val[0]",
+          "tags": [
+            "PanasonicRaw.ImageHeight",
+            "PanasonicRaw.ImageWidth"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "Image::ExifTool::GPS::ToDegrees($val, 1)",
+          "tags": [
+            "XMP.GPSLatitude",
+            "XMP.GPSLongitude"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "$^O eq \"darwin\" ? $val : ConvertUnixTime($val,1)",
+          "tags": [
+            "ExifTool.FileCreateDate"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "sprintf(\"%.3o\", $val)",
+          "tags": [
+            "ExifTool.FilePermissions"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "$val[0] || $val[1]",
+          "tags": [
+            "Exif.Aperture"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "return $val[0] if $val[0] and $val[0]=~/ /;\n            return \"$val[1] $val[2]\";",
+          "tags": [
+            "Exif.DateTimeOriginal"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "(length($val[0]) or length($val[1])) ? \"$val[0] $val[1]\" : undef",
+          "tags": [
+            "Exif.GPSPosition"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "return $val[4] if $val[4];\n            return \"$val[2] $val[3]\" if $val[2] and $val[3] and\n                    $$self{TIFF_TYPE} =~ /^(CR2|Canon 1D RAW|IIQ|EIP)$/;\n            return \"$val[0] $val[1]\" if IsFloat($val[0]) and IsFloat($val[1]);\n            return undef;",
+          "tags": [
+            "Exif.ImageSize"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "my @d = ($val =~ /\\d+/g); $d[0] * $d[1] / 1000000",
+          "tags": [
+            "Exif.Megapixels"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "($val[2] and $val[2]>0) ? $val[2] : (defined($val[0]) ? $val[0] : $val[1])",
+          "tags": [
+            "Exif.ShutterSpeed"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "foreach (0,2) {\n                next unless defined $val[$_] and IsFloat($val[$_]) and defined $val[$_+1];\n                return $val[$_+1] ? -abs($val[$_]) : $val[$_];\n            }\n            return undef;",
+          "tags": [
+            "GPS.GPSAltitude"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "# fix the funny things that these numbers do when they wrap over 9999\n            # (it seems that FileIndex and DirectoryIndex actually store the\n            #  numbers from the previous image, so we need special logic\n            #  to handle the FileIndex wrap properly)\n            $val[1] == 10000 and $val[1] = 1, ++$val[0];\n            return sprintf(\"%.3d%.4d\",@val);",
+          "tags": [
+            "Canon.FileNumber"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "return $val[0] if $val[0] and $val[0] =~ /^\\d+$/;\n            return undef unless $val[1] and $val[2];\n            return $val[1] * $val[2] / 100;",
+          "tags": [
+            "Canon.ISO"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "$val[0]",
+          "tags": [
+            "Canon.Lens"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "\"$val[0]:$val[1]\"",
           "tags": [
             "Kodak.DateCreated"
           ]
         },
         {
-          "expression": "$val=~s/^f//i; $val",
           "count": 1,
+          "expression": "$val=~s/^f//i; $val",
           "tags": [
             "Kodak.Aperture"
           ]
         },
         {
-          "expression": "sprintf(\"%.2X\".\" %.2X\"x7, @raw)",
           "count": 1,
+          "expression": "sprintf(\"%.2X\".\" %.2X\"x7, @raw)",
           "tags": [
             "Nikon.LensID"
           ]
         },
         {
-          "expression": "my $val=Image::ExifTool::XMP::DecodeBase64($val);\n        my $saveOrder = GetByteOrder();\n        SetByteOrder('II');\n        $val = GetDouble($val,0);\n        SetByteOrder($saveOrder);\n        return $val;",
           "count": 1,
+          "expression": "my $val=Image::ExifTool::XMP::DecodeBase64($val);\n        my $saveOrder = GetByteOrder();\n        SetByteOrder('II');\n        $val = GetDouble($val,0);\n        SetByteOrder($saveOrder);\n        return $val;",
           "tags": [
             "Nikon.GPSAltitude"
           ]
         },
         {
-          "expression": "my $val=Image::ExifTool::XMP::DecodeBase64($val); join(\".\",unpack(\"C*\",$$val))",
           "count": 1,
+          "expression": "my $val=Image::ExifTool::XMP::DecodeBase64($val); join(\".\",unpack(\"C*\",$$val))",
           "tags": [
             "Nikon.GPSAltitudeRef"
           ]
         },
         {
-          "expression": "$val=~s/\\s*:.*//; $val",
           "count": 1,
+          "expression": "$val=~s/\\s*:.*//; $val",
           "tags": [
             "Ricoh.LensID"
           ]
         },
         {
-          "expression": "my @a = split /,\\s?/, $val; \\@a",
           "count": 1,
+          "expression": "my @a = split /,\\s?/, $val; \\@a",
           "tags": [
             "Matroska.KEYWORDS"
           ]
         },
         {
-          "expression": "my @c = split \" \", $val; defined $c[2] ? abs($c[2]) : undef",
           "count": 1,
+          "expression": "my @c = split \" \", $val; defined $c[2] ? abs($c[2]) : undef",
           "tags": [
             "QuickTime.GPSAltitude"
           ]
         },
         {
-          "expression": "my @c = split \" \", $val; defined $c[2] ? ($c[2] < 0 ? 1 : 0) : undef",
           "count": 1,
+          "expression": "my @c = split \" \", $val; defined $c[2] ? ($c[2] < 0 ? 1 : 0) : undef",
           "tags": [
             "QuickTime.GPSAltitudeRef"
           ]
         },
         {
-          "expression": "my @c = split \" \", $val; $c[0]",
           "count": 1,
+          "expression": "my @c = split \" \", $val; $c[0]",
           "tags": [
             "QuickTime.GPSLatitude"
           ]
         },
         {
-          "expression": "my @c = split \" \", $val; $c[1]",
           "count": 1,
+          "expression": "my @c = split \" \", $val; $c[1]",
           "tags": [
             "QuickTime.GPSLongitude"
           ]
         },
         {
-          "expression": "Image::ExifTool::QuickTime::CalcRotation($self)",
           "count": 1,
+          "expression": "Image::ExifTool::QuickTime::CalcRotation($self)",
           "tags": [
             "QuickTime.Rotation"
           ]
         },
         {
-          "expression": "require Image::ExifTool::XMP;\n        $val =  Image::ExifTool::XMP::ConvertXMPDate($val);\n        $val =~ s/([-+]\\d{2})(\\d{2})$/$1:$2/; # add colon to timezone if necessary\n        return $val;",
           "count": 1,
+          "expression": "require Image::ExifTool::XMP;\n        $val =  Image::ExifTool::XMP::ConvertXMPDate($val);\n        $val =~ s/([-+]\\d{2})(\\d{2})$/$1:$2/; # add colon to timezone if necessary\n        return $val;",
           "tags": [
             "QuickTime.creationdate"
           ]
         },
         {
-          "expression": "$val =~ /^[0-9a-f]+$/i ? hex($val) : $val",
           "count": 1,
+          "expression": "$val =~ /^[0-9a-f]+$/i ? hex($val) : $val",
           "tags": [
             "SigmaRaw.LENSMODEL"
           ]
         },
         {
-          "expression": "IsFloat($val[0]) and return $val[0] < 0 ? \"S\" : \"N\";\n            $val[0] =~ /^.*([NS])/;\n            return $1;",
           "count": 1,
+          "expression": "IsFloat($val[0]) and return $val[0] < 0 ? \"S\" : \"N\";\n            $val[0] =~ /^.*([NS])/;\n            return $1;",
           "tags": [
             "XMP.GPSLatitudeRef"
           ]
         },
         {
-          "expression": "IsFloat($val[0]) and return $val[0] < 0 ? \"W\" : \"E\";\n            $val[0] =~ /^.*([EW])/;\n            return $1;",
           "count": 1,
+          "expression": "IsFloat($val[0]) and return $val[0] < 0 ? \"W\" : \"E\";\n            $val[0] =~ /^.*([EW])/;\n            return $1;",
           "tags": [
             "XMP.GPSLongitudeRef"
           ]
         },
         {
-          "expression": "sqrt(2) ** $val",
           "count": 1,
+          "expression": "sqrt(2) ** $val",
           "tags": [
             "XMP.ApertureValue"
           ]
         },
         {
-          "expression": "abs($val)<100 ? 1/(2**$val) : 0",
           "count": 1,
+          "expression": "abs($val)<100 ? 1/(2**$val) : 0",
           "tags": [
             "XMP.ShutterSpeedValue"
           ]
         }
       ],
       "patterns": {
-        "sprintf": [
+        "arithmetic": [
           [
             "Canon.FileNumber",
+            "Canon.ISO",
+            "Exif.DateTimeOriginal",
+            "Exif.ImageSize",
+            "Exif.Megapixels",
             "ExifTool.FilePermissions",
-            "Nikon.LensID"
-          ],
-          3
-        ],
-        "unpack": [
-          [
+            "GPS.GPSAltitude",
+            "GPS.GPSLatitude",
+            "GPS.GPSLongitude",
+            "Kodak.Aperture",
+            "Matroska.KEYWORDS",
             "Nikon.GPSAltitudeRef",
+            "Nikon.GPSLatitude",
+            "Nikon.GPSLongitude",
+            "Nikon.LensID",
+            "PanasonicRaw.ImageHeight",
+            "PanasonicRaw.ImageWidth",
+            "QuickTime.creationdate",
+            "Ricoh.LensID",
+            "SigmaRaw.LENSMODEL",
+            "Sony.GPSLatitude",
+            "Sony.GPSLongitude",
+            "XMP.ApertureValue",
+            "XMP.GPSLatitudeRef",
+            "XMP.GPSLongitudeRef",
+            "XMP.ShutterSpeedValue"
+          ],
+          26
+        ],
+        "complex": [
+          [
+            "Canon.FileNumber",
+            "Canon.ISO",
+            "Exif.ImageSize",
+            "GPS.GPSAltitude",
+            "Nikon.GPSAltitude",
+            "Nikon.GPSLatitude",
+            "Nikon.GPSLongitude",
+            "QuickTime.creationdate",
+            "XMP.GPSLatitudeRef",
+            "XMP.GPSLongitudeRef"
+          ],
+          10
+        ],
+        "function_calls": [
+          [
+            "Canon.FileNumber",
+            "Exif.GPSPosition",
+            "Exif.ImageSize",
+            "Exif.ShutterSpeed",
+            "ExifTool.FileAccessDate",
+            "ExifTool.FileCreateDate",
+            "ExifTool.FileInodeChangeDate",
+            "ExifTool.FileModifyDate",
+            "ExifTool.FilePermissions",
+            "GPS.GPSAltitude",
+            "Nikon.GPSAltitude",
+            "Nikon.GPSAltitudeRef",
+            "Nikon.GPSLatitude",
             "Nikon.GPSLatitudeRef",
-            "Nikon.GPSLongitudeRef"
+            "Nikon.GPSLongitude",
+            "Nikon.GPSLongitudeRef",
+            "Nikon.LensID",
+            "PNG.create-date",
+            "PNG.modify-date",
+            "QuickTime.GPSAltitude",
+            "QuickTime.Rotation",
+            "QuickTime.creationdate",
+            "SigmaRaw.LENSMODEL",
+            "XMP.ApertureValue",
+            "XMP.GPSLatitude",
+            "XMP.GPSLatitudeRef",
+            "XMP.GPSLongitude",
+            "XMP.GPSLongitudeRef",
+            "XMP.ShutterSpeedValue"
+          ],
+          29
+        ],
+        "hash_lookups": [
+          [
+            "Exif.ImageSize",
+            "GPS.GPSAltitude",
+            "QuickTime.creationdate"
           ],
           3
         ],
@@ -491,764 +1015,240 @@
           ],
           3
         ],
-        "ternary": [
-          [
-            "GPS.GPSAltitude",
-            "Sony.GPSLongitude",
-            "QuickTime.GPSAltitudeRef",
-            "Sony.GPSLatitude",
-            "GPS.GPSLongitude",
-            "QuickTime.GPSAltitude",
-            "ExifTool.FileCreateDate",
-            "XMP.GPSLongitudeRef",
-            "XMP.ShutterSpeedValue",
-            "Exif.ShutterSpeed",
-            "Exif.GPSPosition",
-            "GPS.GPSLatitude",
-            "SigmaRaw.LENSMODEL",
-            "XMP.GPSLatitudeRef"
-          ],
-          14
-        ],
         "regex_match": [
           [
-            "Sony.GPSLongitude",
-            "Sony.GPSLatitude",
             "Canon.ISO",
-            "GPS.GPSLongitude",
-            "XMP.GPSLongitudeRef",
             "Exif.DateTimeOriginal",
             "Exif.ImageSize",
             "Exif.Megapixels",
-            "XMP.GPSLatitudeRef",
             "GPS.GPSLatitude",
-            "SigmaRaw.LENSMODEL"
+            "GPS.GPSLongitude",
+            "SigmaRaw.LENSMODEL",
+            "Sony.GPSLatitude",
+            "Sony.GPSLongitude",
+            "XMP.GPSLatitudeRef",
+            "XMP.GPSLongitudeRef"
           ],
           11
         ],
         "regex_substitute": [
           [
+            "Kodak.Aperture",
             "QuickTime.creationdate",
-            "Ricoh.LensID",
-            "Kodak.Aperture"
+            "Ricoh.LensID"
           ],
           3
         ],
-        "arithmetic": [
+        "sprintf": [
           [
             "Canon.FileNumber",
             "ExifTool.FilePermissions",
-            "QuickTime.creationdate",
-            "GPS.GPSLongitude",
-            "Ricoh.LensID",
-            "GPS.GPSLatitude",
-            "SigmaRaw.LENSMODEL",
-            "PanasonicRaw.ImageHeight",
-            "Sony.GPSLongitude",
-            "Nikon.GPSLatitude",
-            "PanasonicRaw.ImageWidth",
-            "XMP.GPSLongitudeRef",
-            "Exif.ImageSize",
-            "Nikon.GPSLongitude",
-            "XMP.GPSLatitudeRef",
-            "GPS.GPSAltitude",
-            "Nikon.GPSAltitudeRef",
-            "Sony.GPSLatitude",
-            "Kodak.Aperture",
-            "XMP.ApertureValue",
-            "Canon.ISO",
-            "Matroska.KEYWORDS",
-            "Exif.DateTimeOriginal",
-            "Exif.Megapixels",
-            "XMP.ShutterSpeedValue",
             "Nikon.LensID"
           ],
-          26
+          3
         ],
         "string_concat": [
           [
             "Canon.FileNumber",
             "ExifTool.FilePermissions",
             "Nikon.GPSAltitudeRef",
-            "XMP.GPSLongitudeRef",
             "Nikon.LensID",
-            "XMP.GPSLatitudeRef"
-          ],
-          6
-        ],
-        "function_calls": [
-          [
-            "Canon.FileNumber",
-            "ExifTool.FilePermissions",
-            "ExifTool.FileModifyDate",
-            "QuickTime.creationdate",
-            "QuickTime.GPSAltitude",
-            "XMP.GPSLongitude",
-            "SigmaRaw.LENSMODEL",
-            "PNG.modify-date",
-            "Nikon.GPSLatitude",
-            "XMP.GPSLongitudeRef",
-            "Exif.ImageSize",
-            "ExifTool.FileAccessDate",
-            "Exif.ShutterSpeed",
-            "Exif.GPSPosition",
-            "Nikon.GPSLongitude",
-            "Nikon.GPSLatitudeRef",
             "XMP.GPSLatitudeRef",
-            "GPS.GPSAltitude",
-            "QuickTime.Rotation",
-            "ExifTool.FileInodeChangeDate",
-            "Nikon.GPSAltitudeRef",
-            "Nikon.GPSAltitude",
-            "ExifTool.FileCreateDate",
-            "Nikon.GPSLongitudeRef",
-            "XMP.ApertureValue",
-            "XMP.ShutterSpeedValue",
-            "Nikon.LensID",
-            "XMP.GPSLatitude",
-            "PNG.create-date"
-          ],
-          29
-        ],
-        "hash_lookups": [
-          [
-            "QuickTime.creationdate",
-            "Exif.ImageSize",
-            "GPS.GPSAltitude"
-          ],
-          3
-        ],
-        "complex": [
-          [
-            "Canon.FileNumber",
-            "GPS.GPSAltitude",
-            "QuickTime.creationdate",
-            "Nikon.GPSLatitude",
-            "Nikon.GPSAltitude",
-            "Canon.ISO",
-            "XMP.GPSLongitudeRef",
-            "Exif.ImageSize",
-            "Nikon.GPSLongitude",
-            "XMP.GPSLatitudeRef"
-          ],
-          10
-        ]
-      }
-    },
-    "PrintConv": {
-      "unique_count": 25,
-      "total_usage": 71,
-      "top_expressions": [
-        {
-          "expression": "$self->ConvertDateTime($val)",
-          "count": 28,
-          "tags": [
-            "Exif.DateTimeOriginal",
-            "Exif.SubSecCreateDate",
-            "Exif.SubSecDateTimeOriginal",
-            "Exif.SubSecModifyDate",
-            "ExifTool.FileAccessDate",
-            "ExifTool.FileCreateDate",
-            "ExifTool.FileInodeChangeDate",
-            "ExifTool.FileModifyDate",
-            "GPS.GPSDateTime",
-            "IPTC.DateTimeCreated",
-            "IPTC.DigitalCreationDateTime",
-            "MIE.CreateDate",
-            "MIE.DateTime",
-            "MIE.ModifyDate",
-            "PNG.create-date",
-            "PNG.modify-date",
-            "QuickTime.creationdate",
-            "Sony.GPSDateTime",
-            "XMP.CreateDate",
-            "XMP.CreationDate",
-            "XMP.DateCreated",
-            "XMP.DateTime",
-            "XMP.DateTimeDigitized",
-            "XMP.DateTimeOriginal",
-            "XMP.GPSTimeStamp",
-            "XMP.MetadataDate",
-            "XMP.ModifyDate",
-            "XMP.modifyDate"
-          ]
-        },
-        {
-          "expression": "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")",
-          "count": 5,
-          "tags": [
-            "DJI.GpsLatitude",
-            "GPS.GPSLatitude",
-            "QuickTime.GPSLatitude",
-            "Sony.GPSLatitude",
-            "XMP.GPSLatitude"
-          ]
-        },
-        {
-          "expression": "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")",
-          "count": 5,
-          "tags": [
-            "DJI.GpsLongitude",
-            "GPS.GPSLongitude",
-            "QuickTime.GPSLongitude",
-            "Sony.GPSLongitude",
-            "XMP.GPSLongitude"
-          ]
-        },
-        {
-          "expression": "Image::ExifTool::Exif::PrintExposureTime($val)",
-          "count": 4,
-          "tags": [
-            "Exif.ShutterSpeed",
-            "MIE.ExposureTime",
-            "XMP.ExposureTime",
-            "XMP.ShutterSpeedValue"
-          ]
-        },
-        {
-          "expression": "ConvertDuration($val)",
-          "count": 3,
-          "tags": [
-            "MIE.Duration",
-            "MIE.Duration",
-            "RIFF.Duration"
-          ]
-        },
-        {
-          "expression": "$val=~tr/ /x/;$val",
-          "count": 3,
-          "tags": [
-            "MIE.ImageSize",
-            "MIE.ImageSize",
-            "MIE.ImageSize"
-          ]
-        },
-        {
-          "expression": "Image::ExifTool::Exif::PrintFNumber($val)",
-          "count": 2,
-          "tags": [
-            "Exif.Aperture",
-            "XMP.FNumber"
-          ]
-        },
-        {
-          "expression": "\"$val m\"",
-          "count": 2,
-          "tags": [
-            "Nikon.GPSAltitude",
-            "QuickTime.GPSAltitude"
-          ]
-        },
-        {
-          "expression": "Image::ExifTool::GPS::ToDMS($self, $val, 1)",
-          "count": 2,
-          "tags": [
-            "Nikon.GPSLatitude",
-            "Nikon.GPSLongitude"
-          ]
-        },
-        {
-          "expression": "sprintf(\"%.1f\",$val)",
-          "count": 2,
-          "tags": [
-            "SigmaRaw.APERTURE",
-            "XMP.ApertureValue"
-          ]
-        },
-        {
-          "expression": "lc $val",
-          "count": 1,
-          "tags": [
-            "ExifTool.FileTypeExtension"
-          ]
-        },
-        {
-          "expression": "\"$prt[0], $prt[1]\"",
-          "count": 1,
-          "tags": [
-            "Exif.GPSPosition"
-          ]
-        },
-        {
-          "expression": "$val =~ tr/ /x/; $val",
-          "count": 1,
-          "tags": [
-            "Exif.ImageSize"
-          ]
-        },
-        {
-          "expression": "my $pcv;\n            # use LensType2 instead of LensType if available and valid (Sony E-mount lenses)\n            # (0x8000 or greater; 0 for several older/3rd-party E-mount lenses)\n            if (defined $val[9] and ($val[9] & 0x8000 or $val[9] == 0)) {\n                $val[0] = $val[9];\n                $prt[0] = $prt[9];\n                # Particularly GM lenses: often LensType2=0 but LensType3 is available and valid: use LensType3.\n                if ($val[9] == 0 and $val[10] & 0x8000) {\n                   $val[0] = $val[10];\n                   $prt[0] = $prt[10];\n                }\n                $pcv = $$self{TAG_INFO}{LensType2}{PrintConv};\n            }\n            # use Canon RFLensType if available\n            if ($val[12]) {\n                $val[0] = $val[12];\n                $prt[0] = $prt[12];\n                $pcv = $$self{TAG_INFO}{RFLensType}{PrintConv};\n            }\n            my $lens = Image::ExifTool::Exif::PrintLensID($self, $prt[0], $pcv, $prt[8], @val);\n            # check for use of lens converter (Pentax K-3)\n            if ($val[11] and $val[1] and $lens) {\n                my $conv = $val[1] / $val[11];\n                $lens .= sprintf(' + %.1fx converter', $conv) if $conv > 1.1;\n            }\n            return $lens;",
-          "count": 1,
-          "tags": [
-            "Exif.LensID"
-          ]
-        },
-        {
-          "expression": "sprintf(\"%.*f\", ($val >= 1 ? 1 : ($val >= 0.001 ? 3 : 6)), $val)",
-          "count": 1,
-          "tags": [
-            "Exif.Megapixels"
-          ]
-        },
-        {
-          "expression": "foreach (0,2) {\n                next unless defined $val[$_] and IsFloat($val[$_]);\n                next unless defined $prt[$_+1] and $prt[$_+1] =~ /Sea/;\n                return((int($val[$_]*10)/10) . ' m ' . $prt[$_+1]);\n            }\n            $val = int($val * 10) / 10;\n            return(($val =~ s/^-// ? \"$val m Below\" : \"$val m Above\") . \" Sea Level\");",
-          "count": 1,
-          "tags": [
-            "GPS.GPSAltitude"
-          ]
-        },
-        {
-          "expression": "$_=$val;s/(\\d+)(\\d{4})/$1-$2/;$_",
-          "count": 1,
-          "tags": [
-            "Canon.FileNumber"
-          ]
-        },
-        {
-          "expression": "sprintf(\"%.0f\",$val)",
-          "count": 1,
-          "tags": [
-            "Canon.ISO"
-          ]
-        },
-        {
-          "expression": "Image::ExifTool::Canon::PrintFocalRange(@val)",
-          "count": 1,
-          "tags": [
-            "Canon.Lens"
-          ]
-        },
-        {
-          "expression": "\"$val mm\"",
-          "count": 1,
-          "tags": [
-            "Kodak.Focal Length"
-          ]
-        }
-      ],
-      "all_expressions": [
-        {
-          "expression": "$self->ConvertDateTime($val)",
-          "count": 28,
-          "tags": [
-            "Exif.DateTimeOriginal",
-            "Exif.SubSecCreateDate",
-            "Exif.SubSecDateTimeOriginal",
-            "Exif.SubSecModifyDate",
-            "ExifTool.FileAccessDate",
-            "ExifTool.FileCreateDate",
-            "ExifTool.FileInodeChangeDate",
-            "ExifTool.FileModifyDate",
-            "GPS.GPSDateTime",
-            "IPTC.DateTimeCreated",
-            "IPTC.DigitalCreationDateTime",
-            "MIE.CreateDate",
-            "MIE.DateTime",
-            "MIE.ModifyDate",
-            "PNG.create-date",
-            "PNG.modify-date",
-            "QuickTime.creationdate",
-            "Sony.GPSDateTime",
-            "XMP.CreateDate",
-            "XMP.CreationDate",
-            "XMP.DateCreated",
-            "XMP.DateTime",
-            "XMP.DateTimeDigitized",
-            "XMP.DateTimeOriginal",
-            "XMP.GPSTimeStamp",
-            "XMP.MetadataDate",
-            "XMP.ModifyDate",
-            "XMP.modifyDate"
-          ]
-        },
-        {
-          "expression": "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")",
-          "count": 5,
-          "tags": [
-            "DJI.GpsLatitude",
-            "GPS.GPSLatitude",
-            "QuickTime.GPSLatitude",
-            "Sony.GPSLatitude",
-            "XMP.GPSLatitude"
-          ]
-        },
-        {
-          "expression": "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")",
-          "count": 5,
-          "tags": [
-            "DJI.GpsLongitude",
-            "GPS.GPSLongitude",
-            "QuickTime.GPSLongitude",
-            "Sony.GPSLongitude",
-            "XMP.GPSLongitude"
-          ]
-        },
-        {
-          "expression": "Image::ExifTool::Exif::PrintExposureTime($val)",
-          "count": 4,
-          "tags": [
-            "Exif.ShutterSpeed",
-            "MIE.ExposureTime",
-            "XMP.ExposureTime",
-            "XMP.ShutterSpeedValue"
-          ]
-        },
-        {
-          "expression": "ConvertDuration($val)",
-          "count": 3,
-          "tags": [
-            "MIE.Duration",
-            "MIE.Duration",
-            "RIFF.Duration"
-          ]
-        },
-        {
-          "expression": "$val=~tr/ /x/;$val",
-          "count": 3,
-          "tags": [
-            "MIE.ImageSize",
-            "MIE.ImageSize",
-            "MIE.ImageSize"
-          ]
-        },
-        {
-          "expression": "Image::ExifTool::Exif::PrintFNumber($val)",
-          "count": 2,
-          "tags": [
-            "Exif.Aperture",
-            "XMP.FNumber"
-          ]
-        },
-        {
-          "expression": "\"$val m\"",
-          "count": 2,
-          "tags": [
-            "Nikon.GPSAltitude",
-            "QuickTime.GPSAltitude"
-          ]
-        },
-        {
-          "expression": "Image::ExifTool::GPS::ToDMS($self, $val, 1)",
-          "count": 2,
-          "tags": [
-            "Nikon.GPSLatitude",
-            "Nikon.GPSLongitude"
-          ]
-        },
-        {
-          "expression": "sprintf(\"%.1f\",$val)",
-          "count": 2,
-          "tags": [
-            "SigmaRaw.APERTURE",
-            "XMP.ApertureValue"
-          ]
-        },
-        {
-          "expression": "lc $val",
-          "count": 1,
-          "tags": [
-            "ExifTool.FileTypeExtension"
-          ]
-        },
-        {
-          "expression": "\"$prt[0], $prt[1]\"",
-          "count": 1,
-          "tags": [
-            "Exif.GPSPosition"
-          ]
-        },
-        {
-          "expression": "$val =~ tr/ /x/; $val",
-          "count": 1,
-          "tags": [
-            "Exif.ImageSize"
-          ]
-        },
-        {
-          "expression": "my $pcv;\n            # use LensType2 instead of LensType if available and valid (Sony E-mount lenses)\n            # (0x8000 or greater; 0 for several older/3rd-party E-mount lenses)\n            if (defined $val[9] and ($val[9] & 0x8000 or $val[9] == 0)) {\n                $val[0] = $val[9];\n                $prt[0] = $prt[9];\n                # Particularly GM lenses: often LensType2=0 but LensType3 is available and valid: use LensType3.\n                if ($val[9] == 0 and $val[10] & 0x8000) {\n                   $val[0] = $val[10];\n                   $prt[0] = $prt[10];\n                }\n                $pcv = $$self{TAG_INFO}{LensType2}{PrintConv};\n            }\n            # use Canon RFLensType if available\n            if ($val[12]) {\n                $val[0] = $val[12];\n                $prt[0] = $prt[12];\n                $pcv = $$self{TAG_INFO}{RFLensType}{PrintConv};\n            }\n            my $lens = Image::ExifTool::Exif::PrintLensID($self, $prt[0], $pcv, $prt[8], @val);\n            # check for use of lens converter (Pentax K-3)\n            if ($val[11] and $val[1] and $lens) {\n                my $conv = $val[1] / $val[11];\n                $lens .= sprintf(' + %.1fx converter', $conv) if $conv > 1.1;\n            }\n            return $lens;",
-          "count": 1,
-          "tags": [
-            "Exif.LensID"
-          ]
-        },
-        {
-          "expression": "sprintf(\"%.*f\", ($val >= 1 ? 1 : ($val >= 0.001 ? 3 : 6)), $val)",
-          "count": 1,
-          "tags": [
-            "Exif.Megapixels"
-          ]
-        },
-        {
-          "expression": "foreach (0,2) {\n                next unless defined $val[$_] and IsFloat($val[$_]);\n                next unless defined $prt[$_+1] and $prt[$_+1] =~ /Sea/;\n                return((int($val[$_]*10)/10) . ' m ' . $prt[$_+1]);\n            }\n            $val = int($val * 10) / 10;\n            return(($val =~ s/^-// ? \"$val m Below\" : \"$val m Above\") . \" Sea Level\");",
-          "count": 1,
-          "tags": [
-            "GPS.GPSAltitude"
-          ]
-        },
-        {
-          "expression": "$_=$val;s/(\\d+)(\\d{4})/$1-$2/;$_",
-          "count": 1,
-          "tags": [
-            "Canon.FileNumber"
-          ]
-        },
-        {
-          "expression": "sprintf(\"%.0f\",$val)",
-          "count": 1,
-          "tags": [
-            "Canon.ISO"
-          ]
-        },
-        {
-          "expression": "Image::ExifTool::Canon::PrintFocalRange(@val)",
-          "count": 1,
-          "tags": [
-            "Canon.Lens"
-          ]
-        },
-        {
-          "expression": "\"$val mm\"",
-          "count": 1,
-          "tags": [
-            "Kodak.Focal Length"
-          ]
-        },
-        {
-          "expression": "\"$prt[0] $prt[1]\"",
-          "count": 1,
-          "tags": [
-            "Nikon.LensSpec"
-          ]
-        },
-        {
-          "expression": "ConvertDuration($val) . \" (approx)\"",
-          "count": 1,
-          "tags": [
-            "Vorbis.Duration"
-          ]
-        },
-        {
-          "expression": "Image::ExifTool::XMP::PrintLensID($self, @val)",
-          "count": 1,
-          "tags": [
-            "XMP.LensID"
-          ]
-        },
-        {
-          "expression": "sprintf(\"%.1f mm\",$val)",
-          "count": 1,
-          "tags": [
-            "XMP.FocalLength"
-          ]
-        },
-        {
-          "expression": "$val =~ /^(inf|undef)$/ ? $val : \"$val m\"",
-          "count": 1,
-          "tags": [
-            "XMP.GPSAltitude"
-          ]
-        }
-      ],
-      "patterns": {
-        "sprintf": [
-          [
-            "XMP.FocalLength",
-            "SigmaRaw.APERTURE",
-            "Canon.ISO",
-            "Exif.Megapixels",
-            "Exif.LensID",
-            "XMP.ApertureValue"
+            "XMP.GPSLongitudeRef"
           ],
           6
         ],
         "ternary": [
           [
-            "XMP.GPSAltitude",
-            "GPS.GPSAltitude",
-            "Exif.Megapixels"
-          ],
-          3
-        ],
-        "regex_match": [
-          [
-            "Exif.ImageSize",
-            "XMP.GPSAltitude",
-            "MIE.ImageSize"
-          ],
-          3
-        ],
-        "regex_substitute": [
-          [
-            "GPS.GPSAltitude"
-          ],
-          1
-        ],
-        "arithmetic": [
-          [
-            "Canon.FileNumber",
-            "XMP.FocalLength",
-            "XMP.modifyDate",
-            "XMP.DateTimeOriginal",
-            "ExifTool.FileModifyDate",
-            "QuickTime.creationdate",
-            "IPTC.DateTimeCreated",
-            "MIE.ModifyDate",
-            "Exif.SubSecDateTimeOriginal",
-            "XMP.CreationDate",
-            "Exif.LensID",
-            "XMP.DateCreated",
-            "PNG.modify-date",
-            "Sony.GPSDateTime",
-            "XMP.GPSAltitude",
-            "Exif.ImageSize",
-            "XMP.DateTimeDigitized",
-            "XMP.MetadataDate",
-            "ExifTool.FileAccessDate",
-            "XMP.DateTime",
-            "SigmaRaw.APERTURE",
-            "Exif.SubSecCreateDate",
-            "GPS.GPSAltitude",
-            "IPTC.DigitalCreationDateTime",
-            "ExifTool.FileInodeChangeDate",
-            "ExifTool.FileCreateDate",
-            "XMP.GPSTimeStamp",
-            "GPS.GPSDateTime",
-            "XMP.ApertureValue",
-            "Exif.SubSecModifyDate",
-            "XMP.ModifyDate",
-            "MIE.DateTime",
-            "Canon.ISO",
-            "MIE.CreateDate",
-            "XMP.CreateDate",
-            "Exif.DateTimeOriginal",
-            "Exif.Megapixels",
-            "PNG.create-date",
-            "MIE.ImageSize"
-          ],
-          39
-        ],
-        "string_concat": [
-          [
-            "XMP.FocalLength",
-            "SigmaRaw.APERTURE",
-            "GPS.GPSAltitude",
-            "Vorbis.Duration",
-            "Canon.ISO",
-            "Exif.Megapixels",
-            "XMP.ApertureValue"
-          ],
-          7
-        ],
-        "function_calls": [
-          [
-            "MIE.ExposureTime",
-            "XMP.FocalLength",
-            "XMP.modifyDate",
-            "XMP.DateTimeOriginal",
-            "ExifTool.FileModifyDate",
-            "QuickTime.creationdate",
-            "XMP.FNumber",
-            "IPTC.DateTimeCreated",
-            "MIE.ModifyDate",
-            "Canon.Lens",
-            "GPS.GPSLongitude",
-            "Exif.SubSecDateTimeOriginal",
-            "XMP.CreationDate",
-            "Exif.LensID",
-            "XMP.DateCreated",
-            "GPS.GPSLatitude",
-            "XMP.GPSLongitude",
-            "MIE.Duration",
-            "DJI.GpsLongitude",
-            "Sony.GPSLongitude",
-            "PNG.modify-date",
-            "Sony.GPSDateTime",
-            "Nikon.GPSLatitude",
-            "XMP.LensID",
-            "XMP.DateTimeDigitized",
-            "XMP.MetadataDate",
-            "ExifTool.FileAccessDate",
+            "Exif.GPSPosition",
             "Exif.ShutterSpeed",
-            "Nikon.GPSLongitude",
-            "XMP.DateTime",
-            "QuickTime.GPSLongitude",
-            "SigmaRaw.APERTURE",
-            "Exif.SubSecCreateDate",
-            "GPS.GPSAltitude",
-            "IPTC.DigitalCreationDateTime",
-            "ExifTool.FileInodeChangeDate",
-            "DJI.GpsLatitude",
-            "Sony.GPSLatitude",
             "ExifTool.FileCreateDate",
-            "XMP.GPSTimeStamp",
-            "GPS.GPSDateTime",
-            "Exif.Aperture",
-            "XMP.ApertureValue",
-            "RIFF.Duration",
-            "Exif.SubSecModifyDate",
-            "XMP.ModifyDate",
-            "Vorbis.Duration",
-            "MIE.DateTime",
-            "XMP.ExposureTime",
-            "Canon.ISO",
-            "MIE.CreateDate",
-            "XMP.CreateDate",
-            "Exif.DateTimeOriginal",
-            "Exif.Megapixels",
-            "XMP.ShutterSpeedValue",
-            "QuickTime.GPSLatitude",
-            "XMP.GPSLatitude",
-            "PNG.create-date"
-          ],
-          58
-        ],
-        "hash_lookups": [
-          [
-            "Canon.FileNumber",
             "GPS.GPSAltitude",
-            "Exif.LensID"
+            "GPS.GPSLatitude",
+            "GPS.GPSLongitude",
+            "QuickTime.GPSAltitude",
+            "QuickTime.GPSAltitudeRef",
+            "SigmaRaw.LENSMODEL",
+            "Sony.GPSLatitude",
+            "Sony.GPSLongitude",
+            "XMP.GPSLatitudeRef",
+            "XMP.GPSLongitudeRef",
+            "XMP.ShutterSpeedValue"
+          ],
+          14
+        ],
+        "unpack": [
+          [
+            "Nikon.GPSAltitudeRef",
+            "Nikon.GPSLatitudeRef",
+            "Nikon.GPSLongitudeRef"
           ],
           3
-        ],
-        "complex": [
-          [
-            "GPS.GPSAltitude",
-            "Exif.LensID"
-          ],
-          2
         ]
-      }
-    },
-    "Condition": {
-      "unique_count": 1,
-      "total_usage": 1,
+      },
       "top_expressions": [
         {
-          "expression": "not defined $$self{VALUE}{DateTimeOriginal}",
-          "count": 1,
+          "count": 4,
+          "expression": "\"$val[0] $val[1]\"",
           "tags": [
-            "Exif.DateTimeOriginal"
+            "IPTC.DateTimeCreated",
+            "IPTC.DigitalCreationDateTime",
+            "Nikon.LensSpec",
+            "Olympus.LensType"
           ]
-        }
-      ],
-      "all_expressions": [
+        },
         {
-          "expression": "not defined $$self{VALUE}{DateTimeOriginal}",
+          "count": 3,
+          "expression": "ConvertUnixTime($val,1)",
+          "tags": [
+            "ExifTool.FileAccessDate",
+            "ExifTool.FileInodeChangeDate",
+            "ExifTool.FileModifyDate"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "$val",
+          "tags": [
+            "Exif.LensID",
+            "XMP.LensID"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "\"$val[0] $val[1]Z\"",
+          "tags": [
+            "GPS.GPSDateTime",
+            "Sony.GPSDateTime"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "$val[1] =~ /^S/i ? -$val[0] : $val[0]",
+          "tags": [
+            "GPS.GPSLatitude",
+            "Sony.GPSLatitude"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "$val[1] =~ /^W/i ? -$val[0] : $val[0]",
+          "tags": [
+            "GPS.GPSLongitude",
+            "Sony.GPSLongitude"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "require Image::ExifTool::XMP; Image::ExifTool::XMP::ConvertXMPDate($val)",
+          "tags": [
+            "PNG.create-date",
+            "PNG.modify-date"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "my $val=Image::ExifTool::XMP::DecodeBase64($val);\n        my $saveOrder = GetByteOrder();\n        SetByteOrder('II');\n        $val = GetDouble($val,0) + GetDouble($val,8)/60 + GetDouble($val,16)/3600;\n        SetByteOrder($saveOrder);\n        return $val;",
+          "tags": [
+            "Nikon.GPSLatitude",
+            "Nikon.GPSLongitude"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "my $val=Image::ExifTool::XMP::DecodeBase64($val); unpack(\"V\",$$val)",
+          "tags": [
+            "Nikon.GPSLatitudeRef",
+            "Nikon.GPSLongitudeRef"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "$val[1] - $val[0]",
+          "tags": [
+            "PanasonicRaw.ImageHeight",
+            "PanasonicRaw.ImageWidth"
+          ]
+        },
+        {
+          "count": 2,
+          "expression": "Image::ExifTool::GPS::ToDegrees($val, 1)",
+          "tags": [
+            "XMP.GPSLatitude",
+            "XMP.GPSLongitude"
+          ]
+        },
+        {
           "count": 1,
+          "expression": "$^O eq \"darwin\" ? $val : ConvertUnixTime($val,1)",
+          "tags": [
+            "ExifTool.FileCreateDate"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "sprintf(\"%.3o\", $val)",
+          "tags": [
+            "ExifTool.FilePermissions"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "$val[0] || $val[1]",
+          "tags": [
+            "Exif.Aperture"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "return $val[0] if $val[0] and $val[0]=~/ /;\n            return \"$val[1] $val[2]\";",
           "tags": [
             "Exif.DateTimeOriginal"
           ]
+        },
+        {
+          "count": 1,
+          "expression": "(length($val[0]) or length($val[1])) ? \"$val[0] $val[1]\" : undef",
+          "tags": [
+            "Exif.GPSPosition"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "return $val[4] if $val[4];\n            return \"$val[2] $val[3]\" if $val[2] and $val[3] and\n                    $$self{TIFF_TYPE} =~ /^(CR2|Canon 1D RAW|IIQ|EIP)$/;\n            return \"$val[0] $val[1]\" if IsFloat($val[0]) and IsFloat($val[1]);\n            return undef;",
+          "tags": [
+            "Exif.ImageSize"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "my @d = ($val =~ /\\d+/g); $d[0] * $d[1] / 1000000",
+          "tags": [
+            "Exif.Megapixels"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "($val[2] and $val[2]>0) ? $val[2] : (defined($val[0]) ? $val[0] : $val[1])",
+          "tags": [
+            "Exif.ShutterSpeed"
+          ]
+        },
+        {
+          "count": 1,
+          "expression": "foreach (0,2) {\n                next unless defined $val[$_] and IsFloat($val[$_]) and defined $val[$_+1];\n                return $val[$_+1] ? -abs($val[$_]) : $val[$_];\n            }\n            return undef;",
+          "tags": [
+            "GPS.GPSAltitude"
+          ]
         }
       ],
-      "patterns": {
-        "hash_lookups": [
-          [
-            "Exif.DateTimeOriginal"
-          ],
-          1
-        ]
-      }
+      "total_usage": 55,
+      "unique_count": 41
     }
   },
-  "shared_expressions": []
+  "shared_expressions": [],
+  "summary": {
+    "modules_processed": 49,
+    "total_required_tags": 154
+  }
 }
