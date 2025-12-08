@@ -89,7 +89,7 @@ impl BinaryOperatorNormalizer {
                 && child
                     .content
                     .as_ref()
-                    .map_or(false, |op| self.get_precedence(op).is_some())
+                    .is_some_and(|op| self.get_precedence(op).is_some())
         })
     }
 

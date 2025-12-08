@@ -191,7 +191,7 @@ impl ConditionalStatementsNormalizer {
     fn find_keyword(&self, children: &[PpiNode], keyword: &str) -> Option<usize> {
         children.iter().position(|child| {
             child.class == "PPI::Token::Word"
-                && child.content.as_ref().map_or(false, |c| c == keyword)
+                && child.content.as_ref().is_some_and(|c| c == keyword)
         })
     }
 
@@ -207,7 +207,7 @@ impl ConditionalStatementsNormalizer {
             .skip(start_pos)
             .position(|child| {
                 child.class == "PPI::Token::Word"
-                    && child.content.as_ref().map_or(false, |c| c == keyword)
+                    && child.content.as_ref().is_some_and(|c| c == keyword)
             })
             .map(|pos| pos + start_pos)
     }

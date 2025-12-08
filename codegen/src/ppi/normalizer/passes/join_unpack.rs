@@ -92,8 +92,7 @@ impl JoinUnpackPass {
     /// Find position of "join" function word in children
     fn find_join_function(&self, children: &[PpiNode]) -> Option<usize> {
         children.iter().position(|child| {
-            child.class == "PPI::Token::Word"
-                && child.content.as_ref().map_or(false, |c| c == "join")
+            child.class == "PPI::Token::Word" && child.content.as_ref().is_some_and(|c| c == "join")
         })
     }
 
@@ -104,7 +103,7 @@ impl JoinUnpackPass {
             .skip(start_pos)
             .position(|child| {
                 child.class == "PPI::Token::Word"
-                    && child.content.as_ref().map_or(false, |c| c == "unpack")
+                    && child.content.as_ref().is_some_and(|c| c == "unpack")
             })
             .map(|pos| pos + start_pos)
     }
@@ -126,7 +125,7 @@ impl JoinUnpackPass {
 
             // Skip comma operators
             if child.class == "PPI::Token::Operator"
-                && child.content.as_ref().map_or(false, |c| c == ",")
+                && child.content.as_ref().is_some_and(|c| c == ",")
             {
                 continue;
             }
@@ -156,7 +155,7 @@ impl JoinUnpackPass {
         for child in children.iter().skip(unpack_pos + 1) {
             // Skip comma operators
             if child.class == "PPI::Token::Operator"
-                && child.content.as_ref().map_or(false, |c| c == ",")
+                && child.content.as_ref().is_some_and(|c| c == ",")
             {
                 continue;
             }
