@@ -809,11 +809,12 @@ impl ExifReader {
     }
 
     /// Create ConditionalContext for conditional tag resolution
+    #[allow(dead_code)]
     fn create_conditional_context(
         &self,
-        count: Option<u32>,
-        format: Option<String>,
-        binary_data: Option<Vec<u8>>,
+        _count: Option<u32>,
+        _format: Option<String>,
+        _binary_data: Option<Vec<u8>>,
     ) -> () {
         // TODO P07: Generate main_conditional_tags
         // TODO P07: Implement conditional context when main_conditional_tags is generated
@@ -821,10 +822,11 @@ impl ExifReader {
     }
 
     /// Create ConditionalContext for FujiFilm conditional tag resolution
+    #[allow(dead_code)]
     fn create_fujifilm_conditional_context(
         &self,
-        count: Option<u32>,
-        format: Option<String>,
+        _count: Option<u32>,
+        _format: Option<String>,
     ) -> () {
         // TODO P07: Generate main_model_detection
         // TODO P07: Implement FujiFilm conditional context when main_model_detection is generated
@@ -833,12 +835,13 @@ impl ExifReader {
 
     /// Resolve conditional tag name using manufacturer-specific logic
     /// Returns the resolved tag name if conditional resolution succeeds, None otherwise
+    #[allow(dead_code)]
     fn resolve_conditional_tag_name(
         &self,
-        tag_id: u16,
-        count: Option<u32>,
-        format: Option<String>,
-        binary_data: Option<Vec<u8>>,
+        _tag_id: u16,
+        _count: Option<u32>,
+        _format: Option<String>,
+        _binary_data: Option<Vec<u8>>,
     ) -> Option<String> {
         // TODO P07: Conditional resolution disabled until main_conditional_tags and main_model_detection are generated
         // Only perform conditional resolution for Canon tags when we have Canon context
