@@ -52,9 +52,14 @@ pub mod SonyIDC_pm;
 pub mod Sony_pm;
 pub mod Vorbis_pm;
 pub mod XMP_pm;
+pub mod composite_tags;
 pub mod functions;
 
 // Re-export commonly used types and functions
+pub use composite_tags::{
+    all_composite_tag_names, composite_tag_count, lookup_composite_tag, CompositeTagDef,
+    COMPOSITE_TAGS,
+};
 
 /// Initialize all lazy static data structures
 /// This can be called during startup to avoid lazy initialization costs later

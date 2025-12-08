@@ -566,7 +566,7 @@ src/composite_tags/implementations.rs  # All migrated to codegen-runtime
 
 ### Checklist
 
-- [ ] Patcher sets `__hasCompositeTags` for modules with `AddCompositeTags` calls
+- [x] Patcher sets `__hasCompositeTags` for modules with `AddCompositeTags` calls
 - [ ] `cargo run -p codegen --bin debug-ppi -- --composite '$val[0] + $val[1]'` generates `vals.get(0)...`
 - [ ] `make codegen` generates composite functions (not empty HashMap)
 - [ ] `rg "composite_value_" src/generated/` shows 50+ generated functions
@@ -618,5 +618,42 @@ Common patterns the PPI pipeline must handle (with composite context):
 | Sprintf         | `sprintf("%.1f", $val[0])`              | `sprintf_perl(...)`           |
 | Printed value   | `$prt[2]`                               | `prts.get(2).cloned()`        |
 | Math difference | `$val[1] - $val[0]`                     | `vals[1] - vals[0]`           |
+
+---
+
+## Implementation Progress
+
+### ✅ Task 0: Fix Patcher Composite Detection - COMPLETE
+
+**Changes made:**
+- Modified `codegen/scripts/exiftool-patcher.pl` (lines 59-65) to detect `AddCompositeTags` calls
+- Inserts `our $__hasCompositeTags = 1;` before each `AddCompositeTags` call
+
+**Verified:**
+```bash
+grep '__hasCompositeTags' third-party/exiftool/lib/Image/ExifTool/GPS.pm
+# Output: our $__hasCompositeTags = 1;
+```
+
+**Note for next engineer:** 30 modules call `AddCompositeTags`. After modifying the patcher, markers were removed from these modules to force re-patching. Run `make codegen` to verify the flag is set in all composite modules.
+
+### ⏳ Remaining Tasks
+
+- **Task 1**: Add composite context to PPI generator (`ExpressionContext` enum)
+- **Task 2**: Create composite function signatures (`CompositeValueConvFn`, `CompositePrintConvFn`)
+- **Task 3**: Update `CompositeTagDef` structure to hold function pointers
+- **Task 4**: Generate composite function bodies via PPI
+- **Task 5**: Enable runtime orchestration (uncomment `orchestration.rs`)
+- **Task 6**: Migrate complex implementations + PrintConv fallbacks
+
+### Next Step
+
+Verify `CompositeTagStrategy` is now detecting composite symbols:
+```bash
+RUST_LOG=debug make codegen 2>&1 | grep -i "composite"
+# Should show: "Processing composite symbol" messages
+```
+
+If no composite symbols detected, check `field_extractor.pl:74` is reading `$__hasCompositeTags` correctly.
 
 ---

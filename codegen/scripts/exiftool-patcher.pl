@@ -54,6 +54,19 @@ sub convert_all_my_to_package_variables {
           join( '|', map { quotemeta( $_->{name} ) } @vars_to_export );
         $content =~ s/^my(\s+[%@](?:$var_pattern)\s*=)/our$1/gm;
         $modified = 1;
+    }
+
+    # Detect AddCompositeTags calls and set __hasCompositeTags flag
+    # This enables field_extractor.pl to identify composite tag tables
+    if ( $content =~ /Image::ExifTool::AddCompositeTags\s*\(/ ) {
+
+        # Insert the flag declaration before the AddCompositeTags call
+        $content =~
+s/(Image::ExifTool::AddCompositeTags\s*\([^)]+\)\s*;)/our \$__hasCompositeTags = 1;\n$1/g;
+        $modified = 1;
+    }
+
+    if (@vars_to_export) {
 
         # Build symbol table export statements
         my $exports =
