@@ -231,7 +231,18 @@ impl ExpressionPrecedenceNormalizer {
                     return true;
                 }
 
-                // Check if this is a function call - precedence climbing should handle it
+                // Always process binary operations that contain function calls
+                // e.g., 100 * exp(...), $val / log(2), etc.
+                // The precedence climbing algorithm will correctly handle the function calls
+                if self.has_binary_operators(&node.children) {
+                    trace!(
+                        "should_process: Processing {} - binary operation with function call",
+                        node.class
+                    );
+                    return true;
+                }
+
+                // Check if this is a standalone function call - precedence climbing should handle it
                 if let Some(first_child) = node.children.first() {
                     if first_child.class == "PPI::Token::Word" {
                         if let Some(func_name) = &first_child.content {
@@ -375,7 +386,7 @@ impl ExpressionPrecedenceNormalizer {
                 && child
                     .content
                     .as_ref()
-                    .map_or(false, |op| self.get_precedence(op).is_some())
+                    .is_some_and(|op| self.get_precedence(op).is_some())
         })
     }
 
