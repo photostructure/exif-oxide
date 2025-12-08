@@ -29,7 +29,7 @@ mod tests;
 
 // Re-export key types and functions for external use
 pub use fallback_helper::try_registry_lookup;
-pub use function_registry::{lookup_function, FunctionImplementation, ModuleFunction};
+pub use function_registry::{lookup_function, FunctionImplementation};
 pub use printconv_registry::{lookup_printconv, lookup_tag_specific_printconv};
 pub use types::ValueConvType;
 pub use valueconv_registry::classify_valueconv_expression;

@@ -42,7 +42,8 @@ pub enum FunctionImplementation {
 pub struct BuiltinFunction {
     pub module_path: &'static str,
     pub function_name: &'static str,
-    pub parameter_pattern: &'static str, // For validation/documentation
+    #[allow(dead_code)] // Kept for documentation; used by get_function_details in tests
+    pub parameter_pattern: &'static str,
 }
 
 /// ExifTool module function mappings
@@ -50,7 +51,8 @@ pub struct BuiltinFunction {
 pub struct ModuleFunction {
     pub module_path: &'static str,
     pub function_name: &'static str,
-    pub exiftool_module: &'static str, // Original ExifTool module (Canon, GPS, etc.)
+    #[allow(dead_code)] // Kept for documentation; used by get_function_details in tests
+    pub exiftool_module: &'static str,
 }
 
 /// Custom script function mappings for complex multi-line expressions
@@ -58,7 +60,8 @@ pub struct ModuleFunction {
 pub struct ScriptFunction {
     pub module_path: &'static str,
     pub function_name: &'static str,
-    pub description: &'static str, // Brief description of what the script does
+    #[allow(dead_code)] // Kept for documentation; used by get_function_details in tests
+    pub description: &'static str,
 }
 
 // Registry for function call lookups
