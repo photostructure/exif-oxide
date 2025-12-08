@@ -1607,7 +1607,8 @@ pub trait PpiVisitor {
                 } else {
                     (left, right)
                 };
-                Ok(format!("({l} {operator} {r})"))
+                // No outer parentheses - Rust precedence handles arithmetic correctly
+                Ok(format!("{l} {operator} {r}"))
             }
             "**" => {
                 // Power operator -> use power function which takes TagValue args (owned)
@@ -1695,7 +1696,7 @@ pub trait PpiVisitor {
                     let mut hasher = DefaultHasher::new();
                     pattern.hash(&mut hasher);
                     flags.hash(&mut hasher);
-                    let regex_id = format!("REGEX_{:x}", hasher.finish());
+                    let regex_id = format!("REGEX_{:X}", hasher.finish());
 
                     // Build regex with flags
                     let regex_flags = if flags.contains('i') { "(?i)" } else { "" };
@@ -1745,7 +1746,8 @@ pub trait PpiVisitor {
                     format!("{right}.to_string()")
                 };
 
-                Ok(format!("({left_str} {rust_op} {right_str})"))
+                // No outer parentheses - string comparisons don't need them
+                Ok(format!("{left_str} {rust_op} {right_str}"))
             }
             "==" | "!=" | "<" | ">" | "<=" | ">=" => {
                 // Numeric comparisons - no parentheses needed
