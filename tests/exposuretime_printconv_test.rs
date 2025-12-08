@@ -78,19 +78,20 @@ fn test_various_exposuretime_values() {
         TagValue::string("1/4")
     );
 
-    // Slower speeds (>= 0.25001) should be decimal
+    // Slower speeds (>= 0.25001) should be decimal or integer
     assert_eq!(
         exposuretime_print_conv(&TagValue::F64(0.5), None),
         TagValue::string("0.5")
     );
+    // Simple integers return as I32 to match ExifTool JSON output
     assert_eq!(
         exposuretime_print_conv(&TagValue::F64(1.0), None),
-        TagValue::string("1")
-    ); // .0 stripped
+        TagValue::I32(1)
+    ); // .0 stripped, returns numeric
     assert_eq!(
         exposuretime_print_conv(&TagValue::F64(2.0), None),
-        TagValue::string("2")
-    ); // .0 stripped
+        TagValue::I32(2)
+    ); // .0 stripped, returns numeric
     assert_eq!(
         exposuretime_print_conv(&TagValue::F64(2.5), None),
         TagValue::string("2.5")
@@ -109,8 +110,9 @@ fn test_various_exposuretime_values() {
         exposuretime_print_conv(&TagValue::Rational(1, 2), None),
         TagValue::string("0.5")
     );
+    // 2/1 = 2.0 seconds, returns as integer
     assert_eq!(
         exposuretime_print_conv(&TagValue::Rational(2, 1), None),
-        TagValue::string("2")
+        TagValue::I32(2)
     );
 }
