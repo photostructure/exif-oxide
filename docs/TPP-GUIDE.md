@@ -161,16 +161,3 @@ Before marking your TPP complete:
 ## The Ultimate Test
 
 Hand this TPP to someone unfamiliar with the codebase. If they can implement the solution without asking you questions - even if the code was refactored since you wrote it - you've written an excellent TPP.
-
-## Emergency Recovery
-
-Always include break-glass procedures:
-
-```bash
-# If something breaks
-git diff HEAD~ > my_changes.patch
-git apply -R my_changes.patch  # Revert just your changes
-
-# Validate before declaring success
-cargo t test_name && make precommit
-```

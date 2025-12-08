@@ -14,7 +14,7 @@ Well done. We need to hand this work to another engineer now. Please update your
 
 # When the initial plan is hand-wavy
 
-That's really great analysis! Since this touches core architecture, it needs thorough research. For anything unclear or uncertain, verify against source code, docs, generated code, and ExifTool source. Ultrathink and re-analyze. Consider alternative approaches, weighing pros and cons to improve our plan. Don't expand scope without asking if it's relevant. Review TPPs in docs/todo and docs/done for context and coordination opportunities.
+That's really great analysis! Since this touches core architecture, it needs thorough research. For anything unclear or uncertain, verify against source code, docs, generated code, and ExifTool source. Ultrathink and re-analyze. Consider alternative approaches, weighing pros and cons to improve our plan. Don't expand scope without asking if it's relevant.
 
 # Refining an unsaved TPP
 
@@ -44,7 +44,7 @@ That sounds great. This is critical infrastructure for this project, so let's do
 
 # Validating a TPP
 
-✏️ is a technical project plan: we're going to carefully validate every task to see if it is actually complete. Prior engineers may have incorrectly stated that tasks were complete when they are not, so verify everything carefully. This is critical work for our project, and requires extensive and exhaustive prerequisite research. Read every referenced source and doc. Run relevant tooling and tests and study existing source to validate current code state. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. If all tasks are complete, revise the TPP with updated status and move it to `docs/done/$(TZ=America/Los_Angeles date +%Y%m%d)-$(basename $TPP_FILE_NAME)`. Ultrathink.
+✏️ is a technical project plan: we're going to carefully validate every task to see if it is actually complete. Prior engineers may have incorrectly stated that tasks were complete when they are not, so verify everything carefully. This is critical work for our project, and requires extensive and exhaustive prerequisite research. Read every referenced source and doc. Run relevant tooling and tests and study existing source to validate current code state. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. @CLAUDE.md and @docs/TRUST-EXIFTOOL.md provide invaluable project context and guidelines. 
 
 # When the robots need a reminder
 
