@@ -93,10 +93,9 @@ impl SafeDivisionNormalizer {
     fn extract_numerator(&self, true_branch: &[PpiNode]) -> PpiNode {
         // Find the number before the division operator
         for (i, node) in true_branch.iter().enumerate() {
-            if node.class == "PPI::Token::Operator" && node.content.as_deref() == Some("/") {
-                if i > 0 {
-                    return true_branch[i - 1].clone();
-                }
+            if node.class == "PPI::Token::Operator" && node.content.as_deref() == Some("/") && i > 0
+            {
+                return true_branch[i - 1].clone();
             }
         }
 
