@@ -200,22 +200,23 @@ impl TagKitStrategy {
             "/// Tag definitions for {}::{} table\n",
             symbol.module_name, symbol.table_name
         ));
-        code.push_str(&format!(
-            "pub static {constant_name}: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {{\n"
-        ));
-
         // Generate HashMap construction based on whether we have entries
         if tag_entries.is_empty() {
-            code.push_str("    HashMap::new()\n");
+            // Use direct function reference for empty HashMap (avoids redundant closure warning)
+            code.push_str(&format!(
+                "pub static {constant_name}: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);\n\n"
+            ));
         } else {
+            code.push_str(&format!(
+                "pub static {constant_name}: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {{\n"
+            ));
             code.push_str("    HashMap::from([\n");
             for (_, entry) in tag_entries {
                 code.push_str(&entry);
             }
             code.push_str("    ])\n");
+            code.push_str("});\n\n");
         }
-
-        code.push_str("});\n\n");
 
         // Generate apply_value_conv function: TODO: can this be DRY'ed up and moved into src/ proper, not shoved into every generated file?
         code.push_str(&formatdoc!(r#"
@@ -355,7 +356,7 @@ impl TagKitStrategy {
                     context,
                 ) {
                     Ok(function_name) => {
-                        return Ok(format!("Some(PrintConv::Function({}))", function_name));
+                        return Ok(format!("Some(PrintConv::Function({function_name}))"));
                     }
                     Err(e) => {
                         debug!("PPI generation failed for PrintConv '{}': {}, falling back to registry", print_conv_str, e);
@@ -436,7 +437,7 @@ impl TagKitStrategy {
                     context,
                 ) {
                     Ok(function_name) => {
-                        return Ok(format!("Some(ValueConv::Function({}))", function_name));
+                        return Ok(format!("Some(ValueConv::Function({function_name}))"));
                     }
                     Err(e) => {
                         debug!("PPI generation failed for ValueConv '{}': {}, falling back to registry", value_conv_str, e);
