@@ -29,7 +29,8 @@ exclude = [
 # Prefer TryFrom over From for fallible conversions
 fallible_impl_from = "warn"
 # Catch functions returning important values that callers might ignore
-must_use_candidate = "warn"
+# TODO: Re-enable before v1.0.0 to audit public API
+must_use_candidate = "allow"
 
 # === Generated Code Compatibility ===
 # Allow explicit 'static lifetimes in generated code
