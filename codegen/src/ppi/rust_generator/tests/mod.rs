@@ -180,7 +180,7 @@ mod composite_context {
 
         // Composite context should use vals.get()
         assert!(
-            result.contains("vals.get(0).cloned().unwrap_or_default()"),
+            result.contains("vals.get(0).cloned().unwrap_or(TagValue::Empty)"),
             "Composite context should use vals.get(), got: {result}"
         );
         // Should NOT use codegen_runtime::get_array_element for $val
@@ -205,7 +205,7 @@ mod composite_context {
 
         // Composite context for $prt should use prts.get()
         assert!(
-            result.contains("prts.get(1).cloned().unwrap_or_default()"),
+            result.contains("prts.get(1).cloned().unwrap_or(TagValue::Empty)"),
             "Composite context should use prts.get() for $prt[], got: {result}"
         );
     }
@@ -225,7 +225,7 @@ mod composite_context {
 
         // Composite context for $raw should use raws.get()
         assert!(
-            result.contains("raws.get(2).cloned().unwrap_or_default()"),
+            result.contains("raws.get(2).cloned().unwrap_or(TagValue::Empty)"),
             "Composite context should use raws.get() for $raw[], got: {result}"
         );
     }

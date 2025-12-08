@@ -6,9 +6,839 @@
 //! - CompositeTagDef: Structure defining composite tag dependencies and calculation logic
 //! - COMPOSITE_TAGS: Global registry of all composite tag definitions
 
-use codegen_runtime::{CompositePrintConvFn, CompositeValueConvFn};
+use codegen_runtime::types::ExifError;
+use codegen_runtime::{CompositePrintConvFn, CompositeValueConvFn, ExifContext, TagValue};
 use std::collections::HashMap;
 use std::sync::LazyLock;
+
+// =============================================================================
+// Generated Composite Functions
+// =============================================================================
+//
+// These functions are auto-generated from ExifTool Perl expressions.
+// They receive dependency arrays (vals, prts, raws) and compute composite values.
+
+#[allow(
+    dead_code,
+    unused_variables,
+    clippy::unnecessary_cast,
+    clippy::collapsible_else_if,
+    clippy::redundant_clone
+)]
+
+/// Original perl expression:
+/// ``` perl
+/// $val[0] || $val[1]
+/// ```
+pub fn composite_valueconv_exif_aperture(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if (vals.get(0).cloned().unwrap_or(TagValue::Empty)).is_truthy() {
+            vals.get(0).cloned().unwrap_or(TagValue::Empty).clone()
+        } else {
+            vals.get(1).cloned().unwrap_or(TagValue::Empty)
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// sqrt(24*24+36*36) / ($val * 1440)
+/// ```
+pub fn composite_valueconv_exif_circleofconfusion(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(codegen_runtime::sqrt(24i32 * 24i32 + 36i32 * 36i32)
+        / vals.get(0).cloned().unwrap_or(TagValue::Empty)
+        * 1440i32)
+}
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.3f mm",$val)
+/// ```
+pub fn composite_printconv_exif_circleofconfusion(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(codegen_runtime::sprintf_perl(
+        "%.3f mm",
+        &[vals.get(0).cloned().unwrap_or(TagValue::Empty).clone()],
+    )))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val[1] ? sprintf("%.1f mm (35 mm equivalent: %.1f mm)", $val[0], $val) : sprintf("%.1f mm", $val)
+/// ```
+pub fn composite_printconv_exif_focallength35efl(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if (vals.get(1).cloned().unwrap_or(TagValue::Empty)).is_truthy() {
+            TagValue::String(codegen_runtime::sprintf_perl(
+                "%.1f mm (35 mm equivalent: %.1f mm)",
+                &[
+                    vals.get(0).cloned().unwrap_or(TagValue::Empty).clone(),
+                    vals.get(0).cloned().unwrap_or(TagValue::Empty).clone(),
+                ],
+            ))
+        } else {
+            TagValue::String(codegen_runtime::sprintf_perl(
+                "%.1f mm",
+                &[vals.get(0).cloned().unwrap_or(TagValue::Empty).clone()],
+            ))
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// "$prt[0], $prt[1]"
+/// ```
+pub fn composite_printconv_exif_gpsposition(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(format!(
+        "{}, {}",
+        prts.get(0).cloned().unwrap_or(TagValue::Empty),
+        prts.get(1).cloned().unwrap_or(TagValue::Empty)
+    )))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.2f m", $val)
+/// ```
+pub fn composite_printconv_exif_hyperfocaldistance(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(codegen_runtime::sprintf_perl(
+        "%.2f m",
+        &[vals.get(0).cloned().unwrap_or(TagValue::Empty).clone()],
+    )))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val
+/// ```
+pub fn composite_valueconv_exif_lensid(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(vals.get(0).cloned().unwrap_or(TagValue::Empty))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.1f",$val)
+/// ```
+pub fn composite_printconv_exif_lightvalue(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(codegen_runtime::sprintf_perl(
+        "%.1f",
+        &[vals.get(0).cloned().unwrap_or(TagValue::Empty).clone()],
+    )))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.*f", ($val >= 1 ? 1 : ($val >= 0.001 ? 3 : 6)), $val)
+/// ```
+pub fn composite_printconv_exif_megapixels(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(codegen_runtime::sprintf_perl(
+        "%.*f",
+        &[
+            if vals.get(0).cloned().unwrap_or(TagValue::Empty) >= 1i32 {
+                Into::<TagValue>::into(1i32)
+            } else {
+                if vals.get(0).cloned().unwrap_or(TagValue::Empty) >= 0.001f64 {
+                    Into::<TagValue>::into(3i32)
+                } else {
+                    Into::<TagValue>::into(6i32)
+                }
+            }
+            .clone(),
+            vals.get(0).cloned().unwrap_or(TagValue::Empty).clone(),
+        ],
+    )))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// "$val[0]x$val[1]"
+/// ```
+pub fn composite_valueconv_exif_previewimagesize(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String("$val[0]x$val[1]".to_string()))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.1f", $val)
+/// ```
+pub fn composite_printconv_exif_scalefactor35efl(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(codegen_runtime::sprintf_perl(
+        "%.1f",
+        &[vals.get(0).cloned().unwrap_or(TagValue::Empty).clone()],
+    )))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// "$val[0] $val[1]Z"
+/// ```
+pub fn composite_valueconv_gps_gpsdatetime(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String("$val[0] $val[1]Z".to_string()))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val[1] =~ /^S/i ? -$val[0] : $val[0]
+/// ```
+pub fn composite_valueconv_gps_gpsdestlatitude(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if {
+            use regex::Regex;
+            use std::sync::LazyLock;
+            static REGEX_F0BB09E88B6D529A: LazyLock<Regex> =
+                LazyLock::new(|| Regex::new(r"(?i)^S").unwrap());
+            REGEX_F0BB09E88B6D529A
+                .is_match(&vals.get(1).cloned().unwrap_or(TagValue::Empty).to_string())
+        } {
+            codegen_runtime::negate(vals.get(0).cloned().unwrap_or(TagValue::Empty))
+        } else {
+            vals.get(0).cloned().unwrap_or(TagValue::Empty)
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val[1] =~ /^W/i ? -$val[0] : $val[0]
+/// ```
+pub fn composite_valueconv_gps_gpsdestlongitude(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if {
+            use regex::Regex;
+            use std::sync::LazyLock;
+            static REGEX_7F53CDA04B3D5152: LazyLock<Regex> =
+                LazyLock::new(|| Regex::new(r"(?i)^W").unwrap());
+            REGEX_7F53CDA04B3D5152
+                .is_match(&vals.get(1).cloned().unwrap_or(TagValue::Empty).to_string())
+        } {
+            codegen_runtime::negate(vals.get(0).cloned().unwrap_or(TagValue::Empty))
+        } else {
+            vals.get(0).cloned().unwrap_or(TagValue::Empty)
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val[1] =~ /^S/i ? -$val[0] : $val[0]
+/// ```
+pub fn composite_valueconv_gps_gpslatitude(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if {
+            use regex::Regex;
+            use std::sync::LazyLock;
+            static REGEX_F0BB09E88B6D529A: LazyLock<Regex> =
+                LazyLock::new(|| Regex::new(r"(?i)^S").unwrap());
+            REGEX_F0BB09E88B6D529A
+                .is_match(&vals.get(1).cloned().unwrap_or(TagValue::Empty).to_string())
+        } {
+            codegen_runtime::negate(vals.get(0).cloned().unwrap_or(TagValue::Empty))
+        } else {
+            vals.get(0).cloned().unwrap_or(TagValue::Empty)
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val[1] =~ /^W/i ? -$val[0] : $val[0]
+/// ```
+pub fn composite_valueconv_gps_gpslongitude(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if {
+            use regex::Regex;
+            use std::sync::LazyLock;
+            static REGEX_7F53CDA04B3D5152: LazyLock<Regex> =
+                LazyLock::new(|| Regex::new(r"(?i)^W").unwrap());
+            REGEX_7F53CDA04B3D5152
+                .is_match(&vals.get(1).cloned().unwrap_or(TagValue::Empty).to_string())
+        } {
+            codegen_runtime::negate(vals.get(0).cloned().unwrap_or(TagValue::Empty))
+        } else {
+            vals.get(0).cloned().unwrap_or(TagValue::Empty)
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// "$val[0] $val[1]"
+/// ```
+pub fn composite_valueconv_iptc_datetimecreated(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String("$val[0] $val[1]".to_string()))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// "$val[0] $val[1]"
+/// ```
+pub fn composite_valueconv_iptc_digitalcreationdatetime(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String("$val[0] $val[1]".to_string()))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val[1] ? $val[0] / $val[1] : undef
+/// ```
+pub fn composite_valueconv_apple_runtimesincepowerup(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if (vals.get(1).cloned().unwrap_or(TagValue::Empty)).is_truthy() {
+            vals.get(0).cloned().unwrap_or(TagValue::Empty)
+                / vals.get(1).cloned().unwrap_or(TagValue::Empty)
+        } else {
+            TagValue::String("".to_string())
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val[0]
+/// ```
+pub fn composite_valueconv_canon_conditionalfec(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(vals.get(0).cloned().unwrap_or(TagValue::Empty))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $prt[0]
+/// ```
+pub fn composite_printconv_canon_conditionalfec(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(prts.get(0).cloned().unwrap_or(TagValue::Empty))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.2fx",$val)
+/// ```
+pub fn composite_printconv_canon_digitalzoom(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(codegen_runtime::sprintf_perl(
+        "%.2fx",
+        &[vals.get(0).cloned().unwrap_or(TagValue::Empty).clone()],
+    )))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val[0] ? 0 : ($val[1] ? 1 : 2)
+/// ```
+pub fn composite_valueconv_canon_drivemode(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if (vals.get(0).cloned().unwrap_or(TagValue::Empty)).is_truthy() {
+            Into::<TagValue>::into(0i32)
+        } else {
+            if (vals.get(1).cloned().unwrap_or(TagValue::Empty)).is_truthy() {
+                Into::<TagValue>::into(1i32)
+            } else {
+                Into::<TagValue>::into(2i32)
+            }
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.0f",$val)
+/// ```
+pub fn composite_printconv_canon_iso(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(codegen_runtime::sprintf_perl(
+        "%.0f",
+        &[vals.get(0).cloned().unwrap_or(TagValue::Empty).clone()],
+    )))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val[0]
+/// ```
+pub fn composite_valueconv_canon_lens(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(vals.get(0).cloned().unwrap_or(TagValue::Empty))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val[3] * ($val[2] ? $val[2] : 1)
+/// ```
+pub fn composite_valueconv_canon_lens35efl(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(vals.get(3).cloned().unwrap_or(TagValue::Empty)
+        * if (vals.get(2).cloned().unwrap_or(TagValue::Empty)).is_truthy() {
+            vals.get(2).cloned().unwrap_or(TagValue::Empty)
+        } else {
+            Into::<TagValue>::into(1i32)
+        })
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val eq "7" ? "Bulb" : ($val[0] ? $prt[0] : $prt[1])
+/// ```
+pub fn composite_printconv_canon_shootingmode(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if vals.get(0).cloned().unwrap_or(TagValue::Empty).to_string() == "7" {
+            Into::<TagValue>::into("Bulb")
+        } else {
+            if (vals.get(0).cloned().unwrap_or(TagValue::Empty)).is_truthy() {
+                prts.get(0).cloned().unwrap_or(TagValue::Empty)
+            } else {
+                prts.get(1).cloned().unwrap_or(TagValue::Empty)
+            }
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// "$val[0]:$val[1]"
+/// ```
+pub fn composite_valueconv_kodak_datecreated(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String("$val[0]:$val[1]".to_string()))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// ($val[0] =~ /^Manual/i) ? 0 : 1
+/// ```
+pub fn composite_valueconv_nikon_autofocus(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if {
+            use regex::Regex;
+            use std::sync::LazyLock;
+            static REGEX_79469736F9FB14CD: LazyLock<Regex> =
+                LazyLock::new(|| Regex::new(r"(?i)^Manual").unwrap());
+            REGEX_79469736F9FB14CD
+                .is_match(&vals.get(0).cloned().unwrap_or(TagValue::Empty).to_string())
+        } {
+            Into::<TagValue>::into(0i32)
+        } else {
+            Into::<TagValue>::into(1i32)
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// "$val[0] $val[1]"
+/// ```
+pub fn composite_valueconv_nikon_lensspec(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String("$val[0] $val[1]".to_string()))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// "$prt[0] $prt[1]"
+/// ```
+pub fn composite_printconv_nikon_lensspec(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String(format!(
+        "{} {}",
+        prts.get(0).cloned().unwrap_or(TagValue::Empty),
+        prts.get(1).cloned().unwrap_or(TagValue::Empty)
+    )))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// (($val[1]) == 0) ?  ($val[0]) : 0
+/// ```
+pub fn composite_valueconv_nikon_phasedetectaf(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(if vals.get(1).cloned().unwrap_or(TagValue::Empty) == 0i32 {
+        vals.get(0).cloned().unwrap_or(TagValue::Empty)
+    } else {
+        Into::<TagValue>::into(0i32)
+    })
+}
+
+/// Original perl expression:
+/// ``` perl
+/// "$val[0] $val[1]"
+/// ```
+pub fn composite_valueconv_olympus_lenstype(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String("$val[0] $val[1]".to_string()))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// "$val[0] $val[1] $val[2]"
+/// ```
+pub fn composite_valueconv_panasonic_advancedscenemode(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String("$val[0] $val[1] $val[2]".to_string()))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val >= 128 ? "inf" : $val * $val[1] / 1000
+/// ```
+pub fn composite_valueconv_sony_focusdistance(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if vals.get(0).cloned().unwrap_or(TagValue::Empty) >= 128i32 {
+            Into::<TagValue>::into("inf")
+        } else {
+            Into::<TagValue>::into(
+                vals.get(0).cloned().unwrap_or(TagValue::Empty)
+                    * vals.get(1).cloned().unwrap_or(TagValue::Empty)
+                    / 1000i32 as f64,
+            )
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val eq "inf" ? $val : "$val m"
+/// ```
+pub fn composite_printconv_sony_focusdistance(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if vals.get(0).cloned().unwrap_or(TagValue::Empty).to_string() == "inf" {
+            vals.get(0).cloned().unwrap_or(TagValue::Empty)
+        } else {
+            Into::<TagValue>::into(format!(
+                "{} m",
+                vals.get(0).cloned().unwrap_or(TagValue::Empty)
+            ))
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val eq "inf" ? $val : sprintf("%.4g m", $val)
+/// ```
+pub fn composite_printconv_sony_focusdistance2(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if vals.get(0).cloned().unwrap_or(TagValue::Empty).to_string() == "inf" {
+            vals.get(0).cloned().unwrap_or(TagValue::Empty)
+        } else {
+            TagValue::String(codegen_runtime::sprintf_perl(
+                "%.4g m",
+                &[vals.get(0).cloned().unwrap_or(TagValue::Empty).clone()],
+            ))
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// "$val[0] $val[1]Z"
+/// ```
+pub fn composite_valueconv_sony_gpsdatetime(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(TagValue::String("$val[0] $val[1]Z".to_string()))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val[1] =~ /^S/i ? -$val[0] : $val[0]
+/// ```
+pub fn composite_valueconv_sony_gpslatitude(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if {
+            use regex::Regex;
+            use std::sync::LazyLock;
+            static REGEX_F0BB09E88B6D529A: LazyLock<Regex> =
+                LazyLock::new(|| Regex::new(r"(?i)^S").unwrap());
+            REGEX_F0BB09E88B6D529A
+                .is_match(&vals.get(1).cloned().unwrap_or(TagValue::Empty).to_string())
+        } {
+            codegen_runtime::negate(vals.get(0).cloned().unwrap_or(TagValue::Empty))
+        } else {
+            vals.get(0).cloned().unwrap_or(TagValue::Empty)
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val[1] =~ /^W/i ? -$val[0] : $val[0]
+/// ```
+pub fn composite_valueconv_sony_gpslongitude(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(
+        if {
+            use regex::Regex;
+            use std::sync::LazyLock;
+            static REGEX_7F53CDA04B3D5152: LazyLock<Regex> =
+                LazyLock::new(|| Regex::new(r"(?i)^W").unwrap());
+            REGEX_7F53CDA04B3D5152
+                .is_match(&vals.get(1).cloned().unwrap_or(TagValue::Empty).to_string())
+        } {
+            codegen_runtime::negate(vals.get(0).cloned().unwrap_or(TagValue::Empty))
+        } else {
+            vals.get(0).cloned().unwrap_or(TagValue::Empty)
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val[1] - $val[0]
+/// ```
+pub fn composite_valueconv_panasonicraw_imageheight(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(vals.get(1).cloned().unwrap_or(TagValue::Empty))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val[1] - $val[0]
+/// ```
+pub fn composite_valueconv_panasonicraw_imagewidth(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(vals.get(1).cloned().unwrap_or(TagValue::Empty))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// "$val m"
+/// ```
+pub fn composite_printconv_quicktime_gpsaltitude(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(Into::<TagValue>::into(format!(
+        "{} m",
+        vals.get(0).cloned().unwrap_or(TagValue::Empty)
+    )))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// "$val m"
+/// ```
+pub fn composite_printconv_quicktime_gpsaltitude2(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(Into::<TagValue>::into(format!(
+        "{} m",
+        vals.get(0).cloned().unwrap_or(TagValue::Empty)
+    )))
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val
+/// ```
+pub fn composite_valueconv_xmp_lensid(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    Ok(vals.get(0).cloned().unwrap_or(TagValue::Empty))
+}
+
+// =============================================================================
+// End Generated Composite Functions
+// =============================================================================
 
 /// Definition of a composite tag with dependencies and calculation logic
 ///
@@ -87,8 +917,8 @@ pub static COMPOSITE_EXIF_APERTURE: CompositeTagDef = CompositeTagDef {
     require: &[],
     desire: &["FNumber", "ApertureValue"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_exif_aperture),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("$val[0] || $val[1]"),
     print_conv_expr: Some("Image::ExifTool::Exif::PrintFNumber($val)"),
     description: None,
@@ -114,8 +944,8 @@ pub static COMPOSITE_EXIF_BLUEBALANCE: CompositeTagDef = CompositeTagDef {
         "WBBlueLevel",
     ],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("Image::ExifTool::Exif::RedBlueBalance(1,@val)"),
     print_conv_expr: Some("int($val * 1e6 + 0.5) * 1e-6"),
     description: None,
@@ -132,8 +962,8 @@ pub static COMPOSITE_EXIF_CFAPATTERN: CompositeTagDef = CompositeTagDef {
     ],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("my @a = split / /, $val[0];\n            my @b = split / /, $val[1];\n            return '?' unless @a==2 and @b==$a[0]*$a[1];\n            return \"$a[0] $a[1] @b\";"),
     print_conv_expr: Some("Image::ExifTool::Exif::PrintCFAPattern($val)"),
     description: None,
@@ -151,8 +981,8 @@ pub static COMPOSITE_EXIF_CIRCLEOFCONFUSION: CompositeTagDef = CompositeTagDef {
     require: &["ScaleFactor35efl"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_exif_circleofconfusion),
+    print_conv: Some(composite_printconv_exif_circleofconfusion),
     value_conv_expr: Some("sqrt(24*24+36*36) / ($val * 1440)"),
     print_conv_expr: Some("sprintf(\"%.3f mm\",$val)"),
     description: None,
@@ -178,8 +1008,8 @@ pub static COMPOSITE_EXIF_DOF: CompositeTagDef = CompositeTagDef {
         "FocusDistanceUpper",
     ],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("ToFloat(@val);\n            my ($d, $f) = ($val[3], $val[0]);\n            if (defined $d) {\n                $d or $d = 1e10;    # (use large number for infinity)\n            } else {\n                $d = $val[4] || $val[5] || $val[6];\n                unless (defined $d) {\n                    return undef unless defined $val[7] and defined $val[8];\n                    $d = ($val[7] + $val[8]) / 2;\n                }\n            }\n            return 0 unless $f and $val[2];\n            my $t = $val[1] * $val[2] * ($d * 1000 - $f) / ($f * $f);\n            my @v = ($d / (1 + $t), $d / (1 - $t));\n            $v[1] < 0 and $v[1] = 0; # 0 means 'inf'\n            return join(' ',@v);"),
     print_conv_expr: Some(r#"$val =~ tr/,/./;    # in case locale is whacky
             my @v = split ' ', $val;
@@ -203,8 +1033,8 @@ pub static COMPOSITE_EXIF_DATETIMEORIGINAL: CompositeTagDef = CompositeTagDef {
     require: &[],
     desire: &["DateTimeCreated", "DateCreated", "TimeCreated"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some(
         r#"return $val[0] if $val[0] and $val[0]=~/ /;
             return "$val[1] $val[2]";"#,
@@ -227,8 +1057,8 @@ pub static COMPOSITE_EXIF_FOV: CompositeTagDef = CompositeTagDef {
         "FocusDistance",
     ],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("ToFloat(@val);\n            return undef unless $val[0] and $val[1];\n            my $corr = 1;\n            if ($val[2]) {\n                my $d = 1000 * $val[2] - $val[0];\n                $corr += $val[0]/$d if $d > 0;\n            }\n            my $fd2 = atan2(36, 2*$val[0]*$val[1]*$corr);\n            my @fov = ( $fd2 * 360 / 3.14159 );\n            if ($val[2] and $val[2] > 0 and $val[2] < 10000) {\n                push @fov, 2 * $val[2] * sin($fd2) / cos($fd2);\n            }\n            return join(' ', @fov);"),
     print_conv_expr: Some("my @v = split(' ',$val);\n            my $str = sprintf(\"%.1f deg\", $v[0]);\n            $str .= sprintf(\" (%.2f m)\", $v[1]) if $v[1];\n            return $str;"),
     description: Some("Field Of View"),
@@ -251,8 +1081,8 @@ pub static COMPOSITE_EXIF_FOCALLENGTH35EFL: CompositeTagDef = CompositeTagDef {
         "ScaleFactor35efl",
     ],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: Some(composite_printconv_exif_focallength35efl),
     value_conv_expr: Some("ToFloat(@val); ($val[0] || 0) * ($val[1] || 1)"),
     print_conv_expr: Some("$val[1] ? sprintf(\"%.1f mm (35 mm equivalent: %.1f mm)\", $val[0], $val) : sprintf(\"%.1f mm\", $val)"),
     description: Some("Focal Length"),
@@ -270,8 +1100,8 @@ pub static COMPOSITE_EXIF_GPSPOSITION: CompositeTagDef = CompositeTagDef {
     require: &["GPSLatitude", "GPSLongitude"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: Some(composite_printconv_exif_gpsposition),
     value_conv_expr: Some("(length($val[0]) or length($val[1])) ? \"$val[0] $val[1]\" : undef"),
     print_conv_expr: Some("\"$prt[0], $prt[1]\""),
     description: None,
@@ -289,8 +1119,8 @@ pub static COMPOSITE_EXIF_HYPERFOCALDISTANCE: CompositeTagDef = CompositeTagDef 
     ],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: Some(composite_printconv_exif_hyperfocaldistance),
     value_conv_expr: Some("ToFloat(@val);\n            return 'inf' unless $val[1] and $val[2];\n            return $val[0] * $val[0] / ($val[1] * $val[2] * 1000);"),
     print_conv_expr: Some("sprintf(\"%.2f m\", $val)"),
     description: None,
@@ -308,8 +1138,8 @@ pub static COMPOSITE_EXIF_IMAGESIZE: CompositeTagDef = CompositeTagDef {
     require: &["ImageWidth", "ImageHeight"],
     desire: &["ExifImageWidth", "ExifImageHeight", "RawImageCroppedSize"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some(
         r#"return $val[4] if $val[4];
             return "$val[2] $val[3]" if $val[2] and $val[3] and
@@ -329,8 +1159,8 @@ pub static COMPOSITE_EXIF_JPGFROMRAW: CompositeTagDef = CompositeTagDef {
     require: &["JpgFromRawStart", "JpgFromRawLength"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None,
     value_conv_expr: None,
     print_conv_expr: None,
     description: None,
@@ -359,8 +1189,8 @@ pub static COMPOSITE_EXIF_LENSID: CompositeTagDef = CompositeTagDef {
         "LensType2",
     ],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_exif_lensid),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("$val"),
     print_conv_expr: Some("my $pcv;\n            # use LensType2 instead of LensType if available and valid (Sony E-mount lenses)\n            # (0x8000 or greater; 0 for several older/3rd-party E-mount lenses)\n            if (defined $val[9] and ($val[9] & 0x8000 or $val[9] == 0)) {\n                $val[0] = $val[9];\n                $prt[0] = $prt[9];\n                # Particularly GM lenses: often LensType2=0 but LensType3 is available and valid: use LensType3.\n                if ($val[9] == 0 and $val[10] & 0x8000) {\n                   $val[0] = $val[10];\n                   $prt[0] = $prt[10];\n                }\n                $pcv = $$self{TAG_INFO}{LensType2}{PrintConv};\n            }\n            # use Canon RFLensType if available\n            if ($val[12]) {\n                $val[0] = $val[12];\n                $prt[0] = $prt[12];\n                $pcv = $$self{TAG_INFO}{RFLensType}{PrintConv};\n            }\n            my $lens = Image::ExifTool::Exif::PrintLensID($self, $prt[0], $pcv, $prt[8], @val);\n            # check for use of lens converter (Pentax K-3)\n            if ($val[11] and $val[1] and $lens) {\n                my $conv = $val[1] / $val[11];\n                $lens .= sprintf(' + %.1fx converter', $conv) if $conv > 1.1;\n            }\n            return $lens;"),
     description: None,
@@ -378,8 +1208,8 @@ pub static COMPOSITE_EXIF_LENSID_2: CompositeTagDef = CompositeTagDef {
     require: &[],
     desire: &["LensModel", "Lens", "XMP-aux:LensID", "Make"],
     inhibit: &["Composite:LensID"],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some(
         r"return $val[0] if defined $val[0] and $val[0] =~ /(mm|\d\/F)/;
             return $val[1];",
@@ -398,8 +1228,8 @@ pub static COMPOSITE_EXIF_LIGHTVALUE: CompositeTagDef = CompositeTagDef {
     require: &["Aperture", "ShutterSpeed", "ISO"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: Some(composite_printconv_exif_lightvalue),
     value_conv_expr: Some("Image::ExifTool::Exif::CalculateLV($val[0],$val[1],$prt[2])"),
     print_conv_expr: Some("sprintf(\"%.1f\",$val)"),
     description: None,
@@ -413,8 +1243,8 @@ pub static COMPOSITE_EXIF_MEGAPIXELS: CompositeTagDef = CompositeTagDef {
     require: &["ImageSize"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: Some(composite_printconv_exif_megapixels),
     value_conv_expr: Some(r"my @d = ($val =~ /\d+/g); $d[0] * $d[1] / 1000000"),
     print_conv_expr: Some("sprintf(\"%.*f\", ($val >= 1 ? 1 : ($val >= 0.001 ? 3 : 6)), $val)"),
     description: None,
@@ -428,8 +1258,8 @@ pub static COMPOSITE_EXIF_OTHERIMAGE: CompositeTagDef = CompositeTagDef {
     require: &["OtherImageStart", "OtherImageLength"],
     desire: &["OtherImageStart (1)", "OtherImageLength (1)"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None,
     value_conv_expr: None,
     print_conv_expr: None,
     description: None,
@@ -447,8 +1277,8 @@ pub static COMPOSITE_EXIF_PREVIEWIMAGE: CompositeTagDef = CompositeTagDef {
         "PreviewImageLength (1)",
     ],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None,
     value_conv_expr: None,
     print_conv_expr: None,
     description: None,
@@ -462,8 +1292,8 @@ pub static COMPOSITE_EXIF_PREVIEWIMAGESIZE: CompositeTagDef = CompositeTagDef {
     require: &["PreviewImageWidth", "PreviewImageHeight"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_exif_previewimagesize),
+    print_conv: None,
     value_conv_expr: Some("\"$val[0]x$val[1]\""),
     print_conv_expr: None,
     description: None,
@@ -477,8 +1307,8 @@ pub static COMPOSITE_EXIF_PREVIEWJXL: CompositeTagDef = CompositeTagDef {
     require: &["PreviewJXLStart", "PreviewJXLLength"],
     desire: &["PreviewJXLStart (1)", "PreviewJXLLength (1)"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None,
     value_conv_expr: None,
     print_conv_expr: None,
     description: None,
@@ -504,8 +1334,8 @@ pub static COMPOSITE_EXIF_REDBALANCE: CompositeTagDef = CompositeTagDef {
         "WBRedLevel",
     ],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("Image::ExifTool::Exif::RedBlueBalance(0,@val)"),
     print_conv_expr: Some("int($val * 1e6 + 0.5) * 1e-6"),
     description: None,
@@ -537,8 +1367,8 @@ pub static COMPOSITE_EXIF_SCALEFACTOR35EFL: CompositeTagDef = CompositeTagDef {
         "FocalPlaneYResolution",
     ],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: Some(composite_printconv_exif_scalefactor35efl),
     value_conv_expr: Some("Image::ExifTool::Exif::CalcScaleFactor35efl($self, @val)"),
     print_conv_expr: Some("sprintf(\"%.1f\", $val)"),
     description: Some("Scale Factor To 35 mm Equivalent"),
@@ -552,8 +1382,8 @@ pub static COMPOSITE_EXIF_SHUTTERSPEED: CompositeTagDef = CompositeTagDef {
     require: &[],
     desire: &["ExposureTime", "ShutterSpeedValue", "BulbDuration"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some(
         "($val[2] and $val[2]>0) ? $val[2] : (defined($val[0]) ? $val[0] : $val[1])",
     ),
@@ -570,8 +1400,8 @@ pub static COMPOSITE_EXIF_SUBSECCREATEDATE: CompositeTagDef = CompositeTagDef {
     require: &["EXIF:CreateDate"],
     desire: &["SubSecTimeDigitized", "OffsetTimeDigitized"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None, // PPI generation failed
     value_conv_expr: None,
     print_conv_expr: Some("$self->ConvertDateTime($val)"),
     description: Some("Create Date"),
@@ -586,8 +1416,8 @@ pub static COMPOSITE_EXIF_SUBSECDATETIMEORIGINAL: CompositeTagDef = CompositeTag
     require: &["EXIF:DateTimeOriginal"],
     desire: &["SubSecTimeOriginal", "OffsetTimeOriginal"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None, // PPI generation failed
     value_conv_expr: None,
     print_conv_expr: Some("$self->ConvertDateTime($val)"),
     description: Some("Date/Time Original"),
@@ -602,8 +1432,8 @@ pub static COMPOSITE_EXIF_SUBSECMODIFYDATE: CompositeTagDef = CompositeTagDef {
     require: &["EXIF:ModifyDate"],
     desire: &["SubSecTime", "OffsetTime"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None, // PPI generation failed
     value_conv_expr: None,
     print_conv_expr: Some("$self->ConvertDateTime($val)"),
     description: Some("Modify Date"),
@@ -617,8 +1447,8 @@ pub static COMPOSITE_EXIF_THUMBNAILIMAGE: CompositeTagDef = CompositeTagDef {
     require: &["ThumbnailOffset", "ThumbnailLength"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None,
     value_conv_expr: None,
     print_conv_expr: None,
     description: None,
@@ -643,8 +1473,8 @@ pub static COMPOSITE_EXIF_THUMBNAILTIFF: CompositeTagDef = CompositeTagDef {
     ],
     desire: &["PlanarConfiguration", "Orientation"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None,
     value_conv_expr: None,
     print_conv_expr: None,
     description: None,
@@ -663,8 +1493,8 @@ pub static COMPOSITE_GPS_GPSALTITUDE: CompositeTagDef = CompositeTagDef {
         "XMP:GPSAltitudeRef",
     ],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("foreach (0,2) {\n                next unless defined $val[$_] and IsFloat($val[$_]) and defined $val[$_+1];\n                return $val[$_+1] ? -abs($val[$_]) : $val[$_];\n            }\n            return undef;"),
     print_conv_expr: Some(r#"foreach (0,2) {
                 next unless defined $val[$_] and IsFloat($val[$_]);
@@ -689,8 +1519,8 @@ pub static COMPOSITE_GPS_GPSDATETIME: CompositeTagDef = CompositeTagDef {
     require: &["GPS:GPSDateStamp", "GPS:GPSTimeStamp"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_gps_gpsdatetime),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("\"$val[0] $val[1]Z\""),
     print_conv_expr: Some("$self->ConvertDateTime($val)"),
     description: Some("GPS Date/Time"),
@@ -704,8 +1534,8 @@ pub static COMPOSITE_GPS_GPSDESTLATITUDE: CompositeTagDef = CompositeTagDef {
     require: &["GPS:GPSDestLatitude", "GPS:GPSDestLatitudeRef"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_gps_gpsdestlatitude),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some(r"$val[1] =~ /^S/i ? -$val[0] : $val[0]"),
     print_conv_expr: Some("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")"),
     description: None,
@@ -719,8 +1549,8 @@ pub static COMPOSITE_GPS_GPSDESTLONGITUDE: CompositeTagDef = CompositeTagDef {
     require: &["GPS:GPSDestLongitude", "GPS:GPSDestLongitudeRef"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_gps_gpsdestlongitude),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some(r"$val[1] =~ /^W/i ? -$val[0] : $val[0]"),
     print_conv_expr: Some("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")"),
     description: None,
@@ -734,8 +1564,8 @@ pub static COMPOSITE_GPS_GPSLATITUDE: CompositeTagDef = CompositeTagDef {
     require: &["GPS:GPSLatitude", "GPS:GPSLatitudeRef"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_gps_gpslatitude),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some(r"$val[1] =~ /^S/i ? -$val[0] : $val[0]"),
     print_conv_expr: Some("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")"),
     description: None,
@@ -749,8 +1579,8 @@ pub static COMPOSITE_GPS_GPSLONGITUDE: CompositeTagDef = CompositeTagDef {
     require: &["GPS:GPSLongitude", "GPS:GPSLongitudeRef"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_gps_gpslongitude),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some(r"$val[1] =~ /^W/i ? -$val[0] : $val[0]"),
     print_conv_expr: Some("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")"),
     description: None,
@@ -765,8 +1595,8 @@ pub static COMPOSITE_IPTC_DATETIMECREATED: CompositeTagDef = CompositeTagDef {
     require: &["IPTC:DateCreated", "IPTC:TimeCreated"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_iptc_datetimecreated),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("\"$val[0] $val[1]\""),
     print_conv_expr: Some("$self->ConvertDateTime($val)"),
     description: Some("Date/Time Created"),
@@ -781,8 +1611,8 @@ pub static COMPOSITE_IPTC_DIGITALCREATIONDATETIME: CompositeTagDef = CompositeTa
     require: &["IPTC:DigitalCreationDate", "IPTC:DigitalCreationTime"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_iptc_digitalcreationdatetime),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("\"$val[0] $val[1]\""),
     print_conv_expr: Some("$self->ConvertDateTime($val)"),
     description: Some("Digital Creation Date/Time"),
@@ -796,8 +1626,8 @@ pub static COMPOSITE_APPLE_RUNTIMESINCEPOWERUP: CompositeTagDef = CompositeTagDe
     require: &["Apple:RunTimeValue", "Apple:RunTimeScale"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_apple_runtimesincepowerup),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("$val[1] ? $val[0] / $val[1] : undef"),
     print_conv_expr: Some("ConvertDuration($val)"),
     description: None,
@@ -812,8 +1642,8 @@ pub static COMPOSITE_CANON_CONDITIONALFEC: CompositeTagDef = CompositeTagDef {
     require: &["FlashExposureComp", "FlashBits"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_canon_conditionalfec),
+    print_conv: Some(composite_printconv_canon_conditionalfec),
     value_conv_expr: Some("$val[0]"),
     print_conv_expr: Some("$prt[0]"),
     description: Some("Flash Exposure Compensation"),
@@ -831,8 +1661,8 @@ pub static COMPOSITE_CANON_DIGITALZOOM: CompositeTagDef = CompositeTagDef {
     ],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: Some(composite_printconv_canon_digitalzoom),
     value_conv_expr: None,
     print_conv_expr: Some("sprintf(\"%.2fx\",$val)"),
     description: None,
@@ -846,8 +1676,8 @@ pub static COMPOSITE_CANON_DRIVEMODE: CompositeTagDef = CompositeTagDef {
     require: &["ContinuousDrive", "SelfTimer"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_canon_drivemode),
+    print_conv: None,
     value_conv_expr: Some("$val[0] ? 0 : ($val[1] ? 1 : 2)"),
     print_conv_expr: None,
     description: None,
@@ -864,8 +1694,8 @@ pub static COMPOSITE_CANON_FILENUMBER: CompositeTagDef = CompositeTagDef {
     ],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("# fix the funny things that these numbers do when they wrap over 9999\n            # (it seems that FileIndex and DirectoryIndex actually store the\n            #  numbers from the previous image, so we need special logic\n            #  to handle the FileIndex wrap properly)\n            $val[1] == 10000 and $val[1] = 1, ++$val[0];\n            return sprintf(\"%.3d%.4d\",@val);"),
     print_conv_expr: Some(r"$_=$val;s/(\d+)(\d{4})/$1-$2/;$_"),
     description: None,
@@ -883,8 +1713,8 @@ pub static COMPOSITE_CANON_FLASHTYPE: CompositeTagDef = CompositeTagDef {
     require: &["FlashBits"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("$val[0]&(1<<14)? 1 : 0"),
     print_conv_expr: None,
     description: None,
@@ -898,8 +1728,8 @@ pub static COMPOSITE_CANON_ISO: CompositeTagDef = CompositeTagDef {
     require: &[],
     desire: &["Canon:CameraISO", "Canon:BaseISO", "Canon:AutoISO"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: Some(composite_printconv_canon_iso),
     value_conv_expr: Some(
         r"return $val[0] if $val[0] and $val[0] =~ /^\d+$/;
             return undef unless $val[1] and $val[2];
@@ -917,8 +1747,8 @@ pub static COMPOSITE_CANON_LENS: CompositeTagDef = CompositeTagDef {
     require: &["Canon:MinFocalLength", "Canon:MaxFocalLength"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_canon_lens),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("$val[0]"),
     print_conv_expr: Some("Image::ExifTool::Canon::PrintFocalRange(@val)"),
     description: None,
@@ -939,8 +1769,8 @@ pub static COMPOSITE_CANON_LENS35EFL: CompositeTagDef = CompositeTagDef {
         "ScaleFactor35efl",
     ],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_canon_lens35efl),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("$val[3] * ($val[2] ? $val[2] : 1)"),
     print_conv_expr: Some("$prt[3] . ($val[2] ? sprintf(\" (35 mm equivalent: %s)\",Image::ExifTool::Canon::PrintFocalRange(@val)) : \"\")"),
     description: Some("Lens"),
@@ -958,8 +1788,8 @@ pub static COMPOSITE_CANON_ORIGINALDECISIONDATA: CompositeTagDef = CompositeTagD
     require: &["OriginalDecisionDataOffset"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None,
     value_conv_expr: None,
     print_conv_expr: None,
     description: None,
@@ -973,8 +1803,8 @@ pub static COMPOSITE_CANON_REDEYEREDUCTION: CompositeTagDef = CompositeTagDef {
     require: &["CanonFlashMode", "FlashBits"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("($val[0]==3 or $val[0]==4 or $val[0]==6) ? 1 : 0"),
     print_conv_expr: None,
     description: None,
@@ -988,8 +1818,8 @@ pub static COMPOSITE_CANON_SHOOTINGMODE: CompositeTagDef = CompositeTagDef {
     require: &["CanonExposureMode", "EasyMode"],
     desire: &["BulbDuration"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: Some(composite_printconv_canon_shootingmode),
     value_conv_expr: Some(
         "$val[0] ? (($val[0] eq \"4\" and $val[2]) ? 7 : $val[0]) : $val[1] + 10",
     ),
@@ -1006,8 +1836,8 @@ pub static COMPOSITE_CANON_SHUTTERCURTAINHACK: CompositeTagDef = CompositeTagDef
     require: &["FlashBits"],
     desire: &["ShutterCurtainSync"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("defined($val[0]) ? $val[0] : 0"),
     print_conv_expr: None,
     description: Some("Shutter Curtain Sync"),
@@ -1032,8 +1862,8 @@ pub static COMPOSITE_CANON_WB_RGGBLEVELS: CompositeTagDef = CompositeTagDef {
         "WB_RGGBLevelsCustom",
     ],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("$val[1] ? $val[1] : $val[($val[0] || 0) + 2]"),
     print_conv_expr: None,
     description: None,
@@ -1047,8 +1877,8 @@ pub static COMPOSITE_KODAK_DATECREATED: CompositeTagDef = CompositeTagDef {
     require: &["Kodak:YearCreated", "Kodak:MonthDayCreated"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_kodak_datecreated),
+    print_conv: None,
     value_conv_expr: Some("\"$val[0]:$val[1]\""),
     print_conv_expr: None,
     description: None,
@@ -1070,8 +1900,8 @@ pub static COMPOSITE_KODAK_WB_RGBLEVELS: CompositeTagDef = CompositeTagDef {
         "WB_RGBLevelsShade",
     ],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("$val[$val[0] + 1]"),
     print_conv_expr: None,
     description: None,
@@ -1095,8 +1925,8 @@ pub static COMPOSITE_KODAK_WB_RGBLEVELS2: CompositeTagDef = CompositeTagDef {
     ],
     desire: &["Kodak:WB_RGBLevels", "KodakIFD:ColorTemperature"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("Image::ExifTool::Kodak::CalculateRGBLevels(@val)"),
     print_conv_expr: None,
     description: None,
@@ -1110,8 +1940,8 @@ pub static COMPOSITE_NIKON_AUTOFOCUS: CompositeTagDef = CompositeTagDef {
     require: &["Nikon:FocusMode"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_nikon_autofocus),
+    print_conv: None,
     value_conv_expr: Some(r"($val[0] =~ /^Manual/i) ? 0 : 1"),
     print_conv_expr: None,
     description: None,
@@ -1125,8 +1955,8 @@ pub static COMPOSITE_NIKON_CONTRASTDETECTAF: CompositeTagDef = CompositeTagDef {
     require: &["Nikon:FocusMode", "Nikon:AFDetectionMethod"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some(r"(($val[0] !~ /^Manual/i) and ($val[1] == 1)) ? 1 : 0"),
     print_conv_expr: None,
     description: None,
@@ -1149,8 +1979,8 @@ pub static COMPOSITE_NIKON_LENSID: CompositeTagDef = CompositeTagDef {
     ],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("sprintf(\"%.2X\".\" %.2X\"x7, @raw)"),
     print_conv_expr: None,
     description: None,
@@ -1164,8 +1994,8 @@ pub static COMPOSITE_NIKON_LENSSPEC: CompositeTagDef = CompositeTagDef {
     require: &["Nikon:Lens", "Nikon:LensType"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_nikon_lensspec),
+    print_conv: Some(composite_printconv_nikon_lensspec),
     value_conv_expr: Some("\"$val[0] $val[1]\""),
     print_conv_expr: Some("\"$prt[0] $prt[1]\""),
     description: None,
@@ -1179,8 +2009,8 @@ pub static COMPOSITE_NIKON_PHASEDETECTAF: CompositeTagDef = CompositeTagDef {
     require: &["Nikon:FocusPointSchema", "Nikon:AFDetectionMethod"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_nikon_phasedetectaf),
+    print_conv: None,
     value_conv_expr: Some("(($val[1]) == 0) ?  ($val[0]) : 0"),
     print_conv_expr: None,
     description: None,
@@ -1194,8 +2024,8 @@ pub static COMPOSITE_OLYMPUS_EXTENDERSTATUS: CompositeTagDef = CompositeTagDef {
     require: &["Olympus:Extender", "Olympus:LensType", "MaxApertureValue"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("Image::ExifTool::Olympus::ExtenderStatus($val[0],$prt[1],$val[2])"),
     print_conv_expr: None,
     description: None,
@@ -1209,8 +2039,8 @@ pub static COMPOSITE_OLYMPUS_LENSTYPE: CompositeTagDef = CompositeTagDef {
     require: &["LensTypeMake", "LensTypeModel"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_olympus_lenstype),
+    print_conv: None,
     value_conv_expr: Some("\"$val[0] $val[1]\""),
     print_conv_expr: None,
     description: None,
@@ -1224,8 +2054,8 @@ pub static COMPOSITE_OLYMPUS_ZOOMEDPREVIEWIMAGE: CompositeTagDef = CompositeTagD
     require: &["ZoomedPreviewStart", "ZoomedPreviewLength"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None,
     value_conv_expr: None,
     print_conv_expr: None,
     description: None,
@@ -1239,8 +2069,8 @@ pub static COMPOSITE_PANASONIC_ADVANCEDSCENEMODE: CompositeTagDef = CompositeTag
     require: &["Model", "SceneMode", "AdvancedSceneType"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_panasonic_advancedscenemode),
+    print_conv: None,
     value_conv_expr: Some("\"$val[0] $val[1] $val[2]\""),
     print_conv_expr: None,
     description: None,
@@ -1254,8 +2084,8 @@ pub static COMPOSITE_RICOH_LENSID: CompositeTagDef = CompositeTagDef {
     require: &["Ricoh:LensFirmware"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some(r"$val=~s/\s*:.*//; $val"),
     print_conv_expr: None,
     description: None,
@@ -1269,8 +2099,8 @@ pub static COMPOSITE_RICOH_RICOHPITCH: CompositeTagDef = CompositeTagDef {
     require: &["Ricoh:Accelerometer"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("my @v = split(\" \",$val); $v[1]"),
     print_conv_expr: None,
     description: None,
@@ -1284,8 +2114,8 @@ pub static COMPOSITE_RICOH_RICOHROLL: CompositeTagDef = CompositeTagDef {
     require: &["Ricoh:Accelerometer"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("my @v = split(\" \",$val); $v[0] <= 180 ? $v[0] : $v[0] - 360"),
     print_conv_expr: None,
     description: None,
@@ -1303,8 +2133,8 @@ pub static COMPOSITE_SAMSUNG_DEPTHMAPTIFF: CompositeTagDef = CompositeTagDef {
     ],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("return undef unless length ${$val[0]} == $val[1] * $val[2];\n            my $tiff = MakeTiffHeader($val[1],$val[2],1,8) . ${$val[0]};\n            return \\$tiff;"),
     print_conv_expr: None,
     description: None,
@@ -1326,8 +2156,8 @@ pub static COMPOSITE_SAMSUNG_SINGLESHOTDEPTHMAPTIFF: CompositeTagDef = Composite
     ],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("return undef unless length ${$val[0]} == $val[1] * $val[2];\n            my $tiff = MakeTiffHeader($val[1],$val[2],1,8) . ${$val[0]};\n            return \\$tiff;"),
     print_conv_expr: None,
     description: None,
@@ -1348,8 +2178,8 @@ pub static COMPOSITE_SAMSUNG_WB_RGGBLEVELS: CompositeTagDef = CompositeTagDef {
     ],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("my @a = split ' ', $val[0];\n            my @b = split ' ', $val[1];\n            $a[$_] -= $b[$_] foreach 0..$#a;\n            return \"@a\";"),
     print_conv_expr: None,
     description: None,
@@ -1367,8 +2197,8 @@ pub static COMPOSITE_SONY_FOCUSDISTANCE: CompositeTagDef = CompositeTagDef {
     require: &["Sony:FocusPosition", "FocalLength"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_sony_focusdistance),
+    print_conv: Some(composite_printconv_sony_focusdistance),
     value_conv_expr: Some("$val >= 128 ? \"inf\" : $val * $val[1] / 1000"),
     print_conv_expr: Some("$val eq \"inf\" ? $val : \"$val m\""),
     description: None,
@@ -1385,8 +2215,8 @@ pub static COMPOSITE_SONY_FOCUSDISTANCE2: CompositeTagDef = CompositeTagDef {
     ],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: Some(composite_printconv_sony_focusdistance2),
     value_conv_expr: Some("return undef unless $val;\n            return 'inf' if $val >= 255;\n            return (2**($val/16-5) + 1) * $val[1] / 1000;"),
     print_conv_expr: Some("$val eq \"inf\" ? $val : sprintf(\"%.4g m\", $val)"),
     description: None,
@@ -1405,8 +2235,8 @@ pub static COMPOSITE_SONY_GPSDATETIME: CompositeTagDef = CompositeTagDef {
     require: &["Sony:GPSDateStamp", "Sony:GPSTimeStamp"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_sony_gpsdatetime),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("\"$val[0] $val[1]Z\""),
     print_conv_expr: Some("$self->ConvertDateTime($val)"),
     description: Some("GPS Date/Time"),
@@ -1420,8 +2250,8 @@ pub static COMPOSITE_SONY_GPSLATITUDE: CompositeTagDef = CompositeTagDef {
     require: &["Sony:GPSLatitude", "Sony:GPSLatitudeRef"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_sony_gpslatitude),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some(r"$val[1] =~ /^S/i ? -$val[0] : $val[0]"),
     print_conv_expr: Some("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")"),
     description: None,
@@ -1435,8 +2265,8 @@ pub static COMPOSITE_SONY_GPSLONGITUDE: CompositeTagDef = CompositeTagDef {
     require: &["Sony:GPSLongitude", "Sony:GPSLongitudeRef"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_sony_gpslongitude),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some(r"$val[1] =~ /^W/i ? -$val[0] : $val[0]"),
     print_conv_expr: Some("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")"),
     description: None,
@@ -1450,8 +2280,8 @@ pub static COMPOSITE_SONY_HIDDENDATA: CompositeTagDef = CompositeTagDef {
     require: &["Sony:HiddenDataOffset", "Sony:HiddenDataLength"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None,
     value_conv_expr: None,
     print_conv_expr: None,
     description: None,
@@ -1465,8 +2295,8 @@ pub static COMPOSITE_VORBIS_DURATION: CompositeTagDef = CompositeTagDef {
     require: &["Vorbis:NominalBitrate", "FileSize"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None, // PPI generation failed
     value_conv_expr: None,
     print_conv_expr: Some("ConvertDuration($val) . \" (approx)\""),
     description: None,
@@ -1480,8 +2310,8 @@ pub static COMPOSITE_PANASONICRAW_IMAGEHEIGHT: CompositeTagDef = CompositeTagDef
     require: &["IFD0:SensorTopBorder", "IFD0:SensorBottomBorder"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_panasonicraw_imageheight),
+    print_conv: None,
     value_conv_expr: Some("$val[1] - $val[0]"),
     print_conv_expr: None,
     description: None,
@@ -1495,8 +2325,8 @@ pub static COMPOSITE_PANASONICRAW_IMAGEWIDTH: CompositeTagDef = CompositeTagDef 
     require: &["IFD0:SensorLeftBorder", "IFD0:SensorRightBorder"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_panasonicraw_imagewidth),
+    print_conv: None,
     value_conv_expr: Some("$val[1] - $val[0]"),
     print_conv_expr: None,
     description: None,
@@ -1510,8 +2340,8 @@ pub static COMPOSITE_QUICKTIME_AVGBITRATE: CompositeTagDef = CompositeTagDef {
     require: &["QuickTime::MediaDataSize", "QuickTime::Duration"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None, // PPI generation failed
     value_conv_expr: None,
     print_conv_expr: Some("ConvertBitrate($val)"),
     description: None,
@@ -1525,8 +2355,8 @@ pub static COMPOSITE_QUICKTIME_CDDBDISCPLAYTIME: CompositeTagDef = CompositeTagD
     require: &["CDDB1Info"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some(r"$val =~ /^..([a-z0-9]{4})/i ? hex($1) : undef"),
     print_conv_expr: Some("ConvertDuration($val)"),
     description: None,
@@ -1540,8 +2370,8 @@ pub static COMPOSITE_QUICKTIME_CDDBDISCTRACKS: CompositeTagDef = CompositeTagDef
     require: &["CDDB1Info"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some(r"$val =~ /^.{6}([a-z0-9]{2})/i ? hex($1) : undef"),
     print_conv_expr: None,
     description: None,
@@ -1555,8 +2385,8 @@ pub static COMPOSITE_QUICKTIME_GPSALTITUDE: CompositeTagDef = CompositeTagDef {
     require: &["QuickTime:GPSCoordinates"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: Some(composite_printconv_quicktime_gpsaltitude),
     value_conv_expr: Some("my @c = split \" \", $val; defined $c[2] ? abs($c[2]) : undef"),
     print_conv_expr: Some("\"$val m\""),
     description: None,
@@ -1570,8 +2400,8 @@ pub static COMPOSITE_QUICKTIME_GPSALTITUDE2: CompositeTagDef = CompositeTagDef {
     require: &["QuickTime:LocationInformation"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: Some(composite_printconv_quicktime_gpsaltitude2),
     value_conv_expr: Some(r"$val =~ /Alt=([-+.\d]+)/; abs($1)"),
     print_conv_expr: Some("\"$val m\""),
     description: None,
@@ -1585,8 +2415,8 @@ pub static COMPOSITE_QUICKTIME_GPSALTITUDEREF: CompositeTagDef = CompositeTagDef
     require: &["QuickTime:GPSCoordinates"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("my @c = split \" \", $val; defined $c[2] ? ($c[2] < 0 ? 1 : 0) : undef"),
     print_conv_expr: None,
     description: None,
@@ -1600,8 +2430,8 @@ pub static COMPOSITE_QUICKTIME_GPSALTITUDEREF2: CompositeTagDef = CompositeTagDe
     require: &["QuickTime:LocationInformation"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some(r"$val =~ /Alt=([-+.\d]+)/; $1 < 0 ? 1 : 0"),
     print_conv_expr: None,
     description: None,
@@ -1615,8 +2445,8 @@ pub static COMPOSITE_QUICKTIME_GPSLATITUDE: CompositeTagDef = CompositeTagDef {
     require: &["QuickTime:GPSCoordinates"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("my @c = split \" \", $val; $c[0]"),
     print_conv_expr: Some("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")"),
     description: None,
@@ -1630,8 +2460,8 @@ pub static COMPOSITE_QUICKTIME_GPSLATITUDE2: CompositeTagDef = CompositeTagDef {
     require: &["QuickTime:LocationInformation"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some(r"$val =~ /Lat=([-+.\d]+)/; $1"),
     print_conv_expr: Some("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")"),
     description: None,
@@ -1645,8 +2475,8 @@ pub static COMPOSITE_QUICKTIME_GPSLONGITUDE: CompositeTagDef = CompositeTagDef {
     require: &["QuickTime:GPSCoordinates"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("my @c = split \" \", $val; $c[1]"),
     print_conv_expr: Some("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")"),
     description: None,
@@ -1660,8 +2490,8 @@ pub static COMPOSITE_QUICKTIME_GPSLONGITUDE2: CompositeTagDef = CompositeTagDef 
     require: &["QuickTime:LocationInformation"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some(r"$val =~ /Lon=([-+.\d]+)/; $1"),
     print_conv_expr: Some("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")"),
     description: None,
@@ -1675,8 +2505,8 @@ pub static COMPOSITE_QUICKTIME_ROTATION: CompositeTagDef = CompositeTagDef {
     require: &["QuickTime:MatrixStructure", "QuickTime:HandlerType"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("Image::ExifTool::QuickTime::CalcRotation($self)"),
     print_conv_expr: None,
     description: None,
@@ -1690,8 +2520,8 @@ pub static COMPOSITE_RIFF_DURATION: CompositeTagDef = CompositeTagDef {
     require: &["RIFF:FrameRate", "RIFF:FrameCount"],
     desire: &["VideoFrameRate", "VideoFrameCount"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None, // PPI generation failed
     value_conv_expr: None,
     print_conv_expr: Some("ConvertDuration($val)"),
     description: None,
@@ -1705,8 +2535,8 @@ pub static COMPOSITE_RIFF_DURATION2: CompositeTagDef = CompositeTagDef {
     require: &["RIFF:AvgBytesPerSec"],
     desire: &["FileSize", "FrameCount", "VideoFrameCount"],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None, // PPI generation failed
     value_conv_expr: None,
     print_conv_expr: Some("ConvertDuration($val)"),
     description: None,
@@ -1720,8 +2550,8 @@ pub static COMPOSITE_SONYIDC_IDCPREVIEWIMAGE: CompositeTagDef = CompositeTagDef 
     require: &["IDCPreviewStart", "IDCPreviewLength"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None,
+    print_conv: None,
     value_conv_expr: None,
     print_conv_expr: None,
     description: None,
@@ -1742,8 +2572,8 @@ pub static COMPOSITE_XMP_FLASH: CompositeTagDef = CompositeTagDef {
         "XMP:Flash",
     ],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some("if (ref $val[5] eq 'HASH') {\n                # copy structure fields into value array\n                my $i = 0;\n                $val[$i++] = $val[5]{$_} foreach qw(Fired Return Mode Function RedEyeMode);\n            }\n            return((($val[0] and lc($val[0]) eq 'true') ? 0x01 : 0) |\n                   (($val[1] || 0) << 1) |\n                   (($val[2] || 0) << 3) |\n                   (($val[3] and lc($val[3]) eq 'true') ? 0x20 : 0) |\n                   (($val[4] and lc($val[4]) eq 'true') ? 0x40 : 0));"),
     print_conv_expr: None,
     description: None,
@@ -1761,8 +2591,8 @@ pub static COMPOSITE_XMP_GPSDESTLATITUDEREF: CompositeTagDef = CompositeTagDef {
     require: &["XMP-exif:GPSDestLatitude"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some(
         r#"IsFloat($val[0]) and return $val[0] < 0 ? "S" : "N";
             $val[0] =~ /^.*([NS])/;
@@ -1780,8 +2610,8 @@ pub static COMPOSITE_XMP_GPSDESTLONGITUDEREF: CompositeTagDef = CompositeTagDef 
     require: &["XMP-exif:GPSDestLongitude"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some(
         r#"IsFloat($val[0]) and return $val[0] < 0 ? "W" : "E";
             $val[0] =~ /^.*([EW])/;
@@ -1799,8 +2629,8 @@ pub static COMPOSITE_XMP_GPSLATITUDEREF: CompositeTagDef = CompositeTagDef {
     require: &["XMP-exif:GPSLatitude"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some(
         r#"IsFloat($val[0]) and return $val[0] < 0 ? "S" : "N";
             $val[0] =~ /^.*([NS])/;
@@ -1818,8 +2648,8 @@ pub static COMPOSITE_XMP_GPSLONGITUDEREF: CompositeTagDef = CompositeTagDef {
     require: &["XMP-exif:GPSLongitude"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: None, // PPI generation failed
+    print_conv: None,
     value_conv_expr: Some(
         r#"IsFloat($val[0]) and return $val[0] < 0 ? "W" : "E";
             $val[0] =~ /^.*([EW])/;
@@ -1837,8 +2667,8 @@ pub static COMPOSITE_XMP_LENSID: CompositeTagDef = CompositeTagDef {
     require: &["XMP-aux:LensID", "Make"],
     desire: &["LensInfo", "FocalLength", "LensModel", "MaxApertureValue"],
     inhibit: &["Composite:LensID"],
-    value_conv: None, // TODO: Generate via PPI pipeline
-    print_conv: None, // TODO: Generate via PPI pipeline
+    value_conv: Some(composite_valueconv_xmp_lensid),
+    print_conv: None, // PPI generation failed
     value_conv_expr: Some("$val"),
     print_conv_expr: Some("Image::ExifTool::XMP::PrintLensID($self, @val)"),
     description: None,

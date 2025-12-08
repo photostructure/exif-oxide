@@ -32,6 +32,7 @@ pub trait PpiVisitor {
     fn generate_array_access(&self, array_name: &str, index: usize) -> String {
         if self.is_composite_context() {
             // Composite context: access slice parameters
+            // Use unwrap_or_else with TagValue::Empty since TagValue doesn't implement Default
             let slice_name = match array_name {
                 "$val" | "val" => "vals",
                 "$prt" | "prt" => "prts",
@@ -41,7 +42,7 @@ pub trait PpiVisitor {
                     return format!("codegen_runtime::get_array_element({rust_name}, {index})");
                 }
             };
-            format!("{slice_name}.get({index}).cloned().unwrap_or_default()")
+            format!("{slice_name}.get({index}).cloned().unwrap_or(TagValue::Empty)")
         } else {
             // Regular context: use TagValue array access
             let rust_name = array_name.trim_start_matches('$');
@@ -72,7 +73,7 @@ pub trait PpiVisitor {
                         return format!("codegen_runtime::get_array_element({rust_name}, {index})");
                     }
                 };
-                format!("{slice_name}.get({index}).cloned().unwrap_or_default()")
+                format!("{slice_name}.get({index}).cloned().unwrap_or(TagValue::Empty)")
             } else {
                 let rust_name = array_name.trim_start_matches('$');
                 let rust_array = if rust_name == "val" || array_name == "$val" {
@@ -234,7 +235,32 @@ pub trait PpiVisitor {
     fn visit_statement(&self, node: &PpiNode) -> Result<String, CodeGenError>;
 
     /// Visit symbol node (variables like $val, $$self{Field})
+    ///
+    /// In composite context, bare `$val` (without subscript) should map to `vals.get(0)`
+    /// because composite expressions like `sqrt(24*24+36*36) / ($val * 1440)` use `$val`
+    /// to refer to the first dependency value. See P03c-composite-tags.md section B.
     fn visit_symbol(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        if let Some(content) = &node.content {
+            // In composite context, handle array sigils (@val, @prt, @raw) specially
+            // These are used for splatting arrays into function args, which is too complex
+            if content.starts_with('@') {
+                return Err(CodeGenError::UnsupportedStructure(format!(
+                    "Array splatting ({content}) requires fallback implementation - use individual array access instead"
+                )));
+            }
+
+            // In composite context, bare $val/$prt/$raw should map to first element of slices
+            // This handles expressions like: sqrt(24*24+36*36) / ($val * 1440)
+            // where $val refers to the first dependency (same as $val[0])
+            if self.is_composite_context() {
+                match content.as_str() {
+                    "$val" => return Ok(self.generate_array_access("$val", 0)),
+                    "$prt" => return Ok(self.generate_array_access("$prt", 0)),
+                    "$raw" => return Ok(self.generate_array_access("$raw", 0)),
+                    _ => {}
+                }
+            }
+        }
         process_symbol(node)
     }
 
@@ -309,10 +335,24 @@ pub trait PpiVisitor {
             .or(node.content.as_ref())
             .ok_or(CodeGenError::MissingContent("string".to_string()))?;
 
+        // In composite context, handle array interpolation like "$prt[0], $prt[1]"
+        if self.is_composite_context()
+            && (string_value.contains("$val[")
+                || string_value.contains("$prt[")
+                || string_value.contains("$raw["))
+        {
+            return self.interpolate_composite_string(string_value);
+        }
+
         // Handle simple variable interpolation
         if string_value.contains("$val") && string_value.matches('$').count() == 1 {
+            let val_ref = if self.is_composite_context() {
+                self.generate_array_access("$val", 0)
+            } else {
+                "val".to_string()
+            };
             let template = string_value.replace("$val", "{}");
-            let format_expr = format!("format!(\"{template}\", val)");
+            let format_expr = format!("format!(\"{template}\", {val_ref})");
 
             // In PrintConv context, wrap in TagValue::String or use .into()
             match self.expression_type() {
@@ -330,6 +370,56 @@ pub trait PpiVisitor {
                 }
                 _ => Ok(string_literal),
             }
+        }
+    }
+
+    /// Interpolate composite array references in strings like "$prt[0], $prt[1]"
+    fn interpolate_composite_string(&self, string_value: &str) -> Result<String, CodeGenError> {
+        use regex::Regex;
+        use std::sync::LazyLock;
+
+        static ARRAY_PATTERN: LazyLock<Regex> =
+            LazyLock::new(|| Regex::new(r"\$(\w+)\[(\d+)\]").expect("Invalid regex pattern"));
+
+        let mut format_parts = Vec::new();
+        let mut args = Vec::new();
+        let mut last_end = 0;
+
+        for cap in ARRAY_PATTERN.captures_iter(string_value) {
+            let full_match = cap.get(0).unwrap();
+            let array_name = &cap[1];
+            let index: usize = cap[2].parse().map_err(|_| {
+                CodeGenError::UnsupportedStructure("Invalid array index".to_string())
+            })?;
+
+            // Add text before this match
+            if full_match.start() > last_end {
+                format_parts.push(string_value[last_end..full_match.start()].to_string());
+            }
+            format_parts.push("{}".to_string());
+
+            // Generate array access
+            let var_name = format!("${array_name}");
+            args.push(self.generate_array_access(&var_name, index));
+
+            last_end = full_match.end();
+        }
+
+        // Add remaining text
+        if last_end < string_value.len() {
+            format_parts.push(string_value[last_end..].to_string());
+        }
+
+        let format_template = format_parts.join("");
+        let args_str = args.join(", ");
+        let format_expr = format!("format!(\"{format_template}\", {args_str})");
+
+        // Wrap appropriately based on expression type
+        match self.expression_type() {
+            ExpressionType::PrintConv | ExpressionType::ValueConv => {
+                Ok(format!("TagValue::String({format_expr})"))
+            }
+            _ => Ok(format_expr),
         }
     }
 

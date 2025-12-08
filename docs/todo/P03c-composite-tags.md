@@ -17,23 +17,39 @@
 | **0** | Patcher composite detection | `__hasCompositeTags` marker inserted, 18+ modules detected |
 | **1** | ExpressionContext enum | `ExpressionContext::Composite` in [codegen/src/ppi/types.rs](../../codegen/src/ppi/types.rs) |
 | **2** | Composite function types | `CompositeValueConvFn`, `CompositePrintConvFn` in [codegen-runtime/src/types.rs](../../codegen-runtime/src/types.rs#L120-L153) |
-| **3** | CompositeTagDef update | Struct now uses function pointers (currently `None`), preserves Perl in `*_expr` fields |
+| **3** | CompositeTagDef update | Struct now uses function pointers, preserves Perl in `*_expr` fields |
+| **4** | Generate composite function bodies | **46 functions generated**, 29 ValueConv + 16 PrintConv pointers set |
 
 ### Key Infrastructure Now Available
 
 1. **Context-aware code generation** - `RustGenerator::with_context(ExpressionContext::Composite, ...)` generates:
-   - `$val[n]` → `vals.get(n).cloned().unwrap_or_default()`
-   - `$prt[n]` → `prts.get(n).cloned().unwrap_or_default()`
-   - `$raw[n]` → `raws.get(n).cloned().unwrap_or_default()`
+   - `$val[n]` → `vals.get(n).cloned().unwrap_or(TagValue::Empty)`
+   - `$prt[n]` → `prts.get(n).cloned().unwrap_or(TagValue::Empty)`
+   - `$raw[n]` → `raws.get(n).cloned().unwrap_or(TagValue::Empty)`
+   - Bare `$val` in composite context → `vals.get(0).cloned().unwrap_or(TagValue::Empty)`
 
 2. **Unit tests** proving it works - see [codegen/src/ppi/rust_generator/tests/mod.rs](../../codegen/src/ppi/rust_generator/tests/mod.rs#L109-L232)
 
-3. **Generated output** - [src/generated/composite_tags.rs](../../src/generated/composite_tags.rs) has 99 definitions with:
+3. **Generated output** - [src/generated/composite_tags.rs](../../src/generated/composite_tags.rs) now has **46 working functions**:
    ```rust
+   // Generated function with correct signature
+   pub fn composite_valueconv_exif_aperture(
+       vals: &[TagValue],
+       prts: &[TagValue],
+       raws: &[TagValue],
+       ctx: Option<&ExifContext>,
+   ) -> Result<TagValue, ExifError> {
+       Ok(if vals.get(0).cloned().unwrap_or(TagValue::Empty).is_truthy() {
+           vals.get(0).cloned().unwrap_or(TagValue::Empty).clone()
+       } else {
+           vals.get(1).cloned().unwrap_or(TagValue::Empty)
+       })
+   }
+
    pub static COMPOSITE_EXIF_APERTURE: CompositeTagDef = CompositeTagDef {
        name: "Aperture",
-       value_conv: None,  // TODO: Task 4 fills this
-       value_conv_expr: Some("$val[0] || $val[1]"),  // Original Perl preserved
+       value_conv: Some(composite_valueconv_exif_aperture),  // Function pointer!
+       value_conv_expr: Some("$val[0] || $val[1]"),
        // ...
    };
    ```
@@ -42,7 +58,7 @@
 
 | Task | Description | Complexity |
 |------|-------------|------------|
-| **4** | Generate composite function bodies via PPI pipeline | HIGH |
+| **4b** | Fix warnings and run `make precommit` | LOW |
 | **5** | Enable runtime orchestration | MEDIUM |
 | **6** | Migrate complex implementations to codegen-runtime fallbacks | MEDIUM |
 
@@ -770,31 +786,141 @@ Common patterns the PPI pipeline must handle (with composite context):
 - Modified `codegen/scripts/exiftool-patcher.pl` (lines 59-65) to detect `AddCompositeTags` calls
 - Inserts `our $__hasCompositeTags = 1;` before each `AddCompositeTags` call
 
-**Verified:**
+### ✅ Tasks 1-3: Infrastructure - COMPLETE
+
+All foundation work completed:
+- `ExpressionContext::Composite` enum added
+- `CompositeValueConvFn` / `CompositePrintConvFn` types defined
+- `CompositeTagDef` updated with function pointer fields
+
+### ✅ Task 4: Generate Composite Function Bodies - MOSTLY COMPLETE
+
+**Work completed (2025-12-08):**
+
+1. **Signature generation** - [codegen/src/ppi/rust_generator/signature.rs](../../codegen/src/ppi/rust_generator/signature.rs):
+   - Added `generate_signature_with_context()` function
+   - Composite functions get correct signature: `fn(vals, prts, raws, ctx) -> Result<TagValue>`
+
+2. **Generator context awareness** - [codegen/src/ppi/rust_generator/generator.rs](../../codegen/src/ppi/rust_generator/generator.rs):
+   - Updated `generate_function()` to use context-aware signatures
+   - Updated `generate_body()` to wrap composite PrintConv in `Ok()`
+   - Fixed array access to use `TagValue::Empty` instead of `unwrap_or_default()`
+
+3. **Visitor enhancements** - [codegen/src/ppi/rust_generator/visitor.rs](../../codegen/src/ppi/rust_generator/visitor.rs):
+   - Added `visit_symbol()` override for composite context
+   - Bare `$val` → `vals.get(0)` in composite context
+   - `@val`/`@prt`/`@raw` patterns properly rejected (array splatting not supported)
+   - Added `interpolate_composite_string()` for patterns like `"$prt[0], $prt[1]"`
+
+4. **CompositeTagStrategy** - [codegen/src/strategies/composite_tag.rs](../../codegen/src/strategies/composite_tag.rs):
+   - Added `try_generate_function()` helper
+   - Phase 1: Generate functions for all expressions via PPI
+   - Phase 2: Write generated functions to output file
+   - Phase 3: Set function pointers in static definitions
+
+**Results:**
 ```bash
-grep '__hasCompositeTags' third-party/exiftool/lib/Image/ExifTool/GPS.pm
-# Output: our $__hasCompositeTags = 1;
+# Generated functions
+grep -c "^pub fn composite_" src/generated/composite_tags.rs
+# 46
+
+# ValueConv pointers set
+grep -c "value_conv: Some" src/generated/composite_tags.rs
+# 29
+
+# PrintConv pointers set
+grep -c "print_conv: Some" src/generated/composite_tags.rs
+# 16
 ```
 
-**Note for next engineer:** 30 modules call `AddCompositeTags`. After modifying the patcher, markers were removed from these modules to force re-patching. Run `make codegen` to verify the flag is set in all composite modules.
+**Code compiles successfully** - `cargo build` passes with warnings only.
+
+### ⏳ Remaining Work for Task 4b
+
+1. **Suppress unused variable warnings** - The `#[allow(...)]` attribute needs to apply to each function, not globally. Either:
+   - Prefix unused params with underscore in signature generation
+   - Or add `#[allow(unused_variables)]` to each generated function
+
+2. **Run full test suite** - `cargo t` has one unrelated failing test (`test_key_exif_ifd_tag_grouping` - see [P04-colorspace-support.md](P04-colorspace-support.md))
+
+3. **Run `make precommit`** - Interrupted during previous attempt
 
 ### ⏳ Remaining Tasks
 
-- **Task 1**: Add composite context to PPI generator (`ExpressionContext` enum)
-- **Task 2**: Create composite function signatures (`CompositeValueConvFn`, `CompositePrintConvFn`)
-- **Task 3**: Update `CompositeTagDef` structure to hold function pointers
-- **Task 4**: Generate composite function bodies via PPI
 - **Task 5**: Enable runtime orchestration (uncomment `orchestration.rs`)
 - **Task 6**: Migrate complex implementations + PrintConv fallbacks
 
-### Next Step
+---
 
-Verify `CompositeTagStrategy` is now detecting composite symbols:
+## Handoff Notes for Next Engineer
+
+### What Was Done
+
+Task 4 is functionally complete - composite functions ARE being generated via the PPI pipeline. The key changes were:
+
+1. **signature.rs** - Added composite-aware signature generation
+2. **generator.rs** - Uses context for signatures and body wrapping
+3. **visitor.rs** - Handles bare `$val` and string interpolation in composite context
+4. **composite_tag.rs** - Calls PPI pipeline and tracks successes/failures
+
+### What Needs Finishing
+
+1. **Fix warnings** (141 unused variable warnings in generated code)
+2. **Run `make precommit`** and fix any issues
+3. **Run `cargo t`** - expect 1 failure from unrelated ColorSpace bug
+
+### Key Commands to Verify
+
 ```bash
-RUST_LOG=debug make codegen 2>&1 | grep -i "composite"
-# Should show: "Processing composite symbol" messages
+# Regenerate composite_tags.rs
+make codegen
+
+# Check generated functions
+grep -c "^pub fn composite_" src/generated/composite_tags.rs
+# Should be ~46
+
+# Check function pointers are set
+grep "value_conv: Some" src/generated/composite_tags.rs | head -5
+
+# Build and verify
+cargo build
+
+# Run tests
+cargo t
 ```
 
-If no composite symbols detected, check `field_extractor.pl:74` is reading `$__hasCompositeTags` correctly.
+### Expressions That Fail (Expected)
+
+These fail because they use ExifTool function calls - PPI can't translate them:
+- `Image::ExifTool::Exif::PrintFNumber($val)` - Aperture PrintConv
+- `$self->ConvertDateTime($val)` - DateTime PrintConv
+- `Image::ExifTool::GPS::ToDMS(...)` - GPS coordinate formatting
+- `sprintf("%.2X"." %.2X"x7, @raw)` - Array splatting
+
+These need Task 6 (fallback implementations in codegen-runtime).
+
+### Quick Start for Next Engineer
+
+```bash
+# 1. Verify current state
+cargo build  # Should compile with warnings only
+
+# 2. Check generated functions
+grep -c "^pub fn composite_" src/generated/composite_tags.rs
+
+# 3. Fix the warnings (Task 4b)
+# Option A: Update signature generation to prefix unused params with _
+# Option B: Add #[allow(unused_variables)] to each function
+
+# 4. Run tests
+cargo t  # Expect test_key_exif_ifd_tag_grouping to fail (unrelated bug)
+
+# 5. Run full precommit
+make precommit
+```
+
+### Related Issue
+
+The failing test `test_key_exif_ifd_tag_grouping` is tracked in [P04-colorspace-support.md](P04-colorspace-support.md) - it's a separate bug where EXIF ColorSpace (0xA001) is not being parsed from ExifIFD.
 
 ---

@@ -69,9 +69,9 @@ impl RustGenerator {
     ///   `$val[n]` → `codegen_runtime::get_array_element(val, n)` (val is TagValue::Array)
     ///
     /// For Composite context (multiple dependencies):
-    ///   `$val[n]` → `vals.get(n).cloned().unwrap_or_default()`
-    ///   `$prt[n]` → `prts.get(n).cloned().unwrap_or_default()`
-    ///   `$raw[n]` → `raws.get(n).cloned().unwrap_or_default()`
+    ///   `$val[n]` → `vals.get(n).cloned().unwrap_or(TagValue::Empty)`
+    ///   `$prt[n]` → `prts.get(n).cloned().unwrap_or(TagValue::Empty)`
+    ///   `$raw[n]` → `raws.get(n).cloned().unwrap_or(TagValue::Empty)`
     ///
     /// The index is passed as a string since it may be a literal ("0", "1") or
     /// an expression from the AST.
@@ -88,7 +88,7 @@ impl RustGenerator {
                     return format!("codegen_runtime::get_array_element({rust_name}, {index})");
                 }
             };
-            format!("{slice_name}.get({index}).cloned().unwrap_or_default()")
+            format!("{slice_name}.get({index}).cloned().unwrap_or(TagValue::Empty)")
         } else {
             // Regular context: use TagValue array access
             let rust_name = array_name.trim_start_matches('$');
@@ -127,8 +127,12 @@ impl RustGenerator {
         let doc_comment = Self::format_perl_expression_doc(&self.original_expression);
         code.push_str(&doc_comment);
 
-        // Function signature
-        let signature = signature::generate_signature(&self.expression_type, &self.function_name);
+        // Function signature - use context-aware generation for composite vs regular
+        let signature = signature::generate_signature_with_context(
+            &self.expression_type,
+            &self.expression_context,
+            &self.function_name,
+        );
         writeln!(code, "{signature} {{")?;
 
         // Function body
@@ -158,7 +162,7 @@ impl RustGenerator {
             self.visit_node(&normalized_ast)?
         };
 
-        // Wrap the generated expression based on expression type
+        // Wrap the generated expression based on expression type and context
         match self.expression_type {
             ExpressionType::ValueConv => {
                 // Special case: if the expression is just "val", we need to clone it
@@ -172,7 +176,15 @@ impl RustGenerator {
                     Ok(format!("Ok({unwrapped})"))
                 }
             }
-            ExpressionType::PrintConv => Ok(code),
+            ExpressionType::PrintConv => {
+                // Composite PrintConv functions return Result<TagValue>, so wrap in Ok()
+                if self.is_composite_context() {
+                    let unwrapped = Self::strip_outer_parens(&code);
+                    Ok(format!("Ok({unwrapped})"))
+                } else {
+                    Ok(code)
+                }
+            }
             ExpressionType::Condition => Ok(code),
         }
     }
@@ -527,7 +539,7 @@ impl RustGenerator {
                 if let Some(index) = self.extract_subscript_index(&children[i + 1])? {
                     // Generate context-aware array access
                     // Regular: codegen_runtime::get_array_element(val, n)
-                    // Composite: vals.get(n).cloned().unwrap_or_default()
+                    // Composite: vals.get(n).cloned().unwrap_or(TagValue::Empty)
                     return Ok(self.generate_array_access(array_name, &index));
                 }
             }

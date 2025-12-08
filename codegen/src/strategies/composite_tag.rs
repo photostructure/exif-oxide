@@ -37,6 +37,8 @@ use tracing::{debug, info, warn};
 use super::{ExtractionContext, ExtractionStrategy, GeneratedFile};
 use crate::common::utils::format_rust_string;
 use crate::field_extractor::FieldSymbol;
+use crate::ppi::shared_pipeline::process_perl_expression_with_context;
+use crate::ppi::types::{ExpressionContext, ExpressionType};
 
 /// Strategy for processing composite tag definitions  
 pub struct CompositeTagStrategy {
@@ -56,6 +58,24 @@ struct CompositeDefinition {
     print_conv: Option<String>,
     description: Option<String>,
     groups: HashMap<String, String>,
+}
+
+/// Result of attempting to generate a function via PPI pipeline
+#[derive(Debug, Clone)]
+struct GeneratedFunction {
+    /// The generated Rust function code
+    code: String,
+    /// Function name (e.g., "composite_valueconv_exif_aperture")
+    function_name: String,
+}
+
+/// Statistics for function generation
+#[derive(Debug, Default)]
+struct GenerationStats {
+    value_conv_success: usize,
+    value_conv_failed: usize,
+    print_conv_success: usize,
+    print_conv_failed: usize,
 }
 
 impl Default for CompositeTagStrategy {
@@ -203,6 +223,54 @@ impl CompositeTagStrategy {
         Ok(definition)
     }
 
+    /// Try to generate a function via PPI pipeline for a composite expression
+    ///
+    /// Returns Some(GeneratedFunction) if successful, None if the expression
+    /// cannot be translated (e.g., ExifTool function calls, complex Perl).
+    fn try_generate_function(
+        expression: &str,
+        expr_type: ExpressionType,
+        module: &str,
+        tag_name: &str,
+    ) -> Option<GeneratedFunction> {
+        // Generate a function name: composite_valueconv_MODULE_TAGNAME or composite_printconv_MODULE_TAGNAME
+        let type_str = match expr_type {
+            ExpressionType::ValueConv => "valueconv",
+            ExpressionType::PrintConv => "printconv",
+            ExpressionType::Condition => "condition",
+        };
+        let safe_module = module.to_lowercase().replace(['-', ':'], "_");
+        let safe_tag = tag_name.to_lowercase().replace(['-', ':'], "_");
+        let function_name = format!("composite_{type_str}_{safe_module}_{safe_tag}");
+
+        // Try to generate via PPI pipeline with Composite context
+        match process_perl_expression_with_context(
+            expression,
+            expr_type,
+            ExpressionContext::Composite,
+            &function_name,
+        ) {
+            Ok(output) => {
+                debug!(
+                    "Successfully generated {} for {}::{}: {}",
+                    type_str, module, tag_name, function_name
+                );
+                Some(GeneratedFunction {
+                    code: output.generated_rust,
+                    function_name,
+                })
+            }
+            Err(e) => {
+                // PPI generation failed - this is expected for complex expressions
+                debug!(
+                    "PPI generation failed for {}::{} {}: {}",
+                    module, tag_name, type_str, e
+                );
+                None
+            }
+        }
+    }
+
     /// Generate the main composite_tags.rs module with CompositeTagDef structures
     fn generate_composite_tags_module(
         &self,
@@ -223,8 +291,85 @@ impl CompositeTagStrategy {
         // Imports
         code.push_str("use std::collections::HashMap;\n");
         code.push_str("use std::sync::LazyLock;\n");
-        code.push_str("use codegen_runtime::{CompositeValueConvFn, CompositePrintConvFn};\n");
+        code.push_str("use codegen_runtime::{CompositeValueConvFn, CompositePrintConvFn, TagValue, ExifContext};\n");
+        code.push_str("use codegen_runtime::types::ExifError;\n");
         code.push('\n');
+
+        // Track generated functions and statistics
+        let mut generated_functions: Vec<GeneratedFunction> = Vec::new();
+        let mut value_conv_fns: HashMap<String, String> = HashMap::new(); // tag key -> function name
+        let mut print_conv_fns: HashMap<String, String> = HashMap::new(); // tag key -> function name
+        let mut stats = GenerationStats::default();
+
+        // Phase 1: Try to generate functions for all expressions
+        for def in definitions {
+            let tag_key = format!("{}::{}", def.module, def.name);
+
+            // Try to generate ValueConv function
+            if let Some(expr) = &def.value_conv {
+                if let Some(gen_fn) = Self::try_generate_function(
+                    expr,
+                    ExpressionType::ValueConv,
+                    &def.module,
+                    &def.name,
+                ) {
+                    value_conv_fns.insert(tag_key.clone(), gen_fn.function_name.clone());
+                    generated_functions.push(gen_fn);
+                    stats.value_conv_success += 1;
+                } else {
+                    stats.value_conv_failed += 1;
+                }
+            }
+
+            // Try to generate PrintConv function
+            if let Some(expr) = &def.print_conv {
+                if let Some(gen_fn) = Self::try_generate_function(
+                    expr,
+                    ExpressionType::PrintConv,
+                    &def.module,
+                    &def.name,
+                ) {
+                    print_conv_fns.insert(tag_key.clone(), gen_fn.function_name.clone());
+                    generated_functions.push(gen_fn);
+                    stats.print_conv_success += 1;
+                } else {
+                    stats.print_conv_failed += 1;
+                }
+            }
+        }
+
+        info!(
+            "Composite function generation: ValueConv {}/{} success, PrintConv {}/{} success",
+            stats.value_conv_success,
+            stats.value_conv_success + stats.value_conv_failed,
+            stats.print_conv_success,
+            stats.print_conv_success + stats.print_conv_failed
+        );
+
+        // Phase 2: Write generated functions (with clippy allows for generated code)
+        if !generated_functions.is_empty() {
+            code.push_str("// =============================================================================\n");
+            code.push_str("// Generated Composite Functions\n");
+            code.push_str("// =============================================================================\n");
+            code.push_str("//\n");
+            code.push_str(
+                "// These functions are auto-generated from ExifTool Perl expressions.\n",
+            );
+            code.push_str("// They receive dependency arrays (vals, prts, raws) and compute composite values.\n");
+            code.push('\n');
+            code.push_str("#[allow(dead_code, unused_variables, clippy::unnecessary_cast, clippy::collapsible_else_if, clippy::redundant_clone)]\n");
+            code.push('\n');
+
+            for gen_fn in &generated_functions {
+                code.push_str(&gen_fn.code);
+                code.push('\n');
+            }
+
+            code.push_str("// =============================================================================\n");
+            code.push_str("// End Generated Composite Functions\n");
+            code.push_str("// =============================================================================\n");
+            code.push('\n');
+        }
 
         // CompositeTagDef structure
         code.push_str(
@@ -366,12 +511,26 @@ impl CompositeTagStrategy {
                 code.push_str("    ],\n");
             }
 
-            // ValueConv function pointer (TODO: Task 4 will generate actual functions)
-            // For now, set to None - orchestration will fall back to manual implementations
-            code.push_str("    value_conv: None, // TODO: Generate via PPI pipeline\n");
+            // ValueConv function pointer - reference generated function or None if generation failed
+            let tag_key = format!("{}::{}", def.module, def.name);
+            if let Some(fn_name) = value_conv_fns.get(&tag_key) {
+                code.push_str(&format!("    value_conv: Some({fn_name}),\n"));
+            } else if def.value_conv.is_some() {
+                // Expression exists but PPI generation failed
+                code.push_str("    value_conv: None, // PPI generation failed\n");
+            } else {
+                code.push_str("    value_conv: None,\n");
+            }
 
-            // PrintConv function pointer (TODO: Task 4 will generate actual functions)
-            code.push_str("    print_conv: None, // TODO: Generate via PPI pipeline\n");
+            // PrintConv function pointer - reference generated function or None if generation failed
+            if let Some(fn_name) = print_conv_fns.get(&tag_key) {
+                code.push_str(&format!("    print_conv: Some({fn_name}),\n"));
+            } else if def.print_conv.is_some() {
+                // Expression exists but PPI generation failed
+                code.push_str("    print_conv: None, // PPI generation failed\n");
+            } else {
+                code.push_str("    print_conv: None,\n");
+            }
 
             // Original ValueConv expression (for debugging/reference)
             match &def.value_conv {
