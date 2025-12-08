@@ -26,8 +26,7 @@ pub trait NormalizedAstHandler {
         // Generate Rust if-block with assignment and return expression
         // Trust ExifTool: Preserve exact Perl semantics where conditional assignment affects final result
         Ok(format!(
-            "{{ if {} {{ {} }} {} }}",
-            condition, assignment, return_expr
+            "{{ if {condition} {{ {assignment} }} {return_expr} }}"
         ))
     }
 
@@ -66,7 +65,7 @@ pub trait NormalizedAstHandler {
             }
             "log" => {
                 let args = self.process_function_args(&node.children)?;
-                Ok(format!("log({})", args[0]))
+                Ok(format!("codegen_runtime::log({})", args[0]))
             }
             "length" => {
                 let args = self.process_function_args(&node.children)?;
@@ -74,18 +73,16 @@ pub trait NormalizedAstHandler {
                 match self.expression_type() {
                     ExpressionType::PrintConv => {
                         Ok(format!(
-                            "match {} {{ TagValue::String(s) => s.len().to_string(), _ => \"0\".to_string() }}",
-                            var
+                            "match {var} {{ TagValue::String(s) => s.len().to_string(), _ => \"0\".to_string() }}"
                         ))
                     }
                     ExpressionType::ValueConv => {
                         Ok(format!(
-                            "TagValue::I32(match {} {{ TagValue::String(s) => s.len() as i32, _ => 0 }})",
-                            var
+                            "TagValue::I32(match {var} {{ TagValue::String(s) => s.len() as i32, _ => 0 }})"
                         ))
                     }
                     _ => {
-                        Ok(format!("match {} {{ TagValue::String(s) => s.len() as i32, _ => 0 }}", var))
+                        Ok(format!("match {var} {{ TagValue::String(s) => s.len() as i32, _ => 0 }}"))
                     }
                 }
             }
@@ -115,7 +112,7 @@ pub trait NormalizedAstHandler {
                 if let Some(ref content) = child.content {
                     Ok(content.clone())
                 } else if let Some(ref string_value) = child.string_value {
-                    Ok(format!("\"{}\"", string_value))
+                    Ok(format!("\"{string_value}\""))
                 } else {
                     // For complex expressions, delegate back to main combiner
                     self.combine_statement_parts(&[], &[child.clone()])
@@ -159,16 +156,13 @@ pub trait NormalizedAstHandler {
         // Generate call to the helper function
         match self.expression_type() {
             ExpressionType::PrintConv => Ok(format!(
-                "TagValue::String(codegen_runtime::sprintf_with_string_concat_repeat(\"{}\", \"{}\", {}, &{}))",
-                base_format, concat_part, repeat_count, remaining_args
+                "TagValue::String(codegen_runtime::sprintf_with_string_concat_repeat(\"{base_format}\", \"{concat_part}\", {repeat_count}, &{remaining_args}))"
             )),
             ExpressionType::ValueConv => Ok(format!(
-                "TagValue::String(codegen_runtime::sprintf_with_string_concat_repeat(\"{}\", \"{}\", {}, &{}))",
-                base_format, concat_part, repeat_count, remaining_args
+                "TagValue::String(codegen_runtime::sprintf_with_string_concat_repeat(\"{base_format}\", \"{concat_part}\", {repeat_count}, &{remaining_args}))"
             )),
             _ => Ok(format!(
-                "codegen_runtime::sprintf_with_string_concat_repeat(\"{}\", \"{}\", {}, &{})",
-                base_format, concat_part, repeat_count, remaining_args
+                "codegen_runtime::sprintf_with_string_concat_repeat(\"{base_format}\", \"{concat_part}\", {repeat_count}, &{remaining_args})"
             )),
         }
     }
@@ -230,7 +224,7 @@ pub trait NormalizedAstHandler {
 
         // Extract format string from first child node
         let format_str = if let Some(ref string_value) = first_arg.string_value {
-            format!("\"{}\"", string_value)
+            format!("\"{string_value}\"")
         } else if let Some(ref content) = first_arg.content {
             content.clone()
         } else {
@@ -244,7 +238,7 @@ pub trait NormalizedAstHandler {
                 if let Some(ref content) = child.content {
                     Ok(content.clone())
                 } else if let Some(ref string_value) = child.string_value {
-                    Ok(format!("\"{}\"", string_value))
+                    Ok(format!("\"{string_value}\""))
                 } else {
                     Ok("val".to_string()) // Fallback
                 }
@@ -255,10 +249,9 @@ pub trait NormalizedAstHandler {
 
         match self.expression_type() {
             ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                "TagValue::String(format!({}, {}))",
-                format_str, args_formatted
+                "TagValue::String(format!({format_str}, {args_formatted}))"
             )),
-            _ => Ok(format!("format!({}, {})", format_str, args_formatted)),
+            _ => Ok(format!("format!({format_str}, {args_formatted})")),
         }
     }
 
@@ -297,12 +290,10 @@ pub trait NormalizedAstHandler {
 
                         return match self.expression_type() {
                             ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                                "TagValue::String(codegen_runtime::sprintf_with_string_concat_repeat(\"{}\", \"{}\", {}, &{}))",
-                                base_format, concat_part, repeat_count, remaining_args
+                                "TagValue::String(codegen_runtime::sprintf_with_string_concat_repeat(\"{base_format}\", \"{concat_part}\", {repeat_count}, &{remaining_args}))"
                             )),
                             _ => Ok(format!(
-                                "codegen_runtime::sprintf_with_string_concat_repeat(\"{}\", \"{}\", {}, &{})",
-                                base_format, concat_part, repeat_count, remaining_args
+                                "codegen_runtime::sprintf_with_string_concat_repeat(\"{base_format}\", \"{concat_part}\", {repeat_count}, &{remaining_args})"
                             )),
                         };
                     }
@@ -328,12 +319,10 @@ pub trait NormalizedAstHandler {
 
                 return match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::String(codegen_runtime::sprintf_perl(\"{}\", &{}))",
-                        combined_format, remaining_args
+                        "TagValue::String(codegen_runtime::sprintf_perl(\"{combined_format}\", &{remaining_args}))"
                     )),
                     _ => Ok(format!(
-                        "codegen_runtime::sprintf_perl(\"{}\", &{})",
-                        combined_format, remaining_args
+                        "codegen_runtime::sprintf_perl(\"{combined_format}\", &{remaining_args})"
                     )),
                 };
             }
@@ -356,12 +345,10 @@ pub trait NormalizedAstHandler {
 
                     return match self.expression_type() {
                         ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                            "TagValue::String(codegen_runtime::sprintf_perl(\"{}\", &{}))",
-                            combined_format, remaining_args
+                            "TagValue::String(codegen_runtime::sprintf_perl(\"{combined_format}\", &{remaining_args}))"
                         )),
                         _ => Ok(format!(
-                            "codegen_runtime::sprintf_perl(\"{}\", &{})",
-                            combined_format, remaining_args
+                            "codegen_runtime::sprintf_perl(\"{combined_format}\", &{remaining_args})"
                         )),
                     };
                 }
