@@ -1994,7 +1994,9 @@ mod tests {
         assert!(get_tag_priority("Composite", "Aperture") > get_tag_priority("XMP", "Aperture"));
 
         // MakerNotes > EXIF (matches ExifTool behavior where manufacturer values are preferred)
-        assert!(get_tag_priority("Canon", "WhiteBalance") > get_tag_priority("EXIF", "WhiteBalance"));
+        assert!(
+            get_tag_priority("Canon", "WhiteBalance") > get_tag_priority("EXIF", "WhiteBalance")
+        );
         assert!(get_tag_priority("Nikon", "LensID") > get_tag_priority("EXIF", "LensID"));
 
         // Test XMP high priority tags
