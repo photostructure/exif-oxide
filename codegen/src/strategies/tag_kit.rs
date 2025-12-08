@@ -263,6 +263,17 @@ impl TagKitStrategy {
                         match print_conv {{
                             PrintConv::None => value.clone(),
                             PrintConv::Function(func) => func(value, None),
+                            PrintConv::Simple(lookup) => {{
+                                // Look up value in the hash map
+                                // ExifTool uses the stringified value as the key
+                                let key = value.to_string();
+                                if let Some(display_value) = lookup.get(&key) {{
+                                    crate::types::TagValue::String(display_value.to_string())
+                                }} else {{
+                                    // Key not found - return original value
+                                    value.clone()
+                                }}
+                            }}
                             PrintConv::Expression(_expr) => {{
                                 // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                                 value.clone() // Fallback to original value when expression not handled by PPI
@@ -400,9 +411,37 @@ impl TagKitStrategy {
                     "Some(PrintConv::Expression(\"{}\".to_string()))",
                     escape_string(print_conv_str)
                 ));
-            } else if let Some(_print_conv_obj) = print_conv_value.as_object() {
-                // This is likely a hash reference lookup table
-                return Ok("Some(PrintConv::Complex)".to_string());
+            } else if let Some(print_conv_obj) = print_conv_value.as_object() {
+                // This is an inline hash lookup table - generate PrintConv::Simple
+                // Filter out special entries like "BITMASK" that are not simple lookups
+                let entries: Vec<_> = print_conv_obj
+                    .iter()
+                    .filter(|(k, v)| {
+                        // Skip BITMASK and other non-string values
+                        !k.eq_ignore_ascii_case("BITMASK") && v.is_string()
+                    })
+                    .collect();
+
+                if entries.is_empty() {
+                    // No valid entries - fall back to Complex
+                    return Ok("Some(PrintConv::Complex)".to_string());
+                }
+
+                // Generate HashMap::from([...]) with the entries
+                let mut hash_entries = String::new();
+                for (key, value) in entries {
+                    if let Some(val_str) = value.as_str() {
+                        let escaped_key = escape_string(key);
+                        let escaped_value = escape_string(val_str);
+                        hash_entries.push_str(&format!(
+                            "(\"{escaped_key}\".to_string(), \"{escaped_value}\"), "
+                        ));
+                    }
+                }
+
+                return Ok(format!(
+                    "Some(PrintConv::Simple(std::collections::HashMap::from([{hash_entries}])))"
+                ));
             }
         }
 
