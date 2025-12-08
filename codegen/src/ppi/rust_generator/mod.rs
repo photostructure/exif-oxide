@@ -38,6 +38,10 @@ impl PpiVisitor for RustGenerator {
         &self.expression_type
     }
 
+    fn expression_context(&self) -> ExpressionContext {
+        self.expression_context
+    }
+
     fn visit_document(&self, node: &PpiNode) -> Result<String, CodeGenError> {
         generator::RustGenerator::visit_document(self, node)
     }

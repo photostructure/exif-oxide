@@ -12,7 +12,7 @@ use tracing::{debug, info};
 
 use crate::ppi::normalizer;
 use crate::ppi::rust_generator::generator::RustGenerator;
-use crate::ppi::types::{ExpressionType, PpiNode};
+use crate::ppi::types::{ExpressionContext, ExpressionType, PpiNode};
 
 /// Output from the complete PPI pipeline processing
 #[allow(dead_code)]
@@ -58,6 +58,72 @@ pub fn process_perl_expression(
     // Step 4: Generate Rust code
     let generator =
         RustGenerator::new(expr_type, function_name.to_string(), expression.to_string());
+
+    let generated_rust = generator
+        .generate_function(&normalized_ast)
+        .context("Failed to generate Rust code from normalized AST")?;
+
+    // Step 5: Generate AST hash for deduplication (placeholder for now)
+    let ast_hash = generate_ast_hash(&normalized_ast);
+
+    debug!(
+        "Pipeline processing complete for expression: {}",
+        expression
+    );
+
+    Ok(PipelineOutput {
+        original_expression: expression.to_string(),
+        raw_ppi_ast,
+        normalized_ast,
+        generated_rust,
+        ast_hash,
+    })
+}
+
+/// Process a Perl expression through the complete PPI pipeline with specified context
+///
+/// This variant allows specifying the expression context (Regular or Composite).
+/// Use `ExpressionContext::Composite` for composite tag expressions that use
+/// `$val[n]`, `$prt[n]`, `$raw[n]` array access patterns.
+///
+/// # Arguments
+/// * `expression` - The Perl expression to process
+/// * `expr_type` - Type of expression (PrintConv, ValueConv, Condition)
+/// * `expr_context` - Context for code generation (Regular or Composite)
+/// * `function_name` - Name to use for the generated function
+///
+/// # Returns
+/// Complete pipeline output including AST at each stage and generated Rust code
+#[allow(dead_code)]
+pub fn process_perl_expression_with_context(
+    expression: &str,
+    expr_type: ExpressionType,
+    expr_context: ExpressionContext,
+    function_name: &str,
+) -> Result<PipelineOutput> {
+    info!(
+        "Processing Perl expression with {:?} context: {}",
+        expr_context, expression
+    );
+
+    // Step 1: Call ppi_ast.pl to get raw AST
+    let raw_ast_json =
+        call_ppi_ast_script(expression).context("Failed to parse expression with ppi_ast.pl")?;
+
+    // Step 2: Parse JSON into PpiNode
+    let raw_ppi_ast: PpiNode =
+        serde_json::from_str(&raw_ast_json).context("Failed to parse PPI AST JSON into PpiNode")?;
+
+    // Step 3: Apply normalization
+    let normalized_ast = normalizer::normalize_multi_pass(raw_ppi_ast.clone());
+
+    // Step 4: Generate Rust code with the specified context
+    let generator = RustGenerator::with_context(
+        expr_type,
+        expr_context,
+        function_name.to_string(),
+        expression.to_string(),
+    );
 
     let generated_rust = generator
         .generate_function(&normalized_ast)

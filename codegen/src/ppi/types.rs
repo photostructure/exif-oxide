@@ -59,6 +59,24 @@ pub enum ExpressionType {
     PrintConv,
 }
 
+/// Expression context distinguishes regular tags from composite tags
+///
+/// This affects how `$val`, `$prt`, and `$raw` are translated:
+/// - **Regular**: `$val` is a single TagValue parameter
+/// - **Composite**: `$val[n]`, `$prt[n]`, `$raw[n]` access slice parameters
+///
+/// See docs/todo/P03c-composite-tags.md for details on composite tag expressions.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+pub enum ExpressionContext {
+    /// Regular tag context: $val is a single TagValue
+    /// Function signature: fn(val: &TagValue, ctx: Option<&ExifContext>) -> Result<TagValue>
+    #[default]
+    Regular,
+    /// Composite tag context: $val[n], $prt[n], $raw[n] access slice parameters
+    /// Function signature: fn(vals: &[TagValue], prts: &[TagValue], raws: &[TagValue]) -> Result<TagValue>
+    Composite,
+}
+
 impl ExpressionType {
     /// Determine expression type from field name context
     #[allow(dead_code)]

@@ -15,8 +15,8 @@ use anyhow::Result;
 use clap::Parser;
 use serde_json;
 
-use codegen::ppi::shared_pipeline::process_perl_expression;
-use codegen::ppi::types::{ExpressionType, PpiNode};
+use codegen::ppi::shared_pipeline::{process_perl_expression, process_perl_expression_with_context};
+use codegen::ppi::types::{ExpressionContext, ExpressionType, PpiNode};
 
 #[derive(Parser)]
 #[command(
@@ -61,6 +61,14 @@ struct Args {
         help = "Show detailed AST structure (pretty-printed JSON)"
     )]
     verbose: bool,
+
+    /// Use composite tag context ($val[n] → vals.get(n) instead of get_array_element)
+    #[arg(
+        short = 'c',
+        long = "composite",
+        help = "Generate code for composite tag context (uses vals/prts/raws slices)"
+    )]
+    composite: bool,
 }
 
 #[derive(clap::ValueEnum, Clone, Debug)]
@@ -93,12 +101,23 @@ fn main() -> Result<()> {
 
     println!("🔧 PPI Pipeline Debugger");
     println!("{}", "=".repeat(50));
+    if args.composite {
+        println!("📦 Using COMPOSITE context (vals/prts/raws slices)");
+    }
     println!();
 
     // Process through shared pipeline
     let expr_type = ExpressionType::from(args.expr_type);
-    let pipeline_output =
-        process_perl_expression(&args.expression, expr_type, &args.function_name)?;
+    let pipeline_output = if args.composite {
+        process_perl_expression_with_context(
+            &args.expression,
+            expr_type,
+            ExpressionContext::Composite,
+            &args.function_name,
+        )?
+    } else {
+        process_perl_expression(&args.expression, expr_type, &args.function_name)?
+    };
 
     // Step 1: Show original expression
     println!("📝 STEP 1: Original Perl Expression");

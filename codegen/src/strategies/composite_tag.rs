@@ -223,6 +223,7 @@ impl CompositeTagStrategy {
         // Imports
         code.push_str("use std::collections::HashMap;\n");
         code.push_str("use std::sync::LazyLock;\n");
+        code.push_str("use codegen_runtime::{CompositeValueConvFn, CompositePrintConvFn};\n");
         code.push('\n');
 
         // CompositeTagDef structure
@@ -234,7 +235,23 @@ impl CompositeTagStrategy {
             "/// Mirrors ExifTool's composite tag structure from AddCompositeTags() function.\n",
         );
         code.push_str("/// See: third-party/exiftool/lib/Image/ExifTool.pm:5662-5720\n");
-        code.push_str("#[derive(Debug, Clone)]\n");
+        code.push_str("///\n");
+        code.push_str("/// ## Function Pointer Fields\n");
+        code.push_str("///\n");
+        code.push_str("/// `value_conv` and `print_conv` are function pointers that receive:\n");
+        code.push_str(
+            "/// - `vals`: Slice of TagValues from resolved dependencies (converted values)\n",
+        );
+        code.push_str(
+            "/// - `prts`: Slice of TagValues from resolved dependencies (printed values)\n",
+        );
+        code.push_str("/// - `raws`: Slice of TagValues from resolved dependencies (raw unconverted values)\n");
+        code.push_str("/// - `ctx`: Optional ExifContext for $$self{...} access\n");
+        code.push_str("///\n");
+        code.push_str(
+            "/// These correspond to Perl's `$val[n]`, `$prt[n]`, and `$raw[n]` array access.\n",
+        );
+        code.push_str("#[derive(Clone)]\n");
         code.push_str("pub struct CompositeTagDef {\n");
         code.push_str("    /// Tag name (e.g., \"GPSLatitude\", \"ImageSize\")\n");
         code.push_str("    pub name: &'static str,\n");
@@ -251,17 +268,47 @@ impl CompositeTagStrategy {
         code.push_str("    /// Tags that inhibit this composite if present\n");
         code.push_str("    pub inhibit: &'static [&'static str],\n");
         code.push_str("    \n");
-        code.push_str("    /// ExifTool ValueConv expression for calculation\n");
-        code.push_str("    pub value_conv: Option<&'static str>,\n");
+        code.push_str("    /// Function pointer for ValueConv calculation\n");
+        code.push_str("    /// Generated from ExifTool expressions like `$val[0] || $val[1]`\n");
+        code.push_str("    pub value_conv: Option<CompositeValueConvFn>,\n");
         code.push_str("    \n");
-        code.push_str("    /// ExifTool PrintConv expression for formatting\n");
-        code.push_str("    pub print_conv: Option<&'static str>,\n");
+        code.push_str("    /// Function pointer for PrintConv formatting\n");
+        code.push_str(
+            "    /// Generated from ExifTool expressions like `sprintf(\"%.1f\", $val[0])`\n",
+        );
+        code.push_str("    pub print_conv: Option<CompositePrintConvFn>,\n");
+        code.push_str("    \n");
+        code.push_str("    /// Original Perl ValueConv expression (for debugging/reference)\n");
+        code.push_str("    pub value_conv_expr: Option<&'static str>,\n");
+        code.push_str("    \n");
+        code.push_str("    /// Original Perl PrintConv expression (for debugging/reference)\n");
+        code.push_str("    pub print_conv_expr: Option<&'static str>,\n");
         code.push_str("    \n");
         code.push_str("    /// Human-readable description\n");
         code.push_str("    pub description: Option<&'static str>,\n");
         code.push_str("    \n");
         code.push_str("    /// Group assignments by family number\n");
         code.push_str("    pub groups: &'static [(u8, &'static str)],\n");
+        code.push_str("}\n");
+        code.push('\n');
+
+        // Add Debug implementation for the struct since function pointers don't implement Debug
+        code.push_str("impl std::fmt::Debug for CompositeTagDef {\n");
+        code.push_str("    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {\n");
+        code.push_str("        f.debug_struct(\"CompositeTagDef\")\n");
+        code.push_str("            .field(\"name\", &self.name)\n");
+        code.push_str("            .field(\"module\", &self.module)\n");
+        code.push_str("            .field(\"require\", &self.require)\n");
+        code.push_str("            .field(\"desire\", &self.desire)\n");
+        code.push_str("            .field(\"inhibit\", &self.inhibit)\n");
+        code.push_str("            .field(\"value_conv\", &self.value_conv.map(|_| \"<fn>\"))\n");
+        code.push_str("            .field(\"print_conv\", &self.print_conv.map(|_| \"<fn>\"))\n");
+        code.push_str("            .field(\"value_conv_expr\", &self.value_conv_expr)\n");
+        code.push_str("            .field(\"print_conv_expr\", &self.print_conv_expr)\n");
+        code.push_str("            .field(\"description\", &self.description)\n");
+        code.push_str("            .field(\"groups\", &self.groups)\n");
+        code.push_str("            .finish()\n");
+        code.push_str("    }\n");
         code.push_str("}\n");
         code.push('\n');
 
@@ -319,23 +366,29 @@ impl CompositeTagStrategy {
                 code.push_str("    ],\n");
             }
 
-            // ValueConv
+            // ValueConv function pointer (TODO: Task 4 will generate actual functions)
+            // For now, set to None - orchestration will fall back to manual implementations
+            code.push_str("    value_conv: None, // TODO: Generate via PPI pipeline\n");
+
+            // PrintConv function pointer (TODO: Task 4 will generate actual functions)
+            code.push_str("    print_conv: None, // TODO: Generate via PPI pipeline\n");
+
+            // Original ValueConv expression (for debugging/reference)
             match &def.value_conv {
                 Some(conv) => {
-                    // Escape the Perl expression properly
                     let escaped = format_rust_string(conv);
-                    code.push_str(&format!("    value_conv: Some({escaped}),\n"));
+                    code.push_str(&format!("    value_conv_expr: Some({escaped}),\n"));
                 }
-                None => code.push_str("    value_conv: None,\n"),
+                None => code.push_str("    value_conv_expr: None,\n"),
             }
 
-            // PrintConv
+            // Original PrintConv expression (for debugging/reference)
             match &def.print_conv {
                 Some(conv) => {
                     let escaped = format_rust_string(conv);
-                    code.push_str(&format!("    print_conv: Some({escaped}),\n"));
+                    code.push_str(&format!("    print_conv_expr: Some({escaped}),\n"));
                 }
-                None => code.push_str("    print_conv: None,\n"),
+                None => code.push_str("    print_conv_expr: None,\n"),
             }
 
             // Description

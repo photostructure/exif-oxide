@@ -23,6 +23,9 @@ pub mod types;
 pub use tag_value::TagValue;
 pub use types::{ExifContext, ExifError};
 
+// Re-export composite tag function types
+pub use types::{CompositePrintConvFn, CompositeValueConvFn};
+
 // Re-export array helpers for generated code
 pub use array_helpers::get_array_element;
 

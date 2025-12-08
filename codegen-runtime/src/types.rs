@@ -102,3 +102,52 @@ impl ExifError {
 
 /// Result type alias for convenience
 pub type Result<T> = std::result::Result<T, ExifError>;
+
+// =============================================================================
+// Composite Tag Function Signatures
+// =============================================================================
+//
+// These function types are used by composite tags that compute values from
+// multiple source tags. Unlike regular ValueConv/PrintConv which operate on
+// a single value, composite functions receive arrays of resolved dependencies:
+//
+// - vals: The converted values (after ValueConv) from required/desired tags
+// - prts: The printed values (after PrintConv) from required/desired tags
+// - raws: The raw unconverted values from required/desired tags
+//
+// See docs/todo/P03c-composite-tags.md for the full design.
+
+/// Function signature for composite tag ValueConv expressions
+///
+/// Parameters:
+/// - `vals`: Slice of TagValues from resolved dependencies (converted values)
+/// - `prts`: Slice of TagValues from resolved dependencies (printed values)
+/// - `raws`: Slice of TagValues from resolved dependencies (raw unconverted values)
+/// - `ctx`: Optional ExifContext for $$self{...} access
+///
+/// Example composite expressions:
+/// - `$val[0] || $val[1]` (Aperture - uses first available)
+/// - `$val[0] / $val[1]` (ratio calculations)
+/// - `$prt[0], $prt[1]` (GPS position formatting)
+pub type CompositeValueConvFn = fn(
+    &[crate::TagValue],
+    &[crate::TagValue],
+    &[crate::TagValue],
+    Option<&ExifContext>,
+) -> Result<crate::TagValue>;
+
+/// Function signature for composite tag PrintConv expressions
+///
+/// Parameters are the same as CompositeValueConvFn, but this is applied
+/// after the ValueConv to produce human-readable output.
+///
+/// Example composite PrintConv expressions:
+/// - `sprintf("%.1f", $val[0])` (format single dependency)
+/// - `$prt[0]` (pass through printed value)
+/// - `"$prt[0], $prt[1]"` (combine printed values)
+pub type CompositePrintConvFn = fn(
+    &[crate::TagValue],
+    &[crate::TagValue],
+    &[crate::TagValue],
+    Option<&ExifContext>,
+) -> Result<crate::TagValue>;

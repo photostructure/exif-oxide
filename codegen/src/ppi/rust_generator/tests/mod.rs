@@ -105,3 +105,128 @@ mod normalizer_integration {
         );
     }
 }
+
+/// Tests for composite tag expression context
+/// These test that the generator produces different code for Regular vs Composite contexts
+#[cfg(test)]
+mod composite_context {
+    use crate::ppi::rust_generator::RustGenerator;
+    use crate::ppi::{ExpressionContext, ExpressionType, PpiNode};
+    use serde_json::json;
+
+    /// Helper to create array access AST: $val[index]
+    fn array_access_ast(var_name: &str, index: usize) -> PpiNode {
+        let ast_json = json!({
+            "children": [{
+                "children": [{
+                    "class": "PPI::Token::Symbol",
+                    "content": var_name,
+                    "symbol_type": "scalar"
+                }, {
+                    "children": [{
+                        "children": [{
+                            "class": "PPI::Token::Number",
+                            "content": index.to_string(),
+                            "numeric_value": index as f64
+                        }],
+                        "class": "PPI::Statement::Expression"
+                    }],
+                    "class": "PPI::Structure::Subscript",
+                    "structure_bounds": "[ ... ]"
+                }],
+                "class": "PPI::Statement"
+            }],
+            "class": "PPI::Document"
+        });
+        serde_json::from_value(ast_json).unwrap()
+    }
+
+    #[test]
+    fn test_regular_context_uses_get_array_element() {
+        let ast = array_access_ast("$val", 0);
+
+        let generator = RustGenerator::new(
+            ExpressionType::ValueConv,
+            "test_regular".to_string(),
+            "$val[0]".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Regular context should use codegen_runtime::get_array_element
+        assert!(
+            result.contains("codegen_runtime::get_array_element(val, 0)"),
+            "Regular context should use get_array_element, got: {result}"
+        );
+        // Should NOT use vals.get()
+        assert!(
+            !result.contains("vals.get("),
+            "Regular context should NOT use vals.get(), got: {result}"
+        );
+    }
+
+    #[test]
+    fn test_composite_context_uses_slice_access() {
+        let ast = array_access_ast("$val", 0);
+
+        let generator = RustGenerator::with_context(
+            ExpressionType::ValueConv,
+            ExpressionContext::Composite,
+            "test_composite".to_string(),
+            "$val[0]".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Composite context should use vals.get()
+        assert!(
+            result.contains("vals.get(0).cloned().unwrap_or_default()"),
+            "Composite context should use vals.get(), got: {result}"
+        );
+        // Should NOT use codegen_runtime::get_array_element for $val
+        assert!(
+            !result.contains("codegen_runtime::get_array_element(val, 0)"),
+            "Composite context should NOT use get_array_element for $val, got: {result}"
+        );
+    }
+
+    #[test]
+    fn test_composite_context_prt_uses_prts_slice() {
+        let ast = array_access_ast("$prt", 1);
+
+        let generator = RustGenerator::with_context(
+            ExpressionType::PrintConv,
+            ExpressionContext::Composite,
+            "test_prt_access".to_string(),
+            "$prt[1]".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Composite context for $prt should use prts.get()
+        assert!(
+            result.contains("prts.get(1).cloned().unwrap_or_default()"),
+            "Composite context should use prts.get() for $prt[], got: {result}"
+        );
+    }
+
+    #[test]
+    fn test_composite_context_raw_uses_raws_slice() {
+        let ast = array_access_ast("$raw", 2);
+
+        let generator = RustGenerator::with_context(
+            ExpressionType::ValueConv,
+            ExpressionContext::Composite,
+            "test_raw_access".to_string(),
+            "$raw[2]".to_string(),
+        );
+
+        let result = generator.generate_function(&ast).unwrap();
+
+        // Composite context for $raw should use raws.get()
+        assert!(
+            result.contains("raws.get(2).cloned().unwrap_or_default()"),
+            "Composite context should use raws.get() for $raw[], got: {result}"
+        );
+    }
+}

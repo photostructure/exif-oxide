@@ -17,6 +17,74 @@ use crate::ppi::rust_generator::visitor_tokens::*;
 pub trait PpiVisitor {
     fn expression_type(&self) -> &ExpressionType;
 
+    /// Get the expression context (Regular or Composite)
+    /// Default implementation returns Regular for backwards compatibility
+    fn expression_context(&self) -> ExpressionContext {
+        ExpressionContext::Regular
+    }
+
+    /// Check if we're in composite context
+    fn is_composite_context(&self) -> bool {
+        self.expression_context() == ExpressionContext::Composite
+    }
+
+    /// Generate context-aware array access code
+    fn generate_array_access(&self, array_name: &str, index: usize) -> String {
+        if self.is_composite_context() {
+            // Composite context: access slice parameters
+            let slice_name = match array_name {
+                "$val" | "val" => "vals",
+                "$prt" | "prt" => "prts",
+                "$raw" | "raw" => "raws",
+                other => {
+                    let rust_name = other.trim_start_matches('$');
+                    return format!("codegen_runtime::get_array_element({rust_name}, {index})");
+                }
+            };
+            format!("{slice_name}.get({index}).cloned().unwrap_or_default()")
+        } else {
+            // Regular context: use TagValue array access
+            let rust_name = array_name.trim_start_matches('$');
+            let rust_array = if rust_name == "val" || array_name == "$val" {
+                "val"
+            } else {
+                rust_name
+            };
+            format!("codegen_runtime::get_array_element({rust_array}, {index})")
+        }
+    }
+
+    /// Generate context-aware array access code with string index
+    /// Used when the index comes from AST parsing (as a string literal)
+    fn generate_array_access_str(&self, array_name: &str, index: &str) -> String {
+        // Try to parse as usize for compatibility, otherwise use the string directly
+        if let Ok(idx) = index.parse::<usize>() {
+            self.generate_array_access(array_name, idx)
+        } else {
+            // If it's not a simple number, generate with the expression
+            if self.is_composite_context() {
+                let slice_name = match array_name {
+                    "$val" | "val" => "vals",
+                    "$prt" | "prt" => "prts",
+                    "$raw" | "raw" => "raws",
+                    other => {
+                        let rust_name = other.trim_start_matches('$');
+                        return format!("codegen_runtime::get_array_element({rust_name}, {index})");
+                    }
+                };
+                format!("{slice_name}.get({index}).cloned().unwrap_or_default()")
+            } else {
+                let rust_name = array_name.trim_start_matches('$');
+                let rust_array = if rust_name == "val" || array_name == "$val" {
+                    "val"
+                } else {
+                    rust_name
+                };
+                format!("codegen_runtime::get_array_element({rust_array}, {index})")
+            }
+        }
+    }
+
     /// Recursive visitor for PPI nodes - dispatches based on node class
     fn visit_node(&self, node: &PpiNode) -> Result<String, CodeGenError> {
         match node.class.as_str() {
@@ -1167,22 +1235,16 @@ pub trait PpiVisitor {
         }
     }
 
-    /// Visit array access node - handles $val[0], $val[1], etc.
+    /// Visit array access node - handles $val[0], $val[1], $prt[0], $raw[0], etc.
     fn visit_array_access(&self, node: &PpiNode) -> Result<String, CodeGenError> {
         // The node should have the symbol name in content and subscript in children
         let var_name = node.content.as_deref().unwrap_or("$val");
-        let rust_name = if var_name == "$val" {
-            "val"
-        } else {
-            var_name.trim_start_matches('$')
-        };
 
         // Extract the index from the subscript child
         if let Some(subscript) = node.children.first() {
             if let Some(index) = self.extract_subscript_index(subscript) {
-                return Ok(format!(
-                    "codegen_runtime::get_array_element({rust_name}, {index})"
-                ));
+                // Use context-aware array access generation
+                return Ok(self.generate_array_access(var_name, index));
             }
         }
 

@@ -8,6 +8,46 @@
 
 ---
 
+## Current Status (2025-12-08)
+
+### ✅ Completed Tasks
+
+| Task | Description | Key Changes |
+|------|-------------|-------------|
+| **0** | Patcher composite detection | `__hasCompositeTags` marker inserted, 18+ modules detected |
+| **1** | ExpressionContext enum | `ExpressionContext::Composite` in [codegen/src/ppi/types.rs](../../codegen/src/ppi/types.rs) |
+| **2** | Composite function types | `CompositeValueConvFn`, `CompositePrintConvFn` in [codegen-runtime/src/types.rs](../../codegen-runtime/src/types.rs#L120-L153) |
+| **3** | CompositeTagDef update | Struct now uses function pointers (currently `None`), preserves Perl in `*_expr` fields |
+
+### Key Infrastructure Now Available
+
+1. **Context-aware code generation** - `RustGenerator::with_context(ExpressionContext::Composite, ...)` generates:
+   - `$val[n]` → `vals.get(n).cloned().unwrap_or_default()`
+   - `$prt[n]` → `prts.get(n).cloned().unwrap_or_default()`
+   - `$raw[n]` → `raws.get(n).cloned().unwrap_or_default()`
+
+2. **Unit tests** proving it works - see [codegen/src/ppi/rust_generator/tests/mod.rs](../../codegen/src/ppi/rust_generator/tests/mod.rs#L109-L232)
+
+3. **Generated output** - [src/generated/composite_tags.rs](../../src/generated/composite_tags.rs) has 99 definitions with:
+   ```rust
+   pub static COMPOSITE_EXIF_APERTURE: CompositeTagDef = CompositeTagDef {
+       name: "Aperture",
+       value_conv: None,  // TODO: Task 4 fills this
+       value_conv_expr: Some("$val[0] || $val[1]"),  // Original Perl preserved
+       // ...
+   };
+   ```
+
+### 🚧 Remaining Tasks
+
+| Task | Description | Complexity |
+|------|-------------|------------|
+| **4** | Generate composite function bodies via PPI pipeline | HIGH |
+| **5** | Enable runtime orchestration | MEDIUM |
+| **6** | Migrate complex implementations to codegen-runtime fallbacks | MEDIUM |
+
+---
+
 ## Part 1: Define Success
 
 **Problem**: Composite tags like Aperture, ShutterSpeed, Megapixels, GPSLatitude are "supported" in the codegen schema but never calculated - they return empty values.
@@ -363,75 +403,176 @@ pub type CompositePrintConvFn = fn(&TagValue, &[TagValue], &[TagValue]) -> TagVa
 
 ---
 
-### Task 4: Generate Composite Function Bodies
+### Task 4: Generate Composite Function Bodies ⬅️ NEXT TASK
 
-**Success**: `make codegen` produces `src/generated/composite_tags.rs` with working functions for SIMPLE expressions
+**Success**: `make codegen` produces working functions in `src/generated/composite_tags.rs`, not just `None` placeholders
 
-**Implementation**:
+**Prerequisite Understanding**:
 
-Modify `CompositeTagStrategy::finish_extraction()` to:
+Tasks 1-3 have already built the foundation:
+- `RustGenerator::with_context(ExpressionContext::Composite, ...)` generates context-aware code
+- `CompositeValueConvFn` / `CompositePrintConvFn` types are defined
+- `CompositeTagDef` struct has function pointer fields (currently `None`)
 
-1. For each composite definition with ValueConv:
+The generator already produces correct code for composite expressions - it just isn't being called yet!
 
-   - Parse the Perl expression through PPI pipeline with `Composite` context
-   - Generate a Rust function with composite signature
-   - Store function reference in generated struct
-
-2. For expressions that fail PPI translation:
-   - Check if manual fallback exists in `COMPOSITE_FALLBACKS`
-   - If yes: reference the fallback function
-   - If no: generate placeholder with `missing_composite_value_conv()`
-
-Example generated output:
-
-```rust
-/// GPSLatitude composite - sign from reference
-/// ExifTool: lib/Image/ExifTool/GPS.pm:381
-/// Original: $val[1] =~ /^S/i ? -$val[0] : $val[0]
-fn composite_value_gps_latitude(
-    vals: &[TagValue],
-    _prts: &[TagValue],
-    _raws: &[TagValue]
-) -> Result<TagValue, ExifError> {
-    let ref_val = vals.get(1).and_then(|v| v.as_string()).unwrap_or_default();
-    let lat_val = vals.get(0).cloned().unwrap_or_default();
-    if ref_val.to_uppercase().starts_with('S') {
-        Ok(-lat_val.abs())
-    } else {
-        Ok(lat_val)
-    }
-}
-```
-
-**Verification**:
+**Proof the generator works** (run this to verify):
 
 ```bash
-make codegen
-rg "composite_value_" src/generated/ --type rust | head -20
-# Should show generated composite functions
+# This already works - generates composite-context code
+cargo run -p codegen --bin debug-ppi -- --composite '$val[0] || $val[1]'
+# Output: vals.get(0).cloned().unwrap_or_default() || vals.get(1).cloned().unwrap_or_default()
 ```
 
-**Test Expression Corpus** (from `required-expressions-analysis.json`):
+---
 
-These specific expressions MUST translate successfully:
+#### Step-by-Step Implementation
+
+**Step 1: Study how TagKitStrategy generates functions**
+
+Look at how regular PrintConv/ValueConv functions are generated:
+
+```bash
+# Key file to study:
+codegen/src/strategies/tag_kit/printconv_generation.rs
+
+# Find where it calls the PPI pipeline:
+rg "generate_function|RustGenerator" codegen/src/strategies/tag_kit/
+```
+
+The pattern is:
+1. Get the Perl expression from JSON
+2. Parse it through PPI (`ppi_ast.pl` or inline AST)
+3. Call `RustGenerator::new().generate_function(&ast)`
+4. Store the generated function code
+
+**Step 2: Modify `CompositeTagStrategy::generate_composite_tags_module()`**
+
+Location: [codegen/src/strategies/composite_tag.rs:207](../../codegen/src/strategies/composite_tag.rs#L207)
+
+Currently it outputs:
+```rust
+value_conv: None, // TODO: Generate via PPI pipeline
+```
+
+Change it to:
+1. For each definition with `value_conv_expr`:
+   - Call `ppi_ast.pl` to parse the expression
+   - Create `RustGenerator::with_context(ExpressionType::ValueConv, ExpressionContext::Composite, ...)`
+   - Generate the function body
+   - Output both the function definition AND the pointer
+
+**Step 3: Generate functions BEFORE the static definitions**
+
+The generated file should look like:
+
+```rust
+// Generated composite functions (NEW SECTION)
+fn composite_valueconv_exif_aperture(
+    vals: &[TagValue],
+    _prts: &[TagValue],
+    _raws: &[TagValue],
+    _ctx: Option<&ExifContext>,
+) -> Result<TagValue> {
+    // Generated from: $val[0] || $val[1]
+    Ok(vals.get(0).cloned().unwrap_or_default().or_else(||
+        vals.get(1).cloned().unwrap_or_default()))
+}
+
+// Static definitions reference the functions
+pub static COMPOSITE_EXIF_APERTURE: CompositeTagDef = CompositeTagDef {
+    name: "Aperture",
+    value_conv: Some(composite_valueconv_exif_aperture),  // Function pointer!
+    // ...
+};
+```
+
+**Step 4: Handle PPI failures gracefully**
+
+Some expressions will fail (ExifTool function calls like `Image::ExifTool::Exif::PrintFNumber($val)`).
+
+For failures:
+```rust
+value_conv: None,  // PPI failed: "Image::ExifTool::Exif::PrintFNumber($val)"
+```
+
+Track statistics:
+```rust
+info!("Generated {}/{} composite ValueConv functions ({} failed)",
+      success_count, total_count, fail_count);
+```
+
+---
+
+#### Key Code References
+
+| What | Where |
+|------|-------|
+| PPI pipeline entry point | `codegen/src/ppi/shared_pipeline.rs` |
+| RustGenerator with context | `codegen/src/ppi/rust_generator/generator.rs:47` |
+| Example of calling PPI | `codegen/src/strategies/tag_kit/printconv_generation.rs` |
+| Current composite generation | `codegen/src/strategies/composite_tag.rs:361-384` |
+| Composite function types | `codegen-runtime/src/types.rs:120-153` |
+
+---
+
+#### Test Expression Corpus
+
+These MUST generate successfully (they use patterns the generator already handles):
 
 ```perl
-# ValueConv - MUST PASS
-"$val[0] $val[1]"                                    # DateTimeCreated, LensSpec
-"$val[0] $val[1]Z"                                   # GPSDateTime
-$val[1] =~ /^S/i ? -$val[0] : $val[0]               # GPSLatitude
-$val[1] =~ /^W/i ? -$val[0] : $val[0]               # GPSLongitude
+# Simple - should definitely work
 $val[0] || $val[1]                                   # Aperture
-$val[1] - $val[0]                                    # PanasonicRaw.ImageWidth/Height
-(length($val[0]) or length($val[1])) ? "$val[0] $val[1]" : undef  # GPSPosition
-($val[2] and $val[2]>0) ? $val[2] : (defined($val[0]) ? $val[0] : $val[1])  # ShutterSpeed
+$val[1] - $val[0]                                    # ImageWidth
+"$val[0] $val[1]"                                    # DateTimeCreated
 
-# PrintConv with $prt[] - MUST PASS
+# Ternary with regex - should work
+$val[1] =~ /^S/i ? -$val[0] : $val[0]               # GPSLatitude
+
+# String interpolation with $prt
 "$prt[0], $prt[1]"                                   # GPSPosition
-"$prt[0] $prt[1]"                                    # LensSpec
 ```
 
-**If architecture changed**: The goal is generated Rust functions. Find where `ast_value_*` functions are generated and follow that pattern.
+These will FAIL (and should set `value_conv: None`):
+
+```perl
+Image::ExifTool::Exif::PrintFNumber($val)           # ExifTool function call
+$self->ConvertDateTime($val[0])                      # Method call
+```
+
+---
+
+#### Verification
+
+```bash
+# Regenerate and check for generated functions
+make codegen
+
+# Should show function definitions, not just "None"
+grep -A2 "value_conv:" src/generated/composite_tags.rs | head -20
+
+# Count successes
+grep -c "value_conv: Some" src/generated/composite_tags.rs
+# Target: At least 30+ (simple expressions)
+
+# Check for actual function definitions
+grep -c "fn composite_valueconv_" src/generated/composite_tags.rs
+```
+
+---
+
+#### Common Pitfalls
+
+1. **Function signature mismatch**: The generated function MUST match `CompositeValueConvFn`:
+   ```rust
+   fn(vals: &[TagValue], prts: &[TagValue], raws: &[TagValue], ctx: Option<&ExifContext>) -> Result<TagValue>
+   ```
+
+2. **Missing imports**: The generated file needs `use codegen_runtime::TagValue;`
+
+3. **Inline AST**: Check if the JSON has `ValueConv_ast` (pre-parsed) or just `ValueConv` (needs `ppi_ast.pl`)
+
+4. **The `$val` vs `$val[n]` ambiguity**: In composite context, bare `$val` in ValueConv might mean `$val[0]`. Check ExifTool behavior if unsure.
 
 ---
 

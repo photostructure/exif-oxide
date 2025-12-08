@@ -18,17 +18,18 @@ use crate::ppi::rust_generator::{
     pattern_matching, signature,
     visitor::PpiVisitor,
 };
-use crate::ppi::types::{ExpressionType, PpiNode};
+use crate::ppi::types::{ExpressionContext, ExpressionType, PpiNode};
 
 /// Generate Rust function from PPI AST node
 pub struct RustGenerator {
     pub expression_type: ExpressionType,
+    pub expression_context: ExpressionContext,
     pub function_name: String,
     pub original_expression: String,
 }
 
 impl RustGenerator {
-    /// Create a new RustGenerator instance
+    /// Create a new RustGenerator instance with Regular context (default)
     pub fn new(
         expression_type: ExpressionType,
         function_name: String,
@@ -36,8 +37,67 @@ impl RustGenerator {
     ) -> Self {
         Self {
             expression_type,
+            expression_context: ExpressionContext::Regular,
             function_name,
             original_expression,
+        }
+    }
+
+    /// Create a new RustGenerator with specified context
+    pub fn with_context(
+        expression_type: ExpressionType,
+        expression_context: ExpressionContext,
+        function_name: String,
+        original_expression: String,
+    ) -> Self {
+        Self {
+            expression_type,
+            expression_context,
+            function_name,
+            original_expression,
+        }
+    }
+
+    /// Check if we're generating code for composite tag context
+    pub fn is_composite_context(&self) -> bool {
+        self.expression_context == ExpressionContext::Composite
+    }
+
+    /// Generate array element access code based on expression context
+    ///
+    /// For Regular context (single tag):
+    ///   `$val[n]` → `codegen_runtime::get_array_element(val, n)` (val is TagValue::Array)
+    ///
+    /// For Composite context (multiple dependencies):
+    ///   `$val[n]` → `vals.get(n).cloned().unwrap_or_default()`
+    ///   `$prt[n]` → `prts.get(n).cloned().unwrap_or_default()`
+    ///   `$raw[n]` → `raws.get(n).cloned().unwrap_or_default()`
+    ///
+    /// The index is passed as a string since it may be a literal ("0", "1") or
+    /// an expression from the AST.
+    pub fn generate_array_access(&self, array_name: &str, index: &str) -> String {
+        if self.is_composite_context() {
+            // Composite context: access slice parameters
+            let slice_name = match array_name {
+                "$val" | "val" => "vals",
+                "$prt" | "prt" => "prts",
+                "$raw" | "raw" => "raws",
+                // For other arrays, fall back to the regular approach
+                other => {
+                    let rust_name = other.trim_start_matches('$');
+                    return format!("codegen_runtime::get_array_element({rust_name}, {index})");
+                }
+            };
+            format!("{slice_name}.get({index}).cloned().unwrap_or_default()")
+        } else {
+            // Regular context: use TagValue array access
+            let rust_name = array_name.trim_start_matches('$');
+            let rust_array = if rust_name == "val" || array_name == "$val" {
+                "val"
+            } else {
+                rust_name
+            };
+            format!("codegen_runtime::get_array_element({rust_array}, {index})")
         }
     }
 
@@ -463,18 +523,12 @@ impl RustGenerator {
                 && children[i + 1].class == "PPI::Structure::Subscript"
             {
                 let array_name = children[i].content.as_deref().unwrap_or("$val");
-                let rust_array = if array_name == "$val" {
-                    "val"
-                } else {
-                    array_name.trim_start_matches('$')
-                };
 
                 if let Some(index) = self.extract_subscript_index(&children[i + 1])? {
-                    // Generate array access that handles all array types
-                    // This uses the get_array_element helper that handles typed arrays
-                    return Ok(format!(
-                        "codegen_runtime::get_array_element({rust_array}, {index})"
-                    ));
+                    // Generate context-aware array access
+                    // Regular: codegen_runtime::get_array_element(val, n)
+                    // Composite: vals.get(n).cloned().unwrap_or_default()
+                    return Ok(self.generate_array_access(array_name, &index));
                 }
             }
         }
@@ -533,19 +587,13 @@ impl RustGenerator {
                 && i + 1 < children.len()
                 && children[i + 1].class == "PPI::Structure::Subscript"
             {
-                // Handle array subscript access like $val[0], $val[1]
+                // Handle array subscript access like $val[0], $val[1], $prt[0], $raw[0]
                 let array_name = children[i].content.as_deref().unwrap_or("$val");
-                let rust_array = if array_name == "$val" {
-                    "val"
-                } else {
-                    array_name.trim_start_matches('$')
-                };
 
                 // Extract the index from the subscript structure
                 if let Some(index) = self.extract_subscript_index(&children[i + 1])? {
-                    // Generate array access that handles all array types
-                    let array_access =
-                        format!("codegen_runtime::get_array_element({rust_array}, {index})");
+                    // Generate context-aware array access
+                    let array_access = self.generate_array_access(array_name, &index);
                     processed.push(array_access);
                     i += 2;
                     continue;
