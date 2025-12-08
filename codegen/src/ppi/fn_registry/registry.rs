@@ -110,7 +110,7 @@ impl PpiFunctionRegistry {
             );
             self.usage_contexts
                 .entry(ast_hash.clone())
-                .or_insert_with(BTreeSet::new)
+                .or_default()
                 .insert(context);
         }
 
@@ -166,7 +166,7 @@ impl PpiFunctionRegistry {
         // of the same expression get different functions
         expression_type.hash(&mut hasher);
         let hash = hasher.finish();
-        Ok(format!("{:x}", hash))
+        Ok(format!("{hash:x}"))
     }
 
     /// Create function spec from hash and expression details
@@ -179,12 +179,12 @@ impl PpiFunctionRegistry {
     ) -> FunctionSpec {
         let hash_prefix = ast_hash.chars().take(2).collect::<String>();
         let function_name = match expression_type {
-            ExpressionType::ValueConv => format!("ast_value_{}", ast_hash),
-            ExpressionType::PrintConv => format!("ast_print_{}", ast_hash),
-            ExpressionType::Condition => format!("ast_condition_{}", ast_hash),
+            ExpressionType::ValueConv => format!("ast_value_{ast_hash}"),
+            ExpressionType::PrintConv => format!("ast_print_{ast_hash}"),
+            ExpressionType::Condition => format!("ast_condition_{ast_hash}"),
         };
 
-        let module_path = format!("crate::generated::functions::hash_{}", hash_prefix);
+        let module_path = format!("crate::generated::functions::hash_{hash_prefix}");
 
         FunctionSpec {
             function_name,
