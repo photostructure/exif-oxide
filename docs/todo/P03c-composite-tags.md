@@ -79,6 +79,11 @@ rg "struct ExifReader" src/ --type rust -A50
 
 **Implementation**:
 
+Ideally our implementation will leverage the existing codegen system, but study the ExifTool composite docs first for reference. DON'T reinvent the wheel! DON'T hardcode values! DON'T jump into the implementation without understanding the existing architecture! Re-read TRUST-EXIFTOOL.md and ARCHITECTURE.md and CODEGEN.md .
+
+You need to talk through at least a handful of possible approaches before coding, and discuss the pros and cons with the user before proceeding.
+
+
 ```rust
 // Simplest composite - first available value
 fn compute_aperture(tags: &HashMap<String, TagValue>) -> Option<TagValue> {
