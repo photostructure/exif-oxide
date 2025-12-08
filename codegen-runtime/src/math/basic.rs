@@ -456,6 +456,7 @@ pub fn atan2<T: Into<TagValue>>(y: T, x: T) -> TagValue {
 ///
 /// # Returns
 /// true if the value is a floating point number, false otherwise
+#[allow(non_snake_case)] // Matches ExifTool's Image::ExifTool::IsFloat function
 pub fn IsFloat<T: Into<TagValue>>(val: T) -> bool {
     let val = val.into();
     match val {
