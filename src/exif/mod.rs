@@ -257,6 +257,21 @@ impl ExifReader {
                 }
             }
 
+            // Check for Canon MakerNotes tags
+            // Canon tags use the Canon namespace from parse_ifd("Canon")
+            if source.namespace == "Canon" {
+                use crate::generated::Canon_pm::main_tags::CANON_MAIN_TAGS;
+                if let Some(tag_def) = CANON_MAIN_TAGS.get(&tag_id) {
+                    tracing::debug!("Found Canon tag name for 0x{:x}: {}", tag_id, tag_def.name);
+                    return tag_def.name.to_string();
+                } else {
+                    tracing::debug!(
+                        "Canon tag 0x{:x} not found in CANON_MAIN_TAGS",
+                        tag_id
+                    );
+                }
+            }
+
             // Check for Sony MakerNotes tags
             // Sony tags may have namespace "Sony" or "MakerNotes" depending on extraction path
             if source.namespace == "Sony" || source.namespace == "MakerNotes" {
