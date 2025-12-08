@@ -58,7 +58,7 @@ codegen-runtime = { path = "./codegen-runtime" }
 byteorder = "1.5" # Efficient endian handling
 thiserror = "2.0" # Error handling
 anyhow = "1.0" # Error handling in examples/tests
-regex = "1.11" # For parsing ExifTool tables (used in dev tools)
+regex = "1.12" # For parsing ExifTool tables (used in dev tools)
 serde = { version = "1.0", features = ["derive"] } # Serialization
 serde_json = "1.0" # JSON output
 clap = { version = "4.5", features = ["derive"] } # CLI argument parsing
