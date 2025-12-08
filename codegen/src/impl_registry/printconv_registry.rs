@@ -78,6 +78,16 @@ static PRINTCONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
             ),
         );
 
+        // Canon FileNumber - inserts hyphen before last 4 digits
+        // ExifTool: $_=$val,s/(\d+)(\d{4})/$1-$2/,$_
+        m.insert(
+            "$_=$val,s/(\\d+)(\\d{4})/$1-$2/,$_",
+            (
+                "crate::implementations::print_conv",
+                "canon_file_number_print_conv",
+            ),
+        );
+
         // ExifTool function calls that should be mapped to our implementations
         m.insert(
             "Image::ExifTool::Exif::PrintExposureTime($val)",
