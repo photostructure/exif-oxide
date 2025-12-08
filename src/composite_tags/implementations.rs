@@ -1183,42 +1183,6 @@ pub fn compute_subsec_modify_date(available_tags: &HashMap<String, TagValue>) ->
     Some(TagValue::string(result))
 }
 
-/// Compute SubSecMediaCreateDate composite tag for media files
-/// Note: ExifTool doesn't have this as a standard composite - media uses integer timestamps
-/// This provides compatibility for media creation dates with subsecond precision
-pub fn compute_subsec_media_create_date(
-    available_tags: &HashMap<String, TagValue>,
-) -> Option<TagValue> {
-    // Try QuickTime MediaCreateDate first
-    if let Some(media_create_date) = available_tags.get("MediaCreateDate") {
-        let media_date_str = media_create_date.as_string()?;
-
-        // Apply subsec conversion if subsecond data is available
-        let result = apply_subsec_conversion(
-            &media_date_str,
-            available_tags.get("SubSecTime"),
-            available_tags.get("OffsetTime"),
-        );
-
-        return Some(TagValue::string(result));
-    }
-
-    // Fallback to CreateDate for other media types
-    if let Some(create_date) = available_tags.get("CreateDate") {
-        let create_date_str = create_date.as_string()?;
-
-        let result = apply_subsec_conversion(
-            &create_date_str,
-            available_tags.get("SubSecTimeDigitized"),
-            available_tags.get("OffsetTimeDigitized"),
-        );
-
-        return Some(TagValue::string(result));
-    }
-
-    None
-}
-
 /// Apply ExifTool's SubSec conversion logic to combine datetime with subseconds and timezone
 /// ExifTool: lib/Image/ExifTool/Exif.pm:4620-4636 %subSecConv hash RawConv logic
 fn apply_subsec_conversion(

@@ -97,7 +97,6 @@ pub fn compute_composite_tag(
         // Phase 3: SubSec Timestamps
         "SubSecCreateDate" => compute_subsec_create_date(&resolved_dependencies),
         "SubSecModifyDate" => compute_subsec_modify_date(&resolved_dependencies),
-        "SubSecMediaCreateDate" => compute_subsec_media_create_date(&resolved_dependencies),
 
         // Phase 4: Lens System
         "Lens" => compute_lens(&resolved_dependencies),
