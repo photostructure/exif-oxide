@@ -1,6 +1,7 @@
 # P02: Required Tags Audit
 
 **Prerequisites**:
+
 - Read [GETTING-STARTED.md](../GETTING-STARTED.md) "Current Project State" section
 - P01 (Fix the Build) must be complete - `make precommit` passing
 
@@ -13,6 +14,7 @@
 **Solution**: Cross-reference required tags against current implementation, produce prioritized backlog.
 
 **Success test**:
+
 ```bash
 # Run analysis and verify against test images
 python3 scripts/analyze-required-expressions.py > /tmp/analysis.json
@@ -29,11 +31,11 @@ cargo run --bin compare-with-exiftool test-image.jpg
 
 Analysis exists at `docs/analysis/expressions/required-expressions-analysis.json`:
 
-| Type | Unique Expressions | Total Usage |
-|------|-------------------|-------------|
-| ValueConv | 41 | 55 |
-| PrintConv | 25 | 71 |
-| Condition | 1 | 1 |
+| Type      | Unique Expressions | Total Usage |
+| --------- | ------------------ | ----------- |
+| ValueConv | 41                 | 55          |
+| PrintConv | 25                 | 71          |
+| Condition | 1                  | 1           |
 
 **Only 67 unique expressions** needed for all 125 required tags.
 
@@ -41,17 +43,17 @@ Analysis exists at `docs/analysis/expressions/required-expressions-analysis.json
 
 From cross-referencing `docs/required-tags.json` with `docs/tag-metadata.json`:
 
-| Group | Count | Likely Status |
-|-------|-------|---------------|
-| XMP | 49 | Mostly working (XMP parser exists) |
-| Composite | 37 | Partial (infrastructure exists) |
-| MakerNotes | 37 | Partial (Canon/Nikon/Sony exist) |
-| EXIF | 36 | Mostly working |
-| QuickTime | 18 | **NOT IMPLEMENTED** (video) |
-| File | 14 | Working (Milestone File-Meta complete) |
-| IPTC | 4 | Partial |
-| RIFF | 4 | **NOT IMPLEMENTED** (video) |
-| PanasonicRaw | 3 | Partial |
+| Group        | Count | Likely Status                          |
+| ------------ | ----- | -------------------------------------- |
+| XMP          | 49    | Mostly working (XMP parser exists)     |
+| Composite    | 37    | Partial (infrastructure exists)        |
+| MakerNotes   | 37    | Partial (Canon/Nikon/Sony exist)       |
+| EXIF         | 36    | Mostly working                         |
+| QuickTime    | 18    | **NOT IMPLEMENTED** (video)            |
+| File         | 14    | Working (Milestone File-Meta complete) |
+| IPTC         | 4     | Partial                                |
+| RIFF         | 4     | **NOT IMPLEMENTED** (video)            |
+| PanasonicRaw | 3     | Partial                                |
 
 ### C. Key Scripts
 
@@ -69,6 +71,7 @@ cat docs/analysis/expressions/composite-dependencies.json
 ### D. What "Working" Means
 
 A tag is "working" if:
+
 1. It appears in exif-oxide JSON output
 2. The value matches ExifTool's output (after normalization)
 3. PrintConv produces human-readable format (not raw numbers)
@@ -84,6 +87,7 @@ Use `compare-with-exiftool` to verify - it handles normalization.
 **Success**: `make precommit` passes
 
 **Implementation**:
+
 ```bash
 make precommit  # Must pass before proceeding
 ```
@@ -93,6 +97,7 @@ make precommit  # Must pass before proceeding
 **Success**: Updated analysis JSON with current state
 
 **Implementation**:
+
 ```bash
 cd /home/mrm/src/exif-oxide
 python3 scripts/analyze-required-expressions.py > /tmp/analysis.json
@@ -104,6 +109,7 @@ jq '.summary' /tmp/analysis.json
 **Success**: Gap matrix showing which required tags work for which formats
 
 **Implementation**:
+
 1. Gather test images (JPEG, TIFF, CR2, NEF, ARW, MOV, MP4)
 2. For each image:
    ```bash
@@ -117,6 +123,7 @@ jq '.summary' /tmp/analysis.json
 **Success**: Prioritized backlog in `docs/todo/P03-implementation-backlog.md`
 
 **Categories**:
+
 1. **Quick wins**: Tags that are close to working (small fixes)
 2. **Medium effort**: Need expression support or PrintConv
 3. **Large effort**: Need new format support (QuickTime)
@@ -127,6 +134,7 @@ jq '.summary' /tmp/analysis.json
 **Success**: One TPP per category/group of related work
 
 **Structure**:
+
 - P03a: Quick wins (list specific tags)
 - P03b: Missing expressions (list specific expressions)
 - P03c: QuickTime/video support (new format)
