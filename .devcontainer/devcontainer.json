@@ -1,7 +1,4 @@
 {
-  // exif-oxide development container
-  // Complete Rust + Perl + Python environment with all required tools
-  // See README.md in this directory for details
   "name": "exif-oxide",
   "build": {
     "dockerfile": "Dockerfile"
