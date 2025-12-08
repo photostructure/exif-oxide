@@ -826,6 +826,24 @@ fn apply_canon_main_table_print_conv(exif_reader: &mut crate::exif::ExifReader) 
                             }
                         }
                     }
+                    0x8 => {
+                        // FileNumber - apply PrintConv: $_=$val,s/(\d+)(\d{4})/$1-$2/,$_
+                        // ExifTool: Canon.pm line 1234 - FileNumber PrintConv
+                        // Inserts hyphen before last 4 digits (e.g., 1181861 -> "118-1861")
+                        if let TagValue::U32(file_number) = tag_value {
+                            let file_number_str = format!("{}", file_number);
+                            let formatted = if file_number_str.len() > 4 {
+                                let split_pos = file_number_str.len() - 4;
+                                let (prefix, suffix) = file_number_str.split_at(split_pos);
+                                format!("{}-{}", prefix, suffix)
+                            } else {
+                                file_number_str
+                            };
+                            debug!("Canon FileNumber: {} -> {}", file_number, formatted);
+                            tags_to_update
+                                .push(((tag_id, namespace.clone()), TagValue::String(formatted)));
+                        }
+                    }
                     0x10 => {
                         // CanonModelID - apply generated lookup table
                         // ExifTool: Canon.pm CanonModelID PrintConv
