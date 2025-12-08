@@ -255,14 +255,17 @@ pub fn extract_metadata(
 
     // FileTypeExtension follows ExifTool's logic exactly
     // Source: ExifTool.pm:9583 - $self->FoundTag('FileTypeExtension', uc $normExt);
+    // Source: ExifTool.pm:9623 - $normExt = $fileTypeExt{$fileType} for special extensions
     // Raw value: uppercase, PrintConv: lowercase (PrintConv => 'lc $val')
     if filter_opts.should_extract_tag("FileTypeExtension", "File") {
         let (file_type_ext_raw, file_type_ext_print) = {
-            use crate::generated::ExifTool_pm::file_type_lookup::lookup_file_type_by_extension;
+            use crate::generated::ExifTool_pm::file_type_ext::lookup_file_type_ext;
 
-            // First check ExifTool's %fileTypeExt mapping for special cases
-            let norm_ext = lookup_file_type_by_extension(&detection_result.file_type)
-                .unwrap_or(detection_result.file_type.clone()); // Default to file_type if no mapping
+            // First check ExifTool's %fileTypeExt mapping for special cases (JPEG->jpg, TIFF->tif)
+            // If no mapping, use lowercase of the file type
+            let norm_ext = lookup_file_type_ext(&detection_result.file_type)
+                .map(|s| s.to_string())
+                .unwrap_or_else(|| detection_result.file_type.to_lowercase());
 
             // ExifTool applies uc() (uppercase) to the raw value
             let raw_value = norm_ext.to_uppercase();
@@ -1631,9 +1634,11 @@ fn extract_file_tags_only(
         }
 
         if filter_opts.should_extract_tag("FileTypeExtension", "File") {
-            use crate::generated::ExifTool_pm::file_type_lookup::lookup_file_type_by_extension;
-            let norm_ext = lookup_file_type_by_extension(&detection_result.file_type)
-                .unwrap_or(detection_result.file_type.clone());
+            use crate::generated::ExifTool_pm::file_type_ext::lookup_file_type_ext;
+            // Use %fileTypeExt mapping for special cases (JPEG->jpg, TIFF->tif)
+            let norm_ext = lookup_file_type_ext(&detection_result.file_type)
+                .map(|s| s.to_string())
+                .unwrap_or_else(|| detection_result.file_type.to_lowercase());
             let raw_value = norm_ext.to_uppercase();
             let print_value = norm_ext.to_lowercase();
 
