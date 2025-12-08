@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_53::ast_print_534d44d0c8f65074;
+use crate::generated::functions::hash_7b::ast_print_7b33002b58386905;
 
 /// Tag definitions for Canon::AFInfo2 table
 pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -116,7 +116,7 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "AFPointsInFocus",
                 format: "int16s[int(($val{2}+15)/16)]",
-                print_conv: Some(PrintConv::Function(ast_print_534d44d0c8f65074)),
+                print_conv: Some(PrintConv::Function(ast_print_7b33002b58386905)),
                 value_conv: None,
             },
         ),

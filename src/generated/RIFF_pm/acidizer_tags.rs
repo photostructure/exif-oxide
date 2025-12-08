@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_aa::ast_print_aa93afa3ba8c29d4;
+use crate::generated::functions::hash_8c::ast_print_8c8ef9aa17053210;
 
 /// Tag definitions for RIFF::Acidizer table
 pub static RIFF_ACIDIZER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -44,7 +44,7 @@ pub static RIFF_ACIDIZER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "Meter",
                 format: "int16u[2]",
-                print_conv: Some(PrintConv::Function(ast_print_aa93afa3ba8c29d4)),
+                print_conv: Some(PrintConv::Function(ast_print_8c8ef9aa17053210)),
                 value_conv: None,
             },
         ),

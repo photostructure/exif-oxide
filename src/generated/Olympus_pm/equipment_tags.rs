@@ -7,14 +7,14 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_13::ast_print_13c6fe5be8efefda;
-use crate::generated::functions::hash_3d::ast_value_3de01bdc81ae6b2c;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_a7::ast_value_a702026eef5d42be;
-use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
-use crate::generated::functions::hash_e4::ast_print_e4e23da0cd5e8937;
-use crate::generated::functions::hash_e8::ast_value_e81a402a310d8ce1;
-use crate::generated::functions::hash_ff::ast_value_ff5d284655150fa7;
+use crate::generated::functions::hash_32::ast_value_32f9f1a4869ea54a;
+use crate::generated::functions::hash_33::ast_print_334b62d226f55947;
+use crate::generated::functions::hash_4d::ast_value_4db89662062d70a5;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_bf::ast_print_bfa0fa6136c38814;
+use crate::generated::functions::hash_cc::ast_value_cc90b14f7d584410;
+use crate::generated::functions::hash_dd::ast_print_dd22782e5ba8c7cb;
+use crate::generated::functions::hash_f7::ast_print_f7d9673b93ac13f;
 
 /// Tag definitions for Olympus::Equipment table
 pub static OLYMPUS_EQUIPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -42,7 +42,7 @@ pub static OLYMPUS_EQUIPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "SerialNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_value_e81a402a310d8ce1)),
+                print_conv: Some(PrintConv::Function(ast_print_bfa0fa6136c38814)),
                 value_conv: None,
             },
         ),
@@ -60,7 +60,7 @@ pub static OLYMPUS_EQUIPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "FocalPlaneDiagonal",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
             },
         ),
@@ -69,7 +69,7 @@ pub static OLYMPUS_EQUIPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "BodyFirmwareVersion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_13c6fe5be8efefda)),
+                print_conv: Some(PrintConv::Function(ast_print_334b62d226f55947)),
                 value_conv: None,
             },
         ),
@@ -79,7 +79,7 @@ pub static OLYMPUS_EQUIPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 name: "LensType",
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_ff5d284655150fa7)),
+                value_conv: Some(ValueConv::Function(ast_value_cc90b14f7d584410)),
             },
         ),
         (
@@ -87,7 +87,7 @@ pub static OLYMPUS_EQUIPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "LensSerialNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_value_e81a402a310d8ce1)),
+                print_conv: Some(PrintConv::Function(ast_print_bfa0fa6136c38814)),
                 value_conv: None,
             },
         ),
@@ -105,7 +105,7 @@ pub static OLYMPUS_EQUIPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "LensFirmwareVersion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_13c6fe5be8efefda)),
+                print_conv: Some(PrintConv::Function(ast_print_334b62d226f55947)),
                 value_conv: None,
             },
         ),
@@ -114,8 +114,8 @@ pub static OLYMPUS_EQUIPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "MaxApertureAtMinFocal",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_a702026eef5d42be)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_4db89662062d70a5)),
             },
         ),
         (
@@ -123,8 +123,8 @@ pub static OLYMPUS_EQUIPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "MaxApertureAtMaxFocal",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_a702026eef5d42be)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_4db89662062d70a5)),
             },
         ),
         (
@@ -150,8 +150,8 @@ pub static OLYMPUS_EQUIPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "MaxAperture",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_a702026eef5d42be)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_4db89662062d70a5)),
             },
         ),
         (
@@ -159,7 +159,7 @@ pub static OLYMPUS_EQUIPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "LensProperties",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_e4e23da0cd5e8937)),
+                print_conv: Some(PrintConv::Function(ast_print_f7d9673b93ac13f)),
                 value_conv: None,
             },
         ),
@@ -169,7 +169,7 @@ pub static OLYMPUS_EQUIPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 name: "Extender",
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_3de01bdc81ae6b2c)),
+                value_conv: Some(ValueConv::Function(ast_value_32f9f1a4869ea54a)),
             },
         ),
         (
@@ -195,7 +195,7 @@ pub static OLYMPUS_EQUIPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "ExtenderFirmwareVersion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_13c6fe5be8efefda)),
+                print_conv: Some(PrintConv::Function(ast_print_334b62d226f55947)),
                 value_conv: None,
             },
         ),
@@ -231,7 +231,7 @@ pub static OLYMPUS_EQUIPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "FlashFirmwareVersion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_13c6fe5be8efefda)),
+                print_conv: Some(PrintConv::Function(ast_print_334b62d226f55947)),
                 value_conv: None,
             },
         ),

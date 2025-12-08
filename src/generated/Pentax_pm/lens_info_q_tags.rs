@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_e6::ast_value_e6ee3ce4586918ac;
+use crate::generated::functions::hash_17::ast_value_1722246d8e5fe078;
 
 /// Tag definitions for Pentax::LensInfoQ table
 pub static PENTAX_LENSINFOQ_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -27,7 +27,7 @@ pub static PENTAX_LENSINFOQ_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 name: "LensInfo",
                 format: "string[20]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_e6ee3ce4586918ac)),
+                value_conv: Some(ValueConv::Function(ast_value_1722246d8e5fe078)),
             },
         ),
     ])

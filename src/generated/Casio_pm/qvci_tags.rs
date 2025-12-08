@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_1d::ast_value_1ddeac1b4916acb0;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_4f::ast_value_4f4c73379877e602;
 
 /// Tag definitions for Casio::QVCI table
 pub static CASIO_QVCI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -36,8 +36,8 @@ pub static CASIO_QVCI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "DateTimeOriginal",
                 format: "string[20]",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_1ddeac1b4916acb0)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_4f4c73379877e602)),
             },
         ),
         (

@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_be::ast_print_bec70def03ed8463;
+use crate::generated::functions::hash_c5::ast_print_c55f0a78a353c4e4;
 
 /// Tag definitions for DJI::Main table
 pub static DJI_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -26,7 +26,7 @@ pub static DJI_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "SpeedX",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bec70def03ed8463)),
+                print_conv: Some(PrintConv::Function(ast_print_c55f0a78a353c4e4)),
                 value_conv: None,
             },
         ),
@@ -35,7 +35,7 @@ pub static DJI_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "SpeedY",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bec70def03ed8463)),
+                print_conv: Some(PrintConv::Function(ast_print_c55f0a78a353c4e4)),
                 value_conv: None,
             },
         ),
@@ -44,7 +44,7 @@ pub static DJI_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "SpeedZ",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bec70def03ed8463)),
+                print_conv: Some(PrintConv::Function(ast_print_c55f0a78a353c4e4)),
                 value_conv: None,
             },
         ),
@@ -53,7 +53,7 @@ pub static DJI_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "Pitch",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bec70def03ed8463)),
+                print_conv: Some(PrintConv::Function(ast_print_c55f0a78a353c4e4)),
                 value_conv: None,
             },
         ),
@@ -62,7 +62,7 @@ pub static DJI_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "Yaw",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bec70def03ed8463)),
+                print_conv: Some(PrintConv::Function(ast_print_c55f0a78a353c4e4)),
                 value_conv: None,
             },
         ),
@@ -71,7 +71,7 @@ pub static DJI_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "Roll",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bec70def03ed8463)),
+                print_conv: Some(PrintConv::Function(ast_print_c55f0a78a353c4e4)),
                 value_conv: None,
             },
         ),
@@ -80,7 +80,7 @@ pub static DJI_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "CameraPitch",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bec70def03ed8463)),
+                print_conv: Some(PrintConv::Function(ast_print_c55f0a78a353c4e4)),
                 value_conv: None,
             },
         ),
@@ -89,7 +89,7 @@ pub static DJI_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "CameraYaw",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bec70def03ed8463)),
+                print_conv: Some(PrintConv::Function(ast_print_c55f0a78a353c4e4)),
                 value_conv: None,
             },
         ),
@@ -98,7 +98,7 @@ pub static DJI_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "CameraRoll",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bec70def03ed8463)),
+                print_conv: Some(PrintConv::Function(ast_print_c55f0a78a353c4e4)),
                 value_conv: None,
             },
         ),

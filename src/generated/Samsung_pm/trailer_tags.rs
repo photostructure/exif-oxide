@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_ec::ast_value_ec4363ad50929239;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_3d::ast_value_3d5f3b1c3b62a799;
 
 /// Tag definitions for Samsung::Trailer table
 pub static SAMSUNG_TRAILER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -45,8 +45,8 @@ pub static SAMSUNG_TRAILER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "TimeStamp",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_ec4363ad50929239)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_3d5f3b1c3b62a799)),
             },
         ),
         (
@@ -107,6 +107,15 @@ pub static SAMSUNG_TRAILER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             3473,
             TagInfo {
                 name: "PEg_Info",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            3649,
+            TagInfo {
+                name: "VideoEditedTimeZone",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,

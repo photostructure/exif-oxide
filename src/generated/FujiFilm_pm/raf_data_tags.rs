@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_39::ast_value_393186b6faed2a8e;
-use crate::generated::functions::hash_c8::ast_value_c8cc976fc4865a7f;
+use crate::generated::functions::hash_8f::ast_value_8fc30c76278103b9;
+use crate::generated::functions::hash_d7::ast_value_d71b0e108dcddc45;
 
 /// Tag definitions for FujiFilm::RAFData table
 pub static FUJI_FILM_RAFDATA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -19,7 +19,7 @@ pub static FUJI_FILM_RAFDATA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 name: "RawImageWidth",
                 format: "int32u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_c8cc976fc4865a7f)),
+                value_conv: Some(ValueConv::Function(ast_value_d71b0e108dcddc45)),
             },
         ),
         (
@@ -28,7 +28,7 @@ pub static FUJI_FILM_RAFDATA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 name: "RawImageHeight",
                 format: "int32u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_393186b6faed2a8e)),
+                value_conv: Some(ValueConv::Function(ast_value_8fc30c76278103b9)),
             },
         ),
     ])

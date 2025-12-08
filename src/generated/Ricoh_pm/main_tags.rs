@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_30::ast_print_30c6ff66128b242c;
-use crate::generated::functions::hash_89::ast_print_899945aee711da6a;
-use crate::generated::functions::hash_b7::ast_print_b75f5f46a9f320cf;
+use crate::generated::functions::hash_47::ast_print_475495c4db4ba791;
+use crate::generated::functions::hash_7c::ast_print_7cc7a4bf3f82cb33;
+use crate::generated::functions::hash_96::ast_print_965cc8da10a90f1;
 
 /// Tag definitions for Ricoh::Main table
 pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -28,7 +28,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FirmwareVersion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_899945aee711da6a)),
+                print_conv: Some(PrintConv::Function(ast_print_475495c4db4ba791)),
                 value_conv: None,
             },
         ),
@@ -109,7 +109,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FlashExposureComp",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: None,
             },
         ),
@@ -325,7 +325,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FocalLength",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_30c6ff66128b242c)),
+                print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: None,
             },
         ),

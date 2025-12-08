@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_93::ast_value_93479e0480a898bc;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
-use crate::generated::functions::hash_d3::ast_value_d37ffb72c49bf107;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_4d::ast_value_4d7b388271c29e88;
+use crate::generated::functions::hash_5f::ast_value_5fd665ca42e4d37a;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
 
 /// Tag definitions for Kodak::Type9 table
 pub static KODAK_TYPE9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -20,8 +20,8 @@ pub static KODAK_TYPE9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "ExposureTime",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_d37ffb72c49bf107)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_5fd665ca42e4d37a)),
             },
         ),
         (
@@ -29,8 +29,8 @@ pub static KODAK_TYPE9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "DateTimeOriginal",
                 format: "string[20]",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_93479e0480a898bc)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_4d7b388271c29e88)),
             },
         ),
         (

@@ -7,12 +7,12 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_75::ast_value_759479de720ee9c;
-use crate::generated::functions::hash_99::ast_value_99d1796b50c9db89;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
-use crate::generated::functions::hash_bc::ast_print_bc983315d45d48a3;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_24::ast_value_24a12bba5a03a937;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_79::ast_value_793021431aff9620;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_dd::ast_print_dd22782e5ba8c7cb;
+use crate::generated::functions::hash_f0::ast_print_f013e387a9d36985;
 
 /// Tag definitions for KyoceraRaw::Main table
 pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -55,7 +55,7 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "DateTimeOriginal",
                 format: "string[20]",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::KyoceraRaw::ReverseString]".to_string(),
                 )),
@@ -75,8 +75,8 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "ExposureTime",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_99d1796b50c9db89)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_793021431aff9620)),
             },
         ),
         (
@@ -93,8 +93,8 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "FNumber",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_bc983315d45d48a3)),
-                value_conv: Some(ValueConv::Function(ast_value_759479de720ee9c)),
+                print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
+                value_conv: Some(ValueConv::Function(ast_value_24a12bba5a03a937)),
             },
         ),
         (
@@ -102,8 +102,8 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "MaxAperture",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_bc983315d45d48a3)),
-                value_conv: Some(ValueConv::Function(ast_value_759479de720ee9c)),
+                print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
+                value_conv: Some(ValueConv::Function(ast_value_24a12bba5a03a937)),
             },
         ),
         (
@@ -111,7 +111,7 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "FocalLength",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
             },
         ),

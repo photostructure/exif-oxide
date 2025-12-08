@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_24::ast_print_244597bfb4c5779c;
-use crate::generated::functions::hash_c8::ast_value_c81520c2f48a3e3c;
-use crate::generated::functions::hash_da::ast_print_dad6b5d4251a08c7;
-use crate::generated::functions::hash_ee::ast_value_ee9b0901d11400f9;
+use crate::generated::functions::hash_32::ast_value_32180481d23c95e9;
+use crate::generated::functions::hash_9f::ast_print_9fdbcf4006788a4b;
+use crate::generated::functions::hash_c0::ast_value_c0027708ba7e42e3;
+use crate::generated::functions::hash_f6::ast_print_f6928c7fdabd99df;
 
 /// Tag definitions for Canon::FileInfo table
 pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -83,8 +83,8 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "MacroMagnification",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_244597bfb4c5779c)),
-                value_conv: Some(ValueConv::Function(ast_value_c81520c2f48a3e3c)),
+                print_conv: Some(PrintConv::Function(ast_print_9fdbcf4006788a4b)),
+                value_conv: Some(ValueConv::Function(ast_value_32180481d23c95e9)),
             },
         ),
         (
@@ -101,8 +101,8 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FocusDistanceUpper",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_dad6b5d4251a08c7)),
-                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+                print_conv: Some(PrintConv::Function(ast_print_f6928c7fdabd99df)),
+                value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
             },
         ),
         (
@@ -110,8 +110,8 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FocusDistanceLower",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_dad6b5d4251a08c7)),
-                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+                print_conv: Some(PrintConv::Function(ast_print_f6928c7fdabd99df)),
+                value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
             },
         ),
         (

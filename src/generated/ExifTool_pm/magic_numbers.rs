@@ -372,10 +372,11 @@ pub static REGEX_MAGIC_NUMBERS: LazyLock<HashMap<&'static str, Regex>> = LazyLoc
         map.insert("LIF", regex);
     }
 
-    // Pattern: .{4}\\x01\\x14\\x02\\0{5}\\xc0\\0{6}\\x46
-    if let Ok(regex) = RegexBuilder::new(r".{4}\x01\x14\x02\0{5}\xc0\0{6}\x46")
-        .unicode(false)
-        .build()
+    // Pattern: (.{4}\\x01\\x14\\x02\\0{5}\\xc0\\0{6}\\x46|\\[[InternetShortcut\\][\\x0d\\x0a])
+    if let Ok(regex) =
+        RegexBuilder::new(r"(.{4}\x01\x14\x02\0{5}\xc0\0{6}\x46|\[[InternetShortcut\][\x0d\x0a])")
+            .unicode(false)
+            .build()
     {
         map.insert("LNK", regex);
     }

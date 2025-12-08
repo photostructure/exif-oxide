@@ -7,12 +7,12 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_26::ast_print_269538b049d632d7;
-use crate::generated::functions::hash_54::ast_value_54193e0c249aa3ab;
-use crate::generated::functions::hash_5c::ast_print_5cbd28652a637e12;
-use crate::generated::functions::hash_db::ast_value_db6d300cf2bc94e2;
-use crate::generated::functions::hash_e8::ast_value_e82434acf427488;
-use crate::generated::functions::hash_f6::ast_print_f6376183ea3a1573;
+use crate::generated::functions::hash_13::ast_value_135828bb10970bc4;
+use crate::generated::functions::hash_80::ast_value_80d49a8ed80bae91;
+use crate::generated::functions::hash_ba::ast_print_ba991dc311849c0d;
+use crate::generated::functions::hash_d3::ast_print_d3d0a75db4fdaf7b;
+use crate::generated::functions::hash_e1::ast_value_e137a069f73b6d7;
+use crate::generated::functions::hash_f0::ast_print_f06853894c258287;
 
 /// Tag definitions for IPTC::ApplicationRecord table
 pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -149,7 +149,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 name: "ReleaseDate",
                 format: "digits[8]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_db6d300cf2bc94e2)),
+                value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
             },
         ),
         (
@@ -158,7 +158,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 name: "ReleaseTime",
                 format: "string[11]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_54193e0c249aa3ab)),
+                value_conv: Some(ValueConv::Function(ast_value_135828bb10970bc4)),
             },
         ),
         (
@@ -167,7 +167,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 name: "ExpirationDate",
                 format: "digits[8]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_db6d300cf2bc94e2)),
+                value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
             },
         ),
         (
@@ -176,7 +176,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 name: "ExpirationTime",
                 format: "string[11]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_54193e0c249aa3ab)),
+                value_conv: Some(ValueConv::Function(ast_value_135828bb10970bc4)),
             },
         ),
         (
@@ -212,7 +212,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 name: "ReferenceDate",
                 format: "digits[8]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_db6d300cf2bc94e2)),
+                value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
             },
         ),
         (
@@ -229,8 +229,8 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "DateCreated",
                 format: "digits[8]",
-                print_conv: Some(PrintConv::Function(ast_print_5cbd28652a637e12)),
-                value_conv: Some(ValueConv::Function(ast_value_db6d300cf2bc94e2)),
+                print_conv: Some(PrintConv::Function(ast_print_f06853894c258287)),
+                value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
             },
         ),
         (
@@ -238,8 +238,8 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "TimeCreated",
                 format: "string[11]",
-                print_conv: Some(PrintConv::Function(ast_print_f6376183ea3a1573)),
-                value_conv: Some(ValueConv::Function(ast_value_54193e0c249aa3ab)),
+                print_conv: Some(PrintConv::Function(ast_print_d3d0a75db4fdaf7b)),
+                value_conv: Some(ValueConv::Function(ast_value_135828bb10970bc4)),
             },
         ),
         (
@@ -247,8 +247,8 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "DigitalCreationDate",
                 format: "digits[8]",
-                print_conv: Some(PrintConv::Function(ast_print_5cbd28652a637e12)),
-                value_conv: Some(ValueConv::Function(ast_value_db6d300cf2bc94e2)),
+                print_conv: Some(PrintConv::Function(ast_print_f06853894c258287)),
+                value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
             },
         ),
         (
@@ -256,8 +256,8 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "DigitalCreationTime",
                 format: "string[11]",
-                print_conv: Some(PrintConv::Function(ast_print_f6376183ea3a1573)),
-                value_conv: Some(ValueConv::Function(ast_value_54193e0c249aa3ab)),
+                print_conv: Some(PrintConv::Function(ast_print_d3d0a75db4fdaf7b)),
+                value_conv: Some(ValueConv::Function(ast_value_135828bb10970bc4)),
             },
         ),
         (
@@ -589,7 +589,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "Prefs",
                 format: "string[0,64]",
-                print_conv: Some(PrintConv::Function(ast_print_269538b049d632d7)),
+                print_conv: Some(PrintConv::Function(ast_print_ba991dc311849c0d)),
                 value_conv: None,
             },
         ),
@@ -626,7 +626,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 name: "DocumentHistory",
                 format: "string[0,256]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_e82434acf427488)),
+                value_conv: Some(ValueConv::Function(ast_value_80d49a8ed80bae91)),
             },
         ),
         (

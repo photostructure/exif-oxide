@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_fc::ast_value_fc17eee05ccde440;
+use crate::generated::functions::hash_5e::ast_value_5ec63730e4985b7;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
 
 /// Tag definitions for Nikon::OrientationInfo table
 pub static NIKON_ORIENTATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -18,8 +18,8 @@ pub static NIKON_ORIENTATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "RollAngle",
                 format: "fixed32u",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_fc17eee05ccde440)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_5ec63730e4985b7)),
             },
         ),
         (
@@ -27,8 +27,8 @@ pub static NIKON_ORIENTATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "PitchAngle",
                 format: "fixed32u",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_fc17eee05ccde440)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_5ec63730e4985b7)),
             },
         ),
         (
@@ -36,8 +36,8 @@ pub static NIKON_ORIENTATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "YawAngle",
                 format: "fixed32u",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_fc17eee05ccde440)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_5ec63730e4985b7)),
             },
         ),
     ])

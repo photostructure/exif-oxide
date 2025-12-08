@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_7e::ast_value_7eadc2f4518c667e;
+use crate::generated::functions::hash_c3::ast_value_c3ac357278ffbbb0;
 
 /// Tag definitions for Canon::LensInfo table
 pub static CANON_LENSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static CANON_LENSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             name: "LensSerialNumber",
             format: "undef[5]",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
         },
     )])
 });

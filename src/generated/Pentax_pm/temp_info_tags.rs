@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
-use crate::generated::functions::hash_cc::ast_value_cc6d20d1f05f91ec;
-use crate::generated::functions::hash_d3::ast_print_d3baecf4975cff4c;
-use crate::generated::functions::hash_eb::ast_print_ebe0a6b7251033b3;
+use crate::generated::functions::hash_6a::ast_value_6a2b983323e78027;
+use crate::generated::functions::hash_8e::ast_value_8e281e57f268ff8;
+use crate::generated::functions::hash_91::ast_print_9111b408f0b1518a;
+use crate::generated::functions::hash_c8::ast_print_c8bca6375178b51d;
 
 /// Tag definitions for Pentax::TempInfo table
 pub static PENTAX_TEMPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -21,7 +21,7 @@ pub static PENTAX_TEMPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 name: "ShotNumber",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_cc6d20d1f05f91ec)),
+                value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
             },
         ),
         (
@@ -29,8 +29,8 @@ pub static PENTAX_TEMPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "SensorTemperature",
                 format: "int16s",
-                print_conv: Some(PrintConv::Function(ast_print_ebe0a6b7251033b3)),
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -38,8 +38,8 @@ pub static PENTAX_TEMPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "SensorTemperature2",
                 format: "int16s",
-                print_conv: Some(PrintConv::Function(ast_print_ebe0a6b7251033b3)),
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -47,7 +47,7 @@ pub static PENTAX_TEMPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "CameraTemperature4",
                 format: "int16s",
-                print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
+                print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
             },
         ),
@@ -56,7 +56,7 @@ pub static PENTAX_TEMPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "CameraTemperature5",
                 format: "int16s",
-                print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
+                print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
             },
         ),
@@ -65,8 +65,8 @@ pub static PENTAX_TEMPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "SensorTemperature",
                 format: "int16s",
-                print_conv: Some(PrintConv::Function(ast_print_ebe0a6b7251033b3)),
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
     ])

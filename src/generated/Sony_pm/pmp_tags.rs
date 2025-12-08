@@ -7,12 +7,12 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_30::ast_print_30c6ff66128b242c;
-use crate::generated::functions::hash_75::ast_value_7572393db83255de;
-use crate::generated::functions::hash_93::ast_value_932aeef1bf94311d;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
-use crate::generated::functions::hash_ee::ast_value_ee9b0901d11400f9;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_40::ast_value_40d2585686539f95;
+use crate::generated::functions::hash_6c::ast_value_6cf30d9ec8de1ddc;
+use crate::generated::functions::hash_7c::ast_print_7cc7a4bf3f82cb33;
+use crate::generated::functions::hash_c0::ast_value_c0027708ba7e42e3;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
 
 /// Tag definitions for Sony::PMP table
 pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -85,8 +85,8 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "DateTimeOriginal",
                 format: "int8u[6]",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_932aeef1bf94311d)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_6cf30d9ec8de1ddc)),
             },
         ),
         (
@@ -94,8 +94,8 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ModifyDate",
                 format: "int8u[6]",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_932aeef1bf94311d)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_6cf30d9ec8de1ddc)),
             },
         ),
         (
@@ -103,8 +103,8 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureTime",
                 format: "int16s",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_7572393db83255de)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_40d2585686539f95)),
             },
         ),
         (
@@ -113,7 +113,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "FNumber",
                 format: "int16s",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+                value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
             },
         ),
         (
@@ -122,7 +122,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "ExposureCompensation",
                 format: "int16s",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+                value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
             },
         ),
         (
@@ -130,8 +130,8 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FocalLength",
                 format: "int16s",
-                print_conv: Some(PrintConv::Function(ast_print_30c6ff66128b242c)),
-                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+                print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
+                value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
             },
         ),
         (

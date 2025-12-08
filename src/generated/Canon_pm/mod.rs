@@ -37,6 +37,7 @@ pub mod camera_info_power_shot2_tags;
 pub mod camera_info_power_shot_tags;
 pub mod camera_info_r6_tags;
 pub mod camera_info_r6m2_tags;
+pub mod camera_info_r6m3_tags;
 pub mod camera_info_unknown16_tags;
 pub mod camera_info_unknown32_tags;
 pub mod camera_info_unknown_tags;

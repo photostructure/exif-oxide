@@ -256,6 +256,7 @@ static FILE_TYPE_FORMATS: LazyLock<HashMap<&'static str, (Vec<&'static str>, &'s
         map.insert("LFP", (vec!["LFP"], "Lytro Light Field Picture"));
         map.insert("LIF", (vec!["LIF"], "Leica Image File"));
         map.insert("LNK", (vec!["LNK"], "Windows shortcut"));
+        map.insert("LRF", (vec!["MOV"], "Low-Resolution video File"));
         map.insert("LRI", (vec!["LRI"], "Light RAW"));
         map.insert("LRV", (vec!["MOV"], "Low-Resolution Video"));
         map.insert("M2TS", (vec!["M2TS"], "MPEG-2 Transport Stream"));
@@ -430,6 +431,7 @@ static FILE_TYPE_FORMATS: LazyLock<HashMap<&'static str, (Vec<&'static str>, &'s
         map.insert("TTC", (vec!["Font"], "True Type Font Collection"));
         map.insert("TTF", (vec!["Font"], "True Type Font"));
         map.insert("TXT", (vec!["TXT"], "Text file"));
+        map.insert("URL", (vec!["LNK"], "Windows shortcut URL"));
         map.insert("VCARD", (vec!["VCard"], "Virtual Card"));
         map.insert(
             "VNT",
@@ -438,6 +440,7 @@ static FILE_TYPE_FORMATS: LazyLock<HashMap<&'static str, (Vec<&'static str>, &'s
         map.insert("VOB", (vec!["MPEG"], "Video Object"));
         map.insert("VRD", (vec!["VRD"], "Canon VRD Recipe Data"));
         map.insert("VSD", (vec!["FPX"], "Microsoft Visio Drawing"));
+        map.insert("VSDX", (vec!["ZIP"], "Visio Diagram Document"));
         map.insert("WAV", (vec!["RIFF"], "WAVeform (Windows digital audio)"));
         map.insert("WDP", (vec!["TIFF"], "Windows Media Photo"));
         map.insert("WEBM", (vec!["MKV"], "Google Web Movie"));

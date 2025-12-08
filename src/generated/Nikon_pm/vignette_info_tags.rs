@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_d3::ast_print_d37c45a072187ab5;
+use crate::generated::functions::hash_58::ast_print_58281d11fd553f56;
 
 /// Tag definitions for Nikon::VignetteInfo table
 pub static NIKON_VIGNETTEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -26,7 +26,7 @@ pub static NIKON_VIGNETTEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "VignetteCoefficient1",
                 format: "rational64s",
-                print_conv: Some(PrintConv::Function(ast_print_d37c45a072187ab5)),
+                print_conv: Some(PrintConv::Function(ast_print_58281d11fd553f56)),
                 value_conv: None,
             },
         ),
@@ -35,7 +35,7 @@ pub static NIKON_VIGNETTEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "VignetteCoefficient2",
                 format: "rational64s",
-                print_conv: Some(PrintConv::Function(ast_print_d37c45a072187ab5)),
+                print_conv: Some(PrintConv::Function(ast_print_58281d11fd553f56)),
                 value_conv: None,
             },
         ),
@@ -44,7 +44,7 @@ pub static NIKON_VIGNETTEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "VignetteCoefficient3",
                 format: "rational64s",
-                print_conv: Some(PrintConv::Function(ast_print_d37c45a072187ab5)),
+                print_conv: Some(PrintConv::Function(ast_print_58281d11fd553f56)),
                 value_conv: None,
             },
         ),

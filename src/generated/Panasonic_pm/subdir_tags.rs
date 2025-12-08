@@ -7,11 +7,11 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_7a::ast_value_7a955354dcc5394a;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_bb::ast_print_bb744a13f82c4cd2;
-use crate::generated::functions::hash_d2::ast_value_d257a2f28a742d8d;
-use crate::generated::functions::hash_d3::ast_print_d3baecf4975cff4c;
+use crate::generated::functions::hash_63::ast_value_63c413f7e986d282;
+use crate::generated::functions::hash_a1::ast_value_a15e00efdd4e457;
+use crate::generated::functions::hash_ae::ast_print_aec511ac08c0f1fc;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_c8::ast_print_c8bca6375178b51d;
 
 /// Tag definitions for Panasonic::Subdir table
 pub static PANASONIC_SUBDIR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -147,7 +147,7 @@ pub static PANASONIC_SUBDIR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
+                print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
             },
         ),
@@ -157,7 +157,7 @@ pub static PANASONIC_SUBDIR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 name: "LensType",
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_7a955354dcc5394a)),
+                value_conv: Some(ValueConv::Function(ast_value_a15e00efdd4e457)),
             },
         ),
         (
@@ -165,7 +165,7 @@ pub static PANASONIC_SUBDIR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "ApproximateFNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -174,8 +174,8 @@ pub static PANASONIC_SUBDIR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "MeasuredLV",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bb744a13f82c4cd2)),
-                value_conv: Some(ValueConv::Function(ast_value_d257a2f28a742d8d)),
+                print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
+                value_conv: Some(ValueConv::Function(ast_value_63c413f7e986d282)),
             },
         ),
         (
@@ -183,8 +183,8 @@ pub static PANASONIC_SUBDIR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "ExternalSensorBrightnessValue",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bb744a13f82c4cd2)),
-                value_conv: Some(ValueConv::Function(ast_value_d257a2f28a742d8d)),
+                print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
+                value_conv: Some(ValueConv::Function(ast_value_63c413f7e986d282)),
             },
         ),
         (

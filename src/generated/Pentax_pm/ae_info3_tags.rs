@@ -7,14 +7,13 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_1a::ast_print_1ade125dab246be4;
-use crate::generated::functions::hash_6d::ast_value_6d6b19c587a83655;
-use crate::generated::functions::hash_84::{
-    ast_print_8470e30e1e5b4729, ast_value_849772b1a5139524,
-};
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
-use crate::generated::functions::hash_da::ast_value_da79bd1c8902b829;
-use crate::generated::functions::hash_f0::ast_print_f0406a5cf107f00d;
+use crate::generated::functions::hash_1f::ast_print_1f47b524bed353b1;
+use crate::generated::functions::hash_2c::ast_print_2cea565875d218cc;
+use crate::generated::functions::hash_2e::ast_value_2e5c68232ecbf706;
+use crate::generated::functions::hash_62::ast_value_62606f8de21c9e5a;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_eb::ast_value_ebf06338275430d8;
 
 /// Tag definitions for Pentax::AEInfo3 table
 pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -24,8 +23,8 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AEExposureTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_da79bd1c8902b829)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_ebf06338275430d8)),
             },
         ),
         (
@@ -33,8 +32,8 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AEAperture",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_849772b1a5139524)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_62606f8de21c9e5a)),
             },
         ),
         (
@@ -42,8 +41,8 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AE_ISO",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_f0406a5cf107f00d)),
-                value_conv: Some(ValueConv::Function(ast_value_6d6b19c587a83655)),
+                print_conv: Some(PrintConv::Function(ast_print_2cea565875d218cc)),
+                value_conv: Some(ValueConv::Function(ast_value_2e5c68232ecbf706)),
             },
         ),
         (
@@ -51,8 +50,8 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AEMaxAperture",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_849772b1a5139524)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_62606f8de21c9e5a)),
             },
         ),
         (
@@ -60,8 +59,8 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AEMaxAperture2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_849772b1a5139524)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_62606f8de21c9e5a)),
             },
         ),
         (
@@ -69,8 +68,8 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AEMinAperture",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_1ade125dab246be4)),
-                value_conv: Some(ValueConv::Function(ast_value_849772b1a5139524)),
+                print_conv: Some(PrintConv::Function(ast_print_1f47b524bed353b1)),
+                value_conv: Some(ValueConv::Function(ast_value_62606f8de21c9e5a)),
             },
         ),
         (
@@ -78,8 +77,8 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AEMinExposureTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_da79bd1c8902b829)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_ebf06338275430d8)),
             },
         ),
     ])

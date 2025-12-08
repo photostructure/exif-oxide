@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_3e::ast_value_3e1220cade8783d3;
+use crate::generated::functions::hash_54::ast_value_546a14bd9199ffc8;
 
 /// Tag definitions for Ricoh::Type2 table
 pub static RICOH_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -27,7 +27,7 @@ pub static RICOH_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 name: "RicohMake",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_3e1220cade8783d3)),
+                value_conv: Some(ValueConv::Function(ast_value_546a14bd9199ffc8)),
             },
         ),
     ])

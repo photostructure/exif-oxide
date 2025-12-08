@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
 
 /// Tag definitions for Pentax::Junk2 table
 pub static PENTAX_JUNK2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -35,7 +35,7 @@ pub static PENTAX_JUNK2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "FNumber",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),

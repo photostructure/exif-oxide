@@ -7,24 +7,22 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_15::ast_print_155f09e06c458602;
-use crate::generated::functions::hash_5f::ast_print_5f0ac2991506bef1;
-use crate::generated::functions::hash_65::{
-    ast_value_65c95b46a9fbe1f5, ast_value_65de956e2a10c3d6,
-};
-use crate::generated::functions::hash_66::ast_print_66ae134cac9bc85e;
-use crate::generated::functions::hash_67::ast_print_67e30de4b4355f98;
-use crate::generated::functions::hash_6d::ast_print_6d9da87e28213f05;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_8e::ast_print_8e2bf26a3866c12f;
-use crate::generated::functions::hash_a7::ast_print_a7bd7d3f338f7940;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_b7::{ast_print_b75f5f46a9f320cf, ast_print_b777f2fa21c400c};
-use crate::generated::functions::hash_b8::ast_value_b8eb22ffc318bd41;
-use crate::generated::functions::hash_bb::{
-    ast_print_bb744a13f82c4cd2, ast_print_bba76882980e1e1a,
-};
-use crate::generated::functions::hash_d2::ast_value_d25c2abd9d1305a3;
+use crate::generated::functions::hash_28::ast_value_28bcdef3842cd39f;
+use crate::generated::functions::hash_37::ast_print_378644c5bc54fdfd;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_42::ast_value_422508bb81b54f18;
+use crate::generated::functions::hash_4f::ast_print_4f6c11ca6a17fbc0;
+use crate::generated::functions::hash_53::ast_print_53ea4f6a4e7328bc;
+use crate::generated::functions::hash_5f::ast_print_5f5c47624f96780e;
+use crate::generated::functions::hash_79::ast_print_7916bfba5811ff56;
+use crate::generated::functions::hash_86::ast_print_866bd594655fcf3b;
+use crate::generated::functions::hash_87::ast_print_87ea20bfc391aca2;
+use crate::generated::functions::hash_96::ast_print_965cc8da10a90f1;
+use crate::generated::functions::hash_ae::ast_print_aec511ac08c0f1fc;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_d6::ast_value_d672478fdfe542fd;
+use crate::generated::functions::hash_d7::{ast_print_d7d503356bf3175, ast_value_d7477adc3dcbfb13};
+use crate::generated::functions::hash_e5::ast_print_e50dfd1aa09ed50e;
 
 /// Tag definitions for Nikon::Main table
 pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -34,8 +32,8 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "MakerNoteVersion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_a7bd7d3f338f7940)),
-                value_conv: Some(ValueConv::Function(ast_value_65de956e2a10c3d6)),
+                print_conv: Some(PrintConv::Function(ast_print_53ea4f6a4e7328bc)),
+                value_conv: Some(ValueConv::Function(ast_value_d7477adc3dcbfb13)),
             },
         ),
         (
@@ -43,7 +41,7 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ISO",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_6d9da87e28213f05)),
+                print_conv: Some(PrintConv::Function(ast_print_7916bfba5811ff56)),
                 value_conv: None,
             },
         ),
@@ -133,8 +131,8 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ProgramShift",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
-                value_conv: Some(ValueConv::Function(ast_value_d25c2abd9d1305a3)),
+                print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
+                value_conv: Some(ValueConv::Function(ast_value_d672478fdfe542fd)),
             },
         ),
         (
@@ -142,8 +140,8 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureDifference",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
-                value_conv: Some(ValueConv::Function(ast_value_d25c2abd9d1305a3)),
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
+                value_conv: Some(ValueConv::Function(ast_value_d672478fdfe542fd)),
             },
         ),
         (
@@ -178,8 +176,8 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FlashExposureComp",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
-                value_conv: Some(ValueConv::Function(ast_value_d25c2abd9d1305a3)),
+                print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
+                value_conv: Some(ValueConv::Function(ast_value_d672478fdfe542fd)),
             },
         ),
         (
@@ -187,7 +185,7 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ISOSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b777f2fa21c400c)),
+                print_conv: Some(PrintConv::Function(ast_print_5f5c47624f96780e)),
                 value_conv: None,
             },
         ),
@@ -205,8 +203,8 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExternalFlashExposureComp",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
-                value_conv: Some(ValueConv::Function(ast_value_d25c2abd9d1305a3)),
+                print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
+                value_conv: Some(ValueConv::Function(ast_value_d672478fdfe542fd)),
             },
         ),
         (
@@ -214,8 +212,8 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FlashExposureBracketValue",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_d25c2abd9d1305a3)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_d672478fdfe542fd)),
             },
         ),
         (
@@ -223,7 +221,7 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureBracketValue",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_66ae134cac9bc85e)),
+                print_conv: Some(PrintConv::Function(ast_print_4f6c11ca6a17fbc0)),
                 value_conv: None,
             },
         ),
@@ -250,8 +248,8 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureTuning",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
-                value_conv: Some(ValueConv::Function(ast_value_d25c2abd9d1305a3)),
+                print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
+                value_conv: Some(ValueConv::Function(ast_value_d672478fdfe542fd)),
             },
         ),
         (
@@ -502,7 +500,7 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "LensType",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8e2bf26a3866c12f)),
+                print_conv: Some(PrintConv::Function(ast_print_378644c5bc54fdfd)),
                 value_conv: None,
             },
         ),
@@ -549,7 +547,7 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ShootingMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_5f0ac2991506bef1)),
+                print_conv: Some(PrintConv::Function(ast_print_d7d503356bf3175)),
                 value_conv: None,
             },
         ),
@@ -558,8 +556,8 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "LensFStops",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bb744a13f82c4cd2)),
-                value_conv: Some(ValueConv::Function(ast_value_65c95b46a9fbe1f5)),
+                print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
+                value_conv: Some(ValueConv::Function(ast_value_28bcdef3842cd39f)),
             },
         ),
         (
@@ -657,7 +655,7 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "SensorPixelSize",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_67e30de4b4355f98)),
+                print_conv: Some(PrintConv::Function(ast_print_87ea20bfc391aca2)),
                 value_conv: None,
             },
         ),
@@ -685,7 +683,7 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "RetouchHistory",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_b8eb22ffc318bd41)),
+                value_conv: Some(ValueConv::Function(ast_value_422508bb81b54f18)),
             },
         ),
         (
@@ -729,7 +727,7 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ShutterCount",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_155f09e06c458602)),
+                print_conv: Some(PrintConv::Function(ast_print_866bd594655fcf3b)),
                 value_conv: None,
             },
         ),
@@ -801,7 +799,7 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "PowerUpTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
             },
         ),

@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_77::ast_value_7759998ac069ebd5;
+use crate::generated::functions::hash_23::ast_value_2394a139821fa381;
 
 /// Tag definitions for Panasonic::PANA table
 pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -117,7 +117,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "ThumbnailImage",
                 format: "undef[16384]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7759998ac069ebd5)),
+                value_conv: Some(ValueConv::Function(ast_value_2394a139821fa381)),
             },
         ),
         (

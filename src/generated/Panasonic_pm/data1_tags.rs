@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_ac::ast_value_ac0e8b8bbf4b643f;
+use crate::generated::functions::hash_b7::ast_value_b714a38a402e4241;
 
 /// Tag definitions for Panasonic::Data1 table
 pub static PANASONIC_DATA1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static PANASONIC_DATA1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             name: "LensType",
             format: "int32u",
             print_conv: Some(PrintConv::Complex),
-            value_conv: Some(ValueConv::Function(ast_value_ac0e8b8bbf4b643f)),
+            value_conv: Some(ValueConv::Function(ast_value_b714a38a402e4241)),
         },
     )])
 });

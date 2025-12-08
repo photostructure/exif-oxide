@@ -7,15 +7,14 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_30::ast_value_30791c0bd9d5eab2;
-use crate::generated::functions::hash_45::ast_print_45781a09f536a8e0;
-use crate::generated::functions::hash_4e::ast_print_4e5e992f9b388e54;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
-use crate::generated::functions::hash_d1::ast_print_d1ea0bc590f67427;
-use crate::generated::functions::hash_d3::ast_print_d367e2a7f0ec6d0c;
-use crate::generated::functions::hash_e4::ast_print_e4e7cb74671abf2f;
-use crate::generated::functions::hash_f8::ast_value_f87b1058f4dbdeaa;
+use crate::generated::functions::hash_15::ast_print_15cac37473012c7a;
+use crate::generated::functions::hash_35::ast_print_3575efbb289e3431;
+use crate::generated::functions::hash_3b::ast_print_3b6232f726868923;
+use crate::generated::functions::hash_77::ast_print_77d17dd4b5a01f0f;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_c9::{ast_print_c9112886b2b0340d, ast_value_c9eb0334cb0e5f1};
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_d9::ast_value_d91b1f7aca0906fb;
 
 /// Tag definitions for Sigma::Main table
 pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -44,7 +43,7 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "Quality",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_30791c0bd9d5eab2)),
+                value_conv: Some(ValueConv::Function(ast_value_c9eb0334cb0e5f1)),
             },
         ),
         (
@@ -61,7 +60,7 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "AutoBracket",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_e4e7cb74671abf2f)),
+                print_conv: Some(PrintConv::Function(ast_print_3575efbb289e3431)),
                 value_conv: None,
             },
         ),
@@ -70,7 +69,7 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "PreviewImageSize",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_4e5e992f9b388e54)),
+                print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
                 value_conv: None,
             },
         ),
@@ -106,7 +105,7 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "LensFocalRange",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d1ea0bc590f67427)),
+                print_conv: Some(PrintConv::Function(ast_print_15cac37473012c7a)),
                 value_conv: None,
             },
         ),
@@ -115,7 +114,7 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "LensMaxApertureRange",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d1ea0bc590f67427)),
+                print_conv: Some(PrintConv::Function(ast_print_15cac37473012c7a)),
                 value_conv: None,
             },
         ),
@@ -133,7 +132,7 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -142,7 +141,7 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: None,
             },
         ),
@@ -151,8 +150,8 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureTime2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_f87b1058f4dbdeaa)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_d91b1f7aca0906fb)),
             },
         ),
         (
@@ -169,7 +168,7 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureCompensation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d367e2a7f0ec6d0c)),
+                print_conv: Some(PrintConv::Function(ast_print_77d17dd4b5a01f0f)),
                 value_conv: None,
             },
         ),
@@ -178,7 +177,7 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "SensorTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_45781a09f536a8e0)),
+                print_conv: Some(PrintConv::Function(ast_print_c9112886b2b0340d)),
                 value_conv: None,
             },
         ),
@@ -223,7 +222,7 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureCompensation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d367e2a7f0ec6d0c)),
+                print_conv: Some(PrintConv::Function(ast_print_77d17dd4b5a01f0f)),
                 value_conv: None,
             },
         ),
@@ -241,7 +240,7 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -250,7 +249,7 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: None,
             },
         ),
@@ -259,7 +258,7 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureCompensation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d367e2a7f0ec6d0c)),
+                print_conv: Some(PrintConv::Function(ast_print_77d17dd4b5a01f0f)),
                 value_conv: None,
             },
         ),
@@ -268,7 +267,7 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "SensorTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_45781a09f536a8e0)),
+                print_conv: Some(PrintConv::Function(ast_print_c9112886b2b0340d)),
                 value_conv: None,
             },
         ),

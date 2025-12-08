@@ -7,11 +7,11 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_1f::ast_value_1f3cbbb3d7cfc943;
-use crate::generated::functions::hash_45::ast_print_45145cdaaff93e23;
-use crate::generated::functions::hash_74::ast_value_743e189656f40f03;
-use crate::generated::functions::hash_b7::ast_print_b75f5f46a9f320cf;
-use crate::generated::functions::hash_be::ast_value_be410aac07f2b930;
+use crate::generated::functions::hash_26::ast_value_26c9608b5bf2210d;
+use crate::generated::functions::hash_96::ast_print_965cc8da10a90f1;
+use crate::generated::functions::hash_98::ast_value_98168eda1a41d331;
+use crate::generated::functions::hash_b3::ast_print_b3e8606718d2531e;
+use crate::generated::functions::hash_ce::ast_value_ce66549ef9c04ed6;
 
 /// Tag definitions for Sony::Tag2010a table
 pub static SONY_TAG2010A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -66,8 +66,8 @@ pub static SONY_TAG2010A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "StopsAboveBaseISO",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_45145cdaaff93e23)),
-                value_conv: Some(ValueConv::Function(ast_value_743e189656f40f03)),
+                print_conv: Some(PrintConv::Function(ast_print_b3e8606718d2531e)),
+                value_conv: Some(ValueConv::Function(ast_value_26c9608b5bf2210d)),
             },
         ),
         (
@@ -76,7 +76,7 @@ pub static SONY_TAG2010A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "BrightnessValue",
                 format: "int16u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_be410aac07f2b930)),
+                value_conv: Some(ValueConv::Function(ast_value_ce66549ef9c04ed6)),
             },
         ),
         (
@@ -102,8 +102,8 @@ pub static SONY_TAG2010A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ExposureCompensation",
                 format: "int16s",
-                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
-                value_conv: Some(ValueConv::Function(ast_value_1f3cbbb3d7cfc943)),
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
+                value_conv: Some(ValueConv::Function(ast_value_98168eda1a41d331)),
             },
         ),
         (

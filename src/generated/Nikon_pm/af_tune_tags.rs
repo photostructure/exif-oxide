@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_5c::ast_print_5ce675b536bdc220;
-use crate::generated::functions::hash_b9::ast_print_b93bf01b5173ce30;
+use crate::generated::functions::hash_be::ast_print_be7395d3480fbf0d;
+use crate::generated::functions::hash_d8::ast_print_d87e2f7cfd46802c;
 
 /// Tag definitions for Nikon::AFTune table
 pub static NIKON_AFTUNE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -27,7 +27,7 @@ pub static NIKON_AFTUNE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "AFFineTuneIndex",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_5ce675b536bdc220)),
+                print_conv: Some(PrintConv::Function(ast_print_be7395d3480fbf0d)),
                 value_conv: None,
             },
         ),
@@ -36,7 +36,7 @@ pub static NIKON_AFTUNE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "AFFineTuneAdj",
                 format: "int8s",
-                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: None,
             },
         ),
@@ -45,7 +45,7 @@ pub static NIKON_AFTUNE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "AFFineTuneAdjTele",
                 format: "int8s",
-                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: None,
             },
         ),

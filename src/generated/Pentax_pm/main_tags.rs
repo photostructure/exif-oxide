@@ -7,28 +7,31 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_15::ast_value_15b61e0dd2629a12;
-use crate::generated::functions::hash_16::ast_print_1654733938db8225;
-use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
-use crate::generated::functions::hash_32::ast_value_32a7e10f5e7f8777;
-use crate::generated::functions::hash_47::ast_value_4742ce1aa8d729e3;
-use crate::generated::functions::hash_4e::ast_print_4e5e992f9b388e54;
-use crate::generated::functions::hash_59::ast_print_59427ebd048dabd5;
-use crate::generated::functions::hash_64::ast_print_6486d152488d624b;
-use crate::generated::functions::hash_6c::ast_value_6c25803f7a885741;
-use crate::generated::functions::hash_70::ast_value_70d1d11e7183127a;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_93::ast_print_937eb9745db39aa4;
-use crate::generated::functions::hash_b7::ast_print_b75f5f46a9f320cf;
-use crate::generated::functions::hash_bb::ast_value_bbb807c14c3cf509;
-use crate::generated::functions::hash_c1::ast_print_c12c7e50f55cf298;
-use crate::generated::functions::hash_c4::ast_value_c402fe0c5220435c;
-use crate::generated::functions::hash_d3::ast_print_d3baecf4975cff4c;
-use crate::generated::functions::hash_d7::ast_value_d7759f03b97f918d;
-use crate::generated::functions::hash_ee::ast_value_ee9b0901d11400f9;
-use crate::generated::functions::hash_ef::ast_print_ef689d4362d907e;
-use crate::generated::functions::hash_f0::ast_value_f0974ef9a0a8813d;
-use crate::generated::functions::hash_f8::ast_value_f810249e3e5ba00e;
+use crate::generated::functions::hash_20::ast_value_2019c96d765dcb89;
+use crate::generated::functions::hash_29::ast_print_29a2dcd776668ce0;
+use crate::generated::functions::hash_2a::ast_print_2a136ebabb3d5340;
+use crate::generated::functions::hash_33::{
+    ast_value_33727ac0bdbe4a81, ast_value_33e465b277d8995a,
+};
+use crate::generated::functions::hash_3b::ast_print_3b6232f726868923;
+use crate::generated::functions::hash_47::ast_print_47b0b51c869a6209;
+use crate::generated::functions::hash_67::ast_value_676f07102a6401b3;
+use crate::generated::functions::hash_7c::ast_print_7c85cf32a45b11ab;
+use crate::generated::functions::hash_8e::ast_value_8e281e57f268ff8;
+use crate::generated::functions::hash_96::ast_print_965cc8da10a90f1;
+use crate::generated::functions::hash_a2::ast_value_a26d2224d57eefbf;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_b8::ast_value_b8f4d8c7ca0965f;
+use crate::generated::functions::hash_c0::ast_value_c0027708ba7e42e3;
+use crate::generated::functions::hash_c6::{
+    ast_value_c6a064d658e6a1a2, ast_value_c6ef25cf23665b03,
+};
+use crate::generated::functions::hash_c7::ast_print_c72e80290d210ffe;
+use crate::generated::functions::hash_c8::ast_print_c8bca6375178b51d;
+use crate::generated::functions::hash_ce::{
+    ast_value_ce42a84d72bc5d72, ast_value_cedbb1b70a73dd28,
+};
+use crate::generated::functions::hash_e3::ast_print_e3ac2e6d5f0a434f;
 
 /// Tag definitions for Pentax::Main table
 pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -38,7 +41,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "PentaxVersion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+                print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: None,
             },
         ),
@@ -56,7 +59,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "PreviewImageSize",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_4e5e992f9b388e54)),
+                print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
                 value_conv: None,
             },
         ),
@@ -93,7 +96,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 name: "Date",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_f0974ef9a0a8813d)),
+                value_conv: Some(ValueConv::Function(ast_value_676f07102a6401b3)),
             },
         ),
         (
@@ -102,7 +105,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 name: "Time",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_32a7e10f5e7f8777)),
+                value_conv: Some(ValueConv::Function(ast_value_c6a064d658e6a1a2)),
             },
         ),
         (
@@ -129,7 +132,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 name: "PictureMode",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_c402fe0c5220435c)),
+                value_conv: Some(ValueConv::Function(ast_value_cedbb1b70a73dd28)),
             },
         ),
         (
@@ -155,8 +158,8 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "ExposureTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_1654733938db8225)),
-                value_conv: Some(ValueConv::Function(ast_value_bbb807c14c3cf509)),
+                print_conv: Some(PrintConv::Function(ast_print_c72e80290d210ffe)),
+                value_conv: Some(ValueConv::Function(ast_value_b8f4d8c7ca0965f)),
             },
         ),
         (
@@ -164,8 +167,8 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "FNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -230,7 +233,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 name: "BlueBalance",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_70d1d11e7183127a)),
+                value_conv: Some(ValueConv::Function(ast_value_2019c96d765dcb89)),
             },
         ),
         (
@@ -239,7 +242,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 name: "RedBalance",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_70d1d11e7183127a)),
+                value_conv: Some(ValueConv::Function(ast_value_2019c96d765dcb89)),
             },
         ),
         (
@@ -248,7 +251,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 name: "DigitalZoom",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+                value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
             },
         ),
         (
@@ -328,7 +331,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "DSPFirmwareVersion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+                print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
@@ -339,7 +342,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "CPUFirmwareVersion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+                print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
@@ -386,8 +389,8 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "SensorSize",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_ef689d4362d907e)),
-                value_conv: Some(ValueConv::Function(ast_value_6c25803f7a885741)),
+                print_conv: Some(PrintConv::Function(ast_print_2a136ebabb3d5340)),
+                value_conv: Some(ValueConv::Function(ast_value_33e465b277d8995a)),
             },
         ),
         (
@@ -413,7 +416,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "RawImageSize",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_937eb9745db39aa4)),
+                print_conv: Some(PrintConv::Function(ast_print_e3ac2e6d5f0a434f)),
                 value_conv: None,
             },
         ),
@@ -423,7 +426,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 name: "AFPointsInFocus",
                 format: "int32u",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_f810249e3e5ba00e)),
+                value_conv: Some(ValueConv::Function(ast_value_a26d2224d57eefbf)),
             },
         ),
         (
@@ -458,8 +461,8 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "SensitivityAdjust",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
-                value_conv: Some(ValueConv::Function(ast_value_4742ce1aa8d729e3)),
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
+                value_conv: Some(ValueConv::Function(ast_value_c6ef25cf23665b03)),
             },
         ),
         (
@@ -476,7 +479,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "CameraTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
+                print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
             },
         ),
@@ -513,7 +516,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 name: "ColorTemperature",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_15b61e0dd2629a12)),
+                value_conv: Some(ValueConv::Function(ast_value_ce42a84d72bc5d72)),
             },
         ),
         (
@@ -933,8 +936,8 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "ColorMatrixA",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_59427ebd048dabd5)),
-                value_conv: Some(ValueConv::Function(ast_value_d7759f03b97f918d)),
+                print_conv: Some(PrintConv::Function(ast_print_47b0b51c869a6209)),
+                value_conv: Some(ValueConv::Function(ast_value_33727ac0bdbe4a81)),
             },
         ),
         (
@@ -942,8 +945,8 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "ColorMatrixB",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_59427ebd048dabd5)),
-                value_conv: Some(ValueConv::Function(ast_value_d7759f03b97f918d)),
+                print_conv: Some(PrintConv::Function(ast_print_47b0b51c869a6209)),
+                value_conv: Some(ValueConv::Function(ast_value_33727ac0bdbe4a81)),
             },
         ),
         (
@@ -1281,7 +1284,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "DataDump",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_6486d152488d624b)),
+                print_conv: Some(PrintConv::Function(ast_print_29a2dcd776668ce0)),
                 value_conv: None,
             },
         ),
@@ -1290,7 +1293,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "ToneCurve",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_6486d152488d624b)),
+                print_conv: Some(PrintConv::Function(ast_print_29a2dcd776668ce0)),
                 value_conv: None,
             },
         ),
@@ -1299,7 +1302,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "ToneCurves",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_6486d152488d624b)),
+                print_conv: Some(PrintConv::Function(ast_print_29a2dcd776668ce0)),
                 value_conv: None,
             },
         ),

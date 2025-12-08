@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_66::ast_print_66fac0cb9a600387;
+use crate::generated::functions::hash_c7::ast_print_c77d76da738bc03a;
 
 /// Tag definitions for Nikon::PortraitInfoZ7II table
 pub static NIKON_PORTRAITINFOZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -16,7 +16,7 @@ pub static NIKON_PORTRAITINFOZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         TagInfo {
             name: "PortraitImpressionBalance",
             format: "int8u[2]",
-            print_conv: Some(PrintConv::Function(ast_print_66fac0cb9a600387)),
+            print_conv: Some(PrintConv::Function(ast_print_c77d76da738bc03a)),
             value_conv: None,
         },
     )])

@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_70::ast_value_70d1d11e7183127a;
-use crate::generated::functions::hash_76::ast_value_7626d89bf49583a2;
-use crate::generated::functions::hash_b3::ast_value_b3bc420d22d07d89;
+use crate::generated::functions::hash_20::ast_value_2019c96d765dcb89;
+use crate::generated::functions::hash_51::ast_value_51bd40f5c5652bea;
+use crate::generated::functions::hash_e3::ast_value_e32785f4df88dda7;
 
 /// Tag definitions for PanasonicRaw::Main table
 pub static PANASONIC_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -92,7 +92,7 @@ pub static PANASONIC_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 name: "RedBalance",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_70d1d11e7183127a)),
+                value_conv: Some(ValueConv::Function(ast_value_2019c96d765dcb89)),
             },
         ),
         (
@@ -101,7 +101,7 @@ pub static PANASONIC_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 name: "BlueBalance",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_70d1d11e7183127a)),
+                value_conv: Some(ValueConv::Function(ast_value_2019c96d765dcb89)),
             },
         ),
         (
@@ -128,7 +128,7 @@ pub static PANASONIC_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 name: "HighISOMultiplierRed",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_70d1d11e7183127a)),
+                value_conv: Some(ValueConv::Function(ast_value_2019c96d765dcb89)),
             },
         ),
         (
@@ -137,7 +137,7 @@ pub static PANASONIC_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 name: "HighISOMultiplierGreen",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_70d1d11e7183127a)),
+                value_conv: Some(ValueConv::Function(ast_value_2019c96d765dcb89)),
             },
         ),
         (
@@ -146,7 +146,7 @@ pub static PANASONIC_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 name: "HighISOMultiplierBlue",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_70d1d11e7183127a)),
+                value_conv: Some(ValueConv::Function(ast_value_2019c96d765dcb89)),
             },
         ),
         (
@@ -308,7 +308,7 @@ pub static PANASONIC_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 name: "StripOffsets",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_b3bc420d22d07d89)),
+                value_conv: Some(ValueConv::Function(ast_value_e32785f4df88dda7)),
             },
         ),
         (
@@ -335,7 +335,7 @@ pub static PANASONIC_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 name: "StripByteCounts",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_b3bc420d22d07d89)),
+                value_conv: Some(ValueConv::Function(ast_value_e32785f4df88dda7)),
             },
         ),
         (
@@ -362,7 +362,7 @@ pub static PANASONIC_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 name: "Gamma",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7626d89bf49583a2)),
+                value_conv: Some(ValueConv::Function(ast_value_51bd40f5c5652bea)),
             },
         ),
         (

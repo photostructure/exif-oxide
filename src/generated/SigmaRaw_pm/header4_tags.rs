@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_15::ast_value_15cf16a8ad9f58e5;
+use crate::generated::functions::hash_9d::ast_value_9d90e808fc13dd1;
 
 /// Tag definitions for SigmaRaw::Header4 table
 pub static SIGMA_RAW_HEADER4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static SIGMA_RAW_HEADER4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             name: "FileVersion",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_15cf16a8ad9f58e5)),
+            value_conv: Some(ValueConv::Function(ast_value_9d90e808fc13dd1)),
         },
     )])
 });

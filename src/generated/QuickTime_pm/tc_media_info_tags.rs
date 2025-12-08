@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_4a::ast_value_4a60469dfc6fd956;
+use crate::generated::functions::hash_b2::ast_value_b2cfc23602deafa5;
 
 /// Tag definitions for QuickTime::TCMediaInfo table
 pub static QUICK_TIME_TCMEDIAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -63,7 +63,7 @@ pub static QUICK_TIME_TCMEDIAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 name: "FontName",
                 format: "pstring",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_4a60469dfc6fd956)),
+                value_conv: Some(ValueConv::Function(ast_value_b2cfc23602deafa5)),
             },
         ),
     ])

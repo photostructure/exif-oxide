@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_58::ast_value_58c924c1420b72a1;
-use crate::generated::functions::hash_a8::ast_print_a8b9ab9d001cb5dd;
-use crate::generated::functions::hash_f0::ast_print_f0a9b201612fbfd0;
+use crate::generated::functions::hash_5a::ast_value_5acdb8bd32a91a9e;
+use crate::generated::functions::hash_6a::ast_print_6aba033c223c39a4;
+use crate::generated::functions::hash_fa::ast_print_fa6707f1bb13135d;
 
 /// Tag definitions for Canon::ColorData3 table
 pub static CANON_COLORDATA3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -172,8 +172,8 @@ pub static CANON_COLORDATA3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "FlashOutput",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_f0a9b201612fbfd0)),
-                value_conv: Some(ValueConv::Function(ast_value_58c924c1420b72a1)),
+                print_conv: Some(PrintConv::Function(ast_print_6aba033c223c39a4)),
+                value_conv: Some(ValueConv::Function(ast_value_5acdb8bd32a91a9e)),
             },
         ),
         (
@@ -181,7 +181,7 @@ pub static CANON_COLORDATA3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "FlashBatteryLevel",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_a8b9ab9d001cb5dd)),
+                print_conv: Some(PrintConv::Function(ast_print_fa6707f1bb13135d)),
                 value_conv: None,
             },
         ),

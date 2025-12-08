@@ -7,13 +7,13 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_13::ast_print_13019bc21b8fe7c4;
-use crate::generated::functions::hash_3a::ast_value_3a525264bc178a3a;
-use crate::generated::functions::hash_4a::ast_value_4a9a9258b669d68c;
-use crate::generated::functions::hash_70::ast_value_70d1d11e7183127a;
-use crate::generated::functions::hash_8b::ast_value_8b1e8dd121063bd8;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_c8::ast_print_c84ae4fd283ed65e;
+use crate::generated::functions::hash_20::ast_value_2019c96d765dcb89;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_52::ast_print_529b9dfc5148650a;
+use crate::generated::functions::hash_b2::ast_value_b28872dcf07de6a6;
+use crate::generated::functions::hash_e8::ast_value_e8af3016409e62f1;
+use crate::generated::functions::hash_fa::ast_value_fafc7ff7466a1cb8;
+use crate::generated::functions::hash_ff::ast_print_ff6bef6967d85f9e;
 
 /// Tag definitions for QuickTime::TrackHeader table
 pub static QUICK_TIME_TRACKHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -32,8 +32,8 @@ pub static QUICK_TIME_TRACKHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "TrackCreateDate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_4a9a9258b669d68c)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_e8af3016409e62f1)),
             },
         ),
         (
@@ -41,8 +41,8 @@ pub static QUICK_TIME_TRACKHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "TrackModifyDate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_4a9a9258b669d68c)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_e8af3016409e62f1)),
             },
         ),
         (
@@ -59,8 +59,8 @@ pub static QUICK_TIME_TRACKHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "TrackDuration",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c84ae4fd283ed65e)),
-                value_conv: Some(ValueConv::Function(ast_value_3a525264bc178a3a)),
+                print_conv: Some(PrintConv::Function(ast_print_529b9dfc5148650a)),
+                value_conv: Some(ValueConv::Function(ast_value_fafc7ff7466a1cb8)),
             },
         ),
         (
@@ -86,8 +86,8 @@ pub static QUICK_TIME_TRACKHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "TrackVolume",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_13019bc21b8fe7c4)),
-                value_conv: Some(ValueConv::Function(ast_value_70d1d11e7183127a)),
+                print_conv: Some(PrintConv::Function(ast_print_ff6bef6967d85f9e)),
+                value_conv: Some(ValueConv::Function(ast_value_2019c96d765dcb89)),
             },
         ),
         (
@@ -96,7 +96,7 @@ pub static QUICK_TIME_TRACKHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 name: "MatrixStructure",
                 format: "fixed32s[9]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_8b1e8dd121063bd8)),
+                value_conv: Some(ValueConv::Function(ast_value_b28872dcf07de6a6)),
             },
         ),
         (

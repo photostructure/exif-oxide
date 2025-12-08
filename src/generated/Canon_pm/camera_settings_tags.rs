@@ -7,16 +7,15 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_23::{
-    ast_value_237333b021276c6e, ast_value_23ca0ed710a7de23,
-};
-use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
-use crate::generated::functions::hash_31::ast_print_314bc158a5c6c330;
-use crate::generated::functions::hash_42::ast_print_423da13b81d6bdf1;
-use crate::generated::functions::hash_b9::ast_print_b93bf01b5173ce30;
-use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
-use crate::generated::functions::hash_bc::ast_print_bc983315d45d48a3;
-use crate::generated::functions::hash_cc::ast_value_cc8b3fc622e28074;
+use crate::generated::functions::hash_23::ast_value_23bd74b0abec6c74;
+use crate::generated::functions::hash_61::ast_print_615911c2f9c7546;
+use crate::generated::functions::hash_75::ast_value_75ea21c3208d8187;
+use crate::generated::functions::hash_76::ast_print_76cfbd458e230bac;
+use crate::generated::functions::hash_8e::ast_value_8e281e57f268ff8;
+use crate::generated::functions::hash_d8::ast_print_d87e2f7cfd46802c;
+use crate::generated::functions::hash_dd::ast_print_dd22782e5ba8c7cb;
+use crate::generated::functions::hash_f0::ast_print_f013e387a9d36985;
+use crate::generated::functions::hash_fd::ast_value_fd4074b621d9fc83;
 
 /// Tag definitions for Canon::CameraSettings table
 pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -35,7 +34,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "SelfTimer",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_314bc158a5c6c330)),
+                print_conv: Some(PrintConv::Function(ast_print_76cfbd458e230bac)),
                 value_conv: None,
             },
         ),
@@ -134,7 +133,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "Sharpness",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: None,
             },
         ),
@@ -144,7 +143,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 name: "CameraISO",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_cc8b3fc622e28074)),
+                value_conv: Some(ValueConv::Function(ast_value_23bd74b0abec6c74)),
             },
         ),
         (
@@ -197,8 +196,8 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "MaxFocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
-                value_conv: Some(ValueConv::Function(ast_value_237333b021276c6e)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
+                value_conv: Some(ValueConv::Function(ast_value_fd4074b621d9fc83)),
             },
         ),
         (
@@ -206,8 +205,8 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "MinFocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
-                value_conv: Some(ValueConv::Function(ast_value_237333b021276c6e)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
+                value_conv: Some(ValueConv::Function(ast_value_fd4074b621d9fc83)),
             },
         ),
         (
@@ -215,7 +214,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FocalUnits",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_423da13b81d6bdf1)),
+                print_conv: Some(PrintConv::Function(ast_print_615911c2f9c7546)),
                 value_conv: None,
             },
         ),
@@ -224,8 +223,8 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "MaxAperture",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bc983315d45d48a3)),
-                value_conv: Some(ValueConv::Function(ast_value_23ca0ed710a7de23)),
+                print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
+                value_conv: Some(ValueConv::Function(ast_value_75ea21c3208d8187)),
             },
         ),
         (
@@ -233,8 +232,8 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "MinAperture",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bc983315d45d48a3)),
-                value_conv: Some(ValueConv::Function(ast_value_23ca0ed710a7de23)),
+                print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
+                value_conv: Some(ValueConv::Function(ast_value_75ea21c3208d8187)),
             },
         ),
         (
@@ -288,7 +287,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 name: "DisplayAperture",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (

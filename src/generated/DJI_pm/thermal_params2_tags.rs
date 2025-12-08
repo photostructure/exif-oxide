@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_33::ast_print_339a38d31392b4fd;
-use crate::generated::functions::hash_bb::ast_print_bb744a13f82c4cd2;
-use crate::generated::functions::hash_eb::ast_print_ebe0a6b7251033b3;
-use crate::generated::functions::hash_ec::ast_print_ec7bd11b49f50639;
+use crate::generated::functions::hash_39::ast_print_3903820e7e53c0b1;
+use crate::generated::functions::hash_52::ast_print_52836b45c0320e15;
+use crate::generated::functions::hash_91::ast_print_9111b408f0b1518a;
+use crate::generated::functions::hash_ae::ast_print_aec511ac08c0f1fc;
 
 /// Tag definitions for DJI::ThermalParams2 table
 pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -20,7 +20,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "AmbientTemperature",
                 format: "float",
-                print_conv: Some(PrintConv::Function(ast_print_ebe0a6b7251033b3)),
+                print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
                 value_conv: None,
             },
         ),
@@ -29,7 +29,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "ObjectDistance",
                 format: "float",
-                print_conv: Some(PrintConv::Function(ast_print_ec7bd11b49f50639)),
+                print_conv: Some(PrintConv::Function(ast_print_52836b45c0320e15)),
                 value_conv: None,
             },
         ),
@@ -38,7 +38,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "Emissivity",
                 format: "float",
-                print_conv: Some(PrintConv::Function(ast_print_bb744a13f82c4cd2)),
+                print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
                 value_conv: None,
             },
         ),
@@ -47,7 +47,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "RelativeHumidity",
                 format: "float",
-                print_conv: Some(PrintConv::Function(ast_print_339a38d31392b4fd)),
+                print_conv: Some(PrintConv::Function(ast_print_3903820e7e53c0b1)),
                 value_conv: None,
             },
         ),
@@ -56,7 +56,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "ReflectedTemperature",
                 format: "float",
-                print_conv: Some(PrintConv::Function(ast_print_ebe0a6b7251033b3)),
+                print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
                 value_conv: None,
             },
         ),

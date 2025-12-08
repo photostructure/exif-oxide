@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_4e::ast_print_4ecd72b99799fca9;
-use crate::generated::functions::hash_bb::ast_print_bb744a13f82c4cd2;
+use crate::generated::functions::hash_ae::ast_print_aec511ac08c0f1fc;
+use crate::generated::functions::hash_ef::ast_print_ef0d00aaf4be0ccd;
 
 /// Tag definitions for Nikon::Scan table
 pub static NIKON_SCAN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -45,7 +45,7 @@ pub static NIKON_SCAN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "MasterGain",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bb744a13f82c4cd2)),
+                print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
                 value_conv: None,
             },
         ),
@@ -54,7 +54,7 @@ pub static NIKON_SCAN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ColorGain",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_4ecd72b99799fca9)),
+                print_conv: Some(PrintConv::Function(ast_print_ef0d00aaf4be0ccd)),
                 value_conv: None,
             },
         ),

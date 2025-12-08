@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_e1::ast_print_e1b9c18c6fb887af;
+use crate::generated::functions::hash_2a::ast_print_2aa532acb8a29737;
 
 /// Tag definitions for Nikon::BarometerInfo table
 pub static NIKON_BAROMETERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -26,7 +26,7 @@ pub static NIKON_BAROMETERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "Altitude",
                 format: "int32s",
-                print_conv: Some(PrintConv::Function(ast_print_e1b9c18c6fb887af)),
+                print_conv: Some(PrintConv::Function(ast_print_2aa532acb8a29737)),
                 value_conv: None,
             },
         ),

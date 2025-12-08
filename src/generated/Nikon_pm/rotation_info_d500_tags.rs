@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_bf::ast_print_bf221c10c194a77e;
+use crate::generated::functions::hash_52::ast_print_52df9ad712959d2;
 
 /// Tag definitions for Nikon::RotationInfoD500 table
 pub static NIKON_ROTATIONINFOD500_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -26,7 +26,7 @@ pub static NIKON_ROTATIONINFOD500_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "Interval",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bf221c10c194a77e)),
+                print_conv: Some(PrintConv::Function(ast_print_52df9ad712959d2)),
                 value_conv: None,
             },
         ),
@@ -35,7 +35,7 @@ pub static NIKON_ROTATIONINFOD500_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "IntervalFrame",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bf221c10c194a77e)),
+                print_conv: Some(PrintConv::Function(ast_print_52df9ad712959d2)),
                 value_conv: None,
             },
         ),

@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
+use crate::generated::functions::hash_dd::ast_print_dd22782e5ba8c7cb;
 
 /// Tag definitions for Sony::SR2SubIFD table
 pub static SONY_SR2SUBIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -125,7 +125,7 @@ pub static SONY_SR2SUBIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "MaxFocalLength",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
             },
         ),
@@ -134,7 +134,7 @@ pub static SONY_SR2SUBIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "MinFocalLength",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
             },
         ),

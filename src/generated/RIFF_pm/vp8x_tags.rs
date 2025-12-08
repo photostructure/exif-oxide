@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_ca::ast_value_ca11306ec5737301;
-use crate::generated::functions::hash_ee::ast_value_ee373eddfb12a7cf;
+use crate::generated::functions::hash_13::ast_value_133a2729aa715f5f;
+use crate::generated::functions::hash_b1::ast_value_b1ee7ff9667afb05;
 
 /// Tag definitions for RIFF::VP8X table
 pub static RIFF_VP8X_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -28,7 +28,7 @@ pub static RIFF_VP8X_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "ImageWidth",
                 format: "int32u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_ca11306ec5737301)),
+                value_conv: Some(ValueConv::Function(ast_value_133a2729aa715f5f)),
             },
         ),
         (
@@ -37,7 +37,7 @@ pub static RIFF_VP8X_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "ImageHeight",
                 format: "int32u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_ee373eddfb12a7cf)),
+                value_conv: Some(ValueConv::Function(ast_value_b1ee7ff9667afb05)),
             },
         ),
     ])

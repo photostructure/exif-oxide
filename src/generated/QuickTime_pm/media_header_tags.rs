@@ -7,11 +7,11 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_45::ast_value_45fef045148be706;
-use crate::generated::functions::hash_4a::ast_value_4a9a9258b669d68c;
-use crate::generated::functions::hash_89::ast_print_890e9fe5666b3c5c;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_d9::ast_print_d997884e64b76c6b;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_4a::ast_value_4ab1082138915ea5;
+use crate::generated::functions::hash_90::ast_print_90dee963b13ef4e1;
+use crate::generated::functions::hash_9b::ast_print_9b70d43f79fc1751;
+use crate::generated::functions::hash_e8::ast_value_e8af3016409e62f1;
 
 /// Tag definitions for QuickTime::MediaHeader table
 pub static QUICK_TIME_MEDIAHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -30,8 +30,8 @@ pub static QUICK_TIME_MEDIAHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MediaCreateDate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_4a9a9258b669d68c)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_e8af3016409e62f1)),
             },
         ),
         (
@@ -39,8 +39,8 @@ pub static QUICK_TIME_MEDIAHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MediaModifyDate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_4a9a9258b669d68c)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_e8af3016409e62f1)),
             },
         ),
         (
@@ -57,7 +57,7 @@ pub static QUICK_TIME_MEDIAHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MediaDuration",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d997884e64b76c6b)),
+                print_conv: Some(PrintConv::Function(ast_print_9b70d43f79fc1751)),
                 value_conv: None,
             },
         ),
@@ -66,8 +66,8 @@ pub static QUICK_TIME_MEDIAHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MediaLanguageCode",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_890e9fe5666b3c5c)),
-                value_conv: Some(ValueConv::Function(ast_value_45fef045148be706)),
+                print_conv: Some(PrintConv::Function(ast_print_90dee963b13ef4e1)),
+                value_conv: Some(ValueConv::Function(ast_value_4ab1082138915ea5)),
             },
         ),
     ])

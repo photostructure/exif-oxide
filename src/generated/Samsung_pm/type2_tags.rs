@@ -7,13 +7,13 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_26::ast_print_2605bce06efb0270;
-use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_a6::ast_value_a63033e775fcc039;
-use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
-use crate::generated::functions::hash_ed::ast_value_edcabe5cee6e23c4;
+use crate::generated::functions::hash_68::ast_value_68a0386b1983f2b;
+use crate::generated::functions::hash_76::ast_print_76c7cc600804b004;
+use crate::generated::functions::hash_8e::ast_value_8e281e57f268ff8;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_dd::ast_print_dd22782e5ba8c7cb;
+use crate::generated::functions::hash_f4::ast_value_f4bd1553bca2b9aa;
 
 /// Tag definitions for Samsung::Type2 table
 pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -69,7 +69,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "LocalLocationName",
                 format: "undef",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_a63033e775fcc039)),
+                value_conv: Some(ValueConv::Function(ast_value_f4bd1553bca2b9aa)),
             },
         ),
         (
@@ -104,7 +104,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "CameraTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_2605bce06efb0270)),
+                print_conv: Some(PrintConv::Function(ast_print_76c7cc600804b004)),
                 value_conv: None,
             },
         ),
@@ -239,8 +239,8 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ExposureTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_edcabe5cee6e23c4)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_68a0386b1983f2b)),
             },
         ),
         (
@@ -248,8 +248,8 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "FNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_edcabe5cee6e23c4)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_68a0386b1983f2b)),
             },
         ),
         (
@@ -257,8 +257,8 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "FocalLengthIn35mmFormat",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (

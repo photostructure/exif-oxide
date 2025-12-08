@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_3f::ast_value_3f43ae01afdbd02d;
-use crate::generated::functions::hash_5a::ast_value_5aff1f95e99e78bf;
-use crate::generated::functions::hash_84::ast_value_84c0b26ba3ca2227;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_75::ast_value_75ad43e334570127;
+use crate::generated::functions::hash_8e::ast_value_8e0f058500d5dea1;
+use crate::generated::functions::hash_b7::ast_value_b7ac49cbeefb8652;
 
 /// Tag definitions for RIFF::BroadcastExt table
 pub static RIFF_BROADCASTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -47,8 +47,8 @@ pub static RIFF_BROADCASTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "DateTimeOriginal",
                 format: "string[18]",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_84c0b26ba3ca2227)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_b7ac49cbeefb8652)),
             },
         ),
         (
@@ -57,7 +57,7 @@ pub static RIFF_BROADCASTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 name: "TimeReference",
                 format: "int32u[2]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_3f43ae01afdbd02d)),
+                value_conv: Some(ValueConv::Function(ast_value_75ad43e334570127)),
             },
         ),
         (
@@ -75,7 +75,7 @@ pub static RIFF_BROADCASTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 name: "BWF_UMID",
                 format: "undef[64]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_5aff1f95e99e78bf)),
+                value_conv: Some(ValueConv::Function(ast_value_8e0f058500d5dea1)),
             },
         ),
         (

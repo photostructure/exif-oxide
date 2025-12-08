@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
-use crate::generated::functions::hash_d3::ast_value_d37ffb72c49bf107;
-use crate::generated::functions::hash_ee::ast_value_ee9b0901d11400f9;
+use crate::generated::functions::hash_5f::ast_value_5fd665ca42e4d37a;
+use crate::generated::functions::hash_c0::ast_value_c0027708ba7e42e3;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
 
 /// Tag definitions for Kodak::CameraInfo table
 pub static KODAK_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -101,7 +101,7 @@ pub static KODAK_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 name: "FNumber",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+                value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
             },
         ),
         (
@@ -109,8 +109,8 @@ pub static KODAK_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "ExposureTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_d37ffb72c49bf107)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_5fd665ca42e4d37a)),
             },
         ),
         (

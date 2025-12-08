@@ -7,11 +7,11 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_15::ast_print_15d3bbdbc77bdb90;
-use crate::generated::functions::hash_3b::ast_print_3b2373f5e3819dad;
-use crate::generated::functions::hash_4f::ast_value_4ffb07b2339cdeec;
-use crate::generated::functions::hash_eb::ast_print_ebe0a6b7251033b3;
-use crate::generated::functions::hash_f7::ast_value_f7873b2dff9e970c;
+use crate::generated::functions::hash_13::ast_print_139aec60e3135c33;
+use crate::generated::functions::hash_52::ast_value_52fd700bac71f2a3;
+use crate::generated::functions::hash_91::ast_print_9111b408f0b1518a;
+use crate::generated::functions::hash_b8::ast_print_b8461ac67efa7740;
+use crate::generated::functions::hash_fc::ast_value_fc578fda6da96dc8;
 
 /// Tag definitions for Sony::ExtraInfo3 table
 pub static SONY_EXTRAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -30,8 +30,8 @@ pub static SONY_EXTRAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "BatteryTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ebe0a6b7251033b3)),
-                value_conv: Some(ValueConv::Function(ast_value_f7873b2dff9e970c)),
+                print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
+                value_conv: Some(ValueConv::Function(ast_value_fc578fda6da96dc8)),
             },
         ),
         (
@@ -39,7 +39,7 @@ pub static SONY_EXTRAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "BatteryLevel",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_15d3bbdbc77bdb90)),
+                print_conv: Some(PrintConv::Function(ast_print_b8461ac67efa7740)),
                 value_conv: None,
             },
         ),
@@ -48,8 +48,8 @@ pub static SONY_EXTRAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "BatteryVoltage1",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_3b2373f5e3819dad)),
-                value_conv: Some(ValueConv::Function(ast_value_4ffb07b2339cdeec)),
+                print_conv: Some(PrintConv::Function(ast_print_139aec60e3135c33)),
+                value_conv: Some(ValueConv::Function(ast_value_52fd700bac71f2a3)),
             },
         ),
         (
@@ -57,8 +57,8 @@ pub static SONY_EXTRAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "BatteryVoltage2",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_3b2373f5e3819dad)),
-                value_conv: Some(ValueConv::Function(ast_value_4ffb07b2339cdeec)),
+                print_conv: Some(PrintConv::Function(ast_print_139aec60e3135c33)),
+                value_conv: Some(ValueConv::Function(ast_value_52fd700bac71f2a3)),
             },
         ),
         (

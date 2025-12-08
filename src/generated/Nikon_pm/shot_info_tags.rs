@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_b3::ast_value_b3e836a520234da9;
+use crate::generated::functions::hash_7c::ast_value_7c6a8820d74e378b;
 
 /// Tag definitions for Nikon::ShotInfo table
 pub static NIKON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -90,7 +90,7 @@ pub static NIKON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "ShutterCount",
                 format: "undef[2]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_b3e836a520234da9)),
+                value_conv: Some(ValueConv::Function(ast_value_7c6a8820d74e378b)),
             },
         ),
         (

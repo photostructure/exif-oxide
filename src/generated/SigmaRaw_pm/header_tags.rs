@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_15::ast_value_15cf16a8ad9f58e5;
-use crate::generated::functions::hash_7e::ast_value_7eadc2f4518c667e;
+use crate::generated::functions::hash_9d::ast_value_9d90e808fc13dd1;
+use crate::generated::functions::hash_c3::ast_value_c3ac357278ffbbb0;
 
 /// Tag definitions for SigmaRaw::Header table
 pub static SIGMA_RAW_HEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -19,7 +19,7 @@ pub static SIGMA_RAW_HEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 name: "FileVersion",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_15cf16a8ad9f58e5)),
+                value_conv: Some(ValueConv::Function(ast_value_9d90e808fc13dd1)),
             },
         ),
         (
@@ -28,7 +28,7 @@ pub static SIGMA_RAW_HEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 name: "ImageUniqueID",
                 format: "undef[16]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (

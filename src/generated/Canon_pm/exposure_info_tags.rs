@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_2c::ast_value_2c6b83cffd1363b8;
-use crate::generated::functions::hash_63::ast_print_634937674bb4dcf3;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_b8::ast_print_b8d6a32d77c36946;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_d3::ast_value_d378c181cb02c26d;
 
 /// Tag definitions for Canon::ExposureInfo table
 pub static CANON_EXPOSUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -19,7 +19,7 @@ pub static CANON_EXPOSUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "FNumber",
                 format: "rational32u",
-                print_conv: Some(PrintConv::Function(ast_print_634937674bb4dcf3)),
+                print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
                 value_conv: None,
             },
         ),
@@ -28,7 +28,7 @@ pub static CANON_EXPOSUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "ExposureTime",
                 format: "rational32u",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: None,
             },
         ),
@@ -38,7 +38,7 @@ pub static CANON_EXPOSUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 name: "ISO",
                 format: "int32u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_2c6b83cffd1363b8)),
+                value_conv: Some(ValueConv::Function(ast_value_d378c181cb02c26d)),
             },
         ),
     ])

@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_36::ast_value_36edbc9980448bd8;
-use crate::generated::functions::hash_b1::ast_value_b1a21daf01322ba9;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_4a::ast_value_4ac91d308bf0a86e;
+use crate::generated::functions::hash_da::ast_value_da19f9751eeb9fa7;
 
 /// Tag definitions for CanonRaw::TimeStamp table
 pub static CANON_RAW_TIMESTAMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -19,8 +19,8 @@ pub static CANON_RAW_TIMESTAMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "DateTimeOriginal",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_b1a21daf01322ba9)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_da19f9751eeb9fa7)),
             },
         ),
         (
@@ -29,7 +29,7 @@ pub static CANON_RAW_TIMESTAMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "TimeZoneCode",
                 format: "int32s",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_36edbc9980448bd8)),
+                value_conv: Some(ValueConv::Function(ast_value_4ac91d308bf0a86e)),
             },
         ),
         (

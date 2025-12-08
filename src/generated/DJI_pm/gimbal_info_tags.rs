@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
+use crate::generated::functions::hash_8e::ast_value_8e281e57f268ff8;
 
 /// Tag definitions for DJI::GimbalInfo table
 pub static DJI_GIMBALINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -18,7 +18,7 @@ pub static DJI_GIMBALINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "GimbalPitch",
                 format: "int64s",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -27,7 +27,7 @@ pub static DJI_GIMBALINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "GimbalRoll",
                 format: "int64s",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -36,7 +36,7 @@ pub static DJI_GIMBALINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "GimbalYaw",
                 format: "int64s",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
     ])

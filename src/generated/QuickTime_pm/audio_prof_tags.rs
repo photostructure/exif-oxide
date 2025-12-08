@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_1b::ast_print_1b836ed3009794ff;
-use crate::generated::functions::hash_8f::ast_print_8f60444a6530198d;
-use crate::generated::functions::hash_fd::ast_value_fdcd5166daf4068;
+use crate::generated::functions::hash_21::ast_print_21dfca2f396095a;
+use crate::generated::functions::hash_2d::ast_print_2d66b9944b9eb1b1;
+use crate::generated::functions::hash_dd::ast_value_dd746112419bd2e9;
 
 /// Tag definitions for QuickTime::AudioProf table
 pub static QUICK_TIME_AUDIOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -37,7 +37,7 @@ pub static QUICK_TIME_AUDIOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "AudioCodecInfo",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_1b836ed3009794ff)),
+                print_conv: Some(PrintConv::Function(ast_print_2d66b9944b9eb1b1)),
                 value_conv: None,
             },
         ),
@@ -55,8 +55,8 @@ pub static QUICK_TIME_AUDIOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "AudioAvgBitrate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8f60444a6530198d)),
-                value_conv: Some(ValueConv::Function(ast_value_fdcd5166daf4068)),
+                print_conv: Some(PrintConv::Function(ast_print_21dfca2f396095a)),
+                value_conv: Some(ValueConv::Function(ast_value_dd746112419bd2e9)),
             },
         ),
         (
@@ -64,8 +64,8 @@ pub static QUICK_TIME_AUDIOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "AudioMaxBitrate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8f60444a6530198d)),
-                value_conv: Some(ValueConv::Function(ast_value_fdcd5166daf4068)),
+                print_conv: Some(PrintConv::Function(ast_print_21dfca2f396095a)),
+                value_conv: Some(ValueConv::Function(ast_value_dd746112419bd2e9)),
             },
         ),
     ])

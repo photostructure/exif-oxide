@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_ce::ast_value_ce021e4f406e261d;
+use crate::generated::functions::hash_cd::ast_value_cd271f48a4863d1a;
 
 /// Tag definitions for Nikon::GEM table
 pub static NIKON_GEM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static NIKON_GEM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "DigitalGEM",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_ce021e4f406e261d)),
+            value_conv: Some(ValueConv::Function(ast_value_cd271f48a4863d1a)),
         },
     )])
 });

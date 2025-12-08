@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_16::ast_print_162c0c787a1ce5f3;
-use crate::generated::functions::hash_53::ast_print_53e26bd836197e46;
-use crate::generated::functions::hash_93::ast_print_936cc7e573e248bc;
+use crate::generated::functions::hash_17::ast_print_17c4eccbacff8df4;
+use crate::generated::functions::hash_2c::ast_print_2c5616f5b0afd52d;
+use crate::generated::functions::hash_ad::ast_print_ad2eac416d617233;
 
 /// Tag definitions for Nikon::AutoCaptureInfo table
 pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -28,7 +28,7 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "AutoCaptureCriteria",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_936cc7e573e248bc)),
+                print_conv: Some(PrintConv::Function(ast_print_2c5616f5b0afd52d)),
                 value_conv: None,
             },
         ),
@@ -55,7 +55,7 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "AutoCaptureDistanceFar",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_53e26bd836197e46)),
+                print_conv: Some(PrintConv::Function(ast_print_17c4eccbacff8df4)),
                 value_conv: None,
             },
         ),
@@ -64,7 +64,7 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "AutoCaptureDistanceNear",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_53e26bd836197e46)),
+                print_conv: Some(PrintConv::Function(ast_print_17c4eccbacff8df4)),
                 value_conv: None,
             },
         ),
@@ -73,7 +73,7 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "AutoCaptureCriteriaMotionDirection",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_162c0c787a1ce5f3)),
+                print_conv: Some(PrintConv::Function(ast_print_ad2eac416d617233)),
                 value_conv: None,
             },
         ),

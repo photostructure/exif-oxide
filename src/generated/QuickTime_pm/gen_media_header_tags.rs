@@ -8,7 +8,7 @@ use std::sync::LazyLock;
 
 /// Tag definitions for QuickTime::GenMediaHeader table
 pub static QUICK_TIME_GENMEDIAHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> =
-    LazyLock::new(|| HashMap::new());
+    LazyLock::new(HashMap::new);
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

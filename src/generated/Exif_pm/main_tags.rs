@@ -7,37 +7,41 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_12::ast_value_1278a798296d5090;
-use crate::generated::functions::hash_20::ast_print_2098e9c22eb4e03d;
-use crate::generated::functions::hash_30::ast_print_30c6ff66128b242c;
-use crate::generated::functions::hash_41::ast_print_4186404e3c9fa11a;
-use crate::generated::functions::hash_42::ast_value_4262675ed10175b0;
-use crate::generated::functions::hash_43::ast_value_43559da6465bfeb3;
-use crate::generated::functions::hash_51::ast_value_51b27304e42ac9f0;
-use crate::generated::functions::hash_63::ast_print_634937674bb4dcf3;
-use crate::generated::functions::hash_6c::ast_value_6cb46ed7ea997c8d;
-use crate::generated::functions::hash_6f::ast_value_6f48389e89817069;
-use crate::generated::functions::hash_7d::ast_print_7d90dbf32d8eb4be;
-use crate::generated::functions::hash_7e::ast_value_7eadc2f4518c667e;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_9b::ast_print_9b893935f2d0a4ac;
-use crate::generated::functions::hash_9f::ast_value_9f9eee6bd4079325;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_b3::ast_value_b3bc420d22d07d89;
-use crate::generated::functions::hash_b8::ast_value_b8dc6123922f8b5b;
-use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
-use crate::generated::functions::hash_bb::ast_print_bba76882980e1e1a;
-use crate::generated::functions::hash_c0::ast_print_c0a8bf21acb9deb1;
-use crate::generated::functions::hash_c1::ast_print_c12c7e50f55cf298;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
-use crate::generated::functions::hash_cc::ast_value_cc04498da2daf80c;
-use crate::generated::functions::hash_d3::ast_print_d3baecf4975cff4c;
-use crate::generated::functions::hash_d8::ast_print_d8a29c30d565fdb7;
-use crate::generated::functions::hash_e0::ast_print_e061810051fc636d;
-use crate::generated::functions::hash_e4::ast_print_e4f2e8444c0901ff;
-use crate::generated::functions::hash_e5::ast_value_e53323763c41feda;
-use crate::generated::functions::hash_ed::ast_print_ed72af4e216ef08f;
-use crate::generated::functions::hash_f0::ast_value_f0ad119439d04a33;
+use crate::generated::functions::hash_11::ast_value_11127a0177bcf959;
+use crate::generated::functions::hash_13::ast_value_1304121df5fd2971;
+use crate::generated::functions::hash_20::ast_print_20b4fd429d540f17;
+use crate::generated::functions::hash_21::ast_value_21a96bd45833ea97;
+use crate::generated::functions::hash_39::ast_value_39be436ee8eb1143;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_3f::ast_print_3fbf626e8f5baf04;
+use crate::generated::functions::hash_4d::ast_value_4dbfa1ab67f3dd58;
+use crate::generated::functions::hash_6b::ast_print_6b0aa669c8d8e892;
+use crate::generated::functions::hash_71::ast_value_718699e08034e1ee;
+use crate::generated::functions::hash_7c::{
+    ast_print_7c85cf32a45b11ab, ast_print_7cc7a4bf3f82cb33,
+};
+use crate::generated::functions::hash_92::{
+    ast_value_926e96c93b8b92c5, ast_value_928b8af59f04cfe9,
+};
+use crate::generated::functions::hash_93::ast_print_9310b43635711d8f;
+use crate::generated::functions::hash_9b::ast_print_9b12689ce0511009;
+use crate::generated::functions::hash_a1::ast_print_a1f6756c7e2030be;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_b8::ast_print_b8d6a32d77c36946;
+use crate::generated::functions::hash_bb::ast_value_bb77e52729467611;
+use crate::generated::functions::hash_c3::ast_value_c3ac357278ffbbb0;
+use crate::generated::functions::hash_c7::ast_print_c75c30ea6d74d638;
+use crate::generated::functions::hash_c8::ast_print_c8bca6375178b51d;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_cf::{
+    ast_print_cf9a386ca48e832b, ast_value_cfe9e72af3aafc7b,
+};
+use crate::generated::functions::hash_dd::{
+    ast_print_dd22782e5ba8c7cb, ast_print_dd3be644838b9531,
+};
+use crate::generated::functions::hash_e1::ast_value_e19b1ac6c7b6ad13;
+use crate::generated::functions::hash_e3::ast_value_e32785f4df88dda7;
+use crate::generated::functions::hash_e5::ast_print_e50dfd1aa09ed50e;
 use crate::implementations::print_conv::lensinfo_print_conv;
 
 /// Tag definitions for Exif::Main table
@@ -221,13 +225,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "FreeOffsets",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_b3bc420d22d07d89)),
+            value_conv: Some(ValueConv::Function(ast_value_e32785f4df88dda7)),
         }),
         (289, TagInfo {
             name: "FreeByteCounts",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_b3bc420d22d07d89)),
+            value_conv: Some(ValueConv::Function(ast_value_e32785f4df88dda7)),
         }),
         (290, TagInfo {
             name: "GrayResponseUnit",
@@ -280,7 +284,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (306, TagInfo {
             name: "ModifyDate",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+            print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
             value_conv: None,
         }),
         (315, TagInfo {
@@ -341,13 +345,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "TileOffsets",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_b3bc420d22d07d89)),
+            value_conv: Some(ValueConv::Function(ast_value_e32785f4df88dda7)),
         }),
         (325, TagInfo {
             name: "TileByteCounts",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_b3bc420d22d07d89)),
+            value_conv: Some(ValueConv::Function(ast_value_e32785f4df88dda7)),
         }),
         (327, TagInfo {
             name: "CleanFaxData",
@@ -515,7 +519,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "XP_DIP_XML",
             format: "undef",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_9f9eee6bd4079325)),
+            value_conv: Some(ValueConv::Function(ast_value_39be436ee8eb1143)),
         }),
         (18248, TagInfo {
             name: "StitchInfo",
@@ -658,7 +662,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (32934, TagInfo {
             name: "WangTag4",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_ed72af4e216ef08f)),
+            print_conv: Some(PrintConv::Function(ast_print_a1f6756c7e2030be)),
             value_conv: None,
         }),
         (33421, TagInfo {
@@ -694,13 +698,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (33434, TagInfo {
             name: "ExposureTime",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
+            print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
             value_conv: None,
         }),
         (33437, TagInfo {
             name: "FNumber",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_634937674bb4dcf3)),
+            print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
             value_conv: None,
         }),
         (33445, TagInfo {
@@ -862,7 +866,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (34855, TagInfo {
             name: "ISO",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_d8a29c30d565fdb7)),
+            print_conv: Some(PrintConv::Function(ast_print_9310b43635711d8f)),
             value_conv: None,
         }),
         (34856, TagInfo {
@@ -934,13 +938,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (36867, TagInfo {
             name: "DateTimeOriginal",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+            print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
             value_conv: None,
         }),
         (36868, TagInfo {
             name: "CreateDate",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+            print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
             value_conv: None,
         }),
         (36873, TagInfo {
@@ -982,14 +986,14 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (37377, TagInfo {
             name: "ShutterSpeedValue",
             format: "rational64s",
-            print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-            value_conv: Some(ValueConv::Function(ast_value_e53323763c41feda)),
+            print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+            value_conv: Some(ValueConv::Function(ast_value_928b8af59f04cfe9)),
         }),
         (37378, TagInfo {
             name: "ApertureValue",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-            value_conv: Some(ValueConv::Function(ast_value_6cb46ed7ea997c8d)),
+            print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+            value_conv: Some(ValueConv::Function(ast_value_bb77e52729467611)),
         }),
         (37379, TagInfo {
             name: "BrightnessValue",
@@ -1000,19 +1004,19 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (37380, TagInfo {
             name: "ExposureCompensation",
             format: "rational64s",
-            print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
+            print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
             value_conv: None,
         }),
         (37381, TagInfo {
             name: "MaxApertureValue",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-            value_conv: Some(ValueConv::Function(ast_value_6cb46ed7ea997c8d)),
+            print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+            value_conv: Some(ValueConv::Function(ast_value_bb77e52729467611)),
         }),
         (37382, TagInfo {
             name: "SubjectDistance",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_4186404e3c9fa11a)),
+            print_conv: Some(PrintConv::Function(ast_print_20b4fd429d540f17)),
             value_conv: None,
         }),
         (37383, TagInfo {
@@ -1036,7 +1040,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (37386, TagInfo {
             name: "FocalLength",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_30c6ff66128b242c)),
+            print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
             value_conv: None,
         }),
         (37387, TagInfo {
@@ -1078,7 +1082,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (37398, TagInfo {
             name: "TIFF-EPStandardID",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+            print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
             value_conv: None,
         }),
         (37399, TagInfo {
@@ -1097,19 +1101,19 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "SubSecTime",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_f0ad119439d04a33)),
+            value_conv: Some(ValueConv::Function(ast_value_e19b1ac6c7b6ad13)),
         }),
         (37521, TagInfo {
             name: "SubSecTimeOriginal",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_f0ad119439d04a33)),
+            value_conv: Some(ValueConv::Function(ast_value_e19b1ac6c7b6ad13)),
         }),
         (37522, TagInfo {
             name: "SubSecTimeDigitized",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_f0ad119439d04a33)),
+            value_conv: Some(ValueConv::Function(ast_value_e19b1ac6c7b6ad13)),
         }),
         (37680, TagInfo {
             name: "MSPropertySetStorage",
@@ -1132,7 +1136,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (37888, TagInfo {
             name: "AmbientTemperature",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
+            print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
             value_conv: None,
         }),
         (37889, TagInfo {
@@ -1181,31 +1185,31 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "XPTitle",
             format: "undef",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_9f9eee6bd4079325)),
+            value_conv: Some(ValueConv::Function(ast_value_39be436ee8eb1143)),
         }),
         (40092, TagInfo {
             name: "XPComment",
             format: "undef",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_9f9eee6bd4079325)),
+            value_conv: Some(ValueConv::Function(ast_value_39be436ee8eb1143)),
         }),
         (40093, TagInfo {
             name: "XPAuthor",
             format: "undef",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_9f9eee6bd4079325)),
+            value_conv: Some(ValueConv::Function(ast_value_39be436ee8eb1143)),
         }),
         (40094, TagInfo {
             name: "XPKeywords",
             format: "undef",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_9f9eee6bd4079325)),
+            value_conv: Some(ValueConv::Function(ast_value_39be436ee8eb1143)),
         }),
         (40095, TagInfo {
             name: "XPSubject",
             format: "undef",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_9f9eee6bd4079325)),
+            value_conv: Some(ValueConv::Function(ast_value_39be436ee8eb1143)),
         }),
         (40960, TagInfo {
             name: "FlashpixVersion",
@@ -1276,7 +1280,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (41484, TagInfo {
             name: "SpatialFrequencyResponse",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_9b893935f2d0a4ac)),
+            print_conv: Some(PrintConv::Function(ast_print_c75c30ea6d74d638)),
             value_conv: None,
         }),
         (41486, TagInfo {
@@ -1312,7 +1316,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (41494, TagInfo {
             name: "TIFF-EPStandardID",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+            print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
             value_conv: None,
         }),
         (41495, TagInfo {
@@ -1336,7 +1340,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (41730, TagInfo {
             name: "CFAPattern",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_7d90dbf32d8eb4be)),
+            print_conv: Some(PrintConv::Function(ast_print_9b12689ce0511009)),
             value_conv: None,
         }),
         (41985, TagInfo {
@@ -1366,7 +1370,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (41989, TagInfo {
             name: "FocalLengthIn35mmFormat",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
+            print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
             value_conv: None,
         }),
         (41990, TagInfo {
@@ -1541,7 +1545,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "PixelFormat",
             format: "undef",
             print_conv: Some(PrintConv::Complex),
-            value_conv: Some(ValueConv::Function(ast_value_1278a798296d5090)),
+            value_conv: Some(ValueConv::Function(ast_value_11127a0177bcf959)),
         }),
         (48130, TagInfo {
             name: "Transformation",
@@ -1642,13 +1646,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (50706, TagInfo {
             name: "DNGVersion",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+            print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
             value_conv: None,
         }),
         (50707, TagInfo {
             name: "DNGBackwardVersion",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+            print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
             value_conv: None,
         }),
         (50708, TagInfo {
@@ -1660,13 +1664,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (50709, TagInfo {
             name: "LocalizedCameraModel",
             format: "string",
-            print_conv: Some(PrintConv::Function(ast_print_e4f2e8444c0901ff)),
-            value_conv: Some(ValueConv::Function(ast_value_b8dc6123922f8b5b)),
+            print_conv: Some(PrintConv::Function(ast_print_3fbf626e8f5baf04)),
+            value_conv: Some(ValueConv::Function(ast_value_718699e08034e1ee)),
         }),
         (50710, TagInfo {
             name: "CFAPlaneColor",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_e061810051fc636d)),
+            print_conv: Some(PrintConv::Function(ast_print_6b0aa669c8d8e892)),
             value_conv: None,
         }),
         (50711, TagInfo {
@@ -1697,13 +1701,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "BlackLevelDeltaH",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_4262675ed10175b0)),
+            value_conv: Some(ValueConv::Function(ast_value_1304121df5fd2971)),
         }),
         (50716, TagInfo {
             name: "BlackLevelDeltaV",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_4262675ed10175b0)),
+            value_conv: Some(ValueConv::Function(ast_value_1304121df5fd2971)),
         }),
         (50717, TagInfo {
             name: "WhiteLevel",
@@ -1877,7 +1881,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "RawDataUniqueID",
             format: "undef",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_6f48389e89817069)),
+            value_conv: Some(ValueConv::Function(ast_value_4dbfa1ab67f3dd58)),
         }),
         (50784, TagInfo {
             name: "AliasLayerMetadata",
@@ -1889,7 +1893,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "OriginalRawFileName",
             format: "string",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_b8dc6123922f8b5b)),
+            value_conv: Some(ValueConv::Function(ast_value_718699e08034e1ee)),
         }),
         (50828, TagInfo {
             name: "OriginalRawFileData",
@@ -1949,25 +1953,25 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "PanasonicTitle",
             format: "string",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_b8dc6123922f8b5b)),
+            value_conv: Some(ValueConv::Function(ast_value_718699e08034e1ee)),
         }),
         (50899, TagInfo {
             name: "PanasonicTitle2",
             format: "string",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_b8dc6123922f8b5b)),
+            value_conv: Some(ValueConv::Function(ast_value_718699e08034e1ee)),
         }),
         (50931, TagInfo {
             name: "CameraCalibrationSig",
             format: "string",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_b8dc6123922f8b5b)),
+            value_conv: Some(ValueConv::Function(ast_value_718699e08034e1ee)),
         }),
         (50932, TagInfo {
             name: "ProfileCalibrationSig",
             format: "string",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_b8dc6123922f8b5b)),
+            value_conv: Some(ValueConv::Function(ast_value_718699e08034e1ee)),
         }),
         (50933, TagInfo {
             name: "ProfileIFD",
@@ -1979,7 +1983,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "AsShotProfileName",
             format: "string",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_b8dc6123922f8b5b)),
+            value_conv: Some(ValueConv::Function(ast_value_718699e08034e1ee)),
         }),
         (50935, TagInfo {
             name: "NoiseReductionApplied",
@@ -1991,7 +1995,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "ProfileName",
             format: "string",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_b8dc6123922f8b5b)),
+            value_conv: Some(ValueConv::Function(ast_value_718699e08034e1ee)),
         }),
         (50937, TagInfo {
             name: "ProfileHueSatMapDims",
@@ -2003,19 +2007,19 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "ProfileHueSatMapData1",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_4262675ed10175b0)),
+            value_conv: Some(ValueConv::Function(ast_value_1304121df5fd2971)),
         }),
         (50939, TagInfo {
             name: "ProfileHueSatMapData2",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_4262675ed10175b0)),
+            value_conv: Some(ValueConv::Function(ast_value_1304121df5fd2971)),
         }),
         (50940, TagInfo {
             name: "ProfileToneCurve",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_4262675ed10175b0)),
+            value_conv: Some(ValueConv::Function(ast_value_1304121df5fd2971)),
         }),
         (50941, TagInfo {
             name: "ProfileEmbedPolicy",
@@ -2027,7 +2031,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "ProfileCopyright",
             format: "string",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_b8dc6123922f8b5b)),
+            value_conv: Some(ValueConv::Function(ast_value_718699e08034e1ee)),
         }),
         (50964, TagInfo {
             name: "ForwardMatrix1",
@@ -2045,25 +2049,25 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "PreviewApplicationName",
             format: "string",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_b8dc6123922f8b5b)),
+            value_conv: Some(ValueConv::Function(ast_value_718699e08034e1ee)),
         }),
         (50967, TagInfo {
             name: "PreviewApplicationVersion",
             format: "string",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_b8dc6123922f8b5b)),
+            value_conv: Some(ValueConv::Function(ast_value_718699e08034e1ee)),
         }),
         (50968, TagInfo {
             name: "PreviewSettingsName",
             format: "string",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_b8dc6123922f8b5b)),
+            value_conv: Some(ValueConv::Function(ast_value_718699e08034e1ee)),
         }),
         (50969, TagInfo {
             name: "PreviewSettingsDigest",
             format: "undef",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
         }),
         (50970, TagInfo {
             name: "PreviewColorSpace",
@@ -2074,20 +2078,20 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (50971, TagInfo {
             name: "PreviewDateTime",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-            value_conv: Some(ValueConv::Function(ast_value_cc04498da2daf80c)),
+            print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+            value_conv: Some(ValueConv::Function(ast_value_cfe9e72af3aafc7b)),
         }),
         (50972, TagInfo {
             name: "RawImageDigest",
             format: "undef",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
         }),
         (50973, TagInfo {
             name: "OriginalRawFileDigest",
             format: "undef",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
         }),
         (50981, TagInfo {
             name: "ProfileLookTableDims",
@@ -2099,7 +2103,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "ProfileLookTableData",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_4262675ed10175b0)),
+            value_conv: Some(ValueConv::Function(ast_value_1304121df5fd2971)),
         }),
         (51008, TagInfo {
             name: "OpcodeList1",
@@ -2129,18 +2133,18 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "TimeCodes",
             format: "unknown",
             print_conv: Some(PrintConv::Expression("my @a = map hex, split /[. ]+/, $val;\n            my @v;\n            while (@a >= 8) {\n                my $str = sprintf(\"%.2x:%.2x:%.2x.%.2x\", $a[3]&0x3f,\n                                 $a[2]&0x7f, $a[1]&0x7f, $a[0]&0x3f);\n                if ($a[3] & 0x80) { # date+timezone exist if BGF2 is set\n                    my $tz = $a[7] & 0x3f;\n                    my $bz = sprintf('%.2x', $tz);\n                    $bz = 100 if $bz =~ /[a-f]/i; # not BCD\n                    if ($bz < 26) {\n                        $tz = ($bz < 13 ? 0 : 26) - $bz;\n                    } elsif ($bz == 32) {\n                        $tz = 12.75;\n                    } elsif ($bz >= 28 and $bz <= 31) {\n                        $tz = 0;    # UTC\n                    } elsif ($bz < 100) {\n                        undef $tz;  # undefined or user-defined\n                    } elsif ($tz < 0x20) {\n                        $tz = (($tz < 0x10 ? 10 : 20) - $tz) - 0.5;\n                    } else {\n                        $tz = (($tz < 0x30 ? 53 : 63) - $tz) + 0.5;\n                    }\n                    if ($a[7] & 0x80) { # MJD format (/w UTC time)\n                        my ($h,$m,$s,$f) = split /[:.]/, $str;\n                        my $jday = sprintf('%x%.2x%.2x', reverse @a[4..6]);\n                        $str = ConvertUnixTime(($jday - 40587) * 24 * 3600\n                                 + ((($h+$tz) * 60) + $m) * 60 + $s) . \".$f\";\n                        $str =~ s/^(\\d+):(\\d+):(\\d+) /$1-$2-${3}T/;\n                    } else { # YYMMDD (Note: CinemaDNG 1.1 example seems wrong)\n                        my $yr = sprintf('%.2x',$a[6]) + 1900;\n                        $yr += 100 if $yr < 1970;\n                        $str = sprintf('%d-%.2x-%.2xT%s',$yr,$a[5],$a[4],$str);\n                    }\n                    $str .= TimeZoneString($tz*60) if defined $tz;\n                }\n                push @v, $str;\n                splice @a, 0, 8;\n            }\n            join ' ', @v;".to_string())),
-            value_conv: Some(ValueConv::Function(ast_value_43559da6465bfeb3)),
+            value_conv: Some(ValueConv::Function(ast_value_21a96bd45833ea97)),
         }),
         (51044, TagInfo {
             name: "FrameRate",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_c0a8bf21acb9deb1)),
+            print_conv: Some(PrintConv::Function(ast_print_dd3be644838b9531)),
             value_conv: None,
         }),
         (51058, TagInfo {
             name: "TStop",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_2098e9c22eb4e03d)),
+            print_conv: Some(PrintConv::Function(ast_print_cf9a386ca48e832b)),
             value_conv: None,
         }),
         (51081, TagInfo {
@@ -2201,7 +2205,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "NewRawImageDigest",
             format: "undef",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+            value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
         }),
         (51112, TagInfo {
             name: "RawToPreviewGain",
@@ -2212,7 +2216,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (51114, TagInfo {
             name: "CacheVersion",
             format: "int8u",
-            print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+            print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
             value_conv: None,
         }),
         (51125, TagInfo {
@@ -2345,7 +2349,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "ProfileHueSatMapData3",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_4262675ed10175b0)),
+            value_conv: Some(ValueConv::Function(ast_value_1304121df5fd2971)),
         }),
         (52538, TagInfo {
             name: "ReductionMatrix3",
@@ -2441,19 +2445,19 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "OwnerName",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_51b27304e42ac9f0)),
+            value_conv: Some(ValueConv::Function(ast_value_926e96c93b8b92c5)),
         }),
         (65001, TagInfo {
             name: "SerialNumber",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_51b27304e42ac9f0)),
+            value_conv: Some(ValueConv::Function(ast_value_926e96c93b8b92c5)),
         }),
         (65002, TagInfo {
             name: "Lens",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_51b27304e42ac9f0)),
+            value_conv: Some(ValueConv::Function(ast_value_926e96c93b8b92c5)),
         }),
         (65024, TagInfo {
             name: "KDC_IFD",
@@ -2465,67 +2469,67 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "RawFile",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_51b27304e42ac9f0)),
+            value_conv: Some(ValueConv::Function(ast_value_926e96c93b8b92c5)),
         }),
         (65101, TagInfo {
             name: "Converter",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_51b27304e42ac9f0)),
+            value_conv: Some(ValueConv::Function(ast_value_926e96c93b8b92c5)),
         }),
         (65102, TagInfo {
             name: "WhiteBalance",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_51b27304e42ac9f0)),
+            value_conv: Some(ValueConv::Function(ast_value_926e96c93b8b92c5)),
         }),
         (65105, TagInfo {
             name: "Exposure",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_51b27304e42ac9f0)),
+            value_conv: Some(ValueConv::Function(ast_value_926e96c93b8b92c5)),
         }),
         (65106, TagInfo {
             name: "Shadows",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_51b27304e42ac9f0)),
+            value_conv: Some(ValueConv::Function(ast_value_926e96c93b8b92c5)),
         }),
         (65107, TagInfo {
             name: "Brightness",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_51b27304e42ac9f0)),
+            value_conv: Some(ValueConv::Function(ast_value_926e96c93b8b92c5)),
         }),
         (65108, TagInfo {
             name: "Contrast",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_51b27304e42ac9f0)),
+            value_conv: Some(ValueConv::Function(ast_value_926e96c93b8b92c5)),
         }),
         (65109, TagInfo {
             name: "Saturation",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_51b27304e42ac9f0)),
+            value_conv: Some(ValueConv::Function(ast_value_926e96c93b8b92c5)),
         }),
         (65110, TagInfo {
             name: "Sharpness",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_51b27304e42ac9f0)),
+            value_conv: Some(ValueConv::Function(ast_value_926e96c93b8b92c5)),
         }),
         (65111, TagInfo {
             name: "Smoothness",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_51b27304e42ac9f0)),
+            value_conv: Some(ValueConv::Function(ast_value_926e96c93b8b92c5)),
         }),
         (65112, TagInfo {
             name: "MoireFilter",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_51b27304e42ac9f0)),
+            value_conv: Some(ValueConv::Function(ast_value_926e96c93b8b92c5)),
         }),
     ])
 });

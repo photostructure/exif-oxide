@@ -7,15 +7,15 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
-use crate::generated::functions::hash_5b::ast_value_5b2c41e400f339d0;
-use crate::generated::functions::hash_70::ast_value_7004e7ca2c0f515b;
-use crate::generated::functions::hash_80::ast_value_804ed219632737fc;
-use crate::generated::functions::hash_a1::ast_value_a1bbe7c476ada4eb;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_b3::ast_value_b39416bae8717543;
-use crate::generated::functions::hash_c0::ast_print_c0a8bf21acb9deb1;
-use crate::generated::functions::hash_e1::ast_print_e1b9c18c6fb887af;
+use crate::generated::functions::hash_1c::ast_value_1cfdd58fcf11f5dc;
+use crate::generated::functions::hash_2a::ast_print_2aa532acb8a29737;
+use crate::generated::functions::hash_33::ast_value_3346505e2ab784dc;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_4d::ast_value_4dde3a7930a81c1c;
+use crate::generated::functions::hash_5e::ast_value_5e0f3c4ea6b0a8d5;
+use crate::generated::functions::hash_8e::ast_value_8e281e57f268ff8;
+use crate::generated::functions::hash_dd::ast_print_dd3be644838b9531;
+use crate::generated::functions::hash_e1::ast_value_e17c40c8078c4a4b;
 
 /// Tag definitions for Red::Main table
 pub static RED_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -35,7 +35,7 @@ pub static RED_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "OtherDate1",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_b39416bae8717543)),
+                value_conv: Some(ValueConv::Function(ast_value_4dde3a7930a81c1c)),
             },
         ),
         (
@@ -44,7 +44,7 @@ pub static RED_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "OtherDate2",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_b39416bae8717543)),
+                value_conv: Some(ValueConv::Function(ast_value_4dde3a7930a81c1c)),
             },
         ),
         (
@@ -53,7 +53,7 @@ pub static RED_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "OtherDate3",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_b39416bae8717543)),
+                value_conv: Some(ValueConv::Function(ast_value_4dde3a7930a81c1c)),
             },
         ),
         (
@@ -61,8 +61,8 @@ pub static RED_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "DateTimeOriginal",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_804ed219632737fc)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_1cfdd58fcf11f5dc)),
             },
         ),
         (
@@ -89,7 +89,7 @@ pub static RED_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "DateCreated",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_a1bbe7c476ada4eb)),
+                value_conv: Some(ValueConv::Function(ast_value_5e0f3c4ea6b0a8d5)),
             },
         ),
         (
@@ -98,7 +98,7 @@ pub static RED_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "TimeCreated",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7004e7ca2c0f515b)),
+                value_conv: Some(ValueConv::Function(ast_value_e17c40c8078c4a4b)),
             },
         ),
         (
@@ -116,7 +116,7 @@ pub static RED_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "StorageFormatDate",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_a1bbe7c476ada4eb)),
+                value_conv: Some(ValueConv::Function(ast_value_5e0f3c4ea6b0a8d5)),
             },
         ),
         (
@@ -125,7 +125,7 @@ pub static RED_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "StorageFormatTime",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7004e7ca2c0f515b)),
+                value_conv: Some(ValueConv::Function(ast_value_e17c40c8078c4a4b)),
             },
         ),
         (
@@ -160,7 +160,7 @@ pub static RED_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "OriginalFrameRate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c0a8bf21acb9deb1)),
+                print_conv: Some(PrintConv::Function(ast_print_dd3be644838b9531)),
                 value_conv: None,
             },
         ),
@@ -179,7 +179,7 @@ pub static RED_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "FNumber",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -187,8 +187,8 @@ pub static RED_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FocusDistance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_e1b9c18c6fb887af)),
-                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+                print_conv: Some(PrintConv::Function(ast_print_2aa532acb8a29737)),
+                value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
             },
         ),
     ])

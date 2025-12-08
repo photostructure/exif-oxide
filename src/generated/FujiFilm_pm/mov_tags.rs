@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_b7::ast_print_b75f5f46a9f320cf;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
-use crate::generated::functions::hash_ef::ast_value_efb6d499febeaf95;
+use crate::generated::functions::hash_82::ast_value_8226079554149ee;
+use crate::generated::functions::hash_96::ast_print_965cc8da10a90f1;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
 
 /// Tag definitions for FujiFilm::MOV table
 pub static FUJI_FILM_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -38,8 +38,8 @@ pub static FUJI_FILM_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ExposureTime",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_efb6d499febeaf95)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_8226079554149ee)),
             },
         ),
         (
@@ -47,7 +47,7 @@ pub static FUJI_FILM_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "FNumber",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -56,7 +56,7 @@ pub static FUJI_FILM_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ExposureCompensation",
                 format: "rational64s",
-                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: None,
             },
         ),

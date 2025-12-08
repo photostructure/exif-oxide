@@ -7,8 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Tag definitions for Photoshop::Unknown table
-pub static PHOTOSHOP_UNKNOWN_TAGS: LazyLock<HashMap<u16, TagInfo>> =
-    LazyLock::new(|| HashMap::new());
+pub static PHOTOSHOP_UNKNOWN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

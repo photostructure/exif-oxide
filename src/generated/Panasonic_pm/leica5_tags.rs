@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_54::ast_print_5410ebd1831763d8;
+use crate::generated::functions::hash_b7::ast_print_b7e860dd06786a9a;
 
 /// Tag definitions for Panasonic::Leica5 table
 pub static PANASONIC_LEICA5_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -98,7 +98,7 @@ pub static PANASONIC_LEICA5_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "InternalSerialNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_5410ebd1831763d8)),
+                print_conv: Some(PrintConv::Function(ast_print_b7e860dd06786a9a)),
                 value_conv: None,
             },
         ),

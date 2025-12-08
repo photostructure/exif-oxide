@@ -8,7 +8,7 @@ use std::sync::LazyLock;
 
 /// Tag definitions for CanonCustom::FuncsUnknown table
 pub static CANON_CUSTOM_FUNCSUNKNOWN_TAGS: LazyLock<HashMap<u16, TagInfo>> =
-    LazyLock::new(|| HashMap::new());
+    LazyLock::new(HashMap::new);
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

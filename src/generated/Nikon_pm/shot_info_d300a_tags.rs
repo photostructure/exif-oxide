@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_3b::ast_value_3be01b4842453c7b;
-use crate::generated::functions::hash_f0::ast_print_f0406a5cf107f00d;
+use crate::generated::functions::hash_2c::ast_print_2cea565875d218cc;
+use crate::generated::functions::hash_81::ast_value_81dbf53c19dbd53f;
 
 /// Tag definitions for Nikon::ShotInfoD300a table
 pub static NIKON_SHOTINFOD300A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -27,8 +27,8 @@ pub static NIKON_SHOTINFOD300A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ISO2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_f0406a5cf107f00d)),
-                value_conv: Some(ValueConv::Function(ast_value_3be01b4842453c7b)),
+                print_conv: Some(PrintConv::Function(ast_print_2cea565875d218cc)),
+                value_conv: Some(ValueConv::Function(ast_value_81dbf53c19dbd53f)),
             },
         ),
         (

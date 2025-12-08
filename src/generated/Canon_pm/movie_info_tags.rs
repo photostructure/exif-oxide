@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_48::ast_print_487657613095a4c6;
-use crate::generated::functions::hash_5b::ast_value_5b2c41e400f339d0;
-use crate::generated::functions::hash_8f::ast_print_8f60444a6530198d;
-use crate::generated::functions::hash_c0::ast_print_c0a8bf21acb9deb1;
+use crate::generated::functions::hash_21::ast_print_21dfca2f396095a;
+use crate::generated::functions::hash_33::ast_value_3346505e2ab784dc;
+use crate::generated::functions::hash_cf::ast_print_cfce5cd5c31bbe17;
+use crate::generated::functions::hash_dd::ast_print_dd3be644838b9531;
 
 /// Tag definitions for Canon::MovieInfo table
 pub static CANON_MOVIEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -47,7 +47,7 @@ pub static CANON_MOVIEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "FrameRate",
                 format: "rational32u",
-                print_conv: Some(PrintConv::Function(ast_print_c0a8bf21acb9deb1)),
+                print_conv: Some(PrintConv::Function(ast_print_dd3be644838b9531)),
                 value_conv: None,
             },
         ),
@@ -56,8 +56,8 @@ pub static CANON_MOVIEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "Duration",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
-                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+                print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
+                value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
             },
         ),
         (
@@ -65,7 +65,7 @@ pub static CANON_MOVIEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "AudioBitrate",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_8f60444a6530198d)),
+                print_conv: Some(PrintConv::Function(ast_print_21dfca2f396095a)),
                 value_conv: None,
             },
         ),

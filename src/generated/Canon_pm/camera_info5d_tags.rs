@@ -7,21 +7,20 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_13::ast_value_13e9fff1dc7b41b2;
-use crate::generated::functions::hash_1a::ast_print_1ade125dab246be4;
-use crate::generated::functions::hash_24::ast_print_244597bfb4c5779c;
-use crate::generated::functions::hash_38::ast_value_380417f4c177add7;
-use crate::generated::functions::hash_7d::ast_value_7d55a3546017f4c7;
-use crate::generated::functions::hash_b1::ast_value_b1a21daf01322ba9;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
-use crate::generated::functions::hash_bc::ast_print_bc983315d45d48a3;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
-use crate::generated::functions::hash_c8::{
-    ast_value_c81520c2f48a3e3c, ast_value_c8722122eace16df,
-};
-use crate::generated::functions::hash_cc::ast_value_cc6d20d1f05f91ec;
-use crate::generated::functions::hash_d3::ast_print_d3baecf4975cff4c;
+use crate::generated::functions::hash_17::ast_value_1743afee82a78f9d;
+use crate::generated::functions::hash_1f::ast_print_1f47b524bed353b1;
+use crate::generated::functions::hash_25::ast_value_25c85203cdf230c8;
+use crate::generated::functions::hash_32::ast_value_32180481d23c95e9;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_55::ast_value_55048b24234b7885;
+use crate::generated::functions::hash_6a::ast_value_6a2b983323e78027;
+use crate::generated::functions::hash_9f::ast_print_9fdbcf4006788a4b;
+use crate::generated::functions::hash_c8::ast_print_c8bca6375178b51d;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_da::ast_value_da19f9751eeb9fa7;
+use crate::generated::functions::hash_dd::ast_print_dd22782e5ba8c7cb;
+use crate::generated::functions::hash_f0::ast_print_f013e387a9d36985;
+use crate::generated::functions::hash_f6::ast_value_f6e40ca85ff284cf;
 
 /// Tag definitions for Canon::CameraInfo5D table
 pub static CANON_CAMERAINFO5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -31,8 +30,8 @@ pub static CANON_CAMERAINFO5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "FNumber",
                 format: "int8u",
-                print_conv: Some(PrintConv::Function(ast_print_bc983315d45d48a3)),
-                value_conv: Some(ValueConv::Function(ast_value_380417f4c177add7)),
+                print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
+                value_conv: Some(ValueConv::Function(ast_value_f6e40ca85ff284cf)),
             },
         ),
         (
@@ -40,8 +39,8 @@ pub static CANON_CAMERAINFO5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "ExposureTime",
                 format: "int8u",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_13e9fff1dc7b41b2)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_55048b24234b7885)),
             },
         ),
         (
@@ -49,8 +48,8 @@ pub static CANON_CAMERAINFO5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "ISO",
                 format: "int8u",
-                print_conv: Some(PrintConv::Function(ast_print_1ade125dab246be4)),
-                value_conv: Some(ValueConv::Function(ast_value_c8722122eace16df)),
+                print_conv: Some(PrintConv::Function(ast_print_1f47b524bed353b1)),
+                value_conv: Some(ValueConv::Function(ast_value_1743afee82a78f9d)),
             },
         ),
         (
@@ -67,8 +66,8 @@ pub static CANON_CAMERAINFO5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "CameraTemperature",
                 format: "int8u",
-                print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
-                value_conv: Some(ValueConv::Function(ast_value_7d55a3546017f4c7)),
+                print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
+                value_conv: Some(ValueConv::Function(ast_value_25c85203cdf230c8)),
             },
         ),
         (
@@ -76,8 +75,8 @@ pub static CANON_CAMERAINFO5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "MacroMagnification",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_244597bfb4c5779c)),
-                value_conv: Some(ValueConv::Function(ast_value_c81520c2f48a3e3c)),
+                print_conv: Some(PrintConv::Function(ast_print_9fdbcf4006788a4b)),
+                value_conv: Some(ValueConv::Function(ast_value_32180481d23c95e9)),
             },
         ),
         (
@@ -94,7 +93,7 @@ pub static CANON_CAMERAINFO5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "FocalLength",
                 format: "int16uRev",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
             },
         ),
@@ -139,7 +138,7 @@ pub static CANON_CAMERAINFO5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "MinFocalLength",
                 format: "int16uRev",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
             },
         ),
@@ -148,7 +147,7 @@ pub static CANON_CAMERAINFO5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "MaxFocalLength",
                 format: "int16uRev",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
             },
         ),
@@ -194,7 +193,7 @@ pub static CANON_CAMERAINFO5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 name: "FileIndex",
                 format: "int16u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_cc6d20d1f05f91ec)),
+                value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
             },
         ),
         (
@@ -247,8 +246,8 @@ pub static CANON_CAMERAINFO5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "TimeStamp",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_b1a21daf01322ba9)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_da19f9751eeb9fa7)),
             },
         ),
     ])

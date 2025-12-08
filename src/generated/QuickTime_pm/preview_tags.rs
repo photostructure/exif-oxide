@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_4a::ast_value_4a9a9258b669d68c;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_e8::ast_value_e8af3016409e62f1;
 
 /// Tag definitions for QuickTime::Preview table
 pub static QUICK_TIME_PREVIEW_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -18,8 +18,8 @@ pub static QUICK_TIME_PREVIEW_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "PreviewDate",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_4a9a9258b669d68c)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_e8af3016409e62f1)),
             },
         ),
         (

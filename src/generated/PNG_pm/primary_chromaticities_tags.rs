@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_89::ast_value_891fb9e200fd161b;
+use crate::generated::functions::hash_ae::ast_value_ae080438eb4840af;
 
 /// Tag definitions for PNG::PrimaryChromaticities table
 pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -18,7 +18,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 name: "WhitePointX",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_891fb9e200fd161b)),
+                value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
             },
         ),
         (
@@ -27,7 +27,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 name: "WhitePointY",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_891fb9e200fd161b)),
+                value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
             },
         ),
         (
@@ -36,7 +36,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 name: "RedX",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_891fb9e200fd161b)),
+                value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
             },
         ),
         (
@@ -45,7 +45,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 name: "RedY",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_891fb9e200fd161b)),
+                value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
             },
         ),
         (
@@ -54,7 +54,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 name: "GreenX",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_891fb9e200fd161b)),
+                value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
             },
         ),
         (
@@ -63,7 +63,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 name: "GreenY",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_891fb9e200fd161b)),
+                value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
             },
         ),
         (
@@ -72,7 +72,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 name: "BlueX",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_891fb9e200fd161b)),
+                value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
             },
         ),
         (
@@ -81,7 +81,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 name: "BlueY",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_891fb9e200fd161b)),
+                value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
             },
         ),
     ])

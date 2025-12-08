@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_48::ast_print_487657613095a4c6;
-use crate::generated::functions::hash_5b::ast_value_5b2c41e400f339d0;
+use crate::generated::functions::hash_33::ast_value_3346505e2ab784dc;
+use crate::generated::functions::hash_cf::ast_print_cfce5cd5c31bbe17;
 
 /// Tag definitions for RIFF::ANMF table
 pub static RIFF_ANMF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,8 +17,8 @@ pub static RIFF_ANMF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         TagInfo {
             name: "Duration",
             format: "int32u",
-            print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
-            value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+            print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
+            value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
         },
     )])
 });

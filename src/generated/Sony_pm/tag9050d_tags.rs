@@ -7,12 +7,12 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_53::ast_value_53ef12641c6719f5;
-use crate::generated::functions::hash_70::ast_print_70245c821020ee75;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_bb::ast_print_bb36ed62e5a52a4;
-use crate::generated::functions::hash_e0::ast_value_e0b36f169462770c;
-use crate::generated::functions::hash_f7::ast_print_f78c26f012d763ba;
+use crate::generated::functions::hash_10::ast_print_101e3eed0a079327;
+use crate::generated::functions::hash_20::ast_print_202062b94dbf7029;
+use crate::generated::functions::hash_68::ast_value_689cac30223ecfb0;
+use crate::generated::functions::hash_8c::ast_print_8cb98c82cbc27d63;
+use crate::generated::functions::hash_95::ast_value_95bfd9578fbdb0ab;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
 
 /// Tag definitions for Sony::Tag9050d table
 pub static SONY_TAG9050D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -22,7 +22,7 @@ pub static SONY_TAG9050D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ShutterCount",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_f78c26f012d763ba)),
+                print_conv: Some(PrintConv::Function(ast_print_8cb98c82cbc27d63)),
                 value_conv: None,
             },
         ),
@@ -31,8 +31,8 @@ pub static SONY_TAG9050D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "SonyExposureTime",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_bb36ed62e5a52a4)),
-                value_conv: Some(ValueConv::Function(ast_value_53ef12641c6719f5)),
+                print_conv: Some(PrintConv::Function(ast_print_101e3eed0a079327)),
+                value_conv: Some(ValueConv::Function(ast_value_689cac30223ecfb0)),
             },
         ),
         (
@@ -40,8 +40,8 @@ pub static SONY_TAG9050D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "SonyFNumber",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_e0b36f169462770c)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_95bfd9578fbdb0ab)),
             },
         ),
         (
@@ -58,7 +58,7 @@ pub static SONY_TAG9050D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "InternalSerialNumber",
                 format: "int8u[6]",
-                print_conv: Some(PrintConv::Function(ast_print_70245c821020ee75)),
+                print_conv: Some(PrintConv::Function(ast_print_202062b94dbf7029)),
                 value_conv: None,
             },
         ),

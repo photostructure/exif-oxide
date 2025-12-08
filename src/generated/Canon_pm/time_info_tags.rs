@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_1b::ast_print_1bcd3679c283faf3;
+use crate::generated::functions::hash_20::ast_print_20ac2063644a1265;
 
 /// Tag definitions for Canon::TimeInfo table
 pub static CANON_TIMEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static CANON_TIMEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "TimeZone",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_1bcd3679c283faf3)),
+                print_conv: Some(PrintConv::Function(ast_print_20ac2063644a1265)),
                 value_conv: None,
             },
         ),

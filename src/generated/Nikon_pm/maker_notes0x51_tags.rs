@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_86::ast_value_865f85b3924a28e9;
+use crate::generated::functions::hash_5a::ast_value_5a60f83c3aee8c9c;
 
 /// Tag definitions for Nikon::MakerNotes0x51 table
 pub static NIKON_MAKERNOTES0X51_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -18,7 +18,7 @@ pub static NIKON_MAKERNOTES0X51_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 name: "FirmwareVersion51",
                 format: "string[8]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_865f85b3924a28e9)),
+                value_conv: Some(ValueConv::Function(ast_value_5a60f83c3aee8c9c)),
             },
         ),
         (

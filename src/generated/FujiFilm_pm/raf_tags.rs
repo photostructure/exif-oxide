@@ -7,12 +7,12 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_42::ast_print_422bfca23e0caff5;
-use crate::generated::functions::hash_45::ast_value_4564b55cdb8716ed;
-use crate::generated::functions::hash_4e::ast_print_4e5e992f9b388e54;
-use crate::generated::functions::hash_57::ast_value_574514e3d36a220e;
-use crate::generated::functions::hash_b7::ast_print_b75f5f46a9f320cf;
-use crate::generated::functions::hash_f5::ast_print_f591611bd0effe85;
+use crate::generated::functions::hash_16::ast_print_162adcf46fcf983d;
+use crate::generated::functions::hash_2d::ast_print_2d2c033a3b7919c2;
+use crate::generated::functions::hash_3b::ast_print_3b6232f726868923;
+use crate::generated::functions::hash_87::ast_value_871b0872a6d2e74a;
+use crate::generated::functions::hash_96::ast_print_965cc8da10a90f1;
+use crate::generated::functions::hash_f3::ast_value_f36c97921b30afa4;
 
 /// Tag definitions for FujiFilm::RAF table
 pub static FUJI_FILM_RAF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -22,8 +22,8 @@ pub static FUJI_FILM_RAF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "RawImageFullSize",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_4e5e992f9b388e54)),
-                value_conv: Some(ValueConv::Function(ast_value_4564b55cdb8716ed)),
+                print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
+                value_conv: Some(ValueConv::Function(ast_value_871b0872a6d2e74a)),
             },
         ),
         (
@@ -40,8 +40,8 @@ pub static FUJI_FILM_RAF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "RawImageCroppedSize",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_4e5e992f9b388e54)),
-                value_conv: Some(ValueConv::Function(ast_value_4564b55cdb8716ed)),
+                print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
+                value_conv: Some(ValueConv::Function(ast_value_871b0872a6d2e74a)),
             },
         ),
         (
@@ -49,8 +49,8 @@ pub static FUJI_FILM_RAF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "RawImageAspectRatio",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_422bfca23e0caff5)),
-                value_conv: Some(ValueConv::Function(ast_value_4564b55cdb8716ed)),
+                print_conv: Some(PrintConv::Function(ast_print_162adcf46fcf983d)),
+                value_conv: Some(ValueConv::Function(ast_value_871b0872a6d2e74a)),
             },
         ),
         (
@@ -67,8 +67,8 @@ pub static FUJI_FILM_RAF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "RawZoomTopLeft",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_4e5e992f9b388e54)),
-                value_conv: Some(ValueConv::Function(ast_value_4564b55cdb8716ed)),
+                print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
+                value_conv: Some(ValueConv::Function(ast_value_871b0872a6d2e74a)),
             },
         ),
         (
@@ -76,8 +76,8 @@ pub static FUJI_FILM_RAF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "RawZoomSize",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_4e5e992f9b388e54)),
-                value_conv: Some(ValueConv::Function(ast_value_4564b55cdb8716ed)),
+                print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
+                value_conv: Some(ValueConv::Function(ast_value_871b0872a6d2e74a)),
             },
         ),
         (
@@ -94,7 +94,7 @@ pub static FUJI_FILM_RAF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "XTransLayout",
                 format: "int8u",
-                print_conv: Some(PrintConv::Function(ast_print_f591611bd0effe85)),
+                print_conv: Some(PrintConv::Function(ast_print_2d2c033a3b7919c2)),
                 value_conv: None,
             },
         ),
@@ -193,8 +193,8 @@ pub static FUJI_FILM_RAF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "RelativeExposure",
                 format: "rational32s",
-                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
-                value_conv: Some(ValueConv::Function(ast_value_574514e3d36a220e)),
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
+                value_conv: Some(ValueConv::Function(ast_value_f36c97921b30afa4)),
             },
         ),
         (
@@ -202,7 +202,7 @@ pub static FUJI_FILM_RAF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "RawExposureBias",
                 format: "rational32s",
-                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: None,
             },
         ),

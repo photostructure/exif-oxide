@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_4d::ast_print_4d023868095dfa1c;
-use crate::generated::functions::hash_9c::ast_value_9ceb49948df11722;
+use crate::generated::functions::hash_5c::ast_value_5c94fb903134d434;
+use crate::generated::functions::hash_a3::ast_print_a30bb45410af5d6d;
 
 /// Tag definitions for Photoshop::Resolution table
 pub static PHOTOSHOP_RESOLUTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -18,8 +18,8 @@ pub static PHOTOSHOP_RESOLUTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "XResolution",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_4d023868095dfa1c)),
-                value_conv: Some(ValueConv::Function(ast_value_9ceb49948df11722)),
+                print_conv: Some(PrintConv::Function(ast_print_a30bb45410af5d6d)),
+                value_conv: Some(ValueConv::Function(ast_value_5c94fb903134d434)),
             },
         ),
         (
@@ -36,8 +36,8 @@ pub static PHOTOSHOP_RESOLUTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "YResolution",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_4d023868095dfa1c)),
-                value_conv: Some(ValueConv::Function(ast_value_9ceb49948df11722)),
+                print_conv: Some(PrintConv::Function(ast_print_a30bb45410af5d6d)),
+                value_conv: Some(ValueConv::Function(ast_value_5c94fb903134d434)),
             },
         ),
         (

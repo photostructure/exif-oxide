@@ -7,13 +7,13 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_13::ast_print_139f419a2aaaa1f3;
-use crate::generated::functions::hash_84::ast_print_8497b6582cfb6c0a;
-use crate::generated::functions::hash_97::ast_print_976003e439a3f378;
-use crate::generated::functions::hash_99::ast_print_993ce46cc3d936eb;
-use crate::generated::functions::hash_9a::ast_print_9a8d70b79f825503;
-use crate::generated::functions::hash_d3::ast_print_d3baecf4975cff4c;
-use crate::generated::functions::hash_dd::ast_print_dda555683af957b;
+use crate::generated::functions::hash_31::ast_print_31fb3a3d2e56449d;
+use crate::generated::functions::hash_3d::ast_print_3d7e2c3002e829b4;
+use crate::generated::functions::hash_63::ast_print_63abe5c1769cd6fb;
+use crate::generated::functions::hash_95::ast_print_9559c4f6a17cf903;
+use crate::generated::functions::hash_9c::ast_print_9c532d14777c2531;
+use crate::generated::functions::hash_c8::ast_print_c8bca6375178b51d;
+use crate::generated::functions::hash_fe::ast_print_fec170c109dc18e7;
 
 /// Tag definitions for GoPro::KBAT table
 pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -23,7 +23,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryCurrent",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8497b6582cfb6c0a)),
+                print_conv: Some(PrintConv::Function(ast_print_9c532d14777c2531)),
                 value_conv: None,
             },
         ),
@@ -32,7 +32,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryCapacity",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_993ce46cc3d936eb)),
+                print_conv: Some(PrintConv::Function(ast_print_fec170c109dc18e7)),
                 value_conv: None,
             },
         ),
@@ -41,7 +41,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "KBAT_Unknown2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_9a8d70b79f825503)),
+                print_conv: Some(PrintConv::Function(ast_print_9559c4f6a17cf903)),
                 value_conv: None,
             },
         ),
@@ -50,7 +50,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
+                print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
             },
         ),
@@ -59,7 +59,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryVoltage1",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_dda555683af957b)),
+                print_conv: Some(PrintConv::Function(ast_print_31fb3a3d2e56449d)),
                 value_conv: None,
             },
         ),
@@ -68,7 +68,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryVoltage2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_dda555683af957b)),
+                print_conv: Some(PrintConv::Function(ast_print_31fb3a3d2e56449d)),
                 value_conv: None,
             },
         ),
@@ -77,7 +77,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryVoltage3",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_dda555683af957b)),
+                print_conv: Some(PrintConv::Function(ast_print_31fb3a3d2e56449d)),
                 value_conv: None,
             },
         ),
@@ -86,7 +86,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryVoltage4",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_dda555683af957b)),
+                print_conv: Some(PrintConv::Function(ast_print_31fb3a3d2e56449d)),
                 value_conv: None,
             },
         ),
@@ -95,7 +95,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_976003e439a3f378)),
+                print_conv: Some(PrintConv::Function(ast_print_3d7e2c3002e829b4)),
                 value_conv: None,
             },
         ),
@@ -104,7 +104,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "KBAT_Unknown9",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_139f419a2aaaa1f3)),
+                print_conv: Some(PrintConv::Function(ast_print_63abe5c1769cd6fb)),
                 value_conv: None,
             },
         ),
@@ -149,7 +149,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "BatteryLevel",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_139f419a2aaaa1f3)),
+                print_conv: Some(PrintConv::Function(ast_print_63abe5c1769cd6fb)),
                 value_conv: None,
             },
         ),

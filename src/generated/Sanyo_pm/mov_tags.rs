@@ -7,12 +7,12 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
-use crate::generated::functions::hash_30::ast_print_30c6ff66128b242c;
-use crate::generated::functions::hash_5b::ast_value_5b997436cb4c4a4f;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_bb::ast_print_bba76882980e1e1a;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_7c::ast_print_7cc7a4bf3f82cb33;
+use crate::generated::functions::hash_8e::ast_value_8e281e57f268ff8;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_e5::ast_print_e50dfd1aa09ed50e;
+use crate::generated::functions::hash_e6::ast_value_e60461d3e144eea5;
 
 /// Tag definitions for Sanyo::MOV table
 pub static SANYO_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -40,8 +40,8 @@ pub static SANYO_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureTime",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_5b997436cb4c4a4f)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_e60461d3e144eea5)),
             },
         ),
         (
@@ -49,8 +49,8 @@ pub static SANYO_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FNumber",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -58,8 +58,8 @@ pub static SANYO_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureCompensation",
                 format: "int32s",
-                print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -76,8 +76,8 @@ pub static SANYO_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FocalLength",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_30c6ff66128b242c)),
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
     ])

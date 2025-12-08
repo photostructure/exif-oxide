@@ -7,12 +7,13 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_1b::ast_print_1b836ed3009794ff;
-use crate::generated::functions::hash_42::ast_print_422bfca23e0caff5;
-use crate::generated::functions::hash_4e::ast_print_4e5e992f9b388e54;
-use crate::generated::functions::hash_8f::ast_print_8f60444a6530198d;
-use crate::generated::functions::hash_c0::ast_print_c0a8bf21acb9deb1;
-use crate::generated::functions::hash_fd::ast_value_fdcd5166daf4068;
+use crate::generated::functions::hash_16::ast_print_162adcf46fcf983d;
+use crate::generated::functions::hash_21::ast_print_21dfca2f396095a;
+use crate::generated::functions::hash_2d::ast_print_2d66b9944b9eb1b1;
+use crate::generated::functions::hash_3b::ast_print_3b6232f726868923;
+use crate::generated::functions::hash_dd::{
+    ast_print_dd3be644838b9531, ast_value_dd746112419bd2e9,
+};
 
 /// Tag definitions for QuickTime::VideoProf table
 pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -40,7 +41,7 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "VideoCodecInfo",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_1b836ed3009794ff)),
+                print_conv: Some(PrintConv::Function(ast_print_2d66b9944b9eb1b1)),
                 value_conv: None,
             },
         ),
@@ -58,8 +59,8 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "VideoAvgBitrate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8f60444a6530198d)),
-                value_conv: Some(ValueConv::Function(ast_value_fdcd5166daf4068)),
+                print_conv: Some(PrintConv::Function(ast_print_21dfca2f396095a)),
+                value_conv: Some(ValueConv::Function(ast_value_dd746112419bd2e9)),
             },
         ),
         (
@@ -67,8 +68,8 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "VideoMaxBitrate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8f60444a6530198d)),
-                value_conv: Some(ValueConv::Function(ast_value_fdcd5166daf4068)),
+                print_conv: Some(PrintConv::Function(ast_print_21dfca2f396095a)),
+                value_conv: Some(ValueConv::Function(ast_value_dd746112419bd2e9)),
             },
         ),
         (
@@ -76,7 +77,7 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "VideoAvgFrameRate",
                 format: "fixed32u",
-                print_conv: Some(PrintConv::Function(ast_print_c0a8bf21acb9deb1)),
+                print_conv: Some(PrintConv::Function(ast_print_dd3be644838b9531)),
                 value_conv: None,
             },
         ),
@@ -85,7 +86,7 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "VideoMaxFrameRate",
                 format: "fixed32u",
-                print_conv: Some(PrintConv::Function(ast_print_c0a8bf21acb9deb1)),
+                print_conv: Some(PrintConv::Function(ast_print_dd3be644838b9531)),
                 value_conv: None,
             },
         ),
@@ -94,7 +95,7 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "VideoSize",
                 format: "int16u[2]",
-                print_conv: Some(PrintConv::Function(ast_print_4e5e992f9b388e54)),
+                print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
                 value_conv: None,
             },
         ),
@@ -103,7 +104,7 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "PixelAspectRatio",
                 format: "int16u[2]",
-                print_conv: Some(PrintConv::Function(ast_print_422bfca23e0caff5)),
+                print_conv: Some(PrintConv::Function(ast_print_162adcf46fcf983d)),
                 value_conv: None,
             },
         ),

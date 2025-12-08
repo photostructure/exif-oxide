@@ -7,13 +7,13 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_10::ast_value_1034313b8375eef0;
-use crate::generated::functions::hash_18::ast_value_182eb86db93049bd;
-use crate::generated::functions::hash_1e::ast_print_1eea9199a5407b99;
-use crate::generated::functions::hash_30::ast_print_30c6ff66128b242c;
-use crate::generated::functions::hash_4e::ast_print_4e5e992f9b388e54;
-use crate::generated::functions::hash_8e::ast_print_8eb189bdce07b25f;
-use crate::generated::functions::hash_f9::ast_print_f99f157f7be94989;
+use crate::generated::functions::hash_3b::ast_print_3b6232f726868923;
+use crate::generated::functions::hash_57::ast_print_57ea43f3f55fc687;
+use crate::generated::functions::hash_7c::ast_print_7cc7a4bf3f82cb33;
+use crate::generated::functions::hash_94::ast_value_94506729aa7a1349;
+use crate::generated::functions::hash_ac::ast_value_ac3cde2c32737d14;
+use crate::generated::functions::hash_f8::ast_print_f89dc2cbc486ef0b;
+use crate::generated::functions::hash_f9::ast_print_f908aa39ad979120;
 
 /// Tag definitions for Casio::Type2 table
 pub static CASIO_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -23,7 +23,7 @@ pub static CASIO_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "PreviewImageSize",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_4e5e992f9b388e54)),
+                print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
                 value_conv: None,
             },
         ),
@@ -95,7 +95,7 @@ pub static CASIO_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "FocalLength",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_30c6ff66128b242c)),
+                print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: None,
             },
         ),
@@ -149,7 +149,7 @@ pub static CASIO_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "FirmwareDate",
                 format: "undef",
-                print_conv: Some(PrintConv::Function(ast_print_1eea9199a5407b99)),
+                print_conv: Some(PrintConv::Function(ast_print_57ea43f3f55fc687)),
                 value_conv: None,
             },
         ),
@@ -176,7 +176,7 @@ pub static CASIO_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "AFPointPosition",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_f99f157f7be94989)),
+                print_conv: Some(PrintConv::Function(ast_print_f908aa39ad979120)),
                 value_conv: None,
             },
         ),
@@ -185,8 +185,8 @@ pub static CASIO_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "ObjectDistance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8eb189bdce07b25f)),
-                value_conv: Some(ValueConv::Function(ast_value_182eb86db93049bd)),
+                print_conv: Some(PrintConv::Function(ast_print_f89dc2cbc486ef0b)),
+                value_conv: Some(ValueConv::Function(ast_value_94506729aa7a1349)),
             },
         ),
         (
@@ -438,7 +438,7 @@ pub static CASIO_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 name: "CaptureFrameRate",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_1034313b8375eef0)),
+                value_conv: Some(ValueConv::Function(ast_value_ac3cde2c32737d14)),
             },
         ),
         (

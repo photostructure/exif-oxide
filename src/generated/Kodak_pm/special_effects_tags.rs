@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_6f::ast_print_6ffb072fa1dfc640;
+use crate::generated::functions::hash_cf::ast_print_cfb87d34a95a9b93;
 
 /// Tag definitions for Kodak::SpecialEffects table
 pub static KODAK_SPECIALEFFECTS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -16,7 +16,7 @@ pub static KODAK_SPECIALEFFECTS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
         TagInfo {
             name: "DigitalEffectsName",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_6ffb072fa1dfc640)),
+            print_conv: Some(PrintConv::Function(ast_print_cfb87d34a95a9b93)),
             value_conv: None,
         },
     )])

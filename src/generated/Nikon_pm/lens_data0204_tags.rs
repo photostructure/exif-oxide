@@ -7,16 +7,16 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_30::ast_print_30c6ff66128b242c;
-use crate::generated::functions::hash_6b::ast_value_6baba6a308124f53;
-use crate::generated::functions::hash_6e::ast_value_6ec31a66c09b11db;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_9c::ast_print_9cf1a1875ed5985;
-use crate::generated::functions::hash_9d::ast_value_9d597eb160959cc5;
-use crate::generated::functions::hash_bb::ast_print_bb744a13f82c4cd2;
-use crate::generated::functions::hash_be::ast_value_bebb546318de4cc0;
-use crate::generated::functions::hash_d2::ast_print_d23a0db383ac12a7;
-use crate::generated::functions::hash_d3::ast_value_d39b819d3cebc1bf;
+use crate::generated::functions::hash_25::ast_print_257ede59d0ae2b60;
+use crate::generated::functions::hash_33::ast_value_33bf8765c4bf097a;
+use crate::generated::functions::hash_50::ast_value_503cb8adfb2500ed;
+use crate::generated::functions::hash_7c::ast_print_7cc7a4bf3f82cb33;
+use crate::generated::functions::hash_7f::ast_value_7f1d9c1519aa804e;
+use crate::generated::functions::hash_89::ast_value_89ad23b9d14ff5d;
+use crate::generated::functions::hash_ae::ast_print_aec511ac08c0f1fc;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_c6::ast_print_c63abe95c8d1d776;
+use crate::generated::functions::hash_dd::ast_value_ddfddd5e1e0df35b;
 
 /// Tag definitions for Nikon::LensData0204 table
 pub static NIKON_LENSDATA0204_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -35,8 +35,8 @@ pub static NIKON_LENSDATA0204_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "ExitPupilPosition",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_30c6ff66128b242c)),
-                value_conv: Some(ValueConv::Function(ast_value_9d597eb160959cc5)),
+                print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
+                value_conv: Some(ValueConv::Function(ast_value_503cb8adfb2500ed)),
             },
         ),
         (
@@ -44,8 +44,8 @@ pub static NIKON_LENSDATA0204_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "AFAperture",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_d39b819d3cebc1bf)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_7f1d9c1519aa804e)),
             },
         ),
         (
@@ -53,7 +53,7 @@ pub static NIKON_LENSDATA0204_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "FocusPosition",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_9cf1a1875ed5985)),
+                print_conv: Some(PrintConv::Function(ast_print_257ede59d0ae2b60)),
                 value_conv: None,
             },
         ),
@@ -62,8 +62,8 @@ pub static NIKON_LENSDATA0204_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "FocusDistance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d23a0db383ac12a7)),
-                value_conv: Some(ValueConv::Function(ast_value_6baba6a308124f53)),
+                print_conv: Some(PrintConv::Function(ast_print_c63abe95c8d1d776)),
+                value_conv: Some(ValueConv::Function(ast_value_33bf8765c4bf097a)),
             },
         ),
         (
@@ -71,8 +71,8 @@ pub static NIKON_LENSDATA0204_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "FocalLength",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_30c6ff66128b242c)),
-                value_conv: Some(ValueConv::Function(ast_value_bebb546318de4cc0)),
+                print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
+                value_conv: Some(ValueConv::Function(ast_value_89ad23b9d14ff5d)),
             },
         ),
         (
@@ -89,8 +89,8 @@ pub static NIKON_LENSDATA0204_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "LensFStops",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bb744a13f82c4cd2)),
-                value_conv: Some(ValueConv::Function(ast_value_6ec31a66c09b11db)),
+                print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
+                value_conv: Some(ValueConv::Function(ast_value_ddfddd5e1e0df35b)),
             },
         ),
         (
@@ -98,8 +98,8 @@ pub static NIKON_LENSDATA0204_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "MinFocalLength",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_30c6ff66128b242c)),
-                value_conv: Some(ValueConv::Function(ast_value_bebb546318de4cc0)),
+                print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
+                value_conv: Some(ValueConv::Function(ast_value_89ad23b9d14ff5d)),
             },
         ),
         (
@@ -107,8 +107,8 @@ pub static NIKON_LENSDATA0204_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "MaxFocalLength",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_30c6ff66128b242c)),
-                value_conv: Some(ValueConv::Function(ast_value_bebb546318de4cc0)),
+                print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
+                value_conv: Some(ValueConv::Function(ast_value_89ad23b9d14ff5d)),
             },
         ),
         (
@@ -116,8 +116,8 @@ pub static NIKON_LENSDATA0204_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "MaxApertureAtMinFocal",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_d39b819d3cebc1bf)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_7f1d9c1519aa804e)),
             },
         ),
         (
@@ -125,8 +125,8 @@ pub static NIKON_LENSDATA0204_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "MaxApertureAtMaxFocal",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_d39b819d3cebc1bf)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_7f1d9c1519aa804e)),
             },
         ),
         (
@@ -134,8 +134,8 @@ pub static NIKON_LENSDATA0204_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "EffectiveMaxAperture",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_d39b819d3cebc1bf)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_7f1d9c1519aa804e)),
             },
         ),
     ])

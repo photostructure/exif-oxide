@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
+use crate::generated::functions::hash_8e::ast_value_8e281e57f268ff8;
 
 /// Tag definitions for DJI::DroneInfo table
 pub static DJI_DRONEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -18,7 +18,7 @@ pub static DJI_DRONEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "DroneRoll",
                 format: "int64s",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -27,7 +27,7 @@ pub static DJI_DRONEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "DronePitch",
                 format: "int64s",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -36,7 +36,7 @@ pub static DJI_DRONEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "DroneYaw",
                 format: "int64s",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
     ])

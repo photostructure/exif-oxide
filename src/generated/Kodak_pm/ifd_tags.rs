@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_83::ast_value_839cd811382c9525;
-use crate::generated::functions::hash_c1::ast_print_c12c7e50f55cf298;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
-use crate::generated::functions::hash_d3::ast_value_d37ffb72c49bf107;
+use crate::generated::functions::hash_2e::ast_value_2eea5e422c1a4a85;
+use crate::generated::functions::hash_5f::ast_value_5fd665ca42e4d37a;
+use crate::generated::functions::hash_7c::ast_print_7c85cf32a45b11ab;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
 
 /// Tag definitions for Kodak::IFD table
 pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -20,7 +20,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "KodakVersion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+                print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: None,
             },
         ),
@@ -1829,8 +1829,8 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "DarkFrameShortExposure",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_d37ffb72c49bf107)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_5fd665ca42e4d37a)),
             },
         ),
         (
@@ -1838,8 +1838,8 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "DarkFrameLongExposure",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_d37ffb72c49bf107)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_5fd665ca42e4d37a)),
             },
         ),
         (
@@ -2145,7 +2145,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "KodakLook",
                 format: "undef",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_839cd811382c9525)),
+                value_conv: Some(ValueConv::Function(ast_value_2eea5e422c1a4a85)),
             },
         ),
         (

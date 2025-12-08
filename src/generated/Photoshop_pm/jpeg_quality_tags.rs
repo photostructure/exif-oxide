@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_c7::ast_print_c7ab2268f0055197;
+use crate::generated::functions::hash_8e::ast_print_8e4e6485519821cd;
 
 /// Tag definitions for Photoshop::JPEG_Quality table
 pub static PHOTOSHOP_JPEG_QUALITY_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static PHOTOSHOP_JPEG_QUALITY_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "PhotoshopQuality",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c7ab2268f0055197)),
+                print_conv: Some(PrintConv::Function(ast_print_8e4e6485519821cd)),
                 value_conv: None,
             },
         ),

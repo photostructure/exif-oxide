@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_89::ast_value_89a35071e834811a;
+use crate::generated::functions::hash_82::ast_value_82615a79142d97cd;
 
 /// Tag definitions for Nikon::LocationInfo table
 pub static NIKON_LOCATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -36,7 +36,7 @@ pub static NIKON_LOCATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 name: "CountryCode",
                 format: "undef[3]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_89a35071e834811a)),
+                value_conv: Some(ValueConv::Function(ast_value_82615a79142d97cd)),
             },
         ),
         (

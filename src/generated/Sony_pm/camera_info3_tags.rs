@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
-use crate::generated::functions::hash_30::ast_print_30c6ff66128b242c;
-use crate::generated::functions::hash_c0::ast_value_c0d22fe788e3b3b6;
+use crate::generated::functions::hash_7c::ast_print_7cc7a4bf3f82cb33;
+use crate::generated::functions::hash_8e::ast_value_8e281e57f268ff8;
+use crate::generated::functions::hash_f2::ast_value_f26353ef662842e5;
 
 /// Tag definitions for Sony::CameraInfo3 table
 pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -32,8 +32,8 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_30c6ff66128b242c)),
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -41,8 +41,8 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "FocalLengthTeleZoom",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_30c6ff66128b242c)),
-                value_conv: Some(ValueConv::Function(ast_value_c0d22fe788e3b3b6)),
+                print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
+                value_conv: Some(ValueConv::Function(ast_value_f26353ef662842e5)),
             },
         ),
         (

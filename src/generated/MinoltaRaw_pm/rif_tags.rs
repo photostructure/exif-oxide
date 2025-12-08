@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_64::ast_value_647eb869d9cb9ed1;
-use crate::generated::functions::hash_d3::ast_print_d3695e9544e1c996;
-use crate::generated::functions::hash_ea::ast_print_ea346521bd5b3d3e;
+use crate::generated::functions::hash_39::ast_value_39492c8ca08229b1;
+use crate::generated::functions::hash_aa::ast_print_aaa5902222704349;
+use crate::generated::functions::hash_dc::ast_print_dccfee5faef77602;
 
 /// Tag definitions for MinoltaRaw::RIF table
 pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -46,7 +46,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "WBMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ea346521bd5b3d3e)),
+                print_conv: Some(PrintConv::Function(ast_print_aaa5902222704349)),
                 value_conv: None,
             },
         ),
@@ -191,7 +191,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 name: "ColorTemperature",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_647eb869d9cb9ed1)),
+                value_conv: Some(ValueConv::Function(ast_value_39492c8ca08229b1)),
             },
         ),
         (
@@ -208,8 +208,8 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "ColorTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d3695e9544e1c996)),
-                value_conv: Some(ValueConv::Function(ast_value_647eb869d9cb9ed1)),
+                print_conv: Some(PrintConv::Function(ast_print_dccfee5faef77602)),
+                value_conv: Some(ValueConv::Function(ast_value_39492c8ca08229b1)),
             },
         ),
         (
@@ -226,8 +226,8 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "ColorTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d3695e9544e1c996)),
-                value_conv: Some(ValueConv::Function(ast_value_647eb869d9cb9ed1)),
+                print_conv: Some(PrintConv::Function(ast_print_dccfee5faef77602)),
+                value_conv: Some(ValueConv::Function(ast_value_39492c8ca08229b1)),
             },
         ),
         (

@@ -7,11 +7,11 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_4c::ast_value_4c39f8792bb6ede4;
-use crate::generated::functions::hash_aa::ast_print_aabd3f97f7321fbc;
-use crate::generated::functions::hash_b9::ast_value_b908b85ef208d53a;
-use crate::generated::functions::hash_bb::ast_print_bba76882980e1e1a;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_19::ast_value_19012828a00d9b7;
+use crate::generated::functions::hash_27::ast_print_270a5dae063a1f32;
+use crate::generated::functions::hash_2c::ast_value_2c21dc5576b94e50;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_e5::ast_print_e50dfd1aa09ed50e;
 
 /// Tag definitions for Nikon::ShotInfoD800 table
 pub static NIKON_SHOTINFOD800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -39,8 +39,8 @@ pub static NIKON_SHOTINFOD800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "RepeatingFlashOutputExternal",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_b908b85ef208d53a)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_2c21dc5576b94e50)),
             },
         ),
         (
@@ -48,7 +48,7 @@ pub static NIKON_SHOTINFOD800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "RepeatingFlashRateExternal",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_aabd3f97f7321fbc)),
+                print_conv: Some(PrintConv::Function(ast_print_270a5dae063a1f32)),
                 value_conv: None,
             },
         ),
@@ -66,8 +66,8 @@ pub static NIKON_SHOTINFOD800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "FlashExposureComp2",
                 format: "int8s",
-                print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
-                value_conv: Some(ValueConv::Function(ast_value_4c39f8792bb6ede4)),
+                print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
+                value_conv: Some(ValueConv::Function(ast_value_19012828a00d9b7)),
             },
         ),
         (
@@ -75,7 +75,7 @@ pub static NIKON_SHOTINFOD800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "RepeatingFlashRateBuilt-in",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_aabd3f97f7321fbc)),
+                print_conv: Some(PrintConv::Function(ast_print_270a5dae063a1f32)),
                 value_conv: None,
             },
         ),

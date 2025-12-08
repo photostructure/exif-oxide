@@ -248,6 +248,7 @@ static MIME_TYPE_MAP: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::
     map.insert("VCard", "text/vcard");
     map.insert("VRD", "application/octet-stream");
     map.insert("VSD", "application/x-visio");
+    map.insert("VSDX", "application/vnd.ms-visio.drawing");
     map.insert("WDP", "image/vnd.ms-photo");
     map.insert("WEBM", "video/webm");
     map.insert("WMA", "audio/x-ms-wma");

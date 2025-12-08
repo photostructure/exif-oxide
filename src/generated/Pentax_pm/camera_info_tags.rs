@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_55::ast_value_55021a595ffa8f71;
-use crate::generated::functions::hash_9e::ast_print_9eb71f80f01c13ad;
-use crate::generated::functions::hash_c1::ast_print_c12c7e50f55cf298;
+use crate::generated::functions::hash_8d::ast_value_8d0fef0c52482fb5;
+use crate::generated::functions::hash_a2::ast_value_a24e3c619aa3ac61;
+use crate::generated::functions::hash_ba::ast_print_ba0399c7192e8c6c;
 
 /// Tag definitions for Pentax::CameraInfo table
 pub static PENTAX_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -29,7 +29,7 @@ pub static PENTAX_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 name: "ManufactureDate",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_55021a595ffa8f71)),
+                value_conv: Some(ValueConv::Function(ast_value_8d0fef0c52482fb5)),
             },
         ),
         (
@@ -37,8 +37,8 @@ pub static PENTAX_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "ProductionCode",
                 format: "int32u[2]",
-                print_conv: Some(PrintConv::Function(ast_print_9eb71f80f01c13ad)),
-                value_conv: Some(ValueConv::Function(ast_print_c12c7e50f55cf298)),
+                print_conv: Some(PrintConv::Function(ast_print_ba0399c7192e8c6c)),
+                value_conv: Some(ValueConv::Function(ast_value_a24e3c619aa3ac61)),
             },
         ),
     ])

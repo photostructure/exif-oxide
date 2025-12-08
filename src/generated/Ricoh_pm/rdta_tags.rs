@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_34::ast_value_3477688b3f24ef1e;
+use crate::generated::functions::hash_12::ast_value_1211b0f9da1adb0a;
 
 /// Tag definitions for Ricoh::RDTA table
 pub static RICOH_RDTA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -27,7 +27,7 @@ pub static RICOH_RDTA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "TimeStamp",
                 format: "int64u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_3477688b3f24ef1e)),
+                value_conv: Some(ValueConv::Function(ast_value_1211b0f9da1adb0a)),
             },
         ),
     ])

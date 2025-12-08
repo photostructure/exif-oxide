@@ -7,25 +7,24 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
-use crate::generated::functions::hash_69::ast_value_69f47c9064ee4be6;
-use crate::generated::functions::hash_6f::ast_value_6f8795fcde9693b5;
-use crate::generated::functions::hash_74::ast_value_743cc97ce826a767;
-use crate::generated::functions::hash_77::ast_print_77deeeaf9630ea8f;
-use crate::generated::functions::hash_a9::ast_print_a923dfe25a011d0e;
-use crate::generated::functions::hash_b2::{
-    ast_print_b25c14c47d1cbc24, ast_print_b2e53ba58d428808,
+use crate::generated::functions::hash_22::ast_print_22cf1298aade8342;
+use crate::generated::functions::hash_2d::ast_print_2deedb011bde716b;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_41::ast_print_41a9f4269104a464;
+use crate::generated::functions::hash_7c::ast_print_7c85cf32a45b11ab;
+use crate::generated::functions::hash_8e::ast_value_8e281e57f268ff8;
+use crate::generated::functions::hash_9c::ast_print_9c34f7195c5f73e7;
+use crate::generated::functions::hash_9e::ast_value_9edcd70970960c43;
+use crate::generated::functions::hash_b9::ast_value_b9de0923ad0670f8;
+use crate::generated::functions::hash_c0::ast_value_c0027708ba7e42e3;
+use crate::generated::functions::hash_c9::ast_value_c9162365d287d6f8;
+use crate::generated::functions::hash_cf::ast_print_cf5807c439399953;
+use crate::generated::functions::hash_e1::ast_value_e19b1ac6c7b6ad13;
+use crate::generated::functions::hash_e5::ast_print_e50dfd1aa09ed50e;
+use crate::generated::functions::hash_ed::{
+    ast_print_ed84e8e3ffdd3d4d, ast_value_ed1564c10478139e,
 };
-use crate::generated::functions::hash_b7::ast_value_b7b5c432b9d85328;
-use crate::generated::functions::hash_bb::ast_print_bba76882980e1e1a;
-use crate::generated::functions::hash_c1::ast_print_c12c7e50f55cf298;
-use crate::generated::functions::hash_db::ast_print_dbf94666acbb7012;
-use crate::generated::functions::hash_dc::ast_print_dc5fc04fcf3bd8b7;
-use crate::generated::functions::hash_e6::{
-    ast_print_e6621b3e7e35336a, ast_print_e68a5de1ced03867,
-};
-use crate::generated::functions::hash_ee::ast_value_ee9b0901d11400f9;
-use crate::generated::functions::hash_f0::ast_value_f0ad119439d04a33;
+use crate::generated::functions::hash_fe::ast_print_fec037aa2994a202;
 
 /// Tag definitions for Panasonic::Main table
 pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -44,8 +43,8 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FirmwareVersion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
-                value_conv: Some(ValueConv::Function(ast_value_b7b5c432b9d85328)),
+                print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
+                value_conv: Some(ValueConv::Function(ast_value_c9162365d287d6f8)),
             },
         ),
         (
@@ -116,8 +115,8 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "WhiteBalanceBias",
                 format: "int16s",
-                print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
-                value_conv: Some(ValueConv::Function(ast_value_743cc97ce826a767)),
+                print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
+                value_conv: Some(ValueConv::Function(ast_value_ed1564c10478139e)),
             },
         ),
         (
@@ -125,8 +124,8 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FlashBias",
                 format: "int16s",
-                print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
-                value_conv: Some(ValueConv::Function(ast_value_743cc97ce826a767)),
+                print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
+                value_conv: Some(ValueConv::Function(ast_value_ed1564c10478139e)),
             },
         ),
         (
@@ -134,7 +133,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "InternalSerialNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b2e53ba58d428808)),
+                print_conv: Some(PrintConv::Function(ast_print_2deedb011bde716b)),
                 value_conv: None,
             },
         ),
@@ -173,7 +172,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 print_conv: Some(PrintConv::Expression(
                     "[Function: Image::ExifTool::Panasonic::__ANON__]".to_string(),
                 )),
-                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+                value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
             },
         ),
         (
@@ -244,7 +243,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "BabyAge",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_77deeeaf9630ea8f)),
+                print_conv: Some(PrintConv::Function(ast_print_cf5807c439399953)),
                 value_conv: None,
             },
         ),
@@ -271,7 +270,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "TravelDay",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_dbf94666acbb7012)),
+                print_conv: Some(PrintConv::Function(ast_print_ed84e8e3ffdd3d4d)),
                 value_conv: None,
             },
         ),
@@ -460,7 +459,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AFPointPosition",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_e68a5de1ced03867)),
+                print_conv: Some(PrintConv::Function(ast_print_22cf1298aade8342)),
                 value_conv: None,
             },
         ),
@@ -469,7 +468,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FaceDetInfo",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_a923dfe25a011d0e)),
+                print_conv: Some(PrintConv::Function(ast_print_41a9f4269104a464)),
                 value_conv: None,
             },
         ),
@@ -479,7 +478,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "LensType",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_f0ad119439d04a33)),
+                value_conv: Some(ValueConv::Function(ast_value_e19b1ac6c7b6ad13)),
             },
         ),
         (
@@ -488,7 +487,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "LensSerialNumber",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_f0ad119439d04a33)),
+                value_conv: Some(ValueConv::Function(ast_value_e19b1ac6c7b6ad13)),
             },
         ),
         (
@@ -497,7 +496,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "AccessoryType",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_f0ad119439d04a33)),
+                value_conv: Some(ValueConv::Function(ast_value_e19b1ac6c7b6ad13)),
             },
         ),
         (
@@ -506,7 +505,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "AccessorySerialNumber",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_f0ad119439d04a33)),
+                value_conv: Some(ValueConv::Function(ast_value_e19b1ac6c7b6ad13)),
             },
         ),
         (
@@ -532,7 +531,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "LensFirmwareVersion",
                 format: "int8u",
-                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+                print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: None,
             },
         ),
@@ -685,8 +684,8 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ManometerPressure",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_e6621b3e7e35336a)),
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                print_conv: Some(PrintConv::Function(ast_print_9c34f7195c5f73e7)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -758,7 +757,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "RollAngle",
                 format: "int16s",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -767,7 +766,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "PitchAngle",
                 format: "int16s",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_6f8795fcde9693b5)),
+                value_conv: Some(ValueConv::Function(ast_value_b9de0923ad0670f8)),
             },
         ),
         (
@@ -892,7 +891,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "TimeStamp",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
             },
         ),
@@ -992,7 +991,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "LensTypeModel",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_69f47c9064ee4be6)),
+                value_conv: Some(ValueConv::Function(ast_value_9edcd70970960c43)),
             },
         ),
         (
@@ -1036,7 +1035,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AFAreaSize",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_dc5fc04fcf3bd8b7)),
+                print_conv: Some(PrintConv::Function(ast_print_fec037aa2994a202)),
                 value_conv: None,
             },
         ),
@@ -1046,7 +1045,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "LensTypeModel",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_69f47c9064ee4be6)),
+                value_conv: Some(ValueConv::Function(ast_value_9edcd70970960c43)),
             },
         ),
         (
@@ -1180,7 +1179,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "BabyAge",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_77deeeaf9630ea8f)),
+                print_conv: Some(PrintConv::Function(ast_print_cf5807c439399953)),
                 value_conv: None,
             },
         ),

@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_2e::ast_print_2e926c6f528517f0;
-use crate::generated::functions::hash_56::ast_value_564016ad7399b16a;
-use crate::generated::functions::hash_6d::ast_print_6de6ff12d32c1902;
-use crate::generated::functions::hash_d7::ast_print_d7861faba23a3afc;
+use crate::generated::functions::hash_36::ast_print_36cfa4c2513c137c;
+use crate::generated::functions::hash_aa::ast_value_aae26d7e5adb6938;
+use crate::generated::functions::hash_b1::ast_print_b105a96821e32f2b;
+use crate::generated::functions::hash_b4::ast_print_b4577ab90e52c45f;
 
 /// Tag definitions for Olympus::FocusInfo table
 pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -101,8 +101,8 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "FocusDistance",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_2e926c6f528517f0)),
-                value_conv: Some(ValueConv::Function(ast_value_564016ad7399b16a)),
+                print_conv: Some(PrintConv::Function(ast_print_b4577ab90e52c45f)),
+                value_conv: Some(ValueConv::Function(ast_value_aae26d7e5adb6938)),
             },
         ),
         (
@@ -164,7 +164,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "ManualFlash",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d7861faba23a3afc)),
+                print_conv: Some(PrintConv::Function(ast_print_b105a96821e32f2b)),
                 value_conv: None,
             },
         ),
@@ -182,7 +182,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "ImageStabilization",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_6de6ff12d32c1902)),
+                print_conv: Some(PrintConv::Function(ast_print_36cfa4c2513c137c)),
                 value_conv: None,
             },
         ),

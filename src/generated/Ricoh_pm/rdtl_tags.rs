@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_74::ast_print_74b67b38758b8b7c;
-use crate::generated::functions::hash_95::ast_value_953f71752f648e03;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_ec::ast_print_ec01a8049c79f988;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_55::ast_value_551d2c3da692067;
+use crate::generated::functions::hash_f5::ast_print_f58cef9820a3c7fa;
+use crate::generated::functions::hash_fa::ast_print_fa4db9894c421895;
 
 /// Tag definitions for Ricoh::RDTL table
 pub static RICOH_RDTL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -20,8 +20,8 @@ pub static RICOH_RDTL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSDateTime",
                 format: "double",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_953f71752f648e03)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_551d2c3da692067)),
             },
         ),
         (
@@ -29,7 +29,7 @@ pub static RICOH_RDTL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSLatitude",
                 format: "double",
-                print_conv: Some(PrintConv::Function(ast_print_ec01a8049c79f988)),
+                print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
                 value_conv: None,
             },
         ),
@@ -38,7 +38,7 @@ pub static RICOH_RDTL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSLongitude",
                 format: "double",
-                print_conv: Some(PrintConv::Function(ast_print_ec01a8049c79f988)),
+                print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
                 value_conv: None,
             },
         ),
@@ -47,7 +47,7 @@ pub static RICOH_RDTL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSAltitude",
                 format: "double",
-                print_conv: Some(PrintConv::Function(ast_print_74b67b38758b8b7c)),
+                print_conv: Some(PrintConv::Function(ast_print_f58cef9820a3c7fa)),
                 value_conv: None,
             },
         ),

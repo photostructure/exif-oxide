@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_44::ast_print_44f685eba6f9412f;
-use crate::generated::functions::hash_6c::ast_print_6cee0408ed0783c7;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_e1::ast_print_e1b9c18c6fb887af;
+use crate::generated::functions::hash_26::ast_print_26ee01bf270f786b;
+use crate::generated::functions::hash_2a::ast_print_2aa532acb8a29737;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_67::ast_print_674572cac8977577;
 
 /// Tag definitions for GoPro::GPRI table
 pub static GO_PRO_GPRI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -20,7 +20,7 @@ pub static GO_PRO_GPRI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSDateTimeRaw",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::GoPro::ConvertSystemTime]".to_string(),
                 )),
@@ -31,7 +31,7 @@ pub static GO_PRO_GPRI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSLatitudeRaw",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_44f685eba6f9412f)),
+                print_conv: Some(PrintConv::Function(ast_print_26ee01bf270f786b)),
                 value_conv: None,
             },
         ),
@@ -40,7 +40,7 @@ pub static GO_PRO_GPRI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSLongitudeRaw",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_6cee0408ed0783c7)),
+                print_conv: Some(PrintConv::Function(ast_print_674572cac8977577)),
                 value_conv: None,
             },
         ),
@@ -49,7 +49,7 @@ pub static GO_PRO_GPRI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSAltitudeRaw",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_e1b9c18c6fb887af)),
+                print_conv: Some(PrintConv::Function(ast_print_2aa532acb8a29737)),
                 value_conv: None,
             },
         ),
@@ -58,7 +58,7 @@ pub static GO_PRO_GPRI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPRI_Unknown4",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_e1b9c18c6fb887af)),
+                print_conv: Some(PrintConv::Function(ast_print_2aa532acb8a29737)),
                 value_conv: None,
             },
         ),
@@ -67,7 +67,7 @@ pub static GO_PRO_GPRI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPRI_Unknown5",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_e1b9c18c6fb887af)),
+                print_conv: Some(PrintConv::Function(ast_print_2aa532acb8a29737)),
                 value_conv: None,
             },
         ),

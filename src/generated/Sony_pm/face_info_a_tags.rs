@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_2f::ast_value_2f6e191c54ef7f4e;
-use crate::generated::functions::hash_46::ast_value_462402e4c245880c;
+use crate::generated::functions::hash_80::ast_value_800d1a7009311d4d;
+use crate::generated::functions::hash_f9::ast_value_f9f9345fe159573a;
 
 /// Tag definitions for Sony::FaceInfoA table
 pub static SONY_FACEINFOA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -28,7 +28,7 @@ pub static SONY_FACEINFOA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "FacesDetected",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_2f6e191c54ef7f4e)),
+                value_conv: Some(ValueConv::Function(ast_value_800d1a7009311d4d)),
             },
         ),
         (
@@ -46,7 +46,7 @@ pub static SONY_FACEINFOA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "PotentialFace1Position",
                 format: "int16u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_462402e4c245880c)),
+                value_conv: Some(ValueConv::Function(ast_value_f9f9345fe159573a)),
             },
         ),
         (
@@ -55,7 +55,7 @@ pub static SONY_FACEINFOA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "PotentialFace2Position",
                 format: "int16u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_462402e4c245880c)),
+                value_conv: Some(ValueConv::Function(ast_value_f9f9345fe159573a)),
             },
         ),
         (
@@ -64,7 +64,7 @@ pub static SONY_FACEINFOA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "PotentialFace3Position",
                 format: "int16u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_462402e4c245880c)),
+                value_conv: Some(ValueConv::Function(ast_value_f9f9345fe159573a)),
             },
         ),
         (
@@ -73,7 +73,7 @@ pub static SONY_FACEINFOA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "PotentialFace4Position",
                 format: "int16u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_462402e4c245880c)),
+                value_conv: Some(ValueConv::Function(ast_value_f9f9345fe159573a)),
             },
         ),
         (
@@ -82,7 +82,7 @@ pub static SONY_FACEINFOA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "PotentialFace5Position",
                 format: "int16u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_462402e4c245880c)),
+                value_conv: Some(ValueConv::Function(ast_value_f9f9345fe159573a)),
             },
         ),
         (
@@ -91,7 +91,7 @@ pub static SONY_FACEINFOA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "PotentialFace6Position",
                 format: "int16u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_462402e4c245880c)),
+                value_conv: Some(ValueConv::Function(ast_value_f9f9345fe159573a)),
             },
         ),
         (
@@ -100,7 +100,7 @@ pub static SONY_FACEINFOA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "PotentialFace7Position",
                 format: "int16u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_462402e4c245880c)),
+                value_conv: Some(ValueConv::Function(ast_value_f9f9345fe159573a)),
             },
         ),
         (
@@ -109,7 +109,7 @@ pub static SONY_FACEINFOA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "PotentialFace8Position",
                 format: "int16u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_462402e4c245880c)),
+                value_conv: Some(ValueConv::Function(ast_value_f9f9345fe159573a)),
             },
         ),
         (
@@ -118,7 +118,7 @@ pub static SONY_FACEINFOA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "Face1Position",
                 format: "int16u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_462402e4c245880c)),
+                value_conv: Some(ValueConv::Function(ast_value_f9f9345fe159573a)),
             },
         ),
         (
@@ -127,7 +127,7 @@ pub static SONY_FACEINFOA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "Face2Position",
                 format: "int16u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_462402e4c245880c)),
+                value_conv: Some(ValueConv::Function(ast_value_f9f9345fe159573a)),
             },
         ),
         (
@@ -136,7 +136,7 @@ pub static SONY_FACEINFOA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "Face3Position",
                 format: "int16u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_462402e4c245880c)),
+                value_conv: Some(ValueConv::Function(ast_value_f9f9345fe159573a)),
             },
         ),
         (
@@ -145,7 +145,7 @@ pub static SONY_FACEINFOA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "Face4Position",
                 format: "int16u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_462402e4c245880c)),
+                value_conv: Some(ValueConv::Function(ast_value_f9f9345fe159573a)),
             },
         ),
     ])

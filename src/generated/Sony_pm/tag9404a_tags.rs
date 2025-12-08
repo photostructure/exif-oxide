@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_da::ast_print_da1eca5e0712c7b0;
+use crate::generated::functions::hash_8c::ast_print_8ca73d52cc1cee99;
 
 /// Tag definitions for Sony::Tag9404a table
 pub static SONY_TAG9404A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -35,7 +35,7 @@ pub static SONY_TAG9404A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "LensZoomPosition",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_da1eca5e0712c7b0)),
+                print_conv: Some(PrintConv::Function(ast_print_8ca73d52cc1cee99)),
                 value_conv: None,
             },
         ),

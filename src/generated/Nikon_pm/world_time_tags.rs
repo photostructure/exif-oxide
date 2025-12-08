@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_de::ast_print_de273c44b3d492eb;
+use crate::generated::functions::hash_bd::ast_print_bd89e0bff1b83d5d;
 
 /// Tag definitions for Nikon::WorldTime table
 pub static NIKON_WORLDTIME_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static NIKON_WORLDTIME_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "TimeZone",
                 format: "int16s",
-                print_conv: Some(PrintConv::Function(ast_print_de273c44b3d492eb)),
+                print_conv: Some(PrintConv::Function(ast_print_bd89e0bff1b83d5d)),
                 value_conv: None,
             },
         ),

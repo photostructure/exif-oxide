@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
 
 /// Tag definitions for SigmaRaw::HeaderExt table
 pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ExposureAdjust",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -26,7 +26,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "Contrast",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -35,7 +35,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "Shadow",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -44,7 +44,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "Highlight",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -53,7 +53,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "Saturation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -62,7 +62,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "Sharpness",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -71,7 +71,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "RedAdjust",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -80,7 +80,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "GreenAdjust",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -89,7 +89,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "BlueAdjust",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -98,7 +98,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "X3FillLight",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),

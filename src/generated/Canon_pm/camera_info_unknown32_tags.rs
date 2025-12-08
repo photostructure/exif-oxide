@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_d3::ast_print_d3baecf4975cff4c;
+use crate::generated::functions::hash_c8::ast_print_c8bca6375178b51d;
 
 /// Tag definitions for Canon::CameraInfoUnknown32 table
 pub static CANON_CAMERAINFOUNKNOWN32_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static CANON_CAMERAINFOUNKNOWN32_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "CameraTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
+                print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
             },
         ),
@@ -26,7 +26,7 @@ pub static CANON_CAMERAINFOUNKNOWN32_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "CameraTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
+                print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
             },
         ),
@@ -35,7 +35,7 @@ pub static CANON_CAMERAINFOUNKNOWN32_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "CameraTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
+                print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
             },
         ),
@@ -44,7 +44,7 @@ pub static CANON_CAMERAINFOUNKNOWN32_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "CameraTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
+                print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
             },
         ),
@@ -53,7 +53,7 @@ pub static CANON_CAMERAINFOUNKNOWN32_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "CameraTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
+                print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
             },
         ),

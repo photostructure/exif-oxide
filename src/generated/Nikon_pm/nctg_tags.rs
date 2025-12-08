@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_a1::ast_value_a140a65a5d8d60f;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_c0::ast_print_c0a8bf21acb9deb1;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_6a::ast_value_6a713bfccf5dd9c;
+use crate::generated::functions::hash_dd::ast_print_dd3be644838b9531;
 
 /// Tag definitions for Nikon::NCTG table
 pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -19,7 +19,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "CreateDate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
             },
         ),
@@ -28,7 +28,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "DateTimeOriginal",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
             },
         ),
@@ -38,7 +38,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "FrameCount",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_a140a65a5d8d60f)),
+                value_conv: Some(ValueConv::Function(ast_value_6a713bfccf5dd9c)),
             },
         ),
         (
@@ -46,7 +46,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FrameRate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c0a8bf21acb9deb1)),
+                print_conv: Some(PrintConv::Function(ast_print_dd3be644838b9531)),
                 value_conv: None,
             },
         ),
@@ -109,7 +109,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "NikonDateTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
             },
         ),

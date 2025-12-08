@@ -7,11 +7,11 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_39::ast_print_39aa319f5a5c55eb;
-use crate::generated::functions::hash_5b::ast_value_5b997436cb4c4a4f;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_b7::ast_print_b75f5f46a9f320cf;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_96::ast_print_965cc8da10a90f1;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_e6::ast_value_e60461d3e144eea5;
+use crate::generated::functions::hash_f1::ast_print_f144beb0c69294cb;
 
 /// Tag definitions for Samsung::MP4 table
 pub static SAMSUNG_MP4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -21,7 +21,7 @@ pub static SAMSUNG_MP4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "Make",
                 format: "string[24]",
-                print_conv: Some(PrintConv::Function(ast_print_39aa319f5a5c55eb)),
+                print_conv: Some(PrintConv::Function(ast_print_f144beb0c69294cb)),
                 value_conv: None,
             },
         ),
@@ -39,8 +39,8 @@ pub static SAMSUNG_MP4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "ExposureTime",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_5b997436cb4c4a4f)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_e60461d3e144eea5)),
             },
         ),
         (
@@ -48,7 +48,7 @@ pub static SAMSUNG_MP4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "FNumber",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -57,7 +57,7 @@ pub static SAMSUNG_MP4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "ExposureCompensation",
                 format: "rational64s",
-                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: None,
             },
         ),

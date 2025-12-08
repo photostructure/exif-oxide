@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_25::ast_value_25716161e402fefe;
+use crate::generated::functions::hash_94::ast_value_9436fc85e670f4f5;
 
 /// Tag definitions for Samsung::PictureWizard table
 pub static SAMSUNG_PICTUREWIZARD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -27,7 +27,7 @@ pub static SAMSUNG_PICTUREWIZARD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 name: "PictureWizardSaturation",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_25716161e402fefe)),
+                value_conv: Some(ValueConv::Function(ast_value_9436fc85e670f4f5)),
             },
         ),
         (
@@ -36,7 +36,7 @@ pub static SAMSUNG_PICTUREWIZARD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 name: "PictureWizardSharpness",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_25716161e402fefe)),
+                value_conv: Some(ValueConv::Function(ast_value_9436fc85e670f4f5)),
             },
         ),
         (
@@ -45,7 +45,7 @@ pub static SAMSUNG_PICTUREWIZARD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 name: "PictureWizardContrast",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_25716161e402fefe)),
+                value_conv: Some(ValueConv::Function(ast_value_9436fc85e670f4f5)),
             },
         ),
     ])

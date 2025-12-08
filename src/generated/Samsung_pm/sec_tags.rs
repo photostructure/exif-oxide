@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_39::ast_print_39aa319f5a5c55eb;
+use crate::generated::functions::hash_f1::ast_print_f144beb0c69294cb;
 
 /// Tag definitions for Samsung::sec table
 pub static SAMSUNG_SEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static SAMSUNG_SEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "Make",
                 format: "string[32]",
-                print_conv: Some(PrintConv::Function(ast_print_39aa319f5a5c55eb)),
+                print_conv: Some(PrintConv::Function(ast_print_f144beb0c69294cb)),
                 value_conv: None,
             },
         ),

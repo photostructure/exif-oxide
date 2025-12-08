@@ -7,11 +7,11 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_31::ast_print_312840a770399a53;
-use crate::generated::functions::hash_42::ast_print_42c5dc3d1b33e467;
-use crate::generated::functions::hash_5d::ast_print_5d7bace8d8eb1cfe;
-use crate::generated::functions::hash_78::ast_print_7887a47ea90c93f3;
-use crate::generated::functions::hash_7a::ast_value_7a5b0e7788309e2c;
+use crate::generated::functions::hash_27::ast_print_27f655efdb8691f1;
+use crate::generated::functions::hash_60::ast_print_6066204f5d926f8;
+use crate::generated::functions::hash_92::ast_value_922de111bc6e29e;
+use crate::generated::functions::hash_be::ast_print_be7ee827727a50d1;
+use crate::generated::functions::hash_bf::ast_print_bffb41297287cd35;
 
 /// Tag definitions for Nikon::PictureControl table
 pub static NIKON_PICTURECONTROL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -61,8 +61,8 @@ pub static NIKON_PICTURECONTROL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "PictureControlQuickAdjust",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_7887a47ea90c93f3)),
-                value_conv: Some(ValueConv::Function(ast_value_7a5b0e7788309e2c)),
+                print_conv: Some(PrintConv::Function(ast_print_be7ee827727a50d1)),
+                value_conv: Some(ValueConv::Function(ast_value_922de111bc6e29e)),
             },
         ),
         (
@@ -70,8 +70,8 @@ pub static NIKON_PICTURECONTROL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "Sharpness",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_42c5dc3d1b33e467)),
-                value_conv: Some(ValueConv::Function(ast_value_7a5b0e7788309e2c)),
+                print_conv: Some(PrintConv::Function(ast_print_27f655efdb8691f1)),
+                value_conv: Some(ValueConv::Function(ast_value_922de111bc6e29e)),
             },
         ),
         (
@@ -79,8 +79,8 @@ pub static NIKON_PICTURECONTROL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "Contrast",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_7887a47ea90c93f3)),
-                value_conv: Some(ValueConv::Function(ast_value_7a5b0e7788309e2c)),
+                print_conv: Some(PrintConv::Function(ast_print_be7ee827727a50d1)),
+                value_conv: Some(ValueConv::Function(ast_value_922de111bc6e29e)),
             },
         ),
         (
@@ -88,8 +88,8 @@ pub static NIKON_PICTURECONTROL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "Brightness",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_7887a47ea90c93f3)),
-                value_conv: Some(ValueConv::Function(ast_value_7a5b0e7788309e2c)),
+                print_conv: Some(PrintConv::Function(ast_print_be7ee827727a50d1)),
+                value_conv: Some(ValueConv::Function(ast_value_922de111bc6e29e)),
             },
         ),
         (
@@ -97,8 +97,8 @@ pub static NIKON_PICTURECONTROL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "Saturation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_7887a47ea90c93f3)),
-                value_conv: Some(ValueConv::Function(ast_value_7a5b0e7788309e2c)),
+                print_conv: Some(PrintConv::Function(ast_print_be7ee827727a50d1)),
+                value_conv: Some(ValueConv::Function(ast_value_922de111bc6e29e)),
             },
         ),
         (
@@ -106,8 +106,8 @@ pub static NIKON_PICTURECONTROL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "HueAdjustment",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_5d7bace8d8eb1cfe)),
-                value_conv: Some(ValueConv::Function(ast_value_7a5b0e7788309e2c)),
+                print_conv: Some(PrintConv::Function(ast_print_6066204f5d926f8)),
+                value_conv: Some(ValueConv::Function(ast_value_922de111bc6e29e)),
             },
         ),
         (
@@ -133,8 +133,8 @@ pub static NIKON_PICTURECONTROL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "ToningSaturation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_312840a770399a53)),
-                value_conv: Some(ValueConv::Function(ast_value_7a5b0e7788309e2c)),
+                print_conv: Some(PrintConv::Function(ast_print_bffb41297287cd35)),
+                value_conv: Some(ValueConv::Function(ast_value_922de111bc6e29e)),
             },
         ),
     ])

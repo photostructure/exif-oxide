@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_c1::ast_print_c12c7e50f55cf298;
+use crate::generated::functions::hash_7c::ast_print_7c85cf32a45b11ab;
 
 /// Tag definitions for JPEG::SPIFF table
 pub static JPEG_SPIFF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static JPEG_SPIFF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "SPIFFVersion",
                 format: "int8u[2]",
-                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+                print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: None,
             },
         ),

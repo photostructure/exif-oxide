@@ -7,17 +7,17 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_1a::ast_print_1ade125dab246be4;
-use crate::generated::functions::hash_3c::ast_value_3ca782d06a4e1676;
-use crate::generated::functions::hash_45::ast_print_45145cdaaff93e23;
-use crate::generated::functions::hash_53::ast_value_53ef12641c6719f5;
-use crate::generated::functions::hash_74::ast_value_743e189656f40f03;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_b9::ast_print_b93bf01b5173ce30;
-use crate::generated::functions::hash_bb::ast_print_bb36ed62e5a52a4;
-use crate::generated::functions::hash_cc::ast_value_cc6d20d1f05f91ec;
-use crate::generated::functions::hash_da::ast_print_da1eca5e0712c7b0;
-use crate::generated::functions::hash_e0::ast_value_e0b36f169462770c;
+use crate::generated::functions::hash_10::ast_print_101e3eed0a079327;
+use crate::generated::functions::hash_16::ast_value_161c6918edf43c3f;
+use crate::generated::functions::hash_1f::ast_print_1f47b524bed353b1;
+use crate::generated::functions::hash_26::ast_value_26c9608b5bf2210d;
+use crate::generated::functions::hash_68::ast_value_689cac30223ecfb0;
+use crate::generated::functions::hash_6a::ast_value_6a2b983323e78027;
+use crate::generated::functions::hash_8c::ast_print_8ca73d52cc1cee99;
+use crate::generated::functions::hash_95::ast_value_95bfd9578fbdb0ab;
+use crate::generated::functions::hash_b3::ast_print_b3e8606718d2531e;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_d8::ast_print_d87e2f7cfd46802c;
 
 /// Tag definitions for Sony::Tag9405b table
 pub static SONY_TAG9405B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -27,8 +27,8 @@ pub static SONY_TAG9405B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "SonyISO",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_1ade125dab246be4)),
-                value_conv: Some(ValueConv::Function(ast_value_3ca782d06a4e1676)),
+                print_conv: Some(PrintConv::Function(ast_print_1f47b524bed353b1)),
+                value_conv: Some(ValueConv::Function(ast_value_161c6918edf43c3f)),
             },
         ),
         (
@@ -36,8 +36,8 @@ pub static SONY_TAG9405B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "BaseISO",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_1ade125dab246be4)),
-                value_conv: Some(ValueConv::Function(ast_value_3ca782d06a4e1676)),
+                print_conv: Some(PrintConv::Function(ast_print_1f47b524bed353b1)),
+                value_conv: Some(ValueConv::Function(ast_value_161c6918edf43c3f)),
             },
         ),
         (
@@ -45,8 +45,8 @@ pub static SONY_TAG9405B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "StopsAboveBaseISO",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_45145cdaaff93e23)),
-                value_conv: Some(ValueConv::Function(ast_value_743e189656f40f03)),
+                print_conv: Some(PrintConv::Function(ast_print_b3e8606718d2531e)),
+                value_conv: Some(ValueConv::Function(ast_value_26c9608b5bf2210d)),
             },
         ),
         (
@@ -54,8 +54,8 @@ pub static SONY_TAG9405B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "SonyExposureTime2",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_bb36ed62e5a52a4)),
-                value_conv: Some(ValueConv::Function(ast_value_53ef12641c6719f5)),
+                print_conv: Some(PrintConv::Function(ast_print_101e3eed0a079327)),
+                value_conv: Some(ValueConv::Function(ast_value_689cac30223ecfb0)),
             },
         ),
         (
@@ -63,7 +63,7 @@ pub static SONY_TAG9405B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ExposureTime",
                 format: "rational32u",
-                print_conv: Some(PrintConv::Function(ast_print_bb36ed62e5a52a4)),
+                print_conv: Some(PrintConv::Function(ast_print_101e3eed0a079327)),
                 value_conv: None,
             },
         ),
@@ -72,8 +72,8 @@ pub static SONY_TAG9405B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "SonyFNumber",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_e0b36f169462770c)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_95bfd9578fbdb0ab)),
             },
         ),
         (
@@ -81,8 +81,8 @@ pub static SONY_TAG9405B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "SonyMaxApertureValue",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_e0b36f169462770c)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_95bfd9578fbdb0ab)),
             },
         ),
         (
@@ -91,7 +91,7 @@ pub static SONY_TAG9405B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "SequenceImageNumber",
                 format: "int32u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_cc6d20d1f05f91ec)),
+                value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
             },
         ),
         (
@@ -171,7 +171,7 @@ pub static SONY_TAG9405B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "Sharpness",
                 format: "int8s",
-                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: None,
             },
         ),
@@ -243,7 +243,7 @@ pub static SONY_TAG9405B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "LensZoomPosition",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_da1eca5e0712c7b0)),
+                print_conv: Some(PrintConv::Function(ast_print_8ca73d52cc1cee99)),
                 value_conv: None,
             },
         ),
@@ -261,7 +261,7 @@ pub static SONY_TAG9405B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "LensZoomPosition",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_da1eca5e0712c7b0)),
+                print_conv: Some(PrintConv::Function(ast_print_8ca73d52cc1cee99)),
                 value_conv: None,
             },
         ),
@@ -279,7 +279,7 @@ pub static SONY_TAG9405B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "LensZoomPosition",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_da1eca5e0712c7b0)),
+                print_conv: Some(PrintConv::Function(ast_print_8ca73d52cc1cee99)),
                 value_conv: None,
             },
         ),

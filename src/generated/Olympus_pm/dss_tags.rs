@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_48::ast_print_487657613095a4c6;
-use crate::generated::functions::hash_55::ast_value_5576e8c123ff3a25;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_e1::ast_value_e10d39549dcc6453;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_a0::ast_value_a054955c957463bf;
+use crate::generated::functions::hash_cc::ast_value_ccbc3d950c99a0d3;
+use crate::generated::functions::hash_cf::ast_print_cfce5cd5c31bbe17;
 
 /// Tag definitions for Olympus::DSS table
 pub static OLYMPUS_DSS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -29,8 +29,8 @@ pub static OLYMPUS_DSS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "StartTime",
                 format: "string[12]",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_e10d39549dcc6453)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_ccbc3d950c99a0d3)),
             },
         ),
         (
@@ -38,8 +38,8 @@ pub static OLYMPUS_DSS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "EndTime",
                 format: "string[12]",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_e10d39549dcc6453)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_ccbc3d950c99a0d3)),
             },
         ),
         (
@@ -47,8 +47,8 @@ pub static OLYMPUS_DSS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "Duration",
                 format: "string[6]",
-                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
-                value_conv: Some(ValueConv::Function(ast_value_5576e8c123ff3a25)),
+                print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
+                value_conv: Some(ValueConv::Function(ast_value_a054955c957463bf)),
             },
         ),
         (

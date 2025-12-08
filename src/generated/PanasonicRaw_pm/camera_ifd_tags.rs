@@ -7,13 +7,14 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_69::ast_value_69f47c9064ee4be6;
-use crate::generated::functions::hash_70::ast_value_70d1d11e7183127a;
-use crate::generated::functions::hash_78::ast_value_78de420ad35cdf27;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_b2::ast_value_b2f81fafd2d2443b;
-use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_20::ast_value_2019c96d765dcb89;
+use crate::generated::functions::hash_9e::ast_value_9edcd70970960c43;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_c5::ast_value_c52c83ef53c04e47;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_dd::{
+    ast_print_dd22782e5ba8c7cb, ast_value_dd83ee4563d6583e,
+};
 
 /// Tag definitions for PanasonicRaw::CameraIFD table
 pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -87,7 +88,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 name: "LensTypeModel",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_69f47c9064ee4be6)),
+                value_conv: Some(ValueConv::Function(ast_value_9edcd70970960c43)),
             },
         ),
         (
@@ -95,7 +96,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "FocalLengthIn35mmFormat",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
             },
         ),
@@ -104,8 +105,8 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "ApertureValue",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_78de420ad35cdf27)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_c52c83ef53c04e47)),
             },
         ),
         (
@@ -113,8 +114,8 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "ShutterSpeedValue",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_b2f81fafd2d2443b)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_dd83ee4563d6583e)),
             },
         ),
         (
@@ -123,7 +124,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 name: "SensitivityValue",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_70d1d11e7183127a)),
+                value_conv: Some(ValueConv::Function(ast_value_2019c96d765dcb89)),
             },
         ),
         (

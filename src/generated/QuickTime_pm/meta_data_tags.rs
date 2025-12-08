@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_62::ast_print_628594731df1ac5c;
-use crate::generated::functions::hash_72::ast_value_7240480154508973;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_8c::ast_print_8cf1d70236b67272;
+use crate::generated::functions::hash_c2::ast_value_c215f0f9463fb4;
 
 /// Tag definitions for QuickTime::MetaData table
 pub static QUICK_TIME_METADATA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -19,8 +19,8 @@ pub static QUICK_TIME_METADATA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ProductionDate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_7240480154508973)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_c215f0f9463fb4)),
             },
         ),
         (
@@ -37,7 +37,7 @@ pub static QUICK_TIME_METADATA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "TimeZone",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_628594731df1ac5c)),
+                print_conv: Some(PrintConv::Function(ast_print_8cf1d70236b67272)),
                 value_conv: None,
             },
         ),
@@ -46,8 +46,8 @@ pub static QUICK_TIME_METADATA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ModifyDate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_7240480154508973)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_c215f0f9463fb4)),
             },
         ),
     ])

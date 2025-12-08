@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_24::ast_print_24e72f70112b2913;
-use crate::generated::functions::hash_b3::ast_print_b36147aae9781985;
+use crate::generated::functions::hash_73::ast_print_73b066728dc7efc5;
+use crate::generated::functions::hash_7d::ast_print_7deab36bb4993610;
 
 /// Tag definitions for Nikon::SeqInfoZ9 table
 pub static NIKON_SEQINFOZ9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -18,7 +18,7 @@ pub static NIKON_SEQINFOZ9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "FocusShiftShooting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_24e72f70112b2913)),
+                print_conv: Some(PrintConv::Function(ast_print_73b066728dc7efc5)),
                 value_conv: None,
             },
         ),
@@ -27,7 +27,7 @@ pub static NIKON_SEQINFOZ9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "IntervalShooting",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_b36147aae9781985)),
+                print_conv: Some(PrintConv::Function(ast_print_7deab36bb4993610)),
                 value_conv: None,
             },
         ),

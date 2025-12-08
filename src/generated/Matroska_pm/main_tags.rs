@@ -7,14 +7,14 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_29::ast_value_29b4faab94339ab6;
-use crate::generated::functions::hash_48::ast_print_487657613095a4c6;
-use crate::generated::functions::hash_7e::ast_value_7eadc2f4518c667e;
-use crate::generated::functions::hash_83::ast_value_83f37d90ee875af5;
-use crate::generated::functions::hash_aa::ast_print_aaf44bf2fde8c749;
-use crate::generated::functions::hash_ab::ast_print_abb6a96ce6de058d;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_da::ast_print_da3ee02492769652;
+use crate::generated::functions::hash_26::ast_print_26ee0ff5e974d8e1;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_be::ast_print_be9ef414392ffbfb;
+use crate::generated::functions::hash_c3::ast_value_c3ac357278ffbbb0;
+use crate::generated::functions::hash_cf::ast_print_cfce5cd5c31bbe17;
+use crate::generated::functions::hash_d9::ast_value_d99cb324d081e015;
+use crate::generated::functions::hash_e0::ast_print_e0ed297994b2308c;
+use crate::generated::functions::hash_f2::ast_value_f2e6eb92b211f31a;
 
 /// Tag definitions for Matroska::Main table
 pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -87,8 +87,8 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ChapterTimeStart",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
-                value_conv: Some(ValueConv::Function(ast_value_29b4faab94339ab6)),
+                print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
+                value_conv: Some(ValueConv::Function(ast_value_f2e6eb92b211f31a)),
             },
         ),
         (
@@ -96,8 +96,8 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ChapterTimeEnd",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Function(ast_print_487657613095a4c6)),
-                value_conv: Some(ValueConv::Function(ast_value_29b4faab94339ab6)),
+                print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
+                value_conv: Some(ValueConv::Function(ast_value_f2e6eb92b211f31a)),
             },
         ),
         (
@@ -105,8 +105,8 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "CueRefTime",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Function(ast_print_da3ee02492769652)),
-                value_conv: Some(ValueConv::Function(ast_value_83f37d90ee875af5)),
+                print_conv: Some(PrintConv::Function(ast_print_26ee0ff5e974d8e1)),
+                value_conv: Some(ValueConv::Function(ast_value_d99cb324d081e015)),
             },
         ),
         (
@@ -141,8 +141,8 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "BlockDuration",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Function(ast_print_abb6a96ce6de058d)),
-                value_conv: Some(ValueConv::Function(ast_value_83f37d90ee875af5)),
+                print_conv: Some(PrintConv::Function(ast_print_be9ef414392ffbfb)),
+                value_conv: Some(ValueConv::Function(ast_value_d99cb324d081e015)),
             },
         ),
         (
@@ -285,8 +285,8 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "CueTime",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Function(ast_print_da3ee02492769652)),
-                value_conv: Some(ValueConv::Function(ast_value_83f37d90ee875af5)),
+                print_conv: Some(PrintConv::Function(ast_print_26ee0ff5e974d8e1)),
+                value_conv: Some(ValueConv::Function(ast_value_d99cb324d081e015)),
             },
         ),
         (
@@ -438,8 +438,8 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "TimeCode",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Function(ast_print_da3ee02492769652)),
-                value_conv: Some(ValueConv::Function(ast_value_83f37d90ee875af5)),
+                print_conv: Some(PrintConv::Function(ast_print_26ee0ff5e974d8e1)),
+                value_conv: Some(ValueConv::Function(ast_value_d99cb324d081e015)),
             },
         ),
         (
@@ -519,8 +519,8 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ReferenceBlock",
                 format: "signed",
-                print_conv: Some(PrintConv::Function(ast_print_abb6a96ce6de058d)),
-                value_conv: Some(ValueConv::Function(ast_value_83f37d90ee875af5)),
+                print_conv: Some(PrintConv::Function(ast_print_be9ef414392ffbfb)),
+                value_conv: Some(ValueConv::Function(ast_value_d99cb324d081e015)),
             },
         ),
         (
@@ -645,7 +645,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "DateTimeOriginal",
                 format: "date",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
             },
         ),
@@ -690,8 +690,8 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "Duration",
                 format: "float",
-                print_conv: Some(PrintConv::Function(ast_print_da3ee02492769652)),
-                value_conv: Some(ValueConv::Function(ast_value_83f37d90ee875af5)),
+                print_conv: Some(PrintConv::Function(ast_print_26ee0ff5e974d8e1)),
+                value_conv: Some(ValueConv::Function(ast_value_d99cb324d081e015)),
             },
         ),
         (
@@ -736,7 +736,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "EditionUID",
                 format: "string",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -817,7 +817,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "AttachedFileUID",
                 format: "string",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -978,7 +978,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "SeekID",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_aaf44bf2fde8c749)),
+                print_conv: Some(PrintConv::Function(ast_print_e0ed297994b2308c)),
                 value_conv: None,
             },
         ),
@@ -1177,7 +1177,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "TagChapterUID",
                 format: "string",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -1186,7 +1186,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "TagTrackUID",
                 format: "string",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -1195,7 +1195,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "TagAttachmentUID",
                 format: "string",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -1204,7 +1204,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "TagEditionUID",
                 format: "string",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -1258,7 +1258,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "TrackTranslateEditionUID",
                 format: "string",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -1357,7 +1357,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "ChapterTranslateEditionUID",
                 format: "string",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -1393,7 +1393,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "ChapterSegmentUID",
                 format: "string",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -1402,7 +1402,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "ChapterSegmentEditionUID",
                 format: "string",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -1438,7 +1438,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "SegmentUID",
                 format: "string",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -1447,7 +1447,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "ChapterUID",
                 format: "string",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -1456,7 +1456,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "TrackUID",
                 format: "string",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -1465,7 +1465,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "TrackAttachmentUID",
                 format: "string",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (

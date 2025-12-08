@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_22::ast_value_22aa2ef47b11cd7c;
+use crate::generated::functions::hash_c5::ast_value_c52632c7b0b6c3b9;
 
 /// Tag definitions for Nikon::ColorBalanceC table
 pub static NIKON_COLORBALANCEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -36,7 +36,7 @@ pub static NIKON_COLORBALANCEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "WB_RGGBLevels",
                 format: "int32u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_22aa2ef47b11cd7c)),
+                value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
             },
         ),
         (
@@ -45,7 +45,7 @@ pub static NIKON_COLORBALANCEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "WB_RGGBLevelsDaylight",
                 format: "int32u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_22aa2ef47b11cd7c)),
+                value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
             },
         ),
         (
@@ -54,7 +54,7 @@ pub static NIKON_COLORBALANCEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "WB_RGGBLevelsCloudy",
                 format: "int32u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_22aa2ef47b11cd7c)),
+                value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
             },
         ),
         (
@@ -63,7 +63,7 @@ pub static NIKON_COLORBALANCEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "WB_RGGBLevelsShade",
                 format: "int32u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_22aa2ef47b11cd7c)),
+                value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
             },
         ),
         (
@@ -72,7 +72,7 @@ pub static NIKON_COLORBALANCEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "WB_RGGBLevelsTungsten",
                 format: "int32u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_22aa2ef47b11cd7c)),
+                value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
             },
         ),
         (
@@ -81,7 +81,7 @@ pub static NIKON_COLORBALANCEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "WB_RGGBLevelsFluorescentW",
                 format: "int32u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_22aa2ef47b11cd7c)),
+                value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
             },
         ),
         (
@@ -90,7 +90,7 @@ pub static NIKON_COLORBALANCEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "WB_RGGBLevelsFluorescentN",
                 format: "int32u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_22aa2ef47b11cd7c)),
+                value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
             },
         ),
         (
@@ -99,7 +99,7 @@ pub static NIKON_COLORBALANCEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "WB_RGGBLevelsFluorescentD",
                 format: "int32u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_22aa2ef47b11cd7c)),
+                value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
             },
         ),
         (
@@ -108,7 +108,7 @@ pub static NIKON_COLORBALANCEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "WB_RGGBLevelsHTMercury",
                 format: "int32u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_22aa2ef47b11cd7c)),
+                value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
             },
         ),
         (
@@ -117,7 +117,7 @@ pub static NIKON_COLORBALANCEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "WB_RGGBLevelsCustom",
                 format: "int32u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_22aa2ef47b11cd7c)),
+                value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
             },
         ),
         (
@@ -126,7 +126,7 @@ pub static NIKON_COLORBALANCEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "WB_RGGBLevelsAuto",
                 format: "int32u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_22aa2ef47b11cd7c)),
+                value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
             },
         ),
     ])

@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_c0::ast_print_c0a8bf21acb9deb1;
+use crate::generated::functions::hash_dd::ast_print_dd3be644838b9531;
 
 /// Tag definitions for Red::RED1 table
 pub static RED_RED1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -44,7 +44,7 @@ pub static RED_RED1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FrameRate",
                 format: "rational32u",
-                print_conv: Some(PrintConv::Function(ast_print_c0a8bf21acb9deb1)),
+                print_conv: Some(PrintConv::Function(ast_print_dd3be644838b9531)),
                 value_conv: None,
             },
         ),

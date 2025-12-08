@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_1e::ast_value_1ef1bd5c951da1f3;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_4c::ast_value_4cd6594ea26ecaa7;
 
 /// Tag definitions for Panasonic::TimeInfo table
 pub static PANASONIC_TIMEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -18,8 +18,8 @@ pub static PANASONIC_TIMEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "PanasonicDateTime",
                 format: "undef[8]",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_1ef1bd5c951da1f3)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_4cd6594ea26ecaa7)),
             },
         ),
         (

@@ -121,6 +121,7 @@ static SONY_LENS_TYPES2_DATA: &[(&str, &'static str)] = &[
     ("32889", "Sony FE 28-70mm F2 GM"),
     ("32890", "Sony FE 400-800mm F6.3-8 G OSS"),
     ("32891", "Sony FE 50-150mm F2 GM"),
+    ("32893", "Sony FE 100mm F2.8 Macro GM OSS"),
     ("33072", "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter"),
     ("33073", "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter"),
     ("33076", "Sony FE 100mm F2.8 STF GM OSS (macro mode)"),
@@ -167,6 +168,14 @@ static SONY_LENS_TYPES2_DATA: &[(&str, &'static str)] = &[
         "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter",
     ),
     ("33092", "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter"),
+    (
+        "33093",
+        "Sony FE 100mm F2.8 Macro GM OSS + 1.4X Teleconverter",
+    ),
+    (
+        "33094",
+        "Sony FE 100mm F2.8 Macro GM OSS + 2X Teleconverter",
+    ),
     ("44", "Metabones Canon EF Smart Adapter"),
     ("49201", "Zeiss Touit 12mm F2.8 or other Touit lens"),
     ("49201.1", "Zeiss Touit 32mm F1.8"),

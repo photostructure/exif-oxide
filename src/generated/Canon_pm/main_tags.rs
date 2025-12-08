@@ -7,12 +7,12 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_42::ast_value_4262675ed10175b0;
-use crate::generated::functions::hash_6d::ast_value_6d72618aafeeb2;
-use crate::generated::functions::hash_7e::ast_value_7eadc2f4518c667e;
-use crate::generated::functions::hash_89::ast_print_897f73182e8225d2;
-use crate::generated::functions::hash_bf::ast_print_bffa130fcb334a97;
-use crate::generated::functions::hash_fe::ast_print_fe8d5cd591272bda;
+use crate::generated::functions::hash_13::ast_value_1304121df5fd2971;
+use crate::generated::functions::hash_42::ast_print_42be74113c76318c;
+use crate::generated::functions::hash_70::ast_value_7028cba42a48442b;
+use crate::generated::functions::hash_75::ast_print_75ff5d4ec38b0910;
+use crate::generated::functions::hash_c0::ast_print_c033b0a1599fe562;
+use crate::generated::functions::hash_c3::ast_value_c3ac357278ffbbb0;
 
 /// Tag definitions for Canon::Main table
 pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -85,7 +85,7 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FileNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bffa130fcb334a97)),
+                print_conv: Some(PrintConv::Function(ast_print_c033b0a1599fe562)),
                 value_conv: None,
             },
         ),
@@ -193,7 +193,7 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FirmwareRevision",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_897f73182e8225d2)),
+                print_conv: Some(PrintConv::Function(ast_print_75ff5d4ec38b0910)),
                 value_conv: None,
             },
         ),
@@ -203,7 +203,7 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "Categories",
                 format: "int32u",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_6d72618aafeeb2)),
+                value_conv: Some(ValueConv::Function(ast_value_7028cba42a48442b)),
             },
         ),
         (
@@ -248,7 +248,7 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "ImageUniqueID",
                 format: "undef",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -364,7 +364,7 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "AFPointsInFocus1D",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_fe8d5cd591272bda)),
+                print_conv: Some(PrintConv::Function(ast_print_42be74113c76318c)),
                 value_conv: None,
             },
         ),
@@ -428,7 +428,7 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "ToneCurveTable",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_4262675ed10175b0)),
+                value_conv: Some(ValueConv::Function(ast_value_1304121df5fd2971)),
             },
         ),
         (
@@ -437,7 +437,7 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "SharpnessTable",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_4262675ed10175b0)),
+                value_conv: Some(ValueConv::Function(ast_value_1304121df5fd2971)),
             },
         ),
         (
@@ -446,7 +446,7 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "SharpnessFreqTable",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_4262675ed10175b0)),
+                value_conv: Some(ValueConv::Function(ast_value_1304121df5fd2971)),
             },
         ),
         (
@@ -455,7 +455,7 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "WhiteBalanceTable",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_4262675ed10175b0)),
+                value_conv: Some(ValueConv::Function(ast_value_1304121df5fd2971)),
             },
         ),
         (
@@ -509,7 +509,7 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "ToneCurveMatching",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_4262675ed10175b0)),
+                value_conv: Some(ValueConv::Function(ast_value_1304121df5fd2971)),
             },
         ),
         (
@@ -518,7 +518,7 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "WhiteBalanceMatching",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_4262675ed10175b0)),
+                value_conv: Some(ValueConv::Function(ast_value_1304121df5fd2971)),
             },
         ),
         (

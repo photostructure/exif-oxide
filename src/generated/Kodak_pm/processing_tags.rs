@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_98::ast_value_9828f515f9173f95;
+use crate::generated::functions::hash_c9::ast_value_c978d7a3061a06bd;
 
 /// Tag definitions for Kodak::Processing table
 pub static KODAK_PROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static KODAK_PROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             name: "WB_RGBLevels",
             format: "int16u[3]",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_9828f515f9173f95)),
+            value_conv: Some(ValueConv::Function(ast_value_c978d7a3061a06bd)),
         },
     )])
 });

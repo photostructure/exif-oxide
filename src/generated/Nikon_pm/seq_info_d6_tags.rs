@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_b3::ast_print_b36147aae9781985;
+use crate::generated::functions::hash_7d::ast_print_7deab36bb4993610;
 
 /// Tag definitions for Nikon::SeqInfoD6 table
 pub static NIKON_SEQINFOD6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static NIKON_SEQINFOD6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "IntervalShooting",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_b36147aae9781985)),
+                print_conv: Some(PrintConv::Function(ast_print_7deab36bb4993610)),
                 value_conv: None,
             },
         ),

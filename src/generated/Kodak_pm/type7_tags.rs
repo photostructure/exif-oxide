@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_e8::ast_value_e81a402a310d8ce1;
+use crate::generated::functions::hash_a0::ast_value_a06c82bf6b59eb39;
 
 /// Tag definitions for Kodak::Type7 table
 pub static KODAK_TYPE7_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static KODAK_TYPE7_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             name: "SerialNumber",
             format: "string[16]",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_e81a402a310d8ce1)),
+            value_conv: Some(ValueConv::Function(ast_value_a06c82bf6b59eb39)),
         },
     )])
 });

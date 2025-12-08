@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_1a::ast_value_1aa8084d7d68c73f;
-use crate::generated::functions::hash_25::ast_value_250cc155ed2b25a6;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_bb::ast_print_bb744a13f82c4cd2;
+use crate::generated::functions::hash_35::ast_value_352ee918eb5bec40;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_ae::ast_print_aec511ac08c0f1fc;
+use crate::generated::functions::hash_cc::ast_value_cc07217c1f61b301;
 
 /// Tag definitions for Nintendo::CameraInfo table
 pub static NINTENDO_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -29,8 +29,8 @@ pub static NINTENDO_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "TimeStamp",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_250cc155ed2b25a6)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_cc07217c1f61b301)),
             },
         ),
         (
@@ -39,7 +39,7 @@ pub static NINTENDO_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "InternalSerialNumber",
                 format: "undef[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_1aa8084d7d68c73f)),
+                value_conv: Some(ValueConv::Function(ast_value_352ee918eb5bec40)),
             },
         ),
         (
@@ -47,7 +47,7 @@ pub static NINTENDO_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "Parallax",
                 format: "float",
-                print_conv: Some(PrintConv::Function(ast_print_bb744a13f82c4cd2)),
+                print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
                 value_conv: None,
             },
         ),

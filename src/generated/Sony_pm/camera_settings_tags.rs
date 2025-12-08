@@ -7,22 +7,23 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_15::ast_print_15d3bbdbc77bdb90;
-use crate::generated::functions::hash_45::ast_print_45502c266bb9ea6b;
-use crate::generated::functions::hash_4b::ast_value_4b2b5b722bdd63f4;
-use crate::generated::functions::hash_58::ast_value_58f560b2a6e62b0d;
-use crate::generated::functions::hash_63::ast_print_634937674bb4dcf3;
-use crate::generated::functions::hash_64::ast_value_647eb869d9cb9ed1;
-use crate::generated::functions::hash_83::ast_value_8350871c1b6679f7;
-use crate::generated::functions::hash_86::ast_print_86d069131c594edd;
-use crate::generated::functions::hash_8b::ast_print_8b1cb18fc68bc972;
-use crate::generated::functions::hash_93::ast_print_9380e2f55474fc9;
-use crate::generated::functions::hash_a7::ast_value_a7fc8acd4df4945;
-use crate::generated::functions::hash_b7::ast_print_b75f5f46a9f320cf;
-use crate::generated::functions::hash_b9::ast_print_b93bf01b5173ce30;
-use crate::generated::functions::hash_bb::ast_print_bb36ed62e5a52a4;
-use crate::generated::functions::hash_d0::ast_value_d02980f78a9700ff;
-use crate::generated::functions::hash_e4::ast_value_e42dee863566f395;
+use crate::generated::functions::hash_10::ast_print_101e3eed0a079327;
+use crate::generated::functions::hash_16::ast_print_164b7df7edda79e;
+use crate::generated::functions::hash_17::ast_value_177632e357627b0e;
+use crate::generated::functions::hash_2d::ast_value_2da539a22da2bce2;
+use crate::generated::functions::hash_39::ast_value_39492c8ca08229b1;
+use crate::generated::functions::hash_41::ast_print_41e4fcf67a465f16;
+use crate::generated::functions::hash_4e::ast_value_4eab48f4e81df18f;
+use crate::generated::functions::hash_50::ast_print_50a2776f078ae807;
+use crate::generated::functions::hash_56::ast_value_560b6cca7eb11de6;
+use crate::generated::functions::hash_62::ast_value_62b71052f9215d46;
+use crate::generated::functions::hash_6b::ast_value_6b222e48ef3dd475;
+use crate::generated::functions::hash_96::ast_print_965cc8da10a90f1;
+use crate::generated::functions::hash_b8::{
+    ast_print_b8461ac67efa7740, ast_print_b8d6a32d77c36946,
+};
+use crate::generated::functions::hash_d8::ast_print_d87e2f7cfd46802c;
+use crate::generated::functions::hash_f4::ast_print_f4716ca91121bc8d;
 
 /// Tag definitions for Sony::CameraSettings table
 pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -32,8 +33,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ExposureTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bb36ed62e5a52a4)),
-                value_conv: Some(ValueConv::Function(ast_value_58f560b2a6e62b0d)),
+                print_conv: Some(PrintConv::Function(ast_print_101e3eed0a079327)),
+                value_conv: Some(ValueConv::Function(ast_value_560b6cca7eb11de6)),
             },
         ),
         (
@@ -41,8 +42,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "FNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_634937674bb4dcf3)),
-                value_conv: Some(ValueConv::Function(ast_value_4b2b5b722bdd63f4)),
+                print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
+                value_conv: Some(ValueConv::Function(ast_value_62b71052f9215d46)),
             },
         ),
         (
@@ -59,8 +60,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ExposureCompensationSet",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
-                value_conv: Some(ValueConv::Function(ast_value_8350871c1b6679f7)),
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
+                value_conv: Some(ValueConv::Function(ast_value_2da539a22da2bce2)),
             },
         ),
         (
@@ -87,7 +88,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "WhiteBalanceFineTune",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_d02980f78a9700ff)),
+                value_conv: Some(ValueConv::Function(ast_value_6b222e48ef3dd475)),
             },
         ),
         (
@@ -95,8 +96,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ColorTemperatureSet",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8b1cb18fc68bc972)),
-                value_conv: Some(ValueConv::Function(ast_value_647eb869d9cb9ed1)),
+                print_conv: Some(PrintConv::Function(ast_print_f4716ca91121bc8d)),
+                value_conv: Some(ValueConv::Function(ast_value_39492c8ca08229b1)),
             },
         ),
         (
@@ -104,8 +105,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ColorCompensationFilterSet",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
-                value_conv: Some(ValueConv::Function(ast_value_d02980f78a9700ff)),
+                print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
+                value_conv: Some(ValueConv::Function(ast_value_6b222e48ef3dd475)),
             },
         ),
         (
@@ -113,8 +114,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ColorTemperatureCustom",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8b1cb18fc68bc972)),
-                value_conv: Some(ValueConv::Function(ast_value_647eb869d9cb9ed1)),
+                print_conv: Some(PrintConv::Function(ast_print_f4716ca91121bc8d)),
+                value_conv: Some(ValueConv::Function(ast_value_39492c8ca08229b1)),
             },
         ),
         (
@@ -122,8 +123,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ColorCompensationFilterCustom",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
-                value_conv: Some(ValueConv::Function(ast_value_d02980f78a9700ff)),
+                print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
+                value_conv: Some(ValueConv::Function(ast_value_6b222e48ef3dd475)),
             },
         ),
         (
@@ -176,8 +177,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "FlashExposureCompSet",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
-                value_conv: Some(ValueConv::Function(ast_value_8350871c1b6679f7)),
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
+                value_conv: Some(ValueConv::Function(ast_value_2da539a22da2bce2)),
             },
         ),
         (
@@ -194,8 +195,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ISOSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_9380e2f55474fc9)),
-                value_conv: Some(ValueConv::Function(ast_value_a7fc8acd4df4945)),
+                print_conv: Some(PrintConv::Function(ast_print_50a2776f078ae807)),
+                value_conv: Some(ValueConv::Function(ast_value_4eab48f4e81df18f)),
             },
         ),
         (
@@ -239,8 +240,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "Sharpness",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
-                value_conv: Some(ValueConv::Function(ast_value_e42dee863566f395)),
+                print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
+                value_conv: Some(ValueConv::Function(ast_value_177632e357627b0e)),
             },
         ),
         (
@@ -248,8 +249,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "Contrast",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
-                value_conv: Some(ValueConv::Function(ast_value_e42dee863566f395)),
+                print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
+                value_conv: Some(ValueConv::Function(ast_value_177632e357627b0e)),
             },
         ),
         (
@@ -257,8 +258,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "Saturation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
-                value_conv: Some(ValueConv::Function(ast_value_e42dee863566f395)),
+                print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
+                value_conv: Some(ValueConv::Function(ast_value_177632e357627b0e)),
             },
         ),
         (
@@ -266,8 +267,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ZoneMatchingValue",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
-                value_conv: Some(ValueConv::Function(ast_value_e42dee863566f395)),
+                print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
+                value_conv: Some(ValueConv::Function(ast_value_177632e357627b0e)),
             },
         ),
         (
@@ -275,8 +276,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "Brightness",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
-                value_conv: Some(ValueConv::Function(ast_value_e42dee863566f395)),
+                print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
+                value_conv: Some(ValueConv::Function(ast_value_177632e357627b0e)),
             },
         ),
         (
@@ -356,8 +357,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ShutterSpeedSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_bb36ed62e5a52a4)),
-                value_conv: Some(ValueConv::Function(ast_value_58f560b2a6e62b0d)),
+                print_conv: Some(PrintConv::Function(ast_print_101e3eed0a079327)),
+                value_conv: Some(ValueConv::Function(ast_value_560b6cca7eb11de6)),
             },
         ),
         (
@@ -365,8 +366,8 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ApertureSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_634937674bb4dcf3)),
-                value_conv: Some(ValueConv::Function(ast_value_4b2b5b722bdd63f4)),
+                print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
+                value_conv: Some(ValueConv::Function(ast_value_62b71052f9215d46)),
             },
         ),
         (
@@ -446,7 +447,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "BatteryLevel",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_15d3bbdbc77bdb90)),
+                print_conv: Some(PrintConv::Function(ast_print_b8461ac67efa7740)),
                 value_conv: None,
             },
         ),
@@ -509,7 +510,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "FolderNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_45502c266bb9ea6b)),
+                print_conv: Some(PrintConv::Function(ast_print_164b7df7edda79e)),
                 value_conv: None,
             },
         ),
@@ -518,7 +519,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ImageNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_86d069131c594edd)),
+                print_conv: Some(PrintConv::Function(ast_print_41e4fcf67a465f16)),
                 value_conv: None,
             },
         ),

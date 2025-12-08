@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_16::ast_print_16efff3478ac3340;
+use crate::generated::functions::hash_a0::ast_print_a0adcc7c3d51fb82;
 
 /// Tag definitions for IPTC::NewsPhoto table
 pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -26,7 +26,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "IPTCPictureNumber",
                 format: "string[16]",
-                print_conv: Some(PrintConv::Function(ast_print_16efff3478ac3340)),
+                print_conv: Some(PrintConv::Function(ast_print_a0adcc7c3d51fb82)),
                 value_conv: None,
             },
         ),

@@ -7,13 +7,13 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
-use crate::generated::functions::hash_44::ast_print_44f685eba6f9412f;
-use crate::generated::functions::hash_6c::ast_print_6cee0408ed0783c7;
-use crate::generated::functions::hash_7b::ast_value_7b968480dde20da1;
-use crate::generated::functions::hash_b1::ast_value_b1a21daf01322ba9;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_e9::ast_value_e96c9d58b3e59ef2;
+use crate::generated::functions::hash_26::ast_print_26ee01bf270f786b;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_67::ast_print_674572cac8977577;
+use crate::generated::functions::hash_8e::ast_value_8e281e57f268ff8;
+use crate::generated::functions::hash_c3::ast_value_c3594cf9c6739806;
+use crate::generated::functions::hash_cb::ast_value_cb5ff933cbb4a1e7;
+use crate::generated::functions::hash_da::ast_value_da19f9751eeb9fa7;
 
 /// Tag definitions for RIFF::UserText table
 pub static RIFF_USERTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -24,7 +24,7 @@ pub static RIFF_USERTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "GPSAltitude",
                 format: "int32u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -50,8 +50,8 @@ pub static RIFF_USERTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "GPSLatitude",
                 format: "float",
-                print_conv: Some(PrintConv::Function(ast_print_44f685eba6f9412f)),
-                value_conv: Some(ValueConv::Function(ast_value_7b968480dde20da1)),
+                print_conv: Some(PrintConv::Function(ast_print_26ee01bf270f786b)),
+                value_conv: Some(ValueConv::Function(ast_value_cb5ff933cbb4a1e7)),
             },
         ),
         (
@@ -59,8 +59,8 @@ pub static RIFF_USERTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "GPSLongitude",
                 format: "float",
-                print_conv: Some(PrintConv::Function(ast_print_6cee0408ed0783c7)),
-                value_conv: Some(ValueConv::Function(ast_value_e96c9d58b3e59ef2)),
+                print_conv: Some(PrintConv::Function(ast_print_674572cac8977577)),
+                value_conv: Some(ValueConv::Function(ast_value_c3594cf9c6739806)),
             },
         ),
         (
@@ -68,8 +68,8 @@ pub static RIFF_USERTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "GPSDateTime",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_b1a21daf01322ba9)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_da19f9751eeb9fa7)),
             },
         ),
     ])

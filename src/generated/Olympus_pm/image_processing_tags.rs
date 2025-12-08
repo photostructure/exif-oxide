@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_db::ast_value_db7a59febab7bd3c;
+use crate::generated::functions::hash_54::ast_value_54869e713bc69679;
 
 /// Tag definitions for Olympus::ImageProcessing table
 pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -549,7 +549,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 name: "CameraTemperature",
                 format: "int16s",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_db7a59febab7bd3c)),
+                value_conv: Some(ValueConv::Function(ast_value_54869e713bc69679)),
             },
         ),
         (

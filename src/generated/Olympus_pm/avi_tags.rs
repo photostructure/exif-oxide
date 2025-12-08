@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_63::ast_print_634937674bb4dcf3;
+use crate::generated::functions::hash_b8::ast_print_b8d6a32d77c36946;
 
 /// Tag definitions for Olympus::AVI table
 pub static OLYMPUS_AVI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -35,7 +35,7 @@ pub static OLYMPUS_AVI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "FNumber",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_634937674bb4dcf3)),
+                print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
                 value_conv: None,
             },
         ),

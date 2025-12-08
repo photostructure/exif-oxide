@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_cc::ast_value_cc6d20d1f05f91ec;
+use crate::generated::functions::hash_6a::ast_value_6a2b983323e78027;
 
 /// Tag definitions for Canon::CameraInfoG5XII table
 pub static CANON_CAMERAINFOG5XII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -45,7 +45,7 @@ pub static CANON_CAMERAINFOG5XII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 name: "FileIndex",
                 format: "int32u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_cc6d20d1f05f91ec)),
+                value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
             },
         ),
     ])

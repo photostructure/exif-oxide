@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_63::ast_print_634937674bb4dcf3;
-use crate::generated::functions::hash_bb::ast_print_bba76882980e1e1a;
+use crate::generated::functions::hash_b8::ast_print_b8d6a32d77c36946;
+use crate::generated::functions::hash_e5::ast_print_e50dfd1aa09ed50e;
 
 /// Tag definitions for Olympus::MP4 table
 pub static OLYMPUS_MP4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -36,7 +36,7 @@ pub static OLYMPUS_MP4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "FNumber",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_634937674bb4dcf3)),
+                print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
                 value_conv: None,
             },
         ),
@@ -45,7 +45,7 @@ pub static OLYMPUS_MP4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "ExposureCompensation",
                 format: "rational64s",
-                print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
+                print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
                 value_conv: None,
             },
         ),

@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_6c::ast_value_6cb46ed7ea997c8d;
-use crate::generated::functions::hash_74::ast_value_742c8e667c350c68;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_bb::ast_value_bb77e52729467611;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_cf::ast_value_cff599d69085933c;
 
 /// Tag definitions for CanonRaw::ExposureInfo table
 pub static CANON_RAW_EXPOSUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -20,8 +20,8 @@ pub static CANON_RAW_EXPOSUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "ShutterSpeedValue",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_742c8e667c350c68)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_cff599d69085933c)),
             },
         ),
         (
@@ -29,8 +29,8 @@ pub static CANON_RAW_EXPOSUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "ApertureValue",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_6cb46ed7ea997c8d)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_bb77e52729467611)),
             },
         ),
     ])

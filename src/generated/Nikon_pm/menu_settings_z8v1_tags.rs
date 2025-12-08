@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_79::ast_print_79f8b183abd6a1b;
+use crate::generated::functions::hash_29::ast_print_293f60b26e489f86;
 
 /// Tag definitions for Nikon::MenuSettingsZ8v1 table
 pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -71,7 +71,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens1FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -80,7 +80,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens2FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -89,7 +89,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens3FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -98,7 +98,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens4FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -107,7 +107,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens5FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -116,7 +116,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens6FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -125,7 +125,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens7FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -134,7 +134,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens8FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -143,7 +143,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens9FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -152,7 +152,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens10FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -161,7 +161,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens11FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -170,7 +170,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens12FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -179,7 +179,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens13FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -188,7 +188,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens14FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -197,7 +197,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens15FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -206,7 +206,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens16FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -215,7 +215,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens17FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -224,7 +224,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens18FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -233,7 +233,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens19FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),
@@ -242,7 +242,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NonCPULens20FocalLength",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_79f8b183abd6a1b)),
+                print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
             },
         ),

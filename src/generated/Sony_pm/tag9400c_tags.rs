@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_4e::ast_print_4e04d6169c18f853;
-use crate::generated::functions::hash_cc::ast_value_cc6d20d1f05f91ec;
+use crate::generated::functions::hash_6a::ast_value_6a2b983323e78027;
+use crate::generated::functions::hash_70::ast_print_705d9237f5fcef3b;
 
 /// Tag definitions for Sony::Tag9400c table
 pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -37,7 +37,7 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "SequenceImageNumber",
                 format: "int32u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_cc6d20d1f05f91ec)),
+                value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
             },
         ),
         (
@@ -55,7 +55,7 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "SequenceFileNumber",
                 format: "int32u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_cc6d20d1f05f91ec)),
+                value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
             },
         ),
         (
@@ -81,7 +81,7 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ModelReleaseYear",
                 format: "int8u",
-                print_conv: Some(PrintConv::Function(ast_print_4e04d6169c18f853)),
+                print_conv: Some(PrintConv::Function(ast_print_705d9237f5fcef3b)),
                 value_conv: None,
             },
         ),

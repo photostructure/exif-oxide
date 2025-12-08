@@ -7,14 +7,15 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_52::ast_value_52696782fcca735b;
-use crate::generated::functions::hash_6c::ast_print_6c62520a706b493;
-use crate::generated::functions::hash_72::ast_value_72cc5ff262c4a455;
-use crate::generated::functions::hash_83::ast_value_8390ff1421e71f53;
-use crate::generated::functions::hash_90::ast_print_90673754eeeb7df2;
-use crate::generated::functions::hash_ab::ast_print_ab0e6c517653bb46;
-use crate::generated::functions::hash_ad::ast_value_ada28829e28f9303;
-use crate::generated::functions::hash_b7::ast_print_b75f5f46a9f320cf;
+use crate::generated::functions::hash_1e::ast_print_1ed22ecb53d91772;
+use crate::generated::functions::hash_37::ast_print_3780eb052f6af33a;
+use crate::generated::functions::hash_4c::{
+    ast_value_4c77cbba764059d5, ast_value_4cda13c3b726a013,
+};
+use crate::generated::functions::hash_6a::ast_value_6a9f49c55c6fe127;
+use crate::generated::functions::hash_8d::ast_print_8d207d64d9ef2b8c;
+use crate::generated::functions::hash_96::ast_print_965cc8da10a90f1;
+use crate::generated::functions::hash_b8::ast_value_b8b4108321f31a78;
 
 /// Tag definitions for Nikon::MenuSettingsZ6III table
 pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -141,7 +142,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "FocusShiftInterval",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ab0e6c517653bb46)),
+                print_conv: Some(PrintConv::Function(ast_print_8d207d64d9ef2b8c)),
                 value_conv: None,
             },
         ),
@@ -169,7 +170,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 name: "ISOAutoHiLimit",
                 format: "int16u",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_8390ff1421e71f53)),
+                value_conv: Some(ValueConv::Function(ast_value_b8b4108321f31a78)),
             },
         ),
         (
@@ -223,7 +224,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 name: "FlashGNDistance",
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_72cc5ff262c4a455)),
+                value_conv: Some(ValueConv::Function(ast_value_4cda13c3b726a013)),
             },
         ),
         (
@@ -231,8 +232,8 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "FlashOutput",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_6c62520a706b493)),
-                value_conv: Some(ValueConv::Function(ast_value_52696782fcca735b)),
+                print_conv: Some(PrintConv::Function(ast_print_3780eb052f6af33a)),
+                value_conv: Some(ValueConv::Function(ast_value_6a9f49c55c6fe127)),
             },
         ),
         (
@@ -267,8 +268,8 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "FlashMasterCompensation",
                 format: "int8s",
-                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
-                value_conv: Some(ValueConv::Function(ast_value_ada28829e28f9303)),
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
+                value_conv: Some(ValueConv::Function(ast_value_4c77cbba764059d5)),
             },
         ),
         (
@@ -276,8 +277,8 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "FlashMasterOutput",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_6c62520a706b493)),
-                value_conv: Some(ValueConv::Function(ast_value_52696782fcca735b)),
+                print_conv: Some(PrintConv::Function(ast_print_3780eb052f6af33a)),
+                value_conv: Some(ValueConv::Function(ast_value_6a9f49c55c6fe127)),
             },
         ),
         (
@@ -429,7 +430,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "PixelShiftDelay",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_90673754eeeb7df2)),
+                print_conv: Some(PrintConv::Function(ast_print_1ed22ecb53d91772)),
                 value_conv: None,
             },
         ),
@@ -438,7 +439,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "PixelShiftInterval",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_90673754eeeb7df2)),
+                print_conv: Some(PrintConv::Function(ast_print_1ed22ecb53d91772)),
                 value_conv: None,
             },
         ),

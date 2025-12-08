@@ -7,11 +7,11 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_1c::ast_print_1cf79c06ccd3a2e9;
-use crate::generated::functions::hash_5b::ast_value_5b2c41e400f339d0;
-use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
-use crate::generated::functions::hash_cf::ast_print_cfffa77fa8b0262;
-use crate::generated::functions::hash_e3::ast_value_e30e080d666b2225;
+use crate::generated::functions::hash_10::ast_value_10ca38d85eb04aba;
+use crate::generated::functions::hash_33::ast_value_3346505e2ab784dc;
+use crate::generated::functions::hash_3b::ast_print_3b5d8202349cb3c2;
+use crate::generated::functions::hash_b2::ast_print_b25e38f36bd6b390;
+use crate::generated::functions::hash_dd::ast_print_dd22782e5ba8c7cb;
 
 /// Tag definitions for CanonRaw::Main table
 pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -300,8 +300,8 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "SelfTimerTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_1cf79c06ccd3a2e9)),
-                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+                print_conv: Some(PrintConv::Function(ast_print_b25e38f36bd6b390)),
+                value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
             },
         ),
         (
@@ -309,7 +309,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "TargetDistanceSetting",
                 format: "float",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
             },
         ),
@@ -346,7 +346,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "MeasuredEV",
                 format: "float",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_e30e080d666b2225)),
+                value_conv: Some(ValueConv::Function(ast_value_10ca38d85eb04aba)),
             },
         ),
         (
@@ -354,7 +354,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FileNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_cfffa77fa8b0262)),
+                print_conv: Some(PrintConv::Function(ast_print_3b5d8202349cb3c2)),
                 value_conv: None,
             },
         ),

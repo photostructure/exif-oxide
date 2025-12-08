@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_cc::ast_value_cc6d20d1f05f91ec;
+use crate::generated::functions::hash_6a::ast_value_6a2b983323e78027;
 
 /// Tag definitions for Canon::AFConfig table
 pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -18,7 +18,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "AFConfigTool",
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_cc6d20d1f05f91ec)),
+                value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
             },
         ),
         (

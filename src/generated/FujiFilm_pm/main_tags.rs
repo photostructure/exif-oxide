@@ -7,13 +7,13 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_15::ast_print_15d3bbdbc77bdb90;
-use crate::generated::functions::hash_60::ast_value_6024bbf5fa17668a;
-use crate::generated::functions::hash_64::ast_print_647e3531415500d9;
-use crate::generated::functions::hash_76::ast_print_76b92beaaba5ca0b;
-use crate::generated::functions::hash_99::ast_print_99f2663c86a2cff;
-use crate::generated::functions::hash_b6::ast_value_b6e279789541d533;
-use crate::generated::functions::hash_b9::ast_print_b93bf01b5173ce30;
+use crate::generated::functions::hash_42::ast_print_423b2eddff5b9cd3;
+use crate::generated::functions::hash_5c::ast_print_5cce877bd666c22b;
+use crate::generated::functions::hash_a1::ast_print_a12d0d9a4de49555;
+use crate::generated::functions::hash_b8::ast_print_b8461ac67efa7740;
+use crate::generated::functions::hash_d3::ast_value_d3e4782628524fdc;
+use crate::generated::functions::hash_d8::ast_print_d87e2f7cfd46802c;
+use crate::generated::functions::hash_e2::ast_value_e263dcc51d0cc0f;
 
 /// Tag definitions for FujiFilm::Main table
 pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -32,7 +32,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "InternalSerialNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_99f2663c86a2cff)),
+                print_conv: Some(PrintConv::Function(ast_print_a12d0d9a4de49555)),
                 value_conv: None,
             },
         ),
@@ -104,7 +104,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "WhiteBalanceFineTune",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_647e3531415500d9)),
+                print_conv: Some(PrintConv::Function(ast_print_423b2eddff5b9cd3)),
                 value_conv: None,
             },
         ),
@@ -294,7 +294,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "DigitalZoom",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_6024bbf5fa17668a)),
+                value_conv: Some(ValueConv::Function(ast_value_e263dcc51d0cc0f)),
             },
         ),
         (
@@ -329,7 +329,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "BWAdjustment",
                 format: "int8s",
-                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: None,
             },
         ),
@@ -338,7 +338,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "BWMagentaGreen",
                 format: "int8s",
-                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
+                print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: None,
             },
         ),
@@ -626,7 +626,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AutoDynamicRange",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_15d3bbdbc77bdb90)),
+                print_conv: Some(PrintConv::Function(ast_print_b8461ac67efa7740)),
                 value_conv: None,
             },
         ),
@@ -672,7 +672,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "ImageCount",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_b6e279789541d533)),
+                value_conv: Some(ValueConv::Function(ast_value_d3e4782628524fdc)),
             },
         ),
         (
@@ -707,7 +707,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FlickerReduction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_76b92beaaba5ca0b)),
+                print_conv: Some(PrintConv::Function(ast_print_5cce877bd666c22b)),
                 value_conv: None,
             },
         ),

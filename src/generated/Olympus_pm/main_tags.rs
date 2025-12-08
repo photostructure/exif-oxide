@@ -7,16 +7,16 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_36::ast_print_36fdfc46408f209a;
-use crate::generated::functions::hash_4d::ast_print_4d023868095dfa1c;
-use crate::generated::functions::hash_6c::ast_value_6cb46ed7ea997c8d;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_a0::ast_value_a040417283f4e897;
-use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
-use crate::generated::functions::hash_e8::ast_value_e81a402a310d8ce1;
-use crate::generated::functions::hash_fa::ast_value_fa8a454a107a31f3;
-use crate::generated::functions::hash_ff::ast_value_ff00b07c5d58863f;
+use crate::generated::functions::hash_5f::ast_print_5f49e36c478dfb01;
+use crate::generated::functions::hash_63::ast_value_63c611b509e3e3e9;
+use crate::generated::functions::hash_a0::ast_value_a06c82bf6b59eb39;
+use crate::generated::functions::hash_a3::ast_print_a30bb45410af5d6d;
+use crate::generated::functions::hash_b1::ast_value_b1916ec1ca7c9250;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_bb::ast_value_bb77e52729467611;
+use crate::generated::functions::hash_be::ast_value_beccf4b4cbb850ea;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_dd::ast_print_dd22782e5ba8c7cb;
 
 /// Tag definitions for Olympus::Main table
 pub static OLYMPUS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -147,7 +147,7 @@ pub static OLYMPUS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "DigitalZoom",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_36fdfc46408f209a)),
+                print_conv: Some(PrintConv::Function(ast_print_5f49e36c478dfb01)),
                 value_conv: None,
             },
         ),
@@ -156,7 +156,7 @@ pub static OLYMPUS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "FocalPlaneDiagonal",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
             },
         ),
@@ -175,7 +175,7 @@ pub static OLYMPUS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 name: "CameraType",
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_e81a402a310d8ce1)),
+                value_conv: Some(ValueConv::Function(ast_value_a06c82bf6b59eb39)),
             },
         ),
         (
@@ -381,8 +381,8 @@ pub static OLYMPUS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "ShutterSpeedValue",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_ff00b07c5d58863f)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_beccf4b4cbb850ea)),
             },
         ),
         (
@@ -390,8 +390,8 @@ pub static OLYMPUS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "ISOValue",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_4d023868095dfa1c)),
-                value_conv: Some(ValueConv::Function(ast_value_a040417283f4e897)),
+                print_conv: Some(PrintConv::Function(ast_print_a30bb45410af5d6d)),
+                value_conv: Some(ValueConv::Function(ast_value_63c611b509e3e3e9)),
             },
         ),
         (
@@ -399,8 +399,8 @@ pub static OLYMPUS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "ApertureValue",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_6cb46ed7ea997c8d)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_bb77e52729467611)),
             },
         ),
         (
@@ -489,7 +489,7 @@ pub static OLYMPUS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "ManualFocusDistance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
             },
         ),
@@ -580,7 +580,7 @@ pub static OLYMPUS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 name: "RedBalance",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_fa8a454a107a31f3)),
+                value_conv: Some(ValueConv::Function(ast_value_b1916ec1ca7c9250)),
             },
         ),
         (
@@ -589,7 +589,7 @@ pub static OLYMPUS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 name: "BlueBalance",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_fa8a454a107a31f3)),
+                value_conv: Some(ValueConv::Function(ast_value_b1916ec1ca7c9250)),
             },
         ),
         (

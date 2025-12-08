@@ -7,15 +7,15 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_5b::ast_value_5b2c41e400f339d0;
-use crate::generated::functions::hash_b3::ast_value_b3b6ac1021ca87a1;
-use crate::generated::functions::hash_b9::ast_print_b93bf01b5173ce30;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
-use crate::generated::functions::hash_d2::ast_value_d257a2f28a742d8d;
-use crate::generated::functions::hash_d3::ast_print_d3695e9544e1c996;
-use crate::generated::functions::hash_e2::ast_print_e2ddf072b19d8074;
-use crate::generated::functions::hash_ee::ast_value_ee9b0901d11400f9;
-use crate::generated::functions::hash_ef::ast_value_ef515e3e00781660;
+use crate::generated::functions::hash_33::ast_value_3346505e2ab784dc;
+use crate::generated::functions::hash_36::ast_value_36280449f269c1dd;
+use crate::generated::functions::hash_44::ast_value_44d7c3c8b6f27a4a;
+use crate::generated::functions::hash_61::ast_print_6140e01247d46827;
+use crate::generated::functions::hash_63::ast_value_63c413f7e986d282;
+use crate::generated::functions::hash_c0::ast_value_c0027708ba7e42e3;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_d8::ast_print_d87e2f7cfd46802c;
+use crate::generated::functions::hash_dc::ast_print_dccfee5faef77602;
 
 /// Tag definitions for Kodak::Main table
 pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -80,7 +80,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "MonthDayCreated",
                 format: "int8u[2]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_ef515e3e00781660)),
+                value_conv: Some(ValueConv::Function(ast_value_44d7c3c8b6f27a4a)),
             },
         ),
         (
@@ -89,7 +89,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "TimeCreated",
                 format: "int8u[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_b3b6ac1021ca87a1)),
+                value_conv: Some(ValueConv::Function(ast_value_36280449f269c1dd)),
             },
         ),
         (
@@ -125,7 +125,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "FNumber",
                 format: "int16u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+                value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
             },
         ),
         (
@@ -133,8 +133,8 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureTime",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_d257a2f28a742d8d)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_63c413f7e986d282)),
             },
         ),
         (
@@ -142,8 +142,8 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureCompensation",
                 format: "int16s",
-                print_conv: Some(PrintConv::Function(ast_print_b93bf01b5173ce30)),
-                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+                print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
+                value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
             },
         ),
         (
@@ -259,7 +259,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ISOSetting",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_d3695e9544e1c996)),
+                print_conv: Some(PrintConv::Function(ast_print_dccfee5faef77602)),
                 value_conv: None,
             },
         ),
@@ -278,7 +278,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "TotalZoom",
                 format: "int16u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+                value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
             },
         ),
         (
@@ -286,7 +286,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "DateTimeStamp",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_e2ddf072b19d8074)),
+                print_conv: Some(PrintConv::Function(ast_print_6140e01247d46827)),
                 value_conv: None,
             },
         ),
@@ -305,7 +305,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "DigitalZoom",
                 format: "int16u",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+                value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
             },
         ),
         (

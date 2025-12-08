@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_93::ast_print_9380e2f55474fc9;
-use crate::generated::functions::hash_a7::ast_value_a7fc8acd4df4945;
+use crate::generated::functions::hash_4e::ast_value_4eab48f4e81df18f;
+use crate::generated::functions::hash_50::ast_print_50a2776f078ae807;
 
 /// Tag definitions for Sony::FocusInfo table
 pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -108,8 +108,8 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ISOSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_9380e2f55474fc9)),
-                value_conv: Some(ValueConv::Function(ast_value_a7fc8acd4df4945)),
+                print_conv: Some(PrintConv::Function(ast_print_50a2776f078ae807)),
+                value_conv: Some(ValueConv::Function(ast_value_4eab48f4e81df18f)),
             },
         ),
         (
@@ -117,8 +117,8 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ISO",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_9380e2f55474fc9)),
-                value_conv: Some(ValueConv::Function(ast_value_a7fc8acd4df4945)),
+                print_conv: Some(PrintConv::Function(ast_print_50a2776f078ae807)),
+                value_conv: Some(ValueConv::Function(ast_value_4eab48f4e81df18f)),
             },
         ),
         (

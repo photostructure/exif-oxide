@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_45::ast_print_45502c266bb9ea6b;
-use crate::generated::functions::hash_86::ast_print_86d069131c594edd;
+use crate::generated::functions::hash_16::ast_print_164b7df7edda79e;
+use crate::generated::functions::hash_41::ast_print_41e4fcf67a465f16;
 
 /// Tag definitions for Nikon::FileInfo table
 pub static NIKON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -27,7 +27,7 @@ pub static NIKON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "DirectoryNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_45502c266bb9ea6b)),
+                print_conv: Some(PrintConv::Function(ast_print_164b7df7edda79e)),
                 value_conv: None,
             },
         ),
@@ -36,7 +36,7 @@ pub static NIKON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FileNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_86d069131c594edd)),
+                print_conv: Some(PrintConv::Function(ast_print_41e4fcf67a465f16)),
                 value_conv: None,
             },
         ),

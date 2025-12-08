@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Tag definitions for Jpeg2000::JUMD table
-pub static JPEG2000_JUMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| HashMap::new());
+pub static JPEG2000_JUMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

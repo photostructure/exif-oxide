@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_10::ast_value_1072171a0b3828b9;
-use crate::generated::functions::hash_41::ast_value_41e4bfecd227b921;
-use crate::generated::functions::hash_bc::ast_print_bc983315d45d48a3;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_31::ast_value_31a8ba0fed532190;
+use crate::generated::functions::hash_87::ast_value_8767b6a8d3f8ef64;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_f0::ast_print_f013e387a9d36985;
 
 /// Tag definitions for CanonCustom::PersonalFuncValues table
 pub static CANON_CUSTOM_PERSONALFUNCVALUES_TAGS: LazyLock<HashMap<u16, TagInfo>> =
@@ -21,8 +21,8 @@ pub static CANON_CUSTOM_PERSONALFUNCVALUES_TAGS: LazyLock<HashMap<u16, TagInfo>>
                 TagInfo {
                     name: "PF4ExposureTimeMin",
                     format: "unknown",
-                    print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                    value_conv: Some(ValueConv::Function(ast_value_41e4bfecd227b921)),
+                    print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                    value_conv: Some(ValueConv::Function(ast_value_8767b6a8d3f8ef64)),
                 },
             ),
             (
@@ -30,8 +30,8 @@ pub static CANON_CUSTOM_PERSONALFUNCVALUES_TAGS: LazyLock<HashMap<u16, TagInfo>>
                 TagInfo {
                     name: "PF4ExposureTimeMax",
                     format: "unknown",
-                    print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                    value_conv: Some(ValueConv::Function(ast_value_41e4bfecd227b921)),
+                    print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                    value_conv: Some(ValueConv::Function(ast_value_8767b6a8d3f8ef64)),
                 },
             ),
             (
@@ -39,8 +39,8 @@ pub static CANON_CUSTOM_PERSONALFUNCVALUES_TAGS: LazyLock<HashMap<u16, TagInfo>>
                 TagInfo {
                     name: "PF5ApertureMin",
                     format: "unknown",
-                    print_conv: Some(PrintConv::Function(ast_print_bc983315d45d48a3)),
-                    value_conv: Some(ValueConv::Function(ast_value_1072171a0b3828b9)),
+                    print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
+                    value_conv: Some(ValueConv::Function(ast_value_31a8ba0fed532190)),
                 },
             ),
             (
@@ -48,8 +48,8 @@ pub static CANON_CUSTOM_PERSONALFUNCVALUES_TAGS: LazyLock<HashMap<u16, TagInfo>>
                 TagInfo {
                     name: "PF5ApertureMax",
                     format: "unknown",
-                    print_conv: Some(PrintConv::Function(ast_print_bc983315d45d48a3)),
-                    value_conv: Some(ValueConv::Function(ast_value_1072171a0b3828b9)),
+                    print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
+                    value_conv: Some(ValueConv::Function(ast_value_31a8ba0fed532190)),
                 },
             ),
         ])

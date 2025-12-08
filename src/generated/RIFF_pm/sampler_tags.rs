@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_87::ast_value_879d7ecabc496495;
+use crate::generated::functions::hash_2a::ast_value_2ad70670162b2c7a;
 
 /// Tag definitions for RIFF::Sampler table
 pub static RIFF_SAMPLER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -27,7 +27,7 @@ pub static RIFF_SAMPLER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 name: "SMPTEOffset",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_879d7ecabc496495)),
+                value_conv: Some(ValueConv::Function(ast_value_2ad70670162b2c7a)),
             },
         ),
         (

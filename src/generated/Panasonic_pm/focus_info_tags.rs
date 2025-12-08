@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_30::ast_print_30c6ff66128b242c;
-use crate::generated::functions::hash_51::ast_print_515ec3f56b990031;
-use crate::generated::functions::hash_5b::ast_value_5b2c41e400f339d0;
+use crate::generated::functions::hash_33::ast_value_3346505e2ab784dc;
+use crate::generated::functions::hash_59::ast_print_5999c367bfc59178;
+use crate::generated::functions::hash_7c::ast_print_7cc7a4bf3f82cb33;
 
 /// Tag definitions for Panasonic::FocusInfo table
 pub static PANASONIC_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -19,8 +19,8 @@ pub static PANASONIC_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "FocusDistance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_515ec3f56b990031)),
-                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+                print_conv: Some(PrintConv::Function(ast_print_5999c367bfc59178)),
+                value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
             },
         ),
         (
@@ -28,8 +28,8 @@ pub static PANASONIC_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "FocalLength",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_30c6ff66128b242c)),
-                value_conv: Some(ValueConv::Function(ast_value_5b2c41e400f339d0)),
+                print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
+                value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
             },
         ),
     ])

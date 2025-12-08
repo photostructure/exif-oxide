@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_1e::ast_print_1e6de4de43d39e69;
-use crate::generated::functions::hash_c1::ast_print_c1c5cd7f1c4f4d2;
+use crate::generated::functions::hash_ad::ast_print_adb279f4e37f5c8a;
+use crate::generated::functions::hash_fc::ast_print_fc66a6e6f446bc53;
 
 /// Tag definitions for Apple::Main table
 pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -110,7 +110,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FocusDistanceRange",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c1c5cd7f1c4f4d2)),
+                print_conv: Some(PrintConv::Function(ast_print_adb279f4e37f5c8a)),
                 value_conv: None,
             },
         ),
@@ -218,7 +218,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "AFPerformance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_1e6de4de43d39e69)),
+                print_conv: Some(PrintConv::Function(ast_print_fc66a6e6f446bc53)),
                 value_conv: None,
             },
         ),

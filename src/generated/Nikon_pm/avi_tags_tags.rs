@@ -7,14 +7,14 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_1c::ast_print_1cf79c06ccd3a2e9;
-use crate::generated::functions::hash_30::ast_print_30c6ff66128b242c;
-use crate::generated::functions::hash_45::ast_value_45e5361ebf476759;
-use crate::generated::functions::hash_6c::ast_value_6cb46ed7ea997c8d;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_bb::ast_print_bba76882980e1e1a;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_20::ast_value_20ed25c601606348;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_7c::ast_print_7cc7a4bf3f82cb33;
+use crate::generated::functions::hash_b2::ast_print_b25e38f36bd6b390;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_bb::ast_value_bb77e52729467611;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_e5::ast_print_e50dfd1aa09ed50e;
 
 /// Tag definitions for Nikon::AVITags table
 pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -25,7 +25,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "Software",
                 format: "undef",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_45e5361ebf476759)),
+                value_conv: Some(ValueConv::Function(ast_value_20ed25c601606348)),
             },
         ),
         (
@@ -42,7 +42,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ExposureTime",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: None,
             },
         ),
@@ -51,7 +51,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "FNumber",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -60,7 +60,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ExposureCompensation",
                 format: "rational64s",
-                print_conv: Some(PrintConv::Function(ast_print_bba76882980e1e1a)),
+                print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
                 value_conv: None,
             },
         ),
@@ -69,8 +69,8 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "MaxApertureValue",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
-                value_conv: Some(ValueConv::Function(ast_value_6cb46ed7ea997c8d)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_bb77e52729467611)),
             },
         ),
         (
@@ -105,7 +105,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "FocalLength",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_30c6ff66128b242c)),
+                print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: None,
             },
         ),
@@ -141,7 +141,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "DateTimeOriginal",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
             },
         ),
@@ -150,7 +150,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "CreateDate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
             },
         ),
@@ -168,7 +168,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "Duration",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_1cf79c06ccd3a2e9)),
+                print_conv: Some(PrintConv::Function(ast_print_b25e38f36bd6b390)),
                 value_conv: None,
             },
         ),

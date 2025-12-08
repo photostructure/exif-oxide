@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_99::ast_print_9957cfcd700746af;
+use crate::generated::functions::hash_cb::ast_print_cbdfe9256b8c5e45;
 
 /// Tag definitions for RIFF::ANIM table
 pub static RIFF_ANIM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -26,7 +26,7 @@ pub static RIFF_ANIM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "AnimationLoopCount",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_9957cfcd700746af)),
+                print_conv: Some(PrintConv::Function(ast_print_cbdfe9256b8c5e45)),
                 value_conv: None,
             },
         ),

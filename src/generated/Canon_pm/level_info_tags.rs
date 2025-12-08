@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
-use crate::generated::functions::hash_3b::ast_value_3b77080649d79275;
-use crate::generated::functions::hash_5f::ast_value_5f3878bca702b7b7;
-use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
+use crate::generated::functions::hash_4a::ast_value_4a2b4f330f26f4a2;
+use crate::generated::functions::hash_8e::ast_value_8e281e57f268ff8;
+use crate::generated::functions::hash_dd::ast_print_dd22782e5ba8c7cb;
+use crate::generated::functions::hash_e5::ast_value_e5ec7e4865db5e5a;
 
 /// Tag definitions for Canon::LevelInfo table
 pub static CANON_LEVELINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -21,7 +21,7 @@ pub static CANON_LEVELINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 name: "RollAngle",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_5f3878bca702b7b7)),
+                value_conv: Some(ValueConv::Function(ast_value_e5ec7e4865db5e5a)),
             },
         ),
         (
@@ -30,7 +30,7 @@ pub static CANON_LEVELINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 name: "PitchAngle",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_3b77080649d79275)),
+                value_conv: Some(ValueConv::Function(ast_value_4a2b4f330f26f4a2)),
             },
         ),
         (
@@ -38,8 +38,8 @@ pub static CANON_LEVELINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "FocalLength",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -47,8 +47,8 @@ pub static CANON_LEVELINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "MinFocalLength2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -56,8 +56,8 @@ pub static CANON_LEVELINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "MaxFocalLength2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
     ])

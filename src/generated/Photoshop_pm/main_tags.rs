@@ -7,13 +7,13 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_40::ast_print_4015a70c144b402;
-use crate::generated::functions::hash_45::ast_value_45f64f13ca77f48e;
-use crate::generated::functions::hash_79::ast_value_79412c758cdfcf8d;
-use crate::generated::functions::hash_7e::ast_value_7eadc2f4518c667e;
-use crate::generated::functions::hash_ba::ast_value_ba39cdf4578ace46;
-use crate::generated::functions::hash_e1::ast_value_e143a6a9ab8400ee;
-use crate::generated::functions::hash_e7::ast_value_e76f84b1ea03c377;
+use crate::generated::functions::hash_21::ast_value_21805eee515f1f;
+use crate::generated::functions::hash_24::ast_value_24ecca2f32aee364;
+use crate::generated::functions::hash_34::ast_value_346603e685b2cac;
+use crate::generated::functions::hash_79::ast_value_79fe83c6e85843c7;
+use crate::generated::functions::hash_8a::ast_value_8a814e7eab2cdf95;
+use crate::generated::functions::hash_b2::ast_print_b2688837e8cc9d23;
+use crate::generated::functions::hash_c3::ast_value_c3ac357278ffbbb0;
 
 /// Tag definitions for Photoshop::Main table
 pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -69,7 +69,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "AlphaChannelsNames",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_ba39cdf4578ace46)),
+                value_conv: Some(ValueConv::Function(ast_value_79fe83c6e85843c7)),
             },
         ),
         (
@@ -113,7 +113,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "PrintFlags",
                 format: "int8u",
-                print_conv: Some(PrintConv::Function(ast_print_4015a70c144b402)),
+                print_conv: Some(PrintConv::Function(ast_print_b2688837e8cc9d23)),
                 value_conv: None,
             },
         ),
@@ -312,7 +312,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "CopyrightFlag",
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_e76f84b1ea03c377)),
+                value_conv: Some(ValueConv::Function(ast_value_346603e685b2cac)),
             },
         ),
         (
@@ -339,7 +339,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "GlobalAngle",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_e143a6a9ab8400ee)),
+                value_conv: Some(ValueConv::Function(ast_value_8a814e7eab2cdf95)),
             },
         ),
         (
@@ -438,7 +438,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "GlobalAltitude",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_e143a6a9ab8400ee)),
+                value_conv: Some(ValueConv::Function(ast_value_8a814e7eab2cdf95)),
             },
         ),
         (
@@ -532,7 +532,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "IPTCDigest",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7eadc2f4518c667e)),
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -586,7 +586,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "LayerSelectionIDs",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_45f64f13ca77f48e)),
+                value_conv: Some(ValueConv::Function(ast_value_21805eee515f1f)),
             },
         ),
         (
@@ -748,7 +748,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "ClippingPathName",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_79412c758cdfcf8d)),
+                value_conv: Some(ValueConv::Function(ast_value_24ecca2f32aee364)),
             },
         ),
         (

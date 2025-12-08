@@ -7,12 +7,12 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_41::ast_print_41bf92216501bc5a;
-use crate::generated::functions::hash_b2::{
-    ast_print_b22e140fc097672a, ast_print_b25c14c47d1cbc24,
+use crate::generated::functions::hash_16::ast_print_16bbaa15266fbc78;
+use crate::generated::functions::hash_3a::{
+    ast_print_3a205edef25c6138, ast_print_3acf3ecd771b5e1d,
 };
-use crate::generated::functions::hash_c7::ast_value_c7431c5fa598bf69;
-use crate::generated::functions::hash_e1::ast_print_e168284515af79a7;
+use crate::generated::functions::hash_5f::ast_print_5f1c3854bf9211be;
+use crate::generated::functions::hash_b7::ast_value_b71eb9c67e0faca3;
 
 /// Tag definitions for SonyIDC::Main table
 pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -112,7 +112,7 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "BrightnessAdj",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_e168284515af79a7)),
+                print_conv: Some(PrintConv::Function(ast_print_3acf3ecd771b5e1d)),
                 value_conv: None,
             },
         ),
@@ -221,7 +221,7 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "NoiseReductionValue",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_c7431c5fa598bf69)),
+                value_conv: Some(ValueConv::Function(ast_value_b71eb9c67e0faca3)),
             },
         ),
         (
@@ -230,7 +230,7 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "EdgeNoiseReduction",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_c7431c5fa598bf69)),
+                value_conv: Some(ValueConv::Function(ast_value_b71eb9c67e0faca3)),
             },
         ),
         (
@@ -239,7 +239,7 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "ColorNoiseReduction",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_c7431c5fa598bf69)),
+                value_conv: Some(ValueConv::Function(ast_value_b71eb9c67e0faca3)),
             },
         ),
         (
@@ -382,7 +382,7 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "InclinationAngle",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_41bf92216501bc5a)),
+                print_conv: Some(PrintConv::Function(ast_print_5f1c3854bf9211be)),
                 value_conv: None,
             },
         ),
@@ -427,7 +427,7 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "PxShiftPeriphEdgeNRValue",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b22e140fc097672a)),
+                print_conv: Some(PrintConv::Function(ast_print_16bbaa15266fbc78)),
                 value_conv: None,
             },
         ),
@@ -490,7 +490,7 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "VersionCreateDate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
             },
         ),
@@ -499,7 +499,7 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "VersionModifyDate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
             },
         ),

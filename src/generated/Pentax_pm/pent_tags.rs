@@ -7,18 +7,18 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_44::ast_print_449352809d0c73f5;
-use crate::generated::functions::hash_4d::ast_value_4dd64ad8b929982b;
-use crate::generated::functions::hash_5b::ast_value_5b997436cb4c4a4f;
-use crate::generated::functions::hash_67::ast_value_67653a3c31f6d232;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_87::ast_print_8764401e4e5a97bf;
-use crate::generated::functions::hash_b7::ast_print_b75f5f46a9f320cf;
-use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
-use crate::generated::functions::hash_c1::ast_print_c12c7e50f55cf298;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
-use crate::generated::functions::hash_db::ast_value_db6d300cf2bc94e2;
-use crate::generated::functions::hash_ec::ast_print_ec01a8049c79f988;
+use crate::generated::functions::hash_10::ast_print_10a121f3318d09c;
+use crate::generated::functions::hash_62::ast_print_62c1ef1851063b19;
+use crate::generated::functions::hash_7b::ast_value_7bda4a4d82582552;
+use crate::generated::functions::hash_7c::ast_print_7c85cf32a45b11ab;
+use crate::generated::functions::hash_96::ast_print_965cc8da10a90f1;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_ba::ast_value_ba67c805f3851db9;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_dd::ast_print_dd22782e5ba8c7cb;
+use crate::generated::functions::hash_e1::ast_value_e137a069f73b6d7;
+use crate::generated::functions::hash_e6::ast_value_e60461d3e144eea5;
+use crate::generated::functions::hash_fa::ast_print_fa4db9894c421895;
 
 /// Tag definitions for Pentax::PENT table
 pub static PENTAX_PENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -46,8 +46,8 @@ pub static PENTAX_PENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "ExposureTime",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_5b997436cb4c4a4f)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_e60461d3e144eea5)),
             },
         ),
         (
@@ -55,7 +55,7 @@ pub static PENTAX_PENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "FNumber",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -64,7 +64,7 @@ pub static PENTAX_PENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "ExposureCompensation",
                 format: "rational64s",
-                print_conv: Some(PrintConv::Function(ast_print_b75f5f46a9f320cf)),
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: None,
             },
         ),
@@ -73,7 +73,7 @@ pub static PENTAX_PENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "FocalLength",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
             },
         ),
@@ -109,7 +109,7 @@ pub static PENTAX_PENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSVersionID",
                 format: "undef[8]",
-                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+                print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: None,
             },
         ),
@@ -127,8 +127,8 @@ pub static PENTAX_PENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSLatitude",
                 format: "rational64u[3]",
-                print_conv: Some(PrintConv::Function(ast_print_ec01a8049c79f988)),
-                value_conv: Some(ValueConv::Function(ast_value_4dd64ad8b929982b)),
+                print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
+                value_conv: Some(ValueConv::Function(ast_value_ba67c805f3851db9)),
             },
         ),
         (
@@ -145,8 +145,8 @@ pub static PENTAX_PENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSLongitude",
                 format: "rational64u[3]",
-                print_conv: Some(PrintConv::Function(ast_print_ec01a8049c79f988)),
-                value_conv: Some(ValueConv::Function(ast_value_4dd64ad8b929982b)),
+                print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
+                value_conv: Some(ValueConv::Function(ast_value_ba67c805f3851db9)),
             },
         ),
         (
@@ -163,7 +163,7 @@ pub static PENTAX_PENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSAltitude",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_8764401e4e5a97bf)),
+                print_conv: Some(PrintConv::Function(ast_print_62c1ef1851063b19)),
                 value_conv: None,
             },
         ),
@@ -172,8 +172,8 @@ pub static PENTAX_PENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSTimeStamp",
                 format: "rational64u[3]",
-                print_conv: Some(PrintConv::Function(ast_print_449352809d0c73f5)),
-                value_conv: Some(ValueConv::Function(ast_value_67653a3c31f6d232)),
+                print_conv: Some(PrintConv::Function(ast_print_10a121f3318d09c)),
+                value_conv: Some(ValueConv::Function(ast_value_7bda4a4d82582552)),
             },
         ),
         (
@@ -218,7 +218,7 @@ pub static PENTAX_PENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 name: "GPSDateStamp",
                 format: "string[11]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_db6d300cf2bc94e2)),
+                value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
             },
         ),
         (

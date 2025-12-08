@@ -7,11 +7,11 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_5b::ast_print_5bf8478023213c9;
-use crate::generated::functions::hash_7a::ast_value_7a955354dcc5394a;
-use crate::generated::functions::hash_84::ast_print_8470e30e1e5b4729;
-use crate::generated::functions::hash_bb::ast_print_bb744a13f82c4cd2;
-use crate::generated::functions::hash_d3::ast_print_d3baecf4975cff4c;
+use crate::generated::functions::hash_a1::ast_value_a15e00efdd4e457;
+use crate::generated::functions::hash_ae::ast_print_aec511ac08c0f1fc;
+use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
+use crate::generated::functions::hash_c8::ast_print_c8bca6375178b51d;
+use crate::generated::functions::hash_cc::ast_print_ccb205b5fb8d3f95;
 
 /// Tag definitions for Panasonic::Leica2 table
 pub static PANASONIC_LEICA2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -39,7 +39,7 @@ pub static PANASONIC_LEICA2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "SerialNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_5bf8478023213c9)),
+                print_conv: Some(PrintConv::Function(ast_print_ccb205b5fb8d3f95)),
                 value_conv: None,
             },
         ),
@@ -58,7 +58,7 @@ pub static PANASONIC_LEICA2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 name: "LensType",
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_7a955354dcc5394a)),
+                value_conv: Some(ValueConv::Function(ast_value_a15e00efdd4e457)),
             },
         ),
         (
@@ -66,7 +66,7 @@ pub static PANASONIC_LEICA2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "ExternalSensorBrightnessValue",
                 format: "rational64s",
-                print_conv: Some(PrintConv::Function(ast_print_bb744a13f82c4cd2)),
+                print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
                 value_conv: None,
             },
         ),
@@ -75,7 +75,7 @@ pub static PANASONIC_LEICA2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "MeasuredLV",
                 format: "rational64s",
-                print_conv: Some(PrintConv::Function(ast_print_bb744a13f82c4cd2)),
+                print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
                 value_conv: None,
             },
         ),
@@ -84,7 +84,7 @@ pub static PANASONIC_LEICA2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "ApproximateFNumber",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_8470e30e1e5b4729)),
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
             },
         ),
@@ -93,7 +93,7 @@ pub static PANASONIC_LEICA2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraTemperature",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d3baecf4975cff4c)),
+                print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
             },
         ),

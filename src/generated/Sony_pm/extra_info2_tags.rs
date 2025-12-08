@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_15::ast_print_15d3bbdbc77bdb90;
+use crate::generated::functions::hash_b8::ast_print_b8461ac67efa7740;
 
 /// Tag definitions for Sony::ExtraInfo2 table
 pub static SONY_EXTRAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static SONY_EXTRAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "BatteryLevel",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_15d3bbdbc77bdb90)),
+                print_conv: Some(PrintConv::Function(ast_print_b8461ac67efa7740)),
                 value_conv: None,
             },
         ),

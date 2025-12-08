@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_63::ast_print_634937674bb4dcf3;
-use crate::generated::functions::hash_be::ast_print_bec70def03ed8463;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
+use crate::generated::functions::hash_b8::ast_print_b8d6a32d77c36946;
+use crate::generated::functions::hash_c5::ast_print_c55f0a78a353c4e4;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
 
 /// Tag definitions for FujiFilm::MRAW table
 pub static FUJI_FILM_MRAW_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -28,7 +28,7 @@ pub static FUJI_FILM_MRAW_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ExposureCompensation",
                 format: "rational32s",
-                print_conv: Some(PrintConv::Function(ast_print_bec70def03ed8463)),
+                print_conv: Some(PrintConv::Function(ast_print_c55f0a78a353c4e4)),
                 value_conv: None,
             },
         ),
@@ -37,7 +37,7 @@ pub static FUJI_FILM_MRAW_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ExposureCompensation2",
                 format: "rational32s",
-                print_conv: Some(PrintConv::Function(ast_print_bec70def03ed8463)),
+                print_conv: Some(PrintConv::Function(ast_print_c55f0a78a353c4e4)),
                 value_conv: None,
             },
         ),
@@ -46,7 +46,7 @@ pub static FUJI_FILM_MRAW_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ExposureTime",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: None,
             },
         ),
@@ -55,7 +55,7 @@ pub static FUJI_FILM_MRAW_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FNumber",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_634937674bb4dcf3)),
+                print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
                 value_conv: None,
             },
         ),

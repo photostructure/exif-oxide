@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_d7::ast_value_d7fdacd2543c3a55;
-use crate::generated::functions::hash_e1::ast_value_e169d6db15e948b;
+use crate::generated::functions::hash_59::ast_value_59f47cb5510f6577;
+use crate::generated::functions::hash_ce::ast_value_cec214fb85ae5247;
 
 /// Tag definitions for Jpeg2000::FileType table
 pub static JPEG2000_FILETYPE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -28,7 +28,7 @@ pub static JPEG2000_FILETYPE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 name: "MinorVersion",
                 format: "undef[4]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_d7fdacd2543c3a55)),
+                value_conv: Some(ValueConv::Function(ast_value_cec214fb85ae5247)),
             },
         ),
         (
@@ -37,7 +37,7 @@ pub static JPEG2000_FILETYPE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 name: "CompatibleBrands",
                 format: "undef[$size-8]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_e169d6db15e948b)),
+                value_conv: Some(ValueConv::Function(ast_value_59f47cb5510f6577)),
             },
         ),
     ])

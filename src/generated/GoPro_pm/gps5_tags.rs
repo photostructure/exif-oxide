@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_44::ast_print_44f685eba6f9412f;
-use crate::generated::functions::hash_6c::ast_print_6cee0408ed0783c7;
-use crate::generated::functions::hash_7c::ast_value_7cdaaed953331e49;
-use crate::generated::functions::hash_e1::ast_print_e1b9c18c6fb887af;
+use crate::generated::functions::hash_26::ast_print_26ee01bf270f786b;
+use crate::generated::functions::hash_2a::ast_print_2aa532acb8a29737;
+use crate::generated::functions::hash_67::ast_print_674572cac8977577;
+use crate::generated::functions::hash_a7::ast_value_a7438a881b85f09a;
 
 /// Tag definitions for GoPro::GPS5 table
 pub static GO_PRO_GPS5_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -20,7 +20,7 @@ pub static GO_PRO_GPS5_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSLatitude",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_44f685eba6f9412f)),
+                print_conv: Some(PrintConv::Function(ast_print_26ee01bf270f786b)),
                 value_conv: None,
             },
         ),
@@ -29,7 +29,7 @@ pub static GO_PRO_GPS5_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSLongitude",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_6cee0408ed0783c7)),
+                print_conv: Some(PrintConv::Function(ast_print_674572cac8977577)),
                 value_conv: None,
             },
         ),
@@ -38,7 +38,7 @@ pub static GO_PRO_GPS5_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "GPSAltitude",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_e1b9c18c6fb887af)),
+                print_conv: Some(PrintConv::Function(ast_print_2aa532acb8a29737)),
                 value_conv: None,
             },
         ),
@@ -48,7 +48,7 @@ pub static GO_PRO_GPS5_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 name: "GPSSpeed",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7cdaaed953331e49)),
+                value_conv: Some(ValueConv::Function(ast_value_a7438a881b85f09a)),
             },
         ),
         (
@@ -57,7 +57,7 @@ pub static GO_PRO_GPS5_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 name: "GPSSpeed3D",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_7cdaaed953331e49)),
+                value_conv: Some(ValueConv::Function(ast_value_a7438a881b85f09a)),
             },
         ),
     ])

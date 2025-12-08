@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_8f::ast_print_8f60444a6530198d;
+use crate::generated::functions::hash_21::ast_print_21dfca2f396095a;
 
 /// Tag definitions for QuickTime::HintHeader table
 pub static QUICK_TIME_HINTHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static QUICK_TIME_HINTHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "MaxBitrate",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_8f60444a6530198d)),
+                print_conv: Some(PrintConv::Function(ast_print_21dfca2f396095a)),
                 value_conv: None,
             },
         ),
@@ -26,7 +26,7 @@ pub static QUICK_TIME_HINTHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "AvgBitrate",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_8f60444a6530198d)),
+                print_conv: Some(PrintConv::Function(ast_print_21dfca2f396095a)),
                 value_conv: None,
             },
         ),

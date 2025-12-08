@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_e2::ast_print_e265b6e9dae11253;
+use crate::generated::functions::hash_8b::ast_print_8b98163e01aaf11a;
 
 /// Tag definitions for Sony::SR2Private table
 pub static SONY_SR2PRIVATE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -35,7 +35,7 @@ pub static SONY_SR2PRIVATE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "SR2SubIFDKey",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_e265b6e9dae11253)),
+                print_conv: Some(PrintConv::Function(ast_print_8b98163e01aaf11a)),
                 value_conv: None,
             },
         ),

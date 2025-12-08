@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_8e::ast_value_8ef6bad16279ca65;
-use crate::generated::functions::hash_b8::ast_value_b8adb9d29578d7d8;
-use crate::generated::functions::hash_e4::ast_print_e4e23da0cd5e8937;
+use crate::generated::functions::hash_3d::ast_value_3d23e42e940d6624;
+use crate::generated::functions::hash_4d::ast_value_4d65e4f0f2c777b1;
+use crate::generated::functions::hash_f7::ast_print_f7d9673b93ac13f;
 
 /// Tag definitions for JPEG::NITF table
 pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -20,7 +20,7 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "NITFVersion",
                 format: "int8u[2]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_8ef6bad16279ca65)),
+                value_conv: Some(ValueConv::Function(ast_value_4d65e4f0f2c777b1)),
             },
         ),
         (
@@ -29,7 +29,7 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "ImageFormat",
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_b8adb9d29578d7d8)),
+                value_conv: Some(ValueConv::Function(ast_value_3d23e42e940d6624)),
             },
         ),
         (
@@ -91,7 +91,7 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "Flags",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_e4e23da0cd5e8937)),
+                print_conv: Some(PrintConv::Function(ast_print_f7d9673b93ac13f)),
                 value_conv: None,
             },
         ),

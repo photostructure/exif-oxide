@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_3e::ast_value_3ee5ea531e525a5e;
+use crate::generated::functions::hash_db::ast_value_db584f0afe19b808;
 
 /// Tag definitions for Pentax::LevelInfoK3III table
 pub static PENTAX_LEVELINFOK3III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -27,7 +27,7 @@ pub static PENTAX_LEVELINFOK3III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 name: "RollAngle",
                 format: "int16s",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_3ee5ea531e525a5e)),
+                value_conv: Some(ValueConv::Function(ast_value_db584f0afe19b808)),
             },
         ),
         (
@@ -36,7 +36,7 @@ pub static PENTAX_LEVELINFOK3III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 name: "PitchAngle",
                 format: "int16s",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_3ee5ea531e525a5e)),
+                value_conv: Some(ValueConv::Function(ast_value_db584f0afe19b808)),
             },
         ),
     ])

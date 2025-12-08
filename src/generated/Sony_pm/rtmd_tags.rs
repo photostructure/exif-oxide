@@ -7,19 +7,20 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_14::ast_print_14c647eac637612a;
-use crate::generated::functions::hash_1a::ast_value_1a943147cffc80a4;
-use crate::generated::functions::hash_1b::ast_value_1b787d9ee3f14dc1;
-use crate::generated::functions::hash_44::ast_print_449352809d0c73f5;
-use crate::generated::functions::hash_63::ast_print_634937674bb4dcf3;
-use crate::generated::functions::hash_7f::ast_value_7f6a670980e83698;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_c1::ast_print_c12c7e50f55cf298;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
-use crate::generated::functions::hash_db::ast_value_db6d300cf2bc94e2;
-use crate::generated::functions::hash_ec::ast_print_ec01a8049c79f988;
-use crate::generated::functions::hash_ee::ast_value_ee9b0901d11400f9;
-use crate::generated::functions::hash_fc::ast_value_fc24b94dc60f8d29;
+use crate::generated::functions::hash_10::ast_print_10a121f3318d09c;
+use crate::generated::functions::hash_1d::ast_print_1dcf63244ce05a2;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_7c::ast_print_7c85cf32a45b11ab;
+use crate::generated::functions::hash_80::ast_value_8019a6d0d3ff2af4;
+use crate::generated::functions::hash_9b::ast_value_9b826d8a33505bd4;
+use crate::generated::functions::hash_ae::ast_print_aec511ac08c0f1fc;
+use crate::generated::functions::hash_b8::ast_print_b8d6a32d77c36946;
+use crate::generated::functions::hash_c0::ast_value_c0027708ba7e42e3;
+use crate::generated::functions::hash_c3::ast_value_c39b61e775b07eeb;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_e1::ast_value_e137a069f73b6d7;
+use crate::generated::functions::hash_f0::ast_value_f08f753887ef89a0;
+use crate::generated::functions::hash_fa::ast_print_fa4db9894c421895;
 
 /// Tag definitions for Sony::rtmd table
 pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -65,8 +66,8 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FNumber",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_634937674bb4dcf3)),
-                value_conv: Some(ValueConv::Function(ast_value_1a943147cffc80a4)),
+                print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
+                value_conv: Some(ValueConv::Function(ast_value_9b826d8a33505bd4)),
             },
         ),
         (
@@ -153,9 +154,9 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (
             33030,
             TagInfo {
-                name: "Sony_rtmd_0x8106",
-                format: "int32u",
-                print_conv: None,
+                name: "FrameRate",
+                format: "rational64u",
+                print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
                 value_conv: None,
             },
         ),
@@ -164,7 +165,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureTime",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: None,
             },
         ),
@@ -173,8 +174,8 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "MasterGainAdjustment",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_14c647eac637612a)),
-                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+                print_conv: Some(PrintConv::Function(ast_print_1dcf63244ce05a2)),
+                value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
             },
         ),
         (
@@ -205,6 +206,15 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            33044,
+            TagInfo {
+                name: "SerialNumber",
+                format: "string",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             33045,
             TagInfo {
                 name: "Sony_rtmd_0x8115",
@@ -218,7 +228,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSVersionID",
                 format: "int8u",
-                print_conv: Some(PrintConv::Function(ast_print_c12c7e50f55cf298)),
+                print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: None,
             },
         ),
@@ -236,8 +246,8 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSLatitude",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_ec01a8049c79f988)),
-                value_conv: Some(ValueConv::Function(ast_value_fc24b94dc60f8d29)),
+                print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
+                value_conv: Some(ValueConv::Function(ast_value_8019a6d0d3ff2af4)),
             },
         ),
         (
@@ -254,8 +264,8 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSLongitude",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_ec01a8049c79f988)),
-                value_conv: Some(ValueConv::Function(ast_value_fc24b94dc60f8d29)),
+                print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
+                value_conv: Some(ValueConv::Function(ast_value_8019a6d0d3ff2af4)),
             },
         ),
         (
@@ -263,8 +273,8 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSTimeStamp",
                 format: "rational64u",
-                print_conv: Some(PrintConv::Function(ast_print_449352809d0c73f5)),
-                value_conv: Some(ValueConv::Function(ast_value_1b787d9ee3f14dc1)),
+                print_conv: Some(PrintConv::Function(ast_print_10a121f3318d09c)),
+                value_conv: Some(ValueConv::Function(ast_value_f08f753887ef89a0)),
             },
         ),
         (
@@ -300,7 +310,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "GPSDateStamp",
                 format: "string",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_db6d300cf2bc94e2)),
+                value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
             },
         ),
         (
@@ -353,8 +363,8 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "DateTime",
                 format: "undef",
-                print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
-                value_conv: Some(ValueConv::Function(ast_value_7f6a670980e83698)),
+                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: Some(ValueConv::Function(ast_value_c39b61e775b07eeb)),
             },
         ),
         (

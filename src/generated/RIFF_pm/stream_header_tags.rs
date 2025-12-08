@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_d4::ast_print_d43fd7a703ae1653;
-use crate::generated::functions::hash_f3::ast_print_f320ceed77e30bb7;
+use crate::generated::functions::hash_be::ast_print_be18552a212307e5;
+use crate::generated::functions::hash_d7::ast_print_d780ed94ab5b10da;
 
 /// Tag definitions for RIFF::StreamHeader table
 pub static RIFF_STREAMHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -27,7 +27,7 @@ pub static RIFF_STREAMHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "Quality",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_f320ceed77e30bb7)),
+                print_conv: Some(PrintConv::Function(ast_print_be18552a212307e5)),
                 value_conv: None,
             },
         ),
@@ -36,7 +36,7 @@ pub static RIFF_STREAMHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "SampleSize",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_d43fd7a703ae1653)),
+                print_conv: Some(PrintConv::Function(ast_print_d780ed94ab5b10da)),
                 value_conv: None,
             },
         ),

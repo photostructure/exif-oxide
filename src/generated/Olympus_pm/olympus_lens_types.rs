@@ -179,9 +179,12 @@ static OLYMPUS_LENS_TYPES_DATA: &[(&str, &'static str)] = &[
     ("2 40 10", "Leica DG Vario-Summilux 25-50mm F1.7 Asph."),
     ("2 41 10", "Leica DG Summilux 9mm F1.7 Asph."),
     ("24 01 10", "Venus Optics Laowa 50mm F2.8 2x Macro"),
+    ("247 03 10", "LAOWA C&D-Dreamer MFT 7.5mm F2.0"),
+    ("247 10 10", "LAOWA C&D-Dreamer MFT 6.0mm F2.0"),
     ("3 01 00", "Leica D Vario Elmarit 14-50mm F2.8-3.5 Asph."),
     ("3 02 00", "Leica D Summilux 25mm F1.4 Asph."),
     ("5 01 10", "Tamron 14-150mm F3.5-5.8 Di III"),
+    ("65522 02 10", "Xiaoyi 42.5mm F1.8"),
     (
         "Notes",
         "
@@ -189,7 +192,6 @@ static OLYMPUS_LENS_TYPES_DATA: &[(&str, &'static str)] = &[
         9.15 these were in decimal.)
     ",
     ),
-    ("f7 03 10", "LAOWA C&D-Dreamer MFT 7.5mm F2.0"),
 ];
 
 /// olympusLensTypes lookup table

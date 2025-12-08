@@ -7,21 +7,19 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_10::ast_print_103361d26a5af32d;
-use crate::generated::functions::hash_25::ast_print_252e55dbb07a94df;
-use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
-use crate::generated::functions::hash_33::ast_value_33118cafe9fb1cc3;
-use crate::generated::functions::hash_5d::ast_value_5d1e153d8debf27a;
-use crate::generated::functions::hash_70::ast_print_70620f00a1c89dd5;
-use crate::generated::functions::hash_71::ast_print_71d89be5ccb75efd;
-use crate::generated::functions::hash_79::ast_print_79289c26a24e6f78;
-use crate::generated::functions::hash_b0::ast_print_b0ad9908708bcb9f;
-use crate::generated::functions::hash_b2::ast_print_b25c14c47d1cbc24;
-use crate::generated::functions::hash_d3::ast_print_d3695e9544e1c996;
-use crate::generated::functions::hash_ed::ast_print_ed1555c62079876e;
-use crate::generated::functions::hash_f1::{
-    ast_value_f10df04f24c6ec2c, ast_value_f1277e290c2a7107,
-};
+use crate::generated::functions::hash_1f::ast_print_1f1f8b932218fcc3;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_51::ast_print_51872ff99fb478cd;
+use crate::generated::functions::hash_88::ast_print_8845ad33274dfc8d;
+use crate::generated::functions::hash_8e::{ast_value_8e281e57f268ff8, ast_value_8e44f9d07063045d};
+use crate::generated::functions::hash_8f::ast_print_8f0e2d29a6ca9ad9;
+use crate::generated::functions::hash_97::ast_print_976008d768477bee;
+use crate::generated::functions::hash_c3::ast_print_c325c8237ed81802;
+use crate::generated::functions::hash_cc::ast_value_cc38490c4c9977cc;
+use crate::generated::functions::hash_ce::ast_value_ce2aa2946f06166e;
+use crate::generated::functions::hash_d6::ast_print_d696298f086bdf8;
+use crate::generated::functions::hash_dc::ast_print_dccfee5faef77602;
+use crate::generated::functions::hash_ec::ast_value_ec349fdf9ca7d93f;
 
 /// Tag definitions for Olympus::CameraSettings table
 pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -107,14 +105,14 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (772, TagInfo {
             name: "AFAreas",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_252e55dbb07a94df)),
+            print_conv: Some(PrintConv::Function(ast_print_8f0e2d29a6ca9ad9)),
             value_conv: None,
         }),
         (773, TagInfo {
             name: "AFPointSelected",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_71d89be5ccb75efd)),
-            value_conv: Some(ValueConv::Function(ast_value_f10df04f24c6ec2c)),
+            print_conv: Some(PrintConv::Function(ast_print_976008d768477bee)),
+            value_conv: Some(ValueConv::Function(ast_value_ec349fdf9ca7d93f)),
         }),
         (774, TagInfo {
             name: "AFFineTune",
@@ -197,7 +195,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1281, TagInfo {
             name: "WhiteBalanceTemperature",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_d3695e9544e1c996)),
+            print_conv: Some(PrintConv::Function(ast_print_dccfee5faef77602)),
             value_conv: None,
         }),
         (1282, TagInfo {
@@ -209,7 +207,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1283, TagInfo {
             name: "CustomSaturation",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_103361d26a5af32d)),
+            print_conv: Some(PrintConv::Function(ast_print_51872ff99fb478cd)),
             value_conv: None,
         }),
         (1284, TagInfo {
@@ -221,13 +219,13 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1285, TagInfo {
             name: "ContrastSetting",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_79289c26a24e6f78)),
+            print_conv: Some(PrintConv::Function(ast_print_8845ad33274dfc8d)),
             value_conv: None,
         }),
         (1286, TagInfo {
             name: "SharpnessSetting",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_79289c26a24e6f78)),
+            print_conv: Some(PrintConv::Function(ast_print_8845ad33274dfc8d)),
             value_conv: None,
         }),
         (1287, TagInfo {
@@ -281,7 +279,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1313, TagInfo {
             name: "PictureModeSaturation",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_79289c26a24e6f78)),
+            print_conv: Some(PrintConv::Function(ast_print_8845ad33274dfc8d)),
             value_conv: None,
         }),
         (1314, TagInfo {
@@ -293,13 +291,13 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1315, TagInfo {
             name: "PictureModeContrast",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_79289c26a24e6f78)),
+            print_conv: Some(PrintConv::Function(ast_print_8845ad33274dfc8d)),
             value_conv: None,
         }),
         (1316, TagInfo {
             name: "PictureModeSharpness",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_79289c26a24e6f78)),
+            print_conv: Some(PrintConv::Function(ast_print_8845ad33274dfc8d)),
             value_conv: None,
         }),
         (1317, TagInfo {
@@ -395,7 +393,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1537, TagInfo {
             name: "PanoramaMode",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_70620f00a1c89dd5)),
+            print_conv: Some(PrintConv::Function(ast_print_c325c8237ed81802)),
             value_conv: None,
         }),
         (1539, TagInfo {
@@ -425,14 +423,14 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (2304, TagInfo {
             name: "ManometerPressure",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_b0ad9908708bcb9f)),
-            value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+            print_conv: Some(PrintConv::Function(ast_print_1f1f8b932218fcc3)),
+            value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
         }),
         (2305, TagInfo {
             name: "ManometerReading",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_ed1555c62079876e)),
-            value_conv: Some(ValueConv::Function(ast_value_f1277e290c2a7107)),
+            print_conv: Some(PrintConv::Function(ast_print_d696298f086bdf8)),
+            value_conv: Some(ValueConv::Function(ast_value_cc38490c4c9977cc)),
         }),
         (2306, TagInfo {
             name: "ExtendedWBDetect",
@@ -444,18 +442,18 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             name: "RollAngle",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_5d1e153d8debf27a)),
+            value_conv: Some(ValueConv::Function(ast_value_ce2aa2946f06166e)),
         }),
         (2308, TagInfo {
             name: "PitchAngle",
             format: "unknown",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_33118cafe9fb1cc3)),
+            value_conv: Some(ValueConv::Function(ast_value_8e44f9d07063045d)),
         }),
         (2312, TagInfo {
             name: "DateTimeUTC",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_b25c14c47d1cbc24)),
+            print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
             value_conv: None,
         }),
     ])

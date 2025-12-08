@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_ee::ast_print_ee86c0adbbb71bec;
+use crate::generated::functions::hash_ec::ast_print_ec343c90317449df;
 
 /// Tag definitions for Kodak::Borders table
 pub static KODAK_BORDERS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -16,7 +16,7 @@ pub static KODAK_BORDERS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
         TagInfo {
             name: "BorderName",
             format: "unknown",
-            print_conv: Some(PrintConv::Function(ast_print_ee86c0adbbb71bec)),
+            print_conv: Some(PrintConv::Function(ast_print_ec343c90317449df)),
             value_conv: None,
         },
     )])

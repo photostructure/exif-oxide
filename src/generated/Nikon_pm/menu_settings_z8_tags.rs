@@ -7,9 +7,9 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_60::ast_value_6024bbf5fa17668a;
-use crate::generated::functions::hash_83::ast_value_8390ff1421e71f53;
-use crate::generated::functions::hash_ab::ast_print_ab0e6c517653bb46;
+use crate::generated::functions::hash_8d::ast_print_8d207d64d9ef2b8c;
+use crate::generated::functions::hash_b8::ast_value_b8b4108321f31a78;
+use crate::generated::functions::hash_e2::ast_value_e263dcc51d0cc0f;
 
 /// Tag definitions for Nikon::MenuSettingsZ8 table
 pub static NIKON_MENUSETTINGSZ8_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -127,7 +127,7 @@ pub static NIKON_MENUSETTINGSZ8_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FocusShiftInterval",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ab0e6c517653bb46)),
+                print_conv: Some(PrintConv::Function(ast_print_8d207d64d9ef2b8c)),
                 value_conv: None,
             },
         ),
@@ -182,7 +182,7 @@ pub static NIKON_MENUSETTINGSZ8_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 name: "ISOAutoHiLimit",
                 format: "int16u",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_8390ff1421e71f53)),
+                value_conv: Some(ValueConv::Function(ast_value_b8b4108321f31a78)),
             },
         ),
         (
@@ -191,7 +191,7 @@ pub static NIKON_MENUSETTINGSZ8_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 name: "ISOAutoFlashLimit",
                 format: "int16u",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_8390ff1421e71f53)),
+                value_conv: Some(ValueConv::Function(ast_value_b8b4108321f31a78)),
             },
         ),
         (
@@ -200,7 +200,7 @@ pub static NIKON_MENUSETTINGSZ8_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 name: "ISOAutoShutterTime",
                 format: "int16s",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_6024bbf5fa17668a)),
+                value_conv: Some(ValueConv::Function(ast_value_e263dcc51d0cc0f)),
             },
         ),
         (
@@ -398,7 +398,7 @@ pub static NIKON_MENUSETTINGSZ8_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 name: "MovieISOAutoHiLimit",
                 format: "int16u",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_8390ff1421e71f53)),
+                value_conv: Some(ValueConv::Function(ast_value_b8b4108321f31a78)),
             },
         ),
         (
@@ -416,7 +416,7 @@ pub static NIKON_MENUSETTINGSZ8_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 name: "MovieISOAutoManualMode",
                 format: "int16u",
                 print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_8390ff1421e71f53)),
+                value_conv: Some(ValueConv::Function(ast_value_b8b4108321f31a78)),
             },
         ),
         (

@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_c6::ast_print_c6578bbe163abd7e;
-use crate::generated::functions::hash_ff::ast_print_ff580d7a7e7ea714;
+use crate::generated::functions::hash_c2::ast_print_c23821edccdd4b5c;
+use crate::generated::functions::hash_d5::ast_print_d54898e66e3a2800;
 
 /// Tag definitions for Sony::Tag940c table
 pub static SONY_TAG940C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -36,7 +36,7 @@ pub static SONY_TAG940C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "CameraE-mountVersion",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_ff580d7a7e7ea714)),
+                print_conv: Some(PrintConv::Function(ast_print_d54898e66e3a2800)),
                 value_conv: None,
             },
         ),
@@ -45,7 +45,7 @@ pub static SONY_TAG940C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "LensE-mountVersion",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_ff580d7a7e7ea714)),
+                print_conv: Some(PrintConv::Function(ast_print_d54898e66e3a2800)),
                 value_conv: None,
             },
         ),
@@ -54,7 +54,7 @@ pub static SONY_TAG940C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "LensFirmwareVersion",
                 format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_c6578bbe163abd7e)),
+                print_conv: Some(PrintConv::Function(ast_print_c23821edccdd4b5c)),
                 value_conv: None,
             },
         ),

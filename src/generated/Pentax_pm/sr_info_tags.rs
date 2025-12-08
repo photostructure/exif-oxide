@@ -7,10 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_29::ast_print_29f73438895e98;
-use crate::generated::functions::hash_46::ast_value_46ca3f250be86611;
-use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
-use crate::generated::functions::hash_fb::ast_value_fb809cf882621a79;
+use crate::generated::functions::hash_4d::ast_value_4df6f963709ce74f;
+use crate::generated::functions::hash_b0::ast_value_b06dbcceb3b34517;
+use crate::generated::functions::hash_b4::ast_print_b41bd13e5416819e;
+use crate::generated::functions::hash_dd::ast_print_dd22782e5ba8c7cb;
 
 /// Tag definitions for Pentax::SRInfo table
 pub static PENTAX_SRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -38,8 +38,8 @@ pub static PENTAX_SRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "SRHalfPressTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_29f73438895e98)),
-                value_conv: Some(ValueConv::Function(ast_value_fb809cf882621a79)),
+                print_conv: Some(PrintConv::Function(ast_print_b41bd13e5416819e)),
+                value_conv: Some(ValueConv::Function(ast_value_4df6f963709ce74f)),
             },
         ),
         (
@@ -47,8 +47,8 @@ pub static PENTAX_SRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "SRFocalLength",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
-                value_conv: Some(ValueConv::Function(ast_value_46ca3f250be86611)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
+                value_conv: Some(ValueConv::Function(ast_value_b06dbcceb3b34517)),
             },
         ),
     ])

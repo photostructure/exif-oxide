@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_ef::ast_value_efbc21cd45d1f526;
+use crate::generated::functions::hash_4f::ast_value_4ff3f573ca64de1f;
 
 /// Tag definitions for Nikon::AVIVers table
 pub static NIKON_AVIVERS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static NIKON_AVIVERS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             name: "MakerNoteVersion",
             format: "int8u",
             print_conv: None,
-            value_conv: Some(ValueConv::Function(ast_value_efbc21cd45d1f526)),
+            value_conv: Some(ValueConv::Function(ast_value_4ff3f573ca64de1f)),
         },
     )])
 });

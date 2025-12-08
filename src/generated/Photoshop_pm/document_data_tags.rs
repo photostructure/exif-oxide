@@ -8,7 +8,7 @@ use std::sync::LazyLock;
 
 /// Tag definitions for Photoshop::DocumentData table
 pub static PHOTOSHOP_DOCUMENTDATA_TAGS: LazyLock<HashMap<u16, TagInfo>> =
-    LazyLock::new(|| HashMap::new());
+    LazyLock::new(HashMap::new);
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

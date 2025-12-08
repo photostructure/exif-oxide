@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_54::ast_value_54193e0c249aa3ab;
-use crate::generated::functions::hash_db::ast_value_db6d300cf2bc94e2;
+use crate::generated::functions::hash_13::ast_value_135828bb10970bc4;
+use crate::generated::functions::hash_e1::ast_value_e137a069f73b6d7;
 
 /// Tag definitions for IPTC::EnvelopeRecord table
 pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -91,7 +91,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "DateSent",
                 format: "digits[8]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_db6d300cf2bc94e2)),
+                value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
             },
         ),
         (
@@ -100,7 +100,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 name: "TimeSent",
                 format: "string[11]",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_54193e0c249aa3ab)),
+                value_conv: Some(ValueConv::Function(ast_value_135828bb10970bc4)),
             },
         ),
         (

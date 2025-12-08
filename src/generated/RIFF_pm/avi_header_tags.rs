@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_4e::ast_print_4e32eebd5c55c7ac;
-use crate::generated::functions::hash_c0::ast_print_c0a8bf21acb9deb1;
+use crate::generated::functions::hash_d6::ast_print_d62478e414288a45;
+use crate::generated::functions::hash_dd::ast_print_dd3be644838b9531;
 
 /// Tag definitions for RIFF::AVIHeader table
 pub static RIFF_AVIHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -18,7 +18,7 @@ pub static RIFF_AVIHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FrameRate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c0a8bf21acb9deb1)),
+                print_conv: Some(PrintConv::Function(ast_print_dd3be644838b9531)),
                 value_conv: None,
             },
         ),
@@ -27,7 +27,7 @@ pub static RIFF_AVIHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "MaxDataRate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_4e32eebd5c55c7ac)),
+                print_conv: Some(PrintConv::Function(ast_print_d62478e414288a45)),
                 value_conv: None,
             },
         ),

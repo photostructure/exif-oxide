@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_ad::ast_print_ad5045ef02b4c16f;
+use crate::generated::functions::hash_59::ast_print_59c4870e2ad1642d;
 
 /// Tag definitions for Canon::ColorCalib table
 pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -17,7 +17,7 @@ pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraColorCalibration01",
                 format: "int16s[4]",
-                print_conv: Some(PrintConv::Function(ast_print_ad5045ef02b4c16f)),
+                print_conv: Some(PrintConv::Function(ast_print_59c4870e2ad1642d)),
                 value_conv: None,
             },
         ),
@@ -26,7 +26,7 @@ pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraColorCalibration02",
                 format: "int16s[4]",
-                print_conv: Some(PrintConv::Function(ast_print_ad5045ef02b4c16f)),
+                print_conv: Some(PrintConv::Function(ast_print_59c4870e2ad1642d)),
                 value_conv: None,
             },
         ),
@@ -35,7 +35,7 @@ pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraColorCalibration03",
                 format: "int16s[4]",
-                print_conv: Some(PrintConv::Function(ast_print_ad5045ef02b4c16f)),
+                print_conv: Some(PrintConv::Function(ast_print_59c4870e2ad1642d)),
                 value_conv: None,
             },
         ),
@@ -44,7 +44,7 @@ pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraColorCalibration04",
                 format: "int16s[4]",
-                print_conv: Some(PrintConv::Function(ast_print_ad5045ef02b4c16f)),
+                print_conv: Some(PrintConv::Function(ast_print_59c4870e2ad1642d)),
                 value_conv: None,
             },
         ),
@@ -53,7 +53,7 @@ pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraColorCalibration05",
                 format: "int16s[4]",
-                print_conv: Some(PrintConv::Function(ast_print_ad5045ef02b4c16f)),
+                print_conv: Some(PrintConv::Function(ast_print_59c4870e2ad1642d)),
                 value_conv: None,
             },
         ),
@@ -62,7 +62,7 @@ pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraColorCalibration06",
                 format: "int16s[4]",
-                print_conv: Some(PrintConv::Function(ast_print_ad5045ef02b4c16f)),
+                print_conv: Some(PrintConv::Function(ast_print_59c4870e2ad1642d)),
                 value_conv: None,
             },
         ),
@@ -71,7 +71,7 @@ pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraColorCalibration07",
                 format: "int16s[4]",
-                print_conv: Some(PrintConv::Function(ast_print_ad5045ef02b4c16f)),
+                print_conv: Some(PrintConv::Function(ast_print_59c4870e2ad1642d)),
                 value_conv: None,
             },
         ),
@@ -80,7 +80,7 @@ pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraColorCalibration08",
                 format: "int16s[4]",
-                print_conv: Some(PrintConv::Function(ast_print_ad5045ef02b4c16f)),
+                print_conv: Some(PrintConv::Function(ast_print_59c4870e2ad1642d)),
                 value_conv: None,
             },
         ),
@@ -89,7 +89,7 @@ pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraColorCalibration09",
                 format: "int16s[4]",
-                print_conv: Some(PrintConv::Function(ast_print_ad5045ef02b4c16f)),
+                print_conv: Some(PrintConv::Function(ast_print_59c4870e2ad1642d)),
                 value_conv: None,
             },
         ),
@@ -98,7 +98,7 @@ pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraColorCalibration10",
                 format: "int16s[4]",
-                print_conv: Some(PrintConv::Function(ast_print_ad5045ef02b4c16f)),
+                print_conv: Some(PrintConv::Function(ast_print_59c4870e2ad1642d)),
                 value_conv: None,
             },
         ),
@@ -107,7 +107,7 @@ pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraColorCalibration11",
                 format: "int16s[4]",
-                print_conv: Some(PrintConv::Function(ast_print_ad5045ef02b4c16f)),
+                print_conv: Some(PrintConv::Function(ast_print_59c4870e2ad1642d)),
                 value_conv: None,
             },
         ),
@@ -116,7 +116,7 @@ pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraColorCalibration12",
                 format: "int16s[4]",
-                print_conv: Some(PrintConv::Function(ast_print_ad5045ef02b4c16f)),
+                print_conv: Some(PrintConv::Function(ast_print_59c4870e2ad1642d)),
                 value_conv: None,
             },
         ),
@@ -125,7 +125,7 @@ pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraColorCalibration13",
                 format: "int16s[4]",
-                print_conv: Some(PrintConv::Function(ast_print_ad5045ef02b4c16f)),
+                print_conv: Some(PrintConv::Function(ast_print_59c4870e2ad1642d)),
                 value_conv: None,
             },
         ),
@@ -134,7 +134,7 @@ pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraColorCalibration14",
                 format: "int16s[4]",
-                print_conv: Some(PrintConv::Function(ast_print_ad5045ef02b4c16f)),
+                print_conv: Some(PrintConv::Function(ast_print_59c4870e2ad1642d)),
                 value_conv: None,
             },
         ),
@@ -143,7 +143,7 @@ pub static CANON_COLORCALIB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "CameraColorCalibration15",
                 format: "int16s[4]",
-                print_conv: Some(PrintConv::Function(ast_print_ad5045ef02b4c16f)),
+                print_conv: Some(PrintConv::Function(ast_print_59c4870e2ad1642d)),
                 value_conv: None,
             },
         ),

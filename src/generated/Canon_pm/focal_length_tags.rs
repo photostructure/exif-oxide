@@ -7,8 +7,8 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_23::ast_value_237333b021276c6e;
-use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
+use crate::generated::functions::hash_dd::ast_print_dd22782e5ba8c7cb;
+use crate::generated::functions::hash_fd::ast_value_fd4074b621d9fc83;
 
 /// Tag definitions for Canon::FocalLength table
 pub static CANON_FOCALLENGTH_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -27,8 +27,8 @@ pub static CANON_FOCALLENGTH_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "FocalLength",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
-                value_conv: Some(ValueConv::Function(ast_value_237333b021276c6e)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
+                value_conv: Some(ValueConv::Function(ast_value_fd4074b621d9fc83)),
             },
         ),
     ])

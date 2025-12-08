@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_9c::ast_value_9c5fc67951116486;
+use crate::generated::functions::hash_4b::ast_value_4bca35dfa05220ad;
 
 /// Tag definitions for QuickTime::equi table
 pub static QUICK_TIME_EQUI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -18,7 +18,7 @@ pub static QUICK_TIME_EQUI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 name: "ProjectionBoundsTop",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_9c5fc67951116486)),
+                value_conv: Some(ValueConv::Function(ast_value_4bca35dfa05220ad)),
             },
         ),
         (
@@ -27,7 +27,7 @@ pub static QUICK_TIME_EQUI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 name: "ProjectionBoundsBottom",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_9c5fc67951116486)),
+                value_conv: Some(ValueConv::Function(ast_value_4bca35dfa05220ad)),
             },
         ),
         (
@@ -36,7 +36,7 @@ pub static QUICK_TIME_EQUI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 name: "ProjectionBoundsLeft",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_9c5fc67951116486)),
+                value_conv: Some(ValueConv::Function(ast_value_4bca35dfa05220ad)),
             },
         ),
         (
@@ -45,7 +45,7 @@ pub static QUICK_TIME_EQUI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 name: "ProjectionBoundsRight",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_9c5fc67951116486)),
+                value_conv: Some(ValueConv::Function(ast_value_4bca35dfa05220ad)),
             },
         ),
     ])

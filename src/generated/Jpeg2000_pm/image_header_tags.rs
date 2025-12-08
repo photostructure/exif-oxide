@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_1f::ast_print_1f60a9abccfeb56;
+use crate::generated::functions::hash_7c::ast_print_7c1b806cd4c4514f;
 
 /// Tag definitions for Jpeg2000::ImageHeader table
 pub static JPEG2000_IMAGEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -44,7 +44,7 @@ pub static JPEG2000_IMAGEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "BitsPerComponent",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_1f60a9abccfeb56)),
+                print_conv: Some(PrintConv::Function(ast_print_7c1b806cd4c4514f)),
                 value_conv: None,
             },
         ),

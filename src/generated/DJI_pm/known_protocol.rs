@@ -9,11 +9,17 @@ use std::sync::LazyLock;
 pub static KNOWN_PROTOCOL: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     let mut set = HashSet::new();
     set.insert("dvtm_AVATA2.proto");
+    set.insert("dvtm_Air3.proto");
+    set.insert("dvtm_Air3s.proto");
     set.insert("dvtm_Mini4_Pro.proto");
+    set.insert("dvtm_PP-101.proto");
     set.insert("dvtm_ac203.proto");
     set.insert("dvtm_ac204.proto");
     set.insert("dvtm_dji_neo.proto");
+    set.insert("dvtm_oq101.proto");
     set.insert("dvtm_pm320.proto");
+    set.insert("dvtm_wa345e.proto");
+    set.insert("dvtm_wm261.proto");
     set.insert("dvtm_wm265e.proto");
     set
 });

@@ -7,14 +7,14 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
-use crate::generated::functions::hash_28::ast_value_28edfda19b0d16dd;
-use crate::generated::functions::hash_4e::ast_print_4e5e992f9b388e54;
-use crate::generated::functions::hash_50::ast_value_505555435997e294;
-use crate::generated::functions::hash_ba::ast_print_ba030bb348470426;
-use crate::generated::functions::hash_c6::ast_print_c60ce4347d672501;
-use crate::generated::functions::hash_d2::ast_value_d257a2f28a742d8d;
-use crate::generated::functions::hash_ee::ast_value_ee9b0901d11400f9;
-use crate::generated::functions::hash_f0::ast_print_f0406a5cf107f00d;
+use crate::generated::functions::hash_2c::ast_print_2cea565875d218cc;
+use crate::generated::functions::hash_3b::ast_print_3b6232f726868923;
+use crate::generated::functions::hash_63::ast_value_63c413f7e986d282;
+use crate::generated::functions::hash_88::ast_value_882f6d908299e76b;
+use crate::generated::functions::hash_8e::ast_value_8e281e57f268ff8;
+use crate::generated::functions::hash_c0::ast_value_c0027708ba7e42e3;
+use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
+use crate::generated::functions::hash_dd::ast_print_dd22782e5ba8c7cb;
 
 /// Tag definitions for Kodak::Type10 table
 pub static KODAK_TYPE10_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -24,7 +24,7 @@ pub static KODAK_TYPE10_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "PreviewImageSize",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_4e5e992f9b388e54)),
+                print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
                 value_conv: None,
             },
         ),
@@ -33,8 +33,8 @@ pub static KODAK_TYPE10_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "ExposureTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c60ce4347d672501)),
-                value_conv: Some(ValueConv::Function(ast_value_d257a2f28a742d8d)),
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_63c413f7e986d282)),
             },
         ),
         (
@@ -43,7 +43,7 @@ pub static KODAK_TYPE10_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 name: "FNumber",
                 format: "unknown",
                 print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_28edfda19b0d16dd)),
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
             },
         ),
         (
@@ -51,8 +51,8 @@ pub static KODAK_TYPE10_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "ISO",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_f0406a5cf107f00d)),
-                value_conv: Some(ValueConv::Function(ast_value_505555435997e294)),
+                print_conv: Some(PrintConv::Function(ast_print_2cea565875d218cc)),
+                value_conv: Some(ValueConv::Function(ast_value_882f6d908299e76b)),
             },
         ),
         (
@@ -60,8 +60,8 @@ pub static KODAK_TYPE10_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "FocalLength",
                 format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_ba030bb348470426)),
-                value_conv: Some(ValueConv::Function(ast_value_ee9b0901d11400f9)),
+                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
+                value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
             },
         ),
     ])
