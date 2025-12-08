@@ -6,7 +6,8 @@
 //! This test verifies the end-to-end PPI JSON parsing and Rust code generation
 //! using real Canon.pm output from field_extractor.pl
 
-use codegen::ppi::{parse_ppi_json, ExpressionType, RustGenerator};
+use codegen::ppi::rust_generator::RustGenerator;
+use codegen::ppi::{parse_ppi_json, ExpressionType};
 use exif_oxide::TagValue;
 use serde_json::json;
 

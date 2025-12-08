@@ -52,17 +52,9 @@ pub fn try_registry_lookup(
                 _ => None,
             }
         }
-        ExpressionType::Condition => {
-            if let Some(func_impl) = lookup_function(original_expression) {
-                Some(generate_condition_function(
-                    function_name,
-                    original_expression,
-                    func_impl,
-                ))
-            } else {
-                None
-            }
-        }
+        ExpressionType::Condition => lookup_function(original_expression).map(|func_impl| {
+            generate_condition_function(function_name, original_expression, func_impl)
+        }),
     }
 }
 
@@ -76,7 +68,7 @@ fn generate_printconv_function(
 ) -> String {
     let escaped_expr = escape_expression(original_expression);
     // module_path already includes "crate::implementations::" prefix
-    let function_path = format!("{}::{}", module_path, func_name);
+    let function_path = format!("{module_path}::{func_name}");
 
     formatdoc! {r#"
         /// Registry fallback: PrintConv implementation found
@@ -100,7 +92,7 @@ fn generate_valueconv_function(
 ) -> String {
     let escaped_expr = escape_expression(original_expression);
     // module_path already includes "crate::implementations::" prefix
-    let function_path = format!("{}::{}", module_path, func_name);
+    let function_path = format!("{module_path}::{func_name}");
 
     formatdoc! {r#"
         /// Registry fallback: ValueConv implementation found

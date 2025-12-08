@@ -8,7 +8,8 @@
 //! function calls and transform them into nested function call structures
 //! that the visitor can process without string parsing.
 
-use codegen::ppi::{parse_ppi_json, ExpressionType, RustGenerator};
+use codegen::ppi::rust_generator::RustGenerator;
+use codegen::ppi::{parse_ppi_json, ExpressionType};
 use serde_json::json;
 
 #[test]

@@ -6,7 +6,8 @@
 //! This test validates that PPI enhancement delivers measurable improvement
 //! in expression conversion rates with verifiable end-to-end functionality.
 
-use codegen::ppi::{ExpressionType, RustGenerator};
+use codegen::ppi::rust_generator::RustGenerator;
+use codegen::ppi::ExpressionType;
 use serde_json::json;
 
 /// Test that measures PPI coverage improvement across enhancement phases
