@@ -1,0 +1,267 @@
+{
+  "_metadata": {
+    "description": "Gap analysis of required tags comparing exif-oxide output with ExifTool",
+    "generated": "2025-12-08",
+    "test_images": [
+      "third-party/exiftool/t/images/Canon.jpg",
+      "third-party/exiftool/t/images/Apple.jpg",
+      "third-party/exiftool/t/images/GPS.jpg",
+      "third-party/exiftool/t/images/Nikon.jpg"
+    ],
+    "summary": {
+      "total_required_tags": 124,
+      "tags_with_support_claimed": 123,
+      "tags_fully_working": 75,
+      "tags_with_printconv_issues": 15,
+      "tags_missing_composite": 12,
+      "tags_blocked_video": 22,
+      "tags_needing_research": 20
+    }
+  },
+  "categories": {
+    "quick_wins_printconv": {
+      "description": "Tags where PrintConv exists but is not being applied - showing raw numbers instead of human-readable strings",
+      "effort": "low",
+      "estimated_tags": 15,
+      "tags": [
+        {
+          "name": "EXIF:MeteringMode",
+          "issue": "Shows number (5) instead of string ('Multi-segment')",
+          "fix": "Apply PrintConv lookup table"
+        },
+        {
+          "name": "EXIF:ResolutionUnit",
+          "issue": "Shows number (2) instead of string ('inches')",
+          "fix": "Apply PrintConv lookup table"
+        },
+        {
+          "name": "EXIF:Orientation",
+          "issue": "Shows number (1) instead of string ('Horizontal (normal)')",
+          "fix": "Apply PrintConv lookup table"
+        },
+        {
+          "name": "EXIF:Flash",
+          "issue": "Shows number (0/16) instead of string ('No Flash'/'Off, Did not fire')",
+          "fix": "Apply PrintConv lookup table"
+        },
+        {
+          "name": "EXIF:YCbCrPositioning",
+          "issue": "Shows number (1/2) instead of string ('Centered'/'Co-sited')",
+          "fix": "Apply PrintConv lookup table"
+        },
+        {
+          "name": "EXIF:ExposureProgram",
+          "issue": "Shows number (2/4) instead of string ('Program AE'/'Shutter speed priority AE')",
+          "fix": "Apply PrintConv lookup table"
+        },
+        {
+          "name": "EXIF:GPSLatitudeRef",
+          "issue": "Shows 'N' instead of 'North'",
+          "fix": "Apply PrintConv lookup table"
+        },
+        {
+          "name": "EXIF:GPSLongitudeRef",
+          "issue": "Shows 'W' instead of 'West'",
+          "fix": "Apply PrintConv lookup table"
+        },
+        {
+          "name": "EXIF:GPSAltitudeRef",
+          "issue": "Shows number (0) instead of 'Above Sea Level'",
+          "fix": "Apply PrintConv lookup table"
+        }
+      ]
+    },
+    "quick_wins_format": {
+      "description": "Tags with minor formatting differences",
+      "effort": "low",
+      "estimated_tags": 5,
+      "tags": [
+        {
+          "name": "File:FileTypeExtension",
+          "issue": "Returns 'jpeg' instead of 'jpg'",
+          "fix": "Use canonical short extension"
+        },
+        {
+          "name": "MakerNotes:FileNumber",
+          "issue": "Returns raw number (1181861) instead of formatted ('118-1861')",
+          "fix": "Apply PrintConv regex substitution"
+        },
+        {
+          "name": "EXIF:ShutterSpeedValue",
+          "issue": "Returns decimal (4.3) instead of fraction ('1/20')",
+          "fix": "Apply PrintExposureTime function"
+        },
+        {
+          "name": "EXIF:GPSTimeStamp",
+          "issue": "Missing subseconds - returns '17:17:58' instead of '17:17:58.65'",
+          "fix": "Preserve fractional seconds in GPS timestamp"
+        }
+      ]
+    },
+    "medium_effort_composite": {
+      "description": "Composite tags that need implementation - calculated from other tag values",
+      "effort": "medium",
+      "estimated_tags": 12,
+      "tags": [
+        {
+          "name": "Composite:Aperture",
+          "dependencies": ["FNumber", "ApertureValue"],
+          "expression": "$val[0] || $val[1]"
+        },
+        {
+          "name": "Composite:ShutterSpeed",
+          "dependencies": ["ExposureTime", "ShutterSpeedValue", "BulbDuration"],
+          "expression": "($val[2] and $val[2]>0) ? $val[2] : (defined($val[0]) ? $val[0] : $val[1])"
+        },
+        {
+          "name": "Composite:Megapixels",
+          "dependencies": ["ImageSize"],
+          "expression": "my @d = ($val =~ /\\d+/g); $d[0] * $d[1] / 1000000"
+        },
+        {
+          "name": "Composite:ImageSize",
+          "dependencies": ["ImageWidth", "ImageHeight", "ExifImageWidth", "ExifImageHeight"],
+          "expression": "Complex - see composite-dependencies.json"
+        },
+        {
+          "name": "Composite:ISO",
+          "dependencies": ["CameraISO", "BaseISO", "AutoISO"],
+          "expression": "Canon-specific calculation"
+        },
+        {
+          "name": "Composite:Lens",
+          "dependencies": ["MinFocalLength", "MaxFocalLength"],
+          "expression": "PrintFocalRange(@val)"
+        },
+        {
+          "name": "Composite:LensID",
+          "dependencies": ["Multiple lens-related tags"],
+          "expression": "Complex Nikon lens ID lookup"
+        },
+        {
+          "name": "Composite:GPSLatitude",
+          "dependencies": ["GPSLatitude", "GPSLatitudeRef"],
+          "expression": "$val[1] =~ /^S/i ? -$val[0] : $val[0]"
+        },
+        {
+          "name": "Composite:GPSLongitude",
+          "dependencies": ["GPSLongitude", "GPSLongitudeRef"],
+          "expression": "$val[1] =~ /^W/i ? -$val[0] : $val[0]"
+        },
+        {
+          "name": "Composite:GPSPosition",
+          "dependencies": ["GPSLatitude", "GPSLongitude"],
+          "expression": "\"$val[0] $val[1]\""
+        },
+        {
+          "name": "Composite:GPSDateTime",
+          "dependencies": ["GPSDateStamp", "GPSTimeStamp"],
+          "expression": "\"$val[0] $val[1]Z\""
+        },
+        {
+          "name": "Composite:SubSecDateTimeOriginal",
+          "dependencies": ["EXIF:DateTimeOriginal", "SubSecTimeOriginal", "OffsetTimeOriginal"],
+          "expression": "Complex datetime composition"
+        }
+      ]
+    },
+    "blocked_video_support": {
+      "description": "Tags requiring Milestone 18 (Video Format Support) - DO NOT IMPLEMENT YET",
+      "effort": "blocked",
+      "blocker": "Milestone 18 - Video Format Support",
+      "estimated_tags": 22,
+      "groups": {
+        "QuickTime": {
+          "count": 18,
+          "tags": [
+            "CompressorName", "CreateDate", "CreationDate", "Duration",
+            "HandlerDescription", "ImageHeight", "ImageWidth", "Make",
+            "MediaCreateDate", "MediaDuration", "MediaModifyDate", "Model",
+            "ModifyDate", "Software", "TrackCreateDate", "TrackDuration",
+            "TrackModifyDate", "Rotation"
+          ]
+        },
+        "RIFF": {
+          "count": 4,
+          "tags": ["DateTimeOriginal", "Duration", "ImageHeight", "ImageWidth", "Software"]
+        }
+      }
+    },
+    "research_needed": {
+      "description": "Tags not found in tag-metadata.json - need to identify source ExifTool module",
+      "effort": "research",
+      "estimated_tags": 20,
+      "tags": [
+        "AttributionName",
+        "AttributionURL",
+        "CameraModelName",
+        "DNGLensInfo",
+        "FileVersion",
+        "HierarchicalKeywords",
+        "HistoryWhen",
+        "ImageDataHash",
+        "Jurisdiction",
+        "KeywordInfo",
+        "License",
+        "People",
+        "Permits",
+        "PersonInImageName",
+        "PersonInImageWDetails",
+        "Prohibits",
+        "RegionList",
+        "Requires",
+        "SubSecMediaCreateDate",
+        "UseGuidelines"
+      ],
+      "likely_sources": {
+        "XMP_cc": ["AttributionName", "AttributionURL", "License", "Permits", "Prohibits", "Requires", "UseGuidelines", "Jurisdiction"],
+        "XMP_mwg_rs": ["RegionList", "PersonInImageWDetails"],
+        "XMP_MP": ["PersonInImageName"],
+        "XMP_xmpMM": ["HistoryWhen"],
+        "XMP_lr": ["HierarchicalKeywords"],
+        "File": ["ImageDataHash"],
+        "XMP_DICOM": ["People"],
+        "XMP_crs": ["CameraModelName"],
+        "EXIF": ["DNGLensInfo"]
+      }
+    },
+    "missing_single_tag": {
+      "description": "Single tag missing from supported_tags.json",
+      "effort": "low",
+      "tags": [
+        {
+          "name": "FileAccessDate",
+          "group": "ExifTool",
+          "fix": "Add to supported_tags.json and implement file stat reading"
+        }
+      ]
+    }
+  },
+  "priority_order": [
+    {
+      "priority": 1,
+      "category": "quick_wins_printconv",
+      "rationale": "High impact, low effort - these tags exist but just need PrintConv applied"
+    },
+    {
+      "priority": 2,
+      "category": "quick_wins_format",
+      "rationale": "Minor formatting fixes for better ExifTool compatibility"
+    },
+    {
+      "priority": 3,
+      "category": "medium_effort_composite",
+      "rationale": "Core functionality - many common tags depend on composite evaluation"
+    },
+    {
+      "priority": 4,
+      "category": "research_needed",
+      "rationale": "Need to identify source modules before implementation"
+    },
+    {
+      "priority": 5,
+      "category": "blocked_video_support",
+      "rationale": "Blocked until Milestone 18 - skip for now"
+    }
+  ]
+}
