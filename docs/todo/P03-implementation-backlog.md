@@ -140,7 +140,7 @@ rg "composite" src/implementations/ --type rust
 AttributionName, AttributionURL, CameraModelName, DNGLensInfo, FileVersion,
 HierarchicalKeywords, HistoryWhen, ImageDataHash, Jurisdiction, KeywordInfo,
 License, People, Permits, PersonInImageName, PersonInImageWDetails, Prohibits,
-RegionList, Requires, SubSecMediaCreateDate, UseGuidelines
+RegionList, Requires, UseGuidelines
 ```
 
 **Likely sources** (based on naming patterns):
