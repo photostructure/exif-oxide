@@ -94,7 +94,10 @@ pub fn join_unpack_binary(separator: &str, format: &str, val: &TagValue) -> TagV
             TagValue::U8(n) => format!("{n:02x}"),
             TagValue::U16(n) => format!("{n:04x}"),
             TagValue::U32(n) => format!("{n:08x}"),
-            TagValue::I32(n) => { let b = *n as u8; format!("{b:02x}") }
+            TagValue::I32(n) => {
+                let b = *n as u8;
+                format!("{b:02x}")
+            }
             _ => v.to_string(),
         })
         .collect();
