@@ -11,7 +11,6 @@
 
 // use super::implementations::*;
 // use super::resolution::resolve_tag_dependency;
-// use super::value_conv_evaluator::ValueConvEvaluator;
 
 // TODO: Re-enable when CompositeTagDef is generated
 /*
@@ -115,23 +114,8 @@ pub fn compute_composite_tag(
         // Enhanced ScaleFactor35efl (keep existing simple version for compatibility)
         // "ScaleFactor35efl" => compute_scale_factor_35efl_enhanced(available_tags),
         _ => {
-            // Try dynamic ValueConv evaluation for generated composite definitions
-            if composite_def.value_conv.is_some() {
-                trace!(
-                    "Attempting dynamic evaluation for composite: {}",
-                    composite_def.name
-                );
-
-                let mut evaluator = ValueConvEvaluator::new();
-                if let Some(result) =
-                    evaluator.evaluate_composite(composite_def, &resolved_dependencies)
-                {
-                    trace!("Dynamic evaluation succeeded for: {}", composite_def.name);
-                    return Some(result);
-                }
-
-                trace!("Dynamic evaluation failed for: {}", composite_def.name);
-            }
+            // TODO: Use generated Function variants for composite tag evaluation
+            // instead of runtime interpretation
 
             // Log available vs missing dependencies for debugging
             let mut available_deps = Vec::new();

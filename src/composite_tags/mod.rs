@@ -10,7 +10,6 @@ mod dispatch;
 mod implementations;
 mod orchestration;
 mod resolution;
-mod value_conv_evaluator;
 
 // Re-export the main public API
 // TEMPORARILY COMMENTED OUT - apply_composite_conversions not generated yet
@@ -22,4 +21,3 @@ pub use resolution::{build_available_tags_map, can_build_composite, is_dependenc
 // TEMPORARILY COMMENTED OUT - compute_composite_tag not generated yet
 // pub use dispatch::compute_composite_tag;
 pub use orchestration::handle_unresolved_composites;
-pub use value_conv_evaluator::{ExecutionStrategy, ValueConvEvaluator};
