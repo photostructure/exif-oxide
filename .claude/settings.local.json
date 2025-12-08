@@ -1,9 +1,11 @@
 {
   "permissions": {
     "allow": [
+      "Bash(./codegen/scripts/field_extractor.pl:*)",
       "Bash(./codegen/scripts/ppi_ast.pl:*)",
       "Bash(./scripts/capture.sh cargo:*)",
       "Bash(./scripts/capture.sh make:*)",
+      "Bash(./scripts/capture.sh:*)",
       "Bash(./scripts/field_extractor.pl:*)",
       "Bash(./scripts/ppi_ast.pl:*)",
       "Bash(./target/debug/debug-ppi:*)",
@@ -23,7 +25,9 @@
       "Bash(make:*)",
       "Bash(perl:*)",
       "Bash(rustc:*)",
+      "Bash(rustfmt:*)",
       "Bash(sed:*)",
+      "Bash(timeout 120 make:*)",
       "Bash(wc:*)",
       "Bash(while read tag)",
       "WebSearch"
