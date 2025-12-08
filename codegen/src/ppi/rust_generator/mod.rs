@@ -51,17 +51,9 @@ impl PpiVisitor for RustGenerator {
     }
 }
 
-impl ExpressionCombiner for RustGenerator {
-    fn expression_type(&self) -> &ExpressionType {
-        &self.expression_type
-    }
-}
+impl ExpressionCombiner for RustGenerator {}
 
 impl BinaryOperationsHandler for RustGenerator {
-    fn expression_type(&self) -> &ExpressionType {
-        &self.expression_type
-    }
-
     fn handle_regex_operation(
         &self,
         left: &str,
