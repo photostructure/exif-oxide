@@ -66,26 +66,39 @@ fn generate_regular_signature(expression_type: &ExpressionType, function_name: &
 ///
 /// These correspond to Perl's `@val`, `@prt`, `@raw` arrays in composite expressions.
 /// See: lib/Image/ExifTool.pm:3553-3560 for ExifTool's array population.
+///
+/// Note: The `#[allow(unused_variables)]` attribute is added to each generated function
+/// in composite_tag.rs to suppress warnings for unused parameters.
 fn generate_composite_signature(expression_type: &ExpressionType, function_name: &str) -> String {
     // Composite functions always return Result<TagValue> to handle potential errors
     // from dependency resolution or calculation failures
+    //
+    // Allow attributes suppress various lints for generated code:
+    // - unused_variables: most functions don't use all params
+    // - clippy::get_first: some patterns generate .get(0)
+    // - clippy::collapsible_else_if: nested conditionals from ternary translation
+    // - clippy::blocks_in_conditions: regex blocks in if conditions
+    // - clippy::unnecessary_cast: numeric literal casts
+    // - clippy::redundant_clone: defensive cloning
+    let allow_attrs = "#[allow(unused_variables, clippy::get_first, clippy::collapsible_else_if, clippy::blocks_in_conditions, clippy::unnecessary_cast, clippy::redundant_clone)]";
+
     match expression_type {
         ExpressionType::ValueConv => {
             format!(
-                "pub fn {function_name}(vals: &[TagValue], prts: &[TagValue], raws: &[TagValue], ctx: Option<&ExifContext>) -> Result<TagValue, codegen_runtime::types::ExifError>"
+                "{allow_attrs}\npub fn {function_name}(vals: &[TagValue], prts: &[TagValue], raws: &[TagValue], ctx: Option<&ExifContext>) -> Result<TagValue, codegen_runtime::types::ExifError>"
             )
         }
         ExpressionType::PrintConv => {
             // PrintConv in composite context also takes the slices but returns Result
             // to maintain consistency with CompositeValueConvFn/CompositePrintConvFn types
             format!(
-                "pub fn {function_name}(vals: &[TagValue], prts: &[TagValue], raws: &[TagValue], ctx: Option<&ExifContext>) -> Result<TagValue, codegen_runtime::types::ExifError>"
+                "{allow_attrs}\npub fn {function_name}(vals: &[TagValue], prts: &[TagValue], raws: &[TagValue], ctx: Option<&ExifContext>) -> Result<TagValue, codegen_runtime::types::ExifError>"
             )
         }
         ExpressionType::Condition => {
             // Conditions in composite context are rare but should use the same signature pattern
             format!(
-                "pub fn {function_name}(vals: &[TagValue], prts: &[TagValue], raws: &[TagValue], ctx: Option<&ExifContext>) -> bool"
+                "{allow_attrs}\npub fn {function_name}(vals: &[TagValue], prts: &[TagValue], raws: &[TagValue], ctx: Option<&ExifContext>) -> bool"
             )
         }
     }

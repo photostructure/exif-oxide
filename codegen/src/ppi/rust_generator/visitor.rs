@@ -42,7 +42,12 @@ pub trait PpiVisitor {
                     return format!("codegen_runtime::get_array_element({rust_name}, {index})");
                 }
             };
-            format!("{slice_name}.get({index}).cloned().unwrap_or(TagValue::Empty)")
+            // Use .first() for index 0 to satisfy clippy::get_first lint
+            if index == 0 {
+                format!("{slice_name}.first().cloned().unwrap_or(TagValue::Empty)")
+            } else {
+                format!("{slice_name}.get({index}).cloned().unwrap_or(TagValue::Empty)")
+            }
         } else {
             // Regular context: use TagValue array access
             let rust_name = array_name.trim_start_matches('$');
@@ -73,7 +78,12 @@ pub trait PpiVisitor {
                         return format!("codegen_runtime::get_array_element({rust_name}, {index})");
                     }
                 };
-                format!("{slice_name}.get({index}).cloned().unwrap_or(TagValue::Empty)")
+                // Use .first() for index "0" to satisfy clippy::get_first lint
+                if index == "0" {
+                    format!("{slice_name}.first().cloned().unwrap_or(TagValue::Empty)")
+                } else {
+                    format!("{slice_name}.get({index}).cloned().unwrap_or(TagValue::Empty)")
+                }
             } else {
                 let rust_name = array_name.trim_start_matches('$');
                 let rust_array = if rust_name == "val" || array_name == "$val" {

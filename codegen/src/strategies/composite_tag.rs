@@ -291,7 +291,9 @@ impl CompositeTagStrategy {
         // Imports
         code.push_str("use std::collections::HashMap;\n");
         code.push_str("use std::sync::LazyLock;\n");
+        code.push_str("#[allow(unused_imports)]\n");
         code.push_str("use codegen_runtime::{CompositeValueConvFn, CompositePrintConvFn, TagValue, ExifContext};\n");
+        code.push_str("#[allow(unused_imports)]\n");
         code.push_str("use codegen_runtime::types::ExifError;\n");
         code.push('\n');
 
@@ -357,9 +359,7 @@ impl CompositeTagStrategy {
             );
             code.push_str("// They receive dependency arrays (vals, prts, raws) and compute composite values.\n");
             code.push('\n');
-            code.push_str("#[allow(dead_code, unused_variables, clippy::unnecessary_cast, clippy::collapsible_else_if, clippy::redundant_clone)]\n");
-            code.push('\n');
-
+            // Per-function lint suppression (no empty line after attribute!)
             for gen_fn in &generated_functions {
                 code.push_str(&gen_fn.code);
                 code.push('\n');

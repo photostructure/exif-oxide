@@ -178,10 +178,10 @@ mod composite_context {
 
         let result = generator.generate_function(&ast).unwrap();
 
-        // Composite context should use vals.get()
+        // Composite context should use vals.first() for index 0
         assert!(
-            result.contains("vals.get(0).cloned().unwrap_or(TagValue::Empty)"),
-            "Composite context should use vals.get(), got: {result}"
+            result.contains("vals.first().cloned().unwrap_or(TagValue::Empty)"),
+            "Composite context should use vals.first() for index 0, got: {result}"
         );
         // Should NOT use codegen_runtime::get_array_element for $val
         assert!(

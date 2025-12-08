@@ -88,7 +88,12 @@ impl RustGenerator {
                     return format!("codegen_runtime::get_array_element({rust_name}, {index})");
                 }
             };
-            format!("{slice_name}.get({index}).cloned().unwrap_or(TagValue::Empty)")
+            // Use .first() for index "0" to satisfy clippy::get_first lint
+            if index == "0" {
+                format!("{slice_name}.first().cloned().unwrap_or(TagValue::Empty)")
+            } else {
+                format!("{slice_name}.get({index}).cloned().unwrap_or(TagValue::Empty)")
+            }
         } else {
             // Regular context: use TagValue array access
             let rust_name = array_name.trim_start_matches('$');
