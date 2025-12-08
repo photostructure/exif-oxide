@@ -796,6 +796,11 @@ impl RustGenerator {
     /// Check if children contain sprintf with binary operations
     /// This recursively checks for patterns that generate invalid Rust code
     fn has_sprintf_with_binary_ops(&self, children: &[PpiNode]) -> bool {
+        Self::check_sprintf_with_binary_ops(children)
+    }
+
+    /// Static helper for recursive sprintf/binary op detection
+    fn check_sprintf_with_binary_ops(children: &[PpiNode]) -> bool {
         let mut has_sprintf = false;
         let mut has_binary_op = false;
 
@@ -815,7 +820,7 @@ impl RustGenerator {
             }
 
             // Recursively check children for nested patterns
-            if self.has_sprintf_with_binary_ops(&child.children) {
+            if Self::check_sprintf_with_binary_ops(&child.children) {
                 return true;
             }
         }

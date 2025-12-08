@@ -120,9 +120,7 @@ impl JoinUnpackPass {
         unpack_pos: usize,
     ) -> Option<PpiNode> {
         // Look for separator between join and unpack positions
-        for i in (join_pos + 1)..unpack_pos {
-            let child = &children[i];
-
+        for child in children.iter().take(unpack_pos).skip(join_pos + 1) {
             // Skip comma operators
             if child.class == "PPI::Token::Operator"
                 && child.content.as_ref().is_some_and(|c| c == ",")
@@ -180,14 +178,14 @@ impl JoinUnpackPass {
     ///
     /// This excludes operators and structural elements, focusing on actual data.
     fn is_value_node(&self, node: &PpiNode) -> bool {
-        match node.class.as_str() {
+        matches!(
+            node.class.as_str(),
             "PPI::Token::Quote::Double"
-            | "PPI::Token::Quote::Single"
-            | "PPI::Token::Symbol"
-            | "PPI::Token::Word"
-            | "PPI::Token::Number" => true,
-            _ => false,
-        }
+                | "PPI::Token::Quote::Single"
+                | "PPI::Token::Symbol"
+                | "PPI::Token::Word"
+                | "PPI::Token::Number"
+        )
     }
 }
 

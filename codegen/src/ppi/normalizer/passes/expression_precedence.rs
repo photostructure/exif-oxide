@@ -496,10 +496,10 @@ impl ExpressionPrecedenceNormalizer {
         end: usize,
     ) -> Option<&'a PpiNode> {
         children.iter().skip(start).take(end - start).find(|child| {
-            !matches!(
+            !(matches!(
                 child.class.as_str(),
                 "PPI::Token::Whitespace" | "PPI::Token::Comment"
-            ) && !(child.class == "PPI::Token::Operator" && child.content.as_deref() == Some(","))
+            ) || (child.class == "PPI::Token::Operator" && child.content.as_deref() == Some(",")))
         })
     }
 

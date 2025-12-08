@@ -320,7 +320,13 @@ pub trait PpiVisitor {
             }
             args.push(self.visit_node(child)?);
         }
-        Ok(format!("({})", args.join(", ")))
+        // Don't wrap single arguments in unnecessary parentheses
+        // This avoids generating code like power(base, (val / 16i32))
+        if args.len() == 1 {
+            Ok(args.into_iter().next().unwrap())
+        } else {
+            Ok(format!("({})", args.join(", ")))
+        }
     }
 
     /// Visit structure token - handles structural elements like parentheses, brackets
@@ -525,7 +531,19 @@ pub trait PpiVisitor {
                 let sprintf_args = if args.len() > 1 {
                     let cloned_args = args[1..]
                         .iter()
-                        .map(|arg| format!("{arg}.clone()"))
+                        .map(|arg| {
+                            // Only add .clone() for references - primitives like 10i32 are Copy
+                            if arg.ends_with("i32")
+                                || arg.ends_with("u32")
+                                || arg.ends_with("f64")
+                                || arg.ends_with("i64")
+                                || arg.ends_with("u64")
+                            {
+                                arg.clone()
+                            } else {
+                                format!("{arg}.clone()")
+                            }
+                        })
                         .collect::<Vec<_>>()
                         .join(", ");
                     format!("&[{cloned_args}]")
@@ -873,8 +891,8 @@ pub trait PpiVisitor {
             }
 
             // Escape Rust regex special characters and convert Perl patterns
+            // Note: \b word boundaries work the same in Rust regex
             let rust_pattern = pattern
-                .replace("\\b", "\\b") // Word boundaries work the same
                 .replace("\\0", "\\x00") // Null bytes
                 .replace("\\xff", "\\xFF"); // Hex escapes
 
@@ -970,11 +988,9 @@ pub trait PpiVisitor {
         match (var_name, var_value) {
             (Some(name), Some(value)) => {
                 // Generate Rust variable binding
-                if is_array {
-                    Ok(format!("let {name} = {value};"))
-                } else {
-                    Ok(format!("let {name} = {value};"))
-                }
+                // Note: is_array flag tracked for future array-specific handling
+                let _ = is_array;
+                Ok(format!("let {name} = {value};"))
             }
             _ => Err(CodeGenError::UnsupportedStructure(
                 "Could not parse variable declaration".to_string(),
@@ -1035,15 +1051,12 @@ pub trait PpiVisitor {
             let safe_pattern = self.make_pattern_safe_for_rust(pattern);
             let escaped_replacement = self.escape_replacement_string(replacement);
 
-            if is_global {
-                Ok(format!(
-                    "TagValue::String(codegen_runtime::regex_replace(\"{safe_pattern}\", \"{escaped_replacement}\", &val.to_string()))"
-                ))
-            } else {
-                Ok(format!(
-                    "TagValue::String(codegen_runtime::regex_replace(\"{safe_pattern}\", \"{escaped_replacement}\", &val.to_string()))"
-                ))
-            }
+            // Note: is_global flag tracked for future global-specific handling
+            // Currently regex_replace handles both cases the same way
+            let _ = is_global;
+            Ok(format!(
+                "TagValue::String(codegen_runtime::regex_replace(\"{safe_pattern}\", \"{escaped_replacement}\", &val.to_string()))"
+            ))
         }
     }
 

@@ -241,10 +241,8 @@ pub trait StringOperationsHandler {
 
         // Convert Perl regex pattern to Rust regex pattern
         // Trust ExifTool: preserve exact pattern semantics but translate syntax
-        let rust_pattern = pattern
-            .replace("\\d", "\\d") // \d works the same in Rust
-            .replace("\\w", "\\w") // \w works the same in Rust
-            .replace("\\s", "\\s"); // \s works the same in Rust
+        // Note: \d, \w, \s work the same in Rust regex - no translation needed
+        let rust_pattern = pattern;
 
         // Generate the regex match code
         if op == "=~" {

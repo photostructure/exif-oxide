@@ -188,6 +188,10 @@ impl PpiFunctionRegistry {
             //! DO NOT EDIT MANUALLY.
 
             #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+            #![allow(clippy::blocks_in_conditions)]
+            #![allow(clippy::collapsible_else_if)]
+            #![allow(clippy::unnecessary_cast)]
+            #![allow(clippy::erasing_op)]
 
             use {import_path};
 
@@ -337,7 +341,8 @@ impl PpiFunctionRegistry {
 
         formatdoc! {r#"
             /// PLACEHOLDER: Unsupported expression (missing implementation)
-            {}{}/// TODO: Add support for this expression pattern
+            {}{}///
+            /// TODO: Add support for this expression pattern
             {}
             {{
                 tracing::warn!("Missing implementation for expression in {{}}", file!());

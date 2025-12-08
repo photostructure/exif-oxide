@@ -779,12 +779,12 @@ impl ExifReader {
             let simple_name = tag_name.split(':').next_back().unwrap_or(tag_name);
             for (tag_id, tag_def) in crate::generated::Exif_pm::main_tags::EXIF_MAIN_TAGS.iter() {
                 if tag_def.name == simple_name {
-                    return Some(*tag_id as u16);
+                    return Some(*tag_id);
                 }
             }
             for (tag_id, tag_def) in crate::generated::GPS_pm::main_tags::GPS_MAIN_TAGS.iter() {
                 if tag_def.name == simple_name {
-                    return Some(*tag_id as u16);
+                    return Some(*tag_id);
                 }
             }
         }

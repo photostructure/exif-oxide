@@ -48,7 +48,7 @@ pub fn wrap_for_string_concat(s: &str) -> String {
     let trimmed = s.trim();
     // String literals (surrounded by quotes)
     if trimmed.starts_with('"') && trimmed.ends_with('"') {
-        format!("TagValue::string({})", trimmed)
+        format!("TagValue::string({trimmed})")
     }
     // Numeric literals
     else if trimmed.ends_with("i32") || trimmed.ends_with("f64") || trimmed.ends_with("u32") {
@@ -105,9 +105,11 @@ pub fn wrap_condition_for_bool(condition: &str) -> String {
 }
 
 /// Wrap a ternary branch with appropriate conversion for ownership.
+///
 /// - Bare variable references need .clone()
 /// - Bare integer/float literals need explicit TagValue conversion
 /// - String literals need explicit TagValue conversion
+///
 /// Uses turbofish syntax to avoid type inference ambiguity.
 pub fn wrap_branch_for_owned(branch: &str) -> String {
     if branch == "val" || branch == "val_pt" {

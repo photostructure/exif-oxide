@@ -519,6 +519,7 @@ impl TagKitStrategy {
     }
 
     /// Process AST expression during extract phase and return function name
+    #[allow(clippy::too_many_arguments)]
     fn process_ast_expression(
         &mut self,
         ast_value: &JsonValue,

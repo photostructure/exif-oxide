@@ -348,9 +348,7 @@ pub trait FunctionGenerator: PpiVisitor {
 
         // Process remaining arguments, skipping commas
         let mut args = Vec::new();
-        for i in arg_index..actual_args.len() {
-            let child = &actual_args[i];
-
+        for child in actual_args.iter().skip(arg_index) {
             // Skip comma operators
             if child.class == "PPI::Token::Operator" && child.content.as_deref() == Some(",") {
                 continue;
@@ -552,16 +550,8 @@ pub trait FunctionGenerator: PpiVisitor {
             }
         } else {
             // Try to extract from content if children aren't available
-            if let Some(ref content) = unpack_node.content {
-                // Parse "unpack \"H2H2\"" pattern
-                if content.contains("\"H2H2\"") {
-                    "H2H2".to_string()
-                } else {
-                    "H2H2".to_string() // Default fallback
-                }
-            } else {
-                "H2H2".to_string() // Default fallback
-            }
+            // Default to H2H2 format which is common for hex unpacking
+            "H2H2".to_string()
         };
 
         // Extract data reference

@@ -265,10 +265,7 @@ impl ExifReader {
                     tracing::debug!("Found Canon tag name for 0x{:x}: {}", tag_id, tag_def.name);
                     return tag_def.name.to_string();
                 } else {
-                    tracing::debug!(
-                        "Canon tag 0x{:x} not found in CANON_MAIN_TAGS",
-                        tag_id
-                    );
+                    tracing::debug!("Canon tag 0x{:x} not found in CANON_MAIN_TAGS", tag_id);
                 }
             }
 

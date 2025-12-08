@@ -256,7 +256,7 @@ impl BinaryOperatorNormalizer {
             pos += 1;
 
             // Handle right-associative operators by looking ahead
-            while pos + 1 < tokens.len() {
+            if pos + 1 < tokens.len() {
                 if let Some(next_op) = tokens[pos].content.as_ref() {
                     if tokens[pos].class == "PPI::Token::Operator" {
                         if let Some(next_prec) = self.get_precedence(next_op) {
@@ -268,13 +268,11 @@ impl BinaryOperatorNormalizer {
                                     right = parsed_right;
                                     // Update position - this is approximate, but we'll break anyway
                                     pos = tokens.len();
-                                    break;
                                 }
                             }
                         }
                     }
                 }
-                break;
             }
 
             // Create binary operation node
