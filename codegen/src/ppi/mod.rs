@@ -19,5 +19,4 @@ pub mod types;
 
 pub use fn_registry::*;
 pub use parser::*;
-pub use rust_generator::RustGenerator;
 pub use types::*;
