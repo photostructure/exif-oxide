@@ -193,7 +193,7 @@ impl ScalarArrayStrategy {
                 ScalarValue::Integer(n) => {
                     if format_as_string {
                         // Convert integer to string literal for mixed-type arrays
-                        code.push_str(&format!("\"{}\"", n));
+                        code.push_str(&format!("\"{n}\""));
                     } else {
                         code.push_str(&n.to_string());
                     }
@@ -201,7 +201,7 @@ impl ScalarArrayStrategy {
                 ScalarValue::Float(f) => {
                     if format_as_string {
                         // Convert float to string literal for mixed-type arrays
-                        code.push_str(&format!("\"{}\"", f));
+                        code.push_str(&format!("\"{f}\""));
                     } else {
                         code.push_str(&f.to_string());
                     }
