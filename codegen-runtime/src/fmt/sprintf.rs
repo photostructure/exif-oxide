@@ -165,19 +165,19 @@ fn format_tagvalue(spec: &str, val: &TagValue) -> String {
             let num = tagvalue_to_f64(val);
             format_general(num, precision.unwrap_or(6), conversion == 'G')
         }
-        's' | _ => val.to_string(),
+        _ => val.to_string(), // 's' and any unrecognized specifier
     }
 }
 
 /// Extract width from format specifier
 fn extract_width(spec: &str) -> Option<usize> {
     // Skip the % and any flags
-    let mut chars = spec.chars().skip(1);
-    while let Some(ch) = chars.next() {
+    let mut chars = spec.chars().skip(1).peekable();
+    for ch in chars.by_ref() {
         if ch.is_ascii_digit() {
             // Found start of width
             let mut width_str = String::from(ch);
-            while let Some(ch) = chars.next() {
+            for ch in chars.by_ref() {
                 if ch.is_ascii_digit() {
                     width_str.push(ch);
                 } else {
@@ -263,21 +263,22 @@ fn format_integer(
     _decimal: bool,
 ) -> String {
     let formatted = if plus && num >= 0 {
-        format!("+{}", num)
+        format!("+{num}")
     } else {
         num.to_string()
     };
 
     if let Some(w) = width {
         if zero_pad && !formatted.starts_with('-') && !formatted.starts_with('+') {
-            format!("{:0>width$}", formatted, width = w)
+            format!("{formatted:0>w$}")
         } else if zero_pad {
             // Handle sign separately for zero padding
             let sign = &formatted[..1];
             let rest = &formatted[1..];
-            format!("{}{:0>width$}", sign, rest, width = w - 1)
+            let rest_width = w - 1;
+            format!("{sign}{rest:0>rest_width$}")
         } else {
-            format!("{:>width$}", formatted, width = w)
+            format!("{formatted:>w$}")
         }
     } else {
         formatted
@@ -287,16 +288,16 @@ fn format_integer(
 /// Format as hexadecimal
 fn format_hex(num: i64, width: Option<usize>, zero_pad: bool, uppercase: bool) -> String {
     let formatted = if uppercase {
-        format!("{:X}", num)
+        format!("{num:X}")
     } else {
-        format!("{:x}", num)
+        format!("{num:x}")
     };
 
     if let Some(w) = width {
         if zero_pad {
-            format!("{:0>width$}", formatted, width = w)
+            format!("{formatted:0>w$}")
         } else {
-            format!("{:>width$}", formatted, width = w)
+            format!("{formatted:>w$}")
         }
     } else {
         formatted
@@ -305,13 +306,13 @@ fn format_hex(num: i64, width: Option<usize>, zero_pad: bool, uppercase: bool) -
 
 /// Format as octal
 fn format_octal(num: i64, width: Option<usize>, zero_pad: bool) -> String {
-    let formatted = format!("{:o}", num);
+    let formatted = format!("{num:o}");
 
     if let Some(w) = width {
         if zero_pad {
-            format!("{:0>width$}", formatted, width = w)
+            format!("{formatted:0>w$}")
         } else {
-            format!("{:>width$}", formatted, width = w)
+            format!("{formatted:>w$}")
         }
     } else {
         formatted
@@ -321,13 +322,13 @@ fn format_octal(num: i64, width: Option<usize>, zero_pad: bool) -> String {
 /// Format a float with given precision
 fn format_float(num: f64, precision: usize, width: Option<usize>, plus: bool) -> String {
     let formatted = if plus && num >= 0.0 {
-        format!("+{:.prec$}", num, prec = precision)
+        format!("+{num:.precision$}")
     } else {
-        format!("{:.prec$}", num, prec = precision)
+        format!("{num:.precision$}")
     };
 
     if let Some(w) = width {
-        format!("{:>width$}", formatted, width = w)
+        format!("{formatted:>w$}")
     } else {
         formatted
     }
@@ -336,20 +337,16 @@ fn format_float(num: f64, precision: usize, width: Option<usize>, plus: bool) ->
 /// Format in scientific notation
 fn format_scientific(num: f64, precision: usize, uppercase: bool) -> String {
     if uppercase {
-        format!("{:.prec$E}", num, prec = precision)
+        format!("{num:.precision$E}")
     } else {
-        format!("{:.prec$e}", num, prec = precision)
+        format!("{num:.precision$e}")
     }
 }
 
 /// Format in general notation (shortest of decimal or scientific)
-fn format_general(num: f64, precision: usize, uppercase: bool) -> String {
-    // Rust's g formatting is close to Perl's
-    if uppercase {
-        format!("{:.prec$}", num, prec = precision)
-    } else {
-        format!("{:.prec$}", num, prec = precision)
-    }
+fn format_general(num: f64, precision: usize, _uppercase: bool) -> String {
+    // Rust's g formatting is close to Perl's - uppercase doesn't affect decimal format
+    format!("{num:.precision$}")
 }
 
 /// Replace format specifiers in the original string with formatted values
