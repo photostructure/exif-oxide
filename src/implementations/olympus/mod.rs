@@ -385,6 +385,7 @@ pub fn get_olympus_tag_name(tag_id: u16) -> Option<String> {
 pub fn process_olympus_subdirectory_tags(
     exif_reader: &mut crate::exif::ExifReader,
 ) -> crate::types::Result<()> {
+    #[allow(unused_imports)]
     use crate::exif::subdirectory_processing::process_subdirectories_with_printconv;
     // TODO: Task E - Replace tag_kit functions with manufacturer-specific implementations
     // use crate::generated::Olympus_pm::tag_kit;

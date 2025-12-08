@@ -874,6 +874,7 @@ fn apply_canon_main_table_print_conv(exif_reader: &mut crate::exif::ExifReader) 
 
 /// Find Canon tag ID by name from the tag kit system
 /// Used for applying PrintConv to subdirectory-extracted tags
+#[allow(dead_code)]
 fn find_canon_tag_id_by_name(tag_name: &str) -> Option<u32> {
     use crate::generated::Canon_pm::main_tags::CANON_MAIN_TAGS;
 
@@ -942,8 +943,11 @@ fn get_canon_camera_settings_tag_id(tag_name: &str) -> Option<u32> {
 
 /// Process Canon subdirectory tags using the generic subdirectory processing system
 /// ExifTool: Canon.pm SubDirectory processing for binary data expansion
-fn process_canon_subdirectory_tags(exif_reader: &mut crate::exif::ExifReader) -> Result<()> {
+#[allow(dead_code)]
+fn process_canon_subdirectory_tags(_exif_reader: &mut crate::exif::ExifReader) -> Result<()> {
+    #[allow(unused_imports)]
     use crate::exif::subdirectory_processing::process_subdirectories_with_printconv;
+    #[allow(unused_imports)]
     use crate::generated::Canon_pm;
 
     debug!("Processing Canon subdirectory tags using generic system");
@@ -971,6 +975,7 @@ pub fn apply_camera_settings_print_conv(
     tag_name: &str,
     tag_value: &crate::types::TagValue,
 ) -> crate::types::TagValue {
+    #[allow(unused_imports)]
     use crate::generated::Canon_pm;
 
     debug!(
@@ -982,8 +987,8 @@ pub fn apply_camera_settings_print_conv(
     if let Some(tag_id) = get_canon_camera_settings_tag_id(tag_name) {
         debug!("Found tag kit ID {} for tag {}", tag_id, tag_name);
         // Use unified tag kit system for PrintConv
-        let mut errors: Vec<String> = Vec::new();
-        let mut warnings: Vec<String> = Vec::new();
+        let _errors: Vec<String> = Vec::new();
+        let _warnings: Vec<String> = Vec::new();
 
         // TODO: Task E - Replace tag_kit::apply_print_conv with Canon-specific implementation
         // let result = tag_kit::apply_print_conv(

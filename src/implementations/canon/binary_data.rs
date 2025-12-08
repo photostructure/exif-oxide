@@ -23,8 +23,8 @@ use tracing::debug;
 fn apply_canon_print_conv(
     tag_id: u32,
     value: &TagValue,
-    errors: &mut Vec<String>,
-    warnings: &mut Vec<String>,
+    _errors: &mut Vec<String>,
+    _warnings: &mut Vec<String>,
 ) -> TagValue {
     // Look up the tag in Canon main tags table
     if let Some(tag_info) = CANON_MAIN_TAGS.get(&(tag_id as u16)) {
@@ -341,6 +341,7 @@ pub fn extract_focal_length(
     );
 
     // Use Canon tag kit system for PrintConv lookups
+    #[allow(unused_imports)]
     use crate::generated::Canon_pm;
 
     // Extract FocalType (index 0)
@@ -448,6 +449,7 @@ pub fn extract_shot_info(
     );
 
     // Use Canon tag kit system for PrintConv lookups
+    #[allow(unused_imports)]
     use crate::generated::Canon_pm;
 
     // Extract AutoISO (index 1)
@@ -668,6 +670,7 @@ pub fn extract_panorama(
     let mut panorama = HashMap::new();
 
     // Use Canon tag kit system for PrintConv lookups
+    #[allow(unused_imports)]
     use crate::generated::Canon_pm;
 
     // Canon Panorama format: int16s (signed 16-bit), starting at index 0
@@ -732,6 +735,7 @@ pub fn extract_my_colors(
     let mut my_colors = HashMap::new();
 
     // Use Canon tag kit system for PrintConv lookups
+    #[allow(unused_imports)]
     use crate::generated::Canon_pm;
 
     // Canon MyColors format: int16u (unsigned 16-bit), starting at index 0
@@ -1862,6 +1866,7 @@ mod tests {
         println!("MacroMode PrintConv: {:?} -> {:?}", raw_value, result);
 
         // For debugging: also test with tag ID directly
+        #[allow(unused_imports)]
         use crate::generated::Canon_pm;
         let mut errors = Vec::new();
         let mut warnings = Vec::new();
