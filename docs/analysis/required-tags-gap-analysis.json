@@ -105,62 +105,101 @@
       "tags": [
         {
           "name": "Composite:Aperture",
-          "dependencies": ["FNumber", "ApertureValue"],
+          "dependencies": [
+            "FNumber",
+            "ApertureValue"
+          ],
           "expression": "$val[0] || $val[1]"
         },
         {
           "name": "Composite:ShutterSpeed",
-          "dependencies": ["ExposureTime", "ShutterSpeedValue", "BulbDuration"],
+          "dependencies": [
+            "ExposureTime",
+            "ShutterSpeedValue",
+            "BulbDuration"
+          ],
           "expression": "($val[2] and $val[2]>0) ? $val[2] : (defined($val[0]) ? $val[0] : $val[1])"
         },
         {
           "name": "Composite:Megapixels",
-          "dependencies": ["ImageSize"],
+          "dependencies": [
+            "ImageSize"
+          ],
           "expression": "my @d = ($val =~ /\\d+/g); $d[0] * $d[1] / 1000000"
         },
         {
           "name": "Composite:ImageSize",
-          "dependencies": ["ImageWidth", "ImageHeight", "ExifImageWidth", "ExifImageHeight"],
+          "dependencies": [
+            "ImageWidth",
+            "ImageHeight",
+            "ExifImageWidth",
+            "ExifImageHeight"
+          ],
           "expression": "Complex - see composite-dependencies.json"
         },
         {
           "name": "Composite:ISO",
-          "dependencies": ["CameraISO", "BaseISO", "AutoISO"],
+          "dependencies": [
+            "CameraISO",
+            "BaseISO",
+            "AutoISO"
+          ],
           "expression": "Canon-specific calculation"
         },
         {
           "name": "Composite:Lens",
-          "dependencies": ["MinFocalLength", "MaxFocalLength"],
+          "dependencies": [
+            "MinFocalLength",
+            "MaxFocalLength"
+          ],
           "expression": "PrintFocalRange(@val)"
         },
         {
           "name": "Composite:LensID",
-          "dependencies": ["Multiple lens-related tags"],
+          "dependencies": [
+            "Multiple lens-related tags"
+          ],
           "expression": "Complex Nikon lens ID lookup"
         },
         {
           "name": "Composite:GPSLatitude",
-          "dependencies": ["GPSLatitude", "GPSLatitudeRef"],
+          "dependencies": [
+            "GPSLatitude",
+            "GPSLatitudeRef"
+          ],
           "expression": "$val[1] =~ /^S/i ? -$val[0] : $val[0]"
         },
         {
           "name": "Composite:GPSLongitude",
-          "dependencies": ["GPSLongitude", "GPSLongitudeRef"],
+          "dependencies": [
+            "GPSLongitude",
+            "GPSLongitudeRef"
+          ],
           "expression": "$val[1] =~ /^W/i ? -$val[0] : $val[0]"
         },
         {
           "name": "Composite:GPSPosition",
-          "dependencies": ["GPSLatitude", "GPSLongitude"],
+          "dependencies": [
+            "GPSLatitude",
+            "GPSLongitude"
+          ],
           "expression": "\"$val[0] $val[1]\""
         },
         {
           "name": "Composite:GPSDateTime",
-          "dependencies": ["GPSDateStamp", "GPSTimeStamp"],
+          "dependencies": [
+            "GPSDateStamp",
+            "GPSTimeStamp"
+          ],
           "expression": "\"$val[0] $val[1]Z\""
         },
         {
           "name": "Composite:SubSecDateTimeOriginal",
-          "dependencies": ["EXIF:DateTimeOriginal", "SubSecTimeOriginal", "OffsetTimeOriginal"],
+          "dependencies": [
+            "EXIF:DateTimeOriginal",
+            "SubSecTimeOriginal",
+            "OffsetTimeOriginal"
+          ],
           "expression": "Complex datetime composition"
         }
       ]
@@ -174,16 +213,35 @@
         "QuickTime": {
           "count": 18,
           "tags": [
-            "CompressorName", "CreateDate", "CreationDate", "Duration",
-            "HandlerDescription", "ImageHeight", "ImageWidth", "Make",
-            "MediaCreateDate", "MediaDuration", "MediaModifyDate", "Model",
-            "ModifyDate", "Software", "TrackCreateDate", "TrackDuration",
-            "TrackModifyDate", "Rotation"
+            "CompressorName",
+            "CreateDate",
+            "CreationDate",
+            "Duration",
+            "HandlerDescription",
+            "ImageHeight",
+            "ImageWidth",
+            "Make",
+            "MediaCreateDate",
+            "MediaDuration",
+            "MediaModifyDate",
+            "Model",
+            "ModifyDate",
+            "Software",
+            "TrackCreateDate",
+            "TrackDuration",
+            "TrackModifyDate",
+            "Rotation"
           ]
         },
         "RIFF": {
           "count": 4,
-          "tags": ["DateTimeOriginal", "Duration", "ImageHeight", "ImageWidth", "Software"]
+          "tags": [
+            "DateTimeOriginal",
+            "Duration",
+            "ImageHeight",
+            "ImageWidth",
+            "Software"
+          ]
         }
       }
     },
@@ -214,15 +272,41 @@
         "UseGuidelines"
       ],
       "likely_sources": {
-        "XMP_cc": ["AttributionName", "AttributionURL", "License", "Permits", "Prohibits", "Requires", "UseGuidelines", "Jurisdiction"],
-        "XMP_mwg_rs": ["RegionList", "PersonInImageWDetails"],
-        "XMP_MP": ["PersonInImageName"],
-        "XMP_xmpMM": ["HistoryWhen"],
-        "XMP_lr": ["HierarchicalKeywords"],
-        "File": ["ImageDataHash"],
-        "XMP_DICOM": ["People"],
-        "XMP_crs": ["CameraModelName"],
-        "EXIF": ["DNGLensInfo"]
+        "XMP_cc": [
+          "AttributionName",
+          "AttributionURL",
+          "License",
+          "Permits",
+          "Prohibits",
+          "Requires",
+          "UseGuidelines",
+          "Jurisdiction"
+        ],
+        "XMP_mwg_rs": [
+          "RegionList",
+          "PersonInImageWDetails"
+        ],
+        "XMP_MP": [
+          "PersonInImageName"
+        ],
+        "XMP_xmpMM": [
+          "HistoryWhen"
+        ],
+        "XMP_lr": [
+          "HierarchicalKeywords"
+        ],
+        "File": [
+          "ImageDataHash"
+        ],
+        "XMP_DICOM": [
+          "People"
+        ],
+        "XMP_crs": [
+          "CameraModelName"
+        ],
+        "EXIF": [
+          "DNGLensInfo"
+        ]
       }
     },
     "missing_single_tag": {
