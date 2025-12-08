@@ -9,17 +9,12 @@ use std::collections::HashMap;
 /// PrintConv function for Nikon ActiveDLighting tag
 /// ExifTool: Nikon.pm - ActiveDLighting strength levels
 pub fn nikon_active_d_lighting_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // ExifTool: Active D-Lighting uses standard strength levels
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        crate::types::TagValue::String(s) => {
-            return Ok(s.clone());
-        }
-        _ => return Ok(format!("Unknown ({value})")),
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
+    }
+
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     // ExifTool: ActiveDLighting strength mapping
@@ -44,17 +39,12 @@ pub fn nikon_active_d_lighting_conv(value: &crate::types::TagValue) -> Result<St
 /// PrintConv function for Nikon ImageOptimization tag
 /// ExifTool: Nikon.pm - Image optimization settings
 pub fn nikon_image_optimization_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // ExifTool: ImageOptimization values
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        crate::types::TagValue::String(s) => {
-            return Ok(s.clone());
-        }
-        _ => return Ok(format!("Unknown ({value})")),
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
+    }
+
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     // ExifTool: Image optimization mapping
@@ -78,17 +68,12 @@ pub fn nikon_image_optimization_conv(value: &crate::types::TagValue) -> Result<S
 /// PrintConv function for Nikon HighISONoiseReduction tag
 /// ExifTool: Nikon.pm - High ISO noise reduction settings
 pub fn nikon_high_iso_nr_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // ExifTool: HighISONoiseReduction values
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        crate::types::TagValue::String(s) => {
-            return Ok(s.clone());
-        }
-        _ => return Ok(format!("Unknown ({value})")),
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
+    }
+
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     // ExifTool: High ISO NR mapping
@@ -109,17 +94,12 @@ pub fn nikon_high_iso_nr_conv(value: &crate::types::TagValue) -> Result<String, 
 /// PrintConv function for Nikon ToningEffect tag
 /// ExifTool: Nikon.pm - Toning effect settings
 pub fn nikon_toning_effect_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // ExifTool: ToningEffect values
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        crate::types::TagValue::String(s) => {
-            return Ok(s.clone());
-        }
-        _ => return Ok(format!("Unknown ({value})")),
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
+    }
+
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     // ExifTool: Toning effect mapping
@@ -148,14 +128,12 @@ pub fn nikon_toning_effect_conv(value: &crate::types::TagValue) -> Result<String
 /// PrintConv function for Nikon SubjectDetection tag (Z-series)
 /// ExifTool: Nikon.pm SubjectDetection PrintConv
 pub fn nikon_subject_detection_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        crate::types::TagValue::String(s) => return Ok(s.clone()),
-        _ => return Ok(format!("Unknown ({value})")),
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
+    }
+
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     let subject_detection_map: HashMap<i32, &str> = [
@@ -181,13 +159,8 @@ pub fn nikon_subject_detection_conv(value: &crate::types::TagValue) -> Result<St
 /// PrintConv function for Nikon HDR tag
 /// ExifTool: Nikon.pm HDR PrintConv
 pub fn nikon_hdr_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        _ => return Ok(format!("Unknown ({value})")),
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     let hdr_map: HashMap<i32, &str> = [
@@ -208,13 +181,8 @@ pub fn nikon_hdr_conv(value: &crate::types::TagValue) -> Result<String, String> 
 /// PrintConv function for Nikon PixelShift tag
 /// ExifTool: Nikon.pm PixelShift PrintConv
 pub fn nikon_pixel_shift_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        _ => return Ok(format!("Unknown ({value})")),
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     let pixel_shift_map: HashMap<i32, &str> = [(0, "Off"), (1, "On")].iter().cloned().collect();
@@ -225,13 +193,8 @@ pub fn nikon_pixel_shift_conv(value: &crate::types::TagValue) -> Result<String, 
 /// PrintConv function for Nikon ExposureMode tag
 /// ExifTool: Nikon.pm ExposureMode PrintConv
 pub fn nikon_exposure_mode_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        _ => return Ok(format!("Unknown ({value})")),
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     let exposure_mode_map: HashMap<i32, &str> = [
@@ -253,13 +216,8 @@ pub fn nikon_exposure_mode_conv(value: &crate::types::TagValue) -> Result<String
 /// PrintConv function for Nikon FlickerReduction tag
 /// ExifTool: Nikon.pm FlickerReduction PrintConv
 pub fn nikon_flicker_reduction_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        _ => return Ok(format!("Unknown ({value})")),
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     let flicker_map: HashMap<i32, &str> = [(0, "Off"), (1, "On")].iter().cloned().collect();
@@ -270,13 +228,8 @@ pub fn nikon_flicker_reduction_conv(value: &crate::types::TagValue) -> Result<St
 /// PrintConv function for Nikon MultiSelector tag
 /// ExifTool: Nikon.pm MultiSelector PrintConv
 pub fn nikon_multi_selector_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        _ => return Ok(format!("Unknown ({value})")),
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     let multi_selector_map: HashMap<i32, &str> = [
@@ -297,13 +250,8 @@ pub fn nikon_multi_selector_conv(value: &crate::types::TagValue) -> Result<Strin
 /// PrintConv function for Nikon FlashCommander tag
 /// ExifTool: Nikon.pm FlashCommander PrintConv
 pub fn nikon_flash_commander_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        _ => return Ok(format!("Unknown ({value})")),
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     let flash_commander_map: HashMap<i32, &str> =
@@ -319,15 +267,10 @@ pub fn nikon_flash_commander_conv(value: &crate::types::TagValue) -> Result<Stri
 }
 
 /// PrintConv function for Nikon PreCapture tag
-/// ExifTool: Nikon.pm PreCapture PrintConv  
+/// ExifTool: Nikon.pm PreCapture PrintConv
 pub fn nikon_pre_capture_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        _ => return Ok(format!("Unknown ({value})")),
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     let pre_capture_map: HashMap<i32, &str> = [(0, "Off"), (1, "On")].iter().cloned().collect();
@@ -340,13 +283,8 @@ pub fn nikon_pre_capture_conv(value: &crate::types::TagValue) -> Result<String, 
 pub fn nikon_group_area_illumination_conv(
     value: &crate::types::TagValue,
 ) -> Result<String, String> {
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        _ => return Ok(format!("Unknown ({value})")),
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     let illumination_map: HashMap<i32, &str> = [(0, "Off"), (1, "On")].iter().cloned().collect();

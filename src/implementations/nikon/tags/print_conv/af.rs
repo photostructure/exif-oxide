@@ -9,18 +9,13 @@ use std::collections::HashMap;
 /// PrintConv function for Nikon AFAreaMode tag
 /// ExifTool: Nikon.pm lines 876-906 %aFAreaModePD (Phase Detect)
 pub fn nikon_af_area_mode_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // ExifTool: Multiple AF area mode hashes - using Phase Detect as primary
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        crate::types::TagValue::String(s) => {
-            // ExifTool: Some cameras store AF area mode as strings
-            return Ok(s.clone());
-        }
-        _ => return Ok(format!("Unknown ({value})")),
+    // ExifTool: Some cameras store AF area mode as strings
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
+    }
+
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     // ExifTool: %aFAreaModePD hash (lines 876-906) - Phase Detect modes
@@ -67,17 +62,12 @@ pub fn nikon_af_area_mode_conv(value: &crate::types::TagValue) -> Result<String,
 /// PrintConv function for Nikon VibrationReduction tag
 /// ExifTool: Nikon.pm - VR on/off settings
 pub fn nikon_vr_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // ExifTool: VibrationReduction simple on/off
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        crate::types::TagValue::String(s) => {
-            return Ok(s.clone());
-        }
-        _ => return Ok(format!("Unknown ({value})")),
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
+    }
+
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     // ExifTool: Simple VR on/off mapping
@@ -89,17 +79,12 @@ pub fn nikon_vr_conv(value: &crate::types::TagValue) -> Result<String, String> {
 /// PrintConv function for Nikon VRMode tag
 /// ExifTool: Nikon.pm - VR mode settings
 pub fn nikon_vr_mode_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // ExifTool: VRMode values for different VR types
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        crate::types::TagValue::String(s) => {
-            return Ok(s.clone());
-        }
-        _ => return Ok(format!("Unknown ({value})")),
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
+    }
+
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     // ExifTool: VR mode mapping
@@ -114,13 +99,8 @@ pub fn nikon_vr_mode_conv(value: &crate::types::TagValue) -> Result<String, Stri
 /// PrintConv function for Nikon DynamicAFAreaSize tag
 /// ExifTool: Nikon.pm DynamicAFAreaSize PrintConv
 pub fn nikon_dynamic_af_area_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        _ => return Ok(format!("Unknown ({value})")),
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     let dynamic_af_map: HashMap<i32, &str> = [
@@ -140,17 +120,12 @@ pub fn nikon_dynamic_af_area_conv(value: &crate::types::TagValue) -> Result<Stri
 /// PrintConv function for Nikon ImageStabilization tag
 /// ExifTool: Nikon.pm - VR (Vibration Reduction) settings
 pub fn nikon_image_stabilization_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // ExifTool: ImageStabilization/VR values
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        crate::types::TagValue::String(s) => {
-            return Ok(s.clone());
-        }
-        _ => return Ok(format!("Unknown ({value})")),
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
+    }
+
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     // ExifTool: VR/Image stabilization mapping

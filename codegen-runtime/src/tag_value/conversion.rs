@@ -33,6 +33,37 @@ impl TagValue {
         }
     }
 
+    /// Convert to i32 if possible
+    ///
+    /// Useful for PrintConv lookup tables with i32 keys.
+    pub fn as_i32(&self) -> Option<i32> {
+        match self {
+            TagValue::U8(v) => Some(*v as i32),
+            TagValue::U16(v) => Some(*v as i32),
+            TagValue::U32(v) => i32::try_from(*v).ok(),
+            TagValue::I16(v) => Some(*v as i32),
+            TagValue::I32(v) => Some(*v),
+            _ => None,
+        }
+    }
+
+    /// Convert to i64 if possible
+    ///
+    /// This is the most general integer conversion, handling all integer types
+    /// (signed and unsigned) up to 64 bits. Useful for PrintConv lookup tables
+    /// that need to handle multiple input types uniformly.
+    pub fn as_i64(&self) -> Option<i64> {
+        match self {
+            TagValue::U8(v) => Some(*v as i64),
+            TagValue::U16(v) => Some(*v as i64),
+            TagValue::U32(v) => Some(*v as i64),
+            TagValue::U64(v) => Some(*v as i64),
+            TagValue::I16(v) => Some(*v as i64),
+            TagValue::I32(v) => Some(*v as i64),
+            _ => None,
+        }
+    }
+
     /// Convert to string if possible
     pub fn as_string(&self) -> Option<&str> {
         match self {

@@ -1,67 +1,84 @@
 //! Minolta RAW PrintConv implementations
 //!
 //! This module contains PrintConv functions for Minolta MRW format tags.
-//! All implementations use generated lookup tables from ExifTool source code,
+//! All implementations use lookup tables from ExifTool source code,
 //! following the Trust ExifTool principle exactly.
 //!
 //! ExifTool Reference: lib/Image/ExifTool/MinoltaRaw.pm
-//! Generated tables: src/generated/minoltaraw_pm/
 
 use crate::types::TagValue;
 
 /// Minolta PRD StorageMethod PrintConv
-/// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm PRD hash (StorageMethod)
-/// TODO: Replace with proper generated lookup table when available
+/// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm:94-99
+/// PrintConv => { 82 => 'Padded', 89 => 'Linear' }
 pub fn prd_storage_method_print_conv(val: &TagValue) -> TagValue {
-    // Use registry approach for now - tag_kit::apply_print_conv is no longer available
-    crate::registry::apply_print_conv("StorageMethod", val)
+    let Some(key) = val.as_i64() else {
+        return val.clone();
+    };
+
+    match key {
+        82 => TagValue::string("Padded"),
+        89 => TagValue::string("Linear"),
+        _ => TagValue::string(format!("Unknown ({})", key)),
+    }
 }
 
 /// Minolta PRD BayerPattern PrintConv
-/// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm PRD hash (BayerPattern)
-/// TODO: Replace with proper generated lookup table when available
+/// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm:104-108
+/// PrintConv => { 1 => 'RGGB', 4 => 'GBRG' }
 pub fn prd_bayer_pattern_print_conv(val: &TagValue) -> TagValue {
-    // Use registry approach for now - tag_kit::apply_print_conv is no longer available
-    crate::registry::apply_print_conv("BayerPattern", val)
+    let Some(key) = val.as_i64() else {
+        return val.clone();
+    };
+
+    match key {
+        1 => TagValue::string("RGGB"),
+        4 => TagValue::string("GBRG"),
+        _ => TagValue::string(format!("Unknown ({})", key)),
+    }
 }
 
 /// Minolta RIF ProgramMode PrintConv
-/// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm RIF hash (ProgramMode)
-/// Using MinoltaRaw tag kit system: ProgramMode has tag ID 5
+/// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm:165-174
+/// PrintConv => { 0 => 'None', 1 => 'Portrait', 2 => 'Text', 3 => 'Night Portrait', 4 => 'Sunset', 5 => 'Sports' }
 pub fn rif_program_mode_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::MinoltaRaw_pm::main_tags;
+    let Some(key) = val.as_i64() else {
+        return val.clone();
+    };
 
-    let mut errors = Vec::new();
-    let mut warnings = Vec::new();
-
-    // ProgramMode tag ID 5 from MinoltaRaw main tags
-    main_tags::apply_print_conv(5, val, &mut errors, &mut warnings)
+    match key {
+        0 => TagValue::string("None"),
+        1 => TagValue::string("Portrait"),
+        2 => TagValue::string("Text"),
+        3 => TagValue::string("Night Portrait"),
+        4 => TagValue::string("Sunset"),
+        5 => TagValue::string("Sports"),
+        _ => TagValue::string(format!("Unknown ({})", key)),
+    }
 }
 
 /// Minolta RIF ZoneMatching PrintConv
-/// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm RIF hash (ZoneMatching)
-/// Using MinoltaRaw tag kit system: ZoneMatching has tag ID 58
+/// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm:283-287
+/// PrintConv => { 0 => 'ISO Setting Used', 1 => 'High Key', 2 => 'Low Key' }
 pub fn rif_zone_matching_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::MinoltaRaw_pm::main_tags;
+    let Some(key) = val.as_i64() else {
+        return val.clone();
+    };
 
-    let mut errors = Vec::new();
-    let mut warnings = Vec::new();
-
-    // ZoneMatching tag ID 58 from MinoltaRaw main tags
-    main_tags::apply_print_conv(58, val, &mut errors, &mut warnings)
+    match key {
+        0 => TagValue::string("ISO Setting Used"),
+        1 => TagValue::string("High Key"),
+        2 => TagValue::string("Low Key"),
+        _ => TagValue::string(format!("Unknown ({})", key)),
+    }
 }
 
 /// Minolta RIF ZoneMatching74 PrintConv (for tag offset 74)
-/// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm RIF hash (ZoneMatching at offset 74)
-/// Using MinoltaRaw tag kit system: ZoneMatching74 has tag ID 74
+/// ExifTool: lib/Image/ExifTool/MinoltaRaw.pm:305-309
+/// Same as ZoneMatching but for Sony models at offset 74
 pub fn rif_zone_matching_74_print_conv(val: &TagValue) -> TagValue {
-    use crate::generated::MinoltaRaw_pm::main_tags;
-
-    let mut errors = Vec::new();
-    let mut warnings = Vec::new();
-
-    // ZoneMatching74 tag ID 74 from MinoltaRaw main tags
-    main_tags::apply_print_conv(74, val, &mut errors, &mut warnings)
+    // Same lookup table as ZoneMatching
+    rif_zone_matching_print_conv(val)
 }
 
 /// Apply PrintConv to Minolta PRD block tags

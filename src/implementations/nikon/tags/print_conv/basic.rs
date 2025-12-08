@@ -29,125 +29,97 @@ pub fn nikon_white_balance_conv(value: &crate::types::TagValue) -> Result<String
 /// PrintConv function for Nikon ISO tag
 /// ExifTool: Nikon.pm lines 1105-1123 %isoAutoHiLimitZ7
 pub fn nikon_iso_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // ExifTool: Most Nikon ISO tags store direct values or use model-specific hashes
-    // For basic ISO, handle both numeric and string values
-    match value {
-        crate::types::TagValue::String(s) => {
-            // ExifTool: Many Nikon ISO values are stored as strings
-            if s.starts_with("ISO ") {
-                Ok(s.clone())
-            } else {
-                Ok(format!("ISO {s}"))
-            }
-        }
-        _ => {
-            // ExifTool: Convert numeric values using isoAutoHiLimitZ7 mapping
-            let val = match value {
-                crate::types::TagValue::I32(v) => *v,
-                crate::types::TagValue::I16(v) => *v as i32,
-                crate::types::TagValue::U32(v) => *v as i32,
-                crate::types::TagValue::U16(v) => *v as i32,
-                crate::types::TagValue::U8(v) => *v as i32,
-                _ => return Ok(format!("ISO {value}")),
-            };
-
-            // 🚨 HIGH TRANSCRIPTION ERROR RISK: Manual 30-entry array from ExifTool lines 1099-1124
-            // ExifTool source: %isoAutoHiLimitZ7 with ValueConv formula '($val-104)/8'
-            // TODO: This should be extracted with specialized codegen for complex tag definitions
-            // VALIDATION REQUIRED: Compare against ExifTool output before using in production
-            let iso_map: HashMap<i32, &str> = [
-                (0, "ISO 64"),
-                (1, "ISO 80"),
-                (2, "ISO 100"),
-                (3, "ISO 125"),
-                (4, "ISO 160"),
-                (5, "ISO 200"),
-                (6, "ISO 250"),
-                (7, "ISO 320"),
-                (8, "ISO 400"),
-                (9, "ISO 500"),
-                (10, "ISO 640"),
-                (11, "ISO 800"),
-                (12, "ISO 1000"),
-                (13, "ISO 1250"),
-                (14, "ISO 1600"),
-                (15, "ISO 2000"),
-                (16, "ISO 2500"),
-                (17, "ISO 3200"),
-                (18, "ISO 4000"),
-                (19, "ISO 5000"),
-                (20, "ISO 6400"),
-                (21, "ISO 8000"),
-                (22, "ISO 10000"),
-                (23, "ISO 12800"),
-                (24, "ISO 16000"),
-                (25, "ISO 20000"),
-                (26, "ISO 25600"),
-                (27, "ISO Hi 0.3"),
-                (28, "ISO Hi 0.7"),
-                (29, "ISO Hi 1.0"),
-                (32, "ISO Hi 2.0"),
-            ]
-            .iter()
-            .cloned()
-            .collect();
-
-            Ok(iso_map.get(&val).unwrap_or(&"Unknown").to_string())
-        }
+    // ExifTool: Many Nikon ISO values are stored as strings
+    if let crate::types::TagValue::String(s) = value {
+        return if s.starts_with("ISO ") {
+            Ok(s.clone())
+        } else {
+            Ok(format!("ISO {s}"))
+        };
     }
+
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("ISO {value}"));
+    };
+
+    // 🚨 HIGH TRANSCRIPTION ERROR RISK: Manual 30-entry array from ExifTool lines 1099-1124
+    // ExifTool source: %isoAutoHiLimitZ7 with ValueConv formula '($val-104)/8'
+    // TODO: This should be extracted with specialized codegen for complex tag definitions
+    // VALIDATION REQUIRED: Compare against ExifTool output before using in production
+    let iso_map: HashMap<i32, &str> = [
+        (0, "ISO 64"),
+        (1, "ISO 80"),
+        (2, "ISO 100"),
+        (3, "ISO 125"),
+        (4, "ISO 160"),
+        (5, "ISO 200"),
+        (6, "ISO 250"),
+        (7, "ISO 320"),
+        (8, "ISO 400"),
+        (9, "ISO 500"),
+        (10, "ISO 640"),
+        (11, "ISO 800"),
+        (12, "ISO 1000"),
+        (13, "ISO 1250"),
+        (14, "ISO 1600"),
+        (15, "ISO 2000"),
+        (16, "ISO 2500"),
+        (17, "ISO 3200"),
+        (18, "ISO 4000"),
+        (19, "ISO 5000"),
+        (20, "ISO 6400"),
+        (21, "ISO 8000"),
+        (22, "ISO 10000"),
+        (23, "ISO 12800"),
+        (24, "ISO 16000"),
+        (25, "ISO 20000"),
+        (26, "ISO 25600"),
+        (27, "ISO Hi 0.3"),
+        (28, "ISO Hi 0.7"),
+        (29, "ISO Hi 1.0"),
+        (32, "ISO Hi 2.0"),
+    ]
+    .iter()
+    .cloned()
+    .collect();
+
+    Ok(iso_map.get(&val).unwrap_or(&"Unknown").to_string())
 }
 
 /// PrintConv function for Nikon ColorMode tag
 /// ExifTool: Nikon.pm line 1807 - ColorMode is stored as string values
 pub fn nikon_color_mode_conv(value: &crate::types::TagValue) -> Result<String, String> {
     // ExifTool: ColorMode tag is defined as Writable => 'string'
-    // No numeric PrintConv mapping - values are stored as strings directly
-    match value {
-        crate::types::TagValue::String(s) => Ok(s.clone()),
-        _ => {
-            // ExifTool: Handle numeric values for older cameras that might use codes
-            let val = match value {
-                crate::types::TagValue::I32(v) => *v,
-                crate::types::TagValue::I16(v) => *v as i32,
-                crate::types::TagValue::U32(v) => *v as i32,
-                crate::types::TagValue::U16(v) => *v as i32,
-                crate::types::TagValue::U8(v) => *v as i32,
-                _ => return Ok(format!("{value}")),
-            };
-
-            // ExifTool: ColorMode tag stores string values directly
-            Ok(format!("{val}"))
-        }
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
     }
+
+    // ExifTool: Handle numeric values for older cameras that might use codes
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("{value}"));
+    };
+
+    // ExifTool: ColorMode tag stores string values directly
+    Ok(format!("{val}"))
 }
 
 /// PrintConv function for Nikon Sharpness tag
 /// ExifTool: Nikon.pm - Sharpness uses PrintPC function for Picture Control processing
 pub fn nikon_sharpness_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // ExifTool: PrintConv => 'Image::ExifTool::Nikon::PrintPC($val,"No Sharpening","%d")'
-    // Most sharpness values are numeric ranges, typically -3 to +3
-    match value {
-        crate::types::TagValue::String(s) => {
-            // ExifTool: Some cameras store sharpness as string values
-            Ok(s.clone())
-        }
-        _ => {
-            let val = match value {
-                crate::types::TagValue::I32(v) => *v,
-                crate::types::TagValue::I16(v) => *v as i32,
-                crate::types::TagValue::U32(v) => *v as i32,
-                crate::types::TagValue::U16(v) => *v as i32,
-                crate::types::TagValue::U8(v) => *v as i32,
-                _ => return Ok(format!("{value}")),
-            };
+    // ExifTool: Some cameras store sharpness as string values
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
+    }
 
-            // ExifTool: Handle sharpness range (-3 to +3 typical)
-            match val {
-                0 => Ok("No Sharpening".to_string()), // ExifTool PrintPC default
-                v if v > 0 => Ok(format!("+{v}")),
-                v => Ok(format!("{v}")),
-            }
-        }
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("{value}"));
+    };
+
+    // ExifTool: Handle sharpness range (-3 to +3 typical)
+    match val {
+        0 => Ok("No Sharpening".to_string()), // ExifTool PrintPC default
+        v if v > 0 => Ok(format!("+{v}")),
+        v => Ok(format!("{v}")),
     }
 }
 
@@ -162,58 +134,42 @@ pub fn nikon_focus_mode_conv(value: &crate::types::TagValue) -> Result<String, S
         return Ok(s.clone());
     }
 
-    // Convert TagValue to u8 for lookup
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v as u8,
-        crate::types::TagValue::I16(v) => *v as u8,
-        crate::types::TagValue::U32(v) => *v as u8,
-        crate::types::TagValue::U16(v) => *v as u8,
-        crate::types::TagValue::U8(v) => *v,
-        _ => return Ok(format!("Unknown ({value})")),
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     // Use generated lookup table
-    Ok(lookup_focus_mode_z7(val).unwrap_or("Unknown").to_string())
+    Ok(lookup_focus_mode_z7(val as u8)
+        .unwrap_or("Unknown")
+        .to_string())
 }
 
 /// PrintConv function for Nikon FlashSetting tag
 /// ExifTool: Nikon.pm line 1818 - FlashSetting is stored as string values
 pub fn nikon_flash_setting_conv(value: &crate::types::TagValue) -> Result<String, String> {
     // ExifTool: FlashSetting tag is defined as Writable => 'string'
-    // Comments show example values: "Normal", "Slow", "Rear Slow", "RED-EYE", "RED-EYE SLOW"
-    match value {
-        crate::types::TagValue::String(s) => Ok(s.clone()),
-        _ => {
-            // ExifTool: Handle potential numeric codes for legacy cameras
-            let val = match value {
-                crate::types::TagValue::I32(v) => *v,
-                crate::types::TagValue::I16(v) => *v as i32,
-                crate::types::TagValue::U32(v) => *v as i32,
-                crate::types::TagValue::U16(v) => *v as i32,
-                crate::types::TagValue::U8(v) => *v as i32,
-                _ => return Ok(format!("{value}")),
-            };
-
-            // ExifTool: FlashSetting is stored as string values directly, no numeric mapping exists
-            Ok(format!("{val}"))
-        }
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
     }
+
+    // ExifTool: Handle potential numeric codes for legacy cameras
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("{value}"));
+    };
+
+    // ExifTool: FlashSetting is stored as string values directly, no numeric mapping exists
+    Ok(format!("{val}"))
 }
 
 /// PrintConv function for Nikon ColorSpace tag
 /// ExifTool: Nikon.pm - ColorSpace typically uses standard EXIF values
 pub fn nikon_color_space_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // ExifTool: ColorSpace follows standard EXIF colorspace values
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        crate::types::TagValue::String(s) => {
-            return Ok(s.clone());
-        }
-        _ => return Ok(format!("Unknown ({value})")),
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
+    }
+
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     // ExifTool: Standard EXIF ColorSpace values
@@ -229,17 +185,12 @@ pub fn nikon_color_space_conv(value: &crate::types::TagValue) -> Result<String, 
 /// PrintConv function for Nikon FlashMode tag
 /// ExifTool: Nikon.pm - Flash mode settings
 pub fn nikon_flash_mode_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // ExifTool: FlashMode values from Nikon cameras
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        crate::types::TagValue::String(s) => {
-            return Ok(s.clone());
-        }
-        _ => return Ok(format!("Unknown ({value})")),
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
+    }
+
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     // ExifTool: Flash mode mapping
@@ -260,17 +211,12 @@ pub fn nikon_flash_mode_conv(value: &crate::types::TagValue) -> Result<String, S
 /// PrintConv function for Nikon ShootingMode tag
 /// ExifTool: Nikon.pm - Camera shooting modes
 pub fn nikon_shooting_mode_conv(value: &crate::types::TagValue) -> Result<String, String> {
-    // ExifTool: ShootingMode values from Nikon cameras
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v,
-        crate::types::TagValue::I16(v) => *v as i32,
-        crate::types::TagValue::U32(v) => *v as i32,
-        crate::types::TagValue::U16(v) => *v as i32,
-        crate::types::TagValue::U8(v) => *v as i32,
-        crate::types::TagValue::String(s) => {
-            return Ok(s.clone());
-        }
-        _ => return Ok(format!("Unknown ({value})")),
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
+    }
+
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     // ExifTool: Shooting mode mapping
@@ -295,24 +241,17 @@ pub fn nikon_shooting_mode_conv(value: &crate::types::TagValue) -> Result<String
 /// ExifTool: Nikon.pm line 2362 - SceneMode is stored as string values
 pub fn nikon_scene_mode_conv(value: &crate::types::TagValue) -> Result<String, String> {
     // ExifTool: SceneMode tag is defined as Writable => 'string'
-    // Comments show examples: PORTRAIT, PARTY/INDOOR, NIGHT PORTRAIT, BEACH/SNOW, LANDSCAPE, etc.
-    match value {
-        crate::types::TagValue::String(s) => Ok(s.clone()),
-        _ => {
-            // ExifTool: Handle numeric scene mode codes for cameras that use them
-            let val = match value {
-                crate::types::TagValue::I32(v) => *v,
-                crate::types::TagValue::I16(v) => *v as i32,
-                crate::types::TagValue::U32(v) => *v as i32,
-                crate::types::TagValue::U16(v) => *v as i32,
-                crate::types::TagValue::U8(v) => *v as i32,
-                _ => return Ok(format!("{value}")),
-            };
-
-            // ExifTool: SceneMode is stored as string values directly, no numeric mapping exists
-            Ok(format!("{val}"))
-        }
+    if let crate::types::TagValue::String(s) = value {
+        return Ok(s.clone());
     }
+
+    // ExifTool: Handle numeric scene mode codes for cameras that use them
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("{value}"));
+    };
+
+    // ExifTool: SceneMode is stored as string values directly, no numeric mapping exists
+    Ok(format!("{val}"))
 }
 
 /// PrintConv function for Nikon NEFCompression tag
@@ -321,23 +260,18 @@ pub fn nikon_scene_mode_conv(value: &crate::types::TagValue) -> Result<String, S
 pub fn nikon_nef_compression_conv(value: &crate::types::TagValue) -> Result<String, String> {
     use crate::generated::Nikon_pm::nef_compression::lookup_nef_compression;
 
-    // Handle string values first
     if let crate::types::TagValue::String(s) = value {
         return Ok(s.clone());
     }
 
-    // Convert TagValue to u8 for lookup
-    let val = match value {
-        crate::types::TagValue::I32(v) => *v as u8,
-        crate::types::TagValue::I16(v) => *v as u8,
-        crate::types::TagValue::U32(v) => *v as u8,
-        crate::types::TagValue::U16(v) => *v as u8,
-        crate::types::TagValue::U8(v) => *v,
-        _ => return Ok(format!("Unknown ({value})")),
+    let Some(val) = value.as_i32() else {
+        return Ok(format!("Unknown ({value})"));
     };
 
     // Use generated lookup table (12 entries vs 4 manual entries)
-    Ok(lookup_nef_compression(val).unwrap_or("Unknown").to_string())
+    Ok(lookup_nef_compression(val as u8)
+        .unwrap_or("Unknown")
+        .to_string())
 }
 
 #[cfg(test)]

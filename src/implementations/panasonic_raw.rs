@@ -1,108 +1,81 @@
 //! Panasonic RAW PrintConv implementations
 //!
 //! This module contains PrintConv functions for Panasonic RW2/RWL format tags.
-//! All implementations use the generated tag system from the new universal extraction,
+//! All implementations use lookup tables from ExifTool source code,
 //! following the Trust ExifTool principle exactly.
 //!
 //! ExifTool Reference: lib/Image/ExifTool/PanasonicRaw.pm
-//! Generated tags: src/generated/panasonic_raw/main_tags.rs
 
-use crate::generated::PanasonicRaw_pm::main_tags::PANASONIC_RAW_MAIN_TAGS;
-use crate::types::{PrintConv, TagValue};
-use tracing::debug;
+use crate::types::TagValue;
 
-/// Panasonic RAW-specific PrintConv application using the generated tag table
-/// ExifTool: PanasonicRaw.pm PrintConv processing with registry fallback
-fn apply_panasonic_raw_print_conv(
-    tag_id: u32,
-    value: &TagValue,
-    errors: &mut Vec<String>,
-    warnings: &mut Vec<String>,
-) -> TagValue {
-    // Look up the tag in PanasonicRaw main tags table
-    if let Some(tag_info) = PANASONIC_RAW_MAIN_TAGS.get(&(tag_id as u16)) {
-        debug!("Found PanasonicRaw tag {}: {}", tag_id, tag_info.name);
+/// Panasonic Main Compression PrintConv
+/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm:105-114
+/// PrintConv => { 34316 => 'Panasonic RAW 1', 34826 => 'Panasonic RAW 2', 34828 => 'Panasonic RAW 3', 34830 => 'Panasonic RAW 4' }
+pub fn main_compression_print_conv(val: &TagValue) -> TagValue {
+    let Some(key) = val.as_i64() else {
+        return val.clone();
+    };
 
-        match &tag_info.print_conv {
-            Some(PrintConv::Expression(_expr)) => {
-                // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
-                // Fallback to original value when expression not handled by PPI
-                value.clone()
-            }
-            Some(PrintConv::Complex) => {
-                debug!(
-                    "Complex PrintConv for tag {}, using generated module",
-                    tag_id
-                );
-                // For complex conversions, use the generated module's apply_print_conv
-                // TODO: This should be applied by the specific tag table that contains this tag
-                value.clone() // Placeholder until proper tag table routing is implemented
-            }
-            Some(PrintConv::Simple(_table)) => {
-                debug!(
-                    "Simple PrintConv table for tag {} (not yet implemented)",
-                    tag_id
-                );
-                // TODO: Handle simple lookup tables
-                value.clone()
-            }
-            Some(PrintConv::Function(_func_name)) => {
-                debug!(
-                    "Function PrintConv for tag {} (not yet implemented)",
-                    tag_id
-                );
-                // TODO: Handle function references
-                value.clone()
-            }
-            Some(PrintConv::None) | None => {
-                debug!("No PrintConv for PanasonicRaw tag {}", tag_id);
-                value.clone()
-            }
-        }
-    } else {
-        debug!("PanasonicRaw tag {} not found in main tags table", tag_id);
-        value.clone()
+    match key {
+        34316 => TagValue::string("Panasonic RAW 1"),
+        34826 => TagValue::string("Panasonic RAW 2"),
+        34828 => TagValue::string("Panasonic RAW 3"),
+        34830 => TagValue::string("Panasonic RAW 4"),
+        _ => TagValue::string(format!("Unknown ({})", key)),
     }
 }
 
-/// Panasonic Main Compression PrintConv
-/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Compression, tag ID 11)
-/// Tag kit: src/generated/panasonicraw_pm/tag_kit/other.rs (PRINT_CONV_3)
-pub fn main_compression_print_conv(val: &TagValue) -> TagValue {
-    let mut errors = Vec::new();
-    let mut warnings = Vec::new();
-
-    apply_panasonic_raw_print_conv(11, val, &mut errors, &mut warnings)
-}
-
-/// Panasonic Main Orientation PrintConv  
-/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Orientation, tag ID 274)
-/// Tag kit: src/generated/panasonicraw_pm/tag_kit/core.rs (PRINT_CONV_0)
+/// Panasonic Main Orientation PrintConv
+/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm:248-251 (uses %Image::ExifTool::Exif::orientation)
+/// Standard EXIF orientation values - reuses the generated EXIF orientation lookup table
 pub fn main_orientation_print_conv(val: &TagValue) -> TagValue {
-    let mut errors = Vec::new();
-    let mut warnings = Vec::new();
+    use crate::generated::Exif_pm::orientation::lookup_orientation;
 
-    apply_panasonic_raw_print_conv(274, val, &mut errors, &mut warnings)
+    let Some(key) = val.as_i64() else {
+        return val.clone();
+    };
+
+    if !(0..=255).contains(&key) {
+        return val.clone();
+    }
+
+    match lookup_orientation(key as u8) {
+        Some(description) => TagValue::string(description),
+        None => TagValue::string(format!("Unknown ({})", key)),
+    }
 }
 
 /// Panasonic Main Multishot PrintConv
-/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (Multishot, tag ID 289)
-/// Tag kit: src/generated/panasonicraw_pm/tag_kit/document.rs (PRINT_CONV_1)
+/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm:295-298
+/// PrintConv => { 0 => 'Off', 65536 => 'Pixel Shift' }
 pub fn main_multishot_print_conv(val: &TagValue) -> TagValue {
-    let mut errors = Vec::new();
-    let mut warnings = Vec::new();
+    let Some(key) = val.as_i64() else {
+        return val.clone();
+    };
 
-    apply_panasonic_raw_print_conv(289, val, &mut errors, &mut warnings)
+    match key {
+        0 => TagValue::string("Off"),
+        65536 => TagValue::string("Pixel Shift"),
+        _ => TagValue::string(format!("Unknown ({})", key)),
+    }
 }
 
 /// Panasonic Main CFAPattern PrintConv
-/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm Main hash (CFAPattern, tag ID 9)
-/// Tag kit: src/generated/panasonicraw_pm/tag_kit/interop.rs (PRINT_CONV_2)
+/// ExifTool: lib/Image/ExifTool/PanasonicRaw.pm:96-102
+/// PrintConv => { 0 => 'n/a', 1 => '[Red,Green][Green,Blue]', 2 => '[Green,Red][Blue,Green]', 3 => '[Green,Blue][Red,Green]', 4 => '[Blue,Green][Green,Red]' }
 pub fn main_cfa_pattern_print_conv(val: &TagValue) -> TagValue {
-    let mut errors = Vec::new();
-    let mut warnings = Vec::new();
+    let Some(key) = val.as_i64() else {
+        return val.clone();
+    };
 
-    apply_panasonic_raw_print_conv(9, val, &mut errors, &mut warnings)
+    match key {
+        0 => TagValue::string("n/a"),
+        1 => TagValue::string("[Red,Green][Green,Blue]"),
+        2 => TagValue::string("[Green,Red][Blue,Green]"),
+        3 => TagValue::string("[Green,Blue][Red,Green]"),
+        4 => TagValue::string("[Blue,Green][Green,Red]"),
+        _ => TagValue::string(format!("Unknown ({})", key)),
+    }
 }
 
 /// Apply PrintConv to Panasonic Main table tags
