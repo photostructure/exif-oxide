@@ -58,10 +58,9 @@ pub trait FunctionGenerator: PpiVisitor {
 
                     match self.expression_type() {
                         ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                            "TagValue::String({}.join(\"{}\"))",
-                            array_expr, separator
+                            "TagValue::String({array_expr}.join(\"{separator}\"))"
                         )),
-                        _ => Ok(format!("{}.join(\"{}\")", array_expr, separator)),
+                        _ => Ok(format!("{array_expr}.join(\"{separator}\")")),
                     }
                 } else {
                     Err(CodeGenError::UnsupportedFunction(
@@ -95,12 +94,11 @@ pub trait FunctionGenerator: PpiVisitor {
                                         ))
                                     "#})
                                 }
-                                _ => Ok(format!("unpack_h2h2({})", data)),
+                                _ => Ok(format!("unpack_h2h2({data})")),
                             }
                         }
                         _ => Err(CodeGenError::UnsupportedFunction(format!(
-                            "unpack format: {}",
-                            format
+                            "unpack format: {format}"
                         ))),
                     }
                 } else {
@@ -126,11 +124,10 @@ pub trait FunctionGenerator: PpiVisitor {
                     match self.expression_type() {
                         ExpressionType::PrintConv | ExpressionType::ValueConv => {
                             Ok(format!(
-                                "TagValue::Array({}.to_string().split(\"{}\").map(|s| TagValue::String(s.to_string())).collect())",
-                                data, separator
+                                "TagValue::Array({data}.to_string().split(\"{separator}\").map(|s| TagValue::String(s.to_string())).collect())"
                             ))
                         }
-                        _ => Ok(format!("{}.to_string().split(\"{}\").collect::<Vec<_>>()", data, separator)),
+                        _ => Ok(format!("{data}.to_string().split(\"{separator}\").collect::<Vec<_>>()")),
                     }
                 } else {
                     Err(CodeGenError::UnsupportedFunction(
@@ -139,8 +136,7 @@ pub trait FunctionGenerator: PpiVisitor {
                 }
             }
             _ => Err(CodeGenError::UnsupportedFunction(format!(
-                "multi-arg function: {}",
-                function_name
+                "multi-arg function: {function_name}"
             ))),
         }
     }
@@ -156,22 +152,20 @@ pub trait FunctionGenerator: PpiVisitor {
                 // Perl length function - get string length
                 match self.expression_type() {
                     ExpressionType::PrintConv => Ok(format!(
-                        "TagValue::String(match {} {{ TagValue::String(s) => s.len().to_string(), _ => \"0\".to_string() }})",
-                        arg
+                        "TagValue::String(match {arg} {{ TagValue::String(s) => s.len().to_string(), _ => \"0\".to_string() }})"
                     )),
                     ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::I32(match {} {{ TagValue::String(s) => s.len() as i32, _ => 0 }})",
-                        arg
+                        "TagValue::I32(match {arg} {{ TagValue::String(s) => s.len() as i32, _ => 0 }})"
                     )),
-                    _ => Ok(format!("match {} {{ TagValue::String(s) => s.len() as i32, _ => 0 }}", arg))
+                    _ => Ok(format!("match {arg} {{ TagValue::String(s) => s.len() as i32, _ => 0 }}"))
                 }
             }
-            "int" => Ok(format!("({}).trunc() as i32", arg)),
-            "abs" => Ok(format!("({}).abs()", arg)),
-            "log" => Ok(format!("log({})", arg)),
+            "int" => Ok(format!("({arg}).trunc() as i32")),
+            "abs" => Ok(format!("({arg}).abs()")),
+            "log" => Ok(format!("codegen_runtime::log({arg})")),
             "defined" => {
                 // Use the cleaner runtime helper
-                Ok(format!("codegen_runtime::string::is_defined(&{})", arg))
+                Ok(format!("codegen_runtime::string::is_defined(&{arg})"))
             }
             _ => Err(CodeGenError::UnsupportedFunction(function_name.to_string())),
         }
@@ -212,8 +206,7 @@ pub trait FunctionGenerator: PpiVisitor {
                     };
 
                     Ok(format!(
-                        "crate::types::split_tagvalue(&{}, \"{}\")",
-                        data, separator
+                        "crate::types::split_tagvalue(&{data}, \"{separator}\")"
                     ))
                 } else {
                     Err(CodeGenError::UnsupportedFunction(
@@ -232,7 +225,7 @@ pub trait FunctionGenerator: PpiVisitor {
                 } else {
                     "val".to_string()
                 };
-                Ok(format!("({}.trunc() as i32)", first_arg))
+                Ok(format!("({first_arg}.trunc() as i32)"))
             }
             "abs" => {
                 // Extract first argument from AST
@@ -245,7 +238,7 @@ pub trait FunctionGenerator: PpiVisitor {
                 } else {
                     "val".to_string()
                 };
-                Ok(format!("({}).abs()", first_arg))
+                Ok(format!("({first_arg}).abs()"))
             }
             "log" => {
                 // Extract first argument from AST
@@ -258,18 +251,14 @@ pub trait FunctionGenerator: PpiVisitor {
                 } else {
                     "val".to_string()
                 };
-                Ok(format!("(Into::<f64>::into({})).ln()", first_arg))
+                Ok(format!("(Into::<f64>::into({first_arg})).ln()"))
             }
             "length" => {
                 // Perl length function - get string length
                 match self.expression_type() {
-                    ExpressionType::PrintConv => Ok(format!(
-                        "TagValue::String(match val {{ TagValue::String(s) => s.len().to_string(), _ => \"0\".to_string() }})"
-                    )),
-                    ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::I32(match val {{ TagValue::String(s) => s.len() as i32, _ => 0 }})"
-                    )),
-                    _ => Ok(format!("match val {{ TagValue::String(s) => s.len() as i32, _ => 0 }}"))
+                    ExpressionType::PrintConv => Ok("TagValue::String(match val { TagValue::String(s) => s.len().to_string(), _ => \"0\".to_string() })".to_string()),
+                    ExpressionType::ValueConv => Ok("TagValue::I32(match val { TagValue::String(s) => s.len() as i32, _ => 0 })".to_string()),
+                    _ => Ok("match val { TagValue::String(s) => s.len() as i32, _ => 0 }".to_string())
                 }
             }
             "unpack" => {
@@ -288,12 +277,10 @@ pub trait FunctionGenerator: PpiVisitor {
 
                     match self.expression_type() {
                         ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                            "codegen_runtime::unpack_binary(\"{}\", &{})",
-                            format, data
+                            "codegen_runtime::unpack_binary(\"{format}\", &{data})"
                         )),
                         _ => Ok(format!(
-                            "codegen_runtime::unpack_binary(\"{}\", &{})",
-                            format, data
+                            "codegen_runtime::unpack_binary(\"{format}\", &{data})"
                         )),
                     }
                 } else {
@@ -372,7 +359,7 @@ pub trait FunctionGenerator: PpiVisitor {
             let arg = if let Some(ref content) = child.content {
                 content.replace("$val", "val")
             } else if let Some(ref string_value) = child.string_value {
-                format!("\"{}\"", string_value)
+                format!("\"{string_value}\"")
             } else {
                 "val".to_string() // Fallback
             };
@@ -396,10 +383,7 @@ pub trait FunctionGenerator: PpiVisitor {
                 if div_parts.len() == 2 {
                     let left = div_parts[0].trim().replace("$val", "val");
                     let right = div_parts[1].trim();
-                    format!(
-                        "(Into::<f64>::into({})) / (Into::<f64>::into({}))",
-                        left, right
-                    )
+                    format!("(Into::<f64>::into({left})) / (Into::<f64>::into({right}))")
                 } else {
                     arg.replace("$val", "val")
                 }
@@ -412,21 +396,18 @@ pub trait FunctionGenerator: PpiVisitor {
                 // Use native Rust format! for simple patterns
                 match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::String(format!(\"{}\", {}))",
-                        rust_format, processed_arg
+                        "TagValue::String(format!(\"{rust_format}\", {processed_arg}))"
                     )),
-                    _ => Ok(format!("format!(\"{}\", {})", rust_format, processed_arg)),
+                    _ => Ok(format!("format!(\"{rust_format}\", {processed_arg})")),
                 }
             } else {
                 // Fallback to sprintf_perl for complex patterns
                 match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::String(codegen_runtime::sprintf_perl(\"{}\", &[{}]))",
-                        format_str, processed_arg
+                        "TagValue::String(codegen_runtime::sprintf_perl(\"{format_str}\", &[{processed_arg}]))"
                     )),
                     _ => Ok(format!(
-                        "codegen_runtime::sprintf_perl(\"{}\", &[{}])",
-                        format_str, processed_arg
+                        "codegen_runtime::sprintf_perl(\"{format_str}\", &[{processed_arg}])"
                     )),
                 }
             }
@@ -436,12 +417,10 @@ pub trait FunctionGenerator: PpiVisitor {
 
             match self.expression_type() {
                 ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                    "TagValue::String(codegen_runtime::sprintf_perl(\"{}\", &[{}]))",
-                    format_str, args_formatted
+                    "TagValue::String(codegen_runtime::sprintf_perl(\"{format_str}\", &[{args_formatted}]))"
                 )),
                 _ => Ok(format!(
-                    "codegen_runtime::sprintf_perl(\"{}\", &[{}])",
-                    format_str, args_formatted
+                    "codegen_runtime::sprintf_perl(\"{format_str}\", &[{args_formatted}])"
                 )),
             }
         }
@@ -459,8 +438,7 @@ pub trait FunctionGenerator: PpiVisitor {
 
             // Use the helper function for consistent behavior
             Ok(format!(
-                "crate::types::split_tagvalue(&{}, \"{}\")",
-                data, separator
+                "crate::types::split_tagvalue(&{data}, \"{separator}\")"
             ))
         } else {
             Err(CodeGenError::UnsupportedFunction(
@@ -477,38 +455,38 @@ pub trait FunctionGenerator: PpiVisitor {
 
         // Hex with padding: %.8x -> {:08x}, %.4X -> {:04X}
         for width in (1..=10).rev() {
-            let perl_pattern_lower = format!("%.{}x", width);
-            let rust_pattern_lower = format!("{{:0{}x}}", width);
+            let perl_pattern_lower = format!("%.{width}x");
+            let rust_pattern_lower = format!("{{:0{width}x}}");
             rust_format = rust_format.replace(&perl_pattern_lower, &rust_pattern_lower);
 
-            let perl_pattern_upper = format!("%.{}X", width);
-            let rust_pattern_upper = format!("{{:0{}X}}", width);
+            let perl_pattern_upper = format!("%.{width}X");
+            let rust_pattern_upper = format!("{{:0{width}X}}");
             rust_format = rust_format.replace(&perl_pattern_upper, &rust_pattern_upper);
         }
 
         // Integer padding: %.3d -> {:03}, %.5d -> {:05}
         for width in (1..=10).rev() {
-            let perl_pattern = format!("%.{}d", width);
-            let rust_pattern = format!("{{:0{}}}", width);
+            let perl_pattern = format!("%.{width}d");
+            let rust_pattern = format!("{{:0{width}}}");
             rust_format = rust_format.replace(&perl_pattern, &rust_pattern);
         }
 
         // Float precision: %.3f -> {:.3}, %.2f -> {:.2}, %.0f -> {:.0}
         for precision in (0..=10).rev() {
             // Include 0 for %.0f
-            let perl_pattern = format!("%.{}f", precision);
-            let rust_pattern = format!("{{:.{}}}", precision);
+            let perl_pattern = format!("%.{precision}f");
+            let rust_pattern = format!("{{:.{precision}}}");
             rust_format = rust_format.replace(&perl_pattern, &rust_pattern);
         }
 
         // Width without padding: %6d -> {:6}, %10s -> {:10}
         for width in (1..=20).rev() {
-            let perl_pattern_d = format!("%{}d", width);
-            let rust_pattern_d = format!("{{:{}}}", width);
+            let perl_pattern_d = format!("%{width}d");
+            let rust_pattern_d = format!("{{:{width}}}");
             rust_format = rust_format.replace(&perl_pattern_d, &rust_pattern_d);
 
-            let perl_pattern_s = format!("%{}s", width);
-            let rust_pattern_s = format!("{{:{}}}", width);
+            let perl_pattern_s = format!("%{width}s");
+            let rust_pattern_s = format!("{{:{width}}}");
             rust_format = rust_format.replace(&perl_pattern_s, &rust_pattern_s);
         }
 
@@ -623,8 +601,7 @@ pub trait FunctionGenerator: PpiVisitor {
             _ => {
                 // Use generic unpack function for other formats
                 Ok(format!(
-                    "codegen_runtime::unpack_binary(\"{}\", {})?",
-                    format, data
+                    "codegen_runtime::unpack_binary(\"{format}\", {data})?"
                 ))
             }
         }
