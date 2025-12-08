@@ -21,8 +21,6 @@ use crate::ppi::types::*;
 pub trait ExpressionCombiner:
     BinaryOperationsHandler + StringOperationsHandler + NormalizedAstHandler + ComplexPatternHandler
 {
-    fn expression_type(&self) -> &ExpressionType;
-
     /// Combine statement parts, handling normalized AST nodes and basic patterns
     fn combine_statement_parts(
         &self,
@@ -107,10 +105,10 @@ pub trait ExpressionCombiner:
 
             if matches!(op.as_str(), "!" | "-" | "+" | "~") {
                 let result = match op.as_str() {
-                    "!" => format!("!({})", operand),
-                    "-" => format!("-({})", operand),
-                    "+" => format!("+({})", operand),
-                    "~" => format!("!({})", operand), // Convert to boolean NOT
+                    "!" => format!("!({operand})"),
+                    "-" => format!("-({operand})"),
+                    "+" => format!("+({operand})"),
+                    "~" => format!("!({operand})"), // Convert to boolean NOT
                     _ => unreachable!(),
                 };
                 return Ok(result);
@@ -126,8 +124,7 @@ pub trait ExpressionCombiner:
         // This ensures unsupported expressions become placeholder functions that preserve
         // the original ExifTool expression instead of generating invalid Rust syntax
         Err(CodeGenError::UnsupportedStructure(format!(
-            "No supported pattern found for expression parts: {:?}",
-            parts
+            "No supported pattern found for expression parts: {parts:?}"
         )))
     }
 }
