@@ -2,6 +2,10 @@
 
 **Prerequisites**: [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md), [ARCHITECTURE.md](../ARCHITECTURE.md), [CODEGEN.md](../CODEGEN.md), [PRINTCONV-VALUECONV-GUIDE.md](../guides/PRINTCONV-VALUECONV-GUIDE.md), [COMPOSITE_TAGS.md](../../third-party/exiftool/doc/concepts/COMPOSITE_TAGS.md)
 
+**Analysis Data** (run `make expression-analysis` to regenerate):
+- [composite-dependencies.json](../analysis/expressions/composite-dependencies.json) - 54 composite tag definitions with dependencies
+- [required-expressions-analysis.json](../analysis/expressions/required-expressions-analysis.json) - 154 required tags with expression patterns
+
 ---
 
 ## Part 1: Define Success
@@ -66,6 +70,15 @@ ExifTool populates three parallel arrays (`lib/Image/ExifTool.pm:3553-3560`):
 ValueConv => 'Image::ExifTool::Exif::CalculateLV($val[0],$val[1],$prt[2])'
 ```
 
+**Edge case - bare `$val` in composite context**: Some composites use `$val` without subscript even though they have dependencies:
+
+```perl
+# CircleOfConfusion - has Require[ScaleFactor35efl] but uses $val not $val[0]
+ValueConv => 'sqrt(24*24+36*36) / ($val * 1440)'
+```
+
+In this case, `$val` refers to the **first dependency's value** (same as `$val[0]`). The generator must recognize that in composite context, bare `$val` maps to `vals.get(0)` when the expression contains no subscripts but the tag has dependencies.
+
 ### C. Current Infrastructure Status
 
 ```bash
@@ -90,12 +103,63 @@ rg -l "composite|Composite" src/ --type rust
 
 ### D. Expression Analysis: 75% Simple, 25% Complex
 
-Based on analysis of required composite tags:
+Based on analysis of required composite tags (see `docs/analysis/expressions/composite-dependencies.json`):
 
 | Category          | Tags                                                                                                           | Approach                                   |
 | ----------------- | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
 | **SIMPLE (75%)**  | Aperture, ShutterSpeed, ISO, Lens, GPSLatitude, GPSLongitude, GPSPosition, GPSDateTime, SubSecDateTimeOriginal | PPI auto-generation with composite context |
 | **COMPLEX (25%)** | ImageSize (`$$self{TIFF_TYPE}`), Megapixels (`my @d` local array), LensID (`@raw` + complex algorithm)         | Keep existing manual implementations       |
+
+### D2. PrintConv Function Call Dominance
+
+**Critical finding from `docs/analysis/expressions/required-expressions-analysis.json`**: **58 of 71 PrintConv usages are function calls**, not simple expressions:
+
+| Function                                    | Count | Blocking Tags                                                    |
+| ------------------------------------------- | ----- | ---------------------------------------------------------------- |
+| `$self->ConvertDateTime($val)`              | 28    | SubSecDateTimeOriginal, GPSDateTime, all datetime composites     |
+| `Image::ExifTool::GPS::ToDMS(...)`          | 10    | GPSLatitude, GPSLongitude (all manufacturers)                    |
+| `Image::ExifTool::Exif::PrintExposureTime(...)` | 4     | ShutterSpeed                                                     |
+| `Image::ExifTool::Exif::PrintFNumber(...)`  | 2     | Aperture                                                         |
+| `Image::ExifTool::Canon::PrintFocalRange(...)` | 1     | Canon.Lens                                                       |
+
+**Implication**: These PrintConv function calls need fallback implementations in `codegen-runtime/`. Priority order:
+1. `ConvertDateTime` - blocks 28 tags
+2. `ToDMS` - blocks GPS display formatting
+3. `PrintExposureTime` / `PrintFNumber` - core camera tag display
+
+### D3. Composites Without ValueConv (Pass-Through)
+
+Several composites have **no ValueConv** - they pass through dependency values and only apply PrintConv:
+
+- `SubSecCreateDate`, `SubSecDateTimeOriginal`, `SubSecModifyDate` - datetime assembly
+- `ThumbnailImage`, `PreviewImage`, `JpgFromRaw` - binary extraction
+- `DigitalZoom`, `OriginalDecisionData` - direct value pass-through
+
+The orchestration must handle this case: resolve dependencies, build `vals` array, skip ValueConv, apply PrintConv.
+
+### D4. Composite-on-Composite Dependencies
+
+Some composites depend on OTHER composites. The multi-pass orchestration handles this, but test with these chains:
+
+```
+Megapixels → ImageSize
+CircleOfConfusion → ScaleFactor35efl
+DOF → FocalLength, Aperture, CircleOfConfusion
+HyperfocalDistance → FocalLength, Aperture, CircleOfConfusion
+LightValue → Aperture, ShutterSpeed, ISO (all composites!)
+```
+
+Test with `Canon.jpg` which exercises these chains.
+
+### D5. The `@raw` Array Distinction
+
+**Critical for LensID (Nikon)**: Uses `@raw` not `@val`:
+
+```perl
+ValueConv => 'sprintf("%.2X"." %.2X"x7, @raw)'
+```
+
+This needs the **unconverted** dependency values. The `resolve_dependency_arrays()` function must populate all three arrays (`vals`, `prts`, `raws`), even if most composites only use `@val`.
 
 ### E. Why PPI Already Works (Almost)
 
@@ -126,7 +190,7 @@ $__hasCompositeTags = 1;
 
 ### G. Learned the Hard Way
 
-1. **`$val` vs `$val[0]` ambiguity**: In composite context, `$val` alone refers to the current computed value (inside PrintConv), while `$val[0]` refers to the first dependency.
+1. **`$val` vs `$val[0]` ambiguity**: In composite context, `$val` alone refers to the current computed value (inside PrintConv), while `$val[0]` refers to the first dependency. Exception: some ValueConv expressions use bare `$val` to mean `$val[0]` (see CircleOfConfusion).
 
 2. **Inhibit evaluation order**: If checking `Inhibit` against an unbuilt composite, must defer (ExifTool.pm:4034-4036).
 
@@ -135,6 +199,12 @@ $__hasCompositeTags = 1;
 4. **Module-specific composites**: Canon, Nikon, etc. define their own `%Composite` tables. The `AddCompositeTags()` function merges them into a global registry.
 
 5. **Circular dependency handling**: ExifTool does one final pass ignoring Inhibit tags if stuck (ExifTool.pm:4103-4110).
+
+6. **Pass-through composites**: Several composites have no ValueConv (SubSec*, ThumbnailImage, PreviewImage). They assemble dependency values directly into the result - don't skip them just because ValueConv is missing.
+
+7. **`@raw` is rare but critical**: Only Nikon.LensID uses `@raw` in required tags, but it's essential. The `resolve_dependency_arrays()` must always populate all three arrays.
+
+8. **PrintConv function calls dominate**: 58/71 PrintConv expressions are function calls like `$self->ConvertDateTime()`. These need manual fallbacks - PPI can't translate them.
 
 ---
 
@@ -341,6 +411,26 @@ rg "composite_value_" src/generated/ --type rust | head -20
 # Should show generated composite functions
 ```
 
+**Test Expression Corpus** (from `required-expressions-analysis.json`):
+
+These specific expressions MUST translate successfully:
+
+```perl
+# ValueConv - MUST PASS
+"$val[0] $val[1]"                                    # DateTimeCreated, LensSpec
+"$val[0] $val[1]Z"                                   # GPSDateTime
+$val[1] =~ /^S/i ? -$val[0] : $val[0]               # GPSLatitude
+$val[1] =~ /^W/i ? -$val[0] : $val[0]               # GPSLongitude
+$val[0] || $val[1]                                   # Aperture
+$val[1] - $val[0]                                    # PanasonicRaw.ImageWidth/Height
+(length($val[0]) or length($val[1])) ? "$val[0] $val[1]" : undef  # GPSPosition
+($val[2] and $val[2]>0) ? $val[2] : (defined($val[0]) ? $val[0] : $val[1])  # ShutterSpeed
+
+# PrintConv with $prt[] - MUST PASS
+"$prt[0], $prt[1]"                                   # GPSPosition
+"$prt[0] $prt[1]"                                    # LensSpec
+```
+
 **If architecture changed**: The goal is generated Rust functions. Find where `ast_value_*` functions are generated and follow that pattern.
 
 ---
@@ -474,6 +564,8 @@ src/composite_tags/implementations.rs  # All migrated to codegen-runtime
 
 ## Proof of Completion
 
+### Checklist
+
 - [ ] Patcher sets `__hasCompositeTags` for modules with `AddCompositeTags` calls
 - [ ] `cargo run -p codegen --bin debug-ppi -- --composite '$val[0] + $val[1]'` generates `vals.get(0)...`
 - [ ] `make codegen` generates composite functions (not empty HashMap)
@@ -484,6 +576,32 @@ src/composite_tags/implementations.rs  # All migrated to codegen-runtime
 - [ ] `make precommit` passes
 - [ ] `src/composite_tags/implementations.rs` deleted (migrated to codegen-runtime)
 - [ ] `src/composite_tags/dispatch.rs` deleted (replaced by direct fn calls)
+
+### Specific Tag Verification
+
+Run these commands to verify core composite tags work:
+
+```bash
+# GPS composites (decimal values per TRUST-EXIFTOOL.md)
+cargo run --bin compare-with-exiftool -- third-party/exiftool/t/images/GPS.jpg 2>/dev/null \
+  | grep -E "Composite:(GPSLatitude|GPSLongitude|GPSPosition|GPSAltitude)"
+# Expected: All should match with decimal coordinate values
+
+# Camera composites
+cargo run --bin compare-with-exiftool -- third-party/exiftool/t/images/Canon.jpg 2>/dev/null \
+  | grep -E "Composite:(Aperture|ShutterSpeed|ImageSize|Megapixels|ISO)"
+# Expected: All should match
+
+# Composite-on-composite chain (LightValue depends on Aperture, ShutterSpeed, ISO)
+cargo run --bin compare-with-exiftool -- third-party/exiftool/t/images/Canon.jpg 2>/dev/null \
+  | grep "Composite:LightValue"
+# Expected: Should match (tests multi-pass resolution)
+
+# Nikon LensID with @raw array
+cargo run --bin compare-with-exiftool -- third-party/exiftool/t/images/Nikon.jpg 2>/dev/null \
+  | grep "Composite:LensID"
+# Expected: Should match (tests @raw array handling)
+```
 
 ---
 
