@@ -16,6 +16,7 @@ use tracing::debug;
 
 /// Find Sony tag ID by name from the tag kit system
 /// Used for applying PrintConv to subdirectory-extracted tags
+#[allow(dead_code)]
 fn find_sony_tag_id_by_name(tag_name: &str) -> Option<u32> {
     use crate::generated::Sony_pm::main_tags::SONY_MAIN_TAGS as SONY_PM_TAG_KITS;
 

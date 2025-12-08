@@ -111,6 +111,7 @@ pub fn process_nikon_makernotes(reader: &mut ExifReader, offset: usize) -> Resul
 
 /// Find Nikon tag ID by name from the tag kit system
 /// Used for applying PrintConv to subdirectory-extracted tags
+#[allow(dead_code)]
 fn find_nikon_tag_id_by_name(tag_name: &str) -> Option<u32> {
     use crate::generated::Nikon_pm::main_tags::NIKON_MAIN_TAGS;
 

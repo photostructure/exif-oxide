@@ -830,22 +830,16 @@ impl ExifReader {
         _count: Option<u32>,
         _format: Option<String>,
         _binary_data: Option<Vec<u8>>,
-    ) -> () {
+    ) {
         // TODO P07: Generate main_conditional_tags
         // TODO P07: Implement conditional context when main_conditional_tags is generated
-        ()
     }
 
     /// Create ConditionalContext for FujiFilm conditional tag resolution
     #[allow(dead_code)]
-    fn create_fujifilm_conditional_context(
-        &self,
-        _count: Option<u32>,
-        _format: Option<String>,
-    ) -> () {
+    fn create_fujifilm_conditional_context(&self, _count: Option<u32>, _format: Option<String>) {
         // TODO P07: Generate main_model_detection
         // TODO P07: Implement FujiFilm conditional context when main_model_detection is generated
-        ()
     }
 
     /// Resolve conditional tag name using manufacturer-specific logic

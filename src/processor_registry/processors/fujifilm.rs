@@ -123,6 +123,7 @@ impl Default for FujiFilmFFMVProcessor {
 
 /// Extract value from binary data based on format specification
 /// This implements ExifTool's format parsing logic for generated tables
+#[allow(dead_code)]
 fn extract_value_by_format(data: &[u8], offset: usize, format: &str) -> Option<TagValue> {
     // Parse format specification (e.g., "string[34]", "int32u", "int16u")
     if format.starts_with("string[") {

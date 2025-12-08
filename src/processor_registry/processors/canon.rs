@@ -18,6 +18,7 @@ use std::collections::HashMap;
 use tracing::debug;
 
 /// Type alias for tag kit processor functions
+#[allow(dead_code)]
 type TagKitProcessor = fn(
     u32,
     &TagValue,
@@ -392,6 +393,7 @@ impl BinaryDataProcessor for CanonMainProcessor {
 ///     crate::generated::Canon_pm::process_subdirectory
 /// )?;
 /// ```
+#[allow(dead_code)]
 fn extract_makernotes_via_tag_kit(
     data: &[u8],
     data_offset: usize,

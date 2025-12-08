@@ -98,6 +98,7 @@ pub enum ExecutionStrategy {
 /// Dynamic ValueConv evaluator with three-tier execution system
 pub struct ValueConvEvaluator {
     /// Cached strategy classifications to avoid repeated analysis
+    #[allow(dead_code)]
     strategy_cache: HashMap<String, ExecutionStrategy>,
 }
 

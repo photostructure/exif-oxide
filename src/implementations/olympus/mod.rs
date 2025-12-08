@@ -95,6 +95,7 @@ pub fn is_olympus_makernote(make: &str) -> bool {
 
 /// Find Olympus tag ID by name from the tag kit system
 /// Used for applying PrintConv to subdirectory-extracted tags
+#[allow(dead_code)]
 fn find_olympus_tag_id_by_name(tag_name: &str) -> Option<u32> {
     use crate::generated::Olympus_pm::OLYMPUS_MAIN_TAGS;
 

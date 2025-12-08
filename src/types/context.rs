@@ -17,6 +17,7 @@ use std::collections::HashMap;
 /// Key insight: Expression `$self{TagName}` accesses DataMember variables, NOT final tag values.
 /// DataMembers are set by RawConv like `$$self{Make} = $val` and cleared between files.
 #[derive(Debug, Clone)]
+#[allow(dead_code)]
 pub struct ExifContext {
     /// DataMember variables (lowercase names in ExifTool, cleared between files)
     ///
@@ -57,6 +58,7 @@ pub struct ExifContext {
 //     Integer(i64),
 // }
 
+#[allow(dead_code)]
 impl ExifContext {
     /// Create new empty context
     pub fn new() -> Self {
