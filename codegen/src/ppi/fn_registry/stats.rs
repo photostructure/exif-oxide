@@ -67,11 +67,13 @@ impl ConversionStats {
     }
 
     /// Record a successful conversion processing (legacy method for backward compatibility)
+    #[allow(dead_code)]
     pub fn record_success(&mut self, expression_type: ExpressionType) {
         self.record_ppi_success(expression_type);
     }
 
     /// Calculate PPI success rate for a given expression type
+    #[allow(dead_code)]
     pub fn ppi_success_rate(&self, expression_type: ExpressionType) -> f64 {
         let (attempts, successes) = match expression_type {
             ExpressionType::PrintConv => (self.print_conv_attempts, self.print_conv_ppi_successes),
@@ -87,6 +89,7 @@ impl ConversionStats {
     }
 
     /// Calculate registry fallback success rate for a given expression type
+    #[allow(dead_code)]
     pub fn registry_success_rate(&self, expression_type: ExpressionType) -> f64 {
         let (attempts, successes) = match expression_type {
             ExpressionType::PrintConv => {
@@ -108,6 +111,7 @@ impl ConversionStats {
     }
 
     /// Calculate total success rate (PPI + registry) for a given expression type
+    #[allow(dead_code)]
     pub fn total_success_rate(&self, expression_type: ExpressionType) -> f64 {
         let (attempts, ppi_successes, registry_successes) = match expression_type {
             ExpressionType::PrintConv => (
