@@ -497,13 +497,15 @@ fn extract_makernotes_via_tag_kit(
                 // ExifTool: lib/Image/ExifTool/Canon.pm PrintConv handling for scalar tags
                 let final_value = if manufacturer == "Canon" {
                     // Apply Canon-specific PrintConv using the tag kit system
-                    let _errors: Vec<String> = Vec::new();
-                    let warnings: Vec<String> = Vec::new();
+                    let mut errors: Vec<String> = Vec::new();
+                    let mut warnings: Vec<String> = Vec::new();
 
-                    // TEMPORARILY COMMENTED OUT - apply_print_conv not yet generated
-                    // let print_value =
-                    //     crate::generated::Canon_pm::apply_print_conv(&tag_name, &tag_value);
-                    let print_value = tag_value.clone();
+                    let print_value = crate::generated::Canon_pm::main_tags::apply_print_conv(
+                        entry.tag_id as u32,
+                        &tag_value,
+                        &mut errors,
+                        &mut warnings,
+                    );
 
                     // Log any warnings
                     for warning in warnings {
