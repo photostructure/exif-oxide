@@ -48,12 +48,63 @@ This triggers fallback placeholder generation. **A placeholder that compiles is 
 | 4 | 16 | ~10 | || operator, sqrt(), context lookup booleans |
 | 5 | 10 | **0** | sprintf tuple fix, canon_ev, division types, fallbacks |
 | 6 | **Test suite** | **0 compile errors** | ctx parameters in tests, i64 literals, RustGenerator export |
+| 7 | 6 | **0** | Binary ops with function calls, string concat literal wrapping |
 
-## ✅ BUILD FIXED - Phase 6 Complete
+## ✅ BUILD FIXED - Phase 7 Complete
 
 **Status**: `cargo check` and `cargo test --no-run` both pass with **0 errors**.
 
-Note: 22 runtime test failures exist but are pre-existing issues unrelated to the build fix (minolta_raw, panasonic_raw, iptc tests expecting lookup table registrations that don't exist yet).
+Note: Pre-existing issues remain unrelated to the build fix (clippy warnings ~400, one cli_tag_filtering test failure).
+
+---
+
+## Phase 7: Binary Operations with Function Calls (6 errors → 0)
+
+### 1. Expression Normalizer Not Processing Binary Ops with Function Calls (6 errors → 0)
+**Problem**: Expressions like `100 * exp(($val-32)*log(2)/8)` generated `100i32 * exp (...)` without the `codegen_runtime::` prefix, causing type mismatches (`i32` returned instead of `TagValue`).
+
+**Root cause**: The `should_process()` function in `ExpressionPrecedenceNormalizer` returned early when detecting a `Structure::List` if the first child wasn't a known function. For expressions like `100 * exp(...)`, the first child is `Number(100)`, not a function name, so the normalizer skipped processing.
+
+**Fix**: Updated `expression_precedence.rs:234-243` to also check for binary operators when `Structure::List` is present:
+```rust
+if has_structure_list {
+    // ... ternary check ...
+
+    // Always process binary operations that contain function calls
+    // e.g., 100 * exp(...), $val / log(2), etc.
+    if self.has_binary_operators(&node.children) {
+        return true;
+    }
+
+    // ... rest of function call check
+}
+```
+
+### 2. String Concatenation Missing TagValue Wrapper (1 error → 0)
+**Problem**: Expression `"0x" . unpack("H*",$val)` generated `codegen_runtime::string::concat(&"0x", ...)` where `&"0x"` is `&&str`, not `&TagValue`.
+
+**Fix**: Added `wrap_for_string_concat()` function in `binary_ops.rs:43-61`:
+```rust
+pub fn wrap_for_string_concat(s: &str) -> String {
+    let trimmed = s.trim();
+    if trimmed.starts_with('"') && trimmed.ends_with('"') {
+        format!("TagValue::string({})", trimmed)
+    } else if trimmed.ends_with("i32") || trimmed.ends_with("f64") || trimmed.ends_with("u32") {
+        format!("Into::<TagValue>::into({trimmed})")
+    } else {
+        s.to_string()
+    }
+}
+```
+
+Updated concat operator handling in:
+- `binary_ops.rs:199-205` - use `wrap_for_string_concat()` for both operands
+- `visitor.rs:1634-1638` - same fix for BinaryOperation nodes
+
+### 3. Missing log() Prefix Fix
+**Problem**: The `try_log_pattern()` in `patterns.rs:63` was generating `log({var})` without `codegen_runtime::` prefix.
+
+**Fix**: Updated to `format!("codegen_runtime::log({var})")`.
 
 ---
 
@@ -204,10 +255,16 @@ make precommit        # Full validation
 - [x] RustGenerator exported from codegen::ppi
 - [x] Test compilation passes (0 errors)
 
+### Phase 7 Additions (Binary Ops with Function Calls)
+- [x] Binary operations with function calls processed by normalizer
+- [x] `100 * exp(...)` pattern generates correct `FunctionCall` nodes
+- [x] String concatenation wraps literals in `TagValue::string()`
+- [x] `log()` pattern uses `codegen_runtime::` prefix
+
 ### Build Status
 - [x] `cargo check` passes with 0 errors
 - [x] `cargo test --no-run` passes with 0 errors
-- [ ] `make precommit` full validation (22 pre-existing runtime test failures)
+- [ ] `make precommit` full validation (~400 clippy warnings, P03 task)
 
 ---
 
