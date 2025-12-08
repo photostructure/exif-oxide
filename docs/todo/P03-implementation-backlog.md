@@ -130,38 +130,47 @@ rg "composite" src/implementations/ --type rust
 
 ---
 
-## Research Needed (P03d) - Unknown Tags
+## Research Complete (P03d) - Unknown Tags
 
-**Problem**: 20 required tags are not in `tag-metadata.json` - need to identify which ExifTool module provides them.
+**Status**: COMPLETE - See [P03d-unknown-tags-research.md](P03d-unknown-tags-research.md)
 
-**Tags**:
+**Outcome**: 16 tags researched with ExifTool source references. Full details in [unknown-tags-research.md](../analysis/unknown-tags-research.md).
 
-```
-AttributionName, AttributionURL, CameraModelName, DNGLensInfo, FileVersion,
-HierarchicalKeywords, HistoryWhen, ImageDataHash, Jurisdiction, KeywordInfo,
-License, People, Permits, PersonInImageName, PersonInImageWDetails, Prohibits,
-RegionList, Requires, UseGuidelines
-```
+**Follow-up TPPs**:
+- **[P03e](P03e-dnglensinfo.md)**: DNGLensInfo (EXIF tag 0xc630) - can proceed now
+- **[P03f](P03f-xmp-namespace-tags.md)**: XMP Namespace Tags (15 tags) - blocked on XMP codegen infrastructure
 
-**Likely sources** (based on naming patterns):
+---
 
-| Source Module                | Tags                                                                                                |
-| ---------------------------- | --------------------------------------------------------------------------------------------------- |
-| XMP-cc (Creative Commons)    | AttributionName, AttributionURL, License, Permits, Prohibits, Requires, UseGuidelines, Jurisdiction |
-| XMP-mwg-rs (Regions)         | RegionList, PersonInImageWDetails                                                                   |
-| XMP-MP (Microsoft Photo)     | PersonInImageName                                                                                   |
-| XMP-xmpMM (Media Management) | HistoryWhen                                                                                         |
-| XMP-lr (Lightroom)           | HierarchicalKeywords                                                                                |
-| XMP-crs (Camera Raw)         | CameraModelName                                                                                     |
-| EXIF/DNG                     | DNGLensInfo                                                                                         |
-| File module                  | ImageDataHash                                                                                       |
+## DNGLensInfo (P03e) - EXIF Tag
 
-**Research approach**:
+**Status**: Ready to implement
 
-```bash
-# Search ExifTool source for tag definitions
-rg "AttributionName|HierarchicalKeywords" third-party/exiftool/lib/Image/ExifTool/
-```
+**Problem**: DNGLensInfo (0xc630) is a DNG EXIF tag with 4 rational values for lens info
+
+**Solution**: Add to EXIF tag tables with PrintLensInfo formatting
+
+**Details**: See [P03e-dnglensinfo.md](P03e-dnglensinfo.md)
+
+---
+
+## XMP Namespace Tags (P03f) - Blocked
+
+**Status**: BLOCKED on XMP tag extraction infrastructure
+
+**Problem**: 15 XMP tags researched but codegen doesn't extract XMP tag definitions (tables are empty)
+
+**Tags by namespace**:
+- **XMP-cc** (8): License, AttributionName, AttributionURL, UseGuidelines, Permits, Requires, Prohibits, Jurisdiction
+- **XMP-mwg-rs** (1): RegionList
+- **XMP-mwg-kw** (2): KeywordInfo, HierarchicalKeywords
+- **XMP-Iptc4xmpExt** (2): PersonInImageWDetails, PersonInImageName
+- **XMP-xmpMM** (1): HistoryWhen
+- **XMP-mediapro** (1): People
+
+**Blocker**: TagKitStrategy designed for numeric EXIF tag IDs, not string-based XMP property names
+
+**Details**: See [P03f-xmp-namespace-tags.md](P03f-xmp-namespace-tags.md)
 
 ---
 
@@ -170,7 +179,9 @@ rg "AttributionName|HierarchicalKeywords" third-party/exiftool/lib/Image/ExifToo
 1. **P03a**: PrintConv application (highest impact, lowest effort)
 2. **P03b**: Format fixes (quick wins)
 3. **P03c**: Composite tag infrastructure (enables many tags)
-4. **P03d**: Research unknown tags (parallel work)
+4. **P03d**: Research unknown tags - COMPLETE
+5. **P03e**: DNGLensInfo (EXIF tag, ready now)
+6. **P03f**: XMP Namespace Tags (blocked on XMP codegen infrastructure)
 
 ---
 
