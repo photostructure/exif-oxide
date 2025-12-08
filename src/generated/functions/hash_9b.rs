@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -20,7 +24,7 @@ pub fn ast_value_9b826d8a33505bd4(
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(codegen_runtime::power(
         Into::<TagValue>::into(2i32),
-        (8i32 - val / 8192i32),
+        Into::<TagValue>::into(8i32 - val / 8192i32),
     ))
 }
 
@@ -31,6 +35,7 @@ pub fn ast_value_9b826d8a33505bd4(
 /// ```
 /// Used by:
 /// - QuickTime::MediaHeader.MediaDuration
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_9b70d43f79fc1751(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -50,6 +55,7 @@ pub fn ast_print_9b70d43f79fc1751(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Exif::Main.CFAPattern
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_9b12689ce0511009(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -69,6 +75,7 @@ pub fn ast_print_9b12689ce0511009(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Kodak::Type3.TimeCreated
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_9b17beab9e0d58ca(
     val: &TagValue,

@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -67,7 +71,7 @@ pub fn ast_value_beccf4b4cbb850ea(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(if codegen_runtime::abs(val) < 100i32 {
-        codegen_runtime::power(Into::<TagValue>::into(2i32), (codegen_runtime::negate(val)))
+        codegen_runtime::power(Into::<TagValue>::into(2i32), codegen_runtime::negate(val))
     } else {
         Into::<TagValue>::into(0i32)
     })
@@ -85,6 +89,7 @@ pub fn ast_value_beccf4b4cbb850ea(
 /// - Nikon::PictureControl.Saturation
 /// - Nikon::PictureControl2.PictureControlQuickAdjust
 /// - Nikon::PictureControl3.PictureControlQuickAdjust
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_be7ee827727a50d1(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

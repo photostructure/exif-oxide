@@ -94,7 +94,17 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureProgram",
                 format: "int32u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Not Defined"),
+                    ("1".to_string(), "Manual"),
+                    ("2".to_string(), "Program AE"),
+                    ("3".to_string(), "Aperture-priority AE"),
+                    ("4".to_string(), "Shutter speed priority AE"),
+                    ("5".to_string(), "Creative (Slow speed)"),
+                    ("6".to_string(), "Action (High speed)"),
+                    ("7".to_string(), "Portrait"),
+                    ("8".to_string(), "Landscape"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -130,7 +140,54 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "Flash",
                 format: "int32u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No Flash"),
+                    ("1".to_string(), "Fired"),
+                    ("13".to_string(), "On, Return not detected"),
+                    ("15".to_string(), "On, Return detected"),
+                    ("16".to_string(), "Off, Did not fire"),
+                    ("20".to_string(), "Off, Did not fire, Return not detected"),
+                    ("24".to_string(), "Auto, Did not fire"),
+                    ("25".to_string(), "Auto, Fired"),
+                    ("29".to_string(), "Auto, Fired, Return not detected"),
+                    ("31".to_string(), "Auto, Fired, Return detected"),
+                    ("32".to_string(), "No flash function"),
+                    ("48".to_string(), "Off, No flash function"),
+                    ("5".to_string(), "Fired, Return not detected"),
+                    ("65".to_string(), "Fired, Red-eye reduction"),
+                    (
+                        "69".to_string(),
+                        "Fired, Red-eye reduction, Return not detected",
+                    ),
+                    ("7".to_string(), "Fired, Return detected"),
+                    (
+                        "71".to_string(),
+                        "Fired, Red-eye reduction, Return detected",
+                    ),
+                    ("73".to_string(), "On, Red-eye reduction"),
+                    (
+                        "77".to_string(),
+                        "On, Red-eye reduction, Return not detected",
+                    ),
+                    ("79".to_string(), "On, Red-eye reduction, Return detected"),
+                    ("8".to_string(), "On, Did not fire"),
+                    ("80".to_string(), "Off, Red-eye reduction"),
+                    ("88".to_string(), "Auto, Did not fire, Red-eye reduction"),
+                    ("89".to_string(), "Auto, Fired, Red-eye reduction"),
+                    ("9".to_string(), "On, Fired"),
+                    (
+                        "93".to_string(),
+                        "Auto, Fired, Red-eye reduction, Return not detected",
+                    ),
+                    (
+                        "95".to_string(),
+                        "Auto, Fired, Red-eye reduction, Return detected",
+                    ),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Exif::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -139,7 +196,10 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "CustomRendered",
                 format: "int32u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("1".to_string(), "Custom"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -148,7 +208,10 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "WhiteBalance",
                 format: "int32u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Manual"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -166,7 +229,12 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "SceneCaptureType",
                 format: "int32u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Standard"),
+                    ("1".to_string(), "Landscape"),
+                    ("2".to_string(), "Portrait"),
+                    ("3".to_string(), "Night"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -184,7 +252,10 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSLatitudeRef",
                 format: "string",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("N".to_string(), "North"),
+                    ("S".to_string(), "South"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -202,7 +273,10 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSLongitudeRef",
                 format: "string",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("E".to_string(), "East"),
+                    ("W".to_string(), "West"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -220,7 +294,10 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSAltitudeRef",
                 format: "int32u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Above Sea Level"),
+                    ("1".to_string(), "Below Sea Level"),
+                ]))),
                 value_conv: Some(ValueConv::Function(ast_value_371d7ee27915143)),
             },
         ),
@@ -247,7 +324,10 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSStatus",
                 format: "string",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("A".to_string(), "Measurement Active"),
+                    ("V".to_string(), "Measurement Void"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -256,7 +336,10 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSMeasureMode",
                 format: "string",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("2".to_string(), "2-Dimensional Measurement"),
+                    ("3".to_string(), "3-Dimensional Measurement"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -274,7 +357,11 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSSpeedRef",
                 format: "string",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("K".to_string(), "km/h"),
+                    ("M".to_string(), "mph"),
+                    ("N".to_string(), "knots"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -292,7 +379,10 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSTrackRef",
                 format: "string",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("M".to_string(), "Magnetic North"),
+                    ("T".to_string(), "True North"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -310,7 +400,10 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSImgDirectionRef",
                 format: "string",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("M".to_string(), "Magnetic North"),
+                    ("T".to_string(), "True North"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -422,6 +515,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

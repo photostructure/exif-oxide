@@ -26,7 +26,20 @@ pub static NIKON_MAKERNOTES0X51_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "NEFCompression",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Lossy (type 1)"),
+                    ("10".to_string(), "Packed 14 bits"),
+                    ("13".to_string(), "High Efficiency"),
+                    ("14".to_string(), "High Efficiency*"),
+                    ("2".to_string(), "Uncompressed"),
+                    ("3".to_string(), "Lossless"),
+                    ("4".to_string(), "Lossy (type 2)"),
+                    ("5".to_string(), "Striped packed 12 bits"),
+                    ("6".to_string(), "Uncompressed (reduced to 12 bit)"),
+                    ("7".to_string(), "Unpacked 12 bits"),
+                    ("8".to_string(), "Small"),
+                    ("9".to_string(), "Packed 12 bits"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -75,6 +88,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

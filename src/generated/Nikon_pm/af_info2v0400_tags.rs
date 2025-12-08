@@ -23,7 +23,11 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "AFDetectionMethod",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Phase Detect"),
+                    ("1".to_string(), "Contrast Detect"),
+                    ("2".to_string(), "Hybrid"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -32,7 +36,18 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "AFAreaMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("192".to_string(), "Pinpoint"),
+                    ("193".to_string(), "Single"),
+                    ("195".to_string(), "Wide (S)"),
+                    ("196".to_string(), "Wide (L)"),
+                    ("197".to_string(), "Auto"),
+                    ("204".to_string(), "Dynamic Area (S)"),
+                    ("205".to_string(), "Dynamic Area (M)"),
+                    ("206".to_string(), "Dynamic Area (L)"),
+                    ("207".to_string(), "3D-tracking"),
+                    ("208".to_string(), "Wide (C1/C2)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -41,7 +56,10 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "AFCoordinatesAvailable",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No"),
+                    ("1".to_string(), "Yes"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -104,7 +122,10 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "FocusResult",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Out of Focus"),
+                    ("1".to_string(), "Focus"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -153,6 +174,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

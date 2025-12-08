@@ -212,7 +212,20 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "LightSource",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Unknown"),
+                    ("16".to_string(), "Shade"),
+                    ("17".to_string(), "Cloudy"),
+                    ("18".to_string(), "Fine Weather"),
+                    ("20".to_string(), "Tungsten (Incandescent)"),
+                    ("22".to_string(), "Evening Sunlight"),
+                    ("256".to_string(), "One Touch White Balance"),
+                    ("33".to_string(), "Daylight Fluorescent"),
+                    ("34".to_string(), "Day White Fluorescent"),
+                    ("35".to_string(), "Cool White Fluorescent"),
+                    ("36".to_string(), "White Fluorescent"),
+                    ("512".to_string(), "Custom 1-4"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -378,6 +391,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

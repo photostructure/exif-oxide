@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -43,10 +47,7 @@ pub fn ast_print_3780eb052f6af33a(val: &TagValue, ctx: Option<&ExifContext>) -> 
     if val > 0.99f64 {
         Into::<TagValue>::into("Full")
     } else {
-        TagValue::String(codegen_runtime::sprintf_perl(
-            "%.1f%%",
-            &[val * 100i32.clone()],
-        ))
+        TagValue::String(codegen_runtime::sprintf_perl("%.1f%%", &[val * 100i32]))
     }
 }
 
@@ -83,6 +84,7 @@ pub fn ast_print_3772add5dac32189(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Nikon::Main.LensType
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_378644c5bc54fdfd(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -102,6 +104,7 @@ pub fn ast_print_378644c5bc54fdfd(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Nikon::MakerNotes0x56.FirmwareVersion56
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_37b97a54731266fa(
     val: &TagValue,

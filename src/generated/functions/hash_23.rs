@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -15,6 +19,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// ```
 /// Used by:
 /// - Panasonic::PANA.ThumbnailImage
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_2394a139821fa381(
     val: &TagValue,
@@ -37,6 +42,7 @@ pub fn ast_value_2394a139821fa381(
 /// ```
 /// Used by:
 /// - Canon::CameraSettings.CameraISO
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_23bd74b0abec6c74(
     val: &TagValue,

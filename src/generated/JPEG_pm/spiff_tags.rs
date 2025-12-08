@@ -26,7 +26,13 @@ pub static JPEG_SPIFF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ProfileID",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Not Specified"),
+                    ("1".to_string(), "Continuous-tone Base"),
+                    ("2".to_string(), "Continuous-tone Progressive"),
+                    ("3".to_string(), "Bi-level Facsimile"),
+                    ("4".to_string(), "Continuous-tone Facsimile"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -53,7 +59,20 @@ pub static JPEG_SPIFF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ColorSpace",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Bi-level"),
+                    ("1".to_string(), "YCbCr, ITU-R BT 709, video"),
+                    ("10".to_string(), "RGB"),
+                    ("11".to_string(), "CMY"),
+                    ("12".to_string(), "CMYK"),
+                    ("13".to_string(), "YCCK"),
+                    ("14".to_string(), "CIELab"),
+                    ("2".to_string(), "No color space specified"),
+                    ("3".to_string(), "YCbCr, ITU-R BT 601-1, RGB"),
+                    ("4".to_string(), "YCbCr, ITU-R BT 601-1, video"),
+                    ("8".to_string(), "Gray-scale"),
+                    ("9".to_string(), "PhotoYCC"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -62,7 +81,17 @@ pub static JPEG_SPIFF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "Compression",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    (
+                        "0".to_string(),
+                        "Uncompressed, interleaved, 8 bits per sample",
+                    ),
+                    ("1".to_string(), "Modified Huffman"),
+                    ("2".to_string(), "Modified READ"),
+                    ("3".to_string(), "Modified Modified READ"),
+                    ("4".to_string(), "JBIG"),
+                    ("5".to_string(), "JPEG"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -71,7 +100,11 @@ pub static JPEG_SPIFF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ResolutionUnit",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "None"),
+                    ("1".to_string(), "inches"),
+                    ("2".to_string(), "cm"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -138,6 +171,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

@@ -27,7 +27,17 @@ pub static OLYMPUS_MP4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             TagInfo {
                 name: "Model",
                 format: "string[24]",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("SG472".to_string(), "u7040,S7040"),
+                    ("SG473".to_string(), "u9010,S9010"),
+                    ("SG475".to_string(), "SP800UZ"),
+                    ("SG551".to_string(), "SZ-30MR"),
+                    ("SG553".to_string(), "SP-610UZ"),
+                    ("SG554".to_string(), "SZ-10"),
+                    ("SG555".to_string(), "SZ-20"),
+                    ("SG573".to_string(), "SZ-14"),
+                    ("SG575".to_string(), "SP-620UZ"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -112,6 +122,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -34,10 +38,7 @@ pub fn ast_value_4cda13c3b726a013(
 /// - Nikon::MenuSettingsZ9v4.ExposureDelay
 pub fn ast_print_4c50ec508ecbbcc6(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val.is_truthy() {
-        TagValue::String(codegen_runtime::sprintf_perl(
-            "%.1f sec",
-            &[val / 1000i32.clone()],
-        ))
+        TagValue::String(codegen_runtime::sprintf_perl("%.1f sec", &[val / 1000i32]))
     } else {
         Into::<TagValue>::into("Off")
     }
@@ -68,6 +69,7 @@ pub fn ast_value_4c77cbba764059d5(
 /// ```
 /// Used by:
 /// - Panasonic::TimeInfo.PanasonicDateTime
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_4cd6594ea26ecaa7(
     val: &TagValue,

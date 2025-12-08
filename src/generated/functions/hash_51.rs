@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -19,15 +23,15 @@ pub fn ast_value_51bd40f5c5652bea(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(val
-        / (if val >= 1024i32 {
+        / if val >= 1024i32 {
             Into::<TagValue>::into(1024i32)
         } else {
-            (if val >= 256i32 {
+            if val >= 256i32 {
                 Into::<TagValue>::into(256i32)
             } else {
                 Into::<TagValue>::into(100i32)
-            })
-        }))
+            }
+        })
 }
 
 /// Original perl expression:
@@ -45,7 +49,7 @@ pub fn ast_value_517a89fe0a7b3a4(
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(codegen_runtime::power(
         Into::<TagValue>::into(2i32),
-        ((val / 8i32 - 1.06f64) / 2i32 as f64),
+        Into::<TagValue>::into(val / 8i32 - 1.06f64 / 2i32 as f64),
     ))
 }
 
@@ -62,6 +66,7 @@ pub fn ast_value_517a89fe0a7b3a4(
 /// ```
 /// Used by:
 /// - Olympus::CameraSettings.CustomSaturation
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_51872ff99fb478cd(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

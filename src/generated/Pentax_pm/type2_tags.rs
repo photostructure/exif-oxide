@@ -14,7 +14,11 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "RecordingMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Night Scene"),
+                    ("2".to_string(), "Manual"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -23,7 +27,11 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "Quality",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Good"),
+                    ("1".to_string(), "Better"),
+                    ("2".to_string(), "Best"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -32,7 +40,10 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "FocusMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("2".to_string(), "Custom"),
+                    ("3".to_string(), "Auto"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -41,7 +52,12 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "FlashMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Auto"),
+                    ("2".to_string(), "On"),
+                    ("4".to_string(), "Off"),
+                    ("6".to_string(), "Red-eye reduction"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -50,7 +66,14 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "WhiteBalance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Daylight"),
+                    ("2".to_string(), "Shade"),
+                    ("3".to_string(), "Tungsten"),
+                    ("4".to_string(), "Fluorescent"),
+                    ("5".to_string(), "Manual"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -68,7 +91,11 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "Sharpness",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("1".to_string(), "Soft"),
+                    ("2".to_string(), "Hard"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -77,7 +104,11 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "Contrast",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("1".to_string(), "Low"),
+                    ("2".to_string(), "High"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -86,7 +117,11 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "Saturation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("1".to_string(), "Low"),
+                    ("2".to_string(), "High"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -95,7 +130,10 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "ISO",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("65534".to_string(), "Auto 2"),
+                    ("65535".to_string(), "Auto"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -104,7 +142,11 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "ColorFilter",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Full"),
+                    ("2".to_string(), "Black & White"),
+                    ("3".to_string(), "Sepia"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -180,6 +222,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

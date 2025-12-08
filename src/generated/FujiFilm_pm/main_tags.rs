@@ -50,7 +50,19 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "Sharpness",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "-4 (softest)"),
+                    ("1".to_string(), "-3 (very soft)"),
+                    ("130".to_string(), "-1 (medium soft)"),
+                    ("132".to_string(), "+1 (medium hard)"),
+                    ("2".to_string(), "-2 (soft)"),
+                    ("3".to_string(), "0 (normal)"),
+                    ("32768".to_string(), "Film Simulation"),
+                    ("4".to_string(), "+2 (hard)"),
+                    ("5".to_string(), "+3 (very hard)"),
+                    ("6".to_string(), "+4 (hardest)"),
+                    ("65535".to_string(), "n/a"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -59,7 +71,27 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "WhiteBalance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Auto (white priority)"),
+                    ("1024".to_string(), "Incandescent"),
+                    ("1280".to_string(), "Flash"),
+                    ("1536".to_string(), "Underwater"),
+                    ("2".to_string(), "Auto (ambiance priority)"),
+                    ("256".to_string(), "Daylight"),
+                    ("3840".to_string(), "Custom"),
+                    ("3841".to_string(), "Custom2"),
+                    ("3842".to_string(), "Custom3"),
+                    ("3843".to_string(), "Custom4"),
+                    ("3844".to_string(), "Custom5"),
+                    ("4080".to_string(), "Kelvin"),
+                    ("512".to_string(), "Cloudy"),
+                    ("768".to_string(), "Daylight Fluorescent"),
+                    ("769".to_string(), "Day White Fluorescent"),
+                    ("770".to_string(), "White Fluorescent"),
+                    ("771".to_string(), "Warm White Fluorescent"),
+                    ("772".to_string(), "Living Room Warm White Fluorescent"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -68,7 +100,28 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "Saturation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "0 (normal)"),
+                    ("1024".to_string(), "-2 (low)"),
+                    ("1216".to_string(), "-3 (very low)"),
+                    ("1248".to_string(), "-4 (lowest)"),
+                    ("128".to_string(), "+1 (medium high)"),
+                    ("1280".to_string(), "Acros"),
+                    ("1281".to_string(), "Acros Red Filter"),
+                    ("1282".to_string(), "Acros Yellow Filter"),
+                    ("1283".to_string(), "Acros Green Filter"),
+                    ("192".to_string(), "+3 (very high)"),
+                    ("224".to_string(), "+4 (highest)"),
+                    ("256".to_string(), "+2 (high)"),
+                    ("32768".to_string(), "Film Simulation"),
+                    ("384".to_string(), "-1 (medium low)"),
+                    ("512".to_string(), "Low"),
+                    ("768".to_string(), "None (B&W)"),
+                    ("769".to_string(), "B&W Red Filter"),
+                    ("770".to_string(), "B&W Yellow Filter"),
+                    ("771".to_string(), "B&W Green Filter"),
+                    ("784".to_string(), "B&W Sepia"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -77,7 +130,14 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "Contrast",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("128".to_string(), "Medium High"),
+                    ("256".to_string(), "High"),
+                    ("32768".to_string(), "Film Simulation"),
+                    ("384".to_string(), "Medium Low"),
+                    ("512".to_string(), "Low"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -95,7 +155,11 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "Contrast",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("256".to_string(), "High"),
+                    ("768".to_string(), "Low"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -113,7 +177,11 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "NoiseReduction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("128".to_string(), "Normal"),
+                    ("256".to_string(), "n/a"),
+                    ("64".to_string(), "Low"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -122,7 +190,17 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "NoiseReduction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "0 (normal)"),
+                    ("256".to_string(), "+2 (strong)"),
+                    ("384".to_string(), "+1 (medium strong)"),
+                    ("448".to_string(), "+3 (very strong)"),
+                    ("480".to_string(), "+4 (strongest)"),
+                    ("512".to_string(), "-2 (weak)"),
+                    ("640".to_string(), "-1 (medium weak)"),
+                    ("704".to_string(), "-3 (very weak)"),
+                    ("736".to_string(), "-4 (weakest)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -131,7 +209,19 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "Clarity",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-1000".to_string(), "-1"),
+                    ("-2000".to_string(), "-2"),
+                    ("-3000".to_string(), "-3"),
+                    ("-4000".to_string(), "-4"),
+                    ("-5000".to_string(), "-5"),
+                    ("0".to_string(), "0"),
+                    ("1000".to_string(), "1"),
+                    ("2000".to_string(), "2"),
+                    ("3000".to_string(), "3"),
+                    ("4000".to_string(), "4"),
+                    ("5000".to_string(), "5"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -140,7 +230,51 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FujiFlashMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "On"),
+                    ("16".to_string(), "Commander"),
+                    ("2".to_string(), "Off"),
+                    ("3".to_string(), "Red-eye reduction"),
+                    ("32768".to_string(), "Not Attached"),
+                    ("33056".to_string(), "TTL"),
+                    ("33568".to_string(), "TTL Auto - Did not fire"),
+                    ("38976".to_string(), "Manual"),
+                    ("39008".to_string(), "Flash Commander"),
+                    ("39040".to_string(), "Multi-flash"),
+                    ("4".to_string(), "External"),
+                    ("43296".to_string(), "1st Curtain (front)"),
+                    ("43552".to_string(), "TTL Slow - 1st Curtain (front)"),
+                    ("43808".to_string(), "TTL Auto - 1st Curtain (front)"),
+                    (
+                        "44320".to_string(),
+                        "TTL - Red-eye Flash - 1st Curtain (front)",
+                    ),
+                    (
+                        "44576".to_string(),
+                        "TTL Slow - Red-eye Flash - 1st Curtain (front)",
+                    ),
+                    (
+                        "44832".to_string(),
+                        "TTL Auto - Red-eye Flash - 1st Curtain (front)",
+                    ),
+                    ("51488".to_string(), "2nd Curtain (rear)"),
+                    ("51744".to_string(), "TTL Slow - 2nd Curtain (rear)"),
+                    ("52000".to_string(), "TTL Auto - 2nd Curtain (rear)"),
+                    (
+                        "52512".to_string(),
+                        "TTL - Red-eye Flash - 2nd Curtain (rear)",
+                    ),
+                    (
+                        "52768".to_string(),
+                        "TTL Slow - Red-eye Flash - 2nd Curtain (rear)",
+                    ),
+                    (
+                        "53024".to_string(),
+                        "TTL Auto - Red-eye Flash - 2nd Curtain (rear)",
+                    ),
+                    ("59680".to_string(), "High Speed Sync (HSS)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -158,7 +292,10 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "Macro",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -167,7 +304,11 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FocusMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Manual"),
+                    ("65535".to_string(), "Movie"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -176,7 +317,12 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AFMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No"),
+                    ("1".to_string(), "Single Point"),
+                    ("256".to_string(), "Zone"),
+                    ("512".to_string(), "Wide/Tracking"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -221,7 +367,10 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "SlowSync",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -230,7 +379,41 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "PictureMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Portrait"),
+                    ("10".to_string(), "Sunset"),
+                    ("11".to_string(), "Museum"),
+                    ("12".to_string(), "Party"),
+                    ("13".to_string(), "Flower"),
+                    ("14".to_string(), "Text"),
+                    ("15".to_string(), "Natural Light & Flash"),
+                    ("16".to_string(), "Beach"),
+                    ("17".to_string(), "Snow"),
+                    ("18".to_string(), "Fireworks"),
+                    ("19".to_string(), "Underwater"),
+                    ("2".to_string(), "Landscape"),
+                    ("20".to_string(), "Portrait with Skin Correction"),
+                    ("22".to_string(), "Panorama"),
+                    ("23".to_string(), "Night (tripod)"),
+                    ("24".to_string(), "Pro Low-light"),
+                    ("25".to_string(), "Pro Focus"),
+                    ("256".to_string(), "Aperture-priority AE"),
+                    ("26".to_string(), "Portrait 2"),
+                    ("27".to_string(), "Dog Face Detection"),
+                    ("28".to_string(), "Cat Face Detection"),
+                    ("3".to_string(), "Macro"),
+                    ("4".to_string(), "Sports"),
+                    ("48".to_string(), "HDR"),
+                    ("5".to_string(), "Night Scene"),
+                    ("512".to_string(), "Shutter speed priority AE"),
+                    ("6".to_string(), "Program AE"),
+                    ("64".to_string(), "Advanced Filter"),
+                    ("7".to_string(), "Natural Light"),
+                    ("768".to_string(), "Manual"),
+                    ("8".to_string(), "Anti-blur"),
+                    ("9".to_string(), "Beach & Snow"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -248,7 +431,10 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "EXRAuto",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Manual"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -257,7 +443,11 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "EXRMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("256".to_string(), "HR (High Resolution)"),
+                    ("512".to_string(), "SN (Signal to Noise priority)"),
+                    ("768".to_string(), "DR (Dynamic Range priority)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -266,7 +456,12 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "MultipleExposure",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Additive"),
+                    ("2".to_string(), "Average"),
+                    ("3".to_string(), "Light"),
+                    ("4".to_string(), "Dark"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -275,7 +470,19 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ShadowTone",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-16".to_string(), "+1 (medium hard)"),
+                    ("-32".to_string(), "+2 (hard)"),
+                    ("-48".to_string(), "+3 (very hard)"),
+                    ("-64".to_string(), "+4 (hardest)"),
+                    ("0".to_string(), "0 (normal)"),
+                    ("16".to_string(), "-1 (medium soft)"),
+                    ("32".to_string(), "-2 (soft)"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::FujiFilm::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -284,7 +491,19 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "HighlightTone",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-16".to_string(), "+1 (medium hard)"),
+                    ("-32".to_string(), "+2 (hard)"),
+                    ("-48".to_string(), "+3 (very hard)"),
+                    ("-64".to_string(), "+4 (hardest)"),
+                    ("0".to_string(), "0 (normal)"),
+                    ("16".to_string(), "-1 (medium soft)"),
+                    ("32".to_string(), "-2 (soft)"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::FujiFilm::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -302,7 +521,10 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "LensModulationOptimizer",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -311,7 +533,11 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "GrainEffectRoughness",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("32".to_string(), "Weak"),
+                    ("64".to_string(), "Strong"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -320,7 +546,11 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ColorChromeEffect",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("32".to_string(), "Weak"),
+                    ("64".to_string(), "Strong"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -347,7 +577,11 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "GrainEffectSize",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("16".to_string(), "Small"),
+                    ("32".to_string(), "Large"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -356,7 +590,13 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "CropMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "n/a"),
+                    ("1".to_string(), "Full-frame on GFX"),
+                    ("2".to_string(), "Sports Finder Mode"),
+                    ("4".to_string(), "Electronic Shutter 1.25x Crop"),
+                    ("8".to_string(), "Digital Tele-Conv"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -365,7 +605,11 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ColorChromeFXBlue",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("32".to_string(), "Weak"),
+                    ("64".to_string(), "Strong"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -374,7 +618,12 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ShutterType",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Mechanical"),
+                    ("1".to_string(), "Electronic"),
+                    ("2".to_string(), "Electronic (long shutter speed)"),
+                    ("3".to_string(), "Electronic Front Curtain"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -419,7 +668,11 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "WhiteBalanceBracketing",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1023".to_string(), "+/- 3"),
+                    ("511".to_string(), "+/- 1"),
+                    ("767".to_string(), "+/- 2"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -455,7 +708,14 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "CompositeImageMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "n/a"),
+                    ("1".to_string(), "Pro Low-light"),
+                    ("1024".to_string(), "Multi-exposure"),
+                    ("128".to_string(), "HDR"),
+                    ("2".to_string(), "Pro Focus"),
+                    ("32".to_string(), "Panorama"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -491,7 +751,12 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "PanoramaDirection",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Right"),
+                    ("2".to_string(), "Left"),
+                    ("3".to_string(), "Up"),
+                    ("4".to_string(), "Down"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -500,7 +765,25 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AdvancedFilter",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1048576".to_string(), "Light Leak"),
+                    ("1245184".to_string(), "Expired Film Green"),
+                    ("1245185".to_string(), "Expired Film Red"),
+                    ("1245186".to_string(), "Expired Film Neutral"),
+                    ("131072".to_string(), "Hi Key"),
+                    ("196608".to_string(), "Toy Camera"),
+                    ("262144".to_string(), "Miniature"),
+                    ("327680".to_string(), "Dynamic Tone"),
+                    ("393217".to_string(), "Partial Color Red"),
+                    ("393218".to_string(), "Partial Color Yellow"),
+                    ("393219".to_string(), "Partial Color Green"),
+                    ("393220".to_string(), "Partial Color Blue"),
+                    ("393221".to_string(), "Partial Color Orange"),
+                    ("393222".to_string(), "Partial Color Purple"),
+                    ("458752".to_string(), "Soft Focus"),
+                    ("589824".to_string(), "Low Key"),
+                    ("65536".to_string(), "Pop Color"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -509,7 +792,11 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ColorMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Standard"),
+                    ("16".to_string(), "Chrome"),
+                    ("48".to_string(), "B & W"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -518,7 +805,10 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "BlurWarning",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "None"),
+                    ("1".to_string(), "Blur Warning"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -527,7 +817,10 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FocusWarning",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Good"),
+                    ("1".to_string(), "Out of focus"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -536,7 +829,10 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ExposureWarning",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Good"),
+                    ("1".to_string(), "Bad exposure"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -554,7 +850,10 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "DynamicRange",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Standard"),
+                    ("3".to_string(), "Wide"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -563,7 +862,27 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FilmMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "F0/Standard (Provia)"),
+                    ("1024".to_string(), "F4/Velvia"),
+                    ("1280".to_string(), "Pro Neg. Std"),
+                    ("1281".to_string(), "Pro Neg. Hi"),
+                    ("1536".to_string(), "Classic Chrome"),
+                    ("1792".to_string(), "Eterna"),
+                    ("2048".to_string(), "Classic Negative"),
+                    ("2304".to_string(), "Bleach Bypass"),
+                    ("256".to_string(), "F1/Studio Portrait"),
+                    ("2560".to_string(), "Nostalgic Neg"),
+                    ("272".to_string(), "F1a/Studio Portrait Enhanced Saturation"),
+                    ("2816".to_string(), "Reala ACE"),
+                    (
+                        "288".to_string(),
+                        "F1b/Studio Portrait Smooth Skin Tone (Astia)",
+                    ),
+                    ("304".to_string(), "F1c/Studio Portrait Increased Sharpness"),
+                    ("512".to_string(), "F2/Fujichrome (Velvia)"),
+                    ("768".to_string(), "F3/Studio Portrait Ex"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -572,7 +891,14 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "DynamicRangeSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Manual"),
+                    ("256".to_string(), "Standard (100%)"),
+                    ("32768".to_string(), "Film Simulation"),
+                    ("512".to_string(), "Wide1 (230%)"),
+                    ("513".to_string(), "Wide2 (400%)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -644,7 +970,15 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "SceneRecognition",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Unrecognized"),
+                    ("1024".to_string(), "Macro"),
+                    ("256".to_string(), "Portrait Image"),
+                    ("259".to_string(), "Night Portrait"),
+                    ("261".to_string(), "Backlit Portrait"),
+                    ("512".to_string(), "Landscape Image"),
+                    ("768".to_string(), "Night Scene"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -662,7 +996,10 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ImageGeneration",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Original Image"),
+                    ("1".to_string(), "Re-developed from RAW"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -680,7 +1017,10 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "DRangePriority",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Fixed"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -689,7 +1029,11 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "DRangePriorityAuto",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Weak"),
+                    ("2".to_string(), "Strong"),
+                    ("3".to_string(), "Plus"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -698,7 +1042,10 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "DRangePriorityFixed",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Weak"),
+                    ("2".to_string(), "Strong"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -770,7 +1117,12 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "VideoRecordingMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("16".to_string(), "F-log"),
+                    ("32".to_string(), "HLG"),
+                    ("48".to_string(), "F-log2"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -779,7 +1131,10 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "PeripheralLighting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -788,7 +1143,10 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "VideoCompression",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Log GOP"),
+                    ("2".to_string(), "All Intra"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -824,7 +1182,10 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FullHDHighSpeedRec",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Off"),
+                    ("2".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -972,6 +1333,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

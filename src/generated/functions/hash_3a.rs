@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -15,10 +19,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// Used by:
 /// - SonyIDC::Main.BrightnessAdj
 pub fn ast_print_3acf3ecd771b5e1d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl(
-        "%.2f",
-        &[val / 300i32.clone()],
-    ))
+    TagValue::String(codegen_runtime::sprintf_perl("%.2f", &[val / 300i32]))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -84,6 +85,7 @@ pub fn ast_print_3acf3ecd771b5e1d(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Sony::rtmd.DateTime
 /// - SonyIDC::Main.VersionCreateDate
 /// - SonyIDC::Main.VersionModifyDate
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_3a205edef25c6138(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

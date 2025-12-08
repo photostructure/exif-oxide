@@ -1892,7 +1892,13 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "HostSoftwareRendering",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal (sRGB)"),
+                    ("1".to_string(), "Linear (camera RGB)"),
+                    ("2".to_string(), "Pro Photo RGB"),
+                    ("3".to_string(), "Unknown"),
+                    ("4".to_string(), "Other Profile"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -1910,7 +1916,12 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FinishFileType",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "JPEG Best"),
+                    ("1".to_string(), "JPEG Better"),
+                    ("2".to_string(), "JPEG Good"),
+                    ("3".to_string(), "TIFF RGB"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -1919,7 +1930,12 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FinishResolution",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "100%"),
+                    ("1".to_string(), "67%"),
+                    ("2".to_string(), "50%"),
+                    ("3".to_string(), "25%"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -1928,7 +1944,11 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FinishNoise",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("1".to_string(), "Strong"),
+                    ("2".to_string(), "Low"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -1937,7 +1957,12 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FinishSharpening",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "None"),
+                    ("1".to_string(), "High"),
+                    ("2".to_string(), "Medium"),
+                    ("3".to_string(), "Low"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -1946,7 +1971,25 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FinishLook",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Product"),
+                    ("1".to_string(), "Portrait"),
+                    ("10".to_string(), "Product Hi Color Hold"),
+                    ("11".to_string(), "Portrait Hi Color Hold"),
+                    ("13".to_string(), "DCS BW Normal"),
+                    ("14".to_string(), "DCS BW Wratten 8"),
+                    ("15".to_string(), "DCS BW Wratten 25"),
+                    ("16".to_string(), "DCS Sepia 1"),
+                    ("17".to_string(), "DCS Sepia 2"),
+                    ("2".to_string(), "Product Reduced"),
+                    ("3".to_string(), "Portrait Reduced"),
+                    ("4".to_string(), "Monochrome Product"),
+                    ("5".to_string(), "Monochrome Portrait"),
+                    ("6".to_string(), "Wedding"),
+                    ("7".to_string(), "Event"),
+                    ("8".to_string(), "Product Hi Color"),
+                    ("9".to_string(), "Portrait Hi Color"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -1955,7 +1998,10 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FinishExposure",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Yes"),
+                    ("1".to_string(), "No"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -2198,7 +2244,10 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "CFAInterpolationAlgorithm",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "AH2"),
+                    ("1".to_string(), "Karnak"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -2207,7 +2256,10 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "CFAInterpolationMetric",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Linear12"),
+                    ("1".to_string(), "KLUT12"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -3462,6 +3514,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

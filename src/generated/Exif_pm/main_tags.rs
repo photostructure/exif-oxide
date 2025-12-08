@@ -50,7 +50,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (1, TagInfo {
             name: "InteropIndex",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("R03".to_string(), "R03 - DCF option file (Adobe RGB)"), ("R98".to_string(), "R98 - DCF basic file (sRGB)"), ("THM".to_string(), "THM - DCF thumbnail file"), ]))),
             value_conv: None,
         }),
         (2, TagInfo {
@@ -68,13 +68,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (254, TagInfo {
             name: "SubfileType",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Full-resolution image"), ("1".to_string(), "Reduced-resolution image"), ("16".to_string(), "Enhanced image data"), ("2".to_string(), "Single page of multi-page image"), ("3".to_string(), "Single page of multi-page reduced-resolution image"), ("4".to_string(), "Transparency mask"), ("4294967295".to_string(), "invalid"), ("5".to_string(), "Transparency mask of reduced-resolution image"), ("6".to_string(), "Transparency mask of multi-page image"), ("65537".to_string(), "Alternate reduced-resolution image"), ("65540".to_string(), "Semantic Mask"), ("7".to_string(), "Transparency mask of reduced-resolution multi-page image"), ("8".to_string(), "Depth map"), ("9".to_string(), "Depth map of reduced-resolution image"), ]))),
             value_conv: None,
         }),
         (255, TagInfo {
             name: "OldSubfileType",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Full-resolution image"), ("2".to_string(), "Reduced-resolution image"), ("3".to_string(), "Single page of multi-page image"), ]))),
             value_conv: None,
         }),
         (256, TagInfo {
@@ -98,19 +98,19 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (259, TagInfo {
             name: "Compression",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Uncompressed"), ("10".to_string(), "JBIG Color"), ("2".to_string(), "CCITT 1D"), ("262".to_string(), "Kodak 262"), ("3".to_string(), "T4/Group 3 Fax"), ("32766".to_string(), "Next"), ("32767".to_string(), "Sony ARW Compressed"), ("32769".to_string(), "Packed RAW"), ("32770".to_string(), "Samsung SRW Compressed"), ("32771".to_string(), "CCIRLEW"), ("32772".to_string(), "Samsung SRW Compressed 2"), ("32773".to_string(), "PackBits"), ("32809".to_string(), "Thunderscan"), ("32867".to_string(), "Kodak KDC Compressed"), ("32895".to_string(), "IT8CTPAD"), ("32896".to_string(), "IT8LW"), ("32897".to_string(), "IT8MP"), ("32898".to_string(), "IT8BL"), ("32908".to_string(), "PixarFilm"), ("32909".to_string(), "PixarLog"), ("32946".to_string(), "Deflate"), ("32947".to_string(), "DCS"), ("33003".to_string(), "Aperio JPEG 2000 YCbCr"), ("33005".to_string(), "Aperio JPEG 2000 RGB"), ("34661".to_string(), "JBIG"), ("34676".to_string(), "SGILog"), ("34677".to_string(), "SGILog24"), ("34712".to_string(), "JPEG 2000"), ("34713".to_string(), "Nikon NEF Compressed"), ("34715".to_string(), "JBIG2 TIFF FX"), ("34718".to_string(), "Microsoft Document Imaging (MDI) Binary Level Codec"), ("34719".to_string(), "Microsoft Document Imaging (MDI) Progressive Transform Codec"), ("34720".to_string(), "Microsoft Document Imaging (MDI) Vector"), ("34887".to_string(), "ESRI Lerc"), ("34892".to_string(), "Lossy JPEG"), ("34925".to_string(), "LZMA2"), ("34926".to_string(), "Zstd (old)"), ("34927".to_string(), "WebP (old)"), ("34933".to_string(), "PNG"), ("34934".to_string(), "JPEG XR"), ("4".to_string(), "T6/Group 4 Fax"), ("5".to_string(), "LZW"), ("50000".to_string(), "Zstd"), ("50001".to_string(), "WebP"), ("50002".to_string(), "JPEG XL (old)"), ("52546".to_string(), "JPEG XL"), ("6".to_string(), "JPEG (old-style)"), ("65000".to_string(), "Kodak DCR Compressed"), ("65535".to_string(), "Pentax PEF Compressed"), ("7".to_string(), "JPEG"), ("8".to_string(), "Adobe Deflate"), ("9".to_string(), "JBIG B&W"), ("99".to_string(), "JPEG"), ]))),
             value_conv: None,
         }),
         (262, TagInfo {
             name: "PhotometricInterpretation",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "WhiteIsZero"), ("1".to_string(), "BlackIsZero"), ("10".to_string(), "ITULab"), ("2".to_string(), "RGB"), ("3".to_string(), "RGB Palette"), ("32803".to_string(), "Color Filter Array"), ("32844".to_string(), "Pixar LogL"), ("32845".to_string(), "Pixar LogLuv"), ("32892".to_string(), "Sequential Color Filter"), ("34892".to_string(), "Linear Raw"), ("4".to_string(), "Transparency Mask"), ("5".to_string(), "CMYK"), ("51177".to_string(), "Depth Map"), ("52527".to_string(), "Semantic Mask"), ("6".to_string(), "YCbCr"), ("8".to_string(), "CIELab"), ("9".to_string(), "ICCLab"), ]))),
             value_conv: None,
         }),
         (263, TagInfo {
             name: "Thresholding",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "No dithering or halftoning"), ("2".to_string(), "Ordered dither or halftone"), ("3".to_string(), "Randomized dither"), ]))),
             value_conv: None,
         }),
         (264, TagInfo {
@@ -128,7 +128,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (266, TagInfo {
             name: "FillOrder",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Normal"), ("2".to_string(), "Reversed"), ]))),
             value_conv: None,
         }),
         (269, TagInfo {
@@ -158,7 +158,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (274, TagInfo {
             name: "Orientation",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Horizontal (normal)"), ("2".to_string(), "Mirror horizontal"), ("3".to_string(), "Rotate 180"), ("4".to_string(), "Mirror vertical"), ("5".to_string(), "Mirror horizontal and rotate 270 CW"), ("6".to_string(), "Rotate 90 CW"), ("7".to_string(), "Mirror horizontal and rotate 90 CW"), ("8".to_string(), "Rotate 270 CW"), ]))),
             value_conv: None,
         }),
         (277, TagInfo {
@@ -200,7 +200,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (284, TagInfo {
             name: "PlanarConfiguration",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Chunky"), ("2".to_string(), "Planar"), ]))),
             value_conv: None,
         }),
         (285, TagInfo {
@@ -260,7 +260,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (296, TagInfo {
             name: "ResolutionUnit",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "None"), ("2".to_string(), "inches"), ("3".to_string(), "cm"), ]))),
             value_conv: None,
         }),
         (297, TagInfo {
@@ -302,7 +302,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (317, TagInfo {
             name: "Predictor",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "None"), ("2".to_string(), "Horizontal differencing"), ("3".to_string(), "Floating point"), ("34892".to_string(), "Horizontal difference X2"), ("34893".to_string(), "Horizontal difference X4"), ("34894".to_string(), "Floating point X2"), ("34895".to_string(), "Floating point X4"), ]))),
             value_conv: None,
         }),
         (318, TagInfo {
@@ -356,13 +356,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (327, TagInfo {
             name: "CleanFaxData",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Clean"), ("1".to_string(), "Regenerated"), ("2".to_string(), "Unclean"), ]))),
             value_conv: None,
         }),
         (332, TagInfo {
             name: "InkSet",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "CMYK"), ("2".to_string(), "Not CMYK"), ]))),
             value_conv: None,
         }),
         (337, TagInfo {
@@ -374,7 +374,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (338, TagInfo {
             name: "ExtraSamples",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unspecified"), ("1".to_string(), "Associated Alpha"), ("2".to_string(), "Unassociated Alpha"), ]))),
             value_conv: None,
         }),
         (339, TagInfo {
@@ -386,7 +386,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (346, TagInfo {
             name: "Indexed",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Not indexed"), ("1".to_string(), "Indexed"), ]))),
             value_conv: None,
         }),
         (347, TagInfo {
@@ -398,7 +398,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (351, TagInfo {
             name: "OPIProxy",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Higher resolution image does not exist"), ("1".to_string(), "Higher resolution image exists"), ]))),
             value_conv: None,
         }),
         (400, TagInfo {
@@ -410,13 +410,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (401, TagInfo {
             name: "ProfileType",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unspecified"), ("1".to_string(), "Group 3 FAX"), ]))),
             value_conv: None,
         }),
         (402, TagInfo {
             name: "FaxProfile",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Minimal B&W lossless, S"), ("2".to_string(), "Extended B&W lossless, F"), ("255".to_string(), "Multi Profiles"), ("3".to_string(), "Lossless JBIG B&W, J"), ("4".to_string(), "Lossy color and grayscale, C"), ("5".to_string(), "Lossless color and grayscale, L"), ("6".to_string(), "Mixed raster content, M"), ("7".to_string(), "Profile T"), ]))),
             value_conv: None,
         }),
         (403, TagInfo {
@@ -434,7 +434,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (512, TagInfo {
             name: "JPEGProc",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Baseline"), ("14".to_string(), "Lossless"), ]))),
             value_conv: None,
         }),
         (519, TagInfo {
@@ -464,13 +464,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (530, TagInfo {
             name: "YCbCrSubSampling",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1 1".to_string(), "YCbCr4:4:4 (1 1)"), ("1 2".to_string(), "YCbCr4:4:0 (1 2)"), ("1 4".to_string(), "YCbCr4:4:1 (1 4)"), ("2 1".to_string(), "YCbCr4:2:2 (2 1)"), ("2 2".to_string(), "YCbCr4:2:0 (2 2)"), ("2 4".to_string(), "YCbCr4:2:1 (2 4)"), ("4 1".to_string(), "YCbCr4:1:1 (4 1)"), ("4 2".to_string(), "YCbCr4:1:0 (4 2)"), ]))),
             value_conv: None,
         }),
         (531, TagInfo {
             name: "YCbCrPositioning",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Centered"), ("2".to_string(), "Co-sited"), ]))),
             value_conv: None,
         }),
         (532, TagInfo {
@@ -488,7 +488,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (771, TagInfo {
             name: "RenderingIntent",
             format: "int8u",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Perceptual"), ("1".to_string(), "Relative Colorimetric"), ("2".to_string(), "Saturation"), ("3".to_string(), "Absolute colorimetric"), ]))),
             value_conv: None,
         }),
         (4096, TagInfo {
@@ -566,7 +566,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (28672, TagInfo {
             name: "SonyRawFileType",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Sony Uncompressed 14-bit RAW"), ("1".to_string(), "Sony Uncompressed 12-bit RAW"), ("2".to_string(), "Sony Compressed RAW"), ("3".to_string(), "Sony Lossless Compressed RAW"), ("4".to_string(), "Sony Lossless Compressed RAW 2"), ]))),
             value_conv: None,
         }),
         (28688, TagInfo {
@@ -578,7 +578,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (28721, TagInfo {
             name: "VignettingCorrection",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("256".to_string(), "Off"), ("257".to_string(), "Auto"), ("272".to_string(), "Auto (ILCE-1)"), ("511".to_string(), "No correction params available"), ]))),
             value_conv: None,
         }),
         (28722, TagInfo {
@@ -590,7 +590,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (28724, TagInfo {
             name: "ChromaticAberrationCorrection",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "Auto"), ("255".to_string(), "No correction params available"), ]))),
             value_conv: None,
         }),
         (28725, TagInfo {
@@ -602,7 +602,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (28726, TagInfo {
             name: "DistortionCorrection",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "Auto"), ("17".to_string(), "Auto fixed by lens"), ("255".to_string(), "No correction params available"), ]))),
             value_conv: None,
         }),
         (28727, TagInfo {
@@ -740,25 +740,25 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (34019, TagInfo {
             name: "RasterPadding",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Byte"), ("1".to_string(), "Word"), ("10".to_string(), "Long Sector"), ("2".to_string(), "Long Word"), ("9".to_string(), "Sector"), ]))),
             value_conv: None,
         }),
         (34023, TagInfo {
             name: "ImageColorIndicator",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unspecified Image Color"), ("1".to_string(), "Specified Image Color"), ]))),
             value_conv: None,
         }),
         (34024, TagInfo {
             name: "BackgroundColorIndicator",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unspecified Background Color"), ("1".to_string(), "Specified Background Color"), ]))),
             value_conv: None,
         }),
         (34030, TagInfo {
             name: "HCUsage",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "CT"), ("1".to_string(), "Line Art"), ("2".to_string(), "Trap"), ]))),
             value_conv: None,
         }),
         (34118, TagInfo {
@@ -848,7 +848,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (34850, TagInfo {
             name: "ExposureProgram",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Not Defined"), ("1".to_string(), "Manual"), ("2".to_string(), "Program AE"), ("3".to_string(), "Aperture-priority AE"), ("4".to_string(), "Shutter speed priority AE"), ("5".to_string(), "Creative (Slow speed)"), ("6".to_string(), "Action (High speed)"), ("7".to_string(), "Portrait"), ("8".to_string(), "Landscape"), ("9".to_string(), "Bulb"), ]))),
             value_conv: None,
         }),
         (34852, TagInfo {
@@ -890,7 +890,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (34864, TagInfo {
             name: "SensitivityType",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Standard Output Sensitivity"), ("2".to_string(), "Recommended Exposure Index"), ("3".to_string(), "ISO Speed"), ("4".to_string(), "Standard Output Sensitivity and Recommended Exposure Index"), ("5".to_string(), "Standard Output Sensitivity and ISO Speed"), ("6".to_string(), "Recommended Exposure Index and ISO Speed"), ("7".to_string(), "Standard Output Sensitivity, Recommended Exposure Index and ISO Speed"), ]))),
             value_conv: None,
         }),
         (34865, TagInfo {
@@ -974,7 +974,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (37121, TagInfo {
             name: "ComponentsConfiguration",
             format: "int8u",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "-"), ("1".to_string(), "Y"), ("2".to_string(), "Cb"), ("3".to_string(), "Cr"), ("4".to_string(), "R"), ("5".to_string(), "G"), ("6".to_string(), "B"), ("OTHER".to_string(), "[Function: Image::ExifTool::Exif::__ANON__]"), ]))),
             value_conv: None,
         }),
         (37122, TagInfo {
@@ -1022,19 +1022,19 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (37383, TagInfo {
             name: "MeteringMode",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Average"), ("2".to_string(), "Center-weighted average"), ("255".to_string(), "Other"), ("3".to_string(), "Spot"), ("4".to_string(), "Multi-spot"), ("5".to_string(), "Multi-segment"), ("6".to_string(), "Partial"), ]))),
             value_conv: None,
         }),
         (37384, TagInfo {
             name: "LightSource",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Daylight"), ("10".to_string(), "Cloudy"), ("11".to_string(), "Shade"), ("12".to_string(), "Daylight Fluorescent"), ("13".to_string(), "Day White Fluorescent"), ("14".to_string(), "Cool White Fluorescent"), ("15".to_string(), "White Fluorescent"), ("16".to_string(), "Warm White Fluorescent"), ("17".to_string(), "Standard Light A"), ("18".to_string(), "Standard Light B"), ("19".to_string(), "Standard Light C"), ("2".to_string(), "Fluorescent"), ("20".to_string(), "D55"), ("21".to_string(), "D65"), ("22".to_string(), "D75"), ("23".to_string(), "D50"), ("24".to_string(), "ISO Studio Tungsten"), ("255".to_string(), "Other"), ("3".to_string(), "Tungsten (Incandescent)"), ("4".to_string(), "Flash"), ("9".to_string(), "Fine Weather"), ]))),
             value_conv: None,
         }),
         (37385, TagInfo {
             name: "Flash",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "No Flash"), ("1".to_string(), "Fired"), ("13".to_string(), "On, Return not detected"), ("15".to_string(), "On, Return detected"), ("16".to_string(), "Off, Did not fire"), ("20".to_string(), "Off, Did not fire, Return not detected"), ("24".to_string(), "Auto, Did not fire"), ("25".to_string(), "Auto, Fired"), ("29".to_string(), "Auto, Fired, Return not detected"), ("31".to_string(), "Auto, Fired, Return detected"), ("32".to_string(), "No flash function"), ("48".to_string(), "Off, No flash function"), ("5".to_string(), "Fired, Return not detected"), ("65".to_string(), "Fired, Red-eye reduction"), ("69".to_string(), "Fired, Red-eye reduction, Return not detected"), ("7".to_string(), "Fired, Return detected"), ("71".to_string(), "Fired, Red-eye reduction, Return detected"), ("73".to_string(), "On, Red-eye reduction"), ("77".to_string(), "On, Red-eye reduction, Return not detected"), ("79".to_string(), "On, Red-eye reduction, Return detected"), ("8".to_string(), "On, Did not fire"), ("80".to_string(), "Off, Red-eye reduction"), ("88".to_string(), "Auto, Did not fire, Red-eye reduction"), ("89".to_string(), "Auto, Fired, Red-eye reduction"), ("9".to_string(), "On, Fired"), ("93".to_string(), "Auto, Fired, Red-eye reduction, Return not detected"), ("95".to_string(), "Auto, Fired, Red-eye reduction, Return detected"), ("OTHER".to_string(), "[Function: Image::ExifTool::Exif::__ANON__]"), ]))),
             value_conv: None,
         }),
         (37386, TagInfo {
@@ -1052,7 +1052,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (37392, TagInfo {
             name: "FocalPlaneResolutionUnit",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "None"), ("2".to_string(), "inches"), ("3".to_string(), "cm"), ("4".to_string(), "mm"), ("5".to_string(), "um"), ]))),
             value_conv: None,
         }),
         (37393, TagInfo {
@@ -1064,7 +1064,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (37394, TagInfo {
             name: "SecurityClassification",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("C".to_string(), "Confidential"), ("R".to_string(), "Restricted"), ("S".to_string(), "Secret"), ("T".to_string(), "Top Secret"), ("U".to_string(), "Unclassified"), ]))),
             value_conv: None,
         }),
         (37395, TagInfo {
@@ -1088,7 +1088,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (37399, TagInfo {
             name: "SensingMethod",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Monochrome area"), ("2".to_string(), "One-chip color area"), ("3".to_string(), "Two-chip color area"), ("4".to_string(), "Three-chip color area"), ("5".to_string(), "Color sequential area"), ("6".to_string(), "Monochrome linear"), ("7".to_string(), "Trilinear"), ("8".to_string(), "Color sequential linear"), ]))),
             value_conv: None,
         }),
         (37510, TagInfo {
@@ -1220,7 +1220,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (40961, TagInfo {
             name: "ColorSpace",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "sRGB"), ("2".to_string(), "Adobe RGB"), ("65533".to_string(), "Wide Gamut RGB"), ("65534".to_string(), "ICC Profile"), ("65535".to_string(), "Uncalibrated"), ]))),
             value_conv: None,
         }),
         (40962, TagInfo {
@@ -1298,7 +1298,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (41488, TagInfo {
             name: "FocalPlaneResolutionUnit",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "None"), ("2".to_string(), "inches"), ("3".to_string(), "cm"), ("4".to_string(), "mm"), ("5".to_string(), "um"), ]))),
             value_conv: None,
         }),
         (41492, TagInfo {
@@ -1322,19 +1322,19 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (41495, TagInfo {
             name: "SensingMethod",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Not defined"), ("2".to_string(), "One-chip color area"), ("3".to_string(), "Two-chip color area"), ("4".to_string(), "Three-chip color area"), ("5".to_string(), "Color sequential area"), ("7".to_string(), "Trilinear"), ("8".to_string(), "Color sequential linear"), ]))),
             value_conv: None,
         }),
         (41728, TagInfo {
             name: "FileSource",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("   ".to_string(), "Sigma Digital Camera"), ("1".to_string(), "Film Scanner"), ("2".to_string(), "Reflection Print Scanner"), ("3".to_string(), "Digital Camera"), ]))),
             value_conv: None,
         }),
         (41729, TagInfo {
             name: "SceneType",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Directly photographed"), ]))),
             value_conv: None,
         }),
         (41730, TagInfo {
@@ -1346,19 +1346,19 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (41985, TagInfo {
             name: "CustomRendered",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Normal"), ("1".to_string(), "Custom"), ("2".to_string(), "HDR (no original saved)"), ("3".to_string(), "HDR (original saved)"), ("4".to_string(), "Original (for HDR)"), ("6".to_string(), "Panorama"), ("7".to_string(), "Portrait HDR"), ("8".to_string(), "Portrait"), ]))),
             value_conv: None,
         }),
         (41986, TagInfo {
             name: "ExposureMode",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Auto"), ("1".to_string(), "Manual"), ("2".to_string(), "Auto bracket"), ]))),
             value_conv: None,
         }),
         (41987, TagInfo {
             name: "WhiteBalance",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Auto"), ("1".to_string(), "Manual"), ]))),
             value_conv: None,
         }),
         (41988, TagInfo {
@@ -1376,31 +1376,31 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (41990, TagInfo {
             name: "SceneCaptureType",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Standard"), ("1".to_string(), "Landscape"), ("2".to_string(), "Portrait"), ("3".to_string(), "Night"), ("4".to_string(), "Other"), ]))),
             value_conv: None,
         }),
         (41991, TagInfo {
             name: "GainControl",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "None"), ("1".to_string(), "Low gain up"), ("2".to_string(), "High gain up"), ("3".to_string(), "Low gain down"), ("4".to_string(), "High gain down"), ]))),
             value_conv: None,
         }),
         (41992, TagInfo {
             name: "Contrast",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Normal"), ("1".to_string(), "Low"), ("2".to_string(), "High"), ]))),
             value_conv: None,
         }),
         (41993, TagInfo {
             name: "Saturation",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Normal"), ("1".to_string(), "Low"), ("2".to_string(), "High"), ]))),
             value_conv: None,
         }),
         (41994, TagInfo {
             name: "Sharpness",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Normal"), ("1".to_string(), "Soft"), ("2".to_string(), "Hard"), ]))),
             value_conv: None,
         }),
         (41995, TagInfo {
@@ -1412,7 +1412,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (41996, TagInfo {
             name: "SubjectDistanceRange",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Macro"), ("2".to_string(), "Close"), ("3".to_string(), "Distant"), ]))),
             value_conv: None,
         }),
         (42016, TagInfo {
@@ -1502,7 +1502,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (42080, TagInfo {
             name: "CompositeImage",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Not a Composite Image"), ("2".to_string(), "General Composite Image"), ("3".to_string(), "Composite Image Captured While Shooting"), ]))),
             value_conv: None,
         }),
         (42081, TagInfo {
@@ -1544,19 +1544,19 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (48129, TagInfo {
             name: "PixelFormat",
             format: "undef",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("10".to_string(), "16-bit BGR565"), ("11".to_string(), "16-bit Gray"), ("12".to_string(), "24-bit BGR"), ("13".to_string(), "24-bit RGB"), ("14".to_string(), "32-bit BGR"), ("15".to_string(), "32-bit BGRA"), ("16".to_string(), "32-bit PBGRA"), ("17".to_string(), "32-bit Gray Float"), ("18".to_string(), "48-bit RGB Fixed Point"), ("19".to_string(), "32-bit BGR101010"), ("21".to_string(), "48-bit RGB"), ("22".to_string(), "64-bit RGBA"), ("23".to_string(), "64-bit PRGBA"), ("24".to_string(), "96-bit RGB Fixed Point"), ("25".to_string(), "128-bit RGBA Float"), ("26".to_string(), "128-bit PRGBA Float"), ("27".to_string(), "128-bit RGB Float"), ("28".to_string(), "32-bit CMYK"), ("29".to_string(), "64-bit RGBA Fixed Point"), ("30".to_string(), "128-bit RGBA Fixed Point"), ("31".to_string(), "64-bit CMYK"), ("32".to_string(), "24-bit 3 Channels"), ("33".to_string(), "32-bit 4 Channels"), ("34".to_string(), "40-bit 5 Channels"), ("35".to_string(), "48-bit 6 Channels"), ("36".to_string(), "56-bit 7 Channels"), ("37".to_string(), "64-bit 8 Channels"), ("38".to_string(), "48-bit 3 Channels"), ("39".to_string(), "64-bit 4 Channels"), ("40".to_string(), "80-bit 5 Channels"), ("41".to_string(), "96-bit 6 Channels"), ("42".to_string(), "112-bit 7 Channels"), ("43".to_string(), "128-bit 8 Channels"), ("44".to_string(), "40-bit CMYK Alpha"), ("45".to_string(), "80-bit CMYK Alpha"), ("46".to_string(), "32-bit 3 Channels Alpha"), ("47".to_string(), "40-bit 4 Channels Alpha"), ("48".to_string(), "48-bit 5 Channels Alpha"), ("49".to_string(), "56-bit 6 Channels Alpha"), ("5".to_string(), "Black & White"), ("50".to_string(), "64-bit 7 Channels Alpha"), ("51".to_string(), "72-bit 8 Channels Alpha"), ("52".to_string(), "64-bit 3 Channels Alpha"), ("53".to_string(), "80-bit 4 Channels Alpha"), ("54".to_string(), "96-bit 5 Channels Alpha"), ("55".to_string(), "112-bit 6 Channels Alpha"), ("56".to_string(), "128-bit 7 Channels Alpha"), ("57".to_string(), "144-bit 8 Channels Alpha"), ("58".to_string(), "64-bit RGBA Half"), ("59".to_string(), "48-bit RGB Half"), ("61".to_string(), "32-bit RGBE"), ("62".to_string(), "16-bit Gray Half"), ("63".to_string(), "32-bit Gray Fixed Point"), ("8".to_string(), "8-bit Gray"), ("9".to_string(), "16-bit BGR555"), ]))),
             value_conv: Some(ValueConv::Function(ast_value_11127a0177bcf959)),
         }),
         (48130, TagInfo {
             name: "Transformation",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Horizontal (normal)"), ("1".to_string(), "Mirror vertical"), ("2".to_string(), "Mirror horizontal"), ("3".to_string(), "Rotate 180"), ("4".to_string(), "Rotate 90 CW"), ("5".to_string(), "Mirror horizontal and rotate 90 CW"), ("6".to_string(), "Mirror horizontal and rotate 270 CW"), ("7".to_string(), "Rotate 270 CW"), ]))),
             value_conv: None,
         }),
         (48131, TagInfo {
             name: "Uncompressed",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "No"), ("1".to_string(), "Yes"), ]))),
             value_conv: None,
         }),
         (48132, TagInfo {
@@ -1592,13 +1592,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (48324, TagInfo {
             name: "ImageDataDiscard",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Full Resolution"), ("1".to_string(), "Flexbits Discarded"), ("2".to_string(), "HighPass Frequency Data Discarded"), ("3".to_string(), "Highpass and LowPass Frequency Data Discarded"), ]))),
             value_conv: None,
         }),
         (48325, TagInfo {
             name: "AlphaDataDiscard",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Full Resolution"), ("1".to_string(), "Flexbits Discarded"), ("2".to_string(), "HighPass Frequency Data Discarded"), ("3".to_string(), "Highpass and LowPass Frequency Data Discarded"), ]))),
             value_conv: None,
         }),
         (50255, TagInfo {
@@ -1634,13 +1634,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (50560, TagInfo {
             name: "USPTOOriginalContentType",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Text or Drawing"), ("1".to_string(), "Grayscale"), ("2".to_string(), "Color"), ]))),
             value_conv: None,
         }),
         (50656, TagInfo {
             name: "CR2CFAPattern",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0 1 1 2".to_string(), "[Red,Green][Green,Blue]"), ("1 0 2 1".to_string(), "[Green,Red][Blue,Green]"), ("1 2 0 1".to_string(), "[Green,Blue][Red,Green]"), ("2 1 1 0".to_string(), "[Blue,Green][Green,Red]"), ]))),
             value_conv: Some(ValueConv::Complex),
         }),
         (50706, TagInfo {
@@ -1676,7 +1676,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (50711, TagInfo {
             name: "CFALayout",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Rectangular"), ("2".to_string(), "Even columns offset down 1/2 row"), ("3".to_string(), "Even columns offset up 1/2 row"), ("4".to_string(), "Even rows offset right 1/2 column"), ("5".to_string(), "Even rows offset left 1/2 column"), ("6".to_string(), "Even rows offset up by 1/2 row, even columns offset left by 1/2 column"), ("7".to_string(), "Even rows offset up by 1/2 row, even columns offset right by 1/2 column"), ("8".to_string(), "Even rows offset down by 1/2 row, even columns offset left by 1/2 column"), ("9".to_string(), "Even rows offset down by 1/2 row, even columns offset right by 1/2 column"), ]))),
             value_conv: None,
         }),
         (50712, TagInfo {
@@ -1850,7 +1850,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (50741, TagInfo {
             name: "MakerNoteSafety",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unsafe"), ("1".to_string(), "Safe"), ]))),
             value_conv: None,
         }),
         (50752, TagInfo {
@@ -1862,13 +1862,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (50778, TagInfo {
             name: "CalibrationIlluminant1",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Daylight"), ("10".to_string(), "Cloudy"), ("11".to_string(), "Shade"), ("12".to_string(), "Daylight Fluorescent"), ("13".to_string(), "Day White Fluorescent"), ("14".to_string(), "Cool White Fluorescent"), ("15".to_string(), "White Fluorescent"), ("16".to_string(), "Warm White Fluorescent"), ("17".to_string(), "Standard Light A"), ("18".to_string(), "Standard Light B"), ("19".to_string(), "Standard Light C"), ("2".to_string(), "Fluorescent"), ("20".to_string(), "D55"), ("21".to_string(), "D65"), ("22".to_string(), "D75"), ("23".to_string(), "D50"), ("24".to_string(), "ISO Studio Tungsten"), ("255".to_string(), "Other"), ("3".to_string(), "Tungsten (Incandescent)"), ("4".to_string(), "Flash"), ("9".to_string(), "Fine Weather"), ]))),
             value_conv: None,
         }),
         (50779, TagInfo {
             name: "CalibrationIlluminant2",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Daylight"), ("10".to_string(), "Cloudy"), ("11".to_string(), "Shade"), ("12".to_string(), "Daylight Fluorescent"), ("13".to_string(), "Day White Fluorescent"), ("14".to_string(), "Cool White Fluorescent"), ("15".to_string(), "White Fluorescent"), ("16".to_string(), "Warm White Fluorescent"), ("17".to_string(), "Standard Light A"), ("18".to_string(), "Standard Light B"), ("19".to_string(), "Standard Light C"), ("2".to_string(), "Fluorescent"), ("20".to_string(), "D55"), ("21".to_string(), "D65"), ("22".to_string(), "D75"), ("23".to_string(), "D50"), ("24".to_string(), "ISO Studio Tungsten"), ("255".to_string(), "Other"), ("3".to_string(), "Tungsten (Incandescent)"), ("4".to_string(), "Flash"), ("9".to_string(), "Fine Weather"), ]))),
             value_conv: None,
         }),
         (50780, TagInfo {
@@ -1940,7 +1940,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (50879, TagInfo {
             name: "ColorimetricReference",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Scene-referred"), ("1".to_string(), "Output-referred (ICC Profile Dynamic Range)"), ("2".to_string(), "Output-referred (High Dyanmic Range)"), ]))),
             value_conv: None,
         }),
         (50885, TagInfo {
@@ -2024,7 +2024,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (50941, TagInfo {
             name: "ProfileEmbedPolicy",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Allow Copying"), ("1".to_string(), "Embed if Used"), ("2".to_string(), "Never Embed"), ("3".to_string(), "No Restrictions"), ]))),
             value_conv: None,
         }),
         (50942, TagInfo {
@@ -2072,7 +2072,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (50970, TagInfo {
             name: "PreviewColorSpace",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Gray Gamma 2.2"), ("2".to_string(), "sRGB"), ("3".to_string(), "Adobe RGB"), ("4".to_string(), "ProPhoto RGB"), ]))),
             value_conv: None,
         }),
         (50971, TagInfo {
@@ -2108,19 +2108,19 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (51008, TagInfo {
             name: "OpcodeList1",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "WarpRectilinear"), ("10".to_string(), "DeltaPerRow"), ("11".to_string(), "DeltaPerColumn"), ("12".to_string(), "ScalePerRow"), ("13".to_string(), "ScalePerColumn"), ("14".to_string(), "WarpRectilinear2"), ("2".to_string(), "WarpFisheye"), ("3".to_string(), "FixVignetteRadial"), ("4".to_string(), "FixBadPixelsConstant"), ("5".to_string(), "FixBadPixelsList"), ("6".to_string(), "TrimBounds"), ("7".to_string(), "MapTable"), ("8".to_string(), "MapPolynomial"), ("9".to_string(), "GainMap"), ("OTHER".to_string(), "[Function: Image::ExifTool::Exif::PrintOpcode]"), ]))),
             value_conv: None,
         }),
         (51009, TagInfo {
             name: "OpcodeList2",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "WarpRectilinear"), ("10".to_string(), "DeltaPerRow"), ("11".to_string(), "DeltaPerColumn"), ("12".to_string(), "ScalePerRow"), ("13".to_string(), "ScalePerColumn"), ("14".to_string(), "WarpRectilinear2"), ("2".to_string(), "WarpFisheye"), ("3".to_string(), "FixVignetteRadial"), ("4".to_string(), "FixBadPixelsConstant"), ("5".to_string(), "FixBadPixelsList"), ("6".to_string(), "TrimBounds"), ("7".to_string(), "MapTable"), ("8".to_string(), "MapPolynomial"), ("9".to_string(), "GainMap"), ("OTHER".to_string(), "[Function: Image::ExifTool::Exif::PrintOpcode]"), ]))),
             value_conv: None,
         }),
         (51022, TagInfo {
             name: "OpcodeList3",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "WarpRectilinear"), ("10".to_string(), "DeltaPerRow"), ("11".to_string(), "DeltaPerColumn"), ("12".to_string(), "ScalePerRow"), ("13".to_string(), "ScalePerColumn"), ("14".to_string(), "WarpRectilinear2"), ("2".to_string(), "WarpFisheye"), ("3".to_string(), "FixVignetteRadial"), ("4".to_string(), "FixBadPixelsConstant"), ("5".to_string(), "FixBadPixelsList"), ("6".to_string(), "TrimBounds"), ("7".to_string(), "MapTable"), ("8".to_string(), "MapPolynomial"), ("9".to_string(), "GainMap"), ("OTHER".to_string(), "[Function: Image::ExifTool::Exif::PrintOpcode]"), ]))),
             value_conv: None,
         }),
         (51041, TagInfo {
@@ -2180,13 +2180,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (51107, TagInfo {
             name: "ProfileHueSatMapEncoding",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Linear"), ("1".to_string(), "sRGB"), ]))),
             value_conv: None,
         }),
         (51108, TagInfo {
             name: "ProfileLookTableEncoding",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Linear"), ("1".to_string(), "sRGB"), ]))),
             value_conv: None,
         }),
         (51109, TagInfo {
@@ -2198,7 +2198,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (51110, TagInfo {
             name: "DefaultBlackRender",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Auto"), ("1".to_string(), "None"), ]))),
             value_conv: None,
         }),
         (51111, TagInfo {
@@ -2246,7 +2246,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (51177, TagInfo {
             name: "DepthFormat",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Linear"), ("2".to_string(), "Inverse"), ]))),
             value_conv: None,
         }),
         (51178, TagInfo {
@@ -2264,13 +2264,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (51180, TagInfo {
             name: "DepthUnits",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Meters"), ]))),
             value_conv: None,
         }),
         (51181, TagInfo {
             name: "DepthMeasureType",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Optical Axis"), ("2".to_string(), "Optical Ray"), ]))),
             value_conv: None,
         }),
         (51182, TagInfo {
@@ -2300,7 +2300,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (52529, TagInfo {
             name: "CalibrationIlluminant3",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Daylight"), ("10".to_string(), "Cloudy"), ("11".to_string(), "Shade"), ("12".to_string(), "Daylight Fluorescent"), ("13".to_string(), "Day White Fluorescent"), ("14".to_string(), "Cool White Fluorescent"), ("15".to_string(), "White Fluorescent"), ("16".to_string(), "Warm White Fluorescent"), ("17".to_string(), "Standard Light A"), ("18".to_string(), "Standard Light B"), ("19".to_string(), "Standard Light C"), ("2".to_string(), "Fluorescent"), ("20".to_string(), "D55"), ("21".to_string(), "D65"), ("22".to_string(), "D75"), ("23".to_string(), "D50"), ("24".to_string(), "ISO Studio Tungsten"), ("255".to_string(), "Other"), ("3".to_string(), "Tungsten (Incandescent)"), ("4".to_string(), "Flash"), ("9".to_string(), "Fine Weather"), ]))),
             value_conv: None,
         }),
         (52530, TagInfo {
@@ -2576,6 +2576,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

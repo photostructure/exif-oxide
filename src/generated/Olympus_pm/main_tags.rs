@@ -21,919 +21,612 @@ use crate::generated::functions::hash_dd::ast_print_dd22782e5ba8c7cb;
 /// Tag definitions for Olympus::Main table
 pub static OLYMPUS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (
-            0,
-            TagInfo {
-                name: "MakerNoteVersion",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            1,
-            TagInfo {
-                name: "MinoltaCameraSettingsOld",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            3,
-            TagInfo {
-                name: "MinoltaCameraSettings",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            64,
-            TagInfo {
-                name: "CompressedImageSize",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            129,
-            TagInfo {
-                name: "PreviewImageData",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            136,
-            TagInfo {
-                name: "PreviewImageStart",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            137,
-            TagInfo {
-                name: "PreviewImageLength",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            256,
-            TagInfo {
-                name: "ThumbnailImage",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            260,
-            TagInfo {
-                name: "BodyFirmwareVersion",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            512,
-            TagInfo {
-                name: "SpecialMode",
-                format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "[Function: Image::ExifTool::Olympus::__ANON__]".to_string(),
-                )),
-                value_conv: None,
-            },
-        ),
-        (
-            513,
-            TagInfo {
-                name: "Quality",
-                format: "unknown",
-                print_conv: Some(PrintConv::Expression(
-                    "[Function: Image::ExifTool::Olympus::__ANON__]".to_string(),
-                )),
-                value_conv: None,
-            },
-        ),
-        (
-            514,
-            TagInfo {
-                name: "Macro",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            515,
-            TagInfo {
-                name: "BWMode",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            516,
-            TagInfo {
-                name: "DigitalZoom",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_5f49e36c478dfb01)),
-                value_conv: None,
-            },
-        ),
-        (
-            517,
-            TagInfo {
-                name: "FocalPlaneDiagonal",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
-                value_conv: None,
-            },
-        ),
-        (
-            518,
-            TagInfo {
-                name: "LensDistortionParams",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            519,
-            TagInfo {
-                name: "CameraType",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: Some(ValueConv::Function(ast_value_a06c82bf6b59eb39)),
-            },
-        ),
-        (
-            520,
-            TagInfo {
-                name: "TextInfo",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            521,
-            TagInfo {
-                name: "CameraID",
-                format: "string",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            523,
-            TagInfo {
-                name: "EpsonImageWidth",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            524,
-            TagInfo {
-                name: "EpsonImageHeight",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            525,
-            TagInfo {
-                name: "EpsonSoftware",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            640,
-            TagInfo {
-                name: "PreviewImage",
-                format: "undef",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            768,
-            TagInfo {
-                name: "PreCaptureFrames",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            769,
-            TagInfo {
-                name: "WhiteBoard",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            770,
-            TagInfo {
-                name: "OneTouchWB",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            771,
-            TagInfo {
-                name: "WhiteBalanceBracket",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            772,
-            TagInfo {
-                name: "WhiteBalanceBias",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            1024,
-            TagInfo {
-                name: "SensorArea",
-                format: "int16u",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            1025,
-            TagInfo {
-                name: "BlackLevel",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            1027,
-            TagInfo {
-                name: "SceneMode",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            1028,
-            TagInfo {
-                name: "SerialNumber",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            1029,
-            TagInfo {
-                name: "Firmware",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            3584,
-            TagInfo {
-                name: "PrintIM",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            3840,
-            TagInfo {
-                name: "DataDump",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            3841,
-            TagInfo {
-                name: "DataDump2",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            3844,
-            TagInfo {
-                name: "ZoomedPreviewStart",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            3845,
-            TagInfo {
-                name: "ZoomedPreviewLength",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            3846,
-            TagInfo {
-                name: "ZoomedPreviewSize",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4096,
-            TagInfo {
-                name: "ShutterSpeedValue",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
-                value_conv: Some(ValueConv::Function(ast_value_beccf4b4cbb850ea)),
-            },
-        ),
-        (
-            4097,
-            TagInfo {
-                name: "ISOValue",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_a30bb45410af5d6d)),
-                value_conv: Some(ValueConv::Function(ast_value_63c611b509e3e3e9)),
-            },
-        ),
-        (
-            4098,
-            TagInfo {
-                name: "ApertureValue",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
-                value_conv: Some(ValueConv::Function(ast_value_bb77e52729467611)),
-            },
-        ),
-        (
-            4099,
-            TagInfo {
-                name: "BrightnessValue",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4100,
-            TagInfo {
-                name: "FlashMode",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            4101,
-            TagInfo {
-                name: "FlashDevice",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            4102,
-            TagInfo {
-                name: "ExposureCompensation",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4103,
-            TagInfo {
-                name: "SensorTemperature",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4104,
-            TagInfo {
-                name: "LensTemperature",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4105,
-            TagInfo {
-                name: "LightCondition",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4106,
-            TagInfo {
-                name: "FocusRange",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            4107,
-            TagInfo {
-                name: "FocusMode",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            4108,
-            TagInfo {
-                name: "ManualFocusDistance",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
-                value_conv: None,
-            },
-        ),
-        (
-            4109,
-            TagInfo {
-                name: "ZoomStepCount",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4110,
-            TagInfo {
-                name: "FocusStepCount",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4111,
-            TagInfo {
-                name: "Sharpness",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            4112,
-            TagInfo {
-                name: "FlashChargeLevel",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4113,
-            TagInfo {
-                name: "ColorMatrix",
-                format: "int16s",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4114,
-            TagInfo {
-                name: "BlackLevel",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4115,
-            TagInfo {
-                name: "ColorTemperatureBG",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4116,
-            TagInfo {
-                name: "ColorTemperatureRG",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4117,
-            TagInfo {
-                name: "WBMode",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            4119,
-            TagInfo {
-                name: "RedBalance",
-                format: "unknown",
-                print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_b1916ec1ca7c9250)),
-            },
-        ),
-        (
-            4120,
-            TagInfo {
-                name: "BlueBalance",
-                format: "unknown",
-                print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_b1916ec1ca7c9250)),
-            },
-        ),
-        (
-            4121,
-            TagInfo {
-                name: "ColorMatrixNumber",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4122,
-            TagInfo {
-                name: "SerialNumber",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4123,
-            TagInfo {
-                name: "ExternalFlashAE1_0",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4124,
-            TagInfo {
-                name: "ExternalFlashAE2_0",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4125,
-            TagInfo {
-                name: "InternalFlashAE1_0",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4126,
-            TagInfo {
-                name: "InternalFlashAE2_0",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4127,
-            TagInfo {
-                name: "ExternalFlashAE1",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4128,
-            TagInfo {
-                name: "ExternalFlashAE2",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4129,
-            TagInfo {
-                name: "InternalFlashAE1",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4130,
-            TagInfo {
-                name: "InternalFlashAE2",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4131,
-            TagInfo {
-                name: "FlashExposureComp",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4132,
-            TagInfo {
-                name: "InternalFlashTable",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4133,
-            TagInfo {
-                name: "ExternalFlashGValue",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4134,
-            TagInfo {
-                name: "ExternalFlashBounce",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            4135,
-            TagInfo {
-                name: "ExternalFlashZoom",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4136,
-            TagInfo {
-                name: "ExternalFlashMode",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4137,
-            TagInfo {
-                name: "Contrast",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            4138,
-            TagInfo {
-                name: "SharpnessFactor",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4139,
-            TagInfo {
-                name: "ColorControl",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4140,
-            TagInfo {
-                name: "ValidBits",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4141,
-            TagInfo {
-                name: "CoringFilter",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4142,
-            TagInfo {
-                name: "OlympusImageWidth",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4143,
-            TagInfo {
-                name: "OlympusImageHeight",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4144,
-            TagInfo {
-                name: "SceneDetect",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4145,
-            TagInfo {
-                name: "SceneArea",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4147,
-            TagInfo {
-                name: "SceneDetectData",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4148,
-            TagInfo {
-                name: "CompressionRatio",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4149,
-            TagInfo {
-                name: "PreviewImageValid",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            4150,
-            TagInfo {
-                name: "PreviewImageStart",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4151,
-            TagInfo {
-                name: "PreviewImageLength",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4152,
-            TagInfo {
-                name: "AFResult",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4153,
-            TagInfo {
-                name: "CCDScanMode",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            4154,
-            TagInfo {
-                name: "NoiseReduction",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            4155,
-            TagInfo {
-                name: "FocusStepInfinity",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4156,
-            TagInfo {
-                name: "FocusStepNear",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4157,
-            TagInfo {
-                name: "LightValueCenter",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4158,
-            TagInfo {
-                name: "LightValuePeriphery",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            4159,
-            TagInfo {
-                name: "FieldCount",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
+        (0, TagInfo {
+            name: "MakerNoteVersion",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (1, TagInfo {
+            name: "MinoltaCameraSettingsOld",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (3, TagInfo {
+            name: "MinoltaCameraSettings",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (64, TagInfo {
+            name: "CompressedImageSize",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (129, TagInfo {
+            name: "PreviewImageData",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (136, TagInfo {
+            name: "PreviewImageStart",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (137, TagInfo {
+            name: "PreviewImageLength",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (256, TagInfo {
+            name: "ThumbnailImage",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (260, TagInfo {
+            name: "BodyFirmwareVersion",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (512, TagInfo {
+            name: "SpecialMode",
+            format: "unknown",
+            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Olympus::__ANON__]".to_string())),
+            value_conv: None,
+        }),
+        (513, TagInfo {
+            name: "Quality",
+            format: "unknown",
+            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Olympus::__ANON__]".to_string())),
+            value_conv: None,
+        }),
+        (514, TagInfo {
+            name: "Macro",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "On"), ("2".to_string(), "Super Macro"), ]))),
+            value_conv: None,
+        }),
+        (515, TagInfo {
+            name: "BWMode",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "On"), ("6".to_string(), "(none)"), ]))),
+            value_conv: None,
+        }),
+        (516, TagInfo {
+            name: "DigitalZoom",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_5f49e36c478dfb01)),
+            value_conv: None,
+        }),
+        (517, TagInfo {
+            name: "FocalPlaneDiagonal",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
+            value_conv: None,
+        }),
+        (518, TagInfo {
+            name: "LensDistortionParams",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (519, TagInfo {
+            name: "CameraType",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("D4028".to_string(), "X-2,C-50Z"), ("D4029".to_string(), "E-20,E-20N,E-20P"), ("D4034".to_string(), "C720UZ"), ("D4040".to_string(), "E-1"), ("D4041".to_string(), "E-300"), ("D4083".to_string(), "C2Z,D520Z,C220Z"), ("D4106".to_string(), "u20D,S400D,u400D"), ("D4120".to_string(), "X-1"), ("D4122".to_string(), "u10D,S300D,u300D"), ("D4125".to_string(), "AZ-1"), ("D4141".to_string(), "C150,D390"), ("D4193".to_string(), "C-5000Z"), ("D4194".to_string(), "X-3,C-60Z"), ("D4199".to_string(), "u30D,S410D,u410D"), ("D4205".to_string(), "X450,D535Z,C370Z"), ("D4210".to_string(), "C160,D395"), ("D4211".to_string(), "C725UZ"), ("D4213".to_string(), "FerrariMODEL2003"), ("D4216".to_string(), "u15D"), ("D4217".to_string(), "u25D"), ("D4220".to_string(), "u-miniD,Stylus V"), ("D4221".to_string(), "u40D,S500,uD500"), ("D4231".to_string(), "FerrariMODEL2004"), ("D4240".to_string(), "X500,D590Z,C470Z"), ("D4244".to_string(), "uD800,S800"), ("D4256".to_string(), "u720SW,S720SW"), ("D4261".to_string(), "X600,D630,FE5500"), ("D4262".to_string(), "uD600,S600"), ("D4301".to_string(), "u810/S810"), ("D4302".to_string(), "u710,S710"), ("D4303".to_string(), "u700,S700"), ("D4304".to_string(), "FE100,X710"), ("D4305".to_string(), "FE110,X705"), ("D4310".to_string(), "FE-130,X-720"), ("D4311".to_string(), "FE-140,X-725"), ("D4312".to_string(), "FE150,X730"), ("D4313".to_string(), "FE160,X735"), ("D4314".to_string(), "u740,S740"), ("D4315".to_string(), "u750,S750"), ("D4316".to_string(), "u730/S730"), ("D4317".to_string(), "FE115,X715"), ("D4321".to_string(), "SP550UZ"), ("D4322".to_string(), "SP510UZ"), ("D4324".to_string(), "FE170,X760"), ("D4326".to_string(), "FE200"), ("D4327".to_string(), "FE190/X750"), ("D4328".to_string(), "u760,S760"), ("D4330".to_string(), "FE180/X745"), ("D4331".to_string(), "u1000/S1000"), ("D4332".to_string(), "u770SW,S770SW"), ("D4333".to_string(), "FE240/X795"), ("D4334".to_string(), "FE210,X775"), ("D4336".to_string(), "FE230/X790"), ("D4337".to_string(), "FE220,X785"), ("D4338".to_string(), "u725SW,S725SW"), ("D4339".to_string(), "FE250/X800"), ("D4341".to_string(), "u780,S780"), ("D4343".to_string(), "u790SW,S790SW"), ("D4344".to_string(), "u1020,S1020"), ("D4346".to_string(), "FE15,X10"), ("D4348".to_string(), "FE280,X820,C520"), ("D4349".to_string(), "FE300,X830"), ("D4350".to_string(), "u820,S820"), ("D4351".to_string(), "u1200,S1200"), ("D4352".to_string(), "FE270,X815,C510"), ("D4353".to_string(), "u795SW,S795SW"), ("D4354".to_string(), "u1030SW,S1030SW"), ("D4355".to_string(), "SP560UZ"), ("D4356".to_string(), "u1010,S1010"), ("D4357".to_string(), "u830,S830"), ("D4359".to_string(), "u840,S840"), ("D4360".to_string(), "FE350WIDE,X865"), ("D4361".to_string(), "u850SW,S850SW"), ("D4362".to_string(), "FE340,X855,C560"), ("D4363".to_string(), "FE320,X835,C540"), ("D4364".to_string(), "SP570UZ"), ("D4366".to_string(), "FE330,X845,C550"), ("D4368".to_string(), "FE310,X840,C530"), ("D4370".to_string(), "u1050SW,S1050SW"), ("D4371".to_string(), "u1060,S1060"), ("D4372".to_string(), "FE370,X880,C575"), ("D4374".to_string(), "SP565UZ"), ("D4377".to_string(), "u1040,S1040"), ("D4378".to_string(), "FE360,X875,C570"), ("D4379".to_string(), "FE20,X15,C25"), ("D4380".to_string(), "uT6000,ST6000"), ("D4381".to_string(), "uT8000,ST8000"), ("D4382".to_string(), "u9000,S9000"), ("D4384".to_string(), "SP590UZ"), ("D4385".to_string(), "FE3010,X895"), ("D4386".to_string(), "FE3000,X890"), ("D4387".to_string(), "FE35,X30"), ("D4388".to_string(), "u550WP,S550WP"), ("D4390".to_string(), "FE5000,X905"), ("D4391".to_string(), "u5000"), ("D4392".to_string(), "u7000,S7000"), ("D4396".to_string(), "FE5010,X915"), ("D4397".to_string(), "FE25,X20"), ("D4398".to_string(), "FE45,X40"), ("D4401".to_string(), "XZ-1"), ("D4402".to_string(), "uT6010,ST6010"), ("D4406".to_string(), "u7010,S7010 / u7020,S7020"), ("D4407".to_string(), "FE4010,X930"), ("D4408".to_string(), "X560WP"), ("D4409".to_string(), "FE26,X21"), ("D4410".to_string(), "FE4000,X920,X925"), ("D4411".to_string(), "FE46,X41,X42"), ("D4412".to_string(), "FE5020,X935"), ("D4413".to_string(), "uTough-3000"), ("D4414".to_string(), "StylusTough-6020"), ("D4415".to_string(), "StylusTough-8010"), ("D4417".to_string(), "u5010,S5010"), ("D4418".to_string(), "u7040,S7040"), ("D4419".to_string(), "u9010,S9010"), ("D4423".to_string(), "FE4040"), ("D4424".to_string(), "FE47,X43"), ("D4426".to_string(), "FE4030,X950"), ("D4428".to_string(), "FE5030,X965,X960"), ("D4430".to_string(), "u7030,S7030"), ("D4432".to_string(), "SP600UZ"), ("D4434".to_string(), "SP800UZ"), ("D4439".to_string(), "FE4020,X940"), ("D4442".to_string(), "FE5035"), ("D4448".to_string(), "FE4050,X970"), ("D4450".to_string(), "FE5050,X985"), ("D4454".to_string(), "u-7050"), ("D4464".to_string(), "T10,X27"), ("D4470".to_string(), "FE5040,X980"), ("D4472".to_string(), "TG-310"), ("D4474".to_string(), "TG-610"), ("D4476".to_string(), "TG-810"), ("D4478".to_string(), "VG145,VG140,D715"), ("D4479".to_string(), "VG130,D710"), ("D4480".to_string(), "VG120,D705"), ("D4482".to_string(), "VR310,D720"), ("D4484".to_string(), "VR320,D725"), ("D4486".to_string(), "VR330,D730"), ("D4488".to_string(), "VG110,D700"), ("D4490".to_string(), "SP-610UZ"), ("D4492".to_string(), "SZ-10"), ("D4494".to_string(), "SZ-20"), ("D4496".to_string(), "SZ-30MR"), ("D4498".to_string(), "SP-810UZ"), ("D4500".to_string(), "SZ-11"), ("D4504".to_string(), "TG-615"), ("D4508".to_string(), "TG-620"), ("D4510".to_string(), "TG-820"), ("D4512".to_string(), "TG-1"), ("D4516".to_string(), "SH-21"), ("D4519".to_string(), "SZ-14"), ("D4520".to_string(), "SZ-31MR"), ("D4521".to_string(), "SH-25MR"), ("D4523".to_string(), "SP-720UZ"), ("D4529".to_string(), "VG170"), ("D4530".to_string(), "VH210"), ("D4531".to_string(), "XZ-2"), ("D4535".to_string(), "SP-620UZ"), ("D4536".to_string(), "TG-320"), ("D4537".to_string(), "VR340,D750"), ("D4538".to_string(), "VG160,X990,D745"), ("D4541".to_string(), "SZ-12"), ("D4545".to_string(), "VH410"), ("D4546".to_string(), "XZ-10"), ("D4547".to_string(), "TG-2"), ("D4548".to_string(), "TG-830"), ("D4549".to_string(), "TG-630"), ("D4550".to_string(), "SH-50"), ("D4553".to_string(), "SZ-16,DZ-105"), ("D4562".to_string(), "SP-820UZ"), ("D4566".to_string(), "SZ-15"), ("D4572".to_string(), "STYLUS1"), ("D4574".to_string(), "TG-3"), ("D4575".to_string(), "TG-850"), ("D4579".to_string(), "SP-100EE"), ("D4580".to_string(), "SH-60"), ("D4581".to_string(), "SH-1"), ("D4582".to_string(), "TG-835"), ("D4585".to_string(), "SH-2 / SH-3"), ("D4586".to_string(), "TG-4"), ("D4587".to_string(), "TG-860"), ("D4590".to_string(), "TG-TRACKER"), ("D4591".to_string(), "TG-870"), ("D4593".to_string(), "TG-5"), ("D4603".to_string(), "TG-6"), ("D4605".to_string(), "TG-7"), ("D4809".to_string(), "C2500L"), ("D4842".to_string(), "E-10"), ("D4856".to_string(), "C-1"), ("D4857".to_string(), "C-1Z,D-150Z"), ("DCHC".to_string(), "D500L"), ("DCHT".to_string(), "D600L / D620L"), ("K0055".to_string(), "AIR-A01"), ("Notes".to_string(), "\n        These values are currently decoded only for Olympus models.  Models with\n        Olympus-style maker notes from other brands such as Acer, BenQ, Hitachi, HP,\n        Premier, Konica-Minolta, Maginon, Ricoh, Rollei, SeaLife, Sony, Supra,\n        Vivitar are not listed.\n    "), ("S0003".to_string(), "E-330"), ("S0004".to_string(), "E-500"), ("S0009".to_string(), "E-400"), ("S0010".to_string(), "E-510"), ("S0011".to_string(), "E-3"), ("S0013".to_string(), "E-410"), ("S0016".to_string(), "E-420"), ("S0017".to_string(), "E-30"), ("S0018".to_string(), "E-520"), ("S0019".to_string(), "E-P1"), ("S0023".to_string(), "E-620"), ("S0026".to_string(), "E-P2"), ("S0027".to_string(), "E-PL1"), ("S0029".to_string(), "E-450"), ("S0030".to_string(), "E-600"), ("S0032".to_string(), "E-P3"), ("S0033".to_string(), "E-5"), ("S0034".to_string(), "E-PL2"), ("S0036".to_string(), "E-M5"), ("S0038".to_string(), "E-PL3"), ("S0039".to_string(), "E-PM1"), ("S0040".to_string(), "E-PL1s"), ("S0042".to_string(), "E-PL5"), ("S0043".to_string(), "E-PM2"), ("S0044".to_string(), "E-P5"), ("S0045".to_string(), "E-PL6"), ("S0046".to_string(), "E-PL7"), ("S0047".to_string(), "E-M1"), ("S0051".to_string(), "E-M10"), ("S0052".to_string(), "E-M5MarkII"), ("S0059".to_string(), "E-M10MarkII"), ("S0061".to_string(), "PEN-F"), ("S0065".to_string(), "E-PL8"), ("S0067".to_string(), "E-M1MarkII"), ("S0068".to_string(), "E-M10MarkIII"), ("S0076".to_string(), "E-PL9"), ("S0080".to_string(), "E-M1X"), ("S0085".to_string(), "E-PL10"), ("S0088".to_string(), "E-M10MarkIV"), ("S0089".to_string(), "E-M5MarkIII"), ("S0092".to_string(), "E-M1MarkIII"), ("S0093".to_string(), "E-P7"), ("S0094".to_string(), "E-M10MarkIIIS"), ("S0095".to_string(), "OM-1"), ("S0101".to_string(), "OM-5"), ("S0121".to_string(), "OM-1MarkII"), ("S0123".to_string(), "OM-3"), ("S0130".to_string(), "OM-5MarkII"), ("SR45".to_string(), "D220"), ("SR55".to_string(), "D320L"), ("SR83".to_string(), "D340L"), ("SR85".to_string(), "C830L,D340R"), ("SR852".to_string(), "C860L,D360L"), ("SR872".to_string(), "C900Z,D400Z"), ("SR874".to_string(), "C960Z,D460Z"), ("SR951".to_string(), "C2000Z"), ("SR952".to_string(), "C21"), ("SR953".to_string(), "C21T.commu"), ("SR954".to_string(), "C2020Z"), ("SR955".to_string(), "C990Z,D490Z"), ("SR956".to_string(), "C211Z"), ("SR959".to_string(), "C990ZS,D490Z"), ("SR95A".to_string(), "C2100UZ"), ("SR971".to_string(), "C100,D370"), ("SR973".to_string(), "C2,D230"), ("SX151".to_string(), "E100RS"), ("SX351".to_string(), "C3000Z / C3030Z"), ("SX354".to_string(), "C3040Z"), ("SX355".to_string(), "C2040Z"), ("SX357".to_string(), "C700UZ"), ("SX358".to_string(), "C200Z,D510Z"), ("SX374".to_string(), "C3100Z,C3020Z"), ("SX552".to_string(), "C4040Z"), ("SX553".to_string(), "C40Z,D40Z"), ("SX556".to_string(), "C730UZ"), ("SX558".to_string(), "C5050Z"), ("SX571".to_string(), "C120,D380"), ("SX574".to_string(), "C300Z,D550Z"), ("SX575".to_string(), "C4100Z,C4000Z"), ("SX751".to_string(), "X200,D560Z,C350Z"), ("SX752".to_string(), "X300,D565Z,C450Z"), ("SX753".to_string(), "C750UZ"), ("SX754".to_string(), "C740UZ"), ("SX755".to_string(), "C755UZ"), ("SX756".to_string(), "C5060WZ"), ("SX757".to_string(), "C8080WZ"), ("SX758".to_string(), "X350,D575Z,C360Z"), ("SX759".to_string(), "X400,D580Z,C460Z"), ("SX75A".to_string(), "AZ-2ZOOM"), ("SX75B".to_string(), "D595Z,C500Z"), ("SX75C".to_string(), "X550,D545Z,C480Z"), ("SX75D".to_string(), "IR-300"), ("SX75F".to_string(), "C55Z,C5500Z"), ("SX75G".to_string(), "C170,D425"), ("SX75J".to_string(), "C180,D435"), ("SX771".to_string(), "C760UZ"), ("SX772".to_string(), "C770UZ"), ("SX773".to_string(), "C745UZ"), ("SX774".to_string(), "X250,D560Z,C350Z"), ("SX775".to_string(), "X100,D540Z,C310Z"), ("SX776".to_string(), "C460ZdelSol"), ("SX777".to_string(), "C765UZ"), ("SX77A".to_string(), "D555Z,C315Z"), ("SX851".to_string(), "C7070WZ"), ("SX852".to_string(), "C70Z,C7000Z"), ("SX853".to_string(), "SP500UZ"), ("SX854".to_string(), "SP310"), ("SX855".to_string(), "SP350"), ("SX873".to_string(), "SP320"), ("SX875".to_string(), "FE180/X745"), ("SX876".to_string(), "FE190/X750"), ]))),
+            value_conv: Some(ValueConv::Function(ast_value_a06c82bf6b59eb39)),
+        }),
+        (520, TagInfo {
+            name: "TextInfo",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (521, TagInfo {
+            name: "CameraID",
+            format: "string",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (523, TagInfo {
+            name: "EpsonImageWidth",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (524, TagInfo {
+            name: "EpsonImageHeight",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (525, TagInfo {
+            name: "EpsonSoftware",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (640, TagInfo {
+            name: "PreviewImage",
+            format: "undef",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (768, TagInfo {
+            name: "PreCaptureFrames",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (769, TagInfo {
+            name: "WhiteBoard",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (770, TagInfo {
+            name: "OneTouchWB",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "On"), ("2".to_string(), "On (Preset)"), ]))),
+            value_conv: None,
+        }),
+        (771, TagInfo {
+            name: "WhiteBalanceBracket",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (772, TagInfo {
+            name: "WhiteBalanceBias",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (1024, TagInfo {
+            name: "SensorArea",
+            format: "int16u",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (1025, TagInfo {
+            name: "BlackLevel",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (1027, TagInfo {
+            name: "SceneMode",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Normal"), ("1".to_string(), "Standard"), ("10".to_string(), "Self Portrait"), ("100".to_string(), "Panorama"), ("101".to_string(), "Magic Filter"), ("103".to_string(), "HDR"), ("11".to_string(), "Indoor"), ("12".to_string(), "Beach & Snow"), ("13".to_string(), "Beach"), ("14".to_string(), "Snow"), ("15".to_string(), "Self Portrait+Self Timer"), ("16".to_string(), "Sunset"), ("17".to_string(), "Cuisine"), ("18".to_string(), "Documents"), ("19".to_string(), "Candle"), ("2".to_string(), "Auto"), ("20".to_string(), "Fireworks"), ("21".to_string(), "Available Light"), ("22".to_string(), "Vivid"), ("23".to_string(), "Underwater Wide1"), ("24".to_string(), "Underwater Macro"), ("25".to_string(), "Museum"), ("26".to_string(), "Behind Glass"), ("27".to_string(), "Auction"), ("28".to_string(), "Shoot & Select1"), ("29".to_string(), "Shoot & Select2"), ("3".to_string(), "Intelligent Auto"), ("30".to_string(), "Underwater Wide2"), ("31".to_string(), "Digital Image Stabilization"), ("32".to_string(), "Face Portrait"), ("33".to_string(), "Pet"), ("34".to_string(), "Smile Shot"), ("35".to_string(), "Quick Shutter"), ("4".to_string(), "Portrait"), ("43".to_string(), "Hand-held Starlight"), ("5".to_string(), "Landscape+Portrait"), ("6".to_string(), "Landscape"), ("7".to_string(), "Night Scene"), ("8".to_string(), "Night+Portrait"), ("9".to_string(), "Sport"), ]))),
+            value_conv: None,
+        }),
+        (1028, TagInfo {
+            name: "SerialNumber",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (1029, TagInfo {
+            name: "Firmware",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (3584, TagInfo {
+            name: "PrintIM",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (3840, TagInfo {
+            name: "DataDump",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (3841, TagInfo {
+            name: "DataDump2",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (3844, TagInfo {
+            name: "ZoomedPreviewStart",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (3845, TagInfo {
+            name: "ZoomedPreviewLength",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (3846, TagInfo {
+            name: "ZoomedPreviewSize",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4096, TagInfo {
+            name: "ShutterSpeedValue",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+            value_conv: Some(ValueConv::Function(ast_value_beccf4b4cbb850ea)),
+        }),
+        (4097, TagInfo {
+            name: "ISOValue",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_a30bb45410af5d6d)),
+            value_conv: Some(ValueConv::Function(ast_value_63c611b509e3e3e9)),
+        }),
+        (4098, TagInfo {
+            name: "ApertureValue",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+            value_conv: Some(ValueConv::Function(ast_value_bb77e52729467611)),
+        }),
+        (4099, TagInfo {
+            name: "BrightnessValue",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4100, TagInfo {
+            name: "FlashMode",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("2".to_string(), "On"), ("3".to_string(), "Off"), ]))),
+            value_conv: None,
+        }),
+        (4101, TagInfo {
+            name: "FlashDevice",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "None"), ("1".to_string(), "Internal"), ("4".to_string(), "External"), ("5".to_string(), "Internal + External"), ]))),
+            value_conv: None,
+        }),
+        (4102, TagInfo {
+            name: "ExposureCompensation",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4103, TagInfo {
+            name: "SensorTemperature",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4104, TagInfo {
+            name: "LensTemperature",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4105, TagInfo {
+            name: "LightCondition",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4106, TagInfo {
+            name: "FocusRange",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Normal"), ("1".to_string(), "Macro"), ]))),
+            value_conv: None,
+        }),
+        (4107, TagInfo {
+            name: "FocusMode",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Auto"), ("1".to_string(), "Manual"), ]))),
+            value_conv: None,
+        }),
+        (4108, TagInfo {
+            name: "ManualFocusDistance",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
+            value_conv: None,
+        }),
+        (4109, TagInfo {
+            name: "ZoomStepCount",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4110, TagInfo {
+            name: "FocusStepCount",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4111, TagInfo {
+            name: "Sharpness",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Normal"), ("1".to_string(), "Hard"), ("2".to_string(), "Soft"), ]))),
+            value_conv: None,
+        }),
+        (4112, TagInfo {
+            name: "FlashChargeLevel",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4113, TagInfo {
+            name: "ColorMatrix",
+            format: "int16s",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4114, TagInfo {
+            name: "BlackLevel",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4115, TagInfo {
+            name: "ColorTemperatureBG",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4116, TagInfo {
+            name: "ColorTemperatureRG",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4117, TagInfo {
+            name: "WBMode",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Auto"), ("1 0".to_string(), "Auto"), ("1 2".to_string(), "Auto (2)"), ("1 4".to_string(), "Auto (4)"), ("2 2".to_string(), "3000 Kelvin"), ("2 3".to_string(), "3700 Kelvin"), ("2 4".to_string(), "4000 Kelvin"), ("2 5".to_string(), "4500 Kelvin"), ("2 6".to_string(), "5500 Kelvin"), ("2 7".to_string(), "6500 Kelvin"), ("2 8".to_string(), "7500 Kelvin"), ("3 0".to_string(), "One-touch"), ]))),
+            value_conv: None,
+        }),
+        (4119, TagInfo {
+            name: "RedBalance",
+            format: "unknown",
+            print_conv: None,
+            value_conv: Some(ValueConv::Function(ast_value_b1916ec1ca7c9250)),
+        }),
+        (4120, TagInfo {
+            name: "BlueBalance",
+            format: "unknown",
+            print_conv: None,
+            value_conv: Some(ValueConv::Function(ast_value_b1916ec1ca7c9250)),
+        }),
+        (4121, TagInfo {
+            name: "ColorMatrixNumber",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4122, TagInfo {
+            name: "SerialNumber",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4123, TagInfo {
+            name: "ExternalFlashAE1_0",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4124, TagInfo {
+            name: "ExternalFlashAE2_0",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4125, TagInfo {
+            name: "InternalFlashAE1_0",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4126, TagInfo {
+            name: "InternalFlashAE2_0",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4127, TagInfo {
+            name: "ExternalFlashAE1",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4128, TagInfo {
+            name: "ExternalFlashAE2",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4129, TagInfo {
+            name: "InternalFlashAE1",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4130, TagInfo {
+            name: "InternalFlashAE2",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4131, TagInfo {
+            name: "FlashExposureComp",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4132, TagInfo {
+            name: "InternalFlashTable",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4133, TagInfo {
+            name: "ExternalFlashGValue",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4134, TagInfo {
+            name: "ExternalFlashBounce",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "No"), ("1".to_string(), "Yes"), ]))),
+            value_conv: None,
+        }),
+        (4135, TagInfo {
+            name: "ExternalFlashZoom",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4136, TagInfo {
+            name: "ExternalFlashMode",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4137, TagInfo {
+            name: "Contrast",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "High"), ("1".to_string(), "Normal"), ("2".to_string(), "Low"), ]))),
+            value_conv: None,
+        }),
+        (4138, TagInfo {
+            name: "SharpnessFactor",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4139, TagInfo {
+            name: "ColorControl",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4140, TagInfo {
+            name: "ValidBits",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4141, TagInfo {
+            name: "CoringFilter",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4142, TagInfo {
+            name: "OlympusImageWidth",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4143, TagInfo {
+            name: "OlympusImageHeight",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4144, TagInfo {
+            name: "SceneDetect",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4145, TagInfo {
+            name: "SceneArea",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4147, TagInfo {
+            name: "SceneDetectData",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4148, TagInfo {
+            name: "CompressionRatio",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4149, TagInfo {
+            name: "PreviewImageValid",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "No"), ("1".to_string(), "Yes"), ]))),
+            value_conv: None,
+        }),
+        (4150, TagInfo {
+            name: "PreviewImageStart",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4151, TagInfo {
+            name: "PreviewImageLength",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4152, TagInfo {
+            name: "AFResult",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4153, TagInfo {
+            name: "CCDScanMode",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Interlaced"), ("1".to_string(), "Progressive"), ]))),
+            value_conv: None,
+        }),
+        (4154, TagInfo {
+            name: "NoiseReduction",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "On"), ]))),
+            value_conv: None,
+        }),
+        (4155, TagInfo {
+            name: "FocusStepInfinity",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4156, TagInfo {
+            name: "FocusStepNear",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4157, TagInfo {
+            name: "LightValueCenter",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4158, TagInfo {
+            name: "LightValuePeriphery",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (4159, TagInfo {
+            name: "FieldCount",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
     ])
 });
 
@@ -979,6 +672,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

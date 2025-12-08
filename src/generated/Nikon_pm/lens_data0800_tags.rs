@@ -166,7 +166,53 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "LensID",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Nikkor Z 24-70mm f/4 S"),
+                    ("11".to_string(), "Nikkor Z DX 16-50mm f/3.5-6.3 VR"),
+                    ("12".to_string(), "Nikkor Z DX 50-250mm f/4.5-6.3 VR"),
+                    ("13".to_string(), "Nikkor Z 24-70mm f/2.8 S"),
+                    ("14".to_string(), "Nikkor Z 85mm f/1.8 S"),
+                    ("15".to_string(), "Nikkor Z 24mm f/1.8 S"),
+                    ("16".to_string(), "Nikkor Z 70-200mm f/2.8 VR S"),
+                    ("17".to_string(), "Nikkor Z 20mm f/1.8 S"),
+                    ("18".to_string(), "Nikkor Z 24-200mm f/4-6.3 VR"),
+                    ("2".to_string(), "Nikkor Z 14-30mm f/4 S"),
+                    ("21".to_string(), "Nikkor Z 50mm f/1.2 S"),
+                    ("22".to_string(), "Nikkor Z 24-50mm f/4-6.3"),
+                    ("23".to_string(), "Nikkor Z 14-24mm f/2.8 S"),
+                    ("2305".to_string(), "Laowa FFII 10mm F2.8 C&D Dreamer"),
+                    ("24".to_string(), "Nikkor Z MC 105mm f/2.8 VR S"),
+                    ("25".to_string(), "Nikkor Z 40mm f/2"),
+                    ("26".to_string(), "Nikkor Z DX 18-140mm f/3.5-6.3 VR"),
+                    ("27".to_string(), "Nikkor Z MC 50mm f/2.8"),
+                    ("28".to_string(), "Nikkor Z 100-400mm f/4.5-5.6 VR S"),
+                    ("29".to_string(), "Nikkor Z 28mm f/2.8"),
+                    ("30".to_string(), "Nikkor Z 400mm f/2.8 TC VR S"),
+                    ("31".to_string(), "Nikkor Z 24-120mm f/4 S"),
+                    ("32".to_string(), "Nikkor Z 800mm f/6.3 VR S"),
+                    ("32768".to_string(), "Nikkor Z 400mm f/2.8 TC VR S TC-1.4x"),
+                    ("32769".to_string(), "Nikkor Z 600mm f/4 TC VR S TC-1.4x"),
+                    ("35".to_string(), "Nikkor Z 28-75mm f/2.8"),
+                    ("36".to_string(), "Nikkor Z 400mm f/4.5 VR S"),
+                    ("37".to_string(), "Nikkor Z 600mm f/4 TC VR S"),
+                    ("38".to_string(), "Nikkor Z 85mm f/1.2 S"),
+                    ("39".to_string(), "Nikkor Z 17-28mm f/2.8"),
+                    ("4".to_string(), "Nikkor Z 35mm f/1.8 S"),
+                    ("40".to_string(), "Nikkor Z 26mm f/2.8"),
+                    ("41".to_string(), "Nikkor Z DX 12-28mm f/3.5-5.6 PZ VR"),
+                    ("42".to_string(), "Nikkor Z 180-600mm f/5.6-6.3 VR"),
+                    ("43".to_string(), "Nikkor Z DX 24mm f/1.7"),
+                    ("44".to_string(), "Nikkor Z 70-180mm f/2.8"),
+                    ("45".to_string(), "Nikkor Z 600mm f/6.3 VR S"),
+                    ("46".to_string(), "Nikkor Z 135mm f/1.8 S Plena"),
+                    ("47".to_string(), "Nikkor Z 35mm f/1.2 S"),
+                    ("48".to_string(), "Nikkor Z 28-400mm f/4-8 VR"),
+                    ("49".to_string(), "Nikkor Z 28-135mm f/4 PZ"),
+                    ("51".to_string(), "Nikkor Z 35mm f/1.4"),
+                    ("52".to_string(), "Nikkor Z 50mm f/1.4"),
+                    ("8".to_string(), "Nikkor Z 58mm f/0.95 S Noct"),
+                    ("9".to_string(), "Nikkor Z 50mm f/1.8 S"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -256,7 +302,10 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "LensMountType",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Z-mount"),
+                    ("1".to_string(), "F-mount"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -305,6 +354,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

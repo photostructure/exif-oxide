@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -57,6 +61,7 @@ pub fn ast_print_20b4fd429d540f17(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Nikon::AVITags.Software
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_20ed25c601606348(
     val: &TagValue,
@@ -79,6 +84,7 @@ pub fn ast_value_20ed25c601606348(
 /// ```
 /// Used by:
 /// - Canon::TimeInfo.TimeZone
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_20ac2063644a1265(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -101,6 +107,7 @@ pub fn ast_print_20ac2063644a1265(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Sony::Tag9050b.InternalSerialNumber
 /// - Sony::Tag9050c.InternalSerialNumber
 /// - Sony::Tag9050d.InternalSerialNumber
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_202062b94dbf7029(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

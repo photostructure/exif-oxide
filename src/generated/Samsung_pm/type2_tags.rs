@@ -32,7 +32,13 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "DeviceType",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("12288".to_string(), "HXM Video Camera"),
+                    ("3145728".to_string(), "SMX Video Camera"),
+                    ("4096".to_string(), "Compact Digital Camera"),
+                    ("73728".to_string(), "Cell Phone"),
+                    ("8192".to_string(), "High-end NX Camera"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -41,7 +47,65 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "SamsungModelID",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("100667446".to_string(), "EX1"),
+                    ("117445404".to_string(), "VLUU SH100, SH100"),
+                    ("16781340".to_string(), "NX10"),
+                    ("16781862".to_string(), "HMX-S15BP"),
+                    ("16781875".to_string(), "HMX-Q10"),
+                    ("16781876".to_string(), "HMX-H304"),
+                    ("16782092".to_string(), "NX100"),
+                    ("16782119".to_string(), "NX11"),
+                    (
+                        "24121419".to_string(),
+                        "ES65, ES67 / VLUU ES65, ES67 / SL50",
+                    ),
+                    (
+                        "24121422".to_string(),
+                        "ES70, ES71 / VLUU ES70, ES71 / SL600",
+                    ),
+                    ("24121426".to_string(), "ES73 / VLUU ES73 / SL605"),
+                    (
+                        "24121429".to_string(),
+                        "ES25, ES27 / VLUU ES25, ES27 / SL45",
+                    ),
+                    ("24122112".to_string(), "ES28 / VLUU ES28"),
+                    ("24122115".to_string(), "ES74,ES75,ES78 / VLUU ES75,ES78"),
+                    ("33558598".to_string(), "PL150 / VLUU PL150 / TL210 / PL151"),
+                    ("33558600".to_string(), "PL100 / TL205 / VLUU PL100 / PL101"),
+                    ("33559313".to_string(), "PL120,PL121 / VLUU PL120,PL121"),
+                    ("33559317".to_string(), "PL170,PL171 / VLUUPL170,PL171"),
+                    ("33559326".to_string(), "PL210, PL211 / VLUU PL210, PL211"),
+                    ("40899351".to_string(), "PL20,PL21 / VLUU PL20,PL21"),
+                    ("44040219".to_string(), "WP10 / VLUU WP10 / AQ100"),
+                    ("50331648".to_string(), "Various Models (0x3000000)"),
+                    ("60817432".to_string(), "Various Models (0x3a00018)"),
+                    ("655519746".to_string(), "SMX-C20N"),
+                    (
+                        "67112991".to_string(),
+                        "ST1000 / ST1100 / VLUU ST1000 / CL65",
+                    ),
+                    ("67112994".to_string(), "ST550 / VLUU ST550 / TL225"),
+                    ("67112997".to_string(), "Various Models (0x4001025)"),
+                    ("67113022".to_string(), "VLUU ST5500, ST5500, CL80"),
+                    ("67113025".to_string(), "VLUU ST5000, ST5000, TL240"),
+                    ("67113027".to_string(), "ST70 / VLUU ST70 / ST71"),
+                    ("67113738".to_string(), "Various Models (0x400130a)"),
+                    ("67113742".to_string(), "ST90,ST91 / VLUU ST90,ST91"),
+                    ("67113747".to_string(), "VLUU ST95, ST95"),
+                    ("77594645".to_string(), "VLUU ST60"),
+                    ("77599579".to_string(), "ST30, ST65 / VLUU ST65 / ST67"),
+                    ("83886080".to_string(), "Various Models (0x5000000)"),
+                    ("83890232".to_string(), "Various Models (0x5001038)"),
+                    ("83890234".to_string(), "WB650 / VLUU WB650 / WB660"),
+                    ("83890236".to_string(), "WB600 / VLUU WB600 / WB610"),
+                    (
+                        "83891006".to_string(),
+                        "WB150 / WB150F / WB152 / WB152F / WB151",
+                    ),
+                    ("94371855".to_string(), "WB5000 / HZ25W"),
+                    ("94371870".to_string(), "WB5500 / VLUU WB5500 / HZ50W"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -86,7 +150,10 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "RawDataByteOrder",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Little-endian (Intel, II)"),
+                    ("1".to_string(), "Big-endian (Motorola, MM)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -95,7 +162,10 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "WhiteBalanceSetup",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Manual"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -113,7 +183,11 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "RawDataCFAPattern",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Unchanged"),
+                    ("1".to_string(), "Swap"),
+                    ("65535".to_string(), "Roll"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -122,7 +196,10 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "FaceDetect",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -131,7 +208,10 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "FaceRecognition",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -203,7 +283,10 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ColorSpace",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "sRGB"),
+                    ("1".to_string(), "Adobe RGB"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -212,7 +295,10 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "SmartRange",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -549,6 +635,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

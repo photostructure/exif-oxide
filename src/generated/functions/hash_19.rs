@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -40,6 +44,7 @@ pub fn ast_value_19012828a00d9b7(
 /// - Nikon::PictureControl3.Saturation
 /// - Nikon::PictureControl3.Sharpness
 /// - Nikon::PictureControl3.ToningSaturation
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_19075ce26854d0a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

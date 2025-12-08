@@ -14,7 +14,39 @@ pub static QUICK_TIME_VIDEOHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "GraphicsMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "srcCopy"),
+                    ("1".to_string(), "srcOr"),
+                    ("10".to_string(), "patXor"),
+                    ("11".to_string(), "patBic"),
+                    ("12".to_string(), "notPatCopy"),
+                    ("13".to_string(), "notPatOr"),
+                    ("14".to_string(), "notPatXor"),
+                    ("15".to_string(), "notPatBic"),
+                    ("2".to_string(), "srcXor"),
+                    ("256".to_string(), "Alpha"),
+                    ("257".to_string(), "White Alpha"),
+                    ("258".to_string(), "Pre-multiplied Black Alpha"),
+                    ("272".to_string(), "Component Alpha"),
+                    ("3".to_string(), "srcBic"),
+                    ("32".to_string(), "blend"),
+                    ("33".to_string(), "addPin"),
+                    ("34".to_string(), "addOver"),
+                    ("35".to_string(), "subPin"),
+                    ("36".to_string(), "transparent"),
+                    ("37".to_string(), "addMax"),
+                    ("38".to_string(), "subOver"),
+                    ("39".to_string(), "addMin"),
+                    ("4".to_string(), "notSrcCopy"),
+                    ("49".to_string(), "grayishTextOr"),
+                    ("5".to_string(), "notSrcOr"),
+                    ("50".to_string(), "hilite"),
+                    ("6".to_string(), "notSrcXor"),
+                    ("64".to_string(), "ditherCopy"),
+                    ("7".to_string(), "notSrcBic"),
+                    ("8".to_string(), "patCopy"),
+                    ("9".to_string(), "patOr"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -72,6 +104,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -19,7 +23,7 @@ pub fn ast_value_2e5c68232ecbf706(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(100i32 * codegen_runtime::exp((val - 32i32)))
+    Ok(100i32 * codegen_runtime::exp(val - 32i32))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -29,6 +33,7 @@ pub fn ast_value_2e5c68232ecbf706(
 /// ```
 /// Used by:
 /// - Kodak::IFD.KodakLook
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_2eea5e422c1a4a85(
     val: &TagValue,
@@ -55,6 +60,7 @@ pub fn ast_value_2eea5e422c1a4a85(
 /// ```
 /// Used by:
 /// - H264::MDPM.DateTimeOriginal
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_2e1e97c3e20b75a2(
     val: &TagValue,

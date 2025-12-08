@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -80,6 +84,7 @@ pub fn ast_value_92fe5916ea96cdf7(
 /// - Exif::Main.Sharpness
 /// - Exif::Main.Smoothness
 /// - Exif::Main.WhiteBalance
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_926e96c93b8b92c5(
     val: &TagValue,
@@ -98,28 +103,6 @@ pub fn ast_value_926e96c93b8b92c5(
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// IsFloat($val) && abs($val)<100 ? 2**(-$val) : 0
-/// ```
-/// Used by:
-/// - Exif::Main.ShutterSpeedValue
-/// TODO: Add support for this expression pattern
-pub fn ast_value_928b8af59f04cfe9(
-    val: &TagValue,
-    ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
-        0,                                                 // tag_id will be filled at runtime
-        "UnknownTag",                                      // tag_name will be filled at runtime
-        "UnknownGroup",                                    // group will be filled at runtime
-        "IsFloat($val) && abs($val)<100 ? 2**(-$val) : 0", // original expression
-        val,
-    ))
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
 /// my $version = int($val / 256);
 /// my $release =  int(($val - 256 * $version)/16);
 /// my $modification = $val - (256 * $version + 16 * $release);
@@ -127,6 +110,7 @@ pub fn ast_value_928b8af59f04cfe9(
 /// ```
 /// Used by:
 /// - Nikon::LensData0800.LensFirmwareVersion
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_92c6488dcbb07233(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -137,4 +121,18 @@ pub fn ast_print_92c6488dcbb07233(val: &TagValue, ctx: Option<&ExifContext>) -> 
                     "my $version = int($val / 256);\n            my $release =  int(($val - 256 * $version)/16);\n            my $modification = $val - (256 * $version + 16 * $release);\n            return sprintf(\"%.0f.%.0f.%.0f\", $version,$release,$modification);", // original expression
                     val
                 )
+}
+
+/// Registry fallback: ValueConv implementation found
+/// Original perl expression:
+/// ``` perl
+/// IsFloat($val) && abs($val)<100 ? 2**(-$val) : 0
+/// ```
+/// Used by:
+/// - Exif::Main.ShutterSpeedValue
+pub fn ast_value_928b8af59f04cfe9(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, codegen_runtime::types::ExifError> {
+    crate::implementations::value_conv::apex_shutter_speed_value_conv(val, ctx)
 }

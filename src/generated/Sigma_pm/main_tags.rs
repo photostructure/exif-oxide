@@ -24,7 +24,12 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ExposureMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("A".to_string(), "Aperture-priority AE"),
+                    ("M".to_string(), "Manual"),
+                    ("P".to_string(), "Program AE"),
+                    ("S".to_string(), "Shutter speed priority AE"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -33,7 +38,11 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "MeteringMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("8".to_string(), "Multi-segment"),
+                    ("A".to_string(), "Average"),
+                    ("C".to_string(), "Center-weighted average"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -123,7 +132,17 @@ pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ColorMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "n/a"),
+                    ("1".to_string(), "Sepia"),
+                    ("2".to_string(), "B&W"),
+                    ("3".to_string(), "Standard"),
+                    ("4".to_string(), "Vivid"),
+                    ("5".to_string(), "Neutral"),
+                    ("6".to_string(), "Portrait"),
+                    ("7".to_string(), "Landscape"),
+                    ("8".to_string(), "FOV Classic Blue"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -424,6 +443,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

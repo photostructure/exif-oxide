@@ -41,7 +41,10 @@ pub static NIKON_INTERVALINFOD6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "IntervalExposureSmoothing",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -50,7 +53,10 @@ pub static NIKON_INTERVALINFOD6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "IntervalPriority",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -86,7 +92,10 @@ pub static NIKON_INTERVALINFOD6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FocusShiftExposureLock",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -95,7 +104,10 @@ pub static NIKON_INTERVALINFOD6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "DiffractionCompensation",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -104,7 +116,13 @@ pub static NIKON_INTERVALINFOD6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FlashControlMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "TTL"),
+                    ("1".to_string(), "Auto External Flash"),
+                    ("2".to_string(), "GN (distance priority)"),
+                    ("3".to_string(), "Manual"),
+                    ("4".to_string(), "Repeating Flash"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -113,7 +131,45 @@ pub static NIKON_INTERVALINFOD6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FlashGNDistance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "0.1 m"),
+                    ("10".to_string(), "1.0 m"),
+                    ("11".to_string(), "1.1 m"),
+                    ("12".to_string(), "1.3 m"),
+                    ("13".to_string(), "1.4 m"),
+                    ("14".to_string(), "1.6 m"),
+                    ("15".to_string(), "1.8 m"),
+                    ("16".to_string(), "2.0 m"),
+                    ("17".to_string(), "2.2 m"),
+                    ("18".to_string(), "2.5 m"),
+                    ("19".to_string(), "2.8 m"),
+                    ("2".to_string(), "0.2 m"),
+                    ("20".to_string(), "3.2 m"),
+                    ("21".to_string(), "3.6 m"),
+                    ("22".to_string(), "4.0 m"),
+                    ("23".to_string(), "4.5 m"),
+                    ("24".to_string(), "5.0 m"),
+                    ("25".to_string(), "5.6 m"),
+                    ("255".to_string(), "n/a"),
+                    ("26".to_string(), "6.3 m"),
+                    ("27".to_string(), "7.1 m"),
+                    ("28".to_string(), "8.0 m"),
+                    ("29".to_string(), "9.0 m"),
+                    ("3".to_string(), "0.3 m"),
+                    ("30".to_string(), "10.0 m"),
+                    ("31".to_string(), "11.0 m"),
+                    ("32".to_string(), "13.0 m"),
+                    ("33".to_string(), "14.0 m"),
+                    ("34".to_string(), "16.0 m"),
+                    ("35".to_string(), "18.0 m"),
+                    ("36".to_string(), "20.0 m"),
+                    ("4".to_string(), "0.4 m"),
+                    ("5".to_string(), "0.5 m"),
+                    ("6".to_string(), "0.6 m"),
+                    ("7".to_string(), "0.7 m"),
+                    ("8".to_string(), "0.8 m"),
+                    ("9".to_string(), "0.9 m"),
+                ]))),
                 value_conv: Some(ValueConv::Function(ast_value_4cda13c3b726a013)),
             },
         ),
@@ -131,7 +187,11 @@ pub static NIKON_INTERVALINFOD6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FlashRemoteControl",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Group"),
+                    ("1".to_string(), "Quick Wireless"),
+                    ("2".to_string(), "Remote Repeating"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -140,7 +200,12 @@ pub static NIKON_INTERVALINFOD6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FlashMasterControlMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "TTL"),
+                    ("1".to_string(), "Manual"),
+                    ("2".to_string(), "Auto"),
+                    ("3".to_string(), "Off"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -167,7 +232,10 @@ pub static NIKON_INTERVALINFOD6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FlashWirelessOption",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Optical AWL"),
+                    ("1".to_string(), "Off"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -176,7 +244,10 @@ pub static NIKON_INTERVALINFOD6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "MovieType",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "MOV"),
+                    ("1".to_string(), "MP4"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -225,6 +296,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

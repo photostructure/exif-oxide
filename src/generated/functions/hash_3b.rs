@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -15,6 +19,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// ```
 /// Used by:
 /// - CanonRaw::Main.FileNumber
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_3b5d8202349cb3c2(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -44,6 +49,7 @@ pub fn ast_print_3b5d8202349cb3c2(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Sigma::Main.PreviewImageSize
 /// - Sony::Main.FullImageSize
 /// - Sony::Main.PreviewImageSize
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_3b6232f726868923(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

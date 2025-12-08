@@ -71,7 +71,12 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "SupplementalType",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Main Image"),
+                    ("1".to_string(), "Reduced Resolution Image"),
+                    ("2".to_string(), "Logo"),
+                    ("3".to_string(), "Rasterized Caption"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -80,7 +85,34 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ColorRepresentation",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No Image, Single Frame"),
+                    ("1024".to_string(), "4 Components, Single Frame"),
+                    (
+                        "1025".to_string(),
+                        "4 Components, Frame Sequential in Multiple Objects",
+                    ),
+                    (
+                        "1026".to_string(),
+                        "4 Components, Frame Sequential in One Object",
+                    ),
+                    ("1027".to_string(), "4 Components, Line Sequential"),
+                    ("1028".to_string(), "4 Components, Pixel Sequential"),
+                    ("1029".to_string(), "4 Components, Special Interleaving"),
+                    ("256".to_string(), "Monochrome, Single Frame"),
+                    ("768".to_string(), "3 Components, Single Frame"),
+                    (
+                        "769".to_string(),
+                        "3 Components, Frame Sequential in Multiple Objects",
+                    ),
+                    (
+                        "770".to_string(),
+                        "3 Components, Frame Sequential in One Object",
+                    ),
+                    ("771".to_string(), "3 Components, Line Sequential"),
+                    ("772".to_string(), "3 Components, Pixel Sequential"),
+                    ("773".to_string(), "3 Components, Special Interleaving"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -89,7 +121,16 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "InterchangeColorSpace",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "X,Y,Z CIE"),
+                    ("2".to_string(), "RGB SMPTE"),
+                    ("3".to_string(), "Y,U,V (K) (D65)"),
+                    ("4".to_string(), "RGB Device Dependent"),
+                    ("5".to_string(), "CMY (K) Device Dependent"),
+                    ("6".to_string(), "Lab (K) CIE"),
+                    ("7".to_string(), "YCbCr"),
+                    ("8".to_string(), "sRGB"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -161,7 +202,11 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "SampleStructure",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "OrthogonalConstangSampling"),
+                    ("1".to_string(), "Orthogonal4-2-2Sampling"),
+                    ("2".to_string(), "CompressionDependent"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -170,7 +215,16 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ScanningDirection",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "L-R, Top-Bottom"),
+                    ("1".to_string(), "R-L, Top-Bottom"),
+                    ("2".to_string(), "L-R, Bottom-Top"),
+                    ("3".to_string(), "R-L, Bottom-Top"),
+                    ("4".to_string(), "Top-Bottom, L-R"),
+                    ("5".to_string(), "Bottom-Top, L-R"),
+                    ("6".to_string(), "Top-Bottom, R-L"),
+                    ("7".to_string(), "Bottom-Top, R-L"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -197,7 +251,16 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "QuantizationMethod",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Linear Reflectance/Transmittance"),
+                    ("1".to_string(), "Linear Density"),
+                    ("2".to_string(), "IPTC Ref B"),
+                    ("3".to_string(), "Linear Dot Percent"),
+                    ("4".to_string(), "AP Domestic Analogue"),
+                    ("5".to_string(), "Compression Method Specific"),
+                    ("6".to_string(), "Color Space Specific"),
+                    ("7".to_string(), "Gamma Compensated"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -215,7 +278,10 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ExcursionTolerance",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Not Allowed"),
+                    ("1".to_string(), "Allowed"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -291,6 +357,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

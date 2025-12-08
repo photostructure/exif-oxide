@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -15,10 +19,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// Used by:
 /// - SonyIDC::Main.InclinationAngle
 pub fn ast_print_5f1c3854bf9211be(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl(
-        "%.1f deg",
-        &[val / 1000i32.clone()],
-    ))
+    TagValue::String(codegen_runtime::sprintf_perl("%.1f deg", &[val / 1000i32]))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -28,6 +29,7 @@ pub fn ast_print_5f1c3854bf9211be(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Nikon::Main.ISOSetting
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_5f5c47624f96780e(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -53,6 +55,7 @@ pub fn ast_print_5f5c47624f96780e(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Kodak::IFD.DarkFrameShortExposure
 /// - Kodak::SubIFD2.ExposureTime
 /// - Kodak::Type9.ExposureTime
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_5fd665ca42e4d37a(
     val: &TagValue,
@@ -75,6 +78,7 @@ pub fn ast_value_5fd665ca42e4d37a(
 /// ```
 /// Used by:
 /// - Olympus::Main.DigitalZoom
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_5f49e36c478dfb01(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -99,6 +103,7 @@ pub fn ast_print_5f49e36c478dfb01(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Pentax::LensInfo2.LensType
 /// - Pentax::LensInfo3.LensType
 /// - Pentax::LensInfo4.LensType
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_5fb9598ca4eb87da(
     val: &TagValue,

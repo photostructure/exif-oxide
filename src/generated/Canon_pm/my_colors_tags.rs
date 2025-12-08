@@ -13,7 +13,22 @@ pub static CANON_MYCOLORS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
         TagInfo {
             name: "MyColorMode",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                ("0".to_string(), "Off"),
+                ("1".to_string(), "Positive Film"),
+                ("12".to_string(), "Vivid"),
+                ("13".to_string(), "Neutral"),
+                ("14".to_string(), "Sepia"),
+                ("15".to_string(), "B&W"),
+                ("2".to_string(), "Light Skin Tone"),
+                ("3".to_string(), "Dark Skin Tone"),
+                ("4".to_string(), "Vivid Blue"),
+                ("5".to_string(), "Vivid Green"),
+                ("6".to_string(), "Vivid Red"),
+                ("7".to_string(), "Color Accent"),
+                ("8".to_string(), "Color Swap"),
+                ("9".to_string(), "Custom"),
+            ]))),
             value_conv: None,
         },
     )])
@@ -61,6 +76,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

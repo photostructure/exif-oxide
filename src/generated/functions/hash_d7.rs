@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -24,7 +28,7 @@ pub fn ast_value_d71b0e108dcddc45(
             .unwrap_or(TagValue::U32(1)))
         .is_truthy()
         {
-            (val / 2i32)
+            Into::<TagValue>::into(val / 2i32)
         } else {
             val.clone()
         },
@@ -41,11 +45,11 @@ pub fn ast_print_d780ed94ab5b10da(val: &TagValue, ctx: Option<&ExifContext>) -> 
     if val.is_truthy() {
         codegen_runtime::string::concat(
             &Into::<TagValue>::into(format!("{} byte", val)),
-            &(if val == 1i32 {
+            &if val == 1i32 {
                 Into::<TagValue>::into("")
             } else {
                 Into::<TagValue>::into("s")
-            }),
+            },
         )
     } else {
         Into::<TagValue>::into("Variable")
@@ -76,6 +80,7 @@ pub fn ast_print_d780ed94ab5b10da(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Nikon::Main.ShootingMode
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_d7d503356bf3175(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -95,6 +100,7 @@ pub fn ast_print_d7d503356bf3175(val: &TagValue, ctx: Option<&ExifContext>) -> T
 /// ```
 /// Used by:
 /// - Nikon::Main.MakerNoteVersion
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_d7477adc3dcbfb13(
     val: &TagValue,

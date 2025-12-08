@@ -18,7 +18,11 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "Rotation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Horizontal (normal)"),
+                    ("1".to_string(), "Rotate 270 CW"),
+                    ("2".to_string(), "Rotate 90 CW"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -27,7 +31,10 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ImageStabilizationSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -36,7 +43,12 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "DynamicRangeOptimizerMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Standard"),
+                    ("2".to_string(), "Advanced Auto"),
+                    ("3".to_string(), "Advanced Level"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -54,7 +66,11 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "WhiteBalanceBracketing",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Low"),
+                    ("2".to_string(), "High"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -72,7 +88,11 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "DynamicRangeOptimizerBracket",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Low"),
+                    ("2".to_string(), "High"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -90,7 +110,22 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ExposureProgram",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Manual"),
+                    ("16".to_string(), "Portrait"),
+                    ("17".to_string(), "Sports"),
+                    ("18".to_string(), "Sunset"),
+                    ("19".to_string(), "Night Portrait"),
+                    ("2".to_string(), "Program AE"),
+                    ("20".to_string(), "Landscape"),
+                    ("21".to_string(), "Macro"),
+                    ("3".to_string(), "Aperture-priority AE"),
+                    ("35".to_string(), "Auto No Flash"),
+                    ("4".to_string(), "Shutter speed priority AE"),
+                    ("8".to_string(), "Program Shift A"),
+                    ("9".to_string(), "Program Shift S"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -99,7 +134,22 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "CreativeStyle",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Standard"),
+                    ("11".to_string(), "Neutral"),
+                    ("12".to_string(), "Clear"),
+                    ("13".to_string(), "Deep"),
+                    ("14".to_string(), "Light"),
+                    ("15".to_string(), "Autumn Leaves"),
+                    ("16".to_string(), "Sepia"),
+                    ("2".to_string(), "Vivid"),
+                    ("3".to_string(), "Portrait"),
+                    ("4".to_string(), "Landscape"),
+                    ("5".to_string(), "Sunset"),
+                    ("6".to_string(), "Night View/Portrait"),
+                    ("8".to_string(), "B&W"),
+                    ("9".to_string(), "Adobe RGB"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -126,7 +176,12 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "DynamicRangeOptimizerMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Standard"),
+                    ("2".to_string(), "Advanced Auto"),
+                    ("3".to_string(), "Advanced Level"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -204,6 +259,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

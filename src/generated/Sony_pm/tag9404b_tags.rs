@@ -17,7 +17,41 @@ pub static SONY_TAG9404B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ExposureProgram",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Program AE"),
+                    ("1".to_string(), "Aperture-priority AE"),
+                    ("10".to_string(), "Twilight"),
+                    ("11".to_string(), "Twilight Portrait"),
+                    ("12".to_string(), "Sunset"),
+                    ("14".to_string(), "Action (High speed)"),
+                    ("16".to_string(), "Sports"),
+                    ("17".to_string(), "Handheld Night Shot"),
+                    ("18".to_string(), "Anti Motion Blur"),
+                    ("19".to_string(), "High Sensitivity"),
+                    ("2".to_string(), "Shutter speed priority AE"),
+                    ("21".to_string(), "Beach"),
+                    ("22".to_string(), "Snow"),
+                    ("23".to_string(), "Fireworks"),
+                    ("26".to_string(), "Underwater"),
+                    ("27".to_string(), "Gourmet"),
+                    ("28".to_string(), "Pet"),
+                    ("29".to_string(), "Macro"),
+                    ("3".to_string(), "Manual"),
+                    ("30".to_string(), "Backlight Correction HDR"),
+                    ("33".to_string(), "Sweep Panorama"),
+                    ("36".to_string(), "Background Defocus"),
+                    ("37".to_string(), "Soft Skin"),
+                    ("4".to_string(), "Auto"),
+                    ("42".to_string(), "3D Image"),
+                    ("43".to_string(), "Cont. Priority AE"),
+                    ("45".to_string(), "Document"),
+                    ("46".to_string(), "Party"),
+                    ("5".to_string(), "iAuto"),
+                    ("6".to_string(), "Superior Auto"),
+                    ("7".to_string(), "iAuto+"),
+                    ("8".to_string(), "Portrait"),
+                    ("9".to_string(), "Landscape"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -26,7 +60,10 @@ pub static SONY_TAG9404B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "IntelligentAuto",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -93,6 +130,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

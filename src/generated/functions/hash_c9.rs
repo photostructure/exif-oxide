@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -15,6 +19,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// ```
 /// Used by:
 /// - Sigma::Main.Quality
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_c9eb0334cb0e5f1(
     val: &TagValue,
@@ -37,6 +42,7 @@ pub fn ast_value_c9eb0334cb0e5f1(
 /// ```
 /// Used by:
 /// - Panasonic::Main.FirmwareVersion
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_c9162365d287d6f8(
     val: &TagValue,
@@ -59,6 +65,7 @@ pub fn ast_value_c9162365d287d6f8(
 /// ```
 /// Used by:
 /// - Sigma::Main.SensorTemperature
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_c9112886b2b0340d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -82,6 +89,7 @@ pub fn ast_print_c9112886b2b0340d(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Kodak::Processing.WB_RGBLevels
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_c978d7a3061a06bd(
     val: &TagValue,

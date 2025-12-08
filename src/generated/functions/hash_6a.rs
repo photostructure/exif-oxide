@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -70,10 +74,7 @@ pub fn ast_print_6aba033c223c39a4(val: &TagValue, ctx: Option<&ExifContext>) -> 
     if val == 255i32 {
         Into::<TagValue>::into("Strobe or Misfire")
     } else {
-        TagValue::String(codegen_runtime::sprintf_perl(
-            "%.0f%%",
-            &[val * 100i32.clone()],
-        ))
+        TagValue::String(codegen_runtime::sprintf_perl("%.0f%%", &[val * 100i32]))
     }
 }
 
@@ -97,7 +98,7 @@ pub fn ast_value_6a9f49c55c6fe127(
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(codegen_runtime::power(
         Into::<TagValue>::into(2i32),
-        (codegen_runtime::negate(val) / 3i32),
+        Into::<TagValue>::into(codegen_runtime::negate(val) / 3i32),
     ))
 }
 
@@ -108,6 +109,7 @@ pub fn ast_value_6a9f49c55c6fe127(
 /// ```
 /// Used by:
 /// - Nikon::NCTG.FrameCount
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_6a713bfccf5dd9c(
     val: &TagValue,

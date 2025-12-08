@@ -26,7 +26,43 @@ pub static CANON_TIMEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "TimeZoneCity",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "n/a"),
+                    ("1".to_string(), "Chatham Islands"),
+                    ("10".to_string(), "Dhaka"),
+                    ("11".to_string(), "Kathmandu"),
+                    ("12".to_string(), "Delhi"),
+                    ("13".to_string(), "Karachi"),
+                    ("14".to_string(), "Kabul"),
+                    ("15".to_string(), "Dubai"),
+                    ("16".to_string(), "Tehran"),
+                    ("17".to_string(), "Moscow"),
+                    ("18".to_string(), "Cairo"),
+                    ("19".to_string(), "Paris"),
+                    ("2".to_string(), "Wellington"),
+                    ("20".to_string(), "London"),
+                    ("21".to_string(), "Azores"),
+                    ("22".to_string(), "Fernando de Noronha"),
+                    ("23".to_string(), "Sao Paulo"),
+                    ("24".to_string(), "Newfoundland"),
+                    ("25".to_string(), "Santiago"),
+                    ("26".to_string(), "Caracas"),
+                    ("27".to_string(), "New York"),
+                    ("28".to_string(), "Chicago"),
+                    ("29".to_string(), "Denver"),
+                    ("3".to_string(), "Solomon Islands"),
+                    ("30".to_string(), "Los Angeles"),
+                    ("31".to_string(), "Anchorage"),
+                    ("32".to_string(), "Honolulu"),
+                    ("32766".to_string(), "(not set)"),
+                    ("33".to_string(), "Samoa"),
+                    ("4".to_string(), "Sydney"),
+                    ("5".to_string(), "Adelaide"),
+                    ("6".to_string(), "Tokyo"),
+                    ("7".to_string(), "Hong Kong"),
+                    ("8".to_string(), "Bangkok"),
+                    ("9".to_string(), "Yangon"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -35,7 +71,10 @@ pub static CANON_TIMEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "DaylightSavings",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("60".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -84,6 +123,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

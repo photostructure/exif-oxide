@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -28,6 +32,7 @@ pub fn ast_value_4ac91d308bf0a86e(
 /// ```
 /// Used by:
 /// - Canon::LevelInfo.PitchAngle
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_4a2b4f330f26f4a2(
     val: &TagValue,
@@ -50,6 +55,7 @@ pub fn ast_value_4a2b4f330f26f4a2(
 /// ```
 /// Used by:
 /// - QuickTime::MediaHeader.MediaLanguageCode
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_4ab1082138915ea5(
     val: &TagValue,
@@ -74,6 +80,7 @@ pub fn ast_value_4ab1082138915ea5(
 /// ```
 /// Used by:
 /// - Sony::Tag9050a.SonyDateTime2
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_4a8aefc287f76a07(
     val: &TagValue,

@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -15,6 +19,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// ```
 /// Used by:
 /// - Nikon::Main.SensorPixelSize
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_87ea20bfc391aca2(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -35,6 +40,7 @@ pub fn ast_print_87ea20bfc391aca2(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// Used by:
 /// - CanonCustom::PersonalFuncValues.PF4ExposureTimeMax
 /// - CanonCustom::PersonalFuncValues.PF4ExposureTimeMin
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_8767b6a8d3f8ef64(
     val: &TagValue,
@@ -61,6 +67,7 @@ pub fn ast_value_8767b6a8d3f8ef64(
 /// - FujiFilm::RAF.RawImageFullSize
 /// - FujiFilm::RAF.RawZoomSize
 /// - FujiFilm::RAF.RawZoomTopLeft
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_871b0872a6d2e74a(
     val: &TagValue,

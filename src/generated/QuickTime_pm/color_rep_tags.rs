@@ -23,7 +23,23 @@ pub static QUICK_TIME_COLORREP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "ColorPrimaries",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "BT.709"),
+                    ("10".to_string(), "SMPTE 428 (CIE 1931 XYZ)"),
+                    ("11".to_string(), "SMPTE RP 431-2"),
+                    ("12".to_string(), "SMPTE EG 432-1"),
+                    ("2".to_string(), "Unspecified"),
+                    ("22".to_string(), "EBU Tech. 3213-E"),
+                    ("4".to_string(), "BT.470 System M (historical)"),
+                    ("5".to_string(), "BT.470 System B, G (historical)"),
+                    ("6".to_string(), "BT.601"),
+                    ("7".to_string(), "SMPTE 240"),
+                    (
+                        "8".to_string(),
+                        "Generic film (color filters using illuminant C)",
+                    ),
+                    ("9".to_string(), "BT.2020, BT.2100"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -32,7 +48,27 @@ pub static QUICK_TIME_COLORREP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "TransferCharacteristics",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "For future use (0)"),
+                    ("1".to_string(), "BT.709"),
+                    ("10".to_string(), "Logarithmic (100 * Sqrt(10) : 1 range)"),
+                    ("11".to_string(), "IEC 61966-2-4"),
+                    ("12".to_string(), "BT.1361"),
+                    ("13".to_string(), "sRGB or sYCC"),
+                    ("14".to_string(), "BT.2020 10-bit systems"),
+                    ("15".to_string(), "BT.2020 12-bit systems"),
+                    ("16".to_string(), "SMPTE ST 2084, ITU BT.2100 PQ"),
+                    ("17".to_string(), "SMPTE ST 428"),
+                    ("18".to_string(), "BT.2100 HLG, ARIB STD-B67"),
+                    ("2".to_string(), "Unspecified"),
+                    ("3".to_string(), "For future use (3)"),
+                    ("4".to_string(), "BT.470 System M (historical)"),
+                    ("5".to_string(), "BT.470 System B, G (historical)"),
+                    ("6".to_string(), "BT.601"),
+                    ("7".to_string(), "SMPTE 240 M"),
+                    ("8".to_string(), "Linear"),
+                    ("9".to_string(), "Logarithmic (100 : 1 range)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -41,7 +77,29 @@ pub static QUICK_TIME_COLORREP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "MatrixCoefficients",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Identity matrix"),
+                    ("1".to_string(), "BT.709"),
+                    ("10".to_string(), "BT.2020 constant luminance"),
+                    ("11".to_string(), "SMPTE ST 2085 YDzDx"),
+                    (
+                        "12".to_string(),
+                        "Chromaticity-derived non-constant luminance",
+                    ),
+                    ("13".to_string(), "Chromaticity-derived constant luminance"),
+                    ("14".to_string(), "BT.2100 ICtCp"),
+                    ("2".to_string(), "Unspecified"),
+                    ("3".to_string(), "For future use (3)"),
+                    ("4".to_string(), "US FCC 73.628"),
+                    ("5".to_string(), "BT.470 System B, G (historical)"),
+                    ("6".to_string(), "BT.601"),
+                    ("7".to_string(), "SMPTE 240 M"),
+                    ("8".to_string(), "YCgCo"),
+                    (
+                        "9".to_string(),
+                        "BT.2020 non-constant luminance, BT.2100 YCbCr",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -50,7 +108,10 @@ pub static QUICK_TIME_COLORREP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "VideoFullRangeFlag",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Limited"),
+                    ("1".to_string(), "Full"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -99,6 +160,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

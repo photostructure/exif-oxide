@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -21,7 +25,7 @@ pub fn ast_value_24a12bba5a03a937(
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(codegen_runtime::power(
         Into::<TagValue>::into(2i32),
-        (val / 16i32),
+        Into::<TagValue>::into(val / 16i32),
     ))
 }
 
@@ -34,6 +38,7 @@ pub fn ast_value_24a12bba5a03a937(
 /// ```
 /// Used by:
 /// - Photoshop::Main.ClippingPathName
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_24ecca2f32aee364(
     val: &TagValue,

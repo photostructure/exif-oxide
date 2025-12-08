@@ -14,7 +14,10 @@ pub static QUICK_TIME_HANDLER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "HandlerClass",
                 format: "undef[4]",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("dhlr".to_string(), "Data Handler"),
+                    ("mhlr".to_string(), "Media Handler"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -23,7 +26,33 @@ pub static QUICK_TIME_HANDLER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "HandlerType",
                 format: "undef[4]",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("alis".to_string(), "Alias Data"),
+                    ("camm".to_string(), "Camera Metadata"),
+                    ("crsm".to_string(), "Clock Reference"),
+                    ("data".to_string(), "Data"),
+                    ("hint".to_string(), "Hint Track"),
+                    ("ipsm".to_string(), "IPMP"),
+                    ("m7sm".to_string(), "MPEG-7 Stream"),
+                    ("mdir".to_string(), "Metadata"),
+                    ("mdta".to_string(), "Metadata Tags"),
+                    ("meta".to_string(), "NRT Metadata"),
+                    ("mjsm".to_string(), "MPEG-J"),
+                    ("nrtm".to_string(), "Non-Real Time Metadata"),
+                    ("ocsm".to_string(), "Object Content"),
+                    ("odsm".to_string(), "Object Descriptor"),
+                    ("pict".to_string(), "Picture"),
+                    ("priv".to_string(), "Private"),
+                    ("psmd".to_string(), "Panasonic Static Metadata"),
+                    ("sbtl".to_string(), "Subtitle"),
+                    ("sdsm".to_string(), "Scene Description"),
+                    ("soun".to_string(), "Audio Track"),
+                    ("subp".to_string(), "Subpicture"),
+                    ("text".to_string(), "Text"),
+                    ("tmcd".to_string(), "Time Code"),
+                    ("url ".to_string(), "URL"),
+                    ("vide".to_string(), "Video Track"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -32,7 +61,27 @@ pub static QUICK_TIME_HANDLER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "HandlerVendorID",
                 format: "undef[4]",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    (" KD ".to_string(), "Kodak"),
+                    ("AR.D".to_string(), "Parrot AR.Drone"),
+                    ("FFMP".to_string(), "FFmpeg"),
+                    ("GIC ".to_string(), "General Imaging Co."),
+                    ("KMPI".to_string(), "Konica-Minolta"),
+                    ("NIKO".to_string(), "Nikon"),
+                    ("SMI ".to_string(), "Sorenson Media Inc."),
+                    ("ZORA".to_string(), "Zoran Corporation"),
+                    ("appl".to_string(), "Apple"),
+                    ("fe20".to_string(), "Olympus (fe20)"),
+                    ("kdak".to_string(), "Kodak"),
+                    ("leic".to_string(), "Leica"),
+                    ("mino".to_string(), "Minolta"),
+                    ("niko".to_string(), "Nikon"),
+                    ("olym".to_string(), "Olympus"),
+                    ("pana".to_string(), "Panasonic"),
+                    ("pent".to_string(), "Pentax"),
+                    ("pr01".to_string(), "Olympus (pr01)"),
+                    ("sany".to_string(), "Sanyo"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -90,6 +139,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

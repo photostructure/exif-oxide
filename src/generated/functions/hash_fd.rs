@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -21,7 +25,7 @@ pub fn ast_value_fd4074b621d9fc83(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(val
-        / (ctx
+        / ctx
             .and_then(|c| c.get_data_member("TimeScale").cloned())
-            .unwrap_or(TagValue::U32(1))))
+            .unwrap_or(TagValue::U32(1)))
 }

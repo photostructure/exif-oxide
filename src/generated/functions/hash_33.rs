@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -58,7 +62,11 @@ pub fn ast_value_33bf8765c4bf097a(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(0.01f64 * codegen_runtime::power(Into::<TagValue>::into(10i32), (val / 40i32)))
+    Ok(0.01f64
+        * codegen_runtime::power(
+            Into::<TagValue>::into(10i32),
+            Into::<TagValue>::into(val / 40i32),
+        ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -71,6 +79,7 @@ pub fn ast_value_33bf8765c4bf097a(
 /// - Olympus::Equipment.ExtenderFirmwareVersion
 /// - Olympus::Equipment.FlashFirmwareVersion
 /// - Olympus::Equipment.LensFirmwareVersion
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_334b62d226f55947(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -91,6 +100,7 @@ pub fn ast_print_334b62d226f55947(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// Used by:
 /// - Pentax::Main.ColorMatrixA
 /// - Pentax::Main.ColorMatrixB
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_33727ac0bdbe4a81(
     val: &TagValue,
@@ -113,6 +123,7 @@ pub fn ast_value_33727ac0bdbe4a81(
 /// ```
 /// Used by:
 /// - Pentax::Main.SensorSize
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_33e465b277d8995a(
     val: &TagValue,

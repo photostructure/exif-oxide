@@ -14,7 +14,13 @@ pub static CANON_LOGINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "CompressionFormat",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Editing (ALL-I)"),
+                    ("1".to_string(), "Standard (IPB)"),
+                    ("2".to_string(), "Light (IPB)"),
+                    ("3".to_string(), "Motion JPEG"),
+                    ("4".to_string(), "RAW"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -32,7 +38,13 @@ pub static CANON_LOGINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "Saturation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Exif::PrintParameter]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -41,7 +53,13 @@ pub static CANON_LOGINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ColorTone",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Exif::PrintParameter]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -50,7 +68,11 @@ pub static CANON_LOGINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ColorSpace2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "BT.709"),
+                    ("1".to_string(), "BT.2020"),
+                    ("2".to_string(), "CinemaGamut"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -59,7 +81,10 @@ pub static CANON_LOGINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ColorMatrix",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "EOS Original"),
+                    ("1".to_string(), "Neutral"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -68,7 +93,12 @@ pub static CANON_LOGINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "CanonLogVersion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "OFF"),
+                    ("1".to_string(), "CLogV1"),
+                    ("2".to_string(), "CLogV2"),
+                    ("3".to_string(), "CLogV3"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -117,6 +147,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

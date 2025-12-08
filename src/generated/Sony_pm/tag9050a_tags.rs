@@ -21,226 +21,150 @@ use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
 /// Tag definitions for Sony::Tag9050a table
 pub static SONY_TAG9050A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (
-            0,
-            TagInfo {
-                name: "SonyMaxAperture",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
-                value_conv: Some(ValueConv::Function(ast_value_517a89fe0a7b3a4)),
-            },
-        ),
-        (
-            1,
-            TagInfo {
-                name: "SonyMinAperture",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_1f47b524bed353b1)),
-                value_conv: Some(ValueConv::Function(ast_value_517a89fe0a7b3a4)),
-            },
-        ),
-        (
-            32,
-            TagInfo {
-                name: "Shutter",
-                format: "int16u[3]",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            49,
-            TagInfo {
-                name: "FlashStatus",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            50,
-            TagInfo {
-                name: "ShutterCount",
-                format: "int32u",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            58,
-            TagInfo {
-                name: "SonyExposureTime",
-                format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_101e3eed0a079327)),
-                value_conv: Some(ValueConv::Function(ast_value_689cac30223ecfb0)),
-            },
-        ),
-        (
-            60,
-            TagInfo {
-                name: "SonyFNumber",
-                format: "int16u",
-                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
-                value_conv: Some(ValueConv::Function(ast_value_95bfd9578fbdb0ab)),
-            },
-        ),
-        (
-            63,
-            TagInfo {
-                name: "ReleaseMode2",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            76,
-            TagInfo {
-                name: "ShutterCount2",
-                format: "int32u",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            81,
-            TagInfo {
-                name: "SonyDateTime2",
-                format: "undef[6]",
-                print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
-                value_conv: Some(ValueConv::Function(ast_value_4a8aefc287f76a07)),
-            },
-        ),
-        (
-            103,
-            TagInfo {
-                name: "ReleaseMode2",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            124,
-            TagInfo {
-                name: "InternalSerialNumber",
-                format: "int8u[4]",
-                print_conv: Some(PrintConv::Function(ast_print_202062b94dbf7029)),
-                value_conv: None,
-            },
-        ),
-        (
-            240,
-            TagInfo {
-                name: "InternalSerialNumber",
-                format: "int8u[5]",
-                print_conv: Some(PrintConv::Function(ast_print_202062b94dbf7029)),
-                value_conv: None,
-            },
-        ),
-        (
-            261,
-            TagInfo {
-                name: "LensMount",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            262,
-            TagInfo {
-                name: "LensFormat",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            263,
-            TagInfo {
-                name: "LensType2",
-                format: "int16u",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            265,
-            TagInfo {
-                name: "LensType",
-                format: "int16u",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            267,
-            TagInfo {
-                name: "DistortionCorrParamsPresent",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            276,
-            TagInfo {
-                name: "APS-CSizeCapture",
-                format: "unknown",
-                print_conv: Some(PrintConv::Complex),
-                value_conv: None,
-            },
-        ),
-        (
-            277,
-            TagInfo {
-                name: "LensSpecFeatures",
-                format: "undef[2]",
-                print_conv: Some(PrintConv::Expression(
-                    "[Function: Image::ExifTool::Sony::PrintLensSpec]".to_string(),
-                )),
-                value_conv: Some(ValueConv::Function(ast_value_7d6e8b476b94ed0d)),
-            },
-        ),
-        (
-            278,
-            TagInfo {
-                name: "LensSpecFeatures",
-                format: "undef[2]",
-                print_conv: Some(PrintConv::Expression(
-                    "[Function: Image::ExifTool::Sony::PrintLensSpec]".to_string(),
-                )),
-                value_conv: Some(ValueConv::Function(ast_value_7d6e8b476b94ed0d)),
-            },
-        ),
-        (
-            416,
-            TagInfo {
-                name: "ShutterCount3",
-                format: "int32u",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            426,
-            TagInfo {
-                name: "ShutterCount3",
-                format: "int32u",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            445,
-            TagInfo {
-                name: "ShutterCount3",
-                format: "int32u",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
+        (0, TagInfo {
+            name: "SonyMaxAperture",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+            value_conv: Some(ValueConv::Function(ast_value_517a89fe0a7b3a4)),
+        }),
+        (1, TagInfo {
+            name: "SonyMinAperture",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_1f47b524bed353b1)),
+            value_conv: Some(ValueConv::Function(ast_value_517a89fe0a7b3a4)),
+        }),
+        (32, TagInfo {
+            name: "Shutter",
+            format: "int16u[3]",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0 0 0".to_string(), "Silent / Electronic (0 0 0)"), ("OTHER".to_string(), "[Function: Image::ExifTool::Sony::__ANON__]"), ]))),
+            value_conv: None,
+        }),
+        (49, TagInfo {
+            name: "FlashStatus",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "No Flash present"), ("128".to_string(), "External Flash present"), ("129".to_string(), "External Flash Fired"), ("2".to_string(), "Flash Inhibited"), ("64".to_string(), "Built-in Flash present"), ("65".to_string(), "Built-in Flash Fired"), ("66".to_string(), "Built-in Flash Inhibited"), ]))),
+            value_conv: None,
+        }),
+        (50, TagInfo {
+            name: "ShutterCount",
+            format: "int32u",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (58, TagInfo {
+            name: "SonyExposureTime",
+            format: "int16u",
+            print_conv: Some(PrintConv::Function(ast_print_101e3eed0a079327)),
+            value_conv: Some(ValueConv::Function(ast_value_689cac30223ecfb0)),
+        }),
+        (60, TagInfo {
+            name: "SonyFNumber",
+            format: "int16u",
+            print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+            value_conv: Some(ValueConv::Function(ast_value_95bfd9578fbdb0ab)),
+        }),
+        (63, TagInfo {
+            name: "ReleaseMode2",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Normal"), ("1".to_string(), "Continuous"), ("10".to_string(), "Continuous - Background defocus"), ("13".to_string(), "Continuous - 3D Sweep Panorama"), ("146".to_string(), "Single Frame - Movie Capture"), ("15".to_string(), "Continuous - High Resolution Sweep Panorama"), ("16".to_string(), "Continuous - 3D Image"), ("17".to_string(), "Continuous - Burst 2"), ("18".to_string(), "Normal - iAuto+"), ("19".to_string(), "Continuous - Speed/Advance Priority"), ("2".to_string(), "Continuous - Exposure Bracketing"), ("20".to_string(), "Continuous - Multi Frame NR"), ("23".to_string(), "Single-frame - Exposure Bracketing"), ("26".to_string(), "Continuous Low"), ("27".to_string(), "Continuous - High Sensitivity"), ("28".to_string(), "Smile Shutter"), ("29".to_string(), "Continuous - Tele-zoom Advance Priority"), ("3".to_string(), "DRO or White Balance Bracketing"), ("5".to_string(), "Continuous - Burst"), ("6".to_string(), "Single Frame - Capture During Movie"), ("7".to_string(), "Continuous - Sweep Panorama"), ("8".to_string(), "Continuous - Anti-Motion Blur, Hand-held Twilight"), ("9".to_string(), "Continuous - HDR"), ]))),
+            value_conv: None,
+        }),
+        (76, TagInfo {
+            name: "ShutterCount2",
+            format: "int32u",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (81, TagInfo {
+            name: "SonyDateTime2",
+            format: "undef[6]",
+            print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+            value_conv: Some(ValueConv::Function(ast_value_4a8aefc287f76a07)),
+        }),
+        (103, TagInfo {
+            name: "ReleaseMode2",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Normal"), ("1".to_string(), "Continuous"), ("10".to_string(), "Continuous - Background defocus"), ("13".to_string(), "Continuous - 3D Sweep Panorama"), ("146".to_string(), "Single Frame - Movie Capture"), ("15".to_string(), "Continuous - High Resolution Sweep Panorama"), ("16".to_string(), "Continuous - 3D Image"), ("17".to_string(), "Continuous - Burst 2"), ("18".to_string(), "Normal - iAuto+"), ("19".to_string(), "Continuous - Speed/Advance Priority"), ("2".to_string(), "Continuous - Exposure Bracketing"), ("20".to_string(), "Continuous - Multi Frame NR"), ("23".to_string(), "Single-frame - Exposure Bracketing"), ("26".to_string(), "Continuous Low"), ("27".to_string(), "Continuous - High Sensitivity"), ("28".to_string(), "Smile Shutter"), ("29".to_string(), "Continuous - Tele-zoom Advance Priority"), ("3".to_string(), "DRO or White Balance Bracketing"), ("5".to_string(), "Continuous - Burst"), ("6".to_string(), "Single Frame - Capture During Movie"), ("7".to_string(), "Continuous - Sweep Panorama"), ("8".to_string(), "Continuous - Anti-Motion Blur, Hand-held Twilight"), ("9".to_string(), "Continuous - HDR"), ]))),
+            value_conv: None,
+        }),
+        (124, TagInfo {
+            name: "InternalSerialNumber",
+            format: "int8u[4]",
+            print_conv: Some(PrintConv::Function(ast_print_202062b94dbf7029)),
+            value_conv: None,
+        }),
+        (240, TagInfo {
+            name: "InternalSerialNumber",
+            format: "int8u[5]",
+            print_conv: Some(PrintConv::Function(ast_print_202062b94dbf7029)),
+            value_conv: None,
+        }),
+        (261, TagInfo {
+            name: "LensMount",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "A-mount"), ("2".to_string(), "E-mount"), ]))),
+            value_conv: None,
+        }),
+        (262, TagInfo {
+            name: "LensFormat",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "APS-C"), ("2".to_string(), "Full-frame"), ]))),
+            value_conv: None,
+        }),
+        (263, TagInfo {
+            name: "LensType2",
+            format: "int16u",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown E-mount lens or other lens"), ("0.1".to_string(), "Sigma 19mm F2.8 [EX] DN"), ("0.10".to_string(), "Zeiss Touit 50mm F2.8 Macro"), ("0.11".to_string(), "Zeiss Loxia 50mm F2"), ("0.12".to_string(), "Zeiss Loxia 35mm F2"), ("0.13".to_string(), "Viltrox 85mm F1.8"), ("0.2".to_string(), "Sigma 30mm F2.8 [EX] DN"), ("0.3".to_string(), "Sigma 60mm F2.8 DN"), ("0.4".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE"), ("0.5".to_string(), "Tamron 18-200mm F3.5-6.3 Di III VC"), ("0.6".to_string(), "Tokina FiRIN 20mm F2 FE AF"), ("0.7".to_string(), "Tokina FiRIN 20mm F2 FE MF"), ("0.8".to_string(), "Zeiss Touit 12mm F2.8"), ("0.9".to_string(), "Zeiss Touit 32mm F1.8"), ("1".to_string(), "Sony LA-EA1 or Sigma MC-11 Adapter"), ("13".to_string(), "Samyang AF 35-150mm F2-2.8"), ("17".to_string(), "Samyang RS 21mm F3.5"), ("18".to_string(), "Samyang RS 28mm F3.5"), ("184".to_string(), "Metabones Canon EF Speed Booster Ultra"), ("19".to_string(), "Samyang RS 32mm F2.8"), ("2".to_string(), "Sony LA-EA2 Adapter"), ("20".to_string(), "Samyang AF 35mm F1.4 P FE"), ("21".to_string(), "Samyang AF 14-24mm F2.8"), ("234".to_string(), "Metabones Canon EF Smart Adapter Mark IV"), ("239".to_string(), "Metabones Canon EF Speed Booster"), ("24593".to_string(), "LA-EA4r MonsterAdapter"), ("3".to_string(), "Sony LA-EA3 Adapter"), ("32784".to_string(), "Sony E 16mm F2.8"), ("32785".to_string(), "Sony E 18-55mm F3.5-5.6 OSS"), ("32786".to_string(), "Sony E 55-210mm F4.5-6.3 OSS"), ("32787".to_string(), "Sony E 18-200mm F3.5-6.3 OSS"), ("32788".to_string(), "Sony E 30mm F3.5 Macro"), ("32789".to_string(), "Sony E 24mm F1.8 ZA or Samyang AF 50mm F1.4"), ("32789.1".to_string(), "Samyang AF 50mm F1.4"), ("32790".to_string(), "Sony E 50mm F1.8 OSS or Samyang AF 14mm F2.8"), ("32790.1".to_string(), "Samyang AF 14mm F2.8"), ("32791".to_string(), "Sony E 16-70mm F4 ZA OSS"), ("32792".to_string(), "Sony E 10-18mm F4 OSS"), ("32793".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS"), ("32794".to_string(), "Sony FE 35mm F2.8 ZA or Samyang Lens"), ("32794.1".to_string(), "Samyang AF 24mm F2.8"), ("32794.2".to_string(), "Samyang AF 35mm F2.8"), ("32795".to_string(), "Sony FE 24-70mm F4 ZA OSS"), ("32796".to_string(), "Sony FE 85mm F1.8 or Viltrox PFU RBMH 85mm F1.8"), ("32796.1".to_string(), "Viltrox PFU RBMH 85mm F1.8"), ("32797".to_string(), "Sony E 18-200mm F3.5-6.3 OSS LE"), ("32798".to_string(), "Sony E 20mm F2.8"), ("32799".to_string(), "Sony E 35mm F1.8 OSS"), ("32800".to_string(), "Sony E PZ 18-105mm F4 G OSS"), ("32801".to_string(), "Sony FE 12-24mm F4 G"), ("32802".to_string(), "Sony FE 90mm F2.8 Macro G OSS"), ("32803".to_string(), "Sony E 18-50mm F4-5.6"), ("32804".to_string(), "Sony FE 24mm F1.4 GM"), ("32805".to_string(), "Sony FE 24-105mm F4 G OSS"), ("32807".to_string(), "Sony E PZ 18-200mm F3.5-6.3 OSS"), ("32808".to_string(), "Sony FE 55mm F1.8 ZA"), ("32810".to_string(), "Sony FE 70-200mm F4 G OSS"), ("32811".to_string(), "Sony FE 16-35mm F4 ZA OSS"), ("32812".to_string(), "Sony FE 50mm F2.8 Macro"), ("32813".to_string(), "Sony FE 28-70mm F3.5-5.6 OSS"), ("32814".to_string(), "Sony FE 35mm F1.4 ZA"), ("32815".to_string(), "Sony FE 24-240mm F3.5-6.3 OSS"), ("32816".to_string(), "Sony FE 28mm F2"), ("32817".to_string(), "Sony FE PZ 28-135mm F4 G OSS"), ("32819".to_string(), "Sony FE 100mm F2.8 STF GM OSS"), ("32820".to_string(), "Sony E PZ 18-110mm F4 G OSS"), ("32821".to_string(), "Sony FE 24-70mm F2.8 GM"), ("32822".to_string(), "Sony FE 50mm F1.4 ZA"), ("32823".to_string(), "Sony FE 85mm F1.4 GM or Samyang AF 85mm F1.4"), ("32823.1".to_string(), "Samyang AF 85mm F1.4"), ("32824".to_string(), "Sony FE 50mm F1.8"), ("32826".to_string(), "Sony FE 21mm F2.8 (SEL28F20 + SEL075UWC)"), ("32827".to_string(), "Sony FE 16mm F3.5 Fisheye (SEL28F20 + SEL057FEC)"), ("32828".to_string(), "Sony FE 70-300mm F4.5-5.6 G OSS"), ("32829".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS"), ("32830".to_string(), "Sony FE 70-200mm F2.8 GM OSS"), ("32831".to_string(), "Sony FE 16-35mm F2.8 GM"), ("32848".to_string(), "Sony FE 400mm F2.8 GM OSS"), ("32849".to_string(), "Sony E 18-135mm F3.5-5.6 OSS"), ("32850".to_string(), "Sony FE 135mm F1.8 GM"), ("32851".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS"), ("32852".to_string(), "Sony FE 600mm F4 GM OSS"), ("32853".to_string(), "Sony E 16-55mm F2.8 G"), ("32854".to_string(), "Sony E 70-350mm F4.5-6.3 G OSS"), ("32855".to_string(), "Sony FE C 16-35mm T3.1 G"), ("32858".to_string(), "Sony FE 35mm F1.8"), ("32859".to_string(), "Sony FE 20mm F1.8 G"), ("32860".to_string(), "Sony FE 12-24mm F2.8 GM"), ("32862".to_string(), "Sony FE 50mm F1.2 GM"), ("32863".to_string(), "Sony FE 14mm F1.8 GM"), ("32864".to_string(), "Sony FE 28-60mm F4-5.6"), ("32865".to_string(), "Sony FE 35mm F1.4 GM"), ("32866".to_string(), "Sony FE 24mm F2.8 G"), ("32867".to_string(), "Sony FE 40mm F2.5 G"), ("32868".to_string(), "Sony FE 50mm F2.5 G"), ("32871".to_string(), "Sony FE PZ 16-35mm F4 G"), ("32873".to_string(), "Sony E PZ 10-20mm F4 G"), ("32874".to_string(), "Sony FE 70-200mm F2.8 GM OSS II"), ("32875".to_string(), "Sony FE 24-70mm F2.8 GM II"), ("32876".to_string(), "Sony E 11mm F1.8"), ("32877".to_string(), "Sony E 15mm F1.4 G"), ("32878".to_string(), "Sony FE 20-70mm F4 G"), ("32879".to_string(), "Sony FE 50mm F1.4 GM"), ("32880".to_string(), "Sony FE 16mm F1.8 G"), ("32881".to_string(), "Sony FE 24-50mm F2.8 G"), ("32882".to_string(), "Sony FE 16-25mm F2.8 G"), ("32884".to_string(), "Sony FE 70-200mm F4 Macro G OSS II"), ("32885".to_string(), "Sony FE 16-35mm F2.8 GM II"), ("32886".to_string(), "Sony FE 300mm F2.8 GM OSS"), ("32887".to_string(), "Sony E PZ 16-50mm F3.5-5.6 OSS II"), ("32888".to_string(), "Sony FE 85mm F1.4 GM II"), ("32889".to_string(), "Sony FE 28-70mm F2 GM"), ("32890".to_string(), "Sony FE 400-800mm F6.3-8 G OSS"), ("32891".to_string(), "Sony FE 50-150mm F2 GM"), ("32893".to_string(), "Sony FE 100mm F2.8 Macro GM OSS"), ("33072".to_string(), "Sony FE 70-200mm F2.8 GM OSS + 1.4X Teleconverter"), ("33073".to_string(), "Sony FE 70-200mm F2.8 GM OSS + 2X Teleconverter"), ("33076".to_string(), "Sony FE 100mm F2.8 STF GM OSS (macro mode)"), ("33077".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS + 1.4X Teleconverter"), ("33078".to_string(), "Sony FE 100-400mm F4.5-5.6 GM OSS + 2X Teleconverter"), ("33079".to_string(), "Sony FE 400mm F2.8 GM OSS + 1.4X Teleconverter"), ("33080".to_string(), "Sony FE 400mm F2.8 GM OSS + 2X Teleconverter"), ("33081".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS + 1.4X Teleconverter"), ("33082".to_string(), "Sony FE 200-600mm F5.6-6.3 G OSS + 2X Teleconverter"), ("33083".to_string(), "Sony FE 600mm F4 GM OSS + 1.4X Teleconverter"), ("33084".to_string(), "Sony FE 600mm F4 GM OSS + 2X Teleconverter"), ("33085".to_string(), "Sony FE 70-200mm F2.8 GM OSS II + 1.4X Teleconverter"), ("33086".to_string(), "Sony FE 70-200mm F2.8 GM OSS II + 2X Teleconverter"), ("33087".to_string(), "Sony FE 70-200mm F4 Macro G OSS II + 1.4X Teleconverter"), ("33088".to_string(), "Sony FE 70-200mm F4 Macro G OSS II + 2X Teleconverter"), ("33089".to_string(), "Sony FE 300mm F2.8 GM OSS + 1.4X Teleconverter"), ("33090".to_string(), "Sony FE 300mm F2.8 GM OSS + 2X Teleconverter"), ("33091".to_string(), "Sony FE 400-800mm F6.3-8 G OSS + 1.4X Teleconverter"), ("33092".to_string(), "Sony FE 400-800mm F6.3-8 G OSS + 2X Teleconverter"), ("33093".to_string(), "Sony FE 100mm F2.8 Macro GM OSS + 1.4X Teleconverter"), ("33094".to_string(), "Sony FE 100mm F2.8 Macro GM OSS + 2X Teleconverter"), ("44".to_string(), "Metabones Canon EF Smart Adapter"), ("49201".to_string(), "Zeiss Touit 12mm F2.8 or other Touit lens"), ("49201.1".to_string(), "Zeiss Touit 32mm F1.8"), ("49201.2".to_string(), "Zeiss Touit 50mm F2.8"), ("49202".to_string(), "Zeiss Touit 32mm F1.8"), ("49203".to_string(), "Zeiss Touit 50mm F2.8 Macro"), ("49216".to_string(), "Zeiss Batis 25mm F2"), ("49217".to_string(), "Zeiss Batis 85mm F1.8"), ("49218".to_string(), "Zeiss Batis 18mm F2.8"), ("49219".to_string(), "Zeiss Batis 135mm F2.8"), ("49220".to_string(), "Zeiss Batis 40mm F2 CF"), ("49232".to_string(), "Zeiss Loxia 50mm F2"), ("49233".to_string(), "Zeiss Loxia 35mm F2"), ("49234".to_string(), "Zeiss Loxia 21mm F2.8"), ("49235".to_string(), "Zeiss Loxia 85mm F2.4"), ("49236".to_string(), "Zeiss Loxia 25mm F2.4"), ("49456".to_string(), "Tamron E 18-200mm F3.5-6.3 Di III VC"), ("49457".to_string(), "Tamron 28-75mm F2.8 Di III RXD"), ("49458".to_string(), "Tamron 17-28mm F2.8 Di III RXD"), ("49459".to_string(), "Tamron 35mm F2.8 Di III OSD M1:2"), ("49460".to_string(), "Tamron 24mm F2.8 Di III OSD M1:2"), ("49461".to_string(), "Tamron 20mm F2.8 Di III OSD M1:2"), ("49462".to_string(), "Tamron 70-180mm F2.8 Di III VXD"), ("49463".to_string(), "Tamron 28-200mm F2.8-5.6 Di III RXD"), ("49464".to_string(), "Tamron 70-300mm F4.5-6.3 Di III RXD"), ("49465".to_string(), "Tamron 17-70mm F2.8 Di III-A VC RXD"), ("49466".to_string(), "Tamron 150-500mm F5-6.7 Di III VC VXD"), ("49467".to_string(), "Tamron 11-20mm F2.8 Di III-A RXD"), ("49468".to_string(), "Tamron 18-300mm F3.5-6.3 Di III-A VC VXD"), ("49469".to_string(), "Tamron 35-150mm F2-F2.8 Di III VXD"), ("49470".to_string(), "Tamron 28-75mm F2.8 Di III VXD G2"), ("49471".to_string(), "Tamron 50-400mm F4.5-6.3 Di III VC VXD"), ("49472".to_string(), "Tamron 20-40mm F2.8 Di III VXD"), ("49473".to_string(), "Tamron 17-50mm F4 Di III VXD or Tokina or Viltrox lens"), ("49473.1".to_string(), "Tokina atx-m 85mm F1.8 FE"), ("49473.2".to_string(), "Viltrox 23mm F1.4 E"), ("49473.3".to_string(), "Viltrox 56mm F1.4 E"), ("49473.4".to_string(), "Viltrox 85mm F1.8 II FE"), ("49474".to_string(), "Tamron 70-180mm F2.8 Di III VXD G2 or Viltrox lens"), ("49474.1".to_string(), "Viltrox 13mm F1.4 E"), ("49474.10".to_string(), "Viltrox 20mm F2.8 FE"), ("49474.11".to_string(), "Viltrox AF 135/1.8 LAB FE"), ("49474.2".to_string(), "Viltrox 16mm F1.8 FE"), ("49474.3".to_string(), "Viltrox 23mm F1.4 E"), ("49474.4".to_string(), "Viltrox 24mm F1.8 FE"), ("49474.5".to_string(), "Viltrox 28mm F1.8 FE"), ("49474.6".to_string(), "Viltrox 33mm F1.4 E"), ("49474.7".to_string(), "Viltrox 35mm F1.8 FE"), ("49474.8".to_string(), "Viltrox 50mm F1.8 FE"), ("49474.9".to_string(), "Viltrox 75mm F1.2 E"), ("49475".to_string(), "Tamron 50-300mm F4.5-6.3 Di III VC VXD"), ("49476".to_string(), "Tamron 28-300mm F4-7.1 Di III VC VXD"), ("49477".to_string(), "Tamron 90mm F2.8 Di III Macro VXD"), ("49478".to_string(), "Tamron 16-30mm F2.8 Di III VXD G2"), ("49712".to_string(), "Tokina FiRIN 20mm F2 FE AF"), ("49713".to_string(), "Tokina FiRIN 100mm F2.8 FE MACRO"), ("49714".to_string(), "Tokina atx-m 11-18mm F2.8 E"), ("50480".to_string(), "Sigma 30mm F1.4 DC DN | C"), ("50481".to_string(), "Sigma 50mm F1.4 DG HSM | A"), ("50482".to_string(), "Sigma 18-300mm F3.5-6.3 DC MACRO OS HSM | C + MC-11"), ("50483".to_string(), "Sigma 18-35mm F1.8 DC HSM | A + MC-11"), ("50484".to_string(), "Sigma 24-35mm F2 DG HSM | A + MC-11"), ("50485".to_string(), "Sigma 24mm F1.4 DG HSM | A + MC-11"), ("50486".to_string(), "Sigma 150-600mm F5-6.3 DG OS HSM | C + MC-11"), ("50487".to_string(), "Sigma 20mm F1.4 DG HSM | A + MC-11"), ("50488".to_string(), "Sigma 35mm F1.4 DG HSM | A"), ("50489".to_string(), "Sigma 150-600mm F5-6.3 DG OS HSM | S + MC-11"), ("50490".to_string(), "Sigma 120-300mm F2.8 DG OS HSM | S + MC-11"), ("50492".to_string(), "Sigma 24-105mm F4 DG OS HSM | A + MC-11"), ("50493".to_string(), "Sigma 17-70mm F2.8-4 DC MACRO OS HSM | C + MC-11"), ("50495".to_string(), "Sigma 50-100mm F1.8 DC HSM | A + MC-11"), ("50499".to_string(), "Sigma 85mm F1.4 DG HSM | A"), ("50501".to_string(), "Sigma 100-400mm F5-6.3 DG OS HSM | C + MC-11"), ("50503".to_string(), "Sigma 16mm F1.4 DC DN | C"), ("50507".to_string(), "Sigma 105mm F1.4 DG HSM | A"), ("50508".to_string(), "Sigma 56mm F1.4 DC DN | C"), ("50512".to_string(), "Sigma 70-200mm F2.8 DG OS HSM | S + MC-11"), ("50513".to_string(), "Sigma 70mm F2.8 DG MACRO | A"), ("50514".to_string(), "Sigma 45mm F2.8 DG DN | C"), ("50515".to_string(), "Sigma 35mm F1.2 DG DN | A"), ("50516".to_string(), "Sigma 14-24mm F2.8 DG DN | A"), ("50517".to_string(), "Sigma 24-70mm F2.8 DG DN | A"), ("50518".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C"), ("50521".to_string(), "Sigma 85mm F1.4 DG DN | A"), ("50522".to_string(), "Sigma 105mm F2.8 DG DN MACRO | A"), ("50523".to_string(), "Sigma 65mm F2 DG DN | C"), ("50524".to_string(), "Sigma 35mm F2 DG DN | C"), ("50525".to_string(), "Sigma 24mm F3.5 DG DN | C"), ("50526".to_string(), "Sigma 28-70mm F2.8 DG DN | C"), ("50527".to_string(), "Sigma 150-600mm F5-6.3 DG DN OS | S"), ("50528".to_string(), "Sigma 35mm F1.4 DG DN | A"), ("50529".to_string(), "Sigma 90mm F2.8 DG DN | C"), ("50530".to_string(), "Sigma 24mm F2 DG DN | C"), ("50531".to_string(), "Sigma 18-50mm F2.8 DC DN | C"), ("50532".to_string(), "Sigma 20mm F2 DG DN | C"), ("50533".to_string(), "Sigma 16-28mm F2.8 DG DN | C"), ("50534".to_string(), "Sigma 20mm F1.4 DG DN | A"), ("50535".to_string(), "Sigma 24mm F1.4 DG DN | A"), ("50536".to_string(), "Sigma 60-600mm F4.5-6.3 DG DN OS | S"), ("50537".to_string(), "Sigma 50mm F2 DG DN | C"), ("50538".to_string(), "Sigma 17mm F4 DG DN | C"), ("50539".to_string(), "Sigma 50mm F1.4 DG DN | A"), ("50540".to_string(), "Sigma 14mm F1.4 DG DN | A"), ("50543".to_string(), "Sigma 70-200mm F2.8 DG DN OS | S"), ("50544".to_string(), "Sigma 23mm F1.4 DC DN | C"), ("50545".to_string(), "Sigma 24-70mm F2.8 DG DN II | A"), ("50546".to_string(), "Sigma 500mm F5.6 DG DN OS | S"), ("50547".to_string(), "Sigma 10-18mm F2.8 DC DN | C"), ("50548".to_string(), "Sigma 15mm F1.4 DG DN DIAGONAL FISHEYE | A"), ("50549".to_string(), "Sigma 50mm F1.2 DG DN | A"), ("50550".to_string(), "Sigma 28-105mm F2.8 DG DN | A"), ("50551".to_string(), "Sigma 28-45mm F1.8 DG DN | A"), ("50552".to_string(), "Sigma 35mm F1.2 DG II | A"), ("50553".to_string(), "Sigma 300-600mm F4 DG OS | S"), ("50554".to_string(), "Sigma 16-300mm F3.5-6.7 DC OS | C"), ("50555".to_string(), "Sigma 12mm F1.4 DC | C"), ("50556".to_string(), "Sigma 17-40mm F1.8 DC | A"), ("50557".to_string(), "Sigma 200mm F2 DG OS | S"), ("50558".to_string(), "Sigma 20-200mm F3.5-6.3 DG | C"), ("50559".to_string(), "Sigma 135mm F1.4 DG | A"), ("50992".to_string(), "Voigtlander SUPER WIDE-HELIAR 15mm F4.5 III"), ("50993".to_string(), "Voigtlander HELIAR-HYPER WIDE 10mm F5.6"), ("50994".to_string(), "Voigtlander ULTRA WIDE-HELIAR 12mm F5.6 III"), ("50995".to_string(), "Voigtlander MACRO APO-LANTHAR 65mm F2 Aspherical"), ("50996".to_string(), "Voigtlander NOKTON 40mm F1.2 Aspherical"), ("50997".to_string(), "Voigtlander NOKTON classic 35mm F1.4"), ("50998".to_string(), "Voigtlander MACRO APO-LANTHAR 110mm F2.5"), ("50999".to_string(), "Voigtlander COLOR-SKOPAR 21mm F3.5 Aspherical"), ("51000".to_string(), "Voigtlander NOKTON 50mm F1.2 Aspherical"), ("51001".to_string(), "Voigtlander NOKTON 21mm F1.4 Aspherical"), ("51002".to_string(), "Voigtlander APO-LANTHAR 50mm F2 Aspherical"), ("51003".to_string(), "Voigtlander NOKTON 35mm F1.2 Aspherical SE"), ("51006".to_string(), "Voigtlander APO-LANTHAR 35mm F2 Aspherical"), ("51007".to_string(), "Voigtlander NOKTON 50mm F1 Aspherical"), ("51008".to_string(), "Voigtlander NOKTON 75mm F1.5 Aspherical"), ("51009".to_string(), "Voigtlander NOKTON 28mm F1.5 Aspherical"), ("51072".to_string(), "ZEISS Otus ML 50mm F1.4"), ("51073".to_string(), "ZEISS Otus ML 85mm F1.4"), ("51504".to_string(), "Samyang AF 50mm F1.4"), ("51505".to_string(), "Samyang AF 14mm F2.8 or Samyang AF 35mm F2.8"), ("51505.1".to_string(), "Samyang AF 35mm F2.8"), ("51507".to_string(), "Samyang AF 35mm F1.4"), ("51508".to_string(), "Samyang AF 45mm F1.8"), ("51510".to_string(), "Samyang AF 18mm F2.8 or Samyang AF 35mm F1.8"), ("51510.1".to_string(), "Samyang AF 35mm F1.8"), ("51512".to_string(), "Samyang AF 75mm F1.8"), ("51513".to_string(), "Samyang AF 35mm F1.8"), ("51514".to_string(), "Samyang AF 24mm F1.8"), ("51515".to_string(), "Samyang AF 12mm F2.0"), ("51516".to_string(), "Samyang AF 24-70mm F2.8"), ("51517".to_string(), "Samyang AF 50mm F1.4 II"), ("51518".to_string(), "Samyang AF 135mm F1.8"), ("6".to_string(), "Sony LA-EA4 Adapter"), ("61569".to_string(), "LAOWA FFII 10mm F2.8 C&D Dreamer"), ("61761".to_string(), "Viltrox 28mm F4.5 FE"), ("61767".to_string(), "Viltrox 50mm F2.0 FE"), ("7".to_string(), "Sony LA-EA5 Adapter"), ("78".to_string(), "Metabones Canon EF Smart Adapter Mark III or Other Adapter"), ("Notes".to_string(), "Lens type numbers for Sony E-mount lenses used by NEX/ILCE models."), ]))),
+            value_conv: None,
+        }),
+        (265, TagInfo {
+            name: "LensType",
+            format: "int16u",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Minolta AF 28-85mm F3.5-4.5 New"), ("1".to_string(), "Minolta AF 80-200mm F2.8 HS-APO G"), ("10".to_string(), "Minolta AF 28-105mm F3.5-4.5 [New]"), ("11".to_string(), "Minolta AF 300mm F4 HS-APO G"), ("12".to_string(), "Minolta AF 100mm F2.8 Soft Focus"), ("128".to_string(), "Tamron or Sigma Lens (128)"), ("128.1".to_string(), "Tamron AF 18-200mm F3.5-6.3 XR Di II LD Aspherical [IF] Macro"), ("128.10".to_string(), "Sigma 85mm F1.4 EX DG HSM"), ("128.11".to_string(), "Sigma 24-70mm F2.8 IF EX DG HSM"), ("128.12".to_string(), "Sigma 18-250mm F3.5-6.3 DC OS HSM"), ("128.13".to_string(), "Sigma 17-50mm F2.8 EX DC HSM"), ("128.14".to_string(), "Sigma 17-70mm F2.8-4 DC Macro HSM"), ("128.15".to_string(), "Sigma 150mm F2.8 EX DG OS HSM APO Macro"), ("128.16".to_string(), "Sigma 150-500mm F5-6.3 APO DG OS HSM"), ("128.17".to_string(), "Tamron AF 28-105mm F4-5.6 [IF]"), ("128.18".to_string(), "Sigma 35mm F1.4 DG HSM"), ("128.19".to_string(), "Sigma 18-35mm F1.8 DC HSM"), ("128.2".to_string(), "Tamron AF 28-300mm F3.5-6.3 XR Di LD Aspherical [IF] Macro"), ("128.20".to_string(), "Sigma 50-500mm F4.5-6.3 APO DG OS HSM"), ("128.21".to_string(), "Sigma 24-105mm F4 DG HSM | A"), ("128.22".to_string(), "Sigma 30mm F1.4"), ("128.23".to_string(), "Sigma 35mm F1.4 DG HSM | A"), ("128.24".to_string(), "Sigma 105mm F2.8 EX DG OS HSM Macro"), ("128.25".to_string(), "Sigma 180mm F2.8 EX DG OS HSM APO Macro"), ("128.26".to_string(), "Sigma 18-300mm F3.5-6.3 DC Macro HSM | C"), ("128.27".to_string(), "Sigma 18-50mm F2.8-4.5 DC HSM"), ("128.3".to_string(), "Tamron AF 28-200mm F3.8-5.6 XR Di Aspherical [IF] Macro"), ("128.4".to_string(), "Tamron SP AF 17-35mm F2.8-4 Di LD Aspherical IF"), ("128.5".to_string(), "Sigma AF 50-150mm F2.8 EX DC APO HSM II"), ("128.6".to_string(), "Sigma 10-20mm F3.5 EX DC HSM"), ("128.7".to_string(), "Sigma 70-200mm F2.8 II EX DG APO MACRO HSM"), ("128.8".to_string(), "Sigma 10mm F2.8 EX DC HSM Fisheye"), ("128.9".to_string(), "Sigma 50mm F1.4 EX DG HSM"), ("129".to_string(), "Tamron Lens (129)"), ("129.1".to_string(), "Tamron 200-400mm F5.6 LD"), ("129.2".to_string(), "Tamron 70-300mm F4-5.6 LD"), ("13".to_string(), "Minolta AF 75-300mm F4.5-5.6 (New or II)"), ("131".to_string(), "Tamron 20-40mm F2.7-3.5 SP Aspherical IF"), ("135".to_string(), "Vivitar 28-210mm F3.5-5.6"), ("136".to_string(), "Tokina EMZ M100 AF 100mm F3.5"), ("137".to_string(), "Cosina 70-210mm F2.8-4 AF"), ("138".to_string(), "Soligor 19-35mm F3.5-4.5"), ("139".to_string(), "Tokina AF 28-300mm F4-6.3"), ("14".to_string(), "Minolta AF 100-400mm F4.5-6.7 APO"), ("142".to_string(), "Cosina AF 70-300mm F4.5-5.6 MC"), ("146".to_string(), "Voigtlander Macro APO-Lanthar 125mm F2.5 SL"), ("15".to_string(), "Minolta AF 400mm F4.5 HS-APO G"), ("16".to_string(), "Minolta AF 17-35mm F3.5 G"), ("17".to_string(), "Minolta AF 20-35mm F3.5-4.5"), ("18".to_string(), "Minolta AF 28-80mm F3.5-5.6 II"), ("1868".to_string(), "Sigma MC-11 SA-E Mount Converter with not-supported Sigma lens"), ("18688".to_string(), "Sigma MC-11 SA-E Mount Converter with not-supported Sigma lens"), ("19".to_string(), "Minolta AF 35mm F1.4 G"), ("194".to_string(), "Tamron SP AF 17-50mm F2.8 XR Di II LD Aspherical [IF]"), ("2".to_string(), "Minolta AF 28-70mm F2.8 G"), ("20".to_string(), "Minolta/Sony 135mm F2.8 [T4.5] STF"), ("202".to_string(), "Tamron SP AF 70-200mm F2.8 Di LD [IF] Macro"), ("203".to_string(), "Tamron SP 70-200mm F2.8 Di USD"), ("204".to_string(), "Tamron SP 24-70mm F2.8 Di USD"), ("212".to_string(), "Tamron 28-300mm F3.5-6.3 Di PZD"), ("213".to_string(), "Tamron 16-300mm F3.5-6.3 Di II PZD Macro"), ("214".to_string(), "Tamron SP 150-600mm F5-6.3 Di USD"), ("215".to_string(), "Tamron SP 15-30mm F2.8 Di USD"), ("216".to_string(), "Tamron SP 45mm F1.8 Di USD"), ("217".to_string(), "Tamron SP 35mm F1.8 Di USD"), ("218".to_string(), "Tamron SP 90mm F2.8 Di Macro 1:1 USD (F017)"), ("22".to_string(), "Minolta AF 35-80mm F4-5.6 II"), ("220".to_string(), "Tamron SP 150-600mm F5-6.3 Di USD G2"), ("224".to_string(), "Tamron SP 90mm F2.8 Di Macro 1:1 USD (F004)"), ("23".to_string(), "Minolta AF 200mm F4 Macro APO G"), ("24".to_string(), "Minolta/Sony AF 24-105mm F3.5-4.5 (D) or Sigma or Tamron Lens"), ("24.1".to_string(), "Sigma 18-50mm F2.8"), ("24.2".to_string(), "Sigma 17-70mm F2.8-4.5 DC Macro"), ("24.3".to_string(), "Sigma 20-40mm F2.8 EX DG Aspherical IF"), ("24.4".to_string(), "Sigma 18-200mm F3.5-6.3 DC"), ("24.5".to_string(), "Sigma DC 18-125mm F4-5,6 D"), ("24.6".to_string(), "Tamron SP AF 28-75mm F2.8 XR Di LD Aspherical [IF] Macro"), ("24.7".to_string(), "Sigma 15-30mm F3.5-4.5 EX DG Aspherical"), ("25".to_string(), "Minolta AF 100-300mm F4.5-5.6 APO (D) or Sigma Lens"), ("25.1".to_string(), "Sigma 100-300mm F4 EX (APO (D) or D IF)"), ("25.2".to_string(), "Sigma 70mm F2.8 EX DG Macro"), ("25.3".to_string(), "Sigma 20mm F1.8 EX DG Aspherical RF"), ("25.4".to_string(), "Sigma 30mm F1.4 EX DC"), ("25.5".to_string(), "Sigma 24mm F1.8 EX DG ASP Macro"), ("255".to_string(), "Tamron Lens (255)"), ("255.1".to_string(), "Tamron SP AF 17-50mm F2.8 XR Di II LD Aspherical"), ("255.2".to_string(), "Tamron AF 18-250mm F3.5-6.3 XR Di II LD"), ("255.3".to_string(), "Tamron AF 55-200mm F4-5.6 Di II LD Macro"), ("255.4".to_string(), "Tamron AF 70-300mm F4-5.6 Di LD Macro 1:2"), ("255.5".to_string(), "Tamron SP AF 200-500mm F5.0-6.3 Di LD IF"), ("255.6".to_string(), "Tamron SP AF 10-24mm F3.5-4.5 Di II LD Aspherical IF"), ("255.7".to_string(), "Tamron SP AF 70-200mm F2.8 Di LD IF Macro"), ("255.8".to_string(), "Tamron SP AF 28-75mm F2.8 XR Di LD Aspherical IF"), ("255.9".to_string(), "Tamron AF 90-300mm F4.5-5.6 Telemacro"), ("2550".to_string(), "Minolta AF 50mm F1.7"), ("25501".to_string(), "Minolta AF 50mm F1.7"), ("2551".to_string(), "Minolta AF 35-70mm F4 or Other Lens"), ("2551.1".to_string(), "Sigma UC AF 28-70mm F3.5-4.5"), ("2551.2".to_string(), "Sigma AF 28-70mm F2.8"), ("2551.3".to_string(), "Sigma M-AF 70-200mm F2.8 EX Aspherical"), ("2551.4".to_string(), "Quantaray M-AF 35-80mm F4-5.6"), ("2551.5".to_string(), "Tokina 28-70mm F2.8-4.5 AF"), ("25511".to_string(), "Minolta AF 35-70mm F4 or Other Lens"), ("25511.1".to_string(), "Sigma UC AF 28-70mm F3.5-4.5"), ("25511.2".to_string(), "Sigma AF 28-70mm F2.8"), ("25511.3".to_string(), "Sigma M-AF 70-200mm F2.8 EX Aspherical"), ("25511.4".to_string(), "Quantaray M-AF 35-80mm F4-5.6"), ("25511.5".to_string(), "Tokina 28-70mm F2.8-4.5 AF"), ("2552".to_string(), "Minolta AF 28-85mm F3.5-4.5 or Other Lens"), ("2552.1".to_string(), "Tokina 19-35mm F3.5-4.5"), ("2552.2".to_string(), "Tokina 28-70mm F2.8 AT-X"), ("2552.3".to_string(), "Tokina 80-400mm F4.5-5.6 AT-X AF II 840"), ("2552.4".to_string(), "Tokina AF PRO 28-80mm F2.8 AT-X 280"), ("2552.5".to_string(), "Tokina AT-X PRO [II] AF 28-70mm F2.6-2.8 270"), ("2552.6".to_string(), "Tamron AF 19-35mm F3.5-4.5"), ("2552.7".to_string(), "Angenieux AF 28-70mm F2.6"), ("2552.8".to_string(), "Tokina AT-X 17 AF 17mm F3.5"), ("2552.9".to_string(), "Tokina 20-35mm F3.5-4.5 II AF"), ("25521".to_string(), "Minolta AF 28-85mm F3.5-4.5 or Other Lens"), ("25521.1".to_string(), "Tokina 19-35mm F3.5-4.5"), ("25521.2".to_string(), "Tokina 28-70mm F2.8 AT-X"), ("25521.3".to_string(), "Tokina 80-400mm F4.5-5.6 AT-X AF II 840"), ("25521.4".to_string(), "Tokina AF PRO 28-80mm F2.8 AT-X 280"), ("25521.5".to_string(), "Tokina AT-X PRO [II] AF 28-70mm F2.6-2.8 270"), ("25521.6".to_string(), "Tamron AF 19-35mm F3.5-4.5"), ("25521.7".to_string(), "Angenieux AF 28-70mm F2.6"), ("25521.8".to_string(), "Tokina AT-X 17 AF 17mm F3.5"), ("25521.9".to_string(), "Tokina 20-35mm F3.5-4.5 II AF"), ("2553".to_string(), "Minolta AF 28-135mm F4-4.5 or Other Lens"), ("2553.1".to_string(), "Sigma ZOOM-alpha 35-135mm F3.5-4.5"), ("2553.2".to_string(), "Sigma 28-105mm F2.8-4 Aspherical"), ("2553.3".to_string(), "Sigma 28-105mm F4-5.6 UC"), ("2553.4".to_string(), "Tokina AT-X 242 AF 24-200mm F3.5-5.6"), ("25531".to_string(), "Minolta AF 28-135mm F4-4.5 or Other Lens"), ("25531.1".to_string(), "Sigma ZOOM-alpha 35-135mm F3.5-4.5"), ("25531.2".to_string(), "Sigma 28-105mm F2.8-4 Aspherical"), ("25531.3".to_string(), "Sigma 28-105mm F4-5.6 UC"), ("25531.4".to_string(), "Tokina AT-X 242 AF 24-200mm F3.5-5.6"), ("2554".to_string(), "Minolta AF 35-105mm F3.5-4.5"), ("25541".to_string(), "Minolta AF 35-105mm F3.5-4.5"), ("2555".to_string(), "Minolta AF 70-210mm F4 Macro or Sigma Lens"), ("2555.1".to_string(), "Sigma 70-210mm F4-5.6 APO"), ("2555.2".to_string(), "Sigma M-AF 70-200mm F2.8 EX APO"), ("2555.3".to_string(), "Sigma 75-200mm F2.8-3.5"), ("25551".to_string(), "Minolta AF 70-210mm F4 Macro or Sigma Lens"), ("25551.1".to_string(), "Sigma 70-210mm F4-5.6 APO"), ("25551.2".to_string(), "Sigma M-AF 70-200mm F2.8 EX APO"), ("25551.3".to_string(), "Sigma 75-200mm F2.8-3.5"), ("2556".to_string(), "Minolta AF 135mm F2.8"), ("25561".to_string(), "Minolta AF 135mm F2.8"), ("2557".to_string(), "Minolta/Sony AF 28mm F2.8"), ("25571".to_string(), "Minolta/Sony AF 28mm F2.8"), ("2558".to_string(), "Minolta AF 24-50mm F4"), ("25581".to_string(), "Minolta AF 24-50mm F4"), ("2560".to_string(), "Minolta AF 100-200mm F4.5"), ("25601".to_string(), "Minolta AF 100-200mm F4.5"), ("2561".to_string(), "Minolta AF 75-300mm F4.5-5.6 or Sigma Lens"), ("2561.1".to_string(), "Sigma 70-300mm F4-5.6 DL Macro"), ("2561.10".to_string(), "Sigma 1000mm F8 APO"), ("2561.2".to_string(), "Sigma 300mm F4 APO Macro"), ("2561.3".to_string(), "Sigma AF 500mm F4.5 APO"), ("2561.4".to_string(), "Sigma AF 170-500mm F5-6.3 APO Aspherical"), ("2561.5".to_string(), "Tokina AT-X AF 300mm F4"), ("2561.6".to_string(), "Tokina AT-X AF 400mm F5.6 SD"), ("2561.7".to_string(), "Tokina AF 730 II 75-300mm F4.5-5.6"), ("2561.8".to_string(), "Sigma 800mm F5.6 APO"), ("2561.9".to_string(), "Sigma AF 400mm F5.6 APO Macro"), ("25611".to_string(), "Minolta AF 75-300mm F4.5-5.6 or Sigma Lens"), ("25611.1".to_string(), "Sigma 70-300mm F4-5.6 DL Macro"), ("25611.10".to_string(), "Sigma 1000mm F8 APO"), ("25611.2".to_string(), "Sigma 300mm F4 APO Macro"), ("25611.3".to_string(), "Sigma AF 500mm F4.5 APO"), ("25611.4".to_string(), "Sigma AF 170-500mm F5-6.3 APO Aspherical"), ("25611.5".to_string(), "Tokina AT-X AF 300mm F4"), ("25611.6".to_string(), "Tokina AT-X AF 400mm F5.6 SD"), ("25611.7".to_string(), "Tokina AF 730 II 75-300mm F4.5-5.6"), ("25611.8".to_string(), "Sigma 800mm F5.6 APO"), ("25611.9".to_string(), "Sigma AF 400mm F5.6 APO Macro"), ("2562".to_string(), "Minolta AF 50mm F1.4 [New]"), ("25621".to_string(), "Minolta AF 50mm F1.4 [New]"), ("2563".to_string(), "Minolta AF 300mm F2.8 APO or Sigma Lens"), ("2563.1".to_string(), "Sigma AF 50-500mm F4-6.3 EX DG APO"), ("2563.2".to_string(), "Sigma AF 170-500mm F5-6.3 APO Aspherical"), ("2563.3".to_string(), "Sigma AF 500mm F4.5 EX DG APO"), ("2563.4".to_string(), "Sigma 400mm F5.6 APO"), ("25631".to_string(), "Minolta AF 300mm F2.8 APO or Sigma Lens"), ("25631.1".to_string(), "Sigma AF 50-500mm F4-6.3 EX DG APO"), ("25631.2".to_string(), "Sigma AF 170-500mm F5-6.3 APO Aspherical"), ("25631.3".to_string(), "Sigma AF 500mm F4.5 EX DG APO"), ("25631.4".to_string(), "Sigma 400mm F5.6 APO"), ("2564".to_string(), "Minolta AF 50mm F2.8 Macro or Sigma Lens"), ("2564.1".to_string(), "Sigma 50mm F2.8 EX Macro"), ("25641".to_string(), "Minolta AF 50mm F2.8 Macro or Sigma Lens"), ("25641.1".to_string(), "Sigma 50mm F2.8 EX Macro"), ("2565".to_string(), "Minolta AF 600mm F4 APO"), ("25651".to_string(), "Minolta AF 600mm F4 APO"), ("2566".to_string(), "Minolta AF 24mm F2.8 or Sigma Lens"), ("2566.1".to_string(), "Sigma 17-35mm F2.8-4 EX Aspherical"), ("25661".to_string(), "Minolta AF 24mm F2.8 or Sigma Lens"), ("25661.1".to_string(), "Sigma 17-35mm F2.8-4 EX Aspherical"), ("2572".to_string(), "Minolta/Sony AF 500mm F8 Reflex"), ("25721".to_string(), "Minolta/Sony AF 500mm F8 Reflex"), ("2578".to_string(), "Minolta/Sony AF 16mm F2.8 Fisheye or Sigma Lens"), ("2578.1".to_string(), "Sigma 8mm F4 EX [DG] Fisheye"), ("2578.2".to_string(), "Sigma 14mm F3.5"), ("2578.3".to_string(), "Sigma 15mm F2.8 Fisheye"), ("25781".to_string(), "Minolta/Sony AF 16mm F2.8 Fisheye or Sigma Lens"), ("25781.1".to_string(), "Sigma 8mm F4 EX [DG] Fisheye"), ("25781.2".to_string(), "Sigma 14mm F3.5"), ("25781.3".to_string(), "Sigma 15mm F2.8 Fisheye"), ("2579".to_string(), "Minolta/Sony AF 20mm F2.8 or Tokina Lens"), ("2579.1".to_string(), "Tokina AT-X Pro DX 11-16mm F2.8"), ("25791".to_string(), "Minolta/Sony AF 20mm F2.8 or Tokina Lens"), ("25791.1".to_string(), "Tokina AT-X Pro DX 11-16mm F2.8"), ("2581".to_string(), "Minolta AF 100mm F2.8 Macro [New] or Sigma or Tamron Lens"), ("2581.1".to_string(), "Sigma AF 90mm F2.8 Macro"), ("2581.2".to_string(), "Sigma AF 105mm F2.8 EX [DG] Macro"), ("2581.3".to_string(), "Sigma 180mm F5.6 Macro"), ("2581.4".to_string(), "Sigma 180mm F3.5 EX DG Macro"), ("2581.5".to_string(), "Tamron 90mm F2.8 Macro"), ("25811".to_string(), "Minolta AF 100mm F2.8 Macro [New] or Sigma or Tamron Lens"), ("25811.1".to_string(), "Sigma AF 90mm F2.8 Macro"), ("25811.2".to_string(), "Sigma AF 105mm F2.8 EX [DG] Macro"), ("25811.3".to_string(), "Sigma 180mm F5.6 Macro"), ("25811.4".to_string(), "Sigma 180mm F3.5 EX DG Macro"), ("25811.5".to_string(), "Tamron 90mm F2.8 Macro"), ("2585".to_string(), "Minolta AF 35-105mm F3.5-4.5 New or Tamron Lens"), ("2585.1".to_string(), "Beroflex 35-135mm F3.5-4.5"), ("2585.2".to_string(), "Tamron 24-135mm F3.5-5.6"), ("25851".to_string(), "Beroflex 35-135mm F3.5-4.5"), ("25858".to_string(), "Minolta AF 35-105mm F3.5-4.5 New or Tamron Lens"), ("25858.1".to_string(), "Tamron 24-135mm F3.5-5.6"), ("2588".to_string(), "Minolta AF 70-210mm F3.5-4.5"), ("25881".to_string(), "Minolta AF 70-210mm F3.5-4.5"), ("2589".to_string(), "Minolta AF 80-200mm F2.8 APO or Tokina Lens"), ("2589.1".to_string(), "Tokina 80-200mm F2.8"), ("25891".to_string(), "Minolta AF 80-200mm F2.8 APO or Tokina Lens"), ("25891.1".to_string(), "Tokina 80-200mm F2.8"), ("2590".to_string(), "Minolta AF 200mm F2.8 G APO + Minolta AF 1.4x APO or Other Lens + 1.4x"), ("2590.1".to_string(), "Minolta AF 600mm F4 HS-APO G + Minolta AF 1.4x APO"), ("25901".to_string(), "Minolta AF 200mm F2.8 G APO + Minolta AF 1.4x APO or Other Lens + 1.4x"), ("25901.1".to_string(), "Minolta AF 600mm F4 HS-APO G + Minolta AF 1.4x APO"), ("2591".to_string(), "Minolta AF 35mm F1.4"), ("25911".to_string(), "Minolta AF 35mm F1.4"), ("2592".to_string(), "Minolta AF 85mm F1.4 G (D)"), ("25921".to_string(), "Minolta AF 85mm F1.4 G (D)"), ("2593".to_string(), "Minolta AF 200mm F2.8 APO"), ("25931".to_string(), "Minolta AF 200mm F2.8 APO"), ("2594".to_string(), "Minolta AF 3x-1x F1.7-2.8 Macro"), ("25941".to_string(), "Minolta AF 3x-1x F1.7-2.8 Macro"), ("2596".to_string(), "Minolta AF 28mm F2"), ("25961".to_string(), "Minolta AF 28mm F2"), ("2597".to_string(), "Minolta AF 35mm F2 [New]"), ("25971".to_string(), "Minolta AF 35mm F2 [New]"), ("2598".to_string(), "Minolta AF 100mm F2"), ("25981".to_string(), "Minolta AF 100mm F2"), ("2601".to_string(), "Minolta AF 200mm F2.8 G APO + Minolta AF 2x APO or Other Lens + 2x"), ("2601.1".to_string(), "Minolta AF 600mm F4 HS-APO G + Minolta AF 2x APO"), ("26011".to_string(), "Minolta AF 200mm F2.8 G APO + Minolta AF 2x APO or Other Lens + 2x"), ("26011.1".to_string(), "Minolta AF 600mm F4 HS-APO G + Minolta AF 2x APO"), ("2604".to_string(), "Minolta AF 80-200mm F4.5-5.6"), ("26041".to_string(), "Minolta AF 80-200mm F4.5-5.6"), ("2605".to_string(), "Minolta AF 35-80mm F4-5.6"), ("26051".to_string(), "Minolta AF 35-80mm F4-5.6"), ("2606".to_string(), "Minolta AF 100-300mm F4.5-5.6"), ("26061".to_string(), "Minolta AF 100-300mm F4.5-5.6"), ("2607".to_string(), "Minolta AF 35-80mm F4-5.6"), ("26071".to_string(), "Minolta AF 35-80mm F4-5.6"), ("2608".to_string(), "Minolta AF 300mm F2.8 HS-APO G"), ("26081".to_string(), "Minolta AF 300mm F2.8 HS-APO G"), ("2609".to_string(), "Minolta AF 600mm F4 HS-APO G"), ("26091".to_string(), "Minolta AF 600mm F4 HS-APO G"), ("2612".to_string(), "Minolta AF 200mm F2.8 HS-APO G"), ("26121".to_string(), "Minolta AF 200mm F2.8 HS-APO G"), ("2613".to_string(), "Minolta AF 50mm F1.7 New"), ("26131".to_string(), "Minolta AF 50mm F1.7 New"), ("2615".to_string(), "Minolta AF 28-105mm F3.5-4.5 xi"), ("26151".to_string(), "Minolta AF 28-105mm F3.5-4.5 xi"), ("2616".to_string(), "Minolta AF 35-200mm F4.5-5.6 xi"), ("26161".to_string(), "Minolta AF 35-200mm F4.5-5.6 xi"), ("2618".to_string(), "Minolta AF 28-80mm F4-5.6 xi"), ("26181".to_string(), "Minolta AF 28-80mm F4-5.6 xi"), ("2619".to_string(), "Minolta AF 80-200mm F4.5-5.6 xi"), ("26191".to_string(), "Minolta AF 80-200mm F4.5-5.6 xi"), ("2620".to_string(), "Minolta AF 28-70mm F2.8 G"), ("26201".to_string(), "Minolta AF 28-70mm F2.8 G"), ("2621".to_string(), "Minolta AF 100-300mm F4.5-5.6 xi"), ("26211".to_string(), "Minolta AF 100-300mm F4.5-5.6 xi"), ("2624".to_string(), "Minolta AF 35-80mm F4-5.6 Power Zoom"), ("26241".to_string(), "Minolta AF 35-80mm F4-5.6 Power Zoom"), ("2628".to_string(), "Minolta AF 80-200mm F2.8 HS-APO G"), ("26281".to_string(), "Minolta AF 80-200mm F2.8 HS-APO G"), ("2629".to_string(), "Minolta AF 85mm F1.4 New"), ("26291".to_string(), "Minolta AF 85mm F1.4 New"), ("2631".to_string(), "Minolta AF 100-300mm F4.5-5.6 APO"), ("26311".to_string(), "Minolta AF 100-300mm F4.5-5.6 APO"), ("2632".to_string(), "Minolta AF 24-50mm F4 New"), ("26321".to_string(), "Minolta AF 24-50mm F4 New"), ("2638".to_string(), "Minolta AF 50mm F2.8 Macro New"), ("26381".to_string(), "Minolta AF 50mm F2.8 Macro New"), ("2639".to_string(), "Minolta AF 100mm F2.8 Macro"), ("26391".to_string(), "Minolta AF 100mm F2.8 Macro"), ("2641".to_string(), "Minolta/Sony AF 20mm F2.8 New"), ("26411".to_string(), "Minolta/Sony AF 20mm F2.8 New"), ("2642".to_string(), "Minolta AF 24mm F2.8 New"), ("26421".to_string(), "Minolta AF 24mm F2.8 New"), ("2644".to_string(), "Minolta AF 100-400mm F4.5-6.7 APO"), ("26441".to_string(), "Minolta AF 100-400mm F4.5-6.7 APO"), ("2662".to_string(), "Minolta AF 50mm F1.4 New"), ("26621".to_string(), "Minolta AF 50mm F1.4 New"), ("2667".to_string(), "Minolta AF 35mm F2 New"), ("26671".to_string(), "Minolta AF 35mm F2 New"), ("2668".to_string(), "Minolta AF 28mm F2 New"), ("26681".to_string(), "Minolta AF 28mm F2 New"), ("2672".to_string(), "Minolta AF 24-105mm F3.5-4.5 (D)"), ("26721".to_string(), "Minolta AF 24-105mm F3.5-4.5 (D)"), ("27".to_string(), "Minolta AF 85mm F1.4 G (D)"), ("28".to_string(), "Minolta/Sony AF 100mm F2.8 Macro (D) or Tamron Lens"), ("28.1".to_string(), "Tamron SP AF 90mm F2.8 Di Macro"), ("28.2".to_string(), "Tamron SP AF 180mm F3.5 Di LD [IF] Macro"), ("29".to_string(), "Minolta/Sony AF 75-300mm F4.5-5.6 (D)"), ("3".to_string(), "Minolta AF 28-80mm F4-5.6"), ("30".to_string(), "Minolta AF 28-80mm F3.5-5.6 (D) or Sigma Lens"), ("30.1".to_string(), "Sigma AF 10-20mm F4-5.6 EX DC"), ("30.2".to_string(), "Sigma AF 12-24mm F4.5-5.6 EX DG"), ("30.3".to_string(), "Sigma 28-70mm EX DG F2.8"), ("30.4".to_string(), "Sigma 55-200mm F4-5.6 DC"), ("3046".to_string(), "Metabones Canon EF Speed Booster"), ("30464".to_string(), "Metabones Canon EF Speed Booster"), ("31".to_string(), "Minolta/Sony AF 50mm F2.8 Macro (D) or F3.5"), ("31.1".to_string(), "Minolta/Sony AF 50mm F3.5 Macro"), ("32".to_string(), "Minolta/Sony AF 300mm F2.8 G or 1.5x Teleconverter"), ("33".to_string(), "Minolta/Sony AF 70-200mm F2.8 G"), ("35".to_string(), "Minolta AF 85mm F1.4 G (D) Limited"), ("36".to_string(), "Minolta AF 28-100mm F3.5-5.6 (D)"), ("38".to_string(), "Minolta AF 17-35mm F2.8-4 (D)"), ("39".to_string(), "Minolta AF 28-75mm F2.8 (D)"), ("4".to_string(), "Minolta AF 85mm F1.4G"), ("40".to_string(), "Minolta/Sony AF DT 18-70mm F3.5-5.6 (D)"), ("41".to_string(), "Minolta/Sony AF DT 11-18mm F4.5-5.6 (D) or Tamron Lens"), ("41.1".to_string(), "Tamron SP AF 11-18mm F4.5-5.6 Di II LD Aspherical IF"), ("42".to_string(), "Minolta/Sony AF DT 18-200mm F3.5-6.3 (D)"), ("43".to_string(), "Sony 35mm F1.4 G (SAL35F14G)"), ("44".to_string(), "Sony 50mm F1.4 (SAL50F14)"), ("45".to_string(), "Carl Zeiss Planar T* 85mm F1.4 ZA (SAL85F14Z)"), ("4567".to_string(), "Tokina 70-210mm F4-5.6"), ("45671".to_string(), "Tokina 70-210mm F4-5.6"), ("4568".to_string(), "Tokina AF 35-200mm F4-5.6 Zoom SD"), ("45681".to_string(), "Tokina AF 35-200mm F4-5.6 Zoom SD"), ("4570".to_string(), "Tamron AF 35-135mm F3.5-4.5"), ("45701".to_string(), "Tamron AF 35-135mm F3.5-4.5"), ("4571".to_string(), "Vivitar 70-210mm F4.5-5.6"), ("45711".to_string(), "Vivitar 70-210mm F4.5-5.6"), ("4574".to_string(), "2x Teleconverter or Tamron or Tokina Lens"), ("4574.1".to_string(), "Tamron SP AF 90mm F2.5"), ("4574.2".to_string(), "Tokina RF 500mm F8.0 x2"), ("4574.3".to_string(), "Tokina 300mm F2.8 x2"), ("45741".to_string(), "2x Teleconverter or Tamron or Tokina Lens"), ("45741.1".to_string(), "Tamron SP AF 90mm F2.5"), ("45741.2".to_string(), "Tokina RF 500mm F8.0 x2"), ("45741.3".to_string(), "Tokina 300mm F2.8 x2"), ("4575".to_string(), "1.4x Teleconverter"), ("45751".to_string(), "1.4x Teleconverter"), ("4585".to_string(), "Tamron SP AF 300mm F2.8 LD IF"), ("45851".to_string(), "Tamron SP AF 300mm F2.8 LD IF"), ("4586".to_string(), "Tamron SP AF 35-105mm F2.8 LD Aspherical IF"), ("45861".to_string(), "Tamron SP AF 35-105mm F2.8 LD Aspherical IF"), ("4587".to_string(), "Tamron AF 70-210mm F2.8 SP LD"), ("45871".to_string(), "Tamron AF 70-210mm F2.8 SP LD"), ("46".to_string(), "Carl Zeiss Vario-Sonnar T* DT 16-80mm F3.5-4.5 ZA (SAL1680Z)"), ("47".to_string(), "Carl Zeiss Sonnar T* 135mm F1.8 ZA (SAL135F18Z)"), ("48".to_string(), "Carl Zeiss Vario-Sonnar T* 24-70mm F2.8 ZA SSM (SAL2470Z) or Other Lens"), ("48.1".to_string(), "Carl Zeiss Vario-Sonnar T* 24-70mm F2.8 ZA SSM II (SAL2470Z2)"), ("48.2".to_string(), "Tamron SP 24-70mm F2.8 Di USD"), ("4812".to_string(), "Metabones Canon EF Speed Booster Ultra"), ("48128".to_string(), "Metabones Canon EF Speed Booster Ultra"), ("49".to_string(), "Sony DT 55-200mm F4-5.6 (SAL55200)"), ("5".to_string(), "Minolta AF 35-70mm F3.5-4.5 [II]"), ("50".to_string(), "Sony DT 18-250mm F3.5-6.3 (SAL18250)"), ("51".to_string(), "Sony DT 16-105mm F3.5-5.6 (SAL16105)"), ("52".to_string(), "Sony 70-300mm F4.5-5.6 G SSM (SAL70300G) or G SSM II or Tamron Lens"), ("52.1".to_string(), "Sony 70-300mm F4.5-5.6 G SSM II (SAL70300G2)"), ("52.2".to_string(), "Tamron SP 70-300mm F4-5.6 Di USD"), ("53".to_string(), "Sony 70-400mm F4-5.6 G SSM (SAL70400G)"), ("54".to_string(), "Carl Zeiss Vario-Sonnar T* 16-35mm F2.8 ZA SSM (SAL1635Z) or ZA SSM II"), ("54.1".to_string(), "Carl Zeiss Vario-Sonnar T* 16-35mm F2.8 ZA SSM II (SAL1635Z2)"), ("55".to_string(), "Sony DT 18-55mm F3.5-5.6 SAM (SAL1855) or SAM II"), ("55.1".to_string(), "Sony DT 18-55mm F3.5-5.6 SAM II (SAL18552)"), ("56".to_string(), "Sony DT 55-200mm F4-5.6 SAM (SAL55200-2)"), ("57".to_string(), "Sony DT 50mm F1.8 SAM (SAL50F18) or Tamron Lens or Commlite CM-EF-NEX adapter"), ("57.1".to_string(), "Tamron SP AF 60mm F2 Di II LD [IF] Macro 1:1"), ("57.2".to_string(), "Tamron 18-270mm F3.5-6.3 Di II PZD"), ("58".to_string(), "Sony DT 30mm F2.8 Macro SAM (SAL30M28)"), ("59".to_string(), "Sony 28-75mm F2.8 SAM (SAL2875)"), ("6".to_string(), "Minolta AF 24-85mm F3.5-4.5 [New]"), ("60".to_string(), "Carl Zeiss Distagon T* 24mm F2 ZA SSM (SAL24F20Z)"), ("61".to_string(), "Sony 85mm F2.8 SAM (SAL85F28)"), ("6118".to_string(), "Canon EF Adapter"), ("61184".to_string(), "Canon EF Adapter"), ("62".to_string(), "Sony DT 35mm F1.8 SAM (SAL35F18)"), ("63".to_string(), "Sony DT 16-50mm F2.8 SSM (SAL1650)"), ("64".to_string(), "Sony 500mm F4 G SSM (SAL500F40G)"), ("65".to_string(), "Sony DT 18-135mm F3.5-5.6 SAM (SAL18135)"), ("6528".to_string(), "Sigma 16mm F2.8 Filtermatic Fisheye"), ("65280".to_string(), "Sigma 16mm F2.8 Filtermatic Fisheye"), ("6553".to_string(), "E-Mount, T-Mount, Other Lens or no lens"), ("6553.1".to_string(), "Arax MC 35mm F2.8 Tilt+Shift"), ("6553.2".to_string(), "Arax MC 80mm F2.8 Tilt+Shift"), ("6553.3".to_string(), "Zenitar MF 16mm F2.8 Fisheye M42"), ("6553.4".to_string(), "Samyang 500mm Mirror F8.0"), ("6553.5".to_string(), "Pentacon Auto 135mm F2.8"), ("6553.6".to_string(), "Pentacon Auto 29mm F2.8"), ("6553.7".to_string(), "Helios 44-2 58mm F2.0"), ("65535".to_string(), "E-Mount, T-Mount, Other Lens or no lens"), ("65535.1".to_string(), "Arax MC 35mm F2.8 Tilt+Shift"), ("65535.2".to_string(), "Arax MC 80mm F2.8 Tilt+Shift"), ("65535.3".to_string(), "Zenitar MF 16mm F2.8 Fisheye M42"), ("65535.4".to_string(), "Samyang 500mm Mirror F8.0"), ("65535.5".to_string(), "Pentacon Auto 135mm F2.8"), ("65535.6".to_string(), "Pentacon Auto 29mm F2.8"), ("65535.7".to_string(), "Helios 44-2 58mm F2.0"), ("66".to_string(), "Sony 300mm F2.8 G SSM II (SAL300F28G2)"), ("67".to_string(), "Sony 70-200mm F2.8 G SSM II (SAL70200G2)"), ("68".to_string(), "Sony DT 55-300mm F4.5-5.6 SAM (SAL55300)"), ("69".to_string(), "Sony 70-400mm F4-5.6 G SSM II (SAL70400G2)"), ("7".to_string(), "Minolta AF 100-300mm F4.5-5.6 APO [New] or 100-400mm or Sigma Lens"), ("7.1".to_string(), "Minolta AF 100-400mm F4.5-6.7 APO"), ("7.2".to_string(), "Sigma AF 100-300mm F4 EX DG IF"), ("70".to_string(), "Carl Zeiss Planar T* 50mm F1.4 ZA SSM (SAL50F14Z)"), ("8".to_string(), "Minolta AF 70-210mm F4.5-5.6 [II]"), ("9".to_string(), "Minolta AF 50mm F3.5 Macro"), ("Notes".to_string(), "\n        \"New\" or \"II\" appear in brackets if the original version of the lens has the\n        same LensType.  Special logic is employed to identify the attached lens when\n        a Metabones Canon EF adapter is used.\n    "), ("OTHER".to_string(), "[Function: Image::ExifTool::Minolta::__ANON__]"), ]))),
+            value_conv: None,
+        }),
+        (267, TagInfo {
+            name: "DistortionCorrParamsPresent",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "No"), ("1".to_string(), "Yes"), ]))),
+            value_conv: None,
+        }),
+        (276, TagInfo {
+            name: "APS-CSizeCapture",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "On"), ]))),
+            value_conv: None,
+        }),
+        (277, TagInfo {
+            name: "LensSpecFeatures",
+            format: "undef[2]",
+            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Sony::PrintLensSpec]".to_string())),
+            value_conv: Some(ValueConv::Function(ast_value_7d6e8b476b94ed0d)),
+        }),
+        (278, TagInfo {
+            name: "LensSpecFeatures",
+            format: "undef[2]",
+            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Sony::PrintLensSpec]".to_string())),
+            value_conv: Some(ValueConv::Function(ast_value_7d6e8b476b94ed0d)),
+        }),
+        (416, TagInfo {
+            name: "ShutterCount3",
+            format: "int32u",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (426, TagInfo {
+            name: "ShutterCount3",
+            format: "int32u",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (445, TagInfo {
+            name: "ShutterCount3",
+            format: "int32u",
+            print_conv: None,
+            value_conv: None,
+        }),
     ])
 });
 
@@ -286,6 +210,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

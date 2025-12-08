@@ -27,7 +27,33 @@ pub static NIKON_ISOINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ISOExpansion",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("257".to_string(), "Hi 0.3"),
+                    ("258".to_string(), "Hi 0.5"),
+                    ("259".to_string(), "Hi 0.7"),
+                    ("260".to_string(), "Hi 1.0"),
+                    ("261".to_string(), "Hi 1.3"),
+                    ("262".to_string(), "Hi 1.5"),
+                    ("263".to_string(), "Hi 1.7"),
+                    ("264".to_string(), "Hi 2.0"),
+                    ("265".to_string(), "Hi 2.3"),
+                    ("266".to_string(), "Hi 2.5"),
+                    ("267".to_string(), "Hi 2.7"),
+                    ("268".to_string(), "Hi 3.0"),
+                    ("269".to_string(), "Hi 3.3"),
+                    ("270".to_string(), "Hi 3.5"),
+                    ("271".to_string(), "Hi 3.7"),
+                    ("272".to_string(), "Hi 4.0"),
+                    ("273".to_string(), "Hi 4.3"),
+                    ("274".to_string(), "Hi 4.5"),
+                    ("275".to_string(), "Hi 4.7"),
+                    ("276".to_string(), "Hi 5.0"),
+                    ("513".to_string(), "Lo 0.3"),
+                    ("514".to_string(), "Lo 0.5"),
+                    ("515".to_string(), "Lo 0.7"),
+                    ("516".to_string(), "Lo 1.0"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -45,7 +71,21 @@ pub static NIKON_ISOINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ISOExpansion2",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("257".to_string(), "Hi 0.3"),
+                    ("258".to_string(), "Hi 0.5"),
+                    ("259".to_string(), "Hi 0.7"),
+                    ("260".to_string(), "Hi 1.0"),
+                    ("261".to_string(), "Hi 1.3"),
+                    ("262".to_string(), "Hi 1.5"),
+                    ("263".to_string(), "Hi 1.7"),
+                    ("264".to_string(), "Hi 2.0"),
+                    ("513".to_string(), "Lo 0.3"),
+                    ("514".to_string(), "Lo 0.5"),
+                    ("515".to_string(), "Lo 0.7"),
+                    ("516".to_string(), "Lo 1.0"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -94,6 +134,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

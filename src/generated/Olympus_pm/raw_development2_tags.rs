@@ -32,7 +32,10 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "RawDevWhiteBalance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Color Temperature"),
+                    ("2".to_string(), "Gray Point"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -104,7 +107,11 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "RawDevColorSpace",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "sRGB"),
+                    ("1".to_string(), "Adobe RGB"),
+                    ("2".to_string(), "Pro Photo RGB"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -113,7 +120,10 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "RawDevNoiseReduction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([(
+                    "0".to_string(),
+                    "(none)",
+                )]))),
                 value_conv: None,
             },
         ),
@@ -122,7 +132,10 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "RawDevEngine",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "High Speed"),
+                    ("1".to_string(), "High Function"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -131,7 +144,13 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "RawDevPictureMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Vivid"),
+                    ("2".to_string(), "Natural"),
+                    ("256".to_string(), "Monotone"),
+                    ("3".to_string(), "Muted"),
+                    ("512".to_string(), "Sepia"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -167,7 +186,13 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "RawDevPM_BWFilter",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Neutral"),
+                    ("2".to_string(), "Yellow"),
+                    ("3".to_string(), "Orange"),
+                    ("4".to_string(), "Red"),
+                    ("5".to_string(), "Green"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -176,7 +201,13 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "RawDevPMPictureTone",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Neutral"),
+                    ("2".to_string(), "Sepia"),
+                    ("3".to_string(), "Blue"),
+                    ("4".to_string(), "Purple"),
+                    ("5".to_string(), "Green"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -203,7 +234,10 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "RawDevAutoGradation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -279,6 +313,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

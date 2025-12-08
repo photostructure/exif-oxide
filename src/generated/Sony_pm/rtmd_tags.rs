@@ -237,7 +237,10 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSLatitudeRef",
                 format: "string",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("N".to_string(), "North"),
+                    ("S".to_string(), "South"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -255,7 +258,10 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSLongitudeRef",
                 format: "string",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("E".to_string(), "East"),
+                    ("W".to_string(), "West"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -282,7 +288,10 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSStatus",
                 format: "string",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("A".to_string(), "Measurement Active"),
+                    ("V".to_string(), "Measurement Void"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -291,7 +300,10 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSMeasureMode",
                 format: "string",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("2".to_string(), "2-Dimensional Measurement"),
+                    ("3".to_string(), "3-Dimensional Measurement"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -354,7 +366,14 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "WhiteBalance",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Incandescent"),
+                    ("2".to_string(), "Fluorescent"),
+                    ("255".to_string(), "Preset"),
+                    ("4".to_string(), "Daylight"),
+                    ("5".to_string(), "Cloudy"),
+                    ("6".to_string(), "Custom"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -457,6 +476,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

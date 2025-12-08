@@ -239,7 +239,28 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "CropHiSpeed",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "1.3x Crop"),
+                    ("10".to_string(), "1.3x Movie Crop"),
+                    ("11".to_string(), "FX Uncropped"),
+                    ("12".to_string(), "DX Uncropped"),
+                    ("13".to_string(), "2.8x Movie Crop"),
+                    ("14".to_string(), "1.4x Movie Crop"),
+                    ("15".to_string(), "1.5x Movie Crop"),
+                    ("17".to_string(), "FX 1:1 Crop"),
+                    ("18".to_string(), "DX 1:1 Crop"),
+                    ("2".to_string(), "DX Crop"),
+                    ("3".to_string(), "5:4 Crop"),
+                    ("4".to_string(), "3:2 Crop"),
+                    ("6".to_string(), "16:9 Crop"),
+                    ("8".to_string(), "2.7x Crop"),
+                    ("9".to_string(), "DX Movie 16:9 Crop"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Nikon::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -266,7 +287,11 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ColorSpace",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "sRGB"),
+                    ("2".to_string(), "Adobe RGB"),
+                    ("4".to_string(), "BT.2100"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -284,7 +309,10 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ImageAuthentication",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -302,7 +330,18 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ActiveD-Lighting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Low"),
+                    ("10".to_string(), "Extra High 3"),
+                    ("11".to_string(), "Extra High 4"),
+                    ("3".to_string(), "Normal"),
+                    ("5".to_string(), "High"),
+                    ("65535".to_string(), "Auto"),
+                    ("7".to_string(), "Extra High"),
+                    ("8".to_string(), "Extra High 1"),
+                    ("9".to_string(), "Extra High 2"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -329,7 +368,12 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "VignetteControl",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Low"),
+                    ("3".to_string(), "Normal"),
+                    ("5".to_string(), "High"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -365,7 +409,15 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ShutterMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Mechanical"),
+                    ("16".to_string(), "Electronic"),
+                    ("48".to_string(), "Electronic Front Curtain"),
+                    ("64".to_string(), "Electronic (Movie)"),
+                    ("80".to_string(), "Auto (Mechanical)"),
+                    ("81".to_string(), "Auto (Electronic Front Curtain)"),
+                    ("96".to_string(), "Electronic (High Speed)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -401,7 +453,11 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ImageSizeRAW",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Large"),
+                    ("2".to_string(), "Medium"),
+                    ("3".to_string(), "Small"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -419,7 +475,10 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "JPGCompression",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Size Priority"),
+                    ("3".to_string(), "Optimal Quality"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -538,7 +597,15 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FlashMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Did Not Fire"),
+                    ("1".to_string(), "Fired, Manual"),
+                    ("18".to_string(), "LED Light"),
+                    ("3".to_string(), "Not Ready"),
+                    ("7".to_string(), "Fired, External"),
+                    ("8".to_string(), "Fired, Commander Mode"),
+                    ("9".to_string(), "Fired, TTL Mode"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -610,7 +677,20 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "NEFCompression",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Lossy (type 1)"),
+                    ("10".to_string(), "Packed 14 bits"),
+                    ("13".to_string(), "High Efficiency"),
+                    ("14".to_string(), "High Efficiency*"),
+                    ("2".to_string(), "Uncompressed"),
+                    ("3".to_string(), "Lossless"),
+                    ("4".to_string(), "Lossy (type 2)"),
+                    ("5".to_string(), "Striped packed 12 bits"),
+                    ("6".to_string(), "Uncompressed (reduced to 12 bit)"),
+                    ("7".to_string(), "Unpacked 12 bits"),
+                    ("8".to_string(), "Small"),
+                    ("9".to_string(), "Packed 12 bits"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -673,7 +753,12 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "DateStampMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Date & Time"),
+                    ("2".to_string(), "Date"),
+                    ("3".to_string(), "Date Counter"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -781,7 +866,15 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "HighISONoiseReduction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Minimal"),
+                    ("2".to_string(), "Low"),
+                    ("3".to_string(), "Medium Low"),
+                    ("4".to_string(), "Normal"),
+                    ("5".to_string(), "Medium High"),
+                    ("6".to_string(), "High"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -835,7 +928,10 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "SilentPhotography",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -916,7 +1012,11 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "NEFBitDepth",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0 0 0 0".to_string(), "n/a (JPEG)"),
+                    ("16 16 16 0".to_string(), "16 x 3"),
+                    ("8 8 8 0".to_string(), "8 x 3"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -965,6 +1065,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

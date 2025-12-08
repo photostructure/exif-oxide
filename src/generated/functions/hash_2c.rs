@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -20,7 +24,7 @@ pub fn ast_value_2c21dc5576b94e50(
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(codegen_runtime::power(
         Into::<TagValue>::into(2i32),
-        (codegen_runtime::negate(val) / 6i32),
+        Into::<TagValue>::into(codegen_runtime::negate(val) / 6i32),
     ))
 }
 
@@ -58,6 +62,7 @@ pub fn ast_print_2cea565875d218cc(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Nikon::AutoCaptureInfo.AutoCaptureCriteria
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_2c5616f5b0afd52d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

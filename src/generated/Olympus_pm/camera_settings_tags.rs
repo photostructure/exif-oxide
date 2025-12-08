@@ -33,7 +33,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (256, TagInfo {
             name: "PreviewImageValid",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "No"), ("1".to_string(), "Yes"), ]))),
             value_conv: None,
         }),
         (257, TagInfo {
@@ -51,19 +51,19 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (512, TagInfo {
             name: "ExposureMode",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Manual"), ("2".to_string(), "Program"), ("3".to_string(), "Aperture-priority AE"), ("4".to_string(), "Shutter speed priority AE"), ("5".to_string(), "Program-shift"), ]))),
             value_conv: None,
         }),
         (513, TagInfo {
             name: "AELock",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "On"), ]))),
             value_conv: None,
         }),
         (514, TagInfo {
             name: "MeteringMode",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1027".to_string(), "Spot+Shadow control"), ("2".to_string(), "Center-weighted average"), ("261".to_string(), "Pattern+AF"), ("3".to_string(), "Spot"), ("5".to_string(), "ESP"), ("515".to_string(), "Spot+Highlight control"), ]))),
             value_conv: None,
         }),
         (515, TagInfo {
@@ -75,13 +75,13 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (516, TagInfo {
             name: "NDFilter",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "On"), ]))),
             value_conv: None,
         }),
         (768, TagInfo {
             name: "MacroMode",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "On"), ("2".to_string(), "Super Macro"), ]))),
             value_conv: None,
         }),
         (769, TagInfo {
@@ -99,7 +99,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (771, TagInfo {
             name: "AFSearch",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Not Ready"), ("1".to_string(), "Ready"), ]))),
             value_conv: None,
         }),
         (772, TagInfo {
@@ -117,7 +117,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (774, TagInfo {
             name: "AFFineTune",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "On"), ]))),
             value_conv: None,
         }),
         (775, TagInfo {
@@ -135,7 +135,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (777, TagInfo {
             name: "AISubjectTrackingMode",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1024".to_string(), "Birds; Object Not Found"), ("1025".to_string(), "Birds; Object Found"), ("1280".to_string(), "Dogs & Cats; Object Not Found"), ("1281".to_string(), "Dogs & Cats; Object Found"), ("1536".to_string(), "Human; Object Not Found"), ("1537".to_string(), "Human; Object Found"), ("256".to_string(), "Motorsports; Object Not Found"), ("257".to_string(), "Motorsports; Racing Car Found"), ("258".to_string(), "Motorsports; Car Found"), ("259".to_string(), "Motorsports; Motorcyle Found"), ("512".to_string(), "Airplanes; Object Not Found"), ("513".to_string(), "Airplanes; Passenger/Transport Plane Found"), ("514".to_string(), "Airplanes; Small Plane/Fighter Jet Found"), ("515".to_string(), "Airplanes; Helicopter Found"), ("768".to_string(), "Trains; Object Not Found"), ("769".to_string(), "Trains; Object Found"), ]))),
             value_conv: None,
         }),
         (778, TagInfo {
@@ -153,7 +153,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1024, TagInfo {
             name: "FlashMode",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ]))),
             value_conv: None,
         }),
         (1025, TagInfo {
@@ -165,7 +165,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1027, TagInfo {
             name: "FlashRemoteControl",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "Channel 1, Low"), ("10".to_string(), "Channel 2, Mid"), ("11".to_string(), "Channel 3, Mid"), ("12".to_string(), "Channel 4, Mid"), ("17".to_string(), "Channel 1, High"), ("18".to_string(), "Channel 2, High"), ("19".to_string(), "Channel 3, High"), ("2".to_string(), "Channel 2, Low"), ("20".to_string(), "Channel 4, High"), ("3".to_string(), "Channel 3, Low"), ("4".to_string(), "Channel 4, Low"), ("9".to_string(), "Channel 1, Mid"), ]))),
             value_conv: None,
         }),
         (1028, TagInfo {
@@ -177,19 +177,19 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1029, TagInfo {
             name: "FlashIntensity",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("OTHER".to_string(), "[Function: Image::ExifTool::Olympus::__ANON__]"), ("undef undef undef".to_string(), "n/a"), ("undef undef undef undef".to_string(), "n/a (x4)"), ]))),
             value_conv: None,
         }),
         (1030, TagInfo {
             name: "ManualFlashStrength",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("OTHER".to_string(), "[Function: Image::ExifTool::Olympus::__ANON__]"), ("undef undef undef".to_string(), "n/a"), ("undef undef undef undef".to_string(), "n/a (x4)"), ]))),
             value_conv: None,
         }),
         (1280, TagInfo {
             name: "WhiteBalance2",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Auto"), ("1".to_string(), "Auto (Keep Warm Color Off)"), ("16".to_string(), "7500K (Fine Weather with Shade)"), ("17".to_string(), "6000K (Cloudy)"), ("18".to_string(), "5300K (Fine Weather)"), ("20".to_string(), "3000K (Tungsten light)"), ("21".to_string(), "3600K (Tungsten light-like)"), ("22".to_string(), "Auto Setup"), ("23".to_string(), "5500K (Flash)"), ("256".to_string(), "One Touch WB 1"), ("257".to_string(), "One Touch WB 2"), ("258".to_string(), "One Touch WB 3"), ("259".to_string(), "One Touch WB 4"), ("33".to_string(), "6600K (Daylight fluorescent)"), ("34".to_string(), "4500K (Neutral white fluorescent)"), ("35".to_string(), "4000K (Cool white fluorescent)"), ("36".to_string(), "White Fluorescent"), ("48".to_string(), "3600K (Tungsten light-like)"), ("512".to_string(), "Custom WB 1"), ("513".to_string(), "Custom WB 2"), ("514".to_string(), "Custom WB 3"), ("515".to_string(), "Custom WB 4"), ("67".to_string(), "Underwater"), ]))),
             value_conv: None,
         }),
         (1281, TagInfo {
@@ -213,7 +213,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1284, TagInfo {
             name: "ModifiedSaturation",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "CM1 (Red Enhance)"), ("2".to_string(), "CM2 (Green Enhance)"), ("3".to_string(), "CM3 (Blue Enhance)"), ("4".to_string(), "CM4 (Skin Tones)"), ]))),
             value_conv: None,
         }),
         (1285, TagInfo {
@@ -231,31 +231,31 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1287, TagInfo {
             name: "ColorSpace",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "sRGB"), ("1".to_string(), "Adobe RGB"), ("2".to_string(), "Pro Photo RGB"), ]))),
             value_conv: None,
         }),
         (1289, TagInfo {
             name: "SceneMode",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Standard"), ("10".to_string(), "Landscape"), ("11".to_string(), "Night Scene"), ("12".to_string(), "Self Portrait"), ("13".to_string(), "Panorama"), ("14".to_string(), "2 in 1"), ("142".to_string(), "Hand-held Starlight"), ("15".to_string(), "Movie"), ("154".to_string(), "HDR"), ("16".to_string(), "Landscape+Portrait"), ("17".to_string(), "Night+Portrait"), ("18".to_string(), "Indoor"), ("19".to_string(), "Fireworks"), ("197".to_string(), "Panning"), ("20".to_string(), "Sunset"), ("203".to_string(), "Light Trails"), ("204".to_string(), "Backlight HDR"), ("205".to_string(), "Silent"), ("206".to_string(), "Multi Focus Shot"), ("21".to_string(), "Beauty Skin"), ("22".to_string(), "Macro"), ("23".to_string(), "Super Macro"), ("24".to_string(), "Food"), ("25".to_string(), "Documents"), ("26".to_string(), "Museum"), ("27".to_string(), "Shoot & Select"), ("28".to_string(), "Beach & Snow"), ("29".to_string(), "Self Protrait+Timer"), ("30".to_string(), "Candle"), ("31".to_string(), "Available Light"), ("32".to_string(), "Behind Glass"), ("33".to_string(), "My Mode"), ("34".to_string(), "Pet"), ("35".to_string(), "Underwater Wide1"), ("36".to_string(), "Underwater Macro"), ("37".to_string(), "Shoot & Select1"), ("38".to_string(), "Shoot & Select2"), ("39".to_string(), "High Key"), ("40".to_string(), "Digital Image Stabilization"), ("41".to_string(), "Auction"), ("42".to_string(), "Beach"), ("43".to_string(), "Snow"), ("44".to_string(), "Underwater Wide2"), ("45".to_string(), "Low Key"), ("46".to_string(), "Children"), ("47".to_string(), "Vivid"), ("48".to_string(), "Nature Macro"), ("49".to_string(), "Underwater Snapshot"), ("50".to_string(), "Shooting Guide"), ("54".to_string(), "Face Portrait"), ("57".to_string(), "Bulb"), ("59".to_string(), "Smile Shot"), ("6".to_string(), "Auto"), ("60".to_string(), "Quick Shutter"), ("63".to_string(), "Slow Shutter"), ("64".to_string(), "Bird Watching"), ("65".to_string(), "Multiple Exposure"), ("66".to_string(), "e-Portrait"), ("67".to_string(), "Soft Background Shot"), ("7".to_string(), "Sport"), ("8".to_string(), "Portrait"), ("9".to_string(), "Landscape+Portrait"), ]))),
             value_conv: None,
         }),
         (1290, TagInfo {
             name: "NoiseReduction",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "(none)"), ]))),
             value_conv: None,
         }),
         (1291, TagInfo {
             name: "DistortionCorrection",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "On"), ]))),
             value_conv: None,
         }),
         (1292, TagInfo {
             name: "ShadingCompensation",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "On"), ]))),
             value_conv: None,
         }),
         (1293, TagInfo {
@@ -303,19 +303,19 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1317, TagInfo {
             name: "PictureModeBWFilter",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "n/a"), ("1".to_string(), "Neutral"), ("2".to_string(), "Yellow"), ("3".to_string(), "Orange"), ("4".to_string(), "Red"), ("5".to_string(), "Green"), ]))),
             value_conv: None,
         }),
         (1318, TagInfo {
             name: "PictureModeTone",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "n/a"), ("1".to_string(), "Neutral"), ("2".to_string(), "Sepia"), ("3".to_string(), "Blue"), ("4".to_string(), "Purple"), ("5".to_string(), "Green"), ]))),
             value_conv: None,
         }),
         (1319, TagInfo {
             name: "NoiseFilter",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("-1 -2 1".to_string(), "Low"), ("-2 -2 1".to_string(), "Off"), ("0 -2 1".to_string(), "Standard"), ("0 0 0".to_string(), "n/a"), ("1 -2 1".to_string(), "High"), ]))),
             value_conv: None,
         }),
         (1321, TagInfo {
@@ -333,7 +333,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1325, TagInfo {
             name: "PictureModeEffect",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("-1 -1 1".to_string(), "Low"), ("0 -1 1".to_string(), "Standard"), ("0 0 0".to_string(), "n/a"), ("1 -1 1".to_string(), "High"), ]))),
             value_conv: None,
         }),
         (1326, TagInfo {
@@ -363,7 +363,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1336, TagInfo {
             name: "FilmGrainEffect",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "Low"), ("2".to_string(), "Medium"), ("3".to_string(), "High"), ]))),
             value_conv: None,
         }),
         (1337, TagInfo {
@@ -381,7 +381,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1339, TagInfo {
             name: "MonochromeColor",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "(none)"), ("1".to_string(), "Normal"), ("2".to_string(), "Sepia"), ("3".to_string(), "Blue"), ("4".to_string(), "Purple"), ("5".to_string(), "Green"), ]))),
             value_conv: None,
         }),
         (1536, TagInfo {
@@ -399,19 +399,19 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (1539, TagInfo {
             name: "ImageQuality2",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "SQ"), ("2".to_string(), "HQ"), ("3".to_string(), "SHQ"), ("4".to_string(), "RAW"), ("5".to_string(), "SQ (5)"), ]))),
             value_conv: None,
         }),
         (1540, TagInfo {
             name: "ImageStabilization",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "On, S-IS1 (All Direction Shake IS)"), ("2".to_string(), "On, S-IS2 (Vertical Shake IS)"), ("3".to_string(), "On, S-IS3 (Horizontal Shake IS)"), ("4".to_string(), "On, S-IS Auto"), ]))),
             value_conv: None,
         }),
         (2052, TagInfo {
             name: "StackedImage",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0 0".to_string(), "No"), ("1 *".to_string(), "Live Composite (* images)"), ("11 12".to_string(), "Hand-held high resolution (11 12)"), ("11 16".to_string(), "Hand-held high resolution (11 16)"), ("13 2".to_string(), "GND2 (1EV)"), ("13 4".to_string(), "GND4 (2EV)"), ("13 8".to_string(), "GND8 (3EV)"), ("3 16".to_string(), "ND16 (4EV)"), ("3 2".to_string(), "ND2 (1EV)"), ("3 32".to_string(), "ND32 (5EV)"), ("3 4".to_string(), "ND4 (2EV)"), ("3 64".to_string(), "ND64 (6EV)"), ("3 8".to_string(), "ND8 (3EV)"), ("4 *".to_string(), "Live Time/Bulb (* images)"), ("5 4".to_string(), "HDR1"), ("6 4".to_string(), "HDR2"), ("8 8".to_string(), "Tripod high resolution"), ("9 *".to_string(), "Focus-stacked (* images)"), ("OTHER".to_string(), "[Function: Image::ExifTool::Olympus::__ANON__]"), ]))),
             value_conv: None,
         }),
         (2081, TagInfo {
@@ -435,7 +435,7 @@ pub static OLYMPUS_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
         (2306, TagInfo {
             name: "ExtendedWBDetect",
             format: "unknown",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "On"), ]))),
             value_conv: None,
         }),
         (2307, TagInfo {
@@ -501,6 +501,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

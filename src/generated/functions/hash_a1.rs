@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -16,6 +20,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// Used by:
 /// - Panasonic::Leica2.LensType
 /// - Panasonic::Subdir.LensType
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_a15e00efdd4e457(
     val: &TagValue,
@@ -48,6 +53,7 @@ pub fn ast_value_a15e00efdd4e457(
 /// ```
 /// Used by:
 /// - FujiFilm::Main.InternalSerialNumber
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_a12d0d9a4de49555(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -67,6 +73,7 @@ pub fn ast_print_a12d0d9a4de49555(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Exif::Main.WangTag4
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_a1f6756c7e2030be(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

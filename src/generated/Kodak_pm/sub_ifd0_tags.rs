@@ -20,7 +20,31 @@ pub static KODAK_SUBIFD0_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "SceneMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Sport"),
+                    ("10".to_string(), "Text"),
+                    ("11".to_string(), "Fireworks"),
+                    ("12".to_string(), "Macro"),
+                    ("13".to_string(), "Museum"),
+                    ("16".to_string(), "Children"),
+                    ("17".to_string(), "Program"),
+                    ("18".to_string(), "Aperture Priority"),
+                    ("19".to_string(), "Shutter Priority"),
+                    ("20".to_string(), "Manual"),
+                    ("25".to_string(), "Back Light"),
+                    ("28".to_string(), "Candlelight"),
+                    ("29".to_string(), "Sunset"),
+                    ("3".to_string(), "Portrait"),
+                    ("31".to_string(), "Panorama Left-right"),
+                    ("32".to_string(), "Panorama Right-left"),
+                    ("33".to_string(), "Smart Scene"),
+                    ("34".to_string(), "High ISO"),
+                    ("4".to_string(), "Landscape"),
+                    ("6".to_string(), "Beach"),
+                    ("7".to_string(), "Night Portrait"),
+                    ("8".to_string(), "Night Landscape"),
+                    ("9".to_string(), "Snow"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -213,6 +237,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

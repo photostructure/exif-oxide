@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -33,7 +37,7 @@ pub fn ast_value_cff599d69085933c(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(if codegen_runtime::abs(val) < 100i32 {
-        1i32 as f64 / (codegen_runtime::power(Into::<TagValue>::into(2i32), val.clone()))
+        1i32 as f64 / codegen_runtime::power(Into::<TagValue>::into(2i32), val.clone())
     } else {
         Into::<TagValue>::into(0i32)
     })
@@ -67,6 +71,7 @@ pub fn ast_value_cff599d69085933c(
 /// - Olympus::WAV.Index15
 /// - Olympus::WAV.Index16
 /// - RIFF::ANMF.Duration
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_cfce5cd5c31bbe17(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -86,6 +91,7 @@ pub fn ast_print_cfce5cd5c31bbe17(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Kodak::SpecialEffects.DigitalEffectsName
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_cfb87d34a95a9b93(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -105,6 +111,7 @@ pub fn ast_print_cfb87d34a95a9b93(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Exif::Main.TStop
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_cf9a386ca48e832b(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -125,6 +132,7 @@ pub fn ast_print_cf9a386ca48e832b(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Exif::Main.PreviewDateTime
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_cfe9e72af3aafc7b(
     val: &TagValue,

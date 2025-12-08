@@ -19,7 +19,10 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "AutoCapturedFrame",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No"),
+                    ("5".to_string(), "Yes"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -37,7 +40,21 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "AutoCaptureRecordingTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "1 Sec"),
+                    ("1".to_string(), "3 Sec"),
+                    ("10".to_string(), "3 Min"),
+                    ("11".to_string(), "5 Min"),
+                    ("12".to_string(), "10 Min"),
+                    ("13".to_string(), "30 Min"),
+                    ("2".to_string(), "5 Sec"),
+                    ("4".to_string(), "30 Sec"),
+                    ("5".to_string(), "No Limit"),
+                    ("6".to_string(), "2 Sec"),
+                    ("7".to_string(), "10 Sec"),
+                    ("8".to_string(), "20 Sec"),
+                    ("9".to_string(), "1 Min"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -46,7 +63,21 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "AutoCaptureWaitTime",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No Wait"),
+                    ("1".to_string(), "10 Sec"),
+                    ("10".to_string(), "5 Sec"),
+                    ("11".to_string(), "20 Sec"),
+                    ("12".to_string(), "3 Min"),
+                    ("2".to_string(), "30 Sec"),
+                    ("3".to_string(), "1 Min"),
+                    ("4".to_string(), "5 Min"),
+                    ("5".to_string(), "10 Min"),
+                    ("6".to_string(), "30 Min"),
+                    ("7".to_string(), "1 Sec"),
+                    ("8".to_string(), "2 Sec"),
+                    ("9".to_string(), "3 Sec"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -109,7 +140,12 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "AutoCaptureCriteriaSubjectType",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto (all)"),
+                    ("1".to_string(), "People"),
+                    ("2".to_string(), "Animals"),
+                    ("3".to_string(), "Vehicle"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -158,6 +194,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

@@ -25,7 +25,19 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "DriveMode2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("113".to_string(), "Continuous Bracketing 0.3 EV"),
+                    ("117".to_string(), "Continuous Bracketing 0.7 EV"),
+                    ("145".to_string(), "White Balance Bracketing Low"),
+                    ("146".to_string(), "White Balance Bracketing High"),
+                    ("16".to_string(), "Single Frame"),
+                    ("192".to_string(), "Remote Commander"),
+                    ("33".to_string(), "Continuous High"),
+                    ("34".to_string(), "Continuous Low"),
+                    ("48".to_string(), "Speed Priority Continuous"),
+                    ("81".to_string(), "Self-timer 10 sec"),
+                    ("82".to_string(), "Self-timer 2 sec, Mirror Lock-up"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -34,7 +46,40 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "ExposureProgram",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Program AE"),
+                    ("128".to_string(), "Toy Camera"),
+                    ("129".to_string(), "Pop Color"),
+                    ("130".to_string(), "Posterization"),
+                    ("131".to_string(), "Posterization B/W"),
+                    ("132".to_string(), "Retro Photo"),
+                    ("133".to_string(), "High-key"),
+                    ("134".to_string(), "Partial Color Red"),
+                    ("135".to_string(), "Partial Color Green"),
+                    ("136".to_string(), "Partial Color Blue"),
+                    ("137".to_string(), "Partial Color Yellow"),
+                    ("138".to_string(), "High Contrast Monochrome"),
+                    ("16".to_string(), "Auto"),
+                    ("17".to_string(), "Auto (no flash)"),
+                    ("18".to_string(), "Auto+"),
+                    ("2".to_string(), "Aperture-priority AE"),
+                    ("3".to_string(), "Shutter speed priority AE"),
+                    ("4".to_string(), "Manual"),
+                    ("49".to_string(), "Portrait"),
+                    ("5".to_string(), "Cont. Priority AE"),
+                    ("50".to_string(), "Landscape"),
+                    ("51".to_string(), "Macro"),
+                    ("52".to_string(), "Sports"),
+                    ("53".to_string(), "Sunset"),
+                    ("54".to_string(), "Night view"),
+                    ("55".to_string(), "Night view/portrait"),
+                    ("56".to_string(), "Handheld Night Shot"),
+                    ("57".to_string(), "3D Sweep Panorama"),
+                    ("64".to_string(), "Auto 2"),
+                    ("65".to_string(), "Auto 2 (no flash)"),
+                    ("80".to_string(), "Sweep Panorama"),
+                    ("96".to_string(), "Anti Motion Blur"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -43,7 +88,11 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "MeteringMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Multi-segment"),
+                    ("2".to_string(), "Center-weighted average"),
+                    ("3".to_string(), "Spot"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -52,7 +101,11 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "DynamicRangeOptimizerSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Off"),
+                    ("16".to_string(), "On (Auto)"),
+                    ("17".to_string(), "On (Manual)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -61,7 +114,10 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "ColorSpace",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "sRGB"),
+                    ("2".to_string(), "Adobe RGB"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -70,7 +126,14 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "CreativeStyleSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("16".to_string(), "Standard"),
+                    ("160".to_string(), "Sunset"),
+                    ("32".to_string(), "Vivid"),
+                    ("64".to_string(), "Portrait"),
+                    ("80".to_string(), "Landscape"),
+                    ("96".to_string(), "B&W"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -106,7 +169,59 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "WhiteBalanceSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("100".to_string(), "Fluorescent (+1)"),
+                    ("101".to_string(), "Fluorescent (+2)"),
+                    ("102".to_string(), "Fluorescent (+3)"),
+                    ("112".to_string(), "Flash (-3)"),
+                    ("113".to_string(), "Flash (-2)"),
+                    ("114".to_string(), "Flash (-1)"),
+                    ("115".to_string(), "Flash (0)"),
+                    ("116".to_string(), "Flash (+1)"),
+                    ("117".to_string(), "Flash (+2)"),
+                    ("118".to_string(), "Flash (+3)"),
+                    ("16".to_string(), "Auto (-3)"),
+                    ("163".to_string(), "Custom"),
+                    ("17".to_string(), "Auto (-2)"),
+                    ("18".to_string(), "Auto (-1)"),
+                    ("19".to_string(), "Auto (0)"),
+                    ("20".to_string(), "Auto (+1)"),
+                    ("21".to_string(), "Auto (+2)"),
+                    ("22".to_string(), "Auto (+3)"),
+                    ("243".to_string(), "Color Temperature/Color Filter"),
+                    ("32".to_string(), "Daylight (-3)"),
+                    ("33".to_string(), "Daylight (-2)"),
+                    ("34".to_string(), "Daylight (-1)"),
+                    ("35".to_string(), "Daylight (0)"),
+                    ("36".to_string(), "Daylight (+1)"),
+                    ("37".to_string(), "Daylight (+2)"),
+                    ("38".to_string(), "Daylight (+3)"),
+                    ("48".to_string(), "Shade (-3)"),
+                    ("49".to_string(), "Shade (-2)"),
+                    ("50".to_string(), "Shade (-1)"),
+                    ("51".to_string(), "Shade (0)"),
+                    ("52".to_string(), "Shade (+1)"),
+                    ("53".to_string(), "Shade (+2)"),
+                    ("54".to_string(), "Shade (+3)"),
+                    ("64".to_string(), "Cloudy (-3)"),
+                    ("65".to_string(), "Cloudy (-2)"),
+                    ("66".to_string(), "Cloudy (-1)"),
+                    ("67".to_string(), "Cloudy (0)"),
+                    ("68".to_string(), "Cloudy (+1)"),
+                    ("69".to_string(), "Cloudy (+2)"),
+                    ("70".to_string(), "Cloudy (+3)"),
+                    ("80".to_string(), "Tungsten (-3)"),
+                    ("81".to_string(), "Tungsten (-2)"),
+                    ("82".to_string(), "Tungsten (-1)"),
+                    ("83".to_string(), "Tungsten (0)"),
+                    ("84".to_string(), "Tungsten (+1)"),
+                    ("85".to_string(), "Tungsten (+2)"),
+                    ("86".to_string(), "Tungsten (+3)"),
+                    ("96".to_string(), "Fluorescent (-3)"),
+                    ("97".to_string(), "Fluorescent (-2)"),
+                    ("98".to_string(), "Fluorescent (-1)"),
+                    ("99".to_string(), "Fluorescent (0)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -133,7 +248,14 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "FlashMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Flash Off"),
+                    ("16".to_string(), "Autoflash"),
+                    ("17".to_string(), "Fill-flash"),
+                    ("18".to_string(), "Slow Sync"),
+                    ("19".to_string(), "Rear Sync"),
+                    ("20".to_string(), "Wireless"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -142,7 +264,10 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "LongExposureNoiseReduction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Off"),
+                    ("16".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -151,7 +276,11 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "HighISONoiseReduction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("16".to_string(), "Low"),
+                    ("17".to_string(), "High"),
+                    ("19".to_string(), "Auto"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -160,7 +289,13 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "FocusMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("17".to_string(), "AF-S"),
+                    ("18".to_string(), "AF-C"),
+                    ("19".to_string(), "AF-A"),
+                    ("32".to_string(), "Manual"),
+                    ("48".to_string(), "DMF"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -169,7 +304,12 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "MultiFrameNoiseReduction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "n/a"),
+                    ("1".to_string(), "Off"),
+                    ("16".to_string(), "On"),
+                    ("255".to_string(), "None"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -178,7 +318,11 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "HDRSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Off"),
+                    ("16".to_string(), "On (Auto)"),
+                    ("17".to_string(), "On (Manual)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -187,7 +331,17 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "HDRLevel",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("33".to_string(), "1 EV"),
+                    ("34".to_string(), "1.5 EV"),
+                    ("35".to_string(), "2 EV"),
+                    ("36".to_string(), "2.5 EV"),
+                    ("37".to_string(), "3 EV"),
+                    ("38".to_string(), "3.5 EV"),
+                    ("39".to_string(), "4 EV"),
+                    ("40".to_string(), "5 EV"),
+                    ("41".to_string(), "6 EV"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -196,7 +350,11 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "ViewingMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("16".to_string(), "ViewFinder"),
+                    ("33".to_string(), "Focus Check Live View"),
+                    ("34".to_string(), "Quick AF Live View"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -205,7 +363,10 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "FaceDetection",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Off"),
+                    ("16".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -250,7 +411,12 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "Orientation2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Horizontal (normal)"),
+                    ("2".to_string(), "Rotate 180"),
+                    ("6".to_string(), "Rotate 90 CW"),
+                    ("8".to_string(), "Rotate 270 CW"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -277,7 +443,10 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "FlashAction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Did not fire"),
+                    ("1".to_string(), "Fired"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -286,7 +455,10 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "FocusMode2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "AF"),
+                    ("1".to_string(), "MF"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -295,7 +467,12 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "FlashAction2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Did not fire"),
+                    ("2".to_string(), "External Flash fired (2)"),
+                    ("3".to_string(), "Built-in Flash fired"),
+                    ("4".to_string(), "External Flash fired (4)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -304,7 +481,11 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "FlashActionExternal",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("121".to_string(), "Fired"),
+                    ("122".to_string(), "Fired"),
+                    ("136".to_string(), "Did not fire"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -313,7 +494,11 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "FlashActionExternal",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("136".to_string(), "Did not fire"),
+                    ("167".to_string(), "Fired"),
+                    ("182".to_string(), "Fired, HSS"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -322,7 +507,10 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "FlashStatus",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "None"),
+                    ("2".to_string(), "External"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -331,7 +519,11 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             TagInfo {
                 name: "FlashStatus",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "None"),
+                    ("1".to_string(), "Built-in"),
+                    ("2".to_string(), "External"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -380,6 +572,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

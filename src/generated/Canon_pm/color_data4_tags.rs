@@ -14,7 +14,15 @@ pub static CANON_COLORDATA4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "ColorDataVersion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("2".to_string(), "2 (1DmkIII)"),
+                    ("3".to_string(), "3 (40D)"),
+                    ("4".to_string(), "4 (1DSmkIII)"),
+                    ("5".to_string(), "5 (450D/1000D)"),
+                    ("6".to_string(), "6 (50D/5DmkII)"),
+                    ("7".to_string(), "7 (500D/550D/7D/1DmkIV)"),
+                    ("9".to_string(), "9 (60D/1100D)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -191,6 +199,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

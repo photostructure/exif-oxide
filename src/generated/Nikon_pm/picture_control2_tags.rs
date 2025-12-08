@@ -51,7 +51,11 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "PictureControlAdjust",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Default Settings"),
+                    ("1".to_string(), "Quick Adjust"),
+                    ("2".to_string(), "Full Control"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -123,7 +127,14 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "FilterEffect",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("128".to_string(), "Off"),
+                    ("129".to_string(), "Yellow"),
+                    ("130".to_string(), "Orange"),
+                    ("131".to_string(), "Red"),
+                    ("132".to_string(), "Green"),
+                    ("255".to_string(), "n/a"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -132,7 +143,19 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             TagInfo {
                 name: "ToningEffect",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("128".to_string(), "B&W"),
+                    ("129".to_string(), "Sepia"),
+                    ("130".to_string(), "Cyanotype"),
+                    ("131".to_string(), "Red"),
+                    ("132".to_string(), "Yellow"),
+                    ("133".to_string(), "Green"),
+                    ("134".to_string(), "Blue-green"),
+                    ("135".to_string(), "Blue"),
+                    ("136".to_string(), "Purple-blue"),
+                    ("137".to_string(), "Red-purple"),
+                    ("255".to_string(), "n/a"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -190,6 +213,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

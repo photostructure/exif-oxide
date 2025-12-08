@@ -18,7 +18,267 @@ pub static QUICK_TIME_FILETYPE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "MajorBrand",
                 format: "undef[4]",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    (
+                        "3g2a".to_string(),
+                        "3GPP2 Media (.3G2) compliant with 3GPP2 C.S0050-0 V1.0",
+                    ),
+                    (
+                        "3g2b".to_string(),
+                        "3GPP2 Media (.3G2) compliant with 3GPP2 C.S0050-A V1.0.0",
+                    ),
+                    (
+                        "3g2c".to_string(),
+                        "3GPP2 Media (.3G2) compliant with 3GPP2 C.S0050-B v1.0",
+                    ),
+                    (
+                        "3ge6".to_string(),
+                        "3GPP (.3GP) Release 6 MBMS Extended Presentations",
+                    ),
+                    (
+                        "3ge7".to_string(),
+                        "3GPP (.3GP) Release 7 MBMS Extended Presentations",
+                    ),
+                    ("3gg6".to_string(), "3GPP Release 6 General Profile"),
+                    (
+                        "3gp1".to_string(),
+                        "3GPP Media (.3GP) Release 1 (probably non-existent)",
+                    ),
+                    (
+                        "3gp2".to_string(),
+                        "3GPP Media (.3GP) Release 2 (probably non-existent)",
+                    ),
+                    (
+                        "3gp3".to_string(),
+                        "3GPP Media (.3GP) Release 3 (probably non-existent)",
+                    ),
+                    ("3gp4".to_string(), "3GPP Media (.3GP) Release 4"),
+                    ("3gp5".to_string(), "3GPP Media (.3GP) Release 5"),
+                    (
+                        "3gp6".to_string(),
+                        "3GPP Media (.3GP) Release 6 Streaming Servers",
+                    ),
+                    (
+                        "3gs7".to_string(),
+                        "3GPP Media (.3GP) Release 7 Streaming Servers",
+                    ),
+                    ("CAEP".to_string(), "Canon Digital Camera"),
+                    ("CDes".to_string(), "Convergent Design"),
+                    ("F4A ".to_string(), "Audio for Adobe Flash Player 9+ (.F4A)"),
+                    (
+                        "F4B ".to_string(),
+                        "Audio Book for Adobe Flash Player 9+ (.F4B)",
+                    ),
+                    (
+                        "F4P ".to_string(),
+                        "Protected Video for Adobe Flash Player 9+ (.F4P)",
+                    ),
+                    ("F4V ".to_string(), "Video for Adobe Flash Player 9+ (.F4V)"),
+                    ("JP2 ".to_string(), "JPEG 2000 Image (.JP2) [ISO 15444-1 ?]"),
+                    (
+                        "JP20".to_string(),
+                        "Unknown, from GPAC samples (prob non-existent)",
+                    ),
+                    ("KDDI".to_string(), "3GPP2 EZmovie for KDDI 3G cellphones"),
+                    ("M4A ".to_string(), "Apple iTunes AAC-LC (.M4A) Audio"),
+                    ("M4B ".to_string(), "Apple iTunes AAC-LC (.M4B) Audio Book"),
+                    (
+                        "M4P ".to_string(),
+                        "Apple iTunes AAC-LC (.M4P) AES Protected Audio",
+                    ),
+                    ("M4V ".to_string(), "Apple iTunes Video (.M4V) Video"),
+                    ("M4VH".to_string(), "Apple TV (.M4V)"),
+                    ("M4VP".to_string(), "Apple iPhone (.M4V)"),
+                    ("MPPI".to_string(), "Photo Player, MAF [ISO/IEC 23000-3]"),
+                    ("MSNV".to_string(), "MPEG-4 (.MP4) for SonyPSP"),
+                    (
+                        "NDAS".to_string(),
+                        "MP4 v2 [ISO 14496-14] Nero Digital AAC Audio",
+                    ),
+                    ("NDSC".to_string(), "MPEG-4 (.MP4) Nero Cinema Profile"),
+                    ("NDSH".to_string(), "MPEG-4 (.MP4) Nero HDTV Profile"),
+                    ("NDSM".to_string(), "MPEG-4 (.MP4) Nero Mobile Profile"),
+                    ("NDSP".to_string(), "MPEG-4 (.MP4) Nero Portable Profile"),
+                    ("NDSS".to_string(), "MPEG-4 (.MP4) Nero Standard Profile"),
+                    (
+                        "NDXC".to_string(),
+                        "H.264/MPEG-4 AVC (.MP4) Nero Cinema Profile",
+                    ),
+                    (
+                        "NDXH".to_string(),
+                        "H.264/MPEG-4 AVC (.MP4) Nero HDTV Profile",
+                    ),
+                    (
+                        "NDXM".to_string(),
+                        "H.264/MPEG-4 AVC (.MP4) Nero Mobile Profile",
+                    ),
+                    (
+                        "NDXP".to_string(),
+                        "H.264/MPEG-4 AVC (.MP4) Nero Portable Profile",
+                    ),
+                    (
+                        "NDXS".to_string(),
+                        "H.264/MPEG-4 AVC (.MP4) Nero Standard Profile",
+                    ),
+                    ("ROSS".to_string(), "Ross Video"),
+                    ("XAVC".to_string(), "Sony XAVC"),
+                    ("aax ".to_string(), "Audible Enhanced Audiobook (.AAX)"),
+                    (
+                        "avc1".to_string(),
+                        "MP4 Base w/ AVC ext [ISO 14496-12:2005]",
+                    ),
+                    ("avif".to_string(), "AV1 Image File Format (.AVIF)"),
+                    ("caqv".to_string(), "Casio Digital Camera"),
+                    ("crx ".to_string(), "Canon Raw (.CRX)"),
+                    (
+                        "da0a".to_string(),
+                        "DMB MAF w/ MPEG Layer II aud, MOT slides, DLS, JPG/PNG/MNG images",
+                    ),
+                    (
+                        "da0b".to_string(),
+                        "DMB MAF, extending DA0A, with 3GPP timed text, DID, TVA, REL, IPMP",
+                    ),
+                    (
+                        "da1a".to_string(),
+                        "DMB MAF audio with ER-BSAC audio, JPG/PNG/MNG images",
+                    ),
+                    (
+                        "da1b".to_string(),
+                        "DMB MAF, extending da1a, with 3GPP timed text, DID, TVA, REL, IPMP",
+                    ),
+                    (
+                        "da2a".to_string(),
+                        "DMB MAF aud w/ HE-AAC v2 aud, MOT slides, DLS, JPG/PNG/MNG images",
+                    ),
+                    (
+                        "da2b".to_string(),
+                        "DMB MAF, extending da2a, with 3GPP timed text, DID, TVA, REL, IPMP",
+                    ),
+                    (
+                        "da3a".to_string(),
+                        "DMB MAF aud with HE-AAC aud, JPG/PNG/MNG images",
+                    ),
+                    (
+                        "da3b".to_string(),
+                        "DMB MAF, extending da3a w/ BIFS, 3GPP timed text, DID, TVA, REL, IPMP",
+                    ),
+                    (
+                        "dmb1".to_string(),
+                        "DMB MAF supporting all the components defined in the specification",
+                    ),
+                    ("dmpf".to_string(), "Digital Media Project"),
+                    (
+                        "drc1".to_string(),
+                        "Dirac (wavelet compression), encapsulated in ISO base media (MP4)",
+                    ),
+                    (
+                        "dv1a".to_string(),
+                        "DMB MAF vid w/ AVC vid, ER-BSAC aud, BIFS, JPG/PNG/MNG images, TS",
+                    ),
+                    (
+                        "dv1b".to_string(),
+                        "DMB MAF, extending dv1a, with 3GPP timed text, DID, TVA, REL, IPMP",
+                    ),
+                    (
+                        "dv2a".to_string(),
+                        "DMB MAF vid w/ AVC vid, HE-AAC v2 aud, BIFS, JPG/PNG/MNG images, TS",
+                    ),
+                    (
+                        "dv2b".to_string(),
+                        "DMB MAF, extending dv2a, with 3GPP timed text, DID, TVA, REL, IPMP",
+                    ),
+                    (
+                        "dv3a".to_string(),
+                        "DMB MAF vid w/ AVC vid, HE-AAC aud, BIFS, JPG/PNG/MNG images, TS",
+                    ),
+                    (
+                        "dv3b".to_string(),
+                        "DMB MAF, extending dv3a, with 3GPP timed text, DID, TVA, REL, IPMP",
+                    ),
+                    ("dvr1".to_string(), "DVB (.DVB) over RTP"),
+                    (
+                        "dvt1".to_string(),
+                        "DVB (.DVB) over MPEG-2 Transport Stream",
+                    ),
+                    (
+                        "heic".to_string(),
+                        "High Efficiency Image Format HEVC still image (.HEIC)",
+                    ),
+                    (
+                        "heix".to_string(),
+                        "High Efficiency Image Format still image (.HEIF)",
+                    ),
+                    (
+                        "hevc".to_string(),
+                        "High Efficiency Image Format HEVC sequence (.HEICS)",
+                    ),
+                    ("isc2".to_string(), "ISMACryp 2.0 Encrypted File"),
+                    ("iso2".to_string(), "MP4 Base Media v2 [ISO 14496-12:2005]"),
+                    ("iso3".to_string(), "MP4 Base Media v3"),
+                    ("iso4".to_string(), "MP4 Base Media v4"),
+                    ("iso5".to_string(), "MP4 Base Media v5"),
+                    ("iso6".to_string(), "MP4 Base Media v6"),
+                    ("iso7".to_string(), "MP4 Base Media v7"),
+                    ("iso8".to_string(), "MP4 Base Media v8"),
+                    ("iso9".to_string(), "MP4 Base Media v9"),
+                    ("isom".to_string(), "MP4 Base Media v1 [IS0 14496-12:2003]"),
+                    (
+                        "jpm ".to_string(),
+                        "JPEG 2000 Compound Image (.JPM) [ISO 15444-6]",
+                    ),
+                    (
+                        "jpx ".to_string(),
+                        "JPEG 2000 with extensions (.JPX) [ISO 15444-2]",
+                    ),
+                    (
+                        "mif1".to_string(),
+                        "High Efficiency Image Format still image (.HEIF)",
+                    ),
+                    (
+                        "mj2s".to_string(),
+                        "Motion JPEG 2000 [ISO 15444-3] Simple Profile",
+                    ),
+                    (
+                        "mjp2".to_string(),
+                        "Motion JPEG 2000 [ISO 15444-3] General Profile",
+                    ),
+                    (
+                        "mmp4".to_string(),
+                        "MPEG-4/3GPP Mobile Profile (.MP4/3GP) (for NTT)",
+                    ),
+                    ("mp21".to_string(), "MPEG-21 [ISO/IEC 21000-9]"),
+                    ("mp41".to_string(), "MP4 v1 [ISO 14496-1:ch13]"),
+                    ("mp42".to_string(), "MP4 v2 [ISO 14496-14]"),
+                    (
+                        "mp71".to_string(),
+                        "MP4 w/ MPEG-7 Metadata [per ISO 14496-12]",
+                    ),
+                    (
+                        "mqt ".to_string(),
+                        "Sony / Mobile QuickTime (.MQV) US Patent 7,477,830 (Sony Corp)",
+                    ),
+                    (
+                        "msf1".to_string(),
+                        "High Efficiency Image Format sequence (.HEIFS)",
+                    ),
+                    (
+                        "odcf".to_string(),
+                        "OMA DCF DRM Format 2.0 (OMA-TS-DRM-DCF-V2_0-20060303-A)",
+                    ),
+                    (
+                        "opf2".to_string(),
+                        "OMA PDCF DRM Format 2.1 (OMA-TS-DRM-DCF-V2_1-20070724-C)",
+                    ),
+                    (
+                        "opx2".to_string(),
+                        "OMA PDCF DRM + XBS extensions (OMA-TS-DRM_XBS-V1_0-20070529-C)",
+                    ),
+                    ("pana".to_string(), "Panasonic Digital Camera"),
+                    ("qt  ".to_string(), "Apple QuickTime (.MOV/QT)"),
+                    ("sdv ".to_string(), "SD Memory Card Video"),
+                    ("ssc1".to_string(), "Samsung stereoscopic, single stream"),
+                    ("ssc2".to_string(), "Samsung stereoscopic, dual stream"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -85,6 +345,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

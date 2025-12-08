@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -27,13 +31,13 @@ pub fn ast_print_36cfa4c2513c137c(val: &TagValue, ctx: Option<&ExifContext>) -> 
     } else {
         codegen_runtime::string::concat(
             &Into::<TagValue>::into("On, "),
-            &(if (TagValue::Array(codegen_runtime::unpack_binary("x44C", &val)) & 0x01u32)
+            &if (TagValue::Array(codegen_runtime::unpack_binary("x44C", &val)) & 0x01u32)
                 .is_truthy()
             {
                 Into::<TagValue>::into("Mode 1")
             } else {
                 Into::<TagValue>::into("Mode 2")
-            }),
+            },
         )
     }
 }
@@ -45,6 +49,7 @@ pub fn ast_print_36cfa4c2513c137c(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Kodak::Main.TimeCreated
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_36280449f269c1dd(
     val: &TagValue,

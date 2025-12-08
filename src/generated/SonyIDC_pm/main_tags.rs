@@ -40,7 +40,25 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "IDCCreativeStyle",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Camera Setting"),
+                    ("10".to_string(), "Clear"),
+                    ("11".to_string(), "Deep"),
+                    ("12".to_string(), "Light"),
+                    ("13".to_string(), "Sunset"),
+                    ("14".to_string(), "Night View"),
+                    ("15".to_string(), "Autumn Leaves"),
+                    ("16".to_string(), "B&W"),
+                    ("17".to_string(), "Sepia"),
+                    ("2".to_string(), "Standard"),
+                    ("3".to_string(), "Real"),
+                    ("4".to_string(), "Vivid"),
+                    ("5".to_string(), "Adobe RGB"),
+                    ("6".to_string(), "A100 Standard"),
+                    ("7".to_string(), "Neutral"),
+                    ("8".to_string(), "Portrait"),
+                    ("9".to_string(), "Landscape"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -49,7 +67,10 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "CreativeStyleWasChanged",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No"),
+                    ("1".to_string(), "Yes"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -58,7 +79,21 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "PresetWhiteBalance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Camera Setting"),
+                    ("10".to_string(), "Warm White Fluorescent"),
+                    ("11".to_string(), "Tungsten"),
+                    ("12".to_string(), "Flash"),
+                    ("13".to_string(), "Auto"),
+                    ("2".to_string(), "Color Temperature"),
+                    ("3".to_string(), "Specify Gray Point"),
+                    ("4".to_string(), "Daylight"),
+                    ("5".to_string(), "Cloudy"),
+                    ("6".to_string(), "Shade"),
+                    ("7".to_string(), "Cool White Fluorescent"),
+                    ("8".to_string(), "Day Light Fluorescent"),
+                    ("9".to_string(), "Day White Fluorescent"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -166,7 +201,10 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "NoiseReductionMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -184,7 +222,11 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "D-RangeOptimizerMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Auto"),
+                    ("2".to_string(), "Manual"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -211,7 +253,10 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "HighlightColorDistortReduct",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Standard"),
+                    ("1".to_string(), "Advanced"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -283,7 +328,11 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "DistortionCompensation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-1".to_string(), "n/a"),
+                    ("1".to_string(), "On"),
+                    ("2".to_string(), "Off"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -364,7 +413,10 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ChromaticAberrationCorrection",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "On"),
+                    ("2".to_string(), "Off"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -373,7 +425,10 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "InclinationCorrection",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -391,7 +446,10 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "Cropping",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -418,7 +476,10 @@ pub static SONY_IDC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "PxShiftPeriphEdgeNR",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -548,6 +609,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

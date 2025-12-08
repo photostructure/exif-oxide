@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -20,7 +24,7 @@ pub fn ast_value_fc578fda6da96dc8(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((val - 32i32) / 1.8f64)
+    Ok(val - 32i32 as f64 / 1.8f64)
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -30,6 +34,7 @@ pub fn ast_value_fc578fda6da96dc8(
 /// ```
 /// Used by:
 /// - Apple::Main.AFPerformance
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_fc66a6e6f446bc53(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

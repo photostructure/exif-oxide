@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -32,6 +36,7 @@ pub fn ast_value_800d1a7009311d4d(
 /// ```
 /// Used by:
 /// - IPTC::ApplicationRecord.DocumentHistory
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_80d49a8ed80bae91(
     val: &TagValue,
@@ -55,6 +60,7 @@ pub fn ast_value_80d49a8ed80bae91(
 /// Used by:
 /// - Sony::rtmd.GPSLatitude
 /// - Sony::rtmd.GPSLongitude
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_8019a6d0d3ff2af4(
     val: &TagValue,

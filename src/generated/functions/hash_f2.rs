@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -29,6 +33,7 @@ pub fn ast_value_f26353ef662842e5(
 /// Used by:
 /// - Matroska::Main.ChapterTimeEnd
 /// - Matroska::Main.ChapterTimeStart
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_f2e6eb92b211f31a(
     val: &TagValue,

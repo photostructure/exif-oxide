@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -16,6 +20,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// Used by:
 /// - Olympus::Main.BlueBalance
 /// - Olympus::Main.RedBalance
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_b1916ec1ca7c9250(
     val: &TagValue,
@@ -38,6 +43,7 @@ pub fn ast_value_b1916ec1ca7c9250(
 /// ```
 /// Used by:
 /// - RIFF::VP8X.ImageHeight
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_b1ee7ff9667afb05(
     val: &TagValue,
@@ -63,6 +69,7 @@ pub fn ast_value_b1ee7ff9667afb05(
 /// ```
 /// Used by:
 /// - Olympus::FocusInfo.ManualFlash
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_b105a96821e32f2b(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

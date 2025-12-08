@@ -27,7 +27,18 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "AFPointSelected",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Center"),
+                    ("2".to_string(), "Top"),
+                    ("3".to_string(), "Upper-right"),
+                    ("4".to_string(), "Right"),
+                    ("5".to_string(), "Lower-right"),
+                    ("6".to_string(), "Bottom"),
+                    ("7".to_string(), "Lower-left"),
+                    ("8".to_string(), "Left"),
+                    ("9".to_string(), "Upper-left"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -36,7 +47,13 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "FocusModeSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Manual"),
+                    ("1".to_string(), "AF-S"),
+                    ("2".to_string(), "AF-C"),
+                    ("3".to_string(), "AF-A"),
+                    ("4".to_string(), "DMF"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -45,7 +62,16 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "AFPoint",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Top-right"),
+                    ("1".to_string(), "Bottom-right"),
+                    ("2".to_string(), "Bottom"),
+                    ("3".to_string(), "Middle Horizontal"),
+                    ("4".to_string(), "Center Vertical"),
+                    ("5".to_string(), "Top"),
+                    ("6".to_string(), "Top-left"),
+                    ("7".to_string(), "Bottom-left"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -54,7 +80,14 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "AFStatusActiveSensor",
                 format: "int16s",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-32768".to_string(), "Out of Focus"),
+                    ("0".to_string(), "In Focus"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Minolta::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -63,7 +96,14 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "AFStatusTop-right",
                 format: "int16s",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-32768".to_string(), "Out of Focus"),
+                    ("0".to_string(), "In Focus"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Minolta::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -72,7 +112,14 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "AFStatusBottom-right",
                 format: "int16s",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-32768".to_string(), "Out of Focus"),
+                    ("0".to_string(), "In Focus"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Minolta::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -81,7 +128,14 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "AFStatusBottom",
                 format: "int16s",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-32768".to_string(), "Out of Focus"),
+                    ("0".to_string(), "In Focus"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Minolta::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -90,7 +144,14 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "AFStatusMiddleHorizontal",
                 format: "int16s",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-32768".to_string(), "Out of Focus"),
+                    ("0".to_string(), "In Focus"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Minolta::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -99,7 +160,14 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "AFStatusCenterVertical",
                 format: "int16s",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-32768".to_string(), "Out of Focus"),
+                    ("0".to_string(), "In Focus"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Minolta::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -108,7 +176,14 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "AFStatusTop",
                 format: "int16s",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-32768".to_string(), "Out of Focus"),
+                    ("0".to_string(), "In Focus"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Minolta::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -117,7 +192,14 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "AFStatusTop-left",
                 format: "int16s",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-32768".to_string(), "Out of Focus"),
+                    ("0".to_string(), "In Focus"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Minolta::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -126,7 +208,14 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "AFStatusBottom-left",
                 format: "int16s",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-32768".to_string(), "Out of Focus"),
+                    ("0".to_string(), "In Focus"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Minolta::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -135,7 +224,14 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "AFStatusLeft",
                 format: "int16s",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-32768".to_string(), "Out of Focus"),
+                    ("0".to_string(), "In Focus"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Minolta::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -144,7 +240,14 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "AFStatusCenterHorizontal",
                 format: "int16s",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-32768".to_string(), "Out of Focus"),
+                    ("0".to_string(), "In Focus"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Minolta::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -153,7 +256,14 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "AFStatusRight",
                 format: "int16s",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-32768".to_string(), "Out of Focus"),
+                    ("0".to_string(), "In Focus"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Minolta::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -202,6 +312,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -16,7 +20,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// - Ricoh::RDTL.GPSAltitude
 pub fn ast_print_f58cef9820a3c7fa(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     codegen_runtime::string::concat(
-        &({
+        &{
             let (success, modified_val) = codegen_runtime::regex_substitute_perl(r"^-", "", val);
             if success {
                 let val = &modified_val;
@@ -24,7 +28,7 @@ pub fn ast_print_f58cef9820a3c7fa(val: &TagValue, ctx: Option<&ExifContext>) -> 
             } else {
                 Into::<TagValue>::into(format!("{} m Above", val))
             }
-        }),
+        },
         &Into::<TagValue>::into(" Sea Level"),
     )
 }

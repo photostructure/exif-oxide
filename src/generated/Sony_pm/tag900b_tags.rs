@@ -14,7 +14,17 @@ pub static SONY_TAG900B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "FacesDetected",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "0"),
+                    ("115".to_string(), "8"),
+                    ("168".to_string(), "6"),
+                    ("241".to_string(), "7"),
+                    ("33".to_string(), "5"),
+                    ("57".to_string(), "2"),
+                    ("77".to_string(), "4"),
+                    ("93".to_string(), "3"),
+                    ("98".to_string(), "1"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -23,7 +33,10 @@ pub static SONY_TAG900B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             TagInfo {
                 name: "FaceDetection",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("98".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -72,6 +85,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

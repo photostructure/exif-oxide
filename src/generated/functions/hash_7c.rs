@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -86,6 +90,7 @@ pub fn ast_value_7c6a8820d74e378b(
 /// ```
 /// Used by:
 /// - Jpeg2000::ImageHeader.BitsPerComponent
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_7c1b806cd4c4514f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -121,6 +126,7 @@ pub fn ast_print_7c1b806cd4c4514f(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Pentax::PENT.GPSVersionID
 /// - Sony::ExtraInfo.ExtraInfoVersion
 /// - Sony::rtmd.GPSVersionID
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_7c85cf32a45b11ab(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -146,6 +152,7 @@ pub fn ast_print_7c85cf32a45b11ab(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Sony::Main.Sony_0x940d
 /// - Sony::Main.Sony_0x940f
 /// - Sony::Main.Sony_0x9411
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_7c3d792bbefb801e(
     val: &TagValue,
@@ -182,6 +189,7 @@ pub fn ast_value_7c3d792bbefb801e(
 /// - Canon::ColorCalib2.CameraColorCalibration13
 /// - Canon::ColorCalib2.CameraColorCalibration14
 /// - Canon::ColorCalib2.CameraColorCalibration15
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_7c512da46b991446(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

@@ -14,7 +14,13 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "SetFunctionWhenShooting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Default (no function)"),
+                    ("1".to_string(), "Change quality"),
+                    ("2".to_string(), "Change Parameters"),
+                    ("3".to_string(), "Menu display"),
+                    ("4".to_string(), "Image replay"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -23,7 +29,10 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "LongExposureNoiseReduction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -32,7 +41,10 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "FlashSyncSpeedAv",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "1/250 Fixed"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -41,7 +53,12 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "Shutter-AELock",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "AF/AE lock"),
+                    ("1".to_string(), "AE lock/AF"),
+                    ("2".to_string(), "AF/AF lock, No AE lock"),
+                    ("3".to_string(), "AE/AF, No AE lock"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -50,7 +67,11 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "AFAssistBeam",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Emits"),
+                    ("1".to_string(), "Does not emit"),
+                    ("2".to_string(), "Only ext. flash emits"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -59,7 +80,10 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "ExposureLevelIncrements",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "1/3 Stop"),
+                    ("1".to_string(), "1/2 Stop"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -68,7 +92,10 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "FlashFiring",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Fires"),
+                    ("1".to_string(), "Does not fire"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -77,7 +104,10 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "ISOExpansion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -86,7 +116,12 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "AEBSequenceAutoCancel",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "0,-,+/Enabled"),
+                    ("1".to_string(), "0,-,+/Disabled"),
+                    ("2".to_string(), "-,0,+/Enabled"),
+                    ("3".to_string(), "-,0,+/Disabled"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -95,7 +130,10 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "SuperimposedDisplay",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "On"),
+                    ("1".to_string(), "Off"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -104,7 +142,11 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "MenuButtonDisplayPosition",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Previous (top if power off)"),
+                    ("1".to_string(), "Previous"),
+                    ("2".to_string(), "Top"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -113,7 +155,10 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "MirrorLockup",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Disable"),
+                    ("1".to_string(), "Enable"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -122,7 +167,11 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "AFPointSelectionMethod",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("1".to_string(), "Multi-controller direct"),
+                    ("2".to_string(), "Quick Control Dial direct"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -131,7 +180,10 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "ETTLII",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Evaluative"),
+                    ("1".to_string(), "Average"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -140,7 +192,10 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "ShutterCurtainSync",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "1st-curtain sync"),
+                    ("1".to_string(), "2nd-curtain sync"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -149,7 +204,10 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "SafetyShiftInAvOrTv",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Disable"),
+                    ("1".to_string(), "Enable"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -158,7 +216,14 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "LensAFStopButton",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "AF stop"),
+                    ("1".to_string(), "AF start"),
+                    ("2".to_string(), "AE lock while metering"),
+                    ("3".to_string(), "AF point: M -> Auto / Auto -> Ctr."),
+                    ("4".to_string(), "ONE SHOT <-> AI SERVO"),
+                    ("5".to_string(), "IS start"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -167,7 +232,10 @@ pub static CANON_CUSTOM_FUNCTIONS20D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "AddOriginalDecisionData",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -216,6 +284,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

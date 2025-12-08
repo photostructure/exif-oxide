@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -21,7 +25,7 @@ pub fn ast_value_5acdb8bd32a91a9e(
     Ok(if val >= 255i32 {
         Into::<TagValue>::into(255i32)
     } else {
-        codegen_runtime::exp((val - 200i32) / 16i32 * codegen_runtime::log(2i32))
+        codegen_runtime::exp(val - 200i32 / 16i32 * codegen_runtime::log(2i32))
     })
 }
 
@@ -32,6 +36,7 @@ pub fn ast_value_5acdb8bd32a91a9e(
 /// ```
 /// Used by:
 /// - Nikon::MakerNotes0x51.FirmwareVersion51
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_5a60f83c3aee8c9c(
     val: &TagValue,

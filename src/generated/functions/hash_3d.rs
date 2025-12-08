@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -15,6 +19,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// ```
 /// Used by:
 /// - GoPro::KBAT.BatteryTime
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_3d7e2c3002e829b4(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -34,6 +39,7 @@ pub fn ast_print_3d7e2c3002e829b4(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Samsung::Trailer.TimeStamp
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_3d5f3b1c3b62a799(
     val: &TagValue,
@@ -56,6 +62,7 @@ pub fn ast_value_3d5f3b1c3b62a799(
 /// ```
 /// Used by:
 /// - JPEG::NITF.ImageFormat
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_3d23e42e940d6624(
     val: &TagValue,

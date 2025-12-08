@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -15,6 +19,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// ```
 /// Used by:
 /// - Ricoh::Main.FirmwareVersion
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_475495c4db4ba791(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -35,6 +40,7 @@ pub fn ast_print_475495c4db4ba791(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// Used by:
 /// - Pentax::Main.ColorMatrixA
 /// - Pentax::Main.ColorMatrixB
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_47b0b51c869a6209(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

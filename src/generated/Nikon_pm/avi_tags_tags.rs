@@ -33,7 +33,16 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "Orientation",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Horizontal (normal)"),
+                    ("2".to_string(), "Mirror horizontal"),
+                    ("3".to_string(), "Rotate 180"),
+                    ("4".to_string(), "Mirror vertical"),
+                    ("5".to_string(), "Mirror horizontal and rotate 270 CW"),
+                    ("6".to_string(), "Rotate 90 CW"),
+                    ("7".to_string(), "Mirror horizontal and rotate 90 CW"),
+                    ("8".to_string(), "Rotate 270 CW"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -78,7 +87,16 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "MeteringMode",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Unknown"),
+                    ("1".to_string(), "Average"),
+                    ("2".to_string(), "Center-weighted average"),
+                    ("255".to_string(), "Other"),
+                    ("3".to_string(), "Spot"),
+                    ("4".to_string(), "Multi-spot"),
+                    ("5".to_string(), "Multi-segment"),
+                    ("6".to_string(), "Partial"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -132,7 +150,11 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ResolutionUnit",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "None"),
+                    ("2".to_string(), "inches"),
+                    ("3".to_string(), "cm"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -289,6 +311,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

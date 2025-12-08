@@ -33,7 +33,14 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSLatitudeRef",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("N".to_string(), "North"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::GPS::__ANON__]",
+                    ),
+                    ("S".to_string(), "South"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -51,7 +58,14 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSLongitudeRef",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("E".to_string(), "East"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::GPS::__ANON__]",
+                    ),
+                    ("W".to_string(), "West"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -69,7 +83,16 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSAltitudeRef",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Above Sea Level"),
+                    ("1".to_string(), "Below Sea Level"),
+                    ("2".to_string(), "Positive Sea Level (sea-level ref)"),
+                    ("3".to_string(), "Negative Sea Level (sea-level ref)"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::GPS::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -105,7 +128,10 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSStatus",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("A".to_string(), "Measurement Active"),
+                    ("V".to_string(), "Measurement Void"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -114,7 +140,10 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSMeasureMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("2".to_string(), "2-Dimensional Measurement"),
+                    ("3".to_string(), "3-Dimensional Measurement"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -132,7 +161,11 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSSpeedRef",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("K".to_string(), "km/h"),
+                    ("M".to_string(), "mph"),
+                    ("N".to_string(), "knots"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -150,7 +183,10 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSTrackRef",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("M".to_string(), "Magnetic North"),
+                    ("T".to_string(), "True North"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -168,7 +204,10 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSImgDirectionRef",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("M".to_string(), "Magnetic North"),
+                    ("T".to_string(), "True North"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -195,7 +234,14 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSDestLatitudeRef",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("N".to_string(), "North"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::GPS::__ANON__]",
+                    ),
+                    ("S".to_string(), "South"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -213,7 +259,14 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSDestLongitudeRef",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("E".to_string(), "East"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::GPS::__ANON__]",
+                    ),
+                    ("W".to_string(), "West"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -231,7 +284,10 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSDestBearingRef",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("M".to_string(), "Magnetic North"),
+                    ("T".to_string(), "True North"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -249,7 +305,11 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSDestDistanceRef",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("K".to_string(), "Kilometers"),
+                    ("M".to_string(), "Miles"),
+                    ("N".to_string(), "Nautical Miles"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -294,7 +354,10 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "GPSDifferential",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No Correction"),
+                    ("1".to_string(), "Differential Corrected"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -352,6 +415,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

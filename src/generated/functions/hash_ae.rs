@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -54,10 +58,7 @@ pub fn ast_value_ae080438eb4840af(
 /// - Nikon::MenuSettingsZ8v2.NonCPULens8MaxAperture
 /// - Nikon::MenuSettingsZ8v2.NonCPULens9MaxAperture
 pub fn ast_print_aef1671fb8224b8c(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl(
-        "%.1fmm",
-        &[val / 100i32.clone()],
-    ))
+    TagValue::String(codegen_runtime::sprintf_perl("%.1fmm", &[val / 100i32]))
 }
 
 /// Original perl expression:

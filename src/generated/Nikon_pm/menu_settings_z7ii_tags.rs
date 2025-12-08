@@ -34,7 +34,13 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "ReleaseMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Continuous Low"),
+                    ("1".to_string(), "Continuous High"),
+                    ("2".to_string(), "Continuous High (Extended)"),
+                    ("4".to_string(), "Timer"),
+                    ("5".to_string(), "Single Frame"),
+                ]))),
                 value_conv: Some(ValueConv::Function(ast_value_3908f6cc855d9bf8)),
             },
         ),
@@ -88,7 +94,10 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "IntervalExposureSmoothing",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -97,7 +106,10 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "IntervalPriority",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -133,7 +145,10 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "FocusShiftExposureLock",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -142,7 +157,10 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "DiffractionCompensation",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -151,7 +169,10 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "AutoDistortionControl",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -160,7 +181,12 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "NikonMeteringMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Matrix"),
+                    ("1".to_string(), "Center"),
+                    ("2".to_string(), "Spot"),
+                    ("3".to_string(), "Highlight"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -169,7 +195,13 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "FlashControlMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "TTL"),
+                    ("1".to_string(), "Auto External Flash"),
+                    ("2".to_string(), "GN (distance priority)"),
+                    ("3".to_string(), "Manual"),
+                    ("4".to_string(), "Repeating Flash"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -178,7 +210,45 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "FlashGNDistance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "0.1 m"),
+                    ("10".to_string(), "1.0 m"),
+                    ("11".to_string(), "1.1 m"),
+                    ("12".to_string(), "1.3 m"),
+                    ("13".to_string(), "1.4 m"),
+                    ("14".to_string(), "1.6 m"),
+                    ("15".to_string(), "1.8 m"),
+                    ("16".to_string(), "2.0 m"),
+                    ("17".to_string(), "2.2 m"),
+                    ("18".to_string(), "2.5 m"),
+                    ("19".to_string(), "2.8 m"),
+                    ("2".to_string(), "0.2 m"),
+                    ("20".to_string(), "3.2 m"),
+                    ("21".to_string(), "3.6 m"),
+                    ("22".to_string(), "4.0 m"),
+                    ("23".to_string(), "4.5 m"),
+                    ("24".to_string(), "5.0 m"),
+                    ("25".to_string(), "5.6 m"),
+                    ("255".to_string(), "n/a"),
+                    ("26".to_string(), "6.3 m"),
+                    ("27".to_string(), "7.1 m"),
+                    ("28".to_string(), "8.0 m"),
+                    ("29".to_string(), "9.0 m"),
+                    ("3".to_string(), "0.3 m"),
+                    ("30".to_string(), "10.0 m"),
+                    ("31".to_string(), "11.0 m"),
+                    ("32".to_string(), "13.0 m"),
+                    ("33".to_string(), "14.0 m"),
+                    ("34".to_string(), "16.0 m"),
+                    ("35".to_string(), "18.0 m"),
+                    ("36".to_string(), "20.0 m"),
+                    ("4".to_string(), "0.4 m"),
+                    ("5".to_string(), "0.5 m"),
+                    ("6".to_string(), "0.6 m"),
+                    ("7".to_string(), "0.7 m"),
+                    ("8".to_string(), "0.8 m"),
+                    ("9".to_string(), "0.9 m"),
+                ]))),
                 value_conv: Some(ValueConv::Function(ast_value_4cda13c3b726a013)),
             },
         ),
@@ -196,7 +266,12 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "FlashWirelessOption",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Optical AWL"),
+                    ("2".to_string(), "Optical/Radio AWL"),
+                    ("3".to_string(), "Radio AWL"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -205,7 +280,11 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "FlashRemoteControl",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Group"),
+                    ("1".to_string(), "Quick Wireless"),
+                    ("2".to_string(), "Remote Repeating"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -214,7 +293,12 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "FlashMasterControlMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "TTL"),
+                    ("1".to_string(), "Manual"),
+                    ("2".to_string(), "Auto"),
+                    ("3".to_string(), "Off"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -241,7 +325,12 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MovieFrameSize",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "1920x1080"),
+                    ("2".to_string(), "3840x2160"),
+                    ("3".to_string(), "7680x4320"),
+                    ("7".to_string(), "5376x3024"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -250,7 +339,15 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MovieFrameRate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "120p"),
+                    ("1".to_string(), "100p"),
+                    ("2".to_string(), "60p"),
+                    ("3".to_string(), "50p"),
+                    ("4".to_string(), "30p"),
+                    ("5".to_string(), "25p"),
+                    ("6".to_string(), "24p"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -259,7 +356,11 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MovieSlowMotion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On (4x)"),
+                    ("2".to_string(), "On (5x)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -268,7 +369,10 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MovieType",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "MOV"),
+                    ("1".to_string(), "MP4"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -277,7 +381,39 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MovieISOAutoManualMode",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "ISO 64"),
+                    ("1".to_string(), "ISO 80"),
+                    ("10".to_string(), "ISO 640"),
+                    ("11".to_string(), "ISO 800"),
+                    ("12".to_string(), "ISO 1000"),
+                    ("13".to_string(), "ISO 1250"),
+                    ("14".to_string(), "ISO 1600"),
+                    ("15".to_string(), "ISO 2000"),
+                    ("16".to_string(), "ISO 2500"),
+                    ("17".to_string(), "ISO 3200"),
+                    ("18".to_string(), "ISO 4000"),
+                    ("19".to_string(), "ISO 5000"),
+                    ("2".to_string(), "ISO 100"),
+                    ("20".to_string(), "ISO 6400"),
+                    ("21".to_string(), "ISO 8000"),
+                    ("22".to_string(), "ISO 10000"),
+                    ("23".to_string(), "ISO 12800"),
+                    ("24".to_string(), "ISO 16000"),
+                    ("25".to_string(), "ISO 20000"),
+                    ("26".to_string(), "ISO 25600"),
+                    ("27".to_string(), "ISO Hi 0.3"),
+                    ("28".to_string(), "ISO Hi 0.7"),
+                    ("29".to_string(), "ISO Hi 1.0"),
+                    ("3".to_string(), "ISO 125"),
+                    ("32".to_string(), "ISO Hi 2.0"),
+                    ("4".to_string(), "ISO 160"),
+                    ("5".to_string(), "ISO 200"),
+                    ("6".to_string(), "ISO 250"),
+                    ("7".to_string(), "ISO 320"),
+                    ("8".to_string(), "ISO 400"),
+                    ("9".to_string(), "ISO 500"),
+                ]))),
                 value_conv: Some(ValueConv::Function(ast_value_b8b4108321f31a78)),
             },
         ),
@@ -286,7 +422,13 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MovieActiveD-Lighting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("2".to_string(), "Low"),
+                    ("3".to_string(), "Normal"),
+                    ("4".to_string(), "High"),
+                    ("5".to_string(), "Extra High"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -295,7 +437,12 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MovieHighISONoiseReduction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Low"),
+                    ("2".to_string(), "Normal"),
+                    ("3".to_string(), "High"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -304,7 +451,12 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MovieVignetteControl",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Low"),
+                    ("2".to_string(), "Normal"),
+                    ("3".to_string(), "High"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -313,7 +465,10 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MovieVignetteControlSameAsPhoto",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No"),
+                    ("1".to_string(), "Yes"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -322,7 +477,10 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MovieDiffractionCompensation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -331,7 +489,10 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MovieAutoDistortionControl",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -340,7 +501,12 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MovieFocusMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Manual"),
+                    ("1".to_string(), "AF-S"),
+                    ("2".to_string(), "AF-C"),
+                    ("4".to_string(), "AF-F"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -349,7 +515,11 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MovieVibrationReduction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On (Normal)"),
+                    ("2".to_string(), "On (Sport)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -358,7 +528,10 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "MovieVibrationReductionSameAsPhoto",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No"),
+                    ("1".to_string(), "Yes"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -367,7 +540,10 @@ pub static NIKON_MENUSETTINGSZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "HDMIOutputN-Log",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -416,6 +592,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

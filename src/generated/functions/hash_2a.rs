@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -37,6 +41,7 @@ pub fn ast_print_2aa532acb8a29737(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - RIFF::Sampler.SMPTEOffset
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_2ad70670162b2c7a(
     val: &TagValue,
@@ -59,6 +64,7 @@ pub fn ast_value_2ad70670162b2c7a(
 /// ```
 /// Used by:
 /// - Pentax::Main.SensorSize
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_2a136ebabb3d5340(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

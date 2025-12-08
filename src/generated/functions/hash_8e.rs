@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -110,6 +114,7 @@ pub fn ast_value_8e44f9d07063045d(
 /// ```
 /// Used by:
 /// - RIFF::BroadcastExt.BWF_UMID
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_8e0f058500d5dea1(
     val: &TagValue,

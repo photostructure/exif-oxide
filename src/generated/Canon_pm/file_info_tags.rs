@@ -20,7 +20,13 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "BracketMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "AEB"),
+                    ("2".to_string(), "FEB"),
+                    ("3".to_string(), "ISO"),
+                    ("4".to_string(), "WB"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -29,7 +35,17 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "RawJpgQuality",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-1".to_string(), "n/a"),
+                    ("1".to_string(), "Economy"),
+                    ("130".to_string(), "Light (RAW)"),
+                    ("131".to_string(), "Standard (RAW)"),
+                    ("2".to_string(), "Normal"),
+                    ("3".to_string(), "Fine"),
+                    ("4".to_string(), "RAW"),
+                    ("5".to_string(), "Superfine"),
+                    ("7".to_string(), "CRAW"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -38,7 +54,27 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "RawJpgSize",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-1".to_string(), "n/a"),
+                    ("0".to_string(), "Large"),
+                    ("1".to_string(), "Medium"),
+                    ("10".to_string(), "Medium Widescreen"),
+                    ("128".to_string(), "640x480 Movie"),
+                    ("129".to_string(), "Medium Movie"),
+                    ("130".to_string(), "Small Movie"),
+                    ("137".to_string(), "1280x720 Movie"),
+                    ("14".to_string(), "Small 1"),
+                    ("142".to_string(), "1920x1080 Movie"),
+                    ("143".to_string(), "4096x2160 Movie"),
+                    ("15".to_string(), "Small 2"),
+                    ("16".to_string(), "Small 3"),
+                    ("2".to_string(), "Small"),
+                    ("5".to_string(), "Medium 1"),
+                    ("6".to_string(), "Medium 2"),
+                    ("7".to_string(), "Medium 3"),
+                    ("8".to_string(), "Postcard"),
+                    ("9".to_string(), "Widescreen"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -47,7 +83,12 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "LongExposureNoiseReduction2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On (1D)"),
+                    ("3".to_string(), "On"),
+                    ("4".to_string(), "Auto"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -56,7 +97,11 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "WBBracketMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On (shift AB)"),
+                    ("2".to_string(), "On (shift GM)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -65,7 +110,13 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FilterEffect",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "None"),
+                    ("1".to_string(), "Yellow"),
+                    ("2".to_string(), "Orange"),
+                    ("3".to_string(), "Red"),
+                    ("4".to_string(), "Green"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -74,7 +125,13 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ToningEffect",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "None"),
+                    ("1".to_string(), "Sepia"),
+                    ("2".to_string(), "Blue"),
+                    ("3".to_string(), "Purple"),
+                    ("4".to_string(), "Green"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -92,7 +149,10 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "LiveViewShooting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -119,7 +179,11 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ShutterMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Mechanical"),
+                    ("1".to_string(), "Electronic First Curtain"),
+                    ("2".to_string(), "Electronic"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -128,7 +192,10 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "FlashExposureLock",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -137,7 +204,10 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AntiFlicker",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -146,7 +216,102 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "RFLensType",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "n/a"),
+                    ("257".to_string(), "Canon RF 50mm F1.2L USM"),
+                    ("258".to_string(), "Canon RF 24-105mm F4L IS USM"),
+                    ("259".to_string(), "Canon RF 28-70mm F2L USM"),
+                    ("260".to_string(), "Canon RF 35mm F1.8 MACRO IS STM"),
+                    ("261".to_string(), "Canon RF 85mm F1.2L USM"),
+                    ("262".to_string(), "Canon RF 85mm F1.2L USM DS"),
+                    ("263".to_string(), "Canon RF 24-70mm F2.8L IS USM"),
+                    ("264".to_string(), "Canon RF 15-35mm F2.8L IS USM"),
+                    ("265".to_string(), "Canon RF 24-240mm F4-6.3 IS USM"),
+                    ("266".to_string(), "Canon RF 70-200mm F2.8L IS USM"),
+                    ("267".to_string(), "Canon RF 85mm F2 MACRO IS STM"),
+                    ("268".to_string(), "Canon RF 600mm F11 IS STM"),
+                    ("269".to_string(), "Canon RF 600mm F11 IS STM + RF1.4x"),
+                    ("270".to_string(), "Canon RF 600mm F11 IS STM + RF2x"),
+                    ("271".to_string(), "Canon RF 800mm F11 IS STM"),
+                    ("272".to_string(), "Canon RF 800mm F11 IS STM + RF1.4x"),
+                    ("273".to_string(), "Canon RF 800mm F11 IS STM + RF2x"),
+                    ("274".to_string(), "Canon RF 24-105mm F4-7.1 IS STM"),
+                    ("275".to_string(), "Canon RF 100-500mm F4.5-7.1L IS USM"),
+                    (
+                        "276".to_string(),
+                        "Canon RF 100-500mm F4.5-7.1L IS USM + RF1.4x",
+                    ),
+                    (
+                        "277".to_string(),
+                        "Canon RF 100-500mm F4.5-7.1L IS USM + RF2x",
+                    ),
+                    ("278".to_string(), "Canon RF 70-200mm F4L IS USM"),
+                    ("279".to_string(), "Canon RF 100mm F2.8L MACRO IS USM"),
+                    ("280".to_string(), "Canon RF 50mm F1.8 STM"),
+                    ("281".to_string(), "Canon RF 14-35mm F4L IS USM"),
+                    ("282".to_string(), "Canon RF-S 18-45mm F4.5-6.3 IS STM"),
+                    ("283".to_string(), "Canon RF 100-400mm F5.6-8 IS USM"),
+                    (
+                        "284".to_string(),
+                        "Canon RF 100-400mm F5.6-8 IS USM + RF1.4x",
+                    ),
+                    ("285".to_string(), "Canon RF 100-400mm F5.6-8 IS USM + RF2x"),
+                    ("286".to_string(), "Canon RF-S 18-150mm F3.5-6.3 IS STM"),
+                    ("287".to_string(), "Canon RF 24mm F1.8 MACRO IS STM"),
+                    ("288".to_string(), "Canon RF 16mm F2.8 STM"),
+                    ("289".to_string(), "Canon RF 400mm F2.8L IS USM"),
+                    ("290".to_string(), "Canon RF 400mm F2.8L IS USM + RF1.4x"),
+                    ("291".to_string(), "Canon RF 400mm F2.8L IS USM + RF2x"),
+                    ("292".to_string(), "Canon RF 600mm F4L IS USM"),
+                    ("293".to_string(), "Canon RF 600mm F4L IS USM + RF1.4x"),
+                    ("294".to_string(), "Canon RF 600mm F4L IS USM + RF2x"),
+                    ("295".to_string(), "Canon RF 800mm F5.6L IS USM"),
+                    ("296".to_string(), "Canon RF 800mm F5.6L IS USM + RF1.4x"),
+                    ("297".to_string(), "Canon RF 800mm F5.6L IS USM + RF2x"),
+                    ("298".to_string(), "Canon RF 1200mm F8L IS USM"),
+                    ("299".to_string(), "Canon RF 1200mm F8L IS USM + RF1.4x"),
+                    ("300".to_string(), "Canon RF 1200mm F8L IS USM + RF2x"),
+                    ("301".to_string(), "Canon RF 5.2mm F2.8L Dual Fisheye 3D VR"),
+                    ("302".to_string(), "Canon RF 15-30mm F4.5-6.3 IS STM"),
+                    ("303".to_string(), "Canon RF 135mm F1.8 L IS USM"),
+                    ("304".to_string(), "Canon RF 24-50mm F4.5-6.3 IS STM"),
+                    ("305".to_string(), "Canon RF-S 55-210mm F5-7.1 IS STM"),
+                    ("306".to_string(), "Canon RF 100-300mm F2.8L IS USM"),
+                    (
+                        "307".to_string(),
+                        "Canon RF 100-300mm F2.8L IS USM + RF1.4x",
+                    ),
+                    ("308".to_string(), "Canon RF 100-300mm F2.8L IS USM + RF2x"),
+                    ("309".to_string(), "Canon RF 200-800mm F6.3-9 IS USM"),
+                    (
+                        "310".to_string(),
+                        "Canon RF 200-800mm F6.3-9 IS USM + RF1.4x",
+                    ),
+                    ("311".to_string(), "Canon RF 200-800mm F6.3-9 IS USM + RF2x"),
+                    ("312".to_string(), "Canon RF 10-20mm F4 L IS STM"),
+                    ("313".to_string(), "Canon RF 28mm F2.8 STM"),
+                    ("314".to_string(), "Canon RF 24-105mm F2.8 L IS USM Z"),
+                    ("315".to_string(), "Canon RF-S 10-18mm F4.5-6.3 IS STM"),
+                    ("316".to_string(), "Canon RF 35mm F1.4 L VCM"),
+                    ("317".to_string(), "Canon RF-S 3.9mm F3.5 STM DUAL FISHEYE"),
+                    ("318".to_string(), "Canon RF 28-70mm F2.8 IS STM"),
+                    ("319".to_string(), "Canon RF 70-200mm F2.8 L IS USM Z"),
+                    (
+                        "320".to_string(),
+                        "Canon RF 70-200mm F2.8 L IS USM Z + RF1.4x",
+                    ),
+                    (
+                        "321".to_string(),
+                        "Canon RF 70-200mm F2.8 L IS USM Z + RF2x",
+                    ),
+                    ("323".to_string(), "Canon RF 16-28mm F2.8 IS STM"),
+                    ("324".to_string(), "Canon RF-S 14-30mm F4-6.3 IS STM PZ"),
+                    ("325".to_string(), "Canon RF 50mm F1.4 L VCM"),
+                    ("326".to_string(), "Canon RF 24mm F1.4 L VCM"),
+                    ("327".to_string(), "Canon RF 20mm F1.4 L VCM"),
+                    ("328".to_string(), "Canon RF 85mm F1.4 L VCM"),
+                    ("330".to_string(), "Canon RF 45mm F1.2 STM"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -195,6 +360,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

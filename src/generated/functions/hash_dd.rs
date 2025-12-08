@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -152,7 +156,7 @@ pub fn ast_value_dd83ee4563d6583e(
     Ok(if codegen_runtime::abs(val / 256i32) < 100i32 {
         codegen_runtime::power(
             Into::<TagValue>::into(2i32),
-            (codegen_runtime::negate(val) / 256i32),
+            Into::<TagValue>::into(codegen_runtime::negate(val) / 256i32),
         )
     } else {
         Into::<TagValue>::into(0i32)

@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -33,7 +37,7 @@ pub fn ast_value_7f1d9c1519aa804e(
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(codegen_runtime::power(
         Into::<TagValue>::into(2i32),
-        (val / 24i32),
+        Into::<TagValue>::into(val / 24i32),
     ))
 }
 
@@ -45,6 +49,7 @@ pub fn ast_value_7f1d9c1519aa804e(
 /// Used by:
 /// - Sony::Main.FullImageSize
 /// - Sony::Main.PreviewImageSize
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_7fea16bf09c9adc9(
     val: &TagValue,
@@ -68,6 +73,7 @@ pub fn ast_value_7fea16bf09c9adc9(
 /// ```
 /// Used by:
 /// - Sony::Main.FocusFrameSize
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_7faa47db17becea7(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

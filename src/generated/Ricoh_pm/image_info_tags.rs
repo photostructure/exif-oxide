@@ -62,7 +62,11 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "FlashMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Auto"),
+                    ("2".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -71,7 +75,10 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "Macro",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -80,7 +87,11 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "Sharpness",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Sharp"),
+                    ("1".to_string(), "Normal"),
+                    ("2".to_string(), "Soft"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -89,7 +100,16 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "WhiteBalance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Daylight"),
+                    ("2".to_string(), "Cloudy"),
+                    ("3".to_string(), "Tungsten"),
+                    ("4".to_string(), "Fluorescent"),
+                    ("5".to_string(), "Manual"),
+                    ("7".to_string(), "Detail"),
+                    ("9".to_string(), "Multi-pattern Auto"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -98,7 +118,11 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "ISOSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("11".to_string(), "100 (Low)"),
+                    ("9".to_string(), "Auto"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -107,7 +131,15 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             TagInfo {
                 name: "Saturation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "High"),
+                    ("1".to_string(), "Normal"),
+                    ("10".to_string(), "Natural"),
+                    ("2".to_string(), "Low"),
+                    ("3".to_string(), "B&W"),
+                    ("6".to_string(), "Toning Effect"),
+                    ("9".to_string(), "Vivid"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -156,6 +188,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

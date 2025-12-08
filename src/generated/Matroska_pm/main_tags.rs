@@ -33,7 +33,15 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "TrackType",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Video"),
+                    ("16".to_string(), "Logo"),
+                    ("17".to_string(), "Subtitle"),
+                    ("18".to_string(), "Buttons"),
+                    ("2".to_string(), "Audio"),
+                    ("3".to_string(), "Complex"),
+                    ("32".to_string(), "Control"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -51,7 +59,10 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "TrackDefault",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No"),
+                    ("1".to_string(), "Yes"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -132,7 +143,11 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "VideoScanType",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Undetermined"),
+                    ("1".to_string(), "Interlaced"),
+                    ("2".to_string(), "Progressive"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -150,7 +165,10 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "TrackLacing",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No"),
+                    ("1".to_string(), "Yes"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -240,7 +258,10 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "CodecDecodeAll",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No"),
+                    ("1".to_string(), "Yes"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -321,7 +342,10 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "TrackUsed",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No"),
+                    ("1".to_string(), "Yes"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -537,7 +561,12 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ContentCompressionAlgorithm",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "zlib"),
+                    ("1".to_string(), "bzlib"),
+                    ("2".to_string(), "lzo1x"),
+                    ("3".to_string(), "Header Stripping"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -663,7 +692,10 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "TagDefault",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No"),
+                    ("1".to_string(), "Yes"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -825,7 +857,14 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ContentEncryptionAlgorithm",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Not Encrypted"),
+                    ("1".to_string(), "DES"),
+                    ("2".to_string(), "3DES"),
+                    ("3".to_string(), "Twofish"),
+                    ("4".to_string(), "Blowfish"),
+                    ("5".to_string(), "AES"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -861,7 +900,10 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ContentSignatureAlgorithm",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Not Signed"),
+                    ("1".to_string(), "RSA"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -870,7 +912,11 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ContentSignatureHashAlgorithm",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Not Signed"),
+                    ("1".to_string(), "SHA1-160"),
+                    ("2".to_string(), "MD5"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -915,7 +961,10 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ContentEncodingType",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Compression"),
+                    ("1".to_string(), "Encryption"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -1023,7 +1072,13 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "DisplayUnit",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Pixels"),
+                    ("1".to_string(), "cm"),
+                    ("2".to_string(), "inches"),
+                    ("3".to_string(), "Display Aspect Ratio"),
+                    ("4".to_string(), "Unknown"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -1032,7 +1087,11 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "AspectRatioType",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Free Resizing"),
+                    ("1".to_string(), "Keep Aspect Ratio"),
+                    ("2".to_string(), "Fixed"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -1077,7 +1136,10 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "TrackForced",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No"),
+                    ("1".to_string(), "Yes"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -1167,7 +1229,15 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ChapterPhysicalEquivalent",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("10".to_string(), "Index"),
+                    ("20".to_string(), "Track"),
+                    ("30".to_string(), "Session"),
+                    ("40".to_string(), "Layer"),
+                    ("50".to_string(), "Side"),
+                    ("60".to_string(), "CD / DVD"),
+                    ("70".to_string(), "Set / Package"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -1248,7 +1318,10 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "TrackTranslateCodec",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Matroska Script"),
+                    ("1".to_string(), "DVD Menu"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -1293,7 +1366,11 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ChapterProcessTime",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "For Duration of Chapter"),
+                    ("1".to_string(), "Before Chapter"),
+                    ("2".to_string(), "After Chapter"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -1329,7 +1406,10 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ChapterProcessCodecID",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Matroska"),
+                    ("1".to_string(), "DVD"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -1347,7 +1427,10 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ChapterTranslateCodec",
                 format: "unsigned",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Matroska Script"),
+                    ("1".to_string(), "DVD Menu"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -1612,6 +1695,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

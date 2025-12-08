@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -21,7 +25,7 @@ pub fn ast_value_2da539a22da2bce2(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((val - 128i32) / 24i32)
+    Ok(val - 128i32 / 24i32)
 }
 
 /// Original perl expression:
@@ -42,6 +46,7 @@ pub fn ast_print_2d66b9944b9eb1b1(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - FujiFilm::RAF.XTransLayout
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_2d2c033a3b7919c2(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -63,6 +68,7 @@ pub fn ast_print_2d2c033a3b7919c2(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Panasonic::Main.InternalSerialNumber
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_2deedb011bde716b(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

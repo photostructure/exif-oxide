@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -89,21 +93,13 @@ pub fn ast_value_c0027708ba7e42e3(
     Ok(val / 100i32)
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Registry fallback: PrintConv implementation found
 /// Original perl expression:
 /// ``` perl
-/// $_=$val,s/(\d+)(\d{4})/$1-$2/,$_
+/// $_=$val,s/(\\d+)(\\d{4})/$1-$2/,$_
 /// ```
 /// Used by:
 /// - Canon::Main.FileNumber
-/// TODO: Add support for this expression pattern
 pub fn ast_print_c033b0a1599fe562(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
-        0,                                    // tag_id will be filled at runtime
-        "UnknownTag",                         // tag_name will be filled at runtime
-        "UnknownGroup",                       // group will be filled at runtime
-        "$_=$val,s/(\\d+)(\\d{4})/$1-$2/,$_", // original expression
-        val,
-    )
+    crate::implementations::print_conv::canon_file_number_print_conv(val, ctx)
 }

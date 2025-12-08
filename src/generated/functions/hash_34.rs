@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -16,11 +20,11 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// - Sony::Main.ColorTemperature
 pub fn ast_print_34de78d5cc79bdc9(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val.is_truthy() {
-        (if val == 0xffffffffu32 {
+        if val == 0xffffffffu32 {
             Into::<TagValue>::into("n/a")
         } else {
             val.clone()
-        })
+        }
     } else {
         Into::<TagValue>::into("Auto")
     }
@@ -33,6 +37,7 @@ pub fn ast_print_34de78d5cc79bdc9(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Photoshop::Main.CopyrightFlag
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_346603e685b2cac(
     val: &TagValue,

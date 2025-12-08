@@ -41,7 +41,32 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "SanyoQuality",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal/Very Low"),
+                    ("1".to_string(), "Normal/Low"),
+                    ("2".to_string(), "Normal/Medium Low"),
+                    ("256".to_string(), "Fine/Very Low"),
+                    ("257".to_string(), "Fine/Low"),
+                    ("258".to_string(), "Fine/Medium Low"),
+                    ("259".to_string(), "Fine/Medium"),
+                    ("260".to_string(), "Fine/Medium High"),
+                    ("261".to_string(), "Fine/High"),
+                    ("262".to_string(), "Fine/Very High"),
+                    ("263".to_string(), "Fine/Super High"),
+                    ("3".to_string(), "Normal/Medium"),
+                    ("4".to_string(), "Normal/Medium High"),
+                    ("5".to_string(), "Normal/High"),
+                    ("512".to_string(), "Super Fine/Very Low"),
+                    ("513".to_string(), "Super Fine/Low"),
+                    ("514".to_string(), "Super Fine/Medium Low"),
+                    ("515".to_string(), "Super Fine/Medium"),
+                    ("516".to_string(), "Super Fine/Medium High"),
+                    ("517".to_string(), "Super Fine/High"),
+                    ("518".to_string(), "Super Fine/Very High"),
+                    ("519".to_string(), "Super Fine/Super High"),
+                    ("6".to_string(), "Normal/Very High"),
+                    ("7".to_string(), "Normal/Super High"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -50,7 +75,12 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "Macro",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("1".to_string(), "Macro"),
+                    ("2".to_string(), "View"),
+                    ("3".to_string(), "Manual"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -68,7 +98,12 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "SequentialShot",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "None"),
+                    ("1".to_string(), "Standard"),
+                    ("2".to_string(), "Best"),
+                    ("3".to_string(), "Adjust Exposure"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -77,7 +112,10 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "WideRange",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -86,7 +124,10 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ColorAdjustmentMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -95,7 +136,10 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "QuickShot",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -104,7 +148,10 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "SelfTimer",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -113,7 +160,10 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "VoiceMemo",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -122,7 +172,10 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "RecordShutterRelease",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Record while down"),
+                    ("1".to_string(), "Press start, press stop"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -131,7 +184,10 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FlickerReduce",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -140,7 +196,10 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "OpticalZoomOn",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -149,7 +208,10 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "DigitalZoomOn",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -158,7 +220,10 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "LightSourceSpecial",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -167,7 +232,10 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "Resaved",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No"),
+                    ("1".to_string(), "Yes"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -176,7 +244,15 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "SceneSelect",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Sport"),
+                    ("2".to_string(), "TV"),
+                    ("3".to_string(), "Night"),
+                    ("4".to_string(), "User 1"),
+                    ("5".to_string(), "User 2"),
+                    ("6".to_string(), "Lamp"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -185,7 +261,12 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "SequenceShotInterval",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "5 frames/s"),
+                    ("1".to_string(), "10 frames/s"),
+                    ("2".to_string(), "15 frames/s"),
+                    ("3".to_string(), "20 frames/s"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -194,7 +275,12 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FlashMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Force"),
+                    ("2".to_string(), "Disabled"),
+                    ("3".to_string(), "Red eye"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -261,6 +347,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

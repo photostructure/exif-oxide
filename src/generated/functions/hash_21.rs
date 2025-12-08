@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -15,6 +19,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// ```
 /// Used by:
 /// - Olympus::WAV.RecordingTime
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_21c135941e609b5d(
     val: &TagValue,
@@ -46,6 +51,7 @@ pub fn ast_value_21c135941e609b5d(
 /// - Vorbis::Identification.MaximumBitrate
 /// - Vorbis::Identification.MinimumBitrate
 /// - Vorbis::Identification.NominalBitrate
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_21dfca2f396095a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -67,6 +73,7 @@ pub fn ast_print_21dfca2f396095a(val: &TagValue, ctx: Option<&ExifContext>) -> T
 /// ```
 /// Used by:
 /// - Photoshop::Main.LayerSelectionIDs
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_21805eee515f1f(
     val: &TagValue,
@@ -92,6 +99,7 @@ pub fn ast_value_21805eee515f1f(
 /// ```
 /// Used by:
 /// - Exif::Main.TimeCodes
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_21a96bd45833ea97(
     val: &TagValue,

@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -55,6 +59,7 @@ pub fn ast_print_f013e387a9d36985(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// Used by:
 /// - IPTC::ApplicationRecord.DateCreated
 /// - IPTC::ApplicationRecord.DigitalCreationDate
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_f06853894c258287(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -74,6 +79,7 @@ pub fn ast_print_f06853894c258287(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Sony::rtmd.GPSTimeStamp
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_f08f753887ef89a0(
     val: &TagValue,

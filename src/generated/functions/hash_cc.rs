@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -26,6 +30,7 @@ pub fn ast_print_ccb205b5fb8d3f95(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// Used by:
 /// - Olympus::DSS.EndTime
 /// - Olympus::DSS.StartTime
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_ccbc3d950c99a0d3(
     val: &TagValue,
@@ -48,6 +53,7 @@ pub fn ast_value_ccbc3d950c99a0d3(
 /// ```
 /// Used by:
 /// - Nintendo::CameraInfo.TimeStamp
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_cc07217c1f61b301(
     val: &TagValue,
@@ -70,6 +76,7 @@ pub fn ast_value_cc07217c1f61b301(
 /// ```
 /// Used by:
 /// - Olympus::CameraSettings.ManometerReading
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_cc38490c4c9977cc(
     val: &TagValue,
@@ -92,6 +99,7 @@ pub fn ast_value_cc38490c4c9977cc(
 /// ```
 /// Used by:
 /// - Olympus::Equipment.LensType
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_cc90b14f7d584410(
     val: &TagValue,

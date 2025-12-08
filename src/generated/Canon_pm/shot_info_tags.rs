@@ -89,7 +89,30 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "WhiteBalance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Daylight"),
+                    ("10".to_string(), "PC Set1"),
+                    ("11".to_string(), "PC Set2"),
+                    ("12".to_string(), "PC Set3"),
+                    ("14".to_string(), "Daylight Fluorescent"),
+                    ("15".to_string(), "Custom 1"),
+                    ("16".to_string(), "Custom 2"),
+                    ("17".to_string(), "Underwater"),
+                    ("18".to_string(), "Custom 3"),
+                    ("19".to_string(), "Custom 4"),
+                    ("2".to_string(), "Cloudy"),
+                    ("20".to_string(), "PC Set4"),
+                    ("21".to_string(), "PC Set5"),
+                    ("23".to_string(), "Auto (ambience priority)"),
+                    ("3".to_string(), "Tungsten"),
+                    ("4".to_string(), "Fluorescent"),
+                    ("5".to_string(), "Flash"),
+                    ("6".to_string(), "Custom"),
+                    ("7".to_string(), "Black & White"),
+                    ("8".to_string(), "Shade"),
+                    ("9".to_string(), "Manual Temperature (Kelvin)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -98,7 +121,13 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "SlowShutter",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-1".to_string(), "n/a"),
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Night Scene"),
+                    ("2".to_string(), "On"),
+                    ("3".to_string(), "None"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -143,7 +172,16 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AFPointsInFocus",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("12288".to_string(), "None (MF)"),
+                    ("12289".to_string(), "Right"),
+                    ("12290".to_string(), "Center"),
+                    ("12291".to_string(), "Center+Right"),
+                    ("12292".to_string(), "Left"),
+                    ("12293".to_string(), "Left+Right"),
+                    ("12294".to_string(), "Left+Center"),
+                    ("12295".to_string(), "All"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -161,7 +199,13 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AutoExposureBracketing",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-1".to_string(), "On"),
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On (shot 1)"),
+                    ("2".to_string(), "On (shot 2)"),
+                    ("3".to_string(), "On (shot 3)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -179,7 +223,11 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ControlMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "n/a"),
+                    ("1".to_string(), "Camera Local Control"),
+                    ("3".to_string(), "Computer Remote Control"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -233,7 +281,13 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "CameraType",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "n/a"),
+                    ("248".to_string(), "EOS High-end"),
+                    ("250".to_string(), "Compact"),
+                    ("252".to_string(), "EOS Mid-range"),
+                    ("255".to_string(), "DV Camera"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -242,7 +296,13 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AutoRotate",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-1".to_string(), "n/a"),
+                    ("0".to_string(), "None"),
+                    ("1".to_string(), "Rotate 90 CW"),
+                    ("2".to_string(), "Rotate 180"),
+                    ("3".to_string(), "Rotate 270 CW"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -251,7 +311,11 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "NDFilter",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-1".to_string(), "n/a"),
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -318,6 +382,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

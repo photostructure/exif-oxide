@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -56,10 +60,7 @@ pub fn ast_value_39492c8ca08229b1(
 /// Used by:
 /// - DJI::ThermalParams2.RelativeHumidity
 pub fn ast_print_3903820e7e53c0b1(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl(
-        "%g %%",
-        &[val * 100i32.clone()],
-    ))
+    TagValue::String(codegen_runtime::sprintf_perl("%g %%", &[val * 100i32]))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -74,6 +75,7 @@ pub fn ast_print_3903820e7e53c0b1(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Exif::Main.XPSubject
 /// - Exif::Main.XPTitle
 /// - Exif::Main.XP_DIP_XML
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_39be436ee8eb1143(
     val: &TagValue,

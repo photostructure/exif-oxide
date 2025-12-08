@@ -11,15 +11,14 @@ use crate::generated::functions::hash_b7::ast_value_b714a38a402e4241;
 
 /// Tag definitions for Panasonic::Data1 table
 pub static PANASONIC_DATA1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
-    HashMap::from([(
-        22,
-        TagInfo {
+    HashMap::from([
+        (22, TagInfo {
             name: "LensType",
             format: "int32u",
-            print_conv: Some(PrintConv::Complex),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0 0".to_string(), "Uncoded lens"), ("1".to_string(), "Elmarit-M 21mm f/2.8"), ("11".to_string(), "Summaron-M 28mm f/5.6"), ("12".to_string(), "Thambar-M 90mm f/2.2"), ("16".to_string(), "Tri-Elmar-M 16-18-21mm f/4 ASPH."), ("16 1".to_string(), "Tri-Elmar-M 16-18-21mm f/4 ASPH. (at 16mm)"), ("16 2".to_string(), "Tri-Elmar-M 16-18-21mm f/4 ASPH. (at 18mm)"), ("16 3".to_string(), "Tri-Elmar-M 16-18-21mm f/4 ASPH. (at 21mm)"), ("23".to_string(), "Summicron-M 50mm f/2 (III)"), ("24".to_string(), "Elmarit-M 21mm f/2.8 ASPH."), ("25".to_string(), "Elmarit-M 24mm f/2.8 ASPH."), ("26".to_string(), "Summicron-M 28mm f/2 ASPH."), ("27".to_string(), "Elmarit-M 28mm f/2.8 (IV)"), ("28".to_string(), "Elmarit-M 28mm f/2.8 ASPH."), ("29".to_string(), "Summilux-M 35mm f/1.4 ASPH."), ("29 0".to_string(), "Summilux-M 35mm f/1.4 ASPHERICAL"), ("3".to_string(), "Elmarit-M 28mm f/2.8 (III)"), ("30".to_string(), "Summicron-M 35mm f/2 ASPH."), ("31".to_string(), "Noctilux-M 50mm f/1"), ("31 0".to_string(), "Noctilux-M 50mm f/1.2"), ("32".to_string(), "Summilux-M 50mm f/1.4 ASPH."), ("33".to_string(), "Summicron-M 50mm f/2 (IV, V)"), ("34".to_string(), "Elmar-M 50mm f/2.8"), ("35".to_string(), "Summilux-M 75mm f/1.4"), ("36".to_string(), "Apo-Summicron-M 75mm f/2 ASPH."), ("37".to_string(), "Apo-Summicron-M 90mm f/2 ASPH."), ("38".to_string(), "Elmarit-M 90mm f/2.8"), ("39".to_string(), "Macro-Elmar-M 90mm f/4"), ("39 0".to_string(), "Tele-Elmar-M 135mm f/4 (II)"), ("4".to_string(), "Tele-Elmarit-M 90mm f/2.8 (II)"), ("40".to_string(), "Macro-Adapter M"), ("41".to_string(), "Apo-Summicron-M 50mm f/2 ASPH."), ("41 3".to_string(), "Apo-Summicron-M 50mm f/2 ASPH."), ("42".to_string(), "Tri-Elmar-M 28-35-50mm f/4 ASPH."), ("42 1".to_string(), "Tri-Elmar-M 28-35-50mm f/4 ASPH. (at 28mm)"), ("42 2".to_string(), "Tri-Elmar-M 28-35-50mm f/4 ASPH. (at 35mm)"), ("42 3".to_string(), "Tri-Elmar-M 28-35-50mm f/4 ASPH. (at 50mm)"), ("43".to_string(), "Summarit-M 35mm f/2.5"), ("44".to_string(), "Summarit-M 50mm f/2.5"), ("45".to_string(), "Summarit-M 75mm f/2.5"), ("46".to_string(), "Summarit-M 90mm f/2.5"), ("47".to_string(), "Summilux-M 21mm f/1.4 ASPH."), ("48".to_string(), "Summilux-M 24mm f/1.4 ASPH."), ("49".to_string(), "Noctilux-M 50mm f/0.95 ASPH."), ("5".to_string(), "Summilux-M 50mm f/1.4 (II)"), ("50".to_string(), "Elmar-M 24mm f/3.8 ASPH."), ("51".to_string(), "Super-Elmar-M 21mm f/3.4 Asph"), ("51 2".to_string(), "Super-Elmar-M 14mm f/3.8 Asph"), ("52".to_string(), "Apo-Telyt-M 18mm f/3.8 ASPH."), ("53".to_string(), "Apo-Telyt-M 135mm f/3.4"), ("53 2".to_string(), "Apo-Telyt-M 135mm f/3.4"), ("53 3".to_string(), "Apo-Summicron-M 50mm f/2 (VI)"), ("58".to_string(), "Noctilux-M 75mm f/1.25 ASPH."), ("6".to_string(), "Summicron-M 35mm f/2 (IV)"), ("6 0".to_string(), "Summilux-M 35mm f/1.4"), ("7".to_string(), "Summicron-M 90mm f/2 (II)"), ("9".to_string(), "Elmarit-M 135mm f/2.8 (I/II)"), ("9 0".to_string(), "Apo-Telyt-M 135mm f/3.4"), ("Notes".to_string(), "\n        the LensType value is obtained by splitting the stored value into 2\n        integers:  The stored value divided by 4, and its lower 2 bits.  The second\n        number is used only if necessary to identify certain manually coded lenses\n        on the M9, or the focal length of some multi-focal lenses.\n    "), ("OTHER".to_string(), "[Function: Image::ExifTool::Panasonic::__ANON__]"), ]))),
             value_conv: Some(ValueConv::Function(ast_value_b714a38a402e4241)),
-        },
-    )])
+        }),
+    ])
 });
 
 /// Apply ValueConv transformation for tags in this table
@@ -64,6 +63,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

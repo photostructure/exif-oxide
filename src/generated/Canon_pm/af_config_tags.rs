@@ -17,7 +17,14 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AFConfigTool",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("11".to_string(), "Case A"),
+                    ("2147483648".to_string(), "n/a"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Canon::__ANON__]",
+                    ),
+                ]))),
                 value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
             },
         ),
@@ -26,7 +33,14 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AFTrackingSensitivity",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("127".to_string(), "Auto"),
+                    ("2147483647".to_string(), "n/a"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Canon::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -35,7 +49,14 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AFAccelDecelTracking",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("127".to_string(), "Auto"),
+                    ("2147483647".to_string(), "n/a"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Canon::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -44,7 +65,13 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AFPointSwitching",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("2147483647".to_string(), "n/a"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Canon::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -53,7 +80,11 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AIServoFirstImage",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Equal Priority"),
+                    ("1".to_string(), "Release Priority"),
+                    ("2".to_string(), "Focus Priority"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -62,7 +93,13 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AIServoSecondImage",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Equal Priority"),
+                    ("1".to_string(), "Release Priority"),
+                    ("2".to_string(), "Focus Priority"),
+                    ("3".to_string(), "Release High Priority"),
+                    ("4".to_string(), "Focus High Priority"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -71,7 +108,12 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AFAssistBeam",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Enable"),
+                    ("1".to_string(), "Disable"),
+                    ("2".to_string(), "IR AF Assist Beam Only"),
+                    ("3".to_string(), "LED AF Assist Beam Only"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -80,7 +122,10 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "OneShotAFRelease",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Focus Priority"),
+                    ("1".to_string(), "Release Priority"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -89,7 +134,10 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AutoAFPointSelEOSiTRAF",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Enable"),
+                    ("1".to_string(), "Disable"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -98,7 +146,10 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "LensDriveWhenAFImpossible",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Continue Focus Search"),
+                    ("1".to_string(), "Stop Focus Search"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -116,7 +167,10 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AFAreaSelectionMethod",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "M-Fn Button"),
+                    ("1".to_string(), "Main Dial"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -125,7 +179,11 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "OrientationLinkedAF",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Same for Vert/Horiz Points"),
+                    ("1".to_string(), "Separate Vert/Horiz Points"),
+                    ("2".to_string(), "Separate Area+Points"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -134,7 +192,10 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ManualAFPointSelPattern",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Stops at AF Area Edges"),
+                    ("1".to_string(), "Continuous"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -143,7 +204,13 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AFPointDisplayDuringFocus",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Selected (constant)"),
+                    ("1".to_string(), "All (constant)"),
+                    ("2".to_string(), "Selected (pre-AF, focused)"),
+                    ("3".to_string(), "Selected (focused)"),
+                    ("4".to_string(), "Disabled"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -152,7 +219,11 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "VFDisplayIllumination",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Enable"),
+                    ("2".to_string(), "Disable"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -161,7 +232,10 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "AFStatusViewfinder",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Show in Field of View"),
+                    ("1".to_string(), "Show Outside View"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -170,7 +244,11 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "InitialAFPointInServo",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Initial AF Point Selected"),
+                    ("1".to_string(), "Manual AF Point"),
+                    ("2".to_string(), "Auto"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -179,7 +257,13 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "SubjectToDetect",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "None"),
+                    ("1".to_string(), "People"),
+                    ("2".to_string(), "Animals"),
+                    ("3".to_string(), "Vehicles"),
+                    ("4".to_string(), "Auto"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -188,7 +272,11 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "SubjectSwitching",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Initial Priority"),
+                    ("1".to_string(), "On Subject"),
+                    ("2".to_string(), "Switch Subject"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -197,7 +285,12 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "EyeDetection",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Auto"),
+                    ("2".to_string(), "Left Eye"),
+                    ("3".to_string(), "Right Eye"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -206,7 +299,10 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "WholeAreaTracking",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -215,7 +311,10 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ServoAFCharacteristics",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Case Auto"),
+                    ("1".to_string(), "Case Manual"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -224,7 +323,12 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "CaseAutoSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-1".to_string(), "Locked On"),
+                    ("0".to_string(), "Standard"),
+                    ("1".to_string(), "Responsive"),
+                    ("2147483647".to_string(), "n/a"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -233,7 +337,10 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ActionPriority",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -242,7 +349,11 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "SportEvents",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Soccer"),
+                    ("1".to_string(), "Basketball"),
+                    ("2".to_string(), "Volleyball"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -291,6 +402,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

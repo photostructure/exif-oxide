@@ -67,7 +67,10 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "EditorialUpdate",
                 format: "digits[2]",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([(
+                    "01".to_string(),
+                    "Additional language",
+                )]))),
                 value_conv: None,
             },
         ),
@@ -76,7 +79,13 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "Urgency",
                 format: "digits[1]",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "0 (reserved)"),
+                    ("1".to_string(), "1 (most urgent)"),
+                    ("5".to_string(), "5 (normal urgency)"),
+                    ("8".to_string(), "8 (least urgent)"),
+                    ("9".to_string(), "9 (user-defined priority)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -193,7 +202,13 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "ActionAdvised",
                 format: "digits[2]",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("".to_string(), ""),
+                    ("01".to_string(), "Object Kill"),
+                    ("02".to_string(), "Object Replace"),
+                    ("03".to_string(), "Object Append"),
+                    ("04".to_string(), "Object Reference"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -283,7 +298,11 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "ObjectCycle",
                 format: "string[1]",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("a".to_string(), "Morning"),
+                    ("b".to_string(), "Both Morning and Evening"),
+                    ("p".to_string(), "Evening"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -454,7 +473,11 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "ImageOrientation",
                 format: "string[1]",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("L".to_string(), "Landscape"),
+                    ("P".to_string(), "Portrait"),
+                    ("S".to_string(), "Square"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -472,7 +495,25 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "AudioType",
                 format: "string[2]",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0T".to_string(), "Text Only"),
+                    ("1A".to_string(), "Mono Actuality"),
+                    ("1C".to_string(), "Mono Question and Answer Session"),
+                    ("1M".to_string(), "Mono Music"),
+                    ("1Q".to_string(), "Mono Response to a Question"),
+                    ("1R".to_string(), "Mono Raw Sound"),
+                    ("1S".to_string(), "Mono Scener"),
+                    ("1V".to_string(), "Mono Voicer"),
+                    ("1W".to_string(), "Mono Wrap"),
+                    ("2A".to_string(), "Stereo Actuality"),
+                    ("2C".to_string(), "Stereo Question and Answer Session"),
+                    ("2M".to_string(), "Stereo Music"),
+                    ("2Q".to_string(), "Stereo Response to a Question"),
+                    ("2R".to_string(), "Stereo Raw Sound"),
+                    ("2S".to_string(), "Stereo Scener"),
+                    ("2V".to_string(), "Stereo Voicer"),
+                    ("2W".to_string(), "Stereo Wrap"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -562,7 +603,77 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             TagInfo {
                 name: "ObjectPreviewFileFormat",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No ObjectData"),
+                    (
+                        "1".to_string(),
+                        "IPTC-NAA Digital Newsphoto Parameter Record",
+                    ),
+                    (
+                        "10".to_string(),
+                        "United Press International Down-Load Message",
+                    ),
+                    ("11".to_string(), "JPEG File Interchange (JFIF)"),
+                    ("12".to_string(), "Photo-CD Image-Pac (Eastman Kodak)"),
+                    (
+                        "13".to_string(),
+                        "Bit Mapped Graphics File [.BMP] (Microsoft)",
+                    ),
+                    (
+                        "14".to_string(),
+                        "Digital Audio File [.WAV] (Microsoft & Creative Labs)",
+                    ),
+                    (
+                        "15".to_string(),
+                        "Audio plus Moving Video [.AVI] (Microsoft)",
+                    ),
+                    (
+                        "16".to_string(),
+                        "PC DOS/Windows Executable Files [.COM][.EXE]",
+                    ),
+                    (
+                        "17".to_string(),
+                        "Compressed Binary File [.ZIP] (PKWare Inc)",
+                    ),
+                    (
+                        "18".to_string(),
+                        "Audio Interchange File Format AIFF (Apple Computer Inc)",
+                    ),
+                    ("19".to_string(), "RIFF Wave (Microsoft Corporation)"),
+                    ("2".to_string(), "IPTC7901 Recommended Message Format"),
+                    ("20".to_string(), "Freehand (Macromedia/Aldus)"),
+                    (
+                        "21".to_string(),
+                        "Hypertext Markup Language [.HTML] (The Internet Society)",
+                    ),
+                    ("22".to_string(), "MPEG 2 Audio Layer 2 (Musicom), ISO/IEC"),
+                    ("23".to_string(), "MPEG 2 Audio Layer 3, ISO/IEC"),
+                    ("24".to_string(), "Portable Document File [.PDF] Adobe"),
+                    ("25".to_string(), "News Industry Text Format (NITF)"),
+                    ("26".to_string(), "Tape Archive [.TAR]"),
+                    (
+                        "27".to_string(),
+                        "Tidningarnas Telegrambyra NITF version (TTNITF DTD)",
+                    ),
+                    ("28".to_string(), "Ritzaus Bureau NITF version (RBNITF DTD)"),
+                    ("29".to_string(), "Corel Draw [.CDR]"),
+                    (
+                        "3".to_string(),
+                        "Tagged Image File Format (Adobe/Aldus Image data)",
+                    ),
+                    ("4".to_string(), "Illustrator (Adobe Graphics data)"),
+                    ("5".to_string(), "AppleSingle (Apple Computer Inc)"),
+                    ("6".to_string(), "NAA 89-3 (ANPA 1312)"),
+                    ("7".to_string(), "MacBinary II"),
+                    (
+                        "8".to_string(),
+                        "IPTC Unstructured Character Oriented File Format (UCOFF)",
+                    ),
+                    (
+                        "9".to_string(),
+                        "United Press International ANPA 1312 variant",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -692,6 +803,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

@@ -26,7 +26,32 @@ pub static RIFF_ACIDIZER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "RootNote",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("48".to_string(), "C"),
+                    ("49".to_string(), "C#"),
+                    ("50".to_string(), "D"),
+                    ("51".to_string(), "D#"),
+                    ("52".to_string(), "E"),
+                    ("53".to_string(), "F"),
+                    ("54".to_string(), "F#"),
+                    ("55".to_string(), "G"),
+                    ("56".to_string(), "G#"),
+                    ("57".to_string(), "A"),
+                    ("58".to_string(), "A#"),
+                    ("59".to_string(), "B"),
+                    ("60".to_string(), "High C"),
+                    ("61".to_string(), "High C#"),
+                    ("62".to_string(), "High D"),
+                    ("63".to_string(), "High D#"),
+                    ("64".to_string(), "High E"),
+                    ("65".to_string(), "High F"),
+                    ("66".to_string(), "High F#"),
+                    ("67".to_string(), "High G"),
+                    ("68".to_string(), "High G#"),
+                    ("69".to_string(), "High A"),
+                    ("70".to_string(), "High A#"),
+                    ("71".to_string(), "High B"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -102,6 +127,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

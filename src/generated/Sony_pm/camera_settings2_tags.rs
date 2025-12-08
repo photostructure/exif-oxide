@@ -47,7 +47,10 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "HighSpeedSync",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -65,7 +68,19 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "WhiteBalanceSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("16".to_string(), "Cloudy"),
+                    ("17".to_string(), "Shade"),
+                    ("18".to_string(), "Color Temperature/Color Filter"),
+                    ("2".to_string(), "Auto"),
+                    ("32".to_string(), "Custom 1"),
+                    ("33".to_string(), "Custom 2"),
+                    ("34".to_string(), "Custom 3"),
+                    ("4".to_string(), "Daylight"),
+                    ("5".to_string(), "Fluorescent"),
+                    ("6".to_string(), "Tungsten"),
+                    ("7".to_string(), "Flash"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -128,7 +143,18 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "WhiteBalance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("12".to_string(), "Color Temperature"),
+                    ("13".to_string(), "Color Filter"),
+                    ("14".to_string(), "Custom"),
+                    ("16".to_string(), "Cloudy"),
+                    ("17".to_string(), "Shade"),
+                    ("2".to_string(), "Auto"),
+                    ("4".to_string(), "Daylight"),
+                    ("5".to_string(), "Fluorescent"),
+                    ("6".to_string(), "Tungsten"),
+                    ("7".to_string(), "Flash"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -137,7 +163,12 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FocusModeSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Manual"),
+                    ("1".to_string(), "AF-S"),
+                    ("2".to_string(), "AF-C"),
+                    ("3".to_string(), "AF-A"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -146,7 +177,11 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "AFAreaMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Wide"),
+                    ("1".to_string(), "Local"),
+                    ("2".to_string(), "Spot"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -155,7 +190,17 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "AFPointSetting",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Center"),
+                    ("2".to_string(), "Top"),
+                    ("3".to_string(), "Upper-right"),
+                    ("4".to_string(), "Right"),
+                    ("5".to_string(), "Lower-right"),
+                    ("6".to_string(), "Bottom"),
+                    ("7".to_string(), "Lower-left"),
+                    ("8".to_string(), "Left"),
+                    ("9".to_string(), "Upper-left"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -173,7 +218,11 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "MeteringMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Multi-segment"),
+                    ("2".to_string(), "Center-weighted average"),
+                    ("4".to_string(), "Spot"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -191,7 +240,12 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "DynamicRangeOptimizerMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Standard"),
+                    ("2".to_string(), "Advanced Auto"),
+                    ("3".to_string(), "Advanced Level"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -200,7 +254,15 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "CreativeStyle",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Standard"),
+                    ("2".to_string(), "Vivid"),
+                    ("3".to_string(), "Portrait"),
+                    ("4".to_string(), "Landscape"),
+                    ("5".to_string(), "Sunset"),
+                    ("6".to_string(), "Night View/Portrait"),
+                    ("8".to_string(), "B&W"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -236,7 +298,11 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FlashControl",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "ADI"),
+                    ("1".to_string(), "Pre-flash TTL"),
+                    ("2".to_string(), "Manual"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -245,7 +311,10 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "LongExposureNoiseReduction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -254,7 +323,12 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "HighISONoiseReduction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Low"),
+                    ("2".to_string(), "Normal"),
+                    ("3".to_string(), "High"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -263,7 +337,15 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "ImageStyle",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Standard"),
+                    ("2".to_string(), "Vivid"),
+                    ("3".to_string(), "Portrait"),
+                    ("4".to_string(), "Landscape"),
+                    ("5".to_string(), "Sunset"),
+                    ("7".to_string(), "Night View/Portrait"),
+                    ("8".to_string(), "B&W"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -290,7 +372,22 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "ExposureProgram",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Manual"),
+                    ("16".to_string(), "Portrait"),
+                    ("17".to_string(), "Sports"),
+                    ("18".to_string(), "Sunset"),
+                    ("19".to_string(), "Night Portrait"),
+                    ("2".to_string(), "Program AE"),
+                    ("20".to_string(), "Landscape"),
+                    ("21".to_string(), "Macro"),
+                    ("3".to_string(), "Aperture-priority AE"),
+                    ("35".to_string(), "Auto No Flash"),
+                    ("4".to_string(), "Shutter speed priority AE"),
+                    ("8".to_string(), "Program Shift A"),
+                    ("9".to_string(), "Program Shift S"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -299,7 +396,10 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "ImageStabilizationSetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -308,7 +408,12 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FlashAction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Did not fire"),
+                    ("1".to_string(), "Fired"),
+                    ("2".to_string(), "External Flash, Did not fire"),
+                    ("3".to_string(), "External Flash, Fired"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -317,7 +422,11 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "Rotation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Horizontal (normal)"),
+                    ("1".to_string(), "Rotate 90 CW"),
+                    ("2".to_string(), "Rotate 270 CW"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -326,7 +435,10 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "AELock",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Off"),
+                    ("2".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -335,7 +447,17 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FlashAction2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Fired, Autoflash"),
+                    ("17".to_string(), "Fired, Autoflash, Red-eye reduction"),
+                    ("18".to_string(), "Fired, Fill-flash, Red-eye reduction"),
+                    ("2".to_string(), "Fired, Fill-flash"),
+                    ("3".to_string(), "Fired, Rear Sync"),
+                    ("34".to_string(), "Fired, Fill-flash, HSS"),
+                    ("4".to_string(), "Fired, Wireless"),
+                    ("5".to_string(), "Did not fire"),
+                    ("6".to_string(), "Fired, Slow Sync"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -344,7 +466,12 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FocusMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Manual"),
+                    ("1".to_string(), "AF-S"),
+                    ("2".to_string(), "AF-C"),
+                    ("3".to_string(), "AF-A"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -353,7 +480,10 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FocusStatus",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Not confirmed"),
+                    ("4".to_string(), "Not confirmed, Tracking"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -362,7 +492,11 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "SonyImageSize",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Large"),
+                    ("2".to_string(), "Medium"),
+                    ("3".to_string(), "Small"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -371,7 +505,10 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "AspectRatio",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "3:2"),
+                    ("2".to_string(), "16:9"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -380,7 +517,15 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "Quality",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "RAW"),
+                    ("16".to_string(), "Extra Fine"),
+                    ("2".to_string(), "CRAW"),
+                    ("32".to_string(), "Fine"),
+                    ("34".to_string(), "RAW + JPEG"),
+                    ("35".to_string(), "CRAW + JPEG"),
+                    ("48".to_string(), "Standard"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -389,7 +534,10 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "ExposureLevelIncrements",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("33".to_string(), "1/3 EV"),
+                    ("50".to_string(), "1/2 EV"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -398,7 +546,15 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "DriveMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Single Frame"),
+                    ("10".to_string(), "Remote Commander"),
+                    ("11".to_string(), "Continuous Self-timer"),
+                    ("2".to_string(), "Continuous High"),
+                    ("4".to_string(), "Self-timer 10 sec"),
+                    ("5".to_string(), "Self-timer 2 sec, Mirror Lock-up"),
+                    ("7".to_string(), "Continuous Bracketing"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -407,7 +563,14 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "FlashMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Autoflash"),
+                    ("2".to_string(), "Rear Sync"),
+                    ("3".to_string(), "Wireless"),
+                    ("4".to_string(), "Fill-flash"),
+                    ("5".to_string(), "Flash Off"),
+                    ("6".to_string(), "Slow Sync"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -416,7 +579,10 @@ pub static SONY_CAMERASETTINGS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             TagInfo {
                 name: "ColorSpace",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("5".to_string(), "Adobe RGB"),
+                    ("6".to_string(), "sRGB"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -465,6 +631,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

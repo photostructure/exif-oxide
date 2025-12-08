@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -34,7 +38,10 @@ pub fn ast_value_4db89662062d70a5(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(if val.is_truthy() {
-        codegen_runtime::power(codegen_runtime::sqrt(2i32), (val / 256i32))
+        codegen_runtime::power(
+            codegen_runtime::sqrt(2i32),
+            Into::<TagValue>::into(val / 256i32),
+        )
     } else {
         Into::<TagValue>::into(0i32)
     })
@@ -49,6 +56,7 @@ pub fn ast_value_4db89662062d70a5(
 /// - Red::Main.OtherDate1
 /// - Red::Main.OtherDate2
 /// - Red::Main.OtherDate3
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_4dde3a7930a81c1c(
     val: &TagValue,
@@ -71,6 +79,7 @@ pub fn ast_value_4dde3a7930a81c1c(
 /// ```
 /// Used by:
 /// - Kodak::Type9.DateTimeOriginal
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_4d7b388271c29e88(
     val: &TagValue,
@@ -93,6 +102,7 @@ pub fn ast_value_4d7b388271c29e88(
 /// ```
 /// Used by:
 /// - JPEG::NITF.NITFVersion
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_4d65e4f0f2c777b1(
     val: &TagValue,
@@ -115,6 +125,7 @@ pub fn ast_value_4d65e4f0f2c777b1(
 /// ```
 /// Used by:
 /// - Exif::Main.RawDataUniqueID
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_4dbfa1ab67f3dd58(
     val: &TagValue,

@@ -37,7 +37,37 @@ pub static SONY_TAG9400A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ReleaseMode2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("1".to_string(), "Continuous"),
+                    ("10".to_string(), "Continuous - Background defocus"),
+                    ("13".to_string(), "Continuous - 3D Sweep Panorama"),
+                    ("146".to_string(), "Single Frame - Movie Capture"),
+                    (
+                        "15".to_string(),
+                        "Continuous - High Resolution Sweep Panorama",
+                    ),
+                    ("16".to_string(), "Continuous - 3D Image"),
+                    ("17".to_string(), "Continuous - Burst 2"),
+                    ("18".to_string(), "Normal - iAuto+"),
+                    ("19".to_string(), "Continuous - Speed/Advance Priority"),
+                    ("2".to_string(), "Continuous - Exposure Bracketing"),
+                    ("20".to_string(), "Continuous - Multi Frame NR"),
+                    ("23".to_string(), "Single-frame - Exposure Bracketing"),
+                    ("26".to_string(), "Continuous Low"),
+                    ("27".to_string(), "Continuous - High Sensitivity"),
+                    ("28".to_string(), "Smile Shutter"),
+                    ("29".to_string(), "Continuous - Tele-zoom Advance Priority"),
+                    ("3".to_string(), "DRO or White Balance Bracketing"),
+                    ("5".to_string(), "Continuous - Burst"),
+                    ("6".to_string(), "Single Frame - Capture During Movie"),
+                    ("7".to_string(), "Continuous - Sweep Panorama"),
+                    (
+                        "8".to_string(),
+                        "Continuous - Anti-Motion Blur, Hand-held Twilight",
+                    ),
+                    ("9".to_string(), "Continuous - HDR"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -46,7 +76,10 @@ pub static SONY_TAG9400A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "DigitalZoom",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No"),
+                    ("1".to_string(), "Yes"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -64,7 +97,18 @@ pub static SONY_TAG9400A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "SequenceLength",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Continuous"),
+                    ("1".to_string(), "1 shot"),
+                    ("10".to_string(), "10 shots"),
+                    ("100".to_string(), "Continuous - iSweep Panorama"),
+                    ("2".to_string(), "2 shots"),
+                    ("200".to_string(), "Continuous - Sweep Panorama"),
+                    ("3".to_string(), "3 shots"),
+                    ("4".to_string(), "4 shots"),
+                    ("5".to_string(), "5 shots"),
+                    ("6".to_string(), "6 shots"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -73,7 +117,12 @@ pub static SONY_TAG9400A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "CameraOrientation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Horizontal (normal)"),
+                    ("3".to_string(), "Rotate 180"),
+                    ("6".to_string(), "Rotate 90 CW"),
+                    ("8".to_string(), "Rotate 270 CW"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -82,7 +131,12 @@ pub static SONY_TAG9400A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "Quality2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "JPEG"),
+                    ("1".to_string(), "RAW"),
+                    ("2".to_string(), "RAW + JPEG"),
+                    ("3".to_string(), "JPEG + MPO"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -149,6 +203,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

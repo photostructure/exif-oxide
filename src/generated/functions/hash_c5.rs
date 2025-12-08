@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -20,7 +24,7 @@ pub fn ast_value_c52c83ef53c04e47(
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(codegen_runtime::power(
         Into::<TagValue>::into(2i32),
-        (val / 512i32),
+        Into::<TagValue>::into(val / 512i32),
     ))
 }
 
@@ -69,6 +73,7 @@ pub fn ast_print_c55f0a78a353c4e4(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Nikon::ColorBalanceC.WB_RGGBLevelsHTMercury
 /// - Nikon::ColorBalanceC.WB_RGGBLevelsShade
 /// - Nikon::ColorBalanceC.WB_RGGBLevelsTungsten
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_c52632c7b0b6c3b9(
     val: &TagValue,

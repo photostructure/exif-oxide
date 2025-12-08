@@ -17,7 +17,11 @@ pub static CANON_MODIFIEDINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "ModifiedToneCurve",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Standard"),
+                    ("1".to_string(), "Manual"),
+                    ("2".to_string(), "Custom"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -35,7 +39,14 @@ pub static CANON_MODIFIEDINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "ModifiedSharpnessFreq",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "n/a"),
+                    ("1".to_string(), "Lowest"),
+                    ("2".to_string(), "Low"),
+                    ("3".to_string(), "Standard"),
+                    ("4".to_string(), "High"),
+                    ("5".to_string(), "Highest"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -44,7 +55,30 @@ pub static CANON_MODIFIEDINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "ModifiedWhiteBalance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Daylight"),
+                    ("10".to_string(), "PC Set1"),
+                    ("11".to_string(), "PC Set2"),
+                    ("12".to_string(), "PC Set3"),
+                    ("14".to_string(), "Daylight Fluorescent"),
+                    ("15".to_string(), "Custom 1"),
+                    ("16".to_string(), "Custom 2"),
+                    ("17".to_string(), "Underwater"),
+                    ("18".to_string(), "Custom 3"),
+                    ("19".to_string(), "Custom 4"),
+                    ("2".to_string(), "Cloudy"),
+                    ("20".to_string(), "PC Set4"),
+                    ("21".to_string(), "PC Set5"),
+                    ("23".to_string(), "Auto (ambience priority)"),
+                    ("3".to_string(), "Tungsten"),
+                    ("4".to_string(), "Fluorescent"),
+                    ("5".to_string(), "Flash"),
+                    ("6".to_string(), "Custom"),
+                    ("7".to_string(), "Black & White"),
+                    ("8".to_string(), "Shade"),
+                    ("9".to_string(), "Manual Temperature (Kelvin)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -53,7 +87,32 @@ pub static CANON_MODIFIEDINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "ModifiedPictureStyle",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "None"),
+                    ("1".to_string(), "Standard"),
+                    ("129".to_string(), "Standard"),
+                    ("130".to_string(), "Portrait"),
+                    ("131".to_string(), "Landscape"),
+                    ("132".to_string(), "Neutral"),
+                    ("133".to_string(), "Faithful"),
+                    ("134".to_string(), "Monochrome"),
+                    ("135".to_string(), "Auto"),
+                    ("136".to_string(), "Fine Detail"),
+                    ("2".to_string(), "Portrait"),
+                    ("255".to_string(), "n/a"),
+                    ("3".to_string(), "High Saturation"),
+                    ("33".to_string(), "User Def. 1"),
+                    ("34".to_string(), "User Def. 2"),
+                    ("35".to_string(), "User Def. 3"),
+                    ("4".to_string(), "Adobe RGB"),
+                    ("5".to_string(), "Low Saturation"),
+                    ("6".to_string(), "CM Set 1"),
+                    ("65".to_string(), "PC 1"),
+                    ("65535".to_string(), "n/a"),
+                    ("66".to_string(), "PC 2"),
+                    ("67".to_string(), "PC 3"),
+                    ("7".to_string(), "CM Set 2"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -111,6 +170,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

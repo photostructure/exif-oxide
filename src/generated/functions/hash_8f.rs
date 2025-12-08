@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -24,7 +28,7 @@ pub fn ast_value_8fc30c76278103b9(
             .unwrap_or(TagValue::U32(1)))
         .is_truthy()
         {
-            (val * 2i32)
+            Into::<TagValue>::into(val * 2i32)
         } else {
             val.clone()
         },
@@ -38,6 +42,7 @@ pub fn ast_value_8fc30c76278103b9(
 /// ```
 /// Used by:
 /// - Olympus::CameraSettings.AFAreas
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_8f0e2d29a6ca9ad9(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

@@ -14,7 +14,31 @@ pub static NIKON_PREVIEWIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "SubfileType",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Full-resolution image"),
+                    ("1".to_string(), "Reduced-resolution image"),
+                    ("16".to_string(), "Enhanced image data"),
+                    ("2".to_string(), "Single page of multi-page image"),
+                    (
+                        "3".to_string(),
+                        "Single page of multi-page reduced-resolution image",
+                    ),
+                    ("4".to_string(), "Transparency mask"),
+                    ("4294967295".to_string(), "invalid"),
+                    (
+                        "5".to_string(),
+                        "Transparency mask of reduced-resolution image",
+                    ),
+                    ("6".to_string(), "Transparency mask of multi-page image"),
+                    ("65537".to_string(), "Alternate reduced-resolution image"),
+                    ("65540".to_string(), "Semantic Mask"),
+                    (
+                        "7".to_string(),
+                        "Transparency mask of reduced-resolution multi-page image",
+                    ),
+                    ("8".to_string(), "Depth map"),
+                    ("9".to_string(), "Depth map of reduced-resolution image"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -23,7 +47,70 @@ pub static NIKON_PREVIEWIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "Compression",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Uncompressed"),
+                    ("10".to_string(), "JBIG Color"),
+                    ("2".to_string(), "CCITT 1D"),
+                    ("262".to_string(), "Kodak 262"),
+                    ("3".to_string(), "T4/Group 3 Fax"),
+                    ("32766".to_string(), "Next"),
+                    ("32767".to_string(), "Sony ARW Compressed"),
+                    ("32769".to_string(), "Packed RAW"),
+                    ("32770".to_string(), "Samsung SRW Compressed"),
+                    ("32771".to_string(), "CCIRLEW"),
+                    ("32772".to_string(), "Samsung SRW Compressed 2"),
+                    ("32773".to_string(), "PackBits"),
+                    ("32809".to_string(), "Thunderscan"),
+                    ("32867".to_string(), "Kodak KDC Compressed"),
+                    ("32895".to_string(), "IT8CTPAD"),
+                    ("32896".to_string(), "IT8LW"),
+                    ("32897".to_string(), "IT8MP"),
+                    ("32898".to_string(), "IT8BL"),
+                    ("32908".to_string(), "PixarFilm"),
+                    ("32909".to_string(), "PixarLog"),
+                    ("32946".to_string(), "Deflate"),
+                    ("32947".to_string(), "DCS"),
+                    ("33003".to_string(), "Aperio JPEG 2000 YCbCr"),
+                    ("33005".to_string(), "Aperio JPEG 2000 RGB"),
+                    ("34661".to_string(), "JBIG"),
+                    ("34676".to_string(), "SGILog"),
+                    ("34677".to_string(), "SGILog24"),
+                    ("34712".to_string(), "JPEG 2000"),
+                    ("34713".to_string(), "Nikon NEF Compressed"),
+                    ("34715".to_string(), "JBIG2 TIFF FX"),
+                    (
+                        "34718".to_string(),
+                        "Microsoft Document Imaging (MDI) Binary Level Codec",
+                    ),
+                    (
+                        "34719".to_string(),
+                        "Microsoft Document Imaging (MDI) Progressive Transform Codec",
+                    ),
+                    (
+                        "34720".to_string(),
+                        "Microsoft Document Imaging (MDI) Vector",
+                    ),
+                    ("34887".to_string(), "ESRI Lerc"),
+                    ("34892".to_string(), "Lossy JPEG"),
+                    ("34925".to_string(), "LZMA2"),
+                    ("34926".to_string(), "Zstd (old)"),
+                    ("34927".to_string(), "WebP (old)"),
+                    ("34933".to_string(), "PNG"),
+                    ("34934".to_string(), "JPEG XR"),
+                    ("4".to_string(), "T6/Group 4 Fax"),
+                    ("5".to_string(), "LZW"),
+                    ("50000".to_string(), "Zstd"),
+                    ("50001".to_string(), "WebP"),
+                    ("50002".to_string(), "JPEG XL (old)"),
+                    ("52546".to_string(), "JPEG XL"),
+                    ("6".to_string(), "JPEG (old-style)"),
+                    ("65000".to_string(), "Kodak DCR Compressed"),
+                    ("65535".to_string(), "Pentax PEF Compressed"),
+                    ("7".to_string(), "JPEG"),
+                    ("8".to_string(), "Adobe Deflate"),
+                    ("9".to_string(), "JBIG B&W"),
+                    ("99".to_string(), "JPEG"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -32,7 +119,11 @@ pub static NIKON_PREVIEWIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "ResolutionUnit",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "None"),
+                    ("2".to_string(), "inches"),
+                    ("3".to_string(), "cm"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -59,7 +150,10 @@ pub static NIKON_PREVIEWIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             TagInfo {
                 name: "YCbCrPositioning",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Centered"),
+                    ("2".to_string(), "Co-sited"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -108,6 +202,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

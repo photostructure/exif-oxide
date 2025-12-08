@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -24,7 +28,10 @@ pub fn ast_value_689cac30223ecfb0(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(if val.is_truthy() {
-        codegen_runtime::power(Into::<TagValue>::into(2i32), (16i32 - val / 256i32))
+        codegen_runtime::power(
+            Into::<TagValue>::into(2i32),
+            Into::<TagValue>::into(16i32 - val / 256i32),
+        )
     } else {
         Into::<TagValue>::into(0i32)
     })
@@ -38,6 +45,7 @@ pub fn ast_value_689cac30223ecfb0(
 /// Used by:
 /// - Samsung::Type2.ExposureTime
 /// - Samsung::Type2.FNumber
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_68a0386b1983f2b(
     val: &TagValue,

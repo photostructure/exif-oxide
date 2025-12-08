@@ -46,7 +46,10 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "RecordingFormat",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("2".to_string(), "JPEG"),
+                    ("3".to_string(), "DNG"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -55,7 +58,11 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "DriveMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Single-frame"),
+                    ("1".to_string(), "Continuous"),
+                    ("8".to_string(), "AF-priority Continuous"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -73,7 +80,17 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FocusMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Manual"),
+                    ("10".to_string(), "Movie"),
+                    ("2".to_string(), "Multi AF"),
+                    ("3".to_string(), "Spot AF"),
+                    ("4".to_string(), "Snap"),
+                    ("5".to_string(), "Infinity"),
+                    ("7".to_string(), "Face Detect"),
+                    ("8".to_string(), "Subject Tracking"),
+                    ("9".to_string(), "Pinpoint AF"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -82,7 +99,15 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "AutoBracketing",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("11".to_string(), "WB"),
+                    ("16".to_string(), "DR"),
+                    ("17".to_string(), "Contrast"),
+                    ("18".to_string(), "WB2"),
+                    ("19".to_string(), "Effect"),
+                    ("9".to_string(), "AE"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -91,7 +116,10 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "MacroMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -100,7 +128,17 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FlashMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Auto, Fired"),
+                    ("2".to_string(), "On"),
+                    ("3".to_string(), "Auto, Fired, Red-eye reduction"),
+                    ("4".to_string(), "Slow Sync"),
+                    ("5".to_string(), "Manual"),
+                    ("6".to_string(), "On, Red-eye reduction"),
+                    ("7".to_string(), "Synchro, Red-eye reduction"),
+                    ("8".to_string(), "Auto, Did not fire"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -118,7 +156,20 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ManualFlashOutput",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-120".to_string(), "1/5.6"),
+                    ("-144".to_string(), "1/8"),
+                    ("-168".to_string(), "1/11"),
+                    ("-192".to_string(), "1/16"),
+                    ("-216".to_string(), "1/22"),
+                    ("-24".to_string(), "1/1.4"),
+                    ("-240".to_string(), "1/32"),
+                    ("-288".to_string(), "1/64"),
+                    ("-48".to_string(), "1/2"),
+                    ("-72".to_string(), "1/2.8"),
+                    ("-96".to_string(), "1/4"),
+                    ("0".to_string(), "Full"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -127,7 +178,10 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FullPressSnap",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -136,7 +190,12 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "DynamicRangeExpansion",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("3".to_string(), "Weak"),
+                    ("4".to_string(), "Medium"),
+                    ("5".to_string(), "Strong"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -145,7 +204,12 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "NoiseReduction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Weak"),
+                    ("2".to_string(), "Medium"),
+                    ("3".to_string(), "Strong"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -154,7 +218,21 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ImageEffects",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Standard"),
+                    ("1".to_string(), "Vivid"),
+                    ("10".to_string(), "Cross Process"),
+                    ("11".to_string(), "Positive Film"),
+                    ("12".to_string(), "Bleach Bypass"),
+                    ("13".to_string(), "Retro"),
+                    ("15".to_string(), "Miniature"),
+                    ("17".to_string(), "High Key"),
+                    ("3".to_string(), "Black & White"),
+                    ("5".to_string(), "B&W Toning Effect"),
+                    ("6".to_string(), "Setting 1"),
+                    ("7".to_string(), "Setting 2"),
+                    ("9".to_string(), "High-contrast B&W"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -163,7 +241,12 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "Vignetting",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Low"),
+                    ("2".to_string(), "Medium"),
+                    ("3".to_string(), "High"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -172,7 +255,13 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "Contrast",
                 format: "int32s",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("2147483647".to_string(), "MAX"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Ricoh::__ANON__]",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -199,7 +288,16 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ToningEffect",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Sepia"),
+                    ("2".to_string(), "Red"),
+                    ("3".to_string(), "Green"),
+                    ("4".to_string(), "Blue"),
+                    ("5".to_string(), "Purple"),
+                    ("6".to_string(), "B&W"),
+                    ("7".to_string(), "Color"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -208,7 +306,15 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "HueAdjust",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Basic"),
+                    ("2".to_string(), "Magenta"),
+                    ("3".to_string(), "Yellow"),
+                    ("4".to_string(), "Normal"),
+                    ("5".to_string(), "Warm"),
+                    ("6".to_string(), "Cool"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -217,7 +323,10 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "WideAdapter",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Not Attached"),
+                    ("2".to_string(), "Attached"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -226,7 +335,11 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "CropMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On (35mm)"),
+                    ("2".to_string(), "On (47mm)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -235,7 +348,10 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "NDFilter",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -253,7 +369,10 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "AFStatus",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Out of Focus"),
+                    ("1".to_string(), "In Focus"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -298,7 +417,10 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "AFAreaMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("2".to_string(), "Manual"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -419,6 +541,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

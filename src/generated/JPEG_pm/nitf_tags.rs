@@ -28,7 +28,10 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ImageFormat",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([(
+                    "B".to_string(),
+                    "IMode B",
+                )]))),
                 value_conv: Some(ValueConv::Function(ast_value_3d23e42e940d6624)),
             },
         ),
@@ -55,7 +58,10 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ImageColor",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([(
+                    "0".to_string(),
+                    "Monochrome",
+                )]))),
                 value_conv: None,
             },
         ),
@@ -64,7 +70,10 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ImageClass",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "General Purpose"),
+                    ("4".to_string(), "Tactical Imagery"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -73,7 +82,16 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "JPEGProcess",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    (
+                        "1".to_string(),
+                        "Baseline sequential DCT, Huffman coding, 8-bit samples",
+                    ),
+                    (
+                        "4".to_string(),
+                        "Extended sequential DCT, Huffman coding, 12-bit samples",
+                    ),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -82,7 +100,10 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "StreamColor",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([(
+                    "0".to_string(),
+                    "Monochrome",
+                )]))),
                 value_conv: None,
             },
         ),
@@ -140,6 +161,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

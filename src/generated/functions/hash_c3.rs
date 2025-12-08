@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -51,6 +55,7 @@ pub fn ast_value_c3ac357278ffbbb0(
 /// ```
 /// Used by:
 /// - RIFF::UserText.GPSLongitude
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_c3594cf9c6739806(
     val: &TagValue,
@@ -81,6 +86,7 @@ pub fn ast_value_c3594cf9c6739806(
 /// ```
 /// Used by:
 /// - Olympus::CameraSettings.PanoramaMode
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_c325c8237ed81802(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -100,6 +106,7 @@ pub fn ast_print_c325c8237ed81802(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Sony::rtmd.DateTime
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_c39b61e775b07eeb(
     val: &TagValue,

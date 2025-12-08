@@ -23,7 +23,20 @@ pub static PENTAX_SRINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             TagInfo {
                 name: "ShakeReduction",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                    ("12".to_string(), "Off (AA simulation type 1)"),
+                    ("15".to_string(), "On (AA simulation type 1)"),
+                    ("16".to_string(), "Off (AA simulation type 2) (16)"),
+                    ("20".to_string(), "Off (AA simulation type 2)"),
+                    ("23".to_string(), "On (AA simulation type 2)"),
+                    ("4".to_string(), "Off (AA simulation off)"),
+                    ("5".to_string(), "On but Disabled"),
+                    ("6".to_string(), "On (Video)"),
+                    ("7".to_string(), "On (AA simulation off)"),
+                    ("8".to_string(), "Off (AA simulation type 1) (8)"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -72,6 +85,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

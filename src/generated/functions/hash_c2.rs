@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -17,7 +21,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 pub fn ast_print_c23821edccdd4b5c(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(codegen_runtime::sprintf_perl(
         "Ver.%.2x.%.3d",
-        &[val >> 8i32.clone(), val & 0xffu32.clone()],
+        &[val >> 8i32, val & 0xffu32],
     ))
 }
 
@@ -29,6 +33,7 @@ pub fn ast_print_c23821edccdd4b5c(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// Used by:
 /// - QuickTime::MetaData.ModifyDate
 /// - QuickTime::MetaData.ProductionDate
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_c215f0f9463fb4(
     val: &TagValue,
@@ -52,6 +57,7 @@ pub fn ast_value_c215f0f9463fb4(
 /// Used by:
 /// - Canon::CameraInfoPowerShot.ISO
 /// - Canon::CameraInfoPowerShot2.ISO
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_c24b98dfe8227aef(
     val: &TagValue,

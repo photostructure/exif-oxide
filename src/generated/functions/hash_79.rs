@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -18,7 +22,10 @@ pub fn ast_value_793021431aff9620(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(codegen_runtime::power(Into::<TagValue>::into(2i32), (val / 8i32)) / 16000i32)
+    Ok(codegen_runtime::power(
+        Into::<TagValue>::into(2i32),
+        Into::<TagValue>::into(val / 8i32),
+    ) / 16000i32)
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -28,6 +35,7 @@ pub fn ast_value_793021431aff9620(
 /// ```
 /// Used by:
 /// - Nikon::Main.ISO
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_7916bfba5811ff56(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -47,6 +55,7 @@ pub fn ast_print_7916bfba5811ff56(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Photoshop::Main.AlphaChannelsNames
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_79fe83c6e85843c7(
     val: &TagValue,

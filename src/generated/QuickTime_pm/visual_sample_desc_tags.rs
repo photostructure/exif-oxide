@@ -24,7 +24,27 @@ pub static QUICK_TIME_VISUALSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> =
                 TagInfo {
                     name: "VendorID",
                     format: "string[4]",
-                    print_conv: Some(PrintConv::Complex),
+                    print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                        (" KD ".to_string(), "Kodak"),
+                        ("AR.D".to_string(), "Parrot AR.Drone"),
+                        ("FFMP".to_string(), "FFmpeg"),
+                        ("GIC ".to_string(), "General Imaging Co."),
+                        ("KMPI".to_string(), "Konica-Minolta"),
+                        ("NIKO".to_string(), "Nikon"),
+                        ("SMI ".to_string(), "Sorenson Media Inc."),
+                        ("ZORA".to_string(), "Zoran Corporation"),
+                        ("appl".to_string(), "Apple"),
+                        ("fe20".to_string(), "Olympus (fe20)"),
+                        ("kdak".to_string(), "Kodak"),
+                        ("leic".to_string(), "Leica"),
+                        ("mino".to_string(), "Minolta"),
+                        ("niko".to_string(), "Nikon"),
+                        ("olym".to_string(), "Olympus"),
+                        ("pana".to_string(), "Panasonic"),
+                        ("pent".to_string(), "Pentax"),
+                        ("pr01".to_string(), "Olympus (pr01)"),
+                        ("sany".to_string(), "Sanyo"),
+                    ]))),
                     value_conv: None,
                 },
             ),
@@ -100,6 +120,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

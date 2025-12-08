@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -74,10 +78,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// - Nikon::MenuSettingsZ9v4.NonCPULens8FocalLength
 /// - Nikon::MenuSettingsZ9v4.NonCPULens9FocalLength
 pub fn ast_print_293f60b26e489f86(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl(
-        "%.1fmm",
-        &[val / 10i32.clone()],
-    ))
+    TagValue::String(codegen_runtime::sprintf_perl("%.1fmm", &[val / 10i32]))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -87,6 +88,7 @@ pub fn ast_print_293f60b26e489f86(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Nikon::LensData0800.FocusDistance
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_295976b8397965ca(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -108,6 +110,7 @@ pub fn ast_print_295976b8397965ca(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Pentax::Main.DataDump
 /// - Pentax::Main.ToneCurve
 /// - Pentax::Main.ToneCurves
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_29a2dcd776668ce0(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

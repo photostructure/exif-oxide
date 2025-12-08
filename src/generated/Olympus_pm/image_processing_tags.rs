@@ -431,7 +431,10 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "NoiseReduction2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([(
+                    "0".to_string(),
+                    "(none)",
+                )]))),
                 value_conv: None,
             },
         ),
@@ -440,7 +443,10 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "DistortionCorrection2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -449,7 +455,10 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "ShadingCompensation2",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -485,7 +494,22 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "AspectRatio",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1 1".to_string(), "4:3"),
+                    ("1 4".to_string(), "1:1"),
+                    ("2 1".to_string(), "3:2 (RAW)"),
+                    ("2 2".to_string(), "3:2"),
+                    ("3 1".to_string(), "16:9 (RAW)"),
+                    ("3 3".to_string(), "16:9"),
+                    ("4 1".to_string(), "1:1 (RAW)"),
+                    ("4 4".to_string(), "6:6"),
+                    ("5 5".to_string(), "5:4"),
+                    ("6 6".to_string(), "7:6"),
+                    ("7 7".to_string(), "6:5"),
+                    ("8 8".to_string(), "7:5"),
+                    ("9 1".to_string(), "3:4 (RAW)"),
+                    ("9 9".to_string(), "3:4"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -557,7 +581,10 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "KeystoneCompensation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0 0".to_string(), "Off"),
+                    ("0 1".to_string(), "On"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -566,7 +593,10 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "KeystoneDirection",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Vertical"),
+                    ("1".to_string(), "Horizontal"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -584,7 +614,11 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             TagInfo {
                 name: "GNDFilterType",
                 format: "int8u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "High"),
+                    ("1".to_string(), "Medium"),
+                    ("2".to_string(), "Soft"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -633,6 +667,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

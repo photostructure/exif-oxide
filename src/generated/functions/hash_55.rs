@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -41,8 +45,8 @@ pub fn ast_value_55048b24234b7885(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
     Ok(codegen_runtime::exp(
-        4i32 * codegen_runtime::log(2i32)
-            * (1i32 - crate::implementations::canon::canon_ev(val - 24i32, ctx)),
+        4i32 * codegen_runtime::log(2i32) * 1i32
+            - crate::implementations::canon::canon_ev(val - 24i32, ctx),
     ))
 }
 
@@ -53,6 +57,7 @@ pub fn ast_value_55048b24234b7885(
 /// ```
 /// Used by:
 /// - Ricoh::RDTL.GPSDateTime
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_551d2c3da692067(
     val: &TagValue,

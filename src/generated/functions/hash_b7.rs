@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -37,7 +41,7 @@ pub fn ast_value_b71eb9c67e0faca3(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok((val + 100i32) / 2i32)
+    Ok(val + 100i32 / 2i32)
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -47,6 +51,7 @@ pub fn ast_value_b71eb9c67e0faca3(
 /// ```
 /// Used by:
 /// - RIFF::BroadcastExt.DateTimeOriginal
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_b7ac49cbeefb8652(
     val: &TagValue,
@@ -69,6 +74,7 @@ pub fn ast_value_b7ac49cbeefb8652(
 /// ```
 /// Used by:
 /// - Panasonic::Data1.LensType
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_b714a38a402e4241(
     val: &TagValue,
@@ -93,6 +99,7 @@ pub fn ast_value_b714a38a402e4241(
 /// ```
 /// Used by:
 /// - Panasonic::Leica5.InternalSerialNumber
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_b7e860dd06786a9a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

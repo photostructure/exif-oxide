@@ -41,7 +41,16 @@ pub static OLYMPUS_SUBJECTDETECTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             TagInfo {
                 name: "SubjectDetectStatus",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No Data"),
+                    ("257".to_string(), "Subject and L1 Detail Detected"),
+                    ("258".to_string(), "Subject and L2 Detail Detected"),
+                    ("260".to_string(), "Subject Detected, No Details"),
+                    ("515".to_string(), "Face and Eye Detected"),
+                    ("516".to_string(), "Face Detected"),
+                    ("771".to_string(), "Subject Detail or Eye Detected"),
+                    ("772".to_string(), "No Subject or Face Detected"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -90,6 +99,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

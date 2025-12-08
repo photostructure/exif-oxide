@@ -14,7 +14,57 @@ pub static NIKON_BRACKETINGINFOD810_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
             TagInfo {
                 name: "AEBracketingSteps",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "AE Bracketing Disabled"),
+                    ("129".to_string(), "+3F0.3"),
+                    ("130".to_string(), "-3F0.3"),
+                    ("131".to_string(), "+2F0.3"),
+                    ("132".to_string(), "-2F0.3"),
+                    ("133".to_string(), "3F0.3"),
+                    ("134".to_string(), "5F0.3"),
+                    ("135".to_string(), "7F0.3"),
+                    ("136".to_string(), "9F0.3"),
+                    ("145".to_string(), "+3F0.5"),
+                    ("146".to_string(), "-3F0.5"),
+                    ("147".to_string(), "+2F0.5"),
+                    ("148".to_string(), "-2F0.5"),
+                    ("149".to_string(), "3F0.5"),
+                    ("150".to_string(), "5F0.5"),
+                    ("151".to_string(), "7F0.5"),
+                    ("152".to_string(), "9F0.5"),
+                    ("161".to_string(), "+3F0.7"),
+                    ("162".to_string(), "-3F0.7"),
+                    ("163".to_string(), "+2F0.7"),
+                    ("164".to_string(), "-2F0.7"),
+                    ("165".to_string(), "3F0.7"),
+                    ("166".to_string(), "5F0.7"),
+                    ("167".to_string(), "7F0.7"),
+                    ("168".to_string(), "9F0.7"),
+                    ("177".to_string(), "+3F1"),
+                    ("178".to_string(), "-3F1"),
+                    ("179".to_string(), "+2F1"),
+                    ("180".to_string(), "-2F1"),
+                    ("181".to_string(), "3F1"),
+                    ("182".to_string(), "5F1"),
+                    ("183".to_string(), "7F1"),
+                    ("184".to_string(), "9F1"),
+                    ("193".to_string(), "+3F2"),
+                    ("194".to_string(), "-3F2"),
+                    ("195".to_string(), "+2F2"),
+                    ("196".to_string(), "-2F2"),
+                    ("197".to_string(), "3F2"),
+                    ("198".to_string(), "5F2"),
+                    ("209".to_string(), "+3F3"),
+                    ("210".to_string(), "-3F3"),
+                    ("211".to_string(), "+2F3"),
+                    ("212".to_string(), "-2F3"),
+                    ("213".to_string(), "3F3"),
+                    ("214".to_string(), "5F3"),
+                    ("32".to_string(), "AE Bracketing Disabled"),
+                    ("48".to_string(), "AE Bracketing Disabled"),
+                    ("64".to_string(), "AE Bracketing Disabled"),
+                    ("80".to_string(), "AE Bracketing Disabled"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -23,7 +73,35 @@ pub static NIKON_BRACKETINGINFOD810_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
             TagInfo {
                 name: "WBBracketingSteps",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "WB Bracketing Disabled"),
+                    ("1".to_string(), "b3F 1"),
+                    ("16".to_string(), "0F 2"),
+                    ("17".to_string(), "b3F 2"),
+                    ("18".to_string(), "A3F 2"),
+                    ("19".to_string(), "b2F 2"),
+                    ("2".to_string(), "A3F 1"),
+                    ("20".to_string(), "A2F 2"),
+                    ("21".to_string(), "3F 2"),
+                    ("22".to_string(), "5F 2"),
+                    ("23".to_string(), "7F 2"),
+                    ("24".to_string(), "9F 2"),
+                    ("3".to_string(), "b2F 1"),
+                    ("32".to_string(), "0F 3"),
+                    ("33".to_string(), "b3F 3"),
+                    ("34".to_string(), "A3F 3"),
+                    ("35".to_string(), "b2F 3"),
+                    ("36".to_string(), "A2F 3"),
+                    ("37".to_string(), "3F 3"),
+                    ("38".to_string(), "5F 3"),
+                    ("39".to_string(), "7F 3"),
+                    ("4".to_string(), "A2F 1"),
+                    ("40".to_string(), "9F 3"),
+                    ("5".to_string(), "3F 1"),
+                    ("6".to_string(), "5F 1"),
+                    ("7".to_string(), "7F 1"),
+                    ("8".to_string(), "9F 1"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -32,7 +110,12 @@ pub static NIKON_BRACKETINGINFOD810_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
             TagInfo {
                 name: "NikonMeteringMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Matrix"),
+                    ("1".to_string(), "Center"),
+                    ("2".to_string(), "Spot"),
+                    ("3".to_string(), "Highlight"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -81,6 +164,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -70,6 +74,7 @@ pub fn ast_value_ce42a84d72bc5d72(
 /// ```
 /// Used by:
 /// - Pentax::Main.PictureMode
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_cedbb1b70a73dd28(
     val: &TagValue,
@@ -93,6 +98,7 @@ pub fn ast_value_cedbb1b70a73dd28(
 /// Used by:
 /// - Jpeg2000::FileType.MinorVersion
 /// - QuickTime::FileType.MinorVersion
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_cec214fb85ae5247(
     val: &TagValue,

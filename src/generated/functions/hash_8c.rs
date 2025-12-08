@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -17,10 +21,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// - Sony::Tag9404b.LensZoomPosition
 /// - Sony::Tag9405b.LensZoomPosition
 pub fn ast_print_8ca73d52cc1cee99(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl(
-        "%.0f%%",
-        &[val / 10.24f64.clone()],
-    ))
+    TagValue::String(codegen_runtime::sprintf_perl("%.0f%%", &[val / 10.24f64]))
 }
 
 /// Original perl expression:
@@ -41,6 +42,7 @@ pub fn ast_print_8cb98c82cbc27d63(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - RIFF::Acidizer.Meter
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_8c8ef9aa17053210(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -60,6 +62,7 @@ pub fn ast_print_8c8ef9aa17053210(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - QuickTime::MetaData.TimeZone
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_8cf1d70236b67272(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -92,6 +95,7 @@ pub fn ast_print_8cf1d70236b67272(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Sony::MeterInfo9.MeterInfo1Row5
 /// - Sony::MeterInfo9.MeterInfo1Row6
 /// - Sony::MeterInfo9.MeterInfo1Row7
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_8cb1f3f2fa77517f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());

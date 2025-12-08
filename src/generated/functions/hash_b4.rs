@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -112,10 +116,10 @@ pub fn ast_print_b44b87d319f681cc(val: &TagValue, ctx: Option<&ExifContext>) -> 
 pub fn ast_print_b41bd13e5416819e(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     codegen_runtime::string::concat(
         &TagValue::String(codegen_runtime::sprintf_perl("%.2f s", &[val.clone()])),
-        &(if val > 254.5f64 / 60i32 as f64 {
+        &if val > 254.5f64 / 60i32 as f64 {
             Into::<TagValue>::into(" or longer")
         } else {
             Into::<TagValue>::into("")
-        }),
+        },
     )
 }

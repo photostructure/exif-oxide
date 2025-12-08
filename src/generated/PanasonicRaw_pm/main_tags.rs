@@ -37,7 +37,13 @@ pub static PANASONIC_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "CFAPattern",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "n/a"),
+                    ("1".to_string(), "[Red,Green][Green,Blue]"),
+                    ("2".to_string(), "[Green,Red][Blue,Green]"),
+                    ("3".to_string(), "[Green,Blue][Red,Green]"),
+                    ("4".to_string(), "[Blue,Green][Green,Red]"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -55,7 +61,12 @@ pub static PANASONIC_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "Compression",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("34316".to_string(), "Panasonic RAW 1"),
+                    ("34826".to_string(), "Panasonic RAW 2"),
+                    ("34828".to_string(), "Panasonic RAW 3"),
+                    ("34830".to_string(), "Panasonic RAW 4"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -316,7 +327,16 @@ pub static PANASONIC_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "Orientation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Horizontal (normal)"),
+                    ("2".to_string(), "Mirror horizontal"),
+                    ("3".to_string(), "Rotate 180"),
+                    ("4".to_string(), "Mirror vertical"),
+                    ("5".to_string(), "Mirror horizontal and rotate 270 CW"),
+                    ("6".to_string(), "Rotate 90 CW"),
+                    ("7".to_string(), "Mirror horizontal and rotate 90 CW"),
+                    ("8".to_string(), "Rotate 270 CW"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -379,7 +399,10 @@ pub static PANASONIC_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             TagInfo {
                 name: "Multishot",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("65536".to_string(), "Pixel Shift"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -491,6 +514,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

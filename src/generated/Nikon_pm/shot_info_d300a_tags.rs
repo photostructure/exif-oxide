@@ -45,7 +45,49 @@ pub static NIKON_SHOTINFOD300A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             TagInfo {
                 name: "AFFineTuneAdj",
                 format: "int16u",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "0"),
+                    ("12350".to_string(), "+19"),
+                    ("12482".to_string(), "-19"),
+                    ("16444".to_string(), "+5"),
+                    ("16445".to_string(), "+10"),
+                    ("16446".to_string(), "+20"),
+                    ("16578".to_string(), "-20"),
+                    ("16579".to_string(), "-10"),
+                    ("16580".to_string(), "-5"),
+                    ("194".to_string(), "-16"),
+                    ("195".to_string(), "-8"),
+                    ("196".to_string(), "-4"),
+                    ("197".to_string(), "-2"),
+                    ("198".to_string(), "-1"),
+                    ("24637".to_string(), "+11"),
+                    ("24771".to_string(), "-11"),
+                    ("32827".to_string(), "+3"),
+                    ("32828".to_string(), "+6"),
+                    ("32829".to_string(), "+12"),
+                    ("32963".to_string(), "-12"),
+                    ("32964".to_string(), "-6"),
+                    ("32965".to_string(), "-3"),
+                    ("41021".to_string(), "+13"),
+                    ("41155".to_string(), "-13"),
+                    ("4158".to_string(), "+17"),
+                    ("4290".to_string(), "-17"),
+                    ("49212".to_string(), "+7"),
+                    ("49213".to_string(), "+14"),
+                    ("49347".to_string(), "-14"),
+                    ("49348".to_string(), "-7"),
+                    ("57405".to_string(), "+15"),
+                    ("57539".to_string(), "-15"),
+                    ("58".to_string(), "+1"),
+                    ("59".to_string(), "+2"),
+                    ("60".to_string(), "+4"),
+                    ("61".to_string(), "+8"),
+                    ("62".to_string(), "+16"),
+                    ("8253".to_string(), "+9"),
+                    ("8254".to_string(), "+18"),
+                    ("8386".to_string(), "-18"),
+                    ("8387".to_string(), "-9"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -103,6 +145,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

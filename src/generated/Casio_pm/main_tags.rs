@@ -19,7 +19,17 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "RecordingMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Single Shutter"),
+                    ("10".to_string(), "Night Scene"),
+                    ("15".to_string(), "Portrait"),
+                    ("16".to_string(), "Landscape"),
+                    ("2".to_string(), "Panorama"),
+                    ("3".to_string(), "Night Scene"),
+                    ("4".to_string(), "Portrait"),
+                    ("5".to_string(), "Landscape"),
+                    ("7".to_string(), "Panorama"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -28,7 +38,11 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "Quality",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Economy"),
+                    ("2".to_string(), "Normal"),
+                    ("3".to_string(), "Fine"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -37,7 +51,13 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FocusMode",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("2".to_string(), "Macro"),
+                    ("3".to_string(), "Auto"),
+                    ("4".to_string(), "Manual"),
+                    ("5".to_string(), "Infinity"),
+                    ("7".to_string(), "Spot AF"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -46,7 +66,13 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FlashIntensity",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("11".to_string(), "Weak"),
+                    ("12".to_string(), "Low"),
+                    ("13".to_string(), "Normal"),
+                    ("14".to_string(), "High"),
+                    ("15".to_string(), "Strong"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -64,7 +90,14 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "WhiteBalance",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Auto"),
+                    ("129".to_string(), "Manual"),
+                    ("2".to_string(), "Tungsten"),
+                    ("3".to_string(), "Daylight"),
+                    ("4".to_string(), "Fluorescent"),
+                    ("5".to_string(), "Shade"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -73,7 +106,14 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "DigitalZoom",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("104857".to_string(), "1.6x"),
+                    ("131072".to_string(), "2x"),
+                    ("209715".to_string(), "3.2x"),
+                    ("262144".to_string(), "4x"),
+                    ("65536".to_string(), "Off"),
+                    ("65537".to_string(), "2x"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -82,7 +122,14 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "Sharpness",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("1".to_string(), "Soft"),
+                    ("16".to_string(), "Normal"),
+                    ("17".to_string(), "+1"),
+                    ("18".to_string(), "-1"),
+                    ("2".to_string(), "Hard"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -91,7 +138,14 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "Contrast",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("1".to_string(), "Low"),
+                    ("16".to_string(), "Normal"),
+                    ("17".to_string(), "+1"),
+                    ("18".to_string(), "-1"),
+                    ("2".to_string(), "High"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -100,7 +154,14 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "Saturation",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("1".to_string(), "Low"),
+                    ("16".to_string(), "Normal"),
+                    ("17".to_string(), "+1"),
+                    ("18".to_string(), "-1"),
+                    ("2".to_string(), "High"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -127,7 +188,13 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "Enhancement",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Off"),
+                    ("2".to_string(), "Red"),
+                    ("3".to_string(), "Green"),
+                    ("4".to_string(), "Blue"),
+                    ("5".to_string(), "Flesh Tones"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -136,7 +203,17 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "ColorFilter",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Off"),
+                    ("2".to_string(), "Black & White"),
+                    ("3".to_string(), "Sepia"),
+                    ("4".to_string(), "Red"),
+                    ("5".to_string(), "Green"),
+                    ("6".to_string(), "Blue"),
+                    ("7".to_string(), "Yellow"),
+                    ("8".to_string(), "Pink"),
+                    ("9".to_string(), "Purple"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -145,7 +222,25 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "AFPoint",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Center"),
+                    ("10".to_string(), "Top Left"),
+                    ("11".to_string(), "Top Center"),
+                    ("12".to_string(), "Top Right"),
+                    ("13".to_string(), "Center Left"),
+                    ("14".to_string(), "Center Right"),
+                    ("15".to_string(), "Bottom Left"),
+                    ("16".to_string(), "Bottom Center"),
+                    ("17".to_string(), "Bottom Right"),
+                    ("2".to_string(), "Upper Left"),
+                    ("3".to_string(), "Upper Right"),
+                    ("4".to_string(), "Near Left/Right of Center"),
+                    ("5".to_string(), "Far Left/Right of Center"),
+                    ("6".to_string(), "Far Left/Right of Center/Bottom"),
+                    ("7".to_string(), "Top Near-left"),
+                    ("8".to_string(), "Near Upper/Left"),
+                    ("9".to_string(), "Top Near-right"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -154,7 +249,11 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             TagInfo {
                 name: "FlashIntensity",
                 format: "unknown",
-                print_conv: Some(PrintConv::Complex),
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Normal"),
+                    ("2".to_string(), "Weak"),
+                    ("3".to_string(), "Strong"),
+                ]))),
                 value_conv: None,
             },
         ),
@@ -212,6 +311,17 @@ pub fn apply_print_conv(
             match print_conv {
                 PrintConv::None => value.clone(),
                 PrintConv::Function(func) => func(value, None),
+                PrintConv::Simple(lookup) => {
+                    // Look up value in the hash map
+                    // ExifTool uses the stringified value as the key
+                    let key = value.to_string();
+                    if let Some(display_value) = lookup.get(&key) {
+                        crate::types::TagValue::String(display_value.to_string())
+                    } else {
+                        // Key not found - return original value
+                        value.clone()
+                    }
+                }
                 PrintConv::Expression(_expr) => {
                     // Runtime expression evaluation removed - all Perl interpretation happens via PPI at build time
                     value.clone() // Fallback to original value when expression not handled by PPI

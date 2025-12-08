@@ -4,6 +4,10 @@
 //! DO NOT EDIT MANUALLY.
 
 #![allow(dead_code, unused_variables, unreachable_code, unused_imports)]
+#![allow(clippy::blocks_in_conditions)]
+#![allow(clippy::collapsible_else_if)]
+#![allow(clippy::unnecessary_cast)]
+#![allow(clippy::erasing_op)]
 
 use crate::types::{ExifContext, TagValue};
 use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
@@ -20,6 +24,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// - GoPro::GPS5.GPSLongitude
 /// - GoPro::GPS9.GPSLongitude
 /// - RIFF::UserText.GPSLongitude
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_674572cac8977577(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
@@ -39,6 +44,7 @@ pub fn ast_print_674572cac8977577(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Pentax::Main.Date
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_676f07102a6401b3(
     val: &TagValue,
@@ -78,6 +84,7 @@ pub fn ast_value_676f07102a6401b3(
 /// - Sony::MeterInfo9.MeterInfo2Row7
 /// - Sony::MeterInfo9.MeterInfo2Row8
 /// - Sony::MeterInfo9.MeterInfo2Row9
+///
 /// TODO: Add support for this expression pattern
 pub fn ast_print_675d52609db63e9c(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
