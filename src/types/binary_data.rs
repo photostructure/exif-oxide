@@ -220,17 +220,70 @@ impl<'a> ExpressionEvaluator<'a> {
 
     /// Evaluate a context condition expression
     ///
-    /// TODO: P07 - Full expression evaluation implementation
-    /// For now, returns error to trigger fallback behavior
+    /// Handles basic pattern matching conditions like:
+    /// - `$model =~ /pattern/` - regex match on model name
+    /// - `$model !~ /pattern/` - negative regex match on model name
+    /// - `$$self{Make} =~ /pattern/` - regex match on manufacturer
+    ///
+    /// ExifTool Reference: Common condition patterns in tag tables
     pub fn evaluate_context_condition(
         &self,
-        _processor_context: &ProcessorContext,
-        _expr: &str,
+        processor_context: &ProcessorContext,
+        expr: &str,
     ) -> std::result::Result<bool, ExifError> {
-        // Placeholder - always return error to trigger fallback
-        Err(ExifError::ParseError(
-            "Expression evaluation not yet implemented".to_string(),
-        ))
+        // Handle $model =~ /pattern/ expressions
+        if let Some(rest) = expr.strip_prefix("$model =~ /") {
+            if let Some(pattern) = rest.strip_suffix('/') {
+                if let Some(model) = &processor_context.model {
+                    let regex = regex::Regex::new(pattern)
+                        .map_err(|e| ExifError::ParseError(format!("Invalid regex: {e}")))?;
+                    return Ok(regex.is_match(model));
+                }
+                return Ok(false);
+            }
+        }
+
+        // Handle $model !~ /pattern/ expressions (negative match)
+        if let Some(rest) = expr.strip_prefix("$model !~ /") {
+            if let Some(pattern) = rest.strip_suffix('/') {
+                if let Some(model) = &processor_context.model {
+                    let regex = regex::Regex::new(pattern)
+                        .map_err(|e| ExifError::ParseError(format!("Invalid regex: {e}")))?;
+                    return Ok(!regex.is_match(model));
+                }
+                return Ok(true); // No model = doesn't match = true for !~
+            }
+        }
+
+        // Handle $$self{Make} =~ /pattern/ expressions
+        if let Some(rest) = expr.strip_prefix("$$self{Make} =~ /") {
+            if let Some(pattern) = rest.strip_suffix('/') {
+                if let Some(manufacturer) = &processor_context.manufacturer {
+                    let regex = regex::Regex::new(pattern)
+                        .map_err(|e| ExifError::ParseError(format!("Invalid regex: {e}")))?;
+                    return Ok(regex.is_match(manufacturer));
+                }
+                return Ok(false);
+            }
+        }
+
+        // Handle $$self{Make} !~ /pattern/ expressions (negative match)
+        if let Some(rest) = expr.strip_prefix("$$self{Make} !~ /") {
+            if let Some(pattern) = rest.strip_suffix('/') {
+                if let Some(manufacturer) = &processor_context.manufacturer {
+                    let regex = regex::Regex::new(pattern)
+                        .map_err(|e| ExifError::ParseError(format!("Invalid regex: {e}")))?;
+                    return Ok(!regex.is_match(manufacturer));
+                }
+                return Ok(true); // No manufacturer = doesn't match = true for !~
+            }
+        }
+
+        // Fallback - expression not recognized
+        Err(ExifError::ParseError(format!(
+            "Unrecognized condition expression: {}",
+            expr
+        )))
     }
 
     /// Evaluate a print/value conversion expression
