@@ -29,6 +29,15 @@ static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
         );
 
         // APEX conversions
+        // Note: ExifTool's original has no spaces around < operator
+        m.insert(
+            "IsFloat($val) && abs($val)<100 ? 2**(-$val) : 0",
+            (
+                "crate::implementations::value_conv",
+                "apex_shutter_speed_value_conv",
+            ),
+        );
+        // Also handle spaced version for robustness
         m.insert(
             "IsFloat($val) && abs($val) < 100 ? 2**(-$val) : 0",
             (
