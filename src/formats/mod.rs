@@ -1740,7 +1740,13 @@ fn get_unix_ctime(path: &Path) -> Option<u64> {
 fn apply_exiftool_precedence_rules(tag_entries: Vec<TagEntry>) -> Vec<TagEntry> {
     use std::collections::HashMap;
 
-    // Group tags by name to find conflicts
+    // Group tags by "Group:Name" (the JSON output key) to find actual conflicts
+    // ExifTool's -j -G output uses "Group:TagName" as keys, so tags with different
+    // Group0 values (e.g., "EXIF:ColorSpace" vs "MakerNotes:ColorSpace") are NOT
+    // conflicts - they produce different JSON keys and should both be kept.
+    //
+    // ExifTool reference: With -G flag, both EXIF and MakerNotes versions of same-named
+    // tags are shown because they have different group prefixes in the output.
     let mut tag_groups: HashMap<String, Vec<TagEntry>> = HashMap::new();
     let mut exempt_tags: Vec<TagEntry> = Vec::new();
 
@@ -1750,21 +1756,23 @@ fn apply_exiftool_precedence_rules(tag_entries: Vec<TagEntry>) -> Vec<TagEntry> 
         if is_gps_coordinate_tag(&tag_entry.name) {
             exempt_tags.push(tag_entry);
         } else {
-            tag_groups
-                .entry(tag_entry.name.clone())
-                .or_default()
-                .push(tag_entry);
+            // Group by "Group:Name" - this is the actual JSON output key
+            // Tags with different Group0 values produce different keys
+            let key = format!("{}:{}", tag_entry.group, tag_entry.name);
+            tag_groups.entry(key).or_default().push(tag_entry);
         }
     }
 
     let mut resolved_tags = Vec::new();
 
-    for (tag_name, mut conflicting_tags) in tag_groups {
+    for (tag_key, mut conflicting_tags) in tag_groups {
         if conflicting_tags.len() == 1 {
             // No conflict - add the single tag
             resolved_tags.extend(conflicting_tags);
         } else {
-            // Multiple tags with same name - apply precedence rules
+            // Multiple tags with same Group:Name - apply precedence rules
+            // This handles rare cases where the same Group:Name appears multiple times
+            // (e.g., from different processing paths)
 
             // Sort by priority (highest first)
             conflicting_tags.sort_by(|a, b| {
@@ -1776,10 +1784,6 @@ fn apply_exiftool_precedence_rules(tag_entries: Vec<TagEntry>) -> Vec<TagEntry> 
             // Take the highest priority tag as the winner
             if let Some(winner) = conflicting_tags.first() {
                 resolved_tags.push(winner.clone());
-
-                // TODO: Optionally add lower priority tags as numbered duplicates (e.g., "Make (1)")
-                // This would require checking if duplicates are requested (like ExifTool's -a flag)
-                // For now, we follow the default ExifTool behavior of only showing the highest priority tag
             }
 
             // Debug logging for precedence decisions
@@ -1791,7 +1795,7 @@ fn apply_exiftool_precedence_rules(tag_entries: Vec<TagEntry>) -> Vec<TagEntry> 
                     .collect();
                 tracing::debug!(
                     "Tag precedence: {} - winner: {}, overridden: {:?}",
-                    tag_name,
+                    tag_key,
                     winner_group,
                     loser_groups
                 );
