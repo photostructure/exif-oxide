@@ -31,8 +31,7 @@ pub trait ComplexPatternHandler {
                         "val".to_string()
                     };
                     let result = format!(
-                        "codegen_runtime::join_unpack_binary(\"{}\", \"{}\", &{})",
-                        separator, format, data
+                        "codegen_runtime::join_unpack_binary(\"{separator}\", \"{format}\", &{data})"
                     );
                     return Ok(Some(result));
                 }
@@ -51,7 +50,7 @@ pub trait ComplexPatternHandler {
             } else {
                 "val".to_string()
             };
-            let result = format!("codegen_runtime::unpack_binary(\"{}\", &{})", format, data);
+            let result = format!("codegen_runtime::unpack_binary(\"{format}\", &{data})");
             return Ok(Some(result));
         }
         Ok(None)
@@ -61,7 +60,7 @@ pub trait ComplexPatternHandler {
     fn try_log_pattern(&self, parts: &[String]) -> Result<Option<String>, CodeGenError> {
         if parts.len() == 2 && parts[0] == "log" {
             let var = &parts[1];
-            let result = format!("log({})", var);
+            let result = format!("codegen_runtime::log({var})");
             return Ok(Some(result));
         }
         Ok(None)
@@ -74,21 +73,16 @@ pub trait ComplexPatternHandler {
             let result = match self.expression_type() {
                 ExpressionType::PrintConv => {
                     format!(
-                        "TagValue::String(match {} {{ TagValue::String(s) => s.len().to_string(), _ => \"0\".to_string() }})",
-                        var
+                        "TagValue::String(match {var} {{ TagValue::String(s) => s.len().to_string(), _ => \"0\".to_string() }})"
                     )
                 }
                 ExpressionType::ValueConv => {
                     format!(
-                        "TagValue::I32(match {} {{ TagValue::String(s) => s.len() as i32, _ => 0 }})",
-                        var
+                        "TagValue::I32(match {var} {{ TagValue::String(s) => s.len() as i32, _ => 0 }})"
                     )
                 }
                 _ => {
-                    format!(
-                        "match {} {{ TagValue::String(s) => s.len() as i32, _ => 0 }}",
-                        var
-                    )
+                    format!("match {var} {{ TagValue::String(s) => s.len() as i32, _ => 0 }}")
                 }
             };
             return Ok(Some(result));
@@ -110,8 +104,7 @@ pub trait ComplexPatternHandler {
             // Enhanced pattern recognition: extract mask and offset from the map block
             if let Some((mask, offset, shifts)) = self.extract_pack_map_pattern(parts, children)? {
                 let result = format!(
-                    "codegen_runtime::pack_c_star_bit_extract(val, &{:?}, {}, {})",
-                    shifts, mask, offset
+                    "codegen_runtime::pack_c_star_bit_extract(val, &{shifts:?}, {mask}, {offset})"
                 );
                 return Ok(Some(result));
             }
@@ -120,7 +113,7 @@ pub trait ComplexPatternHandler {
             let numbers: Vec<i32> = parts
                 .iter()
                 .filter_map(|s| s.parse::<i32>().ok())
-                .filter(|&n| n >= 0 && n <= 32) // Only reasonable shift values
+                .filter(|&n| (0..=32).contains(&n)) // Only reasonable shift values
                 .collect();
 
             // Use common ExifTool patterns as fallback
@@ -129,8 +122,7 @@ pub trait ComplexPatternHandler {
 
             if !numbers.is_empty() {
                 let result = format!(
-                    "codegen_runtime::pack_c_star_bit_extract(val, &{:?}, {}, {})",
-                    numbers, mask, offset
+                    "codegen_runtime::pack_c_star_bit_extract(val, &{numbers:?}, {mask}, {offset})"
                 );
                 return Ok(Some(result));
             }
@@ -242,7 +234,7 @@ pub trait ComplexPatternHandler {
             } else if let Ok(num) = part.parse::<i32>() {
                 // Numbers that aren't hex are likely shift values
                 // Only collect reasonable shift values (0-32 for bit operations)
-                if num >= 0 && num <= 32 {
+                if (0..=32).contains(&num) {
                     shifts.push(num);
                 }
             }
@@ -271,10 +263,9 @@ pub trait ComplexPatternHandler {
             if format_str.starts_with('"') && format_str.ends_with('"') {
                 match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(Some(format!(
-                        "TagValue::String(format!({}, {}))",
-                        format_str, variable
+                        "TagValue::String(format!({format_str}, {variable}))"
                     ))),
-                    _ => Ok(Some(format!("format!({}, {})", format_str, variable))),
+                    _ => Ok(Some(format!("format!({format_str}, {variable})"))),
                 }
             } else {
                 Ok(None)
@@ -297,10 +288,9 @@ pub trait ComplexPatternHandler {
 
         match self.expression_type() {
             ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                "TagValue::String(format!({}, {}))",
-                format_str, format_args
+                "TagValue::String(format!({format_str}, {format_args}))"
             )),
-            _ => Ok(format!("format!({}, {})", format_str, format_args)),
+            _ => Ok(format!("format!({format_str}, {format_args})")),
         }
     }
 
