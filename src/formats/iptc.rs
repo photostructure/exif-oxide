@@ -13,7 +13,8 @@
 //!
 //! Reference: ExifTool lib/Image/ExifTool/IPTC.pm ProcessIPTC function (lines 1050-1200)
 
-use crate::generated::IPTC_pm::main_tags::IPTC_MAIN_TAGS;
+use crate::generated::IPTC_pm::application_record_tags::IPTC_APPLICATIONRECORD_TAGS;
+use crate::generated::IPTC_pm::envelope_record_tags::IPTC_ENVELOPERECORD_TAGS;
 use crate::types::{ExifError, Result, TagInfo, TagValue};
 use std::collections::HashMap;
 use tracing::{debug, warn};
@@ -45,26 +46,19 @@ impl IptcParser {
     fn new() -> Self {
         let mut tag_definitions = HashMap::new();
 
-        // TODO P07: Load ApplicationRecord (Record 2) tags when other module is generated
-        // for (id, tag_def) in other::get_other_tags() {
-        //     if id <= 255 {
-        //         tag_definitions.insert((2, id as u8), tag_def);
-        //     }
-        // }
+        // Load ApplicationRecord (Record 2) tags
+        for (id, tag_def) in IPTC_APPLICATIONRECORD_TAGS.iter() {
+            if *id <= 255 {
+                tag_definitions.insert((2, *id as u8), tag_def.clone());
+            }
+        }
 
-        // TODO P07: Load EnvelopeRecord (Record 1) tags when interop module is generated
-        // for (id, tag_def) in interop::get_interop_tags() {
-        //     if id <= 255 {
-        //         tag_definitions.insert((1, id as u8), tag_def);
-        //     }
-        // }
-
-        // TODO P07: Load datetime tags when datetime module is generated
-        // for (id, tag_def) in datetime::get_datetime_tags() {
-        //     if id <= 255 {
-        //         tag_definitions.insert((2, id as u8), tag_def); // Assume Record 2 for datetime
-        //     }
-        // }
+        // Load EnvelopeRecord (Record 1) tags
+        for (id, tag_def) in IPTC_ENVELOPERECORD_TAGS.iter() {
+            if *id <= 255 {
+                tag_definitions.insert((1, *id as u8), tag_def.clone());
+            }
+        }
 
         Self {
             tag_definitions,
