@@ -5,8 +5,7 @@
 
 use super::errors::CodeGenError;
 use super::expressions::{
-    is_boolean_expression, wrap_branch_for_owned, wrap_condition_for_bool,
-    wrap_literal_for_tagvalue,
+    is_boolean_expression, wrap_branch_for_owned, wrap_condition_for_bool, wrap_for_string_concat,
 };
 use crate::impl_registry::lookup_function;
 use crate::ppi::types::*;
@@ -188,7 +187,7 @@ pub trait PpiVisitor {
                 let num_str = num.to_string();
                 // Add explicit float suffix if not present for clarity
                 if !num_str.contains('e') && !num_str.contains('.') {
-                    format!("{}.0", num_str)
+                    format!("{num_str}.0")
                 } else {
                     num_str
                 }
@@ -221,15 +220,15 @@ pub trait PpiVisitor {
         // Using .into() here causes type ambiguity in binary operations
         if raw_number.contains('.') || raw_number.contains('e') {
             // Add f64 suffix for floats
-            Ok(format!("{}f64", raw_number))
+            Ok(format!("{raw_number}f64"))
         } else {
             // For integers, check if they fit in i32 range before using i32 suffix
             // Large literals like 4294967296 need i64 suffix
             let num: i64 = raw_number.parse().unwrap_or(0);
             if num >= i32::MIN as i64 && num <= i32::MAX as i64 {
-                Ok(format!("{}i32", raw_number))
+                Ok(format!("{raw_number}i32"))
             } else {
-                Ok(format!("{}i64", raw_number))
+                Ok(format!("{raw_number}i64"))
             }
         }
     }
@@ -245,11 +244,11 @@ pub trait PpiVisitor {
         // Handle simple variable interpolation
         if string_value.contains("$val") && string_value.matches('$').count() == 1 {
             let template = string_value.replace("$val", "{}");
-            let format_expr = format!("format!(\"{}\", val)", template);
+            let format_expr = format!("format!(\"{template}\", val)");
 
             // In PrintConv context, wrap in TagValue::String or use .into()
             match self.expression_type() {
-                ExpressionType::PrintConv => Ok(format!("Into::<TagValue>::into({})", format_expr)),
+                ExpressionType::PrintConv => Ok(format!("Into::<TagValue>::into({format_expr})")),
                 _ => Ok(format_expr),
             }
         } else {
@@ -259,7 +258,7 @@ pub trait PpiVisitor {
             // In PrintConv context, wrap string literals with .into()
             match self.expression_type() {
                 ExpressionType::PrintConv => {
-                    Ok(format!("Into::<TagValue>::into({})", string_literal))
+                    Ok(format!("Into::<TagValue>::into({string_literal})"))
                 }
                 _ => Ok(string_literal),
             }
@@ -315,7 +314,7 @@ pub trait PpiVisitor {
         for child in &node.children {
             // Skip comma operators - they're just separators
             if child.class == "PPI::Token::Operator"
-                && child.content.as_ref().map_or(false, |c| c == ",")
+                && child.content.as_ref().is_some_and(|c| c == ",")
             {
                 continue;
             }
@@ -378,7 +377,7 @@ pub trait PpiVisitor {
                         "log requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("log({})", args[0]))
+                Ok(format!("codegen_runtime::log({})", args[0]))
             }
             "exp" => {
                 if args.len() != 1 {
@@ -386,7 +385,7 @@ pub trait PpiVisitor {
                         "exp requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("exp({})", args[0]))
+                Ok(format!("codegen_runtime::exp({})", args[0]))
             }
             "int" => {
                 if args.len() != 1 {
@@ -394,7 +393,7 @@ pub trait PpiVisitor {
                         "int requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("int({})", args[0]))
+                Ok(format!("codegen_runtime::int({})", args[0]))
             }
             "abs" => {
                 if args.len() != 1 {
@@ -402,7 +401,7 @@ pub trait PpiVisitor {
                         "abs requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("abs({})", args[0]))
+                Ok(format!("codegen_runtime::abs({})", args[0]))
             }
             "sqrt" => {
                 if args.len() != 1 {
@@ -410,7 +409,7 @@ pub trait PpiVisitor {
                         "sqrt requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("sqrt({})", args[0]))
+                Ok(format!("codegen_runtime::sqrt({})", args[0]))
             }
             "sin" => {
                 if args.len() != 1 {
@@ -418,7 +417,7 @@ pub trait PpiVisitor {
                         "sin requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("sin({})", args[0]))
+                Ok(format!("codegen_runtime::sin({})", args[0]))
             }
             "cos" => {
                 if args.len() != 1 {
@@ -426,7 +425,7 @@ pub trait PpiVisitor {
                         "cos requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("cos({})", args[0]))
+                Ok(format!("codegen_runtime::cos({})", args[0]))
             }
             "atan2" => {
                 if args.len() != 2 {
@@ -434,7 +433,7 @@ pub trait PpiVisitor {
                         "atan2 requires exactly 2 arguments".to_string(),
                     ));
                 }
-                Ok(format!("atan2({}, {})", args[0], args[1]))
+                Ok(format!("codegen_runtime::atan2({}, {})", args[0], args[1]))
             }
             "length" => {
                 if args.len() != 1 {
@@ -443,9 +442,13 @@ pub trait PpiVisitor {
                     ));
                 }
                 match self.expression_type() {
-                    ExpressionType::PrintConv => Ok(format!("length_string({})", args[0])),
-                    ExpressionType::ValueConv => Ok(format!("length_i32({})", args[0])),
-                    _ => Ok(format!("length_i32({})", args[0])),
+                    ExpressionType::PrintConv => {
+                        Ok(format!("codegen_runtime::length_string({})", args[0]))
+                    }
+                    ExpressionType::ValueConv => {
+                        Ok(format!("codegen_runtime::length_i32({})", args[0]))
+                    }
+                    _ => Ok(format!("codegen_runtime::length_i32({})", args[0])),
                 }
             }
             "sprintf" => {
@@ -495,12 +498,10 @@ pub trait PpiVisitor {
                         // Pass unpack result directly as &[TagValue] slice
                         return match self.expression_type() {
                             ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                                "TagValue::String(codegen_runtime::sprintf_perl({}, &codegen_runtime::unpack_binary({}, &{})))",
-                                format_str, unpack_format, data
+                                "TagValue::String(codegen_runtime::sprintf_perl({format_str}, &codegen_runtime::unpack_binary({unpack_format}, &{data})))"
                             )),
                             _ => Ok(format!(
-                                "codegen_runtime::sprintf_perl({}, &codegen_runtime::unpack_binary({}, &{}))",
-                                format_str, unpack_format, data
+                                "codegen_runtime::sprintf_perl({format_str}, &codegen_runtime::unpack_binary({unpack_format}, &{data}))"
                             )),
                         };
                     }
@@ -524,10 +525,10 @@ pub trait PpiVisitor {
                 let sprintf_args = if args.len() > 1 {
                     let cloned_args = args[1..]
                         .iter()
-                        .map(|arg| format!("{}.clone()", arg))
+                        .map(|arg| format!("{arg}.clone()"))
                         .collect::<Vec<_>>()
                         .join(", ");
-                    format!("&[{}]", cloned_args)
+                    format!("&[{cloned_args}]")
                 } else {
                     "&[]".to_string()
                 };
@@ -540,12 +541,10 @@ pub trait PpiVisitor {
 
                 match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::String(codegen_runtime::sprintf_perl({}, {}))",
-                        format_str, sprintf_args
+                        "TagValue::String(codegen_runtime::sprintf_perl({format_str}, {sprintf_args}))"
                     )),
                     _ => Ok(format!(
-                        "codegen_runtime::sprintf_perl({}, {})",
-                        format_str, sprintf_args
+                        "codegen_runtime::sprintf_perl({format_str}, {sprintf_args})"
                     )),
                 }
             }
@@ -561,7 +560,7 @@ pub trait PpiVisitor {
                     "substr_3arg"
                 };
                 let args_str = args.join(", ");
-                Ok(format!("codegen_runtime::{}({})", func_name, args_str))
+                Ok(format!("codegen_runtime::{func_name}({args_str})"))
             }
             "index" => {
                 if args.len() < 2 || args.len() > 3 {
@@ -576,7 +575,7 @@ pub trait PpiVisitor {
                     "index_3arg"
                 };
                 let args_str = args.join(", ");
-                Ok(format!("codegen_runtime::{}({})", func_name, args_str))
+                Ok(format!("codegen_runtime::{func_name}({args_str})"))
             }
             "join" => {
                 // Special handling for "join SEP, unpack FORMAT, DATA" pattern
@@ -593,8 +592,7 @@ pub trait PpiVisitor {
                         let data = self.visit_node(&second_child.children[1])?;
                         // join_unpack_binary already returns TagValue
                         return Ok(format!(
-                            "codegen_runtime::join_unpack_binary({}, {}, &{})",
-                            separator, format_str, data
+                            "codegen_runtime::join_unpack_binary({separator}, {format_str}, &{data})"
                         ));
                     }
                 }
@@ -608,10 +606,7 @@ pub trait PpiVisitor {
                 let separator = &args[0];
                 let list = &args[1];
                 // Use join_vec for non-unpack cases
-                Ok(format!(
-                    "codegen_runtime::join_vec({}, &{})",
-                    separator, list
-                ))
+                Ok(format!("codegen_runtime::join_vec({separator}, &{list})"))
             }
             "unpack" => {
                 if args.len() != 2 {
@@ -633,8 +628,7 @@ pub trait PpiVisitor {
                 let data = &args[1];
                 // unpack_binary returns Vec<TagValue>, wrap in TagValue::Array
                 Ok(format!(
-                    "TagValue::Array(codegen_runtime::unpack_binary({}, &{}))",
-                    format_str, data
+                    "TagValue::Array(codegen_runtime::unpack_binary({format_str}, &{data}))"
                 ))
             }
             "if" => {
@@ -648,7 +642,7 @@ pub trait PpiVisitor {
                 let statement = &args[1];
 
                 // Generate Rust if statement
-                Ok(format!("if {} {{ {} }}", condition, statement))
+                Ok(format!("if {condition} {{ {statement} }}"))
             }
             _ => {
                 // Check if this is an ExifTool function that needs registry lookup
@@ -675,7 +669,7 @@ pub trait PpiVisitor {
                                 let full_args = if args_str.is_empty() {
                                     "ctx".to_string()
                                 } else {
-                                    format!("{}, ctx", args_str)
+                                    format!("{args_str}, ctx")
                                 };
                                 Ok(format!(
                                     "{}::{}({})",
@@ -692,16 +686,14 @@ pub trait PpiVisitor {
                         // Per P01: "If codegen can't generate valid Rust, throw UnsupportedStructure"
                         tracing::warn!("Unknown ExifTool function: {}", func_name);
                         Err(CodeGenError::UnsupportedStructure(format!(
-                            "ExifTool function '{}' not implemented - requires fallback",
-                            func_name
+                            "ExifTool function '{func_name}' not implemented - requires fallback"
                         )))
                     }
                 } else {
                     // Unknown function - trigger fallback to placeholder
                     // Per P01: "If codegen can't generate valid Rust, throw UnsupportedStructure"
                     Err(CodeGenError::UnsupportedStructure(format!(
-                        "Unknown function '{}' requires fallback implementation",
-                        func_name
+                        "Unknown function '{func_name}' requires fallback implementation"
                     )))
                 }
             }
@@ -742,10 +734,9 @@ pub trait PpiVisitor {
 
         match self.expression_type() {
             ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                "TagValue::String({}.repeat({} as usize))",
-                string_part, count
+                "TagValue::String({string_part}.repeat({count} as usize))"
             )),
-            _ => Ok(format!("{}.repeat({} as usize)", string_part, count)),
+            _ => Ok(format!("{string_part}.repeat({count} as usize)")),
         }
     }
 
@@ -785,8 +776,7 @@ pub trait PpiVisitor {
         } else {
             // Unknown cast type - punt to fallback
             Err(CodeGenError::UnsupportedStructure(format!(
-                "Unknown cast operator '{}' requires fallback implementation",
-                content
+                "Unknown cast operator '{content}' requires fallback implementation"
             )))
         }
     }
@@ -832,8 +822,7 @@ pub trait PpiVisitor {
 
             // Generate bounds-checked indexing
             Ok(format!(
-                "{}.as_array().and_then(|arr| arr.get({})).unwrap_or(&TagValue::Empty)",
-                rust_array, index
+                "{rust_array}.as_array().and_then(|arr| arr.get({index})).unwrap_or(&TagValue::Empty)"
             ))
         } else if let Some(brace_pos) = content.find('{') {
             // Hash subscript: $$self{Model} (but this should be handled by cast)
@@ -842,19 +831,17 @@ pub trait PpiVisitor {
             let key = key_part.trim_end_matches('}');
 
             if hash_name.starts_with("$$self") {
-                Ok(format!("ctx.get(\"{}\").unwrap_or_default()", key))
+                Ok(format!("ctx.get(\"{key}\").unwrap_or_default()"))
             } else {
                 let rust_hash = hash_name.trim_start_matches('$');
                 Ok(format!(
-                    "{}.as_object().and_then(|obj| obj.get(\"{}\")).unwrap_or(&TagValue::Empty)",
-                    rust_hash, key
+                    "{rust_hash}.as_object().and_then(|obj| obj.get(\"{key}\")).unwrap_or(&TagValue::Empty)"
                 ))
             }
         } else {
             // Return error for complex subscript patterns that cannot be reliably translated
             Err(CodeGenError::UnsupportedStructure(format!(
-                "Complex subscript pattern cannot be translated: {}",
-                content
+                "Complex subscript pattern cannot be translated: {content}"
             )))
         }
     }
@@ -895,14 +882,13 @@ pub trait PpiVisitor {
             // we just return the pattern itself for later combination
             // The actual matching will be handled when combined with =~ or !~
             if flags.is_empty() {
-                Ok(format!("/{}/", rust_pattern))
+                Ok(format!("/{rust_pattern}/"))
             } else {
-                Ok(format!("/{}/{}", rust_pattern, flags))
+                Ok(format!("/{rust_pattern}/{flags}"))
             }
         } else {
             Err(CodeGenError::UnsupportedStructure(format!(
-                "Invalid regex pattern: {}",
-                content
+                "Invalid regex pattern: {content}"
             )))
         }
     }
@@ -930,9 +916,9 @@ pub trait PpiVisitor {
                 // Parse the hex value to determine appropriate type
                 if let Ok(val) = u64::from_str_radix(hex_part, 16) {
                     if val <= u32::MAX as u64 {
-                        Ok(format!("{}u32", hex_literal))
+                        Ok(format!("{hex_literal}u32"))
                     } else {
-                        Ok(format!("{}u64", hex_literal))
+                        Ok(format!("{hex_literal}u64"))
                     }
                 } else {
                     Ok(hex_literal)
@@ -985,9 +971,9 @@ pub trait PpiVisitor {
             (Some(name), Some(value)) => {
                 // Generate Rust variable binding
                 if is_array {
-                    Ok(format!("let {} = {};", name, value))
+                    Ok(format!("let {name} = {value};"))
                 } else {
-                    Ok(format!("let {} = {};", name, value))
+                    Ok(format!("let {name} = {value};"))
                 }
             }
             _ => Err(CodeGenError::UnsupportedStructure(
@@ -1006,8 +992,7 @@ pub trait PpiVisitor {
         // Parse s/pattern/replacement/flags
         if !content.starts_with("s/") && !content.starts_with("s#") {
             return Err(CodeGenError::UnsupportedStructure(format!(
-                "Invalid substitution pattern: {}",
-                content
+                "Invalid substitution pattern: {content}"
             )));
         }
 
@@ -1017,8 +1002,7 @@ pub trait PpiVisitor {
 
         if parts.len() < 2 {
             return Err(CodeGenError::UnsupportedStructure(format!(
-                "Invalid substitution format: {}",
-                content
+                "Invalid substitution format: {content}"
             )));
         }
 
@@ -1038,13 +1022,11 @@ pub trait PpiVisitor {
             // Simple string replacement
             if is_global {
                 Ok(format!(
-                    "TagValue::String(val.to_string().replace(\"{}\", \"{}\"))",
-                    pattern, replacement
+                    "TagValue::String(val.to_string().replace(\"{pattern}\", \"{replacement}\"))"
                 ))
             } else {
                 Ok(format!(
-                    "TagValue::String(val.to_string().replacen(\"{}\", \"{}\", 1))",
-                    pattern, replacement
+                    "TagValue::String(val.to_string().replacen(\"{pattern}\", \"{replacement}\", 1))"
                 ))
             }
         } else {
@@ -1055,13 +1037,11 @@ pub trait PpiVisitor {
 
             if is_global {
                 Ok(format!(
-                    "TagValue::String(codegen_runtime::regex_replace(\"{}\", \"{}\", &val.to_string()))",
-                    safe_pattern, escaped_replacement
+                    "TagValue::String(codegen_runtime::regex_replace(\"{safe_pattern}\", \"{escaped_replacement}\", &val.to_string()))"
                 ))
             } else {
                 Ok(format!(
-                    "TagValue::String(codegen_runtime::regex_replace(\"{}\", \"{}\", &val.to_string()))",
-                    safe_pattern, escaped_replacement
+                    "TagValue::String(codegen_runtime::regex_replace(\"{safe_pattern}\", \"{escaped_replacement}\", &val.to_string()))"
                 ))
             }
         }
@@ -1100,8 +1080,7 @@ pub trait PpiVisitor {
             _ => {
                 // Unsupported magic variable
                 Err(CodeGenError::UnsupportedToken(format!(
-                    "Unsupported Perl magic variable: {}",
-                    content
+                    "Unsupported Perl magic variable: {content}"
                 )))
             }
         }
@@ -1155,9 +1134,9 @@ pub trait PpiVisitor {
                 } else {
                     // Wrap in appropriate type based on expression type
                     match self.expression_type() {
-                        ExpressionType::ValueConv => Ok(format!("return Ok({})", value)),
-                        ExpressionType::PrintConv => Ok(format!("return {}", value)),
-                        ExpressionType::Condition => Ok(format!("return {}", value)),
+                        ExpressionType::ValueConv => Ok(format!("return Ok({value})")),
+                        ExpressionType::PrintConv => Ok(format!("return {value}")),
+                        ExpressionType::Condition => Ok(format!("return {value}")),
                     }
                 }
             }
@@ -1170,8 +1149,7 @@ pub trait PpiVisitor {
                 Ok("continue".to_string())
             }
             _ => Err(CodeGenError::UnsupportedStructure(format!(
-                "Unknown break keyword: {}",
-                keyword
+                "Unknown break keyword: {keyword}"
             ))),
         }
     }
@@ -1190,8 +1168,7 @@ pub trait PpiVisitor {
         if let Some(subscript) = node.children.first() {
             if let Some(index) = self.extract_subscript_index(subscript) {
                 return Ok(format!(
-                    "codegen_runtime::get_array_element({}, {})",
-                    rust_name, index
+                    "codegen_runtime::get_array_element({rust_name}, {index})"
                 ));
             }
         }
@@ -1226,8 +1203,7 @@ pub trait PpiVisitor {
         // Parse tr/pattern/replacement/flags or tr#pattern#replacement#flags
         if !content.starts_with("tr/") && !content.starts_with("tr#") {
             return Err(CodeGenError::UnsupportedStructure(format!(
-                "Invalid transliterate pattern: {}",
-                content
+                "Invalid transliterate pattern: {content}"
             )));
         }
 
@@ -1237,8 +1213,7 @@ pub trait PpiVisitor {
 
         if parts.len() < 2 {
             return Err(CodeGenError::UnsupportedStructure(format!(
-                "Invalid transliterate format: {}",
-                content
+                "Invalid transliterate format: {content}"
             )));
         }
 
@@ -1254,7 +1229,7 @@ pub trait PpiVisitor {
             // tr/chars//d - delete specified characters
             // Example: tr/()K//d removes parentheses and K
             let chars_to_remove: Vec<String> =
-                search_chars.chars().map(|c| format!("'{}'", c)).collect();
+                search_chars.chars().map(|c| format!("'{c}'")).collect();
             Ok(format!(
                 "val.to_string().chars().filter(|c| ![{}].contains(c)).collect::<String>()",
                 chars_to_remove.join(", ")
@@ -1284,8 +1259,7 @@ pub trait PpiVisitor {
                         i += 1;
                     }
                 }
-                let keep_list: Vec<String> =
-                    keep_chars.iter().map(|c| format!("'{}'", c)).collect();
+                let keep_list: Vec<String> = keep_chars.iter().map(|c| format!("'{c}'")).collect();
                 Ok(format!(
                     "val.to_string().chars().filter(|c| [{}].contains(c)).collect::<String>()",
                     keep_list.join(", ")
@@ -1293,7 +1267,7 @@ pub trait PpiVisitor {
             } else {
                 // Simple character list
                 let keep_chars: Vec<String> =
-                    search_chars.chars().map(|c| format!("'{}'", c)).collect();
+                    search_chars.chars().map(|c| format!("'{c}'")).collect();
                 Ok(format!(
                     "val.to_string().chars().filter(|c| [{}].contains(c)).collect::<String>()",
                     keep_chars.join(", ")
@@ -1307,15 +1281,14 @@ pub trait PpiVisitor {
 
             if search_vec.len() != replace_vec.len() {
                 return Err(CodeGenError::UnsupportedStructure(format!(
-                    "Transliterate pattern length mismatch: {} vs {}",
-                    search_chars, replace_chars
+                    "Transliterate pattern length mismatch: {search_chars} vs {replace_chars}"
                 )));
             }
 
             // Generate character mapping code
             let mut mappings = Vec::new();
             for (s, r) in search_vec.iter().zip(replace_vec.iter()) {
-                mappings.push(format!("'{}' => '{}'", s, r));
+                mappings.push(format!("'{s}' => '{r}'"));
             }
 
             Ok(format!(
@@ -1409,7 +1382,7 @@ pub trait PpiVisitor {
         // Check if this looks like a bare string literal
         if value.starts_with('"') && value.ends_with('"') && !value.contains("TagValue") {
             // It's a bare string literal, add .into()
-            format!("Into::<TagValue>::into({})", value)
+            format!("Into::<TagValue>::into({value})")
         } else {
             // Already has proper type or is an expression
             value
@@ -1441,8 +1414,7 @@ pub trait PpiVisitor {
         // Parse s/pattern/replacement/flags
         if !subst_content.starts_with("s/") && !subst_content.starts_with("s#") {
             return Err(CodeGenError::UnsupportedStructure(format!(
-                "Invalid substitution pattern: {}",
-                subst_content
+                "Invalid substitution pattern: {subst_content}"
             )));
         }
 
@@ -1455,8 +1427,7 @@ pub trait PpiVisitor {
 
         if parts.len() < 2 {
             return Err(CodeGenError::UnsupportedStructure(format!(
-                "Invalid substitution format: {}",
-                subst_content
+                "Invalid substitution format: {subst_content}"
             )));
         }
 
@@ -1481,18 +1452,17 @@ pub trait PpiVisitor {
         Ok(format!(
             r#"{{
                 let (success, modified_val) = codegen_runtime::regex_substitute_perl(
-                    r"{}",
-                    "{}",
+                    r"{pattern}",
+                    "{replacement}",
                     val
                 );
                 if success {{
                     let val = &modified_val;
-                    {}
+                    {true_branch}
                 }} else {{
-                    {}
+                    {false_branch}
                 }}
-            }}"#,
-            pattern, replacement, true_branch, false_branch
+            }}"#
         ))
     }
 
@@ -1512,8 +1482,7 @@ pub trait PpiVisitor {
         // Generate Rust if-block with assignment and return expression
         // Trust ExifTool: Preserve exact Perl semantics where conditional assignment affects final result
         Ok(format!(
-            "{{ if {} {{ {} }} {} }}",
-            condition, assignment, return_expr
+            "{{ if {condition} {{ {assignment} }} {return_expr} }}"
         ))
     }
 
@@ -1529,7 +1498,7 @@ pub trait PpiVisitor {
         // Check if the condition is a regex substitution ($val =~ s///)
         // This needs special handling because the substitution modifies $val
         // and the modified value should be used in the true branch
-        if let Some(condition_node) = node.children.get(0) {
+        if let Some(condition_node) = node.children.first() {
             if self.is_substitution_condition(condition_node) {
                 return self.generate_substitution_ternary(node);
             }
@@ -1560,8 +1529,7 @@ pub trait PpiVisitor {
         let false_branch_wrapped = wrap_branch_for_owned(&false_branch);
 
         Ok(format!(
-            "if {} {{ {} }} else {{ {} }}",
-            condition_wrapped, true_branch_wrapped, false_branch_wrapped
+            "if {condition_wrapped} {{ {true_branch_wrapped} }} else {{ {false_branch_wrapped} }}"
         ))
     }
 
@@ -1577,7 +1545,7 @@ pub trait PpiVisitor {
         let condition = self.visit_node(&node.children[0])?;
         let body = self.visit_node(&node.children[1])?;
 
-        Ok(format!("if {} {{ {} }}", condition, body))
+        Ok(format!("if {condition} {{ {body} }}"))
     }
 
     /// Visit normalized component nodes (Condition, Assignment, TrueBranch, FalseBranch)
@@ -1603,7 +1571,7 @@ pub trait PpiVisitor {
         }
 
         let operand = self.visit_node(&node.children[0])?;
-        Ok(format!("codegen_runtime::negate({})", operand))
+        Ok(format!("codegen_runtime::negate({operand})"))
     }
 
     /// Visit normalized binary operation nodes
@@ -1633,13 +1601,13 @@ pub trait PpiVisitor {
                 let is_int = |s: &str| s.ends_with("i32") || s.ends_with("u32");
 
                 let (l, r) = if operator == "/" && is_float(&left) && is_int(&right) {
-                    (left.clone(), format!("{} as f64", right))
+                    (left.clone(), format!("{right} as f64"))
                 } else if operator == "/" && is_int(&left) && is_float(&right) {
-                    (format!("{} as f64", left), right.clone())
+                    (format!("{left} as f64"), right.clone())
                 } else {
                     (left, right)
                 };
-                Ok(format!("({} {} {})", l, operator, r))
+                Ok(format!("({l} {operator} {r})"))
             }
             "**" => {
                 // Power operator -> use power function which takes TagValue args (owned)
@@ -1648,7 +1616,7 @@ pub trait PpiVisitor {
                 // 2. Clone references like 'val' to make them owned
                 let wrap_for_power = |s: &str| -> String {
                     if s.ends_with("i32") || s.ends_with("f64") || s.ends_with("u32") {
-                        format!("Into::<TagValue>::into({})", s)
+                        format!("Into::<TagValue>::into({s})")
                     } else if s == "val" {
                         // Clone the reference to get owned TagValue
                         "val.clone()".to_string()
@@ -1658,13 +1626,17 @@ pub trait PpiVisitor {
                 };
                 let left_wrapped = wrap_for_power(&left);
                 let right_wrapped = wrap_for_power(&right);
-                Ok(format!("power({}, {})", left_wrapped, right_wrapped))
+                Ok(format!(
+                    "codegen_runtime::power({left_wrapped}, {right_wrapped})"
+                ))
             }
             "." => {
                 // String concatenation - use cleaner concat function
+                // Need to wrap literals appropriately
+                let left_wrapped = wrap_for_string_concat(&left);
+                let right_wrapped = wrap_for_string_concat(&right);
                 Ok(format!(
-                    "codegen_runtime::string::concat(&{}, &{})",
-                    left, right
+                    "codegen_runtime::string::concat(&{left_wrapped}, &{right_wrapped})"
                 ))
             }
             "=~" | "!~" => {
@@ -1727,26 +1699,24 @@ pub trait PpiVisitor {
 
                     // Build regex with flags
                     let regex_flags = if flags.contains('i') { "(?i)" } else { "" };
-                    let full_pattern = format!("{}{}", regex_flags, pattern);
+                    let full_pattern = format!("{regex_flags}{pattern}");
 
                     // Generate regex matching code
                     if operator == "=~" {
                         Ok(format!(
-                            "{{ use regex::Regex; use std::sync::LazyLock; static {}: LazyLock<Regex> = LazyLock::new(|| Regex::new(r\"{}\").unwrap()); {}.is_match(&{}.to_string()) }}",
-                            regex_id, full_pattern, regex_id, left
+                            "{{ use regex::Regex; use std::sync::LazyLock; static {regex_id}: LazyLock<Regex> = LazyLock::new(|| Regex::new(r\"{full_pattern}\").unwrap()); {regex_id}.is_match(&{left}.to_string()) }}"
                         ))
                     } else {
                         Ok(format!(
-                            "{{ use regex::Regex; use std::sync::LazyLock; static {}: LazyLock<Regex> = LazyLock::new(|| Regex::new(r\"{}\").unwrap()); !{}.is_match(&{}.to_string()) }}",
-                            regex_id, full_pattern, regex_id, left
+                            "{{ use regex::Regex; use std::sync::LazyLock; static {regex_id}: LazyLock<Regex> = LazyLock::new(|| Regex::new(r\"{full_pattern}\").unwrap()); !{regex_id}.is_match(&{left}.to_string()) }}"
                         ))
                     }
                 } else {
                     // For simple literal patterns, use contains check
                     if operator == "=~" {
-                        Ok(format!("{}.to_string().contains(r\"{}\")", left, pattern))
+                        Ok(format!("{left}.to_string().contains(r\"{pattern}\")"))
                     } else {
-                        Ok(format!("!{}.to_string().contains(r\"{}\")", left, pattern))
+                        Ok(format!("!{left}.to_string().contains(r\"{pattern}\")"))
                     }
                 }
             }
@@ -1766,26 +1736,26 @@ pub trait PpiVisitor {
                 let left_str = if self.is_string_literal_or_wrapped(&left) {
                     self.extract_string_literal(&left)
                 } else {
-                    format!("{}.to_string()", left)
+                    format!("{left}.to_string()")
                 };
 
                 let right_str = if self.is_string_literal_or_wrapped(&right) {
                     self.extract_string_literal(&right)
                 } else {
-                    format!("{}.to_string()", right)
+                    format!("{right}.to_string()")
                 };
 
-                Ok(format!("({} {} {})", left_str, rust_op, right_str))
+                Ok(format!("({left_str} {rust_op} {right_str})"))
             }
             "==" | "!=" | "<" | ">" | "<=" | ">=" => {
                 // Numeric comparisons
-                Ok(format!("({} {} {})", left, operator, right))
+                Ok(format!("({left} {operator} {right})"))
             }
             "&&" => {
                 // Logical AND - in Perl returns first falsy or last value
                 // For simplicity, we treat as boolean when both sides are comparisons
                 if is_boolean_expression(&left) && is_boolean_expression(&right) {
-                    Ok(format!("({} && {})", left, right))
+                    Ok(format!("({left} && {right})"))
                 } else {
                     // Perl semantics: return left if falsy, else right
                     Ok(format!(
@@ -1808,17 +1778,16 @@ pub trait PpiVisitor {
             }
             "&" | "|" | "^" => {
                 // Bitwise operations
-                Ok(format!("({} {} {})", left, operator, right))
+                Ok(format!("({left} {operator} {right})"))
             }
             "x" => {
                 // String repetition operator: $string x $count
-                Ok(format!("{}.repeat({} as usize)", left, right))
+                Ok(format!("{left}.repeat({right} as usize)"))
             }
             _ => {
                 // Unknown operator - return error for now
                 Err(CodeGenError::UnsupportedStructure(format!(
-                    "Unsupported binary operator: {}",
-                    operator
+                    "Unsupported binary operator: {operator}"
                 )))
             }
         }
