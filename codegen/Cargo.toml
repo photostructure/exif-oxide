@@ -28,11 +28,11 @@ serde_json = "1.0"
 anyhow = "1.0"
 thiserror = "2.0"
 clap = { version = "4.5", features = ["derive"] }
-jsonschema = "0.32"
-regex = "1.11"
+jsonschema = "0.37"
+regex = "1.12"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
-tempfile = "3.20"
+tempfile = "3.23"
 base64 = "0.22"
 glob = "0.3"
 
@@ -40,7 +40,7 @@ glob = "0.3"
 codegen-runtime = { path = "../codegen-runtime", features = ["test-helpers"] }
 
 # For dynamic loading of compiled functions
-libloading = "0.8"
+libloading = "0.9"
 
-rayon = "1.10"
+rayon = "1.11"
 indoc = "2.0"

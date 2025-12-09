@@ -58,7 +58,7 @@ codegen-runtime = { path = "./codegen-runtime" }
 byteorder = "1.5" # Efficient endian handling
 thiserror = "2.0" # Error handling
 anyhow = "1.0" # Error handling in examples/tests
-regex = "1.11" # For parsing ExifTool tables (used in dev tools)
+regex = "1.12" # For parsing ExifTool tables (used in dev tools)
 serde = { version = "1.0", features = ["derive"] } # Serialization
 serde_json = "1.0" # JSON output
 clap = { version = "4.5", features = ["derive"] } # CLI argument parsing
@@ -70,14 +70,14 @@ tracing-subscriber = { version = "0.3", features = [
 chrono = { version = "0.4", features = [
     "serde",
 ] } # Date and time handling for File:FileModifyDate
-indexmap = { version = "2.10", features = [
+indexmap = { version = "2.12", features = [
     "serde",
 ] } # Preserves insertion order for tag output
 
 [dev-dependencies]
-criterion = "0.7" # Benchmarking
+criterion = "0.8" # Benchmarking
 pretty_assertions = "1.4" # Better test assertions
-tempfile = "3.20" # Temporary files for testing
+tempfile = "3.23" # Temporary files for testing
 clap = { version = "4.5", features = [
     "derive",
 ] } # CLI argument parsing for analysis tools
