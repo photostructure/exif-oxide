@@ -109,7 +109,7 @@ impl BinaryDataStrategy {
 
         if !output.status.success() {
             let stderr = String::from_utf8_lossy(&output.stderr);
-            return Err(anyhow::anyhow!("process_binary_data.pl failed: {}", stderr));
+            return Err(anyhow::anyhow!("process_binary_data.pl failed: {stderr}"));
         }
 
         let stdout = String::from_utf8(output.stdout)?;
