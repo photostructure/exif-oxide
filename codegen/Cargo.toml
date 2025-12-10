@@ -5,6 +5,10 @@ edition = "2021"
 authors = ["exif-oxide@photostructure.com"]
 description = "Code generation tool for exif-oxide"
 default-run = "codegen"
+publish = false  # Internal dev tool
+
+[package.metadata.dist]
+dist = false  # Don't include in releases
 
 [[bin]]
 name = "codegen"
@@ -35,9 +39,6 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tempfile = "3.23"
 base64 = "0.22"
 glob = "0.3"
-
-# Runtime support for shared types and fmt functions
-codegen-runtime = { path = "../codegen-runtime", features = ["test-helpers"] }
 
 # For dynamic loading of compiled functions
 libloading = "0.9"
