@@ -1,0 +1,173 @@
+# Ripgrep-style binary release workflow
+# All native runners - no cross-compilation needed
+#
+# Triggered by version tags (e.g., v0.1.0)
+# Builds binaries for multiple platforms and creates GitHub Release
+
+name: Build Binaries
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+  # Allow manual trigger for testing
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # First, create a draft release
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Get version from tag
+        id: version
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Building version: $VERSION"
+
+      - name: Validate version matches Cargo.toml
+        run: |
+          CARGO_VERSION=$(grep '^version = ' Cargo.toml | head -1 | sed 's/version = "\(.*\)"/\1/')
+          TAG_VERSION="${{ steps.version.outputs.version }}"
+          if [ "$CARGO_VERSION" != "$TAG_VERSION" ]; then
+            echo "ERROR: Tag version ($TAG_VERSION) doesn't match Cargo.toml version ($CARGO_VERSION)"
+            exit 1
+          fi
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ steps.version.outputs.version }}" \
+            --draft \
+            --title "v${{ steps.version.outputs.version }}" \
+            --generate-notes
+
+  # Build binaries for each platform (all native runners)
+  build:
+    name: Build (${{ matrix.target }})
+    needs: create-release
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux x86_64
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+            archive: tar.gz
+
+          # Linux ARM64 (native runner)
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-24.04-arm
+            archive: tar.gz
+
+          # macOS x86_64 (Intel runner)
+          - target: x86_64-apple-darwin
+            os: macos-15-intel
+            archive: tar.gz
+
+          # macOS ARM64 (Apple Silicon)
+          - target: aarch64-apple-darwin
+            os: macos-15
+            archive: tar.gz
+
+          # Windows x86_64
+          - target: x86_64-pc-windows-msvc
+            os: windows-latest
+            archive: zip
+
+          # Windows ARM64
+          - target: aarch64-pc-windows-msvc
+            os: windows-11-arm
+            archive: zip
+
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          submodules: recursive
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9 # stable
+        with:
+          toolchain: stable
+
+      - name: Build release binary
+        run: cargo build --release --locked
+
+      - name: Determine binary name
+        id: binary
+        shell: bash
+        run: |
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            echo "name=exif-oxide.exe" >> "$GITHUB_OUTPUT"
+          else
+            echo "name=exif-oxide" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Strip binary (Unix)
+        if: runner.os != 'Windows'
+        run: strip "target/release/${{ steps.binary.outputs.name }}"
+
+      - name: Create archive
+        id: archive
+        shell: bash
+        run: |
+          VERSION="${{ needs.create-release.outputs.version }}"
+          ARCHIVE_NAME="exif-oxide-$VERSION-${{ matrix.target }}"
+          BINARY="target/release/${{ steps.binary.outputs.name }}"
+
+          mkdir -p "$ARCHIVE_NAME"
+          cp "$BINARY" "$ARCHIVE_NAME/"
+          cp README.md LICENSE "$ARCHIVE_NAME/" 2>/dev/null || true
+
+          if [ "${{ matrix.archive }}" = "zip" ]; then
+            7z a "$ARCHIVE_NAME.zip" "$ARCHIVE_NAME"
+            echo "path=$ARCHIVE_NAME.zip" >> "$GITHUB_OUTPUT"
+          else
+            tar czf "$ARCHIVE_NAME.tar.gz" "$ARCHIVE_NAME"
+            echo "path=$ARCHIVE_NAME.tar.gz" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate SHA256 checksum
+        shell: bash
+        run: |
+          ARCHIVE="${{ steps.archive.outputs.path }}"
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            certutil -hashfile "$ARCHIVE" SHA256 | grep -v "hash" > "$ARCHIVE.sha256"
+          else
+            shasum -a 256 "$ARCHIVE" > "$ARCHIVE.sha256"
+          fi
+
+      - name: Upload artifacts to release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "v${{ needs.create-release.outputs.version }}" \
+            "${{ steps.archive.outputs.path }}" \
+            "${{ steps.archive.outputs.path }}.sha256"
+
+  # Publish the release once all builds complete
+  publish-release:
+    name: Publish Release
+    needs: [create-release, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release edit "v${{ needs.create-release.outputs.version }}" --draft=false

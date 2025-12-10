@@ -83,6 +83,30 @@ Complex processing logic is carefully hand-ported with ExifTool source reference
 
 This hybrid approach ensures perfect compatibility with ExifTool's 25+ years of camera-specific quirks while maintaining a maintainable codebase that can track ExifTool's monthly updates. See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for technical details.
 
+## Installation
+
+### Pre-built binaries (recommended)
+
+Download from [GitHub Releases](https://github.com/photostructure/exif-oxide/releases) - binaries available for:
+
+| Platform | Architecture |
+|----------|--------------|
+| Linux    | x86_64, ARM64 |
+| macOS    | Intel, Apple Silicon |
+| Windows  | x86_64, ARM64 |
+
+### Using cargo-binstall
+
+```bash
+cargo binstall exif-oxide
+```
+
+### From source
+
+```bash
+cargo install exif-oxide
+```
+
 ## Usage
 
 ```bash

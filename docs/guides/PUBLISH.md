@@ -24,7 +24,7 @@ The following has been configured:
 ### 2. Automated Release System
 
 - **File**: `.github/workflows/release-plz.yml`
-- **Configuration**: `release-plz.toml`, `cliff.toml`
+- **Configuration**: `release-plz.toml`
 - **Features**: Automatic version bumps, changelog generation, GitHub releases
 
 ### 3. Dependency Management
@@ -146,14 +146,6 @@ Controls release behavior:
 - Changelog generation
 - GitHub release creation
 - PR template
-
-### cliff.toml
-
-Controls changelog generation:
-
-- Commit parsing rules
-- Section grouping
-- Format templates
 
 ## Troubleshooting
 
