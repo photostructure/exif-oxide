@@ -26,7 +26,7 @@ pub fn validate_config(config_path: &Path, schema_path: &Path) -> Result<()> {
 
     // Create the validator
     let validator = jsonschema::validator_for(&schema)
-        .map_err(|e| anyhow::anyhow!("Failed to compile schema: {}", e))?;
+        .map_err(|e| anyhow::anyhow!("Failed to compile schema: {e}"))?;
 
     // Read the instance
     let instance_content = match fs::read_to_string(config_path) {

@@ -532,7 +532,7 @@ impl TagKitStrategy {
     ) -> Result<String> {
         // Parse the PPI JSON AST
         let ppi_ast =
-            parse_ppi_json(ast_value).map_err(|e| anyhow::anyhow!("PPI parsing failed: {}", e))?;
+            parse_ppi_json(ast_value).map_err(|e| anyhow::anyhow!("PPI parsing failed: {e}"))?;
 
         // Create usage context
         let usage_context = Some(crate::ppi::fn_registry::UsageContext {
