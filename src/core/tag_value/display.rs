@@ -1,6 +1,6 @@
 //! Display formatting implementation for TagValue
 
-use super::TagValue;
+use crate::core::TagValue;
 use std::fmt;
 
 impl fmt::Display for TagValue {

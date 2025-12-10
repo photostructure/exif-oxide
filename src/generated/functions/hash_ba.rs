@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -45,7 +45,7 @@ pub fn ast_print_ba0399c7192e8c6c(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// TODO: Add support for this expression pattern
 pub fn ast_print_ba991dc311849c0d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
+    crate::core::missing::missing_print_conv(
                     0, // tag_id will be filled at runtime
                     "UnknownTag", // tag_name will be filled at runtime
                     "UnknownGroup", // group will be filled at runtime
@@ -71,6 +71,6 @@ pub fn ast_print_ba991dc311849c0d(val: &TagValue, ctx: Option<&ExifContext>) -> 
 pub fn ast_value_ba67c805f3851db9(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     crate::implementations::value_conv::gps_coordinate_value_conv(val, ctx)
 }

@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -21,7 +21,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// - Sony::Tag9404b.LensZoomPosition
 /// - Sony::Tag9405b.LensZoomPosition
 pub fn ast_print_8ca73d52cc1cee99(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.0f%%", &[val / 10.24f64]))
+    TagValue::String(crate::core::sprintf_perl("%.0f%%", &[val / 10.24f64]))
 }
 
 /// Original perl expression:
@@ -32,7 +32,7 @@ pub fn ast_print_8ca73d52cc1cee99(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Sony::Tag9050c.ShutterCount
 /// - Sony::Tag9050d.ShutterCount
 pub fn ast_print_8cb98c82cbc27d63(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%6d", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%6d", &[val.clone()]))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -46,7 +46,7 @@ pub fn ast_print_8cb98c82cbc27d63(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// TODO: Add support for this expression pattern
 pub fn ast_print_8c8ef9aa17053210(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
+    crate::core::missing::missing_print_conv(
         0,                                        // tag_id will be filled at runtime
         "UnknownTag",                             // tag_name will be filled at runtime
         "UnknownGroup",                           // group will be filled at runtime
@@ -66,7 +66,7 @@ pub fn ast_print_8c8ef9aa17053210(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// TODO: Add support for this expression pattern
 pub fn ast_print_8cf1d70236b67272(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
+    crate::core::missing::missing_print_conv(
         0,                      // tag_id will be filled at runtime
         "UnknownTag",           // tag_name will be filled at runtime
         "UnknownGroup",         // group will be filled at runtime
@@ -99,7 +99,7 @@ pub fn ast_print_8cf1d70236b67272(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// TODO: Add support for this expression pattern
 pub fn ast_print_8cb1f3f2fa77517f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
+    crate::core::missing::missing_print_conv(
         0,              // tag_id will be filled at runtime
         "UnknownTag",   // tag_name will be filled at runtime
         "UnknownGroup", // group will be filled at runtime

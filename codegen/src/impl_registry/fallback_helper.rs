@@ -100,7 +100,7 @@ fn generate_valueconv_function(
         /// ``` perl
         /// {}
         /// ```
-        pub fn {}(val: &TagValue, ctx: Option<&ExifContext>) -> Result<TagValue, codegen_runtime::types::ExifError> {{
+        pub fn {}(val: &TagValue, ctx: Option<&ExifContext>) -> Result<TagValue, crate::core::types::ExifError> {{
             {}(val, ctx)
         }}
     "#, escaped_expr, function_name, function_path}

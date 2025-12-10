@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod sprintf_split_tests {
-    use crate::fmt::sprintf_split_values;
-    use crate::TagValue;
+    use crate::core::fmt::sprintf_split_values;
+    use crate::core::TagValue;
 
     #[test]
     fn test_sprintf_split_format() {
@@ -25,8 +25,8 @@ mod sprintf_split_tests {
     #[test]
     fn test_sprintf_split_float_values() {
         // Test with actual float values
-        let values = vec![TagValue::F64(3.14159), TagValue::F64(2.71828)];
+        let values = vec![TagValue::F64(1.23456), TagValue::F64(7.89012)];
         let result = sprintf_split_values("%.3f x %.3f mm", &values);
-        assert_eq!(result, "3.142 x 2.718 mm");
+        assert_eq!(result, "1.235 x 7.890 mm");
     }
 }

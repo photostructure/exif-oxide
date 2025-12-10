@@ -193,7 +193,7 @@ pub trait BinaryOperationsHandler {
             let left_wrapped = wrap_literal_for_tagvalue(&left_processed);
             let right_wrapped = wrap_literal_for_tagvalue(&right_processed);
             return Ok(format!(
-                "codegen_runtime::power({left_wrapped}, {right_wrapped})"
+                "crate::core::power({left_wrapped}, {right_wrapped})"
             ));
         }
 
@@ -203,7 +203,7 @@ pub trait BinaryOperationsHandler {
             let left_wrapped = wrap_for_string_concat(&left_processed);
             let right_wrapped = wrap_for_string_concat(&right_processed);
             return Ok(format!(
-                "codegen_runtime::string::concat(&{left_wrapped}, &{right_wrapped})"
+                "crate::core::string::concat(&{left_wrapped}, &{right_wrapped})"
             ));
         }
 

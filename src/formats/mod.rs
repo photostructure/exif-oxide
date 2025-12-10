@@ -1209,7 +1209,7 @@ pub fn extract_metadata(
 
     // Collect any missing PrintConv/ValueConv implementations for --show-missing functionality
     let missing_implementations = if show_missing {
-        let missing_convs = codegen_runtime::missing::get_missing_conversions();
+        let missing_convs = crate::core::missing::get_missing_conversions();
 
         if missing_convs.is_empty() {
             None
@@ -1231,10 +1231,7 @@ pub fn extract_metadata(
             for (expr, tag_info) in grouped {
                 let conv_type = if missing_convs.iter().any(|m| {
                     m.expression == expr
-                        && matches!(
-                            m.conv_type,
-                            codegen_runtime::missing::ConversionType::PrintConv
-                        )
+                        && matches!(m.conv_type, crate::core::missing::ConversionType::PrintConv)
                 }) {
                     "PrintConv"
                 } else {

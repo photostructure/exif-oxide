@@ -46,7 +46,7 @@ fn generate_regular_signature(expression_type: &ExpressionType, function_name: &
         }
         ExpressionType::ValueConv => {
             format!(
-                "pub fn {function_name}(val: &TagValue, ctx: Option<&ExifContext>) -> Result<TagValue, codegen_runtime::types::ExifError>"
+                "pub fn {function_name}(val: &TagValue, ctx: Option<&ExifContext>) -> Result<TagValue, crate::core::types::ExifError>"
             )
         }
         ExpressionType::PrintConv => {
@@ -85,14 +85,14 @@ fn generate_composite_signature(expression_type: &ExpressionType, function_name:
     match expression_type {
         ExpressionType::ValueConv => {
             format!(
-                "{allow_attrs}\npub fn {function_name}(vals: &[TagValue], prts: &[TagValue], raws: &[TagValue], ctx: Option<&ExifContext>) -> Result<TagValue, codegen_runtime::types::ExifError>"
+                "{allow_attrs}\npub fn {function_name}(vals: &[TagValue], prts: &[TagValue], raws: &[TagValue], ctx: Option<&ExifContext>) -> Result<TagValue, crate::core::types::ExifError>"
             )
         }
         ExpressionType::PrintConv => {
             // PrintConv in composite context also takes the slices but returns Result
             // to maintain consistency with CompositeValueConvFn/CompositePrintConvFn types
             format!(
-                "{allow_attrs}\npub fn {function_name}(vals: &[TagValue], prts: &[TagValue], raws: &[TagValue], ctx: Option<&ExifContext>) -> Result<TagValue, codegen_runtime::types::ExifError>"
+                "{allow_attrs}\npub fn {function_name}(vals: &[TagValue], prts: &[TagValue], raws: &[TagValue], ctx: Option<&ExifContext>) -> Result<TagValue, crate::core::types::ExifError>"
             )
         }
         ExpressionType::Condition => {

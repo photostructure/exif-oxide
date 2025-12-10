@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -21,7 +21,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 pub fn ast_value_133a2729aa715f5f(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok((val & 0xffffffu32) + 1i32)
 }
 
@@ -34,7 +34,7 @@ pub fn ast_value_133a2729aa715f5f(
 /// - Sony::ExtraInfo3.BatteryVoltage1
 /// - Sony::ExtraInfo3.BatteryVoltage2
 pub fn ast_print_139aec60e3135c33(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.2f V", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%.2f V", &[val.clone()]))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -53,9 +53,9 @@ pub fn ast_print_139aec60e3135c33(val: &TagValue, ctx: Option<&ExifContext>) -> 
 pub fn ast_value_135828bb10970bc4(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
+    Ok(crate::core::missing::missing_value_conv(
         0,                                       // tag_id will be filled at runtime
         "UnknownTag",                            // tag_name will be filled at runtime
         "UnknownGroup",                          // group will be filled at runtime
@@ -86,6 +86,6 @@ pub fn ast_value_135828bb10970bc4(
 pub fn ast_value_1304121df5fd2971(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     crate::implementations::value_conv::reference_very_long_string_value_conv(val, ctx)
 }

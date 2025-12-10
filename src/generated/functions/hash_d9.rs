@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -26,7 +26,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 pub fn ast_value_d99cb324d081e015(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if (ctx
             .and_then(|c| c.get_data_member("TimeScale").cloned())
@@ -68,9 +68,9 @@ pub fn ast_print_d901a6256d76c6f4(val: &TagValue, ctx: Option<&ExifContext>) -> 
 pub fn ast_value_d91b1f7aca0906fb(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
+    Ok(crate::core::missing::missing_value_conv(
         0,              // tag_id will be filled at runtime
         "UnknownTag",   // tag_name will be filled at runtime
         "UnknownGroup", // group will be filled at runtime
@@ -91,9 +91,9 @@ pub fn ast_value_d91b1f7aca0906fb(
 pub fn ast_value_d93e86a41ac94e29(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
+    Ok(crate::core::missing::missing_value_conv(
         0,                                                              // tag_id will be filled at runtime
         "UnknownTag",   // tag_name will be filled at runtime
         "UnknownGroup", // group will be filled at runtime

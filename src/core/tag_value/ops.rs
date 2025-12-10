@@ -3,7 +3,7 @@
 //! Implements std::ops traits to enable arithmetic operations on TagValue.
 //! Follows ExifTool's type coercion rules for numeric operations.
 
-use super::TagValue;
+use crate::core::TagValue;
 use std::cmp::Ordering;
 use std::ops::{Add, BitAnd, Div, Mul, Neg, Shr, Sub};
 

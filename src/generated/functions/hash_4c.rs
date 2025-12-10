@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -26,7 +26,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 pub fn ast_value_4cda13c3b726a013(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(val + 3i32)
 }
 
@@ -38,7 +38,7 @@ pub fn ast_value_4cda13c3b726a013(
 /// - Nikon::MenuSettingsZ9v4.ExposureDelay
 pub fn ast_print_4c50ec508ecbbcc6(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val.is_truthy() {
-        TagValue::String(codegen_runtime::sprintf_perl("%.1f sec", &[val / 1000i32]))
+        TagValue::String(crate::core::sprintf_perl("%.1f sec", &[val / 1000i32]))
     } else {
         Into::<TagValue>::into("Off")
     }
@@ -58,7 +58,7 @@ pub fn ast_print_4c50ec508ecbbcc6(val: &TagValue, ctx: Option<&ExifContext>) -> 
 pub fn ast_value_4c77cbba764059d5(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(val / 6i32)
 }
 
@@ -74,9 +74,9 @@ pub fn ast_value_4c77cbba764059d5(
 pub fn ast_value_4cd6594ea26ecaa7(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
+    Ok(crate::core::missing::missing_value_conv(
         0,              // tag_id will be filled at runtime
         "UnknownTag",   // tag_name will be filled at runtime
         "UnknownGroup", // group will be filled at runtime

@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -32,10 +32,8 @@ pub fn ast_print_1f1f8b932218fcc3(val: &TagValue, ctx: Option<&ExifContext>) -> 
 pub fn ast_value_1fe8870e96a60dd1(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(codegen_runtime::exp(
-        val / 192i32 * codegen_runtime::log(2i32),
-    ))
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::exp(val / 192i32 * crate::core::log(2i32)))
 }
 
 /// Original perl expression:
@@ -83,5 +81,5 @@ pub fn ast_value_1fe8870e96a60dd1(
 /// - Sony::Tag9405b.SonyISO
 /// - Sony::Tag9416.SonyISO
 pub fn ast_print_1f47b524bed353b1(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.0f", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%.0f", &[val.clone()]))
 }

@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -20,7 +20,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// - Sony::Tag940c.CameraE-mountVersion
 /// - Sony::Tag940c.LensE-mountVersion
 pub fn ast_print_d54898e66e3a2800(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl(
+    TagValue::String(crate::core::sprintf_perl(
         "%x.%.2x",
         &[val >> 8i32, val & 0xffu32],
     ))

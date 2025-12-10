@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -21,10 +21,10 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 pub fn ast_value_352ee918eb5bec40(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(codegen_runtime::string::concat(
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::string::concat(
         &TagValue::string("0x"),
-        &TagValue::Array(codegen_runtime::unpack_binary("H*", &val)),
+        &TagValue::Array(crate::core::unpack_binary("H*", &val)),
     ))
 }
 
@@ -39,7 +39,7 @@ pub fn ast_value_352ee918eb5bec40(
 /// TODO: Add support for this expression pattern
 pub fn ast_print_3575efbb289e3431(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
+    crate::core::missing::missing_print_conv(
         0,                                        // tag_id will be filled at runtime
         "UnknownTag",                             // tag_name will be filled at runtime
         "UnknownGroup",                           // group will be filled at runtime

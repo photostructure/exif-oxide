@@ -7,9 +7,9 @@
 //! - COMPOSITE_TAGS: Global registry of all composite tag definitions
 
 #[allow(unused_imports)]
-use codegen_runtime::types::ExifError;
+use crate::core::types::ExifError;
 #[allow(unused_imports)]
-use codegen_runtime::{CompositePrintConvFn, CompositeValueConvFn, ExifContext, TagValue};
+use crate::core::{CompositePrintConvFn, CompositeValueConvFn, ExifContext, TagValue};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
@@ -37,7 +37,7 @@ pub fn composite_valueconv_exif_aperture(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if (vals.first().cloned().unwrap_or(TagValue::Empty)).is_truthy() {
             vals.first().cloned().unwrap_or(TagValue::Empty).clone()
@@ -64,8 +64,8 @@ pub fn composite_valueconv_exif_circleofconfusion(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(codegen_runtime::sqrt(24i32 * 24i32 + 36i32 * 36i32)
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::sqrt(24i32 * 24i32 + 36i32 * 36i32)
         / vals.first().cloned().unwrap_or(TagValue::Empty)
         * 1440i32)
 }
@@ -87,8 +87,8 @@ pub fn composite_printconv_exif_circleofconfusion(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(TagValue::String(codegen_runtime::sprintf_perl(
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(TagValue::String(crate::core::sprintf_perl(
         "%.3f mm",
         &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
     )))
@@ -111,10 +111,10 @@ pub fn composite_printconv_exif_focallength35efl(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if (vals.get(1).cloned().unwrap_or(TagValue::Empty)).is_truthy() {
-            TagValue::String(codegen_runtime::sprintf_perl(
+            TagValue::String(crate::core::sprintf_perl(
                 "%.1f mm (35 mm equivalent: %.1f mm)",
                 &[
                     vals.first().cloned().unwrap_or(TagValue::Empty).clone(),
@@ -122,7 +122,7 @@ pub fn composite_printconv_exif_focallength35efl(
                 ],
             ))
         } else {
-            TagValue::String(codegen_runtime::sprintf_perl(
+            TagValue::String(crate::core::sprintf_perl(
                 "%.1f mm",
                 &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
             ))
@@ -147,7 +147,7 @@ pub fn composite_printconv_exif_gpsposition(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String(format!(
         "{}, {}",
         prts.first().cloned().unwrap_or(TagValue::Empty),
@@ -172,8 +172,8 @@ pub fn composite_printconv_exif_hyperfocaldistance(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(TagValue::String(codegen_runtime::sprintf_perl(
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(TagValue::String(crate::core::sprintf_perl(
         "%.2f m",
         &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
     )))
@@ -196,7 +196,7 @@ pub fn composite_valueconv_exif_lensid(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(vals.first().cloned().unwrap_or(TagValue::Empty))
 }
 
@@ -217,8 +217,8 @@ pub fn composite_printconv_exif_lightvalue(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(TagValue::String(codegen_runtime::sprintf_perl(
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(TagValue::String(crate::core::sprintf_perl(
         "%.1f",
         &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
     )))
@@ -241,8 +241,8 @@ pub fn composite_printconv_exif_megapixels(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(TagValue::String(codegen_runtime::sprintf_perl(
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(TagValue::String(crate::core::sprintf_perl(
         "%.*f",
         &[
             if vals.first().cloned().unwrap_or(TagValue::Empty) >= 1i32 {
@@ -277,7 +277,7 @@ pub fn composite_valueconv_exif_previewimagesize(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String("$val[0]x$val[1]".to_string()))
 }
 
@@ -298,8 +298,8 @@ pub fn composite_printconv_exif_scalefactor35efl(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(TagValue::String(codegen_runtime::sprintf_perl(
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(TagValue::String(crate::core::sprintf_perl(
         "%.1f",
         &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
     )))
@@ -322,7 +322,7 @@ pub fn composite_valueconv_gps_gpsdatetime(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String("$val[0] $val[1]Z".to_string()))
 }
 
@@ -343,7 +343,7 @@ pub fn composite_valueconv_gps_gpsdestlatitude(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if {
             use regex::Regex;
@@ -353,7 +353,7 @@ pub fn composite_valueconv_gps_gpsdestlatitude(
             REGEX_F0BB09E88B6D529A
                 .is_match(&vals.get(1).cloned().unwrap_or(TagValue::Empty).to_string())
         } {
-            codegen_runtime::negate(vals.first().cloned().unwrap_or(TagValue::Empty))
+            crate::core::negate(vals.first().cloned().unwrap_or(TagValue::Empty))
         } else {
             vals.first().cloned().unwrap_or(TagValue::Empty)
         },
@@ -377,7 +377,7 @@ pub fn composite_valueconv_gps_gpsdestlongitude(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if {
             use regex::Regex;
@@ -387,7 +387,7 @@ pub fn composite_valueconv_gps_gpsdestlongitude(
             REGEX_7F53CDA04B3D5152
                 .is_match(&vals.get(1).cloned().unwrap_or(TagValue::Empty).to_string())
         } {
-            codegen_runtime::negate(vals.first().cloned().unwrap_or(TagValue::Empty))
+            crate::core::negate(vals.first().cloned().unwrap_or(TagValue::Empty))
         } else {
             vals.first().cloned().unwrap_or(TagValue::Empty)
         },
@@ -411,7 +411,7 @@ pub fn composite_valueconv_gps_gpslatitude(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if {
             use regex::Regex;
@@ -421,7 +421,7 @@ pub fn composite_valueconv_gps_gpslatitude(
             REGEX_F0BB09E88B6D529A
                 .is_match(&vals.get(1).cloned().unwrap_or(TagValue::Empty).to_string())
         } {
-            codegen_runtime::negate(vals.first().cloned().unwrap_or(TagValue::Empty))
+            crate::core::negate(vals.first().cloned().unwrap_or(TagValue::Empty))
         } else {
             vals.first().cloned().unwrap_or(TagValue::Empty)
         },
@@ -445,7 +445,7 @@ pub fn composite_valueconv_gps_gpslongitude(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if {
             use regex::Regex;
@@ -455,7 +455,7 @@ pub fn composite_valueconv_gps_gpslongitude(
             REGEX_7F53CDA04B3D5152
                 .is_match(&vals.get(1).cloned().unwrap_or(TagValue::Empty).to_string())
         } {
-            codegen_runtime::negate(vals.first().cloned().unwrap_or(TagValue::Empty))
+            crate::core::negate(vals.first().cloned().unwrap_or(TagValue::Empty))
         } else {
             vals.first().cloned().unwrap_or(TagValue::Empty)
         },
@@ -479,7 +479,7 @@ pub fn composite_valueconv_iptc_datetimecreated(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String("$val[0] $val[1]".to_string()))
 }
 
@@ -500,7 +500,7 @@ pub fn composite_valueconv_iptc_digitalcreationdatetime(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String("$val[0] $val[1]".to_string()))
 }
 
@@ -521,7 +521,7 @@ pub fn composite_valueconv_apple_runtimesincepowerup(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if (vals.get(1).cloned().unwrap_or(TagValue::Empty)).is_truthy() {
             vals.first().cloned().unwrap_or(TagValue::Empty)
@@ -549,7 +549,7 @@ pub fn composite_valueconv_canon_conditionalfec(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(vals.first().cloned().unwrap_or(TagValue::Empty))
 }
 
@@ -570,7 +570,7 @@ pub fn composite_printconv_canon_conditionalfec(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(prts.first().cloned().unwrap_or(TagValue::Empty))
 }
 
@@ -591,8 +591,8 @@ pub fn composite_printconv_canon_digitalzoom(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(TagValue::String(codegen_runtime::sprintf_perl(
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(TagValue::String(crate::core::sprintf_perl(
         "%.2fx",
         &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
     )))
@@ -615,7 +615,7 @@ pub fn composite_valueconv_canon_drivemode(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if (vals.first().cloned().unwrap_or(TagValue::Empty)).is_truthy() {
             Into::<TagValue>::into(0i32)
@@ -646,8 +646,8 @@ pub fn composite_printconv_canon_iso(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(TagValue::String(codegen_runtime::sprintf_perl(
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(TagValue::String(crate::core::sprintf_perl(
         "%.0f",
         &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
     )))
@@ -670,7 +670,7 @@ pub fn composite_valueconv_canon_lens(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(vals.first().cloned().unwrap_or(TagValue::Empty))
 }
 
@@ -691,7 +691,7 @@ pub fn composite_valueconv_canon_lens35efl(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(vals.get(3).cloned().unwrap_or(TagValue::Empty)
         * if (vals.get(2).cloned().unwrap_or(TagValue::Empty)).is_truthy() {
             vals.get(2).cloned().unwrap_or(TagValue::Empty)
@@ -717,7 +717,7 @@ pub fn composite_printconv_canon_shootingmode(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if vals.first().cloned().unwrap_or(TagValue::Empty).to_string() == "7" {
             Into::<TagValue>::into("Bulb")
@@ -748,7 +748,7 @@ pub fn composite_valueconv_kodak_datecreated(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String("$val[0]:$val[1]".to_string()))
 }
 
@@ -769,7 +769,7 @@ pub fn composite_valueconv_nikon_autofocus(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if {
             use regex::Regex;
@@ -803,7 +803,7 @@ pub fn composite_valueconv_nikon_lensspec(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String("$val[0] $val[1]".to_string()))
 }
 
@@ -824,7 +824,7 @@ pub fn composite_printconv_nikon_lensspec(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String(format!(
         "{} {}",
         prts.first().cloned().unwrap_or(TagValue::Empty),
@@ -849,7 +849,7 @@ pub fn composite_valueconv_nikon_phasedetectaf(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(if vals.get(1).cloned().unwrap_or(TagValue::Empty) == 0i32 {
         vals.first().cloned().unwrap_or(TagValue::Empty)
     } else {
@@ -874,7 +874,7 @@ pub fn composite_valueconv_olympus_lenstype(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String("$val[0] $val[1]".to_string()))
 }
 
@@ -895,7 +895,7 @@ pub fn composite_valueconv_panasonic_advancedscenemode(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String("$val[0] $val[1] $val[2]".to_string()))
 }
 
@@ -916,7 +916,7 @@ pub fn composite_valueconv_sony_focusdistance(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if vals.first().cloned().unwrap_or(TagValue::Empty) >= 128i32 {
             Into::<TagValue>::into("inf")
@@ -947,7 +947,7 @@ pub fn composite_printconv_sony_focusdistance(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if vals.first().cloned().unwrap_or(TagValue::Empty).to_string() == "inf" {
             vals.first().cloned().unwrap_or(TagValue::Empty)
@@ -977,12 +977,12 @@ pub fn composite_printconv_sony_focusdistance2(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if vals.first().cloned().unwrap_or(TagValue::Empty).to_string() == "inf" {
             vals.first().cloned().unwrap_or(TagValue::Empty)
         } else {
-            TagValue::String(codegen_runtime::sprintf_perl(
+            TagValue::String(crate::core::sprintf_perl(
                 "%.4g m",
                 &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
             ))
@@ -1007,7 +1007,7 @@ pub fn composite_valueconv_sony_gpsdatetime(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String("$val[0] $val[1]Z".to_string()))
 }
 
@@ -1028,7 +1028,7 @@ pub fn composite_valueconv_sony_gpslatitude(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if {
             use regex::Regex;
@@ -1038,7 +1038,7 @@ pub fn composite_valueconv_sony_gpslatitude(
             REGEX_F0BB09E88B6D529A
                 .is_match(&vals.get(1).cloned().unwrap_or(TagValue::Empty).to_string())
         } {
-            codegen_runtime::negate(vals.first().cloned().unwrap_or(TagValue::Empty))
+            crate::core::negate(vals.first().cloned().unwrap_or(TagValue::Empty))
         } else {
             vals.first().cloned().unwrap_or(TagValue::Empty)
         },
@@ -1062,7 +1062,7 @@ pub fn composite_valueconv_sony_gpslongitude(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(
         if {
             use regex::Regex;
@@ -1072,7 +1072,7 @@ pub fn composite_valueconv_sony_gpslongitude(
             REGEX_7F53CDA04B3D5152
                 .is_match(&vals.get(1).cloned().unwrap_or(TagValue::Empty).to_string())
         } {
-            codegen_runtime::negate(vals.first().cloned().unwrap_or(TagValue::Empty))
+            crate::core::negate(vals.first().cloned().unwrap_or(TagValue::Empty))
         } else {
             vals.first().cloned().unwrap_or(TagValue::Empty)
         },
@@ -1096,7 +1096,7 @@ pub fn composite_valueconv_panasonicraw_imageheight(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(vals.get(1).cloned().unwrap_or(TagValue::Empty))
 }
 
@@ -1117,7 +1117,7 @@ pub fn composite_valueconv_panasonicraw_imagewidth(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(vals.get(1).cloned().unwrap_or(TagValue::Empty))
 }
 
@@ -1138,7 +1138,7 @@ pub fn composite_printconv_quicktime_gpsaltitude(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(Into::<TagValue>::into(format!(
         "{} m",
         vals.first().cloned().unwrap_or(TagValue::Empty)
@@ -1162,7 +1162,7 @@ pub fn composite_printconv_quicktime_gpsaltitude2(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(Into::<TagValue>::into(format!(
         "{} m",
         vals.first().cloned().unwrap_or(TagValue::Empty)
@@ -1186,7 +1186,7 @@ pub fn composite_valueconv_xmp_lensid(
     prts: &[TagValue],
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(vals.first().cloned().unwrap_or(TagValue::Empty))
 }
 

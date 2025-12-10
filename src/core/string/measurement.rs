@@ -3,7 +3,7 @@
 //! This module provides functions for measuring string properties like length,
 //! following Perl's exact behavior for compatibility with ExifTool expressions.
 
-use crate::TagValue;
+use crate::core::TagValue;
 
 /// Perl length() function - returns the length of a string
 ///
@@ -19,7 +19,7 @@ use crate::TagValue;
 ///
 /// # Example
 /// ```rust
-/// # use codegen_runtime::{TagValue, length_string, length_i32};
+/// # use exif_oxide::core::{TagValue, length_string, length_i32};
 /// assert_eq!(length_string(TagValue::String("hello".to_string())), TagValue::String("5".to_string()));
 /// assert_eq!(length_i32(TagValue::String("hello".to_string())), TagValue::I32(5));
 /// ```

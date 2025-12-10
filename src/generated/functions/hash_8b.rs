@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -19,5 +19,5 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// Used by:
 /// - Sony::SR2Private.SR2SubIFDKey
 pub fn ast_print_8b98163e01aaf11a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("0x%.8x", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("0x%.8x", &[val.clone()]))
 }

@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -23,7 +23,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// TODO: Add support for this expression pattern
 pub fn ast_print_d696298f086bdf8(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
+    crate::core::missing::missing_print_conv(
         0,                                          // tag_id will be filled at runtime
         "UnknownTag",                               // tag_name will be filled at runtime
         "UnknownGroup",                             // group will be filled at runtime
@@ -49,9 +49,9 @@ pub fn ast_print_d696298f086bdf8(val: &TagValue, ctx: Option<&ExifContext>) -> T
 pub fn ast_value_d672478fdfe542fd(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
+    Ok(crate::core::missing::missing_value_conv(
         0,                                                        // tag_id will be filled at runtime
         "UnknownTag",   // tag_name will be filled at runtime
         "UnknownGroup", // group will be filled at runtime
@@ -74,7 +74,7 @@ pub fn ast_value_d672478fdfe542fd(
 /// TODO: Add support for this expression pattern
 pub fn ast_print_d62478e414288a45(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
+    crate::core::missing::missing_print_conv(
                     0, // tag_id will be filled at runtime
                     "UnknownTag", // tag_name will be filled at runtime
                     "UnknownGroup", // group will be filled at runtime

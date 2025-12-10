@@ -4,7 +4,7 @@
 /// - Missing arguments become 0 (with Perl warnings, but we handle gracefully)
 /// - Extra arguments are ignored
 /// - Format specifiers are replaced in order
-use crate::TagValue;
+use crate::core::TagValue;
 use std::collections::VecDeque;
 
 /// Perl-compatible sprintf that handles any number of arguments
@@ -13,7 +13,7 @@ use std::collections::VecDeque;
 ///
 /// # Examples
 /// ```
-/// use codegen_runtime::{TagValue, fmt::sprintf_perl};
+/// use exif_oxide::core::{TagValue, fmt::sprintf_perl};
 ///
 /// let result = sprintf_perl("%.3f x %.3f mm", &[TagValue::F64(1.234), TagValue::F64(5.678)]);
 /// assert_eq!(result, "1.234 x 5.678 mm");

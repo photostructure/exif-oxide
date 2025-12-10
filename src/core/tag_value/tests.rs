@@ -1,6 +1,6 @@
 //! Tests for TagValue functionality
 
-use super::TagValue;
+use crate::core::TagValue;
 
 #[test]
 fn test_string_creation() {

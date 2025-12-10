@@ -7,7 +7,7 @@ pub mod unpack;
 
 pub use unpack::unpack_binary;
 
-use crate::TagValue;
+use crate::core::TagValue;
 
 /// Join a vector of TagValues with a separator
 ///
@@ -20,7 +20,7 @@ use crate::TagValue;
 ///
 /// # Example
 /// ```rust
-/// # use codegen_runtime::{TagValue, join_vec};
+/// # use exif_oxide::core::{TagValue, join_vec};
 /// let values = vec![TagValue::String("a".into()), TagValue::String("b".into())];
 /// let result = join_vec(" ", &values);
 /// // Returns: TagValue::String("a b")
@@ -44,7 +44,7 @@ pub fn join_vec(separator: &str, values: &[TagValue]) -> TagValue {
 ///
 /// # Example
 /// ```rust
-/// # use codegen_runtime::{TagValue, pack_c_star_bit_extract};
+/// # use exif_oxide::core::{TagValue, pack_c_star_bit_extract};
 /// // Equivalent to: pack "C*", map { (($val>>$_)&0x1f)+0x60 } 10, 5, 0
 /// let result = pack_c_star_bit_extract(&TagValue::I32(0x1234), &[10, 5, 0], 0x1f, 0x60);
 /// ```
@@ -78,7 +78,7 @@ pub fn pack_c_star_bit_extract(val: &TagValue, shifts: &[i32], mask: i32, offset
 ///
 /// # Example
 /// ```rust
-/// # use codegen_runtime::{TagValue, join_unpack_binary};
+/// # use exif_oxide::core::{TagValue, join_unpack_binary};
 /// // Equivalent to: join " ", unpack "H2H2", val
 /// let result = join_unpack_binary(" ", "H2H2", &TagValue::Binary(vec![0xAB, 0xCD]));
 /// // Returns: TagValue::String("ab cd")
@@ -144,6 +144,6 @@ mod tests {
         let result = pack_c_star_bit_extract(&TagValue::I32(0x1F), &[0], 0x1F, 0x40);
         // (0x1F >> 0) & 0x1F + 0x40 = 0x1F + 0x40 = 0x5F
         // Should pack as byte [0x5F] → string
-        assert!(result.to_string().len() > 0); // Should produce some output
+        assert!(!result.to_string().is_empty()); // Should produce some output
     }
 }

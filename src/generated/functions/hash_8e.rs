@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -82,7 +82,7 @@ pub fn ast_print_8e4e6485519821cd(val: &TagValue, ctx: Option<&ExifContext>) -> 
 pub fn ast_value_8e281e57f268ff8(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(val / 10i32)
 }
 
@@ -95,9 +95,9 @@ pub fn ast_value_8e281e57f268ff8(
 pub fn ast_value_8e44f9d07063045d(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok({
-        let (success, modified_val) = codegen_runtime::regex_substitute_perl(r" 1$", "", val);
+        let (success, modified_val) = crate::core::regex_substitute_perl(r" 1$", "", val);
         if success {
             let val = &modified_val;
             val / 10i32
@@ -119,9 +119,9 @@ pub fn ast_value_8e44f9d07063045d(
 pub fn ast_value_8e0f058500d5dea1(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
+    Ok(crate::core::missing::missing_value_conv(
         0,                                           // tag_id will be filled at runtime
         "UnknownTag",                                // tag_name will be filled at runtime
         "UnknownGroup",                              // group will be filled at runtime

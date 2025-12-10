@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -19,7 +19,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// Used by:
 /// - SonyIDC::Main.BrightnessAdj
 pub fn ast_print_3acf3ecd771b5e1d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.2f", &[val / 300i32]))
+    TagValue::String(crate::core::sprintf_perl("%.2f", &[val / 300i32]))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -89,7 +89,7 @@ pub fn ast_print_3acf3ecd771b5e1d(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// TODO: Add support for this expression pattern
 pub fn ast_print_3a205edef25c6138(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
+    crate::core::missing::missing_print_conv(
         0,                              // tag_id will be filled at runtime
         "UnknownTag",                   // tag_name will be filled at runtime
         "UnknownGroup",                 // group will be filled at runtime

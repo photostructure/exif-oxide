@@ -1,5 +1,5 @@
 [workspace]
-members = [".", "codegen", "codegen-runtime"]
+members = [".", "codegen"]
 resolver = "2"
 
 [package]
@@ -52,9 +52,6 @@ module_name_repetitions = "allow"
 non_snake_case = "allow"
 
 [dependencies]
-# Runtime support for generated code
-codegen-runtime = { path = "./codegen-runtime" }
-
 byteorder = "1.5" # Efficient endian handling
 thiserror = "2.0" # Error handling
 anyhow = "1.0" # Error handling in examples/tests
@@ -102,6 +99,11 @@ lto = true        # Link-time optimization
 codegen-units = 1 # Single codegen unit for better optimization
 strip = true      # Strip symbols automatically
 panic = "abort"   # Smaller binary, faster panic
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"
 
 [[bin]]
 name = "exif-oxide"

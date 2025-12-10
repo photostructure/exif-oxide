@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -19,7 +19,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// Used by:
 /// - Sony::Tag940c.LensFirmwareVersion
 pub fn ast_print_c23821edccdd4b5c(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl(
+    TagValue::String(crate::core::sprintf_perl(
         "Ver.%.2x.%.3d",
         &[val >> 8i32, val & 0xffu32],
     ))
@@ -38,9 +38,9 @@ pub fn ast_print_c23821edccdd4b5c(val: &TagValue, ctx: Option<&ExifContext>) -> 
 pub fn ast_value_c215f0f9463fb4(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
+    Ok(crate::core::missing::missing_value_conv(
         0,                      // tag_id will be filled at runtime
         "UnknownTag",           // tag_name will be filled at runtime
         "UnknownGroup",         // group will be filled at runtime
@@ -62,9 +62,9 @@ pub fn ast_value_c215f0f9463fb4(
 pub fn ast_value_c24b98dfe8227aef(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
+    Ok(crate::core::missing::missing_value_conv(
         0,                                 // tag_id will be filled at runtime
         "UnknownTag",                      // tag_name will be filled at runtime
         "UnknownGroup",                    // group will be filled at runtime

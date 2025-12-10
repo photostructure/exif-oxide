@@ -3,7 +3,7 @@
 //! These functions provide idiomatic alternatives to repetitive string operations
 //! while maintaining ExifTool compatibility.
 
-use crate::TagValue;
+use crate::core::TagValue;
 
 /// Create a TagValue::String from any string-like input
 ///
@@ -16,7 +16,7 @@ pub fn tag_string<S: Into<String>>(s: S) -> TagValue {
 ///
 /// Replaces repetitive `TagValue::String(format!(...))` patterns
 pub fn format_tag(template: &str, args: &[TagValue]) -> TagValue {
-    let formatted = crate::fmt::sprintf_perl(template, args);
+    let formatted = crate::core::fmt::sprintf_perl(template, args);
     TagValue::String(formatted)
 }
 

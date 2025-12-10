@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -23,6 +23,6 @@ pub fn ast_print_1ed22ecb53d91772(val: &TagValue, ctx: Option<&ExifContext>) -> 
     if val == 0i32 {
         Into::<TagValue>::into("No Delay")
     } else {
-        TagValue::String(codegen_runtime::sprintf_perl("%.0f sec", &[val.clone()]))
+        TagValue::String(crate::core::sprintf_perl("%.0f sec", &[val.clone()]))
     }
 }

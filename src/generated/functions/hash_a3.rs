@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -21,5 +21,5 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// - Photoshop::Resolution.XResolution
 /// - Photoshop::Resolution.YResolution
 pub fn ast_print_a30bb45410af5d6d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    codegen_runtime::int(val * 100i32 + 0.5f64) / 100i32 as f64
+    crate::core::int(val * 100i32 + 0.5f64) / 100i32 as f64
 }

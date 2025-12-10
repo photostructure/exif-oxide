@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -60,7 +60,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 pub fn ast_value_6a2b983323e78027(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(val + 1i32)
 }
 
@@ -74,7 +74,7 @@ pub fn ast_print_6aba033c223c39a4(val: &TagValue, ctx: Option<&ExifContext>) -> 
     if val == 255i32 {
         Into::<TagValue>::into("Strobe or Misfire")
     } else {
-        TagValue::String(codegen_runtime::sprintf_perl("%.0f%%", &[val * 100i32]))
+        TagValue::String(crate::core::sprintf_perl("%.0f%%", &[val * 100i32]))
     }
 }
 
@@ -95,10 +95,10 @@ pub fn ast_print_6aba033c223c39a4(val: &TagValue, ctx: Option<&ExifContext>) -> 
 pub fn ast_value_6a9f49c55c6fe127(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(codegen_runtime::power(
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::power(
         Into::<TagValue>::into(2i32),
-        Into::<TagValue>::into(codegen_runtime::negate(val) / 3i32),
+        Into::<TagValue>::into(crate::core::negate(val) / 3i32),
     ))
 }
 
@@ -114,9 +114,9 @@ pub fn ast_value_6a9f49c55c6fe127(
 pub fn ast_value_6a713bfccf5dd9c(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
+    Ok(crate::core::missing::missing_value_conv(
         0,                       // tag_id will be filled at runtime
         "UnknownTag",            // tag_name will be filled at runtime
         "UnknownGroup",          // group will be filled at runtime

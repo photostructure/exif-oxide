@@ -6,12 +6,9 @@
 use codegen::ppi::fn_registry::{PpiFunctionRegistry, UsageContext};
 use codegen::ppi::shared_pipeline::call_ppi_ast_script;
 use codegen::ppi::{ExpressionType, PpiNode};
-use codegen_runtime::missing::clear_missing_conversions;
 
 #[test]
 fn test_foreach_expression_generates_placeholder() {
-    clear_missing_conversions();
-
     let mut registry = PpiFunctionRegistry::new();
 
     // Perl foreach expression that we can't translate
@@ -38,7 +35,7 @@ fn test_foreach_expression_generates_placeholder() {
     // Generate function files
     let files = registry
         .generate_function_files_with_imports(
-            "use codegen_runtime::{TagValue, missing}; use codegen_runtime::types::{ExifContext, ExifError}"
+            "use crate::core::{TagValue, missing}; use crate::core::types::{ExifContext, ExifError}"
         )
         .expect("Failed to generate function files");
 
@@ -83,7 +80,7 @@ fn test_tr_operator_generates_placeholder() {
     // Generate function files
     let files = registry
         .generate_function_files_with_imports(
-            "use codegen_runtime::{TagValue, missing}; use codegen_runtime::types::{ExifContext, ExifError}"
+            "use crate::core::{TagValue, missing}; use crate::core::types::{ExifContext, ExifError}"
         )
         .expect("Failed to generate function files");
 
@@ -134,7 +131,7 @@ return(($a{$a} || "Unknown ($a)") . ', Shot ' . $b);"#;
     // Generate function files
     let files = registry
         .generate_function_files_with_imports(
-            "use codegen_runtime::{TagValue, missing}; use codegen_runtime::types::{ExifContext, ExifError}"
+            "use crate::core::{TagValue, missing}; use crate::core::types::{ExifContext, ExifError}"
         )
         .expect("Failed to generate function files");
 
@@ -180,7 +177,7 @@ fn test_exiftool_function_call_generates_placeholder() {
     // Generate function files
     let files = registry
         .generate_function_files_with_imports(
-            "use codegen_runtime::{TagValue, missing}; use codegen_runtime::types::{ExifContext, ExifError}"
+            "use crate::core::{TagValue, missing}; use crate::core::types::{ExifContext, ExifError}"
         )
         .expect("Failed to generate function files");
 

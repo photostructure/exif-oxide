@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -19,9 +19,9 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// Used by:
 /// - Ricoh::RDTL.GPSAltitude
 pub fn ast_print_f58cef9820a3c7fa(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    codegen_runtime::string::concat(
+    crate::core::string::concat(
         &{
-            let (success, modified_val) = codegen_runtime::regex_substitute_perl(r"^-", "", val);
+            let (success, modified_val) = crate::core::regex_substitute_perl(r"^-", "", val);
             if success {
                 let val = &modified_val;
                 Into::<TagValue>::into(format!("{} m Below", val))

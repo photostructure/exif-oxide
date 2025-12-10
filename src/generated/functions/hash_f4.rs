@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -38,9 +38,9 @@ pub fn ast_print_f4716ca91121bc8d(val: &TagValue, ctx: Option<&ExifContext>) -> 
 pub fn ast_value_f4bd1553bca2b9aa(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
+    Ok(crate::core::missing::missing_value_conv(
         0,                                               // tag_id will be filled at runtime
         "UnknownTag",                                    // tag_name will be filled at runtime
         "UnknownGroup",                                  // group will be filled at runtime

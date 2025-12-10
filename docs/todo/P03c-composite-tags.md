@@ -589,7 +589,7 @@ grep -c "fn composite_valueconv_" src/generated/composite_tags.rs
    fn(vals: &[TagValue], prts: &[TagValue], raws: &[TagValue], ctx: Option<&ExifContext>) -> Result<TagValue>
    ```
 
-2. **Missing imports**: The generated file needs `use codegen_runtime::TagValue;`
+2. **Missing imports**: The generated file needs `use crate::core::TagValue;`
 
 3. **Inline AST**: Check if the JSON has `ValueConv_ast` (pre-parsed) or just `ValueConv` (needs `ppi_ast.pl`)
 
@@ -708,7 +708,7 @@ In codegen, when PPI fails:
 ```rust
 // Check if we have a manual fallback registered
 if let Some(fallback_fn) = COMPOSITE_FALLBACKS.get(composite_name) {
-    // Generate: value_conv_fn: Some(codegen_runtime::composite_fallbacks::composite_image_size)
+    // Generate: value_conv_fn: Some(crate::core::composite_fallbacks::composite_image_size)
 } else {
     // Generate: value_conv_fn: Some(missing_composite_value_conv) with warning
 }

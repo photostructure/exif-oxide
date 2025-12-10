@@ -7,7 +7,7 @@ pub mod sprintf;
 
 pub use sprintf::sprintf_perl;
 
-use crate::TagValue;
+use crate::core::TagValue;
 
 /// Format values from a split operation using a sprintf-style format string
 ///
@@ -95,7 +95,7 @@ fn apply_format(format_str: &str, values: &[String]) -> String {
 ///
 /// # Example
 /// ```
-/// use codegen_runtime::{TagValue, fmt::sprintf_with_string_concat_repeat};
+/// use exif_oxide::core::{TagValue, fmt::sprintf_with_string_concat_repeat};
 ///
 /// let result = sprintf_with_string_concat_repeat(
 ///     "%19d %4d %6d",
@@ -132,9 +132,9 @@ pub fn sprintf_with_string_concat_repeat(
 ///
 /// # Returns
 /// The original value with a warning comment in debug builds
-pub fn conservative_fallback(original_expression: &str, val: &TagValue) -> TagValue {
+pub fn conservative_fallback(_original_expression: &str, val: &TagValue) -> TagValue {
     #[cfg(debug_assertions)]
-    eprintln!("FALLBACK: Complex expression not fully parsed: {original_expression}");
+    eprintln!("FALLBACK: Complex expression not fully parsed: {_original_expression}");
 
     // Conservative approach: return the original value unchanged
     val.clone()

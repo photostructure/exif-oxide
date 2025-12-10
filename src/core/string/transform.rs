@@ -4,7 +4,7 @@
 //! regex operations that follow Perl's exact behavior for compatibility
 //! with ExifTool expressions.
 
-use crate::TagValue;
+use crate::core::TagValue;
 
 /// Simple regex replace function (wrapper around regex_substitute_perl)
 ///
@@ -34,7 +34,7 @@ pub fn regex_replace(pattern: &str, replacement: &str, input: &str) -> String {
 ///
 /// # Arguments
 /// * `pattern` - The regex pattern to match
-/// * `replacement` - The replacement string  
+/// * `replacement` - The replacement string
 /// * `val` - The TagValue to operate on
 ///
 /// # Returns
@@ -43,7 +43,7 @@ pub fn regex_replace(pattern: &str, replacement: &str, input: &str) -> String {
 ///
 /// # Example
 /// ```rust
-/// # use codegen_runtime::{TagValue, regex_substitute_perl};
+/// # use exif_oxide::core::{TagValue, regex_substitute_perl};
 /// let (success, result) = regex_substitute_perl(r" 1$", "", &TagValue::String("123 1".to_string()));
 /// assert_eq!(success, true);
 /// assert_eq!(result, TagValue::String("123".to_string()));
@@ -65,56 +65,6 @@ pub fn regex_substitute_perl(pattern: &str, replacement: &str, val: &TagValue) -
     } else {
         // No match - return original value unchanged
         (false, val.clone())
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_regex_substitute_perl() {
-        // Test successful substitution
-        let (success, result) =
-            regex_substitute_perl(r" 1$", "", &TagValue::String("123 1".to_string()));
-        assert_eq!(success, true);
-        assert_eq!(result, TagValue::String("123".to_string()));
-
-        // Test no match
-        let (success, result) =
-            regex_substitute_perl(r"xyz", "abc", &TagValue::String("hello".to_string()));
-        assert_eq!(success, false);
-        assert_eq!(result, TagValue::String("hello".to_string()));
-
-        // Test invalid regex pattern
-        let (success, result) =
-            regex_substitute_perl(r"[", "abc", &TagValue::String("hello".to_string()));
-        assert_eq!(success, false);
-        assert_eq!(result, TagValue::String("hello".to_string()));
-    }
-
-    #[test]
-    fn test_regex_substitute_perl_direct() {
-        // Debug what's happening with regex_substitute_perl directly
-        let (success, result) =
-            regex_substitute_perl("123", "X", &TagValue::String("hello 123 world".to_string()));
-        assert_eq!(success, true);
-        assert_eq!(result, TagValue::String("hello X world".to_string()));
-    }
-
-    #[test]
-    fn test_regex_replace() {
-        // Test successful replacement
-        let result = regex_replace(r"123", "X", "hello 123 world");
-        assert_eq!(result, "hello X world");
-
-        // Test no match - should return original string
-        let result = regex_replace(r"\d+", "X", "hello world");
-        assert_eq!(result, "hello world");
-
-        // Test invalid pattern - should return original string
-        let result = regex_replace(r"[", "X", "hello world");
-        assert_eq!(result, "hello world");
     }
 }
 
@@ -165,4 +115,54 @@ pub fn uc<T: Into<TagValue>>(input: T) -> TagValue {
         _ => val.to_string().to_uppercase(),
     };
     TagValue::String(s)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_regex_substitute_perl() {
+        // Test successful substitution
+        let (success, result) =
+            regex_substitute_perl(r" 1$", "", &TagValue::String("123 1".to_string()));
+        assert!(success);
+        assert_eq!(result, TagValue::String("123".to_string()));
+
+        // Test no match
+        let (success, result) =
+            regex_substitute_perl(r"xyz", "abc", &TagValue::String("hello".to_string()));
+        assert!(!success);
+        assert_eq!(result, TagValue::String("hello".to_string()));
+
+        // Test invalid regex pattern
+        let (success, result) =
+            regex_substitute_perl(r"[", "abc", &TagValue::String("hello".to_string()));
+        assert!(!success);
+        assert_eq!(result, TagValue::String("hello".to_string()));
+    }
+
+    #[test]
+    fn test_regex_substitute_perl_direct() {
+        // Debug what's happening with regex_substitute_perl directly
+        let (success, result) =
+            regex_substitute_perl("123", "X", &TagValue::String("hello 123 world".to_string()));
+        assert!(success);
+        assert_eq!(result, TagValue::String("hello X world".to_string()));
+    }
+
+    #[test]
+    fn test_regex_replace() {
+        // Test successful replacement
+        let result = regex_replace(r"123", "X", "hello 123 world");
+        assert_eq!(result, "hello X world");
+
+        // Test no match - should return original string
+        let result = regex_replace(r"\d+", "X", "hello world");
+        assert_eq!(result, "hello world");
+
+        // Test invalid pattern - should return original string
+        let result = regex_replace(r"[", "X", "hello world");
+        assert_eq!(result, "hello world");
+    }
 }

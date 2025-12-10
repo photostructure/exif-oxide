@@ -57,15 +57,11 @@ pub trait NormalizedAstHandler {
         match func_name {
             "safe_reciprocal" | "safe_division" => {
                 let args = self.process_function_args(&node.children)?;
-                Ok(format!(
-                    "codegen_runtime::{}({})",
-                    func_name,
-                    args.join(", ")
-                ))
+                Ok(format!("crate::core::{}({})", func_name, args.join(", ")))
             }
             "log" => {
                 let args = self.process_function_args(&node.children)?;
-                Ok(format!("codegen_runtime::log({})", args[0]))
+                Ok(format!("crate::core::log({})", args[0]))
             }
             "length" => {
                 let args = self.process_function_args(&node.children)?;
@@ -91,7 +87,7 @@ pub trait NormalizedAstHandler {
             "unpack" => {
                 let args = self.process_function_args(&node.children)?;
                 Ok(format!(
-                    "codegen_runtime::unpack_binary({}, &{})",
+                    "crate::core::unpack_binary({}, &{})",
                     args[0],
                     args.get(1).unwrap_or(&"val".to_string())
                 ))
@@ -156,13 +152,13 @@ pub trait NormalizedAstHandler {
         // Generate call to the helper function
         match self.expression_type() {
             ExpressionType::PrintConv => Ok(format!(
-                "TagValue::String(codegen_runtime::sprintf_with_string_concat_repeat(\"{base_format}\", \"{concat_part}\", {repeat_count}, &{remaining_args}))"
+                "TagValue::String(crate::core::sprintf_with_string_concat_repeat(\"{base_format}\", \"{concat_part}\", {repeat_count}, &{remaining_args}))"
             )),
             ExpressionType::ValueConv => Ok(format!(
-                "TagValue::String(codegen_runtime::sprintf_with_string_concat_repeat(\"{base_format}\", \"{concat_part}\", {repeat_count}, &{remaining_args}))"
+                "TagValue::String(crate::core::sprintf_with_string_concat_repeat(\"{base_format}\", \"{concat_part}\", {repeat_count}, &{remaining_args}))"
             )),
             _ => Ok(format!(
-                "codegen_runtime::sprintf_with_string_concat_repeat(\"{base_format}\", \"{concat_part}\", {repeat_count}, &{remaining_args})"
+                "crate::core::sprintf_with_string_concat_repeat(\"{base_format}\", \"{concat_part}\", {repeat_count}, &{remaining_args})"
             )),
         }
     }
@@ -290,10 +286,10 @@ pub trait NormalizedAstHandler {
 
                         return match self.expression_type() {
                             ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                                "TagValue::String(codegen_runtime::sprintf_with_string_concat_repeat(\"{base_format}\", \"{concat_part}\", {repeat_count}, &{remaining_args}))"
+                                "TagValue::String(crate::core::sprintf_with_string_concat_repeat(\"{base_format}\", \"{concat_part}\", {repeat_count}, &{remaining_args}))"
                             )),
                             _ => Ok(format!(
-                                "codegen_runtime::sprintf_with_string_concat_repeat(\"{base_format}\", \"{concat_part}\", {repeat_count}, &{remaining_args})"
+                                "crate::core::sprintf_with_string_concat_repeat(\"{base_format}\", \"{concat_part}\", {repeat_count}, &{remaining_args})"
                             )),
                         };
                     }
@@ -319,10 +315,10 @@ pub trait NormalizedAstHandler {
 
                 return match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::String(codegen_runtime::sprintf_perl(\"{combined_format}\", &{remaining_args}))"
+                        "TagValue::String(crate::core::sprintf_perl(\"{combined_format}\", &{remaining_args}))"
                     )),
                     _ => Ok(format!(
-                        "codegen_runtime::sprintf_perl(\"{combined_format}\", &{remaining_args})"
+                        "crate::core::sprintf_perl(\"{combined_format}\", &{remaining_args})"
                     )),
                 };
             }
@@ -345,10 +341,10 @@ pub trait NormalizedAstHandler {
 
                     return match self.expression_type() {
                         ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                            "TagValue::String(codegen_runtime::sprintf_perl(\"{combined_format}\", &{remaining_args}))"
+                            "TagValue::String(crate::core::sprintf_perl(\"{combined_format}\", &{remaining_args}))"
                         )),
                         _ => Ok(format!(
-                            "codegen_runtime::sprintf_perl(\"{combined_format}\", &{remaining_args})"
+                            "crate::core::sprintf_perl(\"{combined_format}\", &{remaining_args})"
                         )),
                     };
                 }

@@ -314,11 +314,11 @@ pub trait StringOperationsHandler {
 
             if is_global {
                 format!(
-                    "codegen_runtime::regex_replace(\"{safe_pattern}\", \"{left}\", &{escaped_replacement}.to_string())"
+                    "crate::core::regex_replace(\"{safe_pattern}\", \"{left}\", &{escaped_replacement}.to_string())"
                 )
             } else {
                 format!(
-                    "codegen_runtime::regex_replace(\"{safe_pattern}\", &{left}.to_string(), \"{escaped_replacement}\")"
+                    "crate::core::regex_replace(\"{safe_pattern}\", &{left}.to_string(), \"{escaped_replacement}\")"
                 )
             }
         };

@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -65,7 +65,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// - Sony::Tag9416.MaxFocalLength
 /// - Sony::Tag9416.MinFocalLength
 pub fn ast_print_7cc7a4bf3f82cb33(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.1f mm", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%.1f mm", &[val.clone()]))
 }
 
 /// Original perl expression:
@@ -77,8 +77,8 @@ pub fn ast_print_7cc7a4bf3f82cb33(val: &TagValue, ctx: Option<&ExifContext>) -> 
 pub fn ast_value_7c6a8820d74e378b(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(TagValue::Array(codegen_runtime::unpack_binary("n", &val)))
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(TagValue::Array(crate::core::unpack_binary("n", &val)))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -94,7 +94,7 @@ pub fn ast_value_7c6a8820d74e378b(
 /// TODO: Add support for this expression pattern
 pub fn ast_print_7c1b806cd4c4514f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
+    crate::core::missing::missing_print_conv(
                     0, // tag_id will be filled at runtime
                     "UnknownTag", // tag_name will be filled at runtime
                     "UnknownGroup", // group will be filled at runtime
@@ -130,7 +130,7 @@ pub fn ast_print_7c1b806cd4c4514f(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// TODO: Add support for this expression pattern
 pub fn ast_print_7c85cf32a45b11ab(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
+    crate::core::missing::missing_print_conv(
         0,                       // tag_id will be filled at runtime
         "UnknownTag",            // tag_name will be filled at runtime
         "UnknownGroup",          // group will be filled at runtime
@@ -157,9 +157,9 @@ pub fn ast_print_7c85cf32a45b11ab(val: &TagValue, ctx: Option<&ExifContext>) -> 
 pub fn ast_value_7c3d792bbefb801e(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
+    Ok(crate::core::missing::missing_value_conv(
         0,                // tag_id will be filled at runtime
         "UnknownTag",     // tag_name will be filled at runtime
         "UnknownGroup",   // group will be filled at runtime
@@ -193,7 +193,7 @@ pub fn ast_value_7c3d792bbefb801e(
 /// TODO: Add support for this expression pattern
 pub fn ast_print_7c512da46b991446(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
+    crate::core::missing::missing_print_conv(
         0,                                                       // tag_id will be filled at runtime
         "UnknownTag",   // tag_name will be filled at runtime
         "UnknownGroup", // group will be filled at runtime

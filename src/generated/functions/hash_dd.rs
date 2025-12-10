@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -123,7 +123,7 @@ pub fn ast_print_dd22782e5ba8c7cb(val: &TagValue, ctx: Option<&ExifContext>) -> 
 pub fn ast_value_dd746112419bd2e9(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(val * 1000i32)
 }
 
@@ -139,7 +139,7 @@ pub fn ast_value_dd746112419bd2e9(
 pub fn ast_value_ddfddd5e1e0df35b(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(val / 12i32)
 }
 
@@ -152,11 +152,11 @@ pub fn ast_value_ddfddd5e1e0df35b(
 pub fn ast_value_dd83ee4563d6583e(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(if codegen_runtime::abs(val / 256i32) < 100i32 {
-        codegen_runtime::power(
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(if crate::core::abs(val / 256i32) < 100i32 {
+        crate::core::power(
             Into::<TagValue>::into(2i32),
-            Into::<TagValue>::into(codegen_runtime::negate(val) / 256i32),
+            Into::<TagValue>::into(crate::core::negate(val) / 256i32),
         )
     } else {
         Into::<TagValue>::into(0i32)
@@ -178,5 +178,5 @@ pub fn ast_value_dd83ee4563d6583e(
 /// - Red::RED1.FrameRate
 /// - Red::RED2.FrameRate
 pub fn ast_print_dd3be644838b9531(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    codegen_runtime::int(val * 1000i32 + 0.5f64) / 1000i32 as f64
+    crate::core::int(val * 1000i32 + 0.5f64) / 1000i32 as f64
 }

@@ -3,7 +3,7 @@
 //! This module provides functions for extracting substrings from strings,
 //! following Perl's exact behavior for compatibility with ExifTool expressions.
 
-use crate::TagValue;
+use crate::core::TagValue;
 
 /// Perl substr() function - extract substring
 ///
@@ -22,7 +22,7 @@ use crate::TagValue;
 ///
 /// # Examples
 /// ```rust
-/// # use codegen_runtime::{TagValue, substr_2arg, substr_3arg};
+/// # use exif_oxide::core::{TagValue, substr_2arg, substr_3arg};
 /// assert_eq!(
 ///     substr_3arg(
 ///         TagValue::String("hello".to_string()),

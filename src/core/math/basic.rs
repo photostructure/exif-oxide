@@ -3,7 +3,7 @@
 //! This module provides Rust implementations of basic Perl mathematical functions
 //! like int(), exp(), log() that are commonly used in ExifTool expressions.
 
-use crate::TagValue;
+use crate::core::TagValue;
 
 /// Perl exp() function - returns e raised to the power of the argument
 ///
@@ -17,7 +17,7 @@ use crate::TagValue;
 ///
 /// # Example
 /// ```rust
-/// # use codegen_runtime::{TagValue, exp};
+/// # use exif_oxide::core::{TagValue, exp};
 /// let result = exp(TagValue::F64(1.0));
 /// let result2 = exp(2i32);  // Also works
 /// // Should be approximately e ≈ 2.718281828
@@ -67,7 +67,7 @@ pub fn exp<T: Into<TagValue>>(val: T) -> TagValue {
 ///
 /// # Example
 /// ```rust
-/// # use codegen_runtime::{TagValue, log};
+/// # use exif_oxide::core::{TagValue, log};
 /// let result = log(TagValue::F64(2.718281828));
 /// let result2 = log(2i32);  // Also works
 /// // Should be approximately 1.0
@@ -125,7 +125,7 @@ pub fn log<T: Into<TagValue>>(val: T) -> TagValue {
 ///
 /// # Example
 /// ```rust
-/// # use codegen_runtime::{TagValue, int};
+/// # use exif_oxide::core::{TagValue, int};
 /// assert_eq!(int(TagValue::F64(3.7)), TagValue::F64(3.0));
 /// assert_eq!(int(TagValue::F64(-3.7)), TagValue::F64(-3.0));
 /// assert_eq!(int(TagValue::I32(42)), TagValue::F64(42.0));
@@ -233,7 +233,7 @@ pub fn abs<T: Into<TagValue>>(val: T) -> TagValue {
 ///
 /// # Example
 /// ```rust
-/// # use codegen_runtime::{TagValue, negate};
+/// # use exif_oxide::core::{TagValue, negate};
 /// assert_eq!(negate(TagValue::I32(42)), TagValue::I32(-42));
 /// assert_eq!(negate(TagValue::F64(3.14)), TagValue::F64(-3.14));
 /// assert_eq!(negate(-5i32), TagValue::I32(5));  // Also works with literals
@@ -644,7 +644,7 @@ mod tests {
         // Test with different numeric types
         assert_eq!(negate(TagValue::I32(42)), TagValue::I32(-42));
         assert_eq!(negate(TagValue::I32(-42)), TagValue::I32(42));
-        assert_eq!(negate(TagValue::F64(3.14)), TagValue::F64(-3.14));
+        assert_eq!(negate(TagValue::F64(1.23)), TagValue::F64(-1.23));
         assert_eq!(negate(TagValue::F64(-2.5)), TagValue::F64(2.5));
 
         // Test with unsigned types (should convert to signed)
@@ -658,8 +658,8 @@ mod tests {
             TagValue::F64(-42.0)
         );
         assert_eq!(
-            negate(TagValue::String("-3.14".to_string())),
-            TagValue::F64(3.14)
+            negate(TagValue::String("-1.23".to_string())),
+            TagValue::F64(1.23)
         );
 
         // Non-numeric strings return 0
@@ -690,7 +690,7 @@ mod tests {
         // Test negate() with literals (common use case in generated code)
         assert_eq!(negate(42i32), TagValue::I32(-42));
         assert_eq!(negate(-5i32), TagValue::I32(5));
-        assert_eq!(negate(3.14f64), TagValue::F64(-3.14));
+        assert_eq!(negate(1.23f64), TagValue::F64(-1.23));
         assert_eq!(negate(-2.5f64), TagValue::F64(2.5));
     }
 }

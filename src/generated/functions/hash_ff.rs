@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -20,5 +20,5 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// - QuickTime::MovieHeader.PreferredVolume
 /// - QuickTime::TrackHeader.TrackVolume
 pub fn ast_print_ff6bef6967d85f9e(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.2f%%", &[val * 100i32]))
+    TagValue::String(crate::core::sprintf_perl("%.2f%%", &[val * 100i32]))
 }

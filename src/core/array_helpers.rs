@@ -1,6 +1,6 @@
 //! Helper functions for working with arrays in generated code
 
-use crate::TagValue;
+use crate::core::TagValue;
 
 /// Get an element from any array type at the specified index
 ///

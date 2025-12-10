@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -28,7 +28,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 pub fn ast_value_ae080438eb4840af(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(val / 100000i32)
 }
 
@@ -58,7 +58,7 @@ pub fn ast_value_ae080438eb4840af(
 /// - Nikon::MenuSettingsZ8v2.NonCPULens8MaxAperture
 /// - Nikon::MenuSettingsZ8v2.NonCPULens9MaxAperture
 pub fn ast_print_aef1671fb8224b8c(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.1fmm", &[val / 100i32]))
+    TagValue::String(crate::core::sprintf_perl("%.1fmm", &[val / 100i32]))
 }
 
 /// Original perl expression:
@@ -89,5 +89,5 @@ pub fn ast_print_aef1671fb8224b8c(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Panasonic::Subdir.MeasuredLV
 /// - Sony::rtmd.FrameRate
 pub fn ast_print_aec511ac08c0f1fc(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.2f", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%.2f", &[val.clone()]))
 }

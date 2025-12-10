@@ -153,9 +153,9 @@ mod composite_context {
 
         let result = generator.generate_function(&ast).unwrap();
 
-        // Regular context should use codegen_runtime::get_array_element
+        // Regular context should use crate::core::get_array_element
         assert!(
-            result.contains("codegen_runtime::get_array_element(val, 0)"),
+            result.contains("crate::core::get_array_element(val, 0)"),
             "Regular context should use get_array_element, got: {result}"
         );
         // Should NOT use vals.get()
@@ -183,9 +183,9 @@ mod composite_context {
             result.contains("vals.first().cloned().unwrap_or(TagValue::Empty)"),
             "Composite context should use vals.first() for index 0, got: {result}"
         );
-        // Should NOT use codegen_runtime::get_array_element for $val
+        // Should NOT use crate::core::get_array_element for $val
         assert!(
-            !result.contains("codegen_runtime::get_array_element(val, 0)"),
+            !result.contains("crate::core::get_array_element(val, 0)"),
             "Composite context should NOT use get_array_element for $val, got: {result}"
         );
     }

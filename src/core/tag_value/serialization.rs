@@ -1,6 +1,6 @@
 //! Serialization support for TagValue, including ExifTool-compatible JSON numeric detection
 
-use super::TagValue;
+use crate::core::TagValue;
 use regex::Regex;
 use serde::{Serialize, Serializer};
 use std::sync::LazyLock;

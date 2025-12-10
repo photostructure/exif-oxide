@@ -4,7 +4,7 @@
 //! have implementations in the registry. This helps identify what needs to be
 //! implemented for better compatibility when using the --show-missing flag.
 
-use crate::tag_value::TagValue;
+use crate::core::tag_value::TagValue;
 use std::cell::RefCell;
 use std::collections::HashSet;
 

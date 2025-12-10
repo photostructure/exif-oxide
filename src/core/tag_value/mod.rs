@@ -25,7 +25,7 @@ use std::collections::HashMap;
 /// There are several convenient ways to create string TagValues:
 ///
 /// ```
-/// use codegen_runtime::TagValue;
+/// use exif_oxide::core::TagValue;
 ///
 /// // Most ergonomic - using From trait
 /// let tag1: TagValue = "Hello".into();

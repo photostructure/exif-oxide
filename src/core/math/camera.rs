@@ -3,7 +3,7 @@
 //! These functions implement common photographic calculations found in ExifTool,
 //! leveraging the existing TagValue trait system for clean, idiomatic code.
 
-use crate::TagValue;
+use crate::core::TagValue;
 
 /// Calculate 2^x for the given expression
 ///
@@ -11,7 +11,7 @@ use crate::TagValue;
 ///
 /// # Examples
 /// ```
-/// use codegen_runtime::{TagValue, math::pow2};
+/// use exif_oxide::core::{TagValue, math::pow2};
 ///
 /// let val = TagValue::I32(768);
 /// let result = pow2(val / 384i32 - 1i32);  // 2^((768/384) - 1) = 2^1 = 2.0
@@ -56,7 +56,7 @@ pub fn exposure_compensation(val: &TagValue, offset: i32, divisor: i32) -> TagVa
 ///
 /// Pattern: `2**(-$val)` for reciprocal exposure times
 pub fn shutter_speed_from_exposure(val: &TagValue) -> TagValue {
-    let neg_val = crate::math::negate(val.clone());
+    let neg_val = crate::core::math::negate(val.clone());
     pow2(neg_val)
 }
 
@@ -87,10 +87,10 @@ mod tests {
 
     #[test]
     fn test_round_to_places() {
-        let val = TagValue::F64(3.14159);
+        let val = TagValue::F64(1.23456);
         let result = round_to_places(&val, 2);
         if let TagValue::F64(rounded) = result {
-            assert!((rounded - 3.14).abs() < 0.01);
+            assert!((rounded - 1.23).abs() < 0.01);
         } else {
             panic!("Expected F64 result");
         }

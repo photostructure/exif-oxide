@@ -37,14 +37,14 @@ pub trait FunctionGenerator: PpiVisitor {
                     {
                         // Handle multi-argument unpack call using structured AST
                         format!(
-                            "codegen_runtime::unpack_binary(\"{}\", &{})",
+                            "crate::core::unpack_binary(\"{}\", &{})",
                             node.children[1].string_value.as_deref().unwrap_or("H2H2"),
                             node.children[2].content.as_deref().unwrap_or("val")
                         )
                     } else if node.children[1].content.as_deref() == Some("unpack") {
                         // Handle nested unpack call using AST
                         format!(
-                            "codegen_runtime::unpack_binary(\"{}\", &val)",
+                            "crate::core::unpack_binary(\"{}\", &val)",
                             node.children[1].string_value.as_deref().unwrap_or("H2H2")
                         )
                     } else {
@@ -162,10 +162,10 @@ pub trait FunctionGenerator: PpiVisitor {
             }
             "int" => Ok(format!("({arg}).trunc() as i32")),
             "abs" => Ok(format!("({arg}).abs()")),
-            "log" => Ok(format!("codegen_runtime::log({arg})")),
+            "log" => Ok(format!("crate::core::log({arg})")),
             "defined" => {
                 // Use the cleaner runtime helper
-                Ok(format!("codegen_runtime::string::is_defined(&{arg})"))
+                Ok(format!("crate::core::string::is_defined(&{arg})"))
             }
             _ => Err(CodeGenError::UnsupportedFunction(function_name.to_string())),
         }
@@ -276,12 +276,10 @@ pub trait FunctionGenerator: PpiVisitor {
                     };
 
                     match self.expression_type() {
-                        ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                            "codegen_runtime::unpack_binary(\"{format}\", &{data})"
-                        )),
-                        _ => Ok(format!(
-                            "codegen_runtime::unpack_binary(\"{format}\", &{data})"
-                        )),
+                        ExpressionType::PrintConv | ExpressionType::ValueConv => {
+                            Ok(format!("crate::core::unpack_binary(\"{format}\", &{data})"))
+                        }
+                        _ => Ok(format!("crate::core::unpack_binary(\"{format}\", &{data})")),
                     }
                 } else {
                     Err(CodeGenError::UnsupportedFunction(
@@ -402,10 +400,10 @@ pub trait FunctionGenerator: PpiVisitor {
                 // Fallback to sprintf_perl for complex patterns
                 match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::String(codegen_runtime::sprintf_perl(\"{format_str}\", &[{processed_arg}]))"
+                        "TagValue::String(crate::core::sprintf_perl(\"{format_str}\", &[{processed_arg}]))"
                     )),
                     _ => Ok(format!(
-                        "codegen_runtime::sprintf_perl(\"{format_str}\", &[{processed_arg}])"
+                        "crate::core::sprintf_perl(\"{format_str}\", &[{processed_arg}])"
                     )),
                 }
             }
@@ -415,10 +413,10 @@ pub trait FunctionGenerator: PpiVisitor {
 
             match self.expression_type() {
                 ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                    "TagValue::String(codegen_runtime::sprintf_perl(\"{format_str}\", &[{args_formatted}]))"
+                    "TagValue::String(crate::core::sprintf_perl(\"{format_str}\", &[{args_formatted}]))"
                 )),
                 _ => Ok(format!(
-                    "codegen_runtime::sprintf_perl(\"{format_str}\", &[{args_formatted}])"
+                    "crate::core::sprintf_perl(\"{format_str}\", &[{args_formatted}])"
                 )),
             }
         }
@@ -590,9 +588,7 @@ pub trait FunctionGenerator: PpiVisitor {
                 "#}),
             _ => {
                 // Use generic unpack function for other formats
-                Ok(format!(
-                    "codegen_runtime::unpack_binary(\"{format}\", {data})?"
-                ))
+                Ok(format!("crate::core::unpack_binary(\"{format}\", {data})?"))
             }
         }
     }

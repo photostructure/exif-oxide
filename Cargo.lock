@@ -290,7 +290,6 @@ dependencies = [
  "anyhow",
  "base64",
  "clap",
- "codegen-runtime",
  "glob",
  "indoc",
  "jsonschema",
@@ -303,17 +302,6 @@ dependencies = [
  "thiserror",
  "tracing",
  "tracing-subscriber",
-]
-
-[[package]]
-name = "codegen-runtime"
-version = "0.2.0"
-dependencies = [
- "byteorder",
- "regex",
- "serde",
- "serde_json",
- "thiserror",
 ]
 
 [[package]]
@@ -457,7 +445,6 @@ dependencies = [
  "chrono",
  "clap",
  "codegen",
- "codegen-runtime",
  "criterion",
  "indexmap",
  "pretty_assertions",

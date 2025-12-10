@@ -7,13 +7,9 @@
 use codegen::ppi::fn_registry::{PpiFunctionRegistry, UsageContext};
 use codegen::ppi::shared_pipeline::call_ppi_ast_script;
 use codegen::ppi::types::{ExpressionType, PpiNode};
-use codegen_runtime::missing::clear_missing_conversions;
 
 #[test]
 fn test_placeholder_function_tracks_missing_valueconv() {
-    // Clear any previous missing conversions
-    clear_missing_conversions();
-
     // Create a registry and register an expression that can't be translated
     let mut registry = PpiFunctionRegistry::new();
 
@@ -39,7 +35,7 @@ fn test_placeholder_function_tracks_missing_valueconv() {
 
     // Generate the function files
     let files = registry
-        .generate_function_files_with_imports("use codegen_runtime::{TagValue, missing}; use codegen_runtime::types::{ExifContext, ExifError}")
+        .generate_function_files_with_imports("use crate::core::{TagValue, missing}; use crate::core::types::{ExifContext, ExifError}")
         .expect("Failed to generate function files");
 
     // The generated file should contain a placeholder function
@@ -52,7 +48,7 @@ fn test_placeholder_function_tracks_missing_valueconv() {
     assert!(
         function_file
             .content
-            .contains("codegen_runtime::missing::missing_value_conv"),
+            .contains("crate::core::missing::missing_value_conv"),
         "Placeholder function should call missing_value_conv"
     );
 
@@ -93,7 +89,7 @@ fn test_placeholder_function_tracks_missing_printconv() {
 
     // Generate the function files
     let files = registry
-        .generate_function_files_with_imports("use codegen_runtime::{TagValue, missing}; use codegen_runtime::types::{ExifContext, ExifError}")
+        .generate_function_files_with_imports("use crate::core::{TagValue, missing}; use crate::core::types::{ExifContext, ExifError}")
         .expect("Failed to generate function files");
 
     // The generated file should contain a placeholder function
@@ -106,7 +102,7 @@ fn test_placeholder_function_tracks_missing_printconv() {
     assert!(
         function_file
             .content
-            .contains("codegen_runtime::missing::missing_print_conv"),
+            .contains("crate::core::missing::missing_print_conv"),
         "Placeholder function should call missing_print_conv"
     );
 
@@ -147,7 +143,7 @@ fn test_placeholder_escapes_expression_properly() {
 
     // Generate the function files
     let files = registry
-        .generate_function_files_with_imports("use codegen_runtime::{TagValue, missing}; use codegen_runtime::types::{ExifContext, ExifError}")
+        .generate_function_files_with_imports("use crate::core::{TagValue, missing}; use crate::core::types::{ExifContext, ExifError}")
         .expect("Failed to generate function files");
 
     // The generated file should contain properly escaped expression

@@ -2,7 +2,7 @@
 
 ## READ FIRST
 
-Before making ANY edits to codegen or codegen-runtime:
+Before making ANY edits to codegen or src/core:
 
 - [TRUST-EXIFTOOL.md](./TRUST-EXIFTOOL.md) - fundamental project law
 - [ANTI-PATTERNS.md](./ANTI-PATTERNS.md) - mistakes causing PR rejections
@@ -16,18 +16,20 @@ Before making ANY edits to codegen or codegen-runtime:
 - Manual ExifTool data transcription - 100+ bugs from this mistake
 - Bypassing `ExpressionPrecedenceNormalizer` for operators
 
-## Two-Crate Architecture
+## Architecture
 
-The code generation system has two distinct crates:
+The code generation system has two components:
 
-| Crate               | Purpose                                         | When Used         |
+| Component           | Purpose                                         | When Used         |
 | ------------------- | ----------------------------------------------- | ----------------- |
 | **codegen**         | CLI tool that generates Rust from ExifTool Perl | Build time only   |
-| **codegen-runtime** | Runtime library that generated code imports     | Compile + runtime |
+| **src/core**        | Runtime module that generated code imports      | Compile + runtime |
 
 ```
-ExifTool Perl → [codegen] → src/generated/*.rs → [uses codegen-runtime] → exif-oxide binary
+ExifTool Perl → [codegen] → src/generated/*.rs → [uses crate::core] → exif-oxide binary
 ```
+
+Note: `src/core` was previously a separate crate (`codegen_runtime`) but is now integrated into the main crate as a module to simplify publishing.
 
 ## Data Flow Overview
 
@@ -201,13 +203,13 @@ pub fn ast_value_161c6918(val: &TagValue, ctx: Option<&ExifContext>) -> Result<T
 }
 ```
 
-## codegen-runtime Module Structure
+## Core Module Structure
 
-The runtime library provides all helpers that generated code imports:
+The runtime module (`src/core/`) provides all helpers that generated code imports:
 
 ```
-codegen-runtime/src/
-├── lib.rs                    # Re-exports for `use codegen_runtime::*;`
+src/core/
+├── mod.rs                    # Re-exports for `use crate::core::*;`
 ├── types.rs                  # ExifContext, ExifError
 ├── missing.rs                # Missing implementation tracking
 ├── tag_value/
@@ -293,7 +295,7 @@ When expressions can't be translated, placeholder functions are generated:
 ```rust
 pub fn ast_print_c033b0a1(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    codegen_runtime::missing::missing_print_conv(
+    crate::core::missing::missing_print_conv(
         0, "UnknownTag", "UnknownGroup",
         "$_=$val,s/(\\d+)(\\d{4})/$1-$2/,$_",  // Original Perl
         val,
@@ -317,8 +319,8 @@ Usage:
 
 ### Adding New Runtime Functions
 
-1. Add function to appropriate `codegen-runtime/src/` module
-2. Re-export from `lib.rs` for `use codegen_runtime::*;` access
+1. Add function to appropriate `src/core/` module
+2. Re-export from `mod.rs` for `use crate::core::*;` access
 3. Update generator to emit calls to new function
 
 ### Adding New Strategies
@@ -375,9 +377,9 @@ TagValue::Empty                   // Default fallback
 **Runtime Function Calls**:
 
 ```rust
-codegen_runtime::sprintf_perl(fmt, args)    // Correct
-codegen_runtime::math::abs(val)             // Correct
-format!("{}", val)                          // WRONG - breaks Perl compat
+crate::core::sprintf_perl(fmt, args)    // Correct
+crate::core::math::abs(val)             // Correct
+format!("{}", val)                      // WRONG - breaks Perl compat
 ```
 
 ## Performance

@@ -3,7 +3,7 @@
 //! This module provides utilities for testing generated code,
 //! available only when the test-helpers feature is enabled.
 
-use crate::{ExifContext, TagValue};
+use crate::core::{ExifContext, TagValue};
 
 /// Create a basic ExifContext for testing
 pub fn create_test_context() -> ExifContext {

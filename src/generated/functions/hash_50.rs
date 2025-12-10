@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -23,7 +23,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 pub fn ast_value_503cb8adfb2500ed(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(if val.is_truthy() {
         2048i32 / val
     } else {
@@ -42,7 +42,7 @@ pub fn ast_value_503cb8adfb2500ed(
 /// - Sony::FocusInfo.ISOSetting
 pub fn ast_print_50a2776f078ae807(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val.is_truthy() {
-        TagValue::String(codegen_runtime::sprintf_perl("%.0f", &[val.clone()]))
+        TagValue::String(crate::core::sprintf_perl("%.0f", &[val.clone()]))
     } else {
         Into::<TagValue>::into("Auto")
     }

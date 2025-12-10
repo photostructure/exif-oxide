@@ -3,7 +3,7 @@
 //! This module provides safe mathematical operations that handle zero, empty,
 //! or undefined values by returning safe fallback values instead of errors.
 
-use crate::TagValue;
+use crate::core::TagValue;
 
 /// Safe division calculation following ExifTool pattern: $val ? numerator / $val : 0
 ///
@@ -98,7 +98,7 @@ pub fn safe_division(numerator: f64, val: &TagValue) -> TagValue {
 ///
 /// # Example
 /// ```rust
-/// # use codegen_runtime::{TagValue, safe_reciprocal};
+/// # use exif_oxide::core::{TagValue, safe_reciprocal};
 ///
 /// // Normal case: 1/2 = 0.5
 /// assert_eq!(safe_reciprocal(&TagValue::I32(2)), TagValue::F64(0.5));

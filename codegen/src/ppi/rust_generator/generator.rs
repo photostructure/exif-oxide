@@ -66,7 +66,7 @@ impl RustGenerator {
     /// Generate array element access code based on expression context
     ///
     /// For Regular context (single tag):
-    ///   `$val[n]` → `codegen_runtime::get_array_element(val, n)` (val is TagValue::Array)
+    ///   `$val[n]` → `crate::core::get_array_element(val, n)` (val is TagValue::Array)
     ///
     /// For Composite context (multiple dependencies):
     ///   `$val[n]` → `vals.get(n).cloned().unwrap_or(TagValue::Empty)`
@@ -85,7 +85,7 @@ impl RustGenerator {
                 // For other arrays, fall back to the regular approach
                 other => {
                     let rust_name = other.trim_start_matches('$');
-                    return format!("codegen_runtime::get_array_element({rust_name}, {index})");
+                    return format!("crate::core::get_array_element({rust_name}, {index})");
                 }
             };
             // Use .first() for index "0" to satisfy clippy::get_first lint
@@ -102,7 +102,7 @@ impl RustGenerator {
             } else {
                 rust_name
             };
-            format!("codegen_runtime::get_array_element({rust_array}, {index})")
+            format!("crate::core::get_array_element({rust_array}, {index})")
         }
     }
 
@@ -543,7 +543,7 @@ impl RustGenerator {
 
                 if let Some(index) = self.extract_subscript_index(&children[i + 1])? {
                     // Generate context-aware array access
-                    // Regular: codegen_runtime::get_array_element(val, n)
+                    // Regular: crate::core::get_array_element(val, n)
                     // Composite: vals.get(n).cloned().unwrap_or(TagValue::Empty)
                     return Ok(self.generate_array_access(array_name, &index));
                 }

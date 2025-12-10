@@ -3,8 +3,8 @@
 //! This module provides a unified interface to all type definitions
 //! used throughout the library.
 
-// Re-export core types from codegen-runtime for API compatibility
-pub use codegen_runtime::{ExifContext, TagValue};
+// Re-export core types from crate::core for API compatibility
+pub use crate::core::{ExifContext, TagValue};
 
 pub mod binary_data;
 mod context;
@@ -16,6 +16,6 @@ mod tag_info;
 pub use binary_data::*;
 #[allow(unused_imports)]
 pub use context::*;
-pub use errors::{ExifError, Result}; // ExifError comes from codegen_runtime via errors module
+pub use errors::{ExifError, Result}; // ExifError comes from crate::core via errors module
 pub use metadata::*;
 pub use tag_info::*;

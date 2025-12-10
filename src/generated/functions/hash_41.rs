@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -34,5 +34,5 @@ pub fn ast_print_41a9f4269104a464(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Olympus::WAV.FileNumber
 /// - Sony::CameraSettings.ImageNumber
 pub fn ast_print_41e4fcf67a465f16(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.4d", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%.4d", &[val.clone()]))
 }

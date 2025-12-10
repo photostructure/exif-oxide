@@ -292,9 +292,9 @@ impl CompositeTagStrategy {
         code.push_str("use std::collections::HashMap;\n");
         code.push_str("use std::sync::LazyLock;\n");
         code.push_str("#[allow(unused_imports)]\n");
-        code.push_str("use codegen_runtime::{CompositeValueConvFn, CompositePrintConvFn, TagValue, ExifContext};\n");
+        code.push_str("use crate::core::{CompositeValueConvFn, CompositePrintConvFn, TagValue, ExifContext};\n");
         code.push_str("#[allow(unused_imports)]\n");
-        code.push_str("use codegen_runtime::types::ExifError;\n");
+        code.push_str("use crate::core::types::ExifError;\n");
         code.push('\n');
 
         // Track generated functions and statistics

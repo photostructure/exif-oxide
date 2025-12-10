@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -29,5 +29,5 @@ pub fn ast_print_9c532d14777c2531(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// Used by:
 /// - Panasonic::Main.ManometerPressure
 pub fn ast_print_9c34f7195c5f73e7(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("%.1f kPa", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%.1f kPa", &[val.clone()]))
 }

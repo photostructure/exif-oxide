@@ -22,6 +22,7 @@
 
 pub mod compat;
 pub mod composite_tags;
+pub mod core;
 pub mod examples;
 pub mod exif;
 pub mod file_detection;

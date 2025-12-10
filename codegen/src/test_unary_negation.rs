@@ -69,7 +69,7 @@ mod tests {
 
         // Verify that the generated code uses negate() instead of (0i32 - ...)
         assert!(
-            generated_code.contains("codegen_runtime::negate("),
+            generated_code.contains("crate::core::negate("),
             "Expected generated code to contain negate() call, got: {}",
             generated_code
         );

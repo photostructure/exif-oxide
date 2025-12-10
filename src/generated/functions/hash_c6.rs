@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -22,7 +22,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// - Nikon::LensData0800.FocusDistance
 pub fn ast_print_c63abe95c8d1d776(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val.is_truthy() {
-        TagValue::String(codegen_runtime::sprintf_perl("%.2f m", &[val.clone()]))
+        TagValue::String(crate::core::sprintf_perl("%.2f m", &[val.clone()]))
     } else {
         Into::<TagValue>::into("inf")
     }
@@ -37,7 +37,7 @@ pub fn ast_print_c63abe95c8d1d776(val: &TagValue, ctx: Option<&ExifContext>) -> 
 pub fn ast_value_c6ef25cf23665b03(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(val - 50i32 / 10i32)
 }
 
@@ -53,9 +53,9 @@ pub fn ast_value_c6ef25cf23665b03(
 pub fn ast_value_c6a064d658e6a1a2(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(codegen_runtime::missing::missing_value_conv(
+    Ok(crate::core::missing::missing_value_conv(
         0,              // tag_id will be filled at runtime
         "UnknownTag",   // tag_name will be filled at runtime
         "UnknownGroup", // group will be filled at runtime

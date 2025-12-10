@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -21,6 +21,6 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 pub fn ast_value_749a6f02fbbfbd9e(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
-    Ok(codegen_runtime::exp(val / 32i32 * codegen_runtime::log(2i32)) * 100i32 / 32i32)
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::exp(val / 32i32 * crate::core::log(2i32)) * 100i32 / 32i32)
 }

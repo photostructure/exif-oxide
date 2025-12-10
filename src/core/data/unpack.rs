@@ -2,7 +2,7 @@
 ///
 /// This module provides functions to unpack binary data according to
 /// Perl unpack format specifications.
-use crate::TagValue;
+use crate::core::TagValue;
 
 /// Unpack binary data according to a Perl unpack specification
 ///
@@ -14,7 +14,7 @@ use crate::TagValue;
 ///
 /// # Examples
 /// ```
-/// use codegen_runtime::{TagValue, data::unpack_binary};
+/// use exif_oxide::core::{TagValue, data::unpack_binary};
 ///
 /// let result = unpack_binary("nC2", &TagValue::Binary(vec![0x20, 0x24, 0x0A, 0x14]));
 /// // Returns: [TagValue::U16(8228), TagValue::U8(10), TagValue::U8(20)]

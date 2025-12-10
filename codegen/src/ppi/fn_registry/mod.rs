@@ -28,10 +28,10 @@ impl PpiFunctionRegistry {
     /// Generate all function files after all modules have been processed
     pub fn generate_function_files(&mut self) -> Result<Vec<GeneratedFile>> {
         // Import math functions that may be used directly in generated expressions.
-        // Most codegen_runtime calls use fully-qualified paths, but some code paths
+        // Most crate::core calls use fully-qualified paths, but some code paths
         // generate bare function names (e.g., exp, log) in complex nested expressions.
         self.generate_function_files_with_imports(
-            "crate::types::{TagValue, ExifContext}; use codegen_runtime::{exp, log, int, abs, sqrt, sin, cos, atan2, power}"
+            "crate::types::{TagValue, ExifContext}; use crate::core::{exp, log, int, abs, sqrt, sin, cos, atan2, power}"
         )
     }
 
@@ -297,7 +297,7 @@ impl PpiFunctionRegistry {
             ExpressionType::ValueConv => {
                 // Call missing_value_conv to track this for --show-missing
                 format!(
-                    r#"Ok(codegen_runtime::missing::missing_value_conv(
+                    r#"Ok(crate::core::missing::missing_value_conv(
                     0, // tag_id will be filled at runtime
                     "UnknownTag", // tag_name will be filled at runtime
                     "UnknownGroup", // group will be filled at runtime
@@ -309,7 +309,7 @@ impl PpiFunctionRegistry {
             ExpressionType::PrintConv => {
                 // Call missing_print_conv to track this for --show-missing
                 format!(
-                    r#"codegen_runtime::missing::missing_print_conv(
+                    r#"crate::core::missing::missing_print_conv(
                     0, // tag_id will be filled at runtime
                     "UnknownTag", // tag_name will be filled at runtime
                     "UnknownGroup", // group will be filled at runtime

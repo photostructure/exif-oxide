@@ -1,6 +1,6 @@
 //! Conversion methods and From trait implementations for TagValue
 
-use super::TagValue;
+use crate::core::TagValue;
 use regex::Regex;
 use std::collections::HashMap;
 use std::sync::LazyLock;
@@ -279,7 +279,7 @@ impl TagValue {
     /// # Examples
     ///
     /// ```
-    /// use codegen_runtime::TagValue;
+    /// use exif_oxide::core::TagValue;
     ///
     /// let tag_value = TagValue::string("Hello");
     /// assert_eq!(tag_value, TagValue::String("Hello".to_string()));
@@ -300,7 +300,7 @@ impl TagValue {
     /// # Examples
     ///
     /// ```
-    /// use codegen_runtime::TagValue;
+    /// use exif_oxide::core::TagValue;
     ///
     /// // Numeric strings become F64 values
     /// let numeric = TagValue::string_with_numeric_detection("14.0");

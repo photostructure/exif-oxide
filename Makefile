@@ -55,8 +55,7 @@ codegen-check:
 codegen-test:
 	$(MAKE) -C codegen test
 
-codegen-runtime-test:
-	cargo test -p codegen-runtime
+# Note: core module tests run as part of the main crate tests
 
 # Fix formatting and auto-fixable clippy issues
 fix: fmt
@@ -170,7 +169,7 @@ audit: check-deps
 	cargo audit
 
 # All tests including unit, integration, codegen, and compatibility tests
-tests: codegen-test codegen-runtime-test test compat-full
+tests: codegen-test test compat-full
 
 # Pre-commit checks: codegen, fix code, lint, test, audit, and build. We don't
 # clean-all because that leaves the tree temporarily broken, and we don't
@@ -212,7 +211,7 @@ test-mime-compat:
 	cargo test --test mime_type_compatibility_tests --features integration-tests -- --nocapture
 
 # Run comprehensive binary extraction compatibility tests
-binary-compat-test:
+binary-compat-test: build
 	@echo "Running comprehensive binary extraction compatibility tests..."
 	@echo "⏱️  Note: This test processes 344+ files and takes several minutes to complete"
 	cargo test --test binary_extraction_comprehensive --features integration-tests -- --nocapture --ignored
@@ -228,7 +227,7 @@ cmp:
 
 # Test binary extraction for a specific file (for debugging)
 # Usage: make binary-test-file FILE=test-images/nikon/d850.nef
-binary-test-file:
+binary-test-file: build
 	@if [ -z "$(FILE)" ]; then \
 		echo "Usage: make binary-test-file FILE=path/to/image.ext"; \
 		echo "Examples:"; \

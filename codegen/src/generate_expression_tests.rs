@@ -29,7 +29,6 @@ use codegen::ppi::fn_registry::{FunctionSpec, PpiFunctionRegistry};
 use codegen::ppi::normalizer::normalize_multi_pass;
 use codegen::ppi::shared_pipeline::call_ppi_ast_script;
 use codegen::ppi::{ExpressionType, PpiNode};
-use codegen_runtime::TagValue;
 
 #[derive(Parser)]
 #[command(
@@ -266,7 +265,7 @@ fn main() -> Result<()> {
     // Phase 2: Generate function files
     info!("🔧 Phase 2: Generating function files...");
     let mut generated_files = registry.generate_function_files_with_imports(
-        "codegen_runtime::{TagValue, ExifContext, abs, atan2, cos, exp, int, log, sin, sqrt, length_string, length_i32}",
+        "crate::core::{TagValue, ExifContext, abs, atan2, cos, exp, int, log, sin, sqrt, length_string, length_i32}",
     )?;
 
     // In debug mode, filter out mod.rs files to avoid breaking other tests
@@ -476,9 +475,9 @@ fn generate_test_file_content(processed: &ProcessedTestFile) -> Result<String> {
 
     let is_placeholder = config.placeholder_expected.unwrap_or(false);
     let imports = if is_placeholder {
-        "use anyhow::Result;\nuse codegen_runtime::{TagValue, ExifContext, missing};\nuse codegen::ppi::ExpressionType;"
+        "use anyhow::Result;\nuse crate::core::{TagValue, ExifContext, missing};\nuse codegen::ppi::ExpressionType;"
     } else {
-        "use anyhow::Result;\nuse codegen_runtime::{TagValue, ExifContext};"
+        "use anyhow::Result;\nuse crate::core::{TagValue, ExifContext};"
     };
 
     // Properly format multiline expressions in comments

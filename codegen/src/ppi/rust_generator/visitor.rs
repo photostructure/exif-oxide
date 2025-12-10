@@ -39,7 +39,7 @@ pub trait PpiVisitor {
                 "$raw" | "raw" => "raws",
                 other => {
                     let rust_name = other.trim_start_matches('$');
-                    return format!("codegen_runtime::get_array_element({rust_name}, {index})");
+                    return format!("crate::core::get_array_element({rust_name}, {index})");
                 }
             };
             // Use .first() for index 0 to satisfy clippy::get_first lint
@@ -56,43 +56,7 @@ pub trait PpiVisitor {
             } else {
                 rust_name
             };
-            format!("codegen_runtime::get_array_element({rust_array}, {index})")
-        }
-    }
-
-    /// Generate context-aware array access code with string index
-    /// Used when the index comes from AST parsing (as a string literal)
-    fn generate_array_access_str(&self, array_name: &str, index: &str) -> String {
-        // Try to parse as usize for compatibility, otherwise use the string directly
-        if let Ok(idx) = index.parse::<usize>() {
-            self.generate_array_access(array_name, idx)
-        } else {
-            // If it's not a simple number, generate with the expression
-            if self.is_composite_context() {
-                let slice_name = match array_name {
-                    "$val" | "val" => "vals",
-                    "$prt" | "prt" => "prts",
-                    "$raw" | "raw" => "raws",
-                    other => {
-                        let rust_name = other.trim_start_matches('$');
-                        return format!("codegen_runtime::get_array_element({rust_name}, {index})");
-                    }
-                };
-                // Use .first() for index "0" to satisfy clippy::get_first lint
-                if index == "0" {
-                    format!("{slice_name}.first().cloned().unwrap_or(TagValue::Empty)")
-                } else {
-                    format!("{slice_name}.get({index}).cloned().unwrap_or(TagValue::Empty)")
-                }
-            } else {
-                let rust_name = array_name.trim_start_matches('$');
-                let rust_array = if rust_name == "val" || array_name == "$val" {
-                    "val"
-                } else {
-                    rust_name
-                };
-                format!("codegen_runtime::get_array_element({rust_array}, {index})")
-            }
+            format!("crate::core::get_array_element({rust_array}, {index})")
         }
     }
 
@@ -461,10 +425,10 @@ pub trait PpiVisitor {
                     // Return a placeholder value that will be handled by the conservative fallback
                     tracing::warn!("Unsupported ExifTool namespace reference: {}", word);
                     match self.expression_type() {
-                        ExpressionType::PrintConv => Ok(
-                            "codegen_runtime::fmt::conservative_fallback(\"\".into(), val)"
-                                .to_string(),
-                        ),
+                        ExpressionType::PrintConv => {
+                            Ok("crate::core::fmt::conservative_fallback(\"\".into(), val)"
+                                .to_string())
+                        }
                         ExpressionType::ValueConv => Ok("val.clone()".to_string()),
                         ExpressionType::Condition => Ok("false".to_string()),
                     }
@@ -532,7 +496,7 @@ pub trait PpiVisitor {
                         "safe_reciprocal requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("codegen_runtime::safe_reciprocal(&{})", args[0]))
+                Ok(format!("crate::core::safe_reciprocal(&{})", args[0]))
             }
             "safe_division" => {
                 if args.len() != 2 {
@@ -541,7 +505,7 @@ pub trait PpiVisitor {
                     ));
                 }
                 Ok(format!(
-                    "codegen_runtime::safe_division({}.0, &{})",
+                    "crate::core::safe_division({}.0, &{})",
                     args[0], args[1]
                 ))
             }
@@ -551,7 +515,7 @@ pub trait PpiVisitor {
                         "log requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("codegen_runtime::log({})", args[0]))
+                Ok(format!("crate::core::log({})", args[0]))
             }
             "exp" => {
                 if args.len() != 1 {
@@ -559,7 +523,7 @@ pub trait PpiVisitor {
                         "exp requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("codegen_runtime::exp({})", args[0]))
+                Ok(format!("crate::core::exp({})", args[0]))
             }
             "int" => {
                 if args.len() != 1 {
@@ -567,7 +531,7 @@ pub trait PpiVisitor {
                         "int requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("codegen_runtime::int({})", args[0]))
+                Ok(format!("crate::core::int({})", args[0]))
             }
             "abs" => {
                 if args.len() != 1 {
@@ -575,7 +539,7 @@ pub trait PpiVisitor {
                         "abs requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("codegen_runtime::abs({})", args[0]))
+                Ok(format!("crate::core::abs({})", args[0]))
             }
             "sqrt" => {
                 if args.len() != 1 {
@@ -583,7 +547,7 @@ pub trait PpiVisitor {
                         "sqrt requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("codegen_runtime::sqrt({})", args[0]))
+                Ok(format!("crate::core::sqrt({})", args[0]))
             }
             "sin" => {
                 if args.len() != 1 {
@@ -591,7 +555,7 @@ pub trait PpiVisitor {
                         "sin requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("codegen_runtime::sin({})", args[0]))
+                Ok(format!("crate::core::sin({})", args[0]))
             }
             "cos" => {
                 if args.len() != 1 {
@@ -599,7 +563,7 @@ pub trait PpiVisitor {
                         "cos requires exactly 1 argument".to_string(),
                     ));
                 }
-                Ok(format!("codegen_runtime::cos({})", args[0]))
+                Ok(format!("crate::core::cos({})", args[0]))
             }
             "atan2" => {
                 if args.len() != 2 {
@@ -607,7 +571,7 @@ pub trait PpiVisitor {
                         "atan2 requires exactly 2 arguments".to_string(),
                     ));
                 }
-                Ok(format!("codegen_runtime::atan2({}, {})", args[0], args[1]))
+                Ok(format!("crate::core::atan2({}, {})", args[0], args[1]))
             }
             "length" => {
                 if args.len() != 1 {
@@ -617,12 +581,12 @@ pub trait PpiVisitor {
                 }
                 match self.expression_type() {
                     ExpressionType::PrintConv => {
-                        Ok(format!("codegen_runtime::length_string({})", args[0]))
+                        Ok(format!("crate::core::length_string({})", args[0]))
                     }
                     ExpressionType::ValueConv => {
-                        Ok(format!("codegen_runtime::length_i32({})", args[0]))
+                        Ok(format!("crate::core::length_i32({})", args[0]))
                     }
-                    _ => Ok(format!("codegen_runtime::length_i32({})", args[0])),
+                    _ => Ok(format!("crate::core::length_i32({})", args[0])),
                 }
             }
             "sprintf" => {
@@ -672,10 +636,10 @@ pub trait PpiVisitor {
                         // Pass unpack result directly as &[TagValue] slice
                         return match self.expression_type() {
                             ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                                "TagValue::String(codegen_runtime::sprintf_perl({format_str}, &codegen_runtime::unpack_binary({unpack_format}, &{data})))"
+                                "TagValue::String(crate::core::sprintf_perl({format_str}, &crate::core::unpack_binary({unpack_format}, &{data})))"
                             )),
                             _ => Ok(format!(
-                                "codegen_runtime::sprintf_perl({format_str}, &codegen_runtime::unpack_binary({unpack_format}, &{data}))"
+                                "crate::core::sprintf_perl({format_str}, &crate::core::unpack_binary({unpack_format}, &{data}))"
                             )),
                         };
                     }
@@ -727,10 +691,10 @@ pub trait PpiVisitor {
 
                 match self.expression_type() {
                     ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                        "TagValue::String(codegen_runtime::sprintf_perl({format_str}, {sprintf_args}))"
+                        "TagValue::String(crate::core::sprintf_perl({format_str}, {sprintf_args}))"
                     )),
                     _ => Ok(format!(
-                        "codegen_runtime::sprintf_perl({format_str}, {sprintf_args})"
+                        "crate::core::sprintf_perl({format_str}, {sprintf_args})"
                     )),
                 }
             }
@@ -746,7 +710,7 @@ pub trait PpiVisitor {
                     "substr_3arg"
                 };
                 let args_str = args.join(", ");
-                Ok(format!("codegen_runtime::{func_name}({args_str})"))
+                Ok(format!("crate::core::{func_name}({args_str})"))
             }
             "index" => {
                 if args.len() < 2 || args.len() > 3 {
@@ -761,7 +725,7 @@ pub trait PpiVisitor {
                     "index_3arg"
                 };
                 let args_str = args.join(", ");
-                Ok(format!("codegen_runtime::{func_name}({args_str})"))
+                Ok(format!("crate::core::{func_name}({args_str})"))
             }
             "join" => {
                 // Special handling for "join SEP, unpack FORMAT, DATA" pattern
@@ -778,7 +742,7 @@ pub trait PpiVisitor {
                         let data = self.visit_node(&second_child.children[1])?;
                         // join_unpack_binary already returns TagValue
                         return Ok(format!(
-                            "codegen_runtime::join_unpack_binary({separator}, {format_str}, &{data})"
+                            "crate::core::join_unpack_binary({separator}, {format_str}, &{data})"
                         ));
                     }
                 }
@@ -792,7 +756,7 @@ pub trait PpiVisitor {
                 let separator = &args[0];
                 let list = &args[1];
                 // Use join_vec for non-unpack cases
-                Ok(format!("codegen_runtime::join_vec({separator}, &{list})"))
+                Ok(format!("crate::core::join_vec({separator}, &{list})"))
             }
             "unpack" => {
                 if args.len() != 2 {
@@ -814,7 +778,7 @@ pub trait PpiVisitor {
                 let data = &args[1];
                 // unpack_binary returns Vec<TagValue>, wrap in TagValue::Array
                 Ok(format!(
-                    "TagValue::Array(codegen_runtime::unpack_binary({format_str}, &{data}))"
+                    "TagValue::Array(crate::core::unpack_binary({format_str}, &{data}))"
                 ))
             }
             "if" => {
@@ -1223,7 +1187,7 @@ pub trait PpiVisitor {
             // Currently regex_replace handles both cases the same way
             let _ = is_global;
             Ok(format!(
-                "TagValue::String(codegen_runtime::regex_replace(\"{safe_pattern}\", \"{escaped_replacement}\", &val.to_string()))"
+                "TagValue::String(crate::core::regex_replace(\"{safe_pattern}\", \"{escaped_replacement}\", &val.to_string()))"
             ))
         }
     }
@@ -1626,7 +1590,7 @@ pub trait PpiVisitor {
         // the case where it references $val (which should be the modified value)
         Ok(format!(
             r#"{{
-                let (success, modified_val) = codegen_runtime::regex_substitute_perl(
+                let (success, modified_val) = crate::core::regex_substitute_perl(
                     r"{pattern}",
                     "{replacement}",
                     val
@@ -1746,7 +1710,7 @@ pub trait PpiVisitor {
         }
 
         let operand = self.visit_node(&node.children[0])?;
-        Ok(format!("codegen_runtime::negate({operand})"))
+        Ok(format!("crate::core::negate({operand})"))
     }
 
     /// Visit normalized binary operation nodes
@@ -1803,7 +1767,7 @@ pub trait PpiVisitor {
                 let left_wrapped = wrap_for_power(&left);
                 let right_wrapped = wrap_for_power(&right);
                 Ok(format!(
-                    "codegen_runtime::power({left_wrapped}, {right_wrapped})"
+                    "crate::core::power({left_wrapped}, {right_wrapped})"
                 ))
             }
             "." => {
@@ -1812,7 +1776,7 @@ pub trait PpiVisitor {
                 let left_wrapped = wrap_for_string_concat(&left);
                 let right_wrapped = wrap_for_string_concat(&right);
                 Ok(format!(
-                    "codegen_runtime::string::concat(&{left_wrapped}, &{right_wrapped})"
+                    "crate::core::string::concat(&{left_wrapped}, &{right_wrapped})"
                 ))
             }
             "=~" | "!~" => {

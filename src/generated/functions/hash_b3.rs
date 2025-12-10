@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -30,7 +30,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 /// - Sony::Tag9416.StopsAboveBaseISO
 pub fn ast_print_b3e8606718d2531e(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val.is_truthy() {
-        TagValue::String(codegen_runtime::sprintf_perl("%.1f", &[val.clone()]))
+        TagValue::String(crate::core::sprintf_perl("%.1f", &[val.clone()]))
     } else {
         val.clone()
     }

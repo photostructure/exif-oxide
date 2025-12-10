@@ -9,8 +9,8 @@
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
 
+use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
-use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 
 /// Original perl expression:
 /// ``` perl
@@ -41,7 +41,7 @@ use codegen_runtime::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 pub fn ast_value_25c85203cdf230c8(
     val: &TagValue,
     ctx: Option<&ExifContext>,
-) -> Result<TagValue, codegen_runtime::types::ExifError> {
+) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(val - 128i32)
 }
 
@@ -53,5 +53,5 @@ pub fn ast_value_25c85203cdf230c8(
 /// - Nikon::LensData01.FocusPosition
 /// - Nikon::LensData0204.FocusPosition
 pub fn ast_print_257ede59d0ae2b60(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(codegen_runtime::sprintf_perl("0x%02x", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("0x%02x", &[val.clone()]))
 }
