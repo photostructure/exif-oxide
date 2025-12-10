@@ -82,6 +82,7 @@ pub const APPLE_IMG_9757_HEIC: &str = "test-images/apple/IMG_9757.heic";
 
 /// Helper to create an ExifReader with test data for integration tests
 /// This allows us to simulate extracted EXIF data without accessing private fields
+#[allow(unused_mut)] // mut needed only when test-helpers feature is enabled
 pub fn create_test_reader_with_tags(test_data: Vec<(u16, TagValue, &str, &str)>) -> ExifReader {
     let mut reader = ExifReader::new();
 

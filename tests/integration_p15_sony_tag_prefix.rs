@@ -88,11 +88,13 @@ fn test_sony_tag_prefix_behavior() {
         }
     }
 
-    // Test 4: Ensure EXIF:Tag_C4A5 remains (this is correct - not a MakerNotes tag)
-    let exif_tag_c4a5 = find_tag("EXIF:Tag_C4A5");
+    // Test 4: Ensure EXIF:PrintIM is named correctly (not manufacturer-specific)
+    // ExifTool: Tag 0xC4A5 is named "PrintIM" in Exif::Main table (Exif.pm:3200)
+    // This validates we use EXIF_MAIN_TAGS for high-range tags, not generic Tag_XXXX
+    let exif_printim = find_tag("EXIF:PrintIM");
     assert!(
-        exif_tag_c4a5.is_some(),
-        "EXIF:Tag_C4A5 should remain as generic tag (not manufacturer-specific)"
+        exif_printim.is_some(),
+        "EXIF:PrintIM (0xC4A5) should use proper name from EXIF_MAIN_TAGS"
     );
 
     // MAIN ASSERTION: Sony unknown tags should use TAG_PREFIX format
