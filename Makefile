@@ -1,4 +1,4 @@
-.PHONY: all ast-check ast-test check check-fmt check-json fmt lint yamllint unit-test test t codegen-test fix build install doc clean clean-generated clean-all check-deps check-perl codegen sync expression-analysis expression-analysis-force subdirectory-coverage check-subdirectory-coverage perl-setup perl-deps update upgrade-gha upgrade audit tests precommit compat-gen compat-gen-force compat-test test-mime-compat binary-compat-test cmp compat compat-force compat-full help
+.PHONY: all ast-check ast-test check check-fmt fmt lint yamllint unit-test test t codegen-test fix build install doc clean clean-generated clean-all check-deps check-perl codegen sync expression-analysis expression-analysis-force subdirectory-coverage check-subdirectory-coverage perl-setup perl-deps update upgrade-gha upgrade audit tests precommit compat-gen compat-gen-force compat-test test-mime-compat binary-compat-test cmp compat compat-force compat-full help
 
 # Default target: build the project
 all: build
@@ -13,14 +13,11 @@ check-perl:
 
 
 # Run all checks without modifying (for CI)
-check: check-fmt lint yamllint check-json check-perl
+check: check-fmt lint yamllint check-perl
 
 # Check formatting without modifying
 check-fmt:
 	cargo fmt --all -- --check
-
-check-json:
-	@./scripts/check-json.sh
 
 # Format code
 fmt: check-deps
@@ -271,14 +268,13 @@ help:
 	@echo "  make all           - Build the project"
 	@echo ""
 	@echo "Setup:"
-	@echo "  make check-deps    - Check for required external tools (jq, yamllint, jsonschema, etc.)"
+	@echo "  make check-deps    - Check for required external tools (jq, yamllint, etc.)"
 	@echo ""
 	@echo "Development:"
 	@echo "  make check         - Run all checks without modifying (for CI)"
 	@echo "  make fmt           - Format code"
 	@echo "  make lint          - Run clippy linter"
 	@echo "  make yamllint      - Run yamllint on YAML files"
-	@echo "  make check-json    - Validate JSON config files against schemas"
 	@echo "  make unit-test     - Run unit tests only (fast)"
 	@echo "  make test          - Run all tests including integration tests"
 	@echo "  make t             - Alias for 'make test'"

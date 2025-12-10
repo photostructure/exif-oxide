@@ -25,7 +25,6 @@ check_tool "sd" "cargo install sd"
 check_tool "shfmt" "sudo apt-get install shfmt or go install mvdan.cc/sh/v3/cmd/shfmt@latest"
 check_tool "jq" "sudo apt-get install jq"
 check_tool "yamllint" "pip install yamllint"
-check_tool "jsonschema" "pip install jsonschema"
 check_tool "cargo-upgrade" "cargo install cargo-edit"
 check_tool "cargo-audit" "cargo install cargo-audit --locked"
 
