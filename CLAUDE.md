@@ -29,23 +29,25 @@ These will get your PR reverted immediately:
 
 1. **Editing any file in `**/generated/`** → These are generated. Fix `codegen/src/` instead.
 2. **Using `split_whitespace()` on AST nodes** → Breaks Perl parsing
-3. **Deleting ExifTool patterns** → Breaks camera support 
+3. **Deleting ExifTool patterns** → Breaks camera support
 4. **"Improving" ExifTool logic** → We translate EXACTLY. No optimizations.
 5. **Manual data transcription** → Use codegen for ALL ExifTool data
 
 ## ✅ MANDATORY BEFORE EVERY PR
 
+Ask the user
+
 ```bash
-make precommit  # MUST pass
-cargo t         # MUST pass (not cargo test - needs test-helpers)
+make codegen fmt lint t  # MUST pass
 ```
 
 ## 📁 Directory Safety
 
 **NEVER** use `cd ..` or relative paths. **ALWAYS** use absolute paths:
+
 ```bash
-cd /home/mrm/src/exif-oxide          # ✅ GOOD
-cd /home/mrm/src/exif-oxide/codegen  # ✅ GOOD  
+cd $HOME/src/exif-oxide          # ✅ GOOD
+cd $HOME/src/exif-oxide/codegen  # ✅ GOOD
 cd ../..                              # ❌ WILL CAUSE DISASTERS
 ```
 
@@ -63,6 +65,7 @@ See https://github.com/anthropics/claude-code/issues/4711 for details.
 ## 📚 Critical Documentation
 
 **READ THESE FIRST:**
+
 - [ANTI-PATTERNS.md](docs/ANTI-PATTERNS.md) - What NOT to do (with horror stories)
 - [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md) - Core principle: translate EXACTLY
 - [CODEGEN.md](docs/CODEGEN.md) - How code generation works
@@ -102,7 +105,6 @@ See https://github.com/anthropics/claude-code/issues/4711 for details.
 - [VALUE_CONV.md](third-party/exiftool/doc/concepts/VALUE_CONV.md) - Value conversion system
 - [PRINT_CONV.md](third-party/exiftool/doc/concepts/PRINT_CONV.md) - Human-readable output conversions
 - [PATTERNS.md](third-party/exiftool/doc/concepts/PATTERNS.md) - Common patterns across modules
-
 
 ## ⚠️ IMPORTANT: ExifTool is a Git Submodule
 
@@ -165,7 +167,6 @@ This tool:
 - Shows only actual differences, not formatting variations
 - Groups differences into: tags only in ExifTool, tags only in exif-oxide, and tags with different values
 - Handles ExifTool's inconsistent formatting across different modules
-
 
 ---
 
