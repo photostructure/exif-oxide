@@ -19,10 +19,12 @@ pub mod missing;
 pub mod string;
 pub mod tag_value;
 pub mod types;
+pub mod xmp_tag_info;
 
 // Re-export core types for convenience
 pub use tag_value::TagValue;
 pub use types::{ExifContext, ExifError};
+pub use xmp_tag_info::{XmpListType, XmpTagInfo};
 
 // Re-export composite tag function types
 pub use types::{CompositePrintConvFn, CompositeValueConvFn};

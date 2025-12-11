@@ -106,9 +106,10 @@ impl XmpProcessor {
     /// This method converts the nested namespace structure into individual XMP tags
     /// following ExifTool's approach:
     /// - dc:title → XMP:Title
-    /// - photoshop:City → XMP:City  
+    /// - photoshop:City → XMP:City
     /// - Alt containers → extract x-default value
     /// - Bag/Seq containers → convert to arrays
+    /// - Apply PrintConv from generated tables for human-readable output
     fn flatten_xmp_structure(
         &self,
         xmp_structure: &HashMap<String, TagValue>,
@@ -120,19 +121,30 @@ impl XmpProcessor {
             if let TagValue::Object(namespace_obj) = namespace_content {
                 // Process each property in this namespace
                 for (property_name, property_value) in namespace_obj {
+                    // Look up tag info from generated tables
+                    let tag_info =
+                        super::xmp_lookup::lookup_xmp_tag(namespace_prefix, property_name);
+
                     // Map property to ExifTool-style tag name
-                    let tag_name = self.map_property_to_tag_name(namespace_prefix, property_name);
+                    let tag_name = if let Some(info) = tag_info {
+                        info.name.to_string()
+                    } else {
+                        self.map_property_to_tag_name(namespace_prefix, property_name)
+                    };
 
                     // Handle different RDF container types and value formats
                     let final_value = self.process_xmp_value(property_value)?;
+
+                    // Apply PrintConv if available from generated tables
+                    let print_value = self.apply_xmp_print_conv(tag_info, &final_value);
 
                     // Create individual TagEntry with XMP group
                     flattened_tags.push(TagEntry {
                         group: "XMP".to_string(),
                         group1: "XMP".to_string(),
                         name: tag_name,
-                        value: final_value.clone(),
-                        print: final_value,
+                        value: final_value,
+                        print: print_value,
                     });
                 }
             }
@@ -141,114 +153,140 @@ impl XmpProcessor {
         Ok(flattened_tags)
     }
 
+    /// Apply PrintConv from XmpTagInfo to convert raw value to human-readable format
+    ///
+    /// This follows ExifTool's pattern where PrintConv lookups convert numeric
+    /// values like Orientation (1-8) to human-readable strings like "Rotate 90 CW".
+    fn apply_xmp_print_conv(
+        &self,
+        tag_info: Option<&crate::core::XmpTagInfo>,
+        value: &TagValue,
+    ) -> TagValue {
+        let Some(info) = tag_info else {
+            return value.clone();
+        };
+        let Some(ref print_conv) = info.print_conv else {
+            return value.clone();
+        };
+
+        match print_conv {
+            crate::types::PrintConv::Simple(lookup) => {
+                // Simple lookup: convert value to string key and look up
+                match value {
+                    TagValue::String(s) => lookup
+                        .get(s)
+                        .map(|v| TagValue::string(*v))
+                        .unwrap_or_else(|| value.clone()),
+                    TagValue::U8(n) => lookup
+                        .get(&n.to_string())
+                        .map(|v| TagValue::string(*v))
+                        .unwrap_or_else(|| value.clone()),
+                    TagValue::U16(n) => lookup
+                        .get(&n.to_string())
+                        .map(|v| TagValue::string(*v))
+                        .unwrap_or_else(|| value.clone()),
+                    TagValue::U32(n) => lookup
+                        .get(&n.to_string())
+                        .map(|v| TagValue::string(*v))
+                        .unwrap_or_else(|| value.clone()),
+                    TagValue::I32(n) => lookup
+                        .get(&n.to_string())
+                        .map(|v| TagValue::string(*v))
+                        .unwrap_or_else(|| value.clone()),
+                    TagValue::Array(items) => {
+                        // For arrays, try to convert each item
+                        let converted: Vec<TagValue> = items
+                            .iter()
+                            .map(|item| {
+                                if let TagValue::String(s) = item {
+                                    lookup
+                                        .get(s)
+                                        .map(|v| TagValue::string(*v))
+                                        .unwrap_or_else(|| item.clone())
+                                } else {
+                                    item.clone()
+                                }
+                            })
+                            .collect();
+                        TagValue::Array(converted)
+                    }
+                    _ => value.clone(),
+                }
+            }
+            // Other PrintConv types not yet supported for XMP - return value as-is
+            crate::types::PrintConv::None
+            | crate::types::PrintConv::Function(_)
+            | crate::types::PrintConv::Expression(_)
+            | crate::types::PrintConv::Complex => value.clone(),
+        }
+    }
+
     /// Map namespace:property to ExifTool tag name
     ///
+    /// Uses generated XMP tag tables (719 tags across 40 namespaces) as the
+    /// primary source, with hardcoded fallbacks for:
+    /// - Namespaces not in generated tables (mwg-rs, plus, cc)
+    /// - Special tag name mappings (ISOSpeedRatings → ISOSpeed)
+    ///
     /// Following ExifTool's GetXMPTagID() function in XMP.pm:2990-3043
-    /// Examples: dc:title → Title, photoshop:City → City, xmp:Rating → Rating
     fn map_property_to_tag_name(&self, namespace_prefix: &str, property_name: &str) -> String {
-        // Handle special cases based on ExifTool's tag name mapping
-        // Covers all 63 required XMP tags from docs/tag-metadata.json
+        // Special cases that override generated tables or handle missing namespaces
+        // These are kept as hardcoded fallbacks per P03f Known Limitations
         match (namespace_prefix, property_name) {
-            // Dublin Core namespace mappings (dc)
-            ("dc", "title") => "Title".to_string(),
-            ("dc", "description") => "Description".to_string(),
-            ("dc", "subject") => "Subject".to_string(),
-            ("dc", "creator") => "Creator".to_string(),
-            ("dc", "rights") => "Rights".to_string(),
-            ("dc", "source") => "Source".to_string(),
+            // Alternative tag names not in generated tables
+            ("exif", "ISOSpeedRatings") => return "ISOSpeed".to_string(),
+            ("photoshop", "Category") => return "Categories".to_string(),
 
-            // Basic XMP namespace mappings (xmp)
-            ("xmp", "CreateDate") => "CreateDate".to_string(),
-            ("xmp", "ModifyDate") => "ModifyDate".to_string(),
-            ("xmp", "MetadataDate") => "MetadataDate".to_string(),
-            ("xmp", "CreatorTool") => "CreatorTool".to_string(),
-            ("xmp", "Rating") => "Rating".to_string(),
+            // IPTC Core special mappings (generated table uses different property names)
+            ("iptc4xmpCore", "Location") => return "Location".to_string(),
+            ("iptc4xmpCore", "CountryCode") => return "CountryCode".to_string(),
 
-            // Photoshop namespace mappings (photoshop)
-            ("photoshop", "City") => "City".to_string(),
-            ("photoshop", "Country") => "Country".to_string(),
-            ("photoshop", "Source") => "Source".to_string(),
-            ("photoshop", "Category") => "Categories".to_string(), // Note: Categories in XMP
+            // XMP Rights special case
+            ("xmpRights", "UsageTerms") => return "UsageTerms".to_string(),
 
-            // EXIF-in-XMP namespace mappings (exif)
-            ("exif", "ExposureTime") => "ExposureTime".to_string(),
-            ("exif", "FNumber") => "FNumber".to_string(),
-            ("exif", "FocalLength") => "FocalLength".to_string(),
-            ("exif", "ISO") => "ISO".to_string(),
-            ("exif", "ISOSpeed") => "ISOSpeed".to_string(),
-            ("exif", "ISOSpeedRatings") => "ISOSpeed".to_string(), // Alternative name
-            ("exif", "ApertureValue") => "ApertureValue".to_string(),
-            ("exif", "ShutterSpeedValue") => "ShutterSpeedValue".to_string(),
-            ("exif", "DateTimeOriginal") => "DateTimeOriginal".to_string(),
-            ("exif", "DateTimeDigitized") => "DateTimeDigitized".to_string(),
-            ("exif", "DateTime") => "DateTime".to_string(),
-            ("exif", "GPSLatitude") => "GPSLatitude".to_string(),
-            ("exif", "GPSLongitude") => "GPSLongitude".to_string(),
-            ("exif", "GPSLongitudeRef") => "GPSLongitudeRef".to_string(),
-            ("exif", "GPSAltitude") => "GPSAltitude".to_string(),
-            ("exif", "GPSAltitudeRef") => "GPSAltitudeRef".to_string(),
-            ("exif", "GPSDateStamp") => "GPSDateStamp".to_string(),
-            ("exif", "GPSProcessingMethod") => "GPSProcessingMethod".to_string(),
+            // XMP Media Management special case
+            ("xmpMM", "History") => return "History".to_string(),
 
-            // TIFF-in-XMP namespace mappings (tiff)
-            ("tiff", "ImageWidth") => "ImageWidth".to_string(),
-            ("tiff", "ImageHeight") => "ImageHeight".to_string(),
-            ("tiff", "Orientation") => "Orientation".to_string(),
-            ("tiff", "Make") => "Make".to_string(),
-            ("tiff", "Model") => "Model".to_string(),
-            ("tiff", "Software") => "Software".to_string(),
+            // MWG namespace (MWG.pm not processed by codegen)
+            ("mwg-rs", "Regions") => return "RegionList".to_string(),
+            ("mwg-kw", property) => return property.to_string(),
 
-            // Adobe Auxiliary namespace mappings (aux)
-            ("aux", "Lens") => "Lens".to_string(),
-            ("aux", "LensID") => "LensID".to_string(),
-            ("aux", "LensInfo") => "LensInfo".to_string(),
-            ("aux", "LensMake") => "LensMake".to_string(),
-            ("aux", "LensModel") => "LensModel".to_string(),
+            // Microsoft Photo namespace (MP)
+            ("MP", "RegionInfo") => return "RegionInfoMP".to_string(),
 
-            // XMP Rights Management namespace mappings (xmpRights)
-            ("xmpRights", "UsageTerms") => "License".to_string(),
+            // Plus namespace (not in generated tables)
+            ("plus", "Licensor") => return "Licensor".to_string(),
+            ("plus", "LicensorURL") => return "LicensorURL".to_string(),
 
-            // IPTC Core namespace mappings (iptc4xmpCore)
-            ("iptc4xmpCore", "Location") => "City".to_string(),
-            ("iptc4xmpCore", "CountryCode") => "Country".to_string(),
+            // Creative Commons namespace (XMP2.pl not processed)
+            ("cc", "license") => return "License".to_string(),
+            ("cc", "attributionName") => return "AttributionName".to_string(),
+            ("cc", "attributionURL") => return "AttributionURL".to_string(),
 
-            // XMP Media Management namespace mappings (xmpMM)
-            ("xmpMM", "History") => "HistoryWhen".to_string(),
+            // Custom XMP namespace mappings (user-defined, not in ExifTool)
+            ("CatalogSets", _) => return "CatalogSets".to_string(),
+            ("PersonInImage", _) => return "PersonInImage".to_string(),
+            ("PersonInImageName", _) => return "PersonInImageName".to_string(),
+            ("PersonInImageWDetails", _) => return "PersonInImageWDetails".to_string(),
+            ("HierarchicalKeywords", _) => return "HierarchicalKeywords".to_string(),
+            ("HierarchicalSubject", _) => return "HierarchicalSubject".to_string(),
+            ("LastKeywordXMP", _) => return "LastKeywordXMP".to_string(),
+            ("TagsList", _) => return "TagsList".to_string(),
+            ("Jurisdiction", _) => return "Jurisdiction".to_string(),
+            ("Permits", _) => return "Permits".to_string(),
+            ("Prohibits", _) => return "Prohibits".to_string(),
+            ("Requires", _) => return "Requires".to_string(),
+            ("UseGuidelines", _) => return "UseGuidelines".to_string(),
+            ("OriginalCreateDateTime", _) => return "OriginalCreateDateTime".to_string(),
+            ("Duration", _) => return "Duration".to_string(),
+            ("CameraModelName", _) => return "CameraModelName".to_string(),
+            ("GPSDateTime", _) => return "GPSDateTime".to_string(),
 
-            // MWG namespace mappings (mwg-rs) - Metadata Working Group Regions
-            ("mwg-rs", "Regions") => "RegionList".to_string(),
-
-            // Microsoft Photo namespace mappings (MP)
-            ("MP", "RegionInfo") => "RegionInfoMP".to_string(),
-
-            // Plus namespace mappings (plus) - PLUS Coalition
-            ("plus", "Licensor") => "AttributionName".to_string(),
-            ("plus", "LicensorURL") => "AttributionURL".to_string(),
-
-            // Custom XMP namespace mappings
-            ("CatalogSets", _) => "CatalogSets".to_string(),
-            ("PersonInImage", _) => "PersonInImage".to_string(),
-            ("PersonInImageName", _) => "PersonInImageName".to_string(),
-            ("PersonInImageWDetails", _) => "PersonInImageWDetails".to_string(),
-            ("HierarchicalKeywords", _) => "HierarchicalKeywords".to_string(),
-            ("HierarchicalSubject", _) => "HierarchicalSubject".to_string(),
-            ("LastKeywordXMP", _) => "LastKeywordXMP".to_string(),
-            ("TagsList", _) => "TagsList".to_string(),
-            ("Jurisdiction", _) => "Jurisdiction".to_string(),
-            ("Permits", _) => "Permits".to_string(),
-            ("Prohibits", _) => "Prohibits".to_string(),
-            ("Requires", _) => "Requires".to_string(),
-            ("UseGuidelines", _) => "UseGuidelines".to_string(),
-            ("OriginalCreateDateTime", _) => "OriginalCreateDateTime".to_string(),
-            ("Duration", _) => "Duration".to_string(),
-            ("CameraModelName", _) => "CameraModelName".to_string(),
-
-            // Composite tags that may appear in XMP
-            ("GPSDateTime", _) => "GPSDateTime".to_string(),
-
-            // Default case: use property name as-is
-            (_, prop) => prop.to_string(),
+            _ => {}
         }
+
+        // Use generated tables (719 XmpTagInfo entries across 40 namespaces)
+        super::xmp_lookup::get_xmp_tag_name(namespace_prefix, property_name)
     }
 
     /// Process XMP property values according to RDF container types

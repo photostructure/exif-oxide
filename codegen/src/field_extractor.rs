@@ -31,7 +31,7 @@ pub struct FieldSymbol {
 }
 
 /// Metadata about extracted symbols for strategy pattern matching
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct FieldMetadata {
     /// Estimated size (hash key count, array length, or string length)
     pub size: u32,

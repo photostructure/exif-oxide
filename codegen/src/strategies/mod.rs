@@ -739,6 +739,7 @@ mod mime_type;
 mod scalar_array;
 mod simple_table;
 mod tag_kit;
+mod xmp_tag;
 
 // Output location utilities
 pub mod output_locations;
@@ -753,6 +754,7 @@ pub use mime_type::MimeTypeStrategy;
 pub use scalar_array::ScalarArrayStrategy;
 pub use simple_table::SimpleTableStrategy;
 pub use tag_kit::TagKitStrategy;
+pub use xmp_tag::XmpTagStrategy;
 
 /// Registry of all available strategies
 /// Ordered by precedence - first-match-wins
@@ -768,6 +770,8 @@ pub fn all_strategies() -> Vec<Box<dyn ExtractionStrategy>> {
         Box::new(SimpleTableStrategy::new()), // Simple key-value lookups with mixed keys
         // Scalar arrays (MUST be before TagKitStrategy to handle arrays of primitives)
         Box::new(ScalarArrayStrategy::new()), // Arrays of scalars (u8[], i32[], &str[])
+        // XMP namespace tables (MUST be before TagKitStrategy to claim NAMESPACE-keyed tables)
+        Box::new(XmpTagStrategy::new()), // XMP tag definitions with string keys
         Box::new(TagKitStrategy::new()), // Complex tag definitions (Main tables) - after specific patterns
         Box::new(BinaryDataStrategy::new()), // ProcessBinaryData tables (CameraInfo*, etc.)
         Box::new(BooleanSetStrategy::new()), // Membership sets (isDat*, isTxt*, etc.)
@@ -782,7 +786,7 @@ mod tests {
     #[test]
     fn test_strategy_dispatcher_creation() {
         let dispatcher = StrategyDispatcher::new();
-        assert_eq!(dispatcher.strategies.len(), 9); // All 9 strategies registered
+        assert_eq!(dispatcher.strategies.len(), 10); // All 10 strategies registered
     }
 
     #[test]
