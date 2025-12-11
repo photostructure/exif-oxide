@@ -461,20 +461,6 @@ grep -A5 -B5 '\$self{' third-party/exiftool/lib/Image/ExifTool/Canon.pm
 
 **Solution**: Implement conversion in binary data processor, not registry. See "Inter-Tag Dependencies" section above.
 
-### "Registry Lookup Fails Despite Correct Expression"
-
-**Symptoms**: Expression shows as raw Perl code instead of function name in generated code.
-
-**Common Causes**:
-1. **Whitespace differences** - Try normalizing the expression:
-   ```bash
-   echo 'sprintf( "%.1f mm" , $val )' | perl codegen/extractors/normalize_expression.pl
-   ```
-
-2. **Missing registry entry** - Add the normalized expression to appropriate registry
-
-3. **Module scoping** - Expression might need module-specific entry like `"Canon_pm::WhiteBalance"`
-
 ### "Wrong Conversion Applied"
 
 **Symptoms**: Tag gets converted but produces incorrect values.

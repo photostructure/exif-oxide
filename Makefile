@@ -1,4 +1,4 @@
-.PHONY: all ast-check ast-test check check-fmt fmt lint yamllint unit-test test t codegen-test fix build install doc clean clean-generated clean-all check-deps check-perl codegen sync expression-analysis expression-analysis-force subdirectory-coverage check-subdirectory-coverage perl-setup perl-deps update upgrade-gha upgrade audit tests precommit compat-gen compat-gen-force compat-test test-mime-compat binary-compat-test cmp compat compat-force compat-full help
+.PHONY: all ast-check ast-test check check-fmt fmt lint yamllint unit-test test t codegen-test fix build install doc clean clean-generated clean-all check-deps check-perl codegen sync expression-analysis expression-analysis-force perl-setup perl-deps update upgrade-gha upgrade audit tests precommit compat-gen compat-gen-force compat-test test-mime-compat binary-compat-test cmp compat compat-force compat-full help
 
 # Default target: build the project
 all: build
@@ -35,7 +35,7 @@ yamllint: check-deps
 unit-test:
 	cargo test --all --features test-helpers
 
-# Run all tests including integration tests
+# Run all tests including codegen-test and integration tests
 test:
 	cargo test --all --features test-helpers,integration-tests
 
@@ -118,25 +118,6 @@ docs/analysis/expressions/required-expressions-analysis.json: docs/analysis/expr
 expression-analysis-force:
 	@rm -f docs/analysis/expressions/composite-dependencies.json docs/analysis/expressions/required-expressions-analysis.json
 	@$(MAKE) expression-analysis
-
-# Generate SubDirectory coverage report
-subdirectory-coverage:
-	@echo "📊 Generating SubDirectory coverage report..."
-	@mkdir -p codegen/coverage
-	@cd codegen/extractors && perl subdirectory_discovery.pl --json 2>/dev/null > ../coverage/subdirectory_coverage.json
-	@cd codegen/extractors && perl subdirectory_discovery.pl --markdown 2>/dev/null > ../../docs/generated/SUBDIRECTORY-COVERAGE.md
-	@coverage=$$(jq '.summary.coverage_percentage' codegen/coverage/subdirectory_coverage.json); \
-	echo "SubDirectory coverage: $$coverage%"
-
-# Check SubDirectory coverage and warn if below threshold
-check-subdirectory-coverage: subdirectory-coverage
-	@coverage=$$(jq -r '.summary.coverage_percentage' codegen/coverage/subdirectory_coverage.json | cut -d. -f1); \
-	if [ "$$coverage" -lt 80 ]; then \
-		echo "⚠️  Warning: SubDirectory coverage is only $${coverage}%"; \
-		echo "   See docs/generated/SUBDIRECTORY-COVERAGE.md for details"; \
-	else \
-		echo "✅ SubDirectory coverage is $${coverage}%"; \
-	fi
 
 # Set up local Perl environment and install cpanminus
 perl-setup:
@@ -283,8 +264,6 @@ help:
 	@echo "  make codegen-test  - Run codegen tests"
 	@echo "  make sync          - Extract all ExifTool algorithms and regenerate code"
 	@echo "  make check-perl    - Check Perl files for syntax errors"
-	@echo "  make subdirectory-coverage - Generate SubDirectory coverage report"
-	@echo "  make check-subdirectory-coverage - Check SubDirectory coverage and warn if low"
 	@echo ""
 	@echo "Cleaning:"
 	@echo "  make clean         - Clean build artifacts (cargo clean)"
