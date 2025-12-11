@@ -153,16 +153,12 @@ perl-deps: perl-setup
 	@echo "Installing Perl dependencies from cpanfile..."
 	@eval $$(perl -I ~/perl5/lib/perl5/ -Mlocal::lib) && ~/perl5/bin/cpanm --installdeps .
 
-# Update dependencies
-update:
-	cargo update
-
-upgrade-gha:
-	pinact run -u || { echo "pinact not found. Install with: go install github.com/suzuki-shunsuke/pinact/cmd/pinact@latest"; exit 1; }
-
 # Upgrade to latest versions (requires: cargo install cargo-edit)
 upgrade: upgrade-gha check-deps
 	cargo upgrade --incompatible
+
+upgrade-gha:
+	pinact run -u || { echo "pinact not found. Install with: go install github.com/suzuki-shunsuke/pinact/v3/cmd/pinact@latest"; exit 1; }
 
 # Security audit for vulnerabilities in dependencies (requires: cargo install cargo-audit)
 audit: check-deps
@@ -213,7 +209,7 @@ test-mime-compat:
 # Run comprehensive binary extraction compatibility tests
 binary-compat-test: build
 	@echo "Running comprehensive binary extraction compatibility tests..."
-	@echo "⏱️  Note: This test processes 344+ files and takes several minutes to complete"
+	@echo "⏱️  Note: This test processes 380+ files"
 	cargo test --test binary_extraction_comprehensive --features integration-tests -- --nocapture --ignored
 
 # Compare exif-oxide output with ExifTool using the Rust comparison tool
