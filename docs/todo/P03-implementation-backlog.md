@@ -158,7 +158,7 @@ cargo run -- third-party/exiftool/t/images/DNG.dng 2>/dev/null | grep DNGLensInf
 - **XMP-xmpMM** (1): HistoryWhen
 - **XMP-mediapro** (1): People
 
-**Details**: See [P03f-xmp-namespace-tags.md](P03f-xmp-namespace-tags.md) for full implementation plan with 6 tasks.
+**Details**: See [P03f-xmp-namespace-tags.md](P03f-xmp-namespace-tags.md) for full implementation plan.
 
 ---
 
@@ -169,12 +169,22 @@ cargo run -- third-party/exiftool/t/images/DNG.dng 2>/dev/null | grep DNGLensInf
 3. ⚠️ **P03c**: Composite tag infrastructure - **95% COMPLETE** (bugs remain)
 4. ✅ **P03d**: Research unknown tags - **COMPLETE**
 5. ✅ **P03e**: DNGLensInfo - **COMPLETE** (already in codegen)
-6. 🔲 **P03f**: XMP Namespace Tags - **NOT STARTED** (plan ready)
+6. ⚠️ **P03f**: XMP Namespace Tags - **IN PROGRESS** (Tasks 1-3 complete, Task 4 in progress)
+
+### P03f Progress
+
+- ✅ XmpTagInfo type created (`src/core/xmp_tag_info.rs`)
+- ✅ XmpTagStrategy created (`codegen/src/strategies/xmp_tag.rs`)
+- ✅ PrintConv extraction working (inlined in XmpTagInfo)
+- ✅ 40 XMP namespace tables generated, 719 tags total
+- 🔶 Processor not yet wired to use generated tables
+- ⬜ Tests and documentation pending
 
 ### Next Steps
 
-1. **P03c bugs**: Fix Megapixels sprintf, ShutterSpeed fallback, GPSPosition sign
-2. **P03f**: Implement XmpTagStrategy for XMP tag codegen (6 tasks)
+1. **P03f Task 4**: Wire `src/xmp/processor.rs` to use generated XMP tables (see P03f doc)
+2. **P03f Task 5-6**: Add tests and update documentation
+3. **P03c bugs**: Fix Megapixels sprintf, ShutterSpeed fallback, GPSPosition sign
 
 ---
 
