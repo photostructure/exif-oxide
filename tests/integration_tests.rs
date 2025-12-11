@@ -18,8 +18,8 @@ use common::{CANON_T3I_CR2, CANON_T3I_JPG};
 /// Test CLI basic functionality
 #[test]
 fn test_cli_help() {
-    let output = Command::new("cargo")
-        .args(["run", "--", "--help"])
+    let output = Command::new(env!("CARGO_BIN_EXE_exif-oxide"))
+        .arg("--help")
         .output()
         .expect("Failed to run CLI with --help");
 
@@ -32,8 +32,8 @@ fn test_cli_help() {
 /// Test CLI with existing test image
 #[test]
 fn test_cli_with_test_image() {
-    let output = Command::new("cargo")
-        .args(["run", "--", CANON_T3I_JPG])
+    let output = Command::new(env!("CARGO_BIN_EXE_exif-oxide"))
+        .arg(CANON_T3I_JPG)
         .output()
         .expect("Failed to run CLI with test image");
 
@@ -58,8 +58,8 @@ fn test_cli_with_test_image() {
 /// Test CLI with --show-missing flag
 #[test]
 fn test_cli_show_missing() {
-    let output = Command::new("cargo")
-        .args(["run", "--", "--show-missing", CANON_T3I_JPG])
+    let output = Command::new(env!("CARGO_BIN_EXE_exif-oxide"))
+        .args(["--show-missing", CANON_T3I_JPG])
         .output()
         .expect("Failed to run CLI with --show-missing");
 
@@ -99,8 +99,8 @@ fn test_cli_show_missing() {
 /// Test CLI error handling for non-existent file
 #[test]
 fn test_cli_nonexistent_file() {
-    let output = Command::new("cargo")
-        .args(["run", "--", "nonexistent_file.jpg"])
+    let output = Command::new(env!("CARGO_BIN_EXE_exif-oxide"))
+        .arg("nonexistent_file.jpg")
         .output()
         .expect("Failed to run CLI with nonexistent file");
 
@@ -126,8 +126,8 @@ fn test_cli_nonexistent_file() {
 /// Test JSON structure compatibility with ExifTool format
 #[test]
 fn test_json_structure_compatibility() {
-    let output = Command::new("cargo")
-        .args(["run", "--", CANON_T3I_JPG])
+    let output = Command::new(env!("CARGO_BIN_EXE_exif-oxide"))
+        .arg(CANON_T3I_JPG)
         .output()
         .expect("Failed to run CLI");
 
@@ -193,8 +193,8 @@ fn test_compare_with_exiftool() {
     let exiftool_data = &exiftool_json[0];
 
     // Get our output
-    let our_output = Command::new("cargo")
-        .args(["run", "--", CANON_T3I_JPG])
+    let our_output = Command::new(env!("CARGO_BIN_EXE_exif-oxide"))
+        .arg(CANON_T3I_JPG)
         .output()
         .expect("Failed to run our CLI");
 
@@ -237,8 +237,8 @@ fn test_different_file_formats() {
             continue; // Skip if test file doesn't exist
         }
 
-        let output = Command::new("cargo")
-            .args(["run", "--", file])
+        let output = Command::new(env!("CARGO_BIN_EXE_exif-oxide"))
+            .arg(file)
             .output()
             .unwrap_or_else(|_| panic!("Failed to run CLI with {file}"));
 

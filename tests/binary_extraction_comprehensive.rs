@@ -13,11 +13,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::process::Command;
-use std::sync::Once;
 use walkdir::WalkDir;
-
-/// Ensures the exif-oxide binary is built exactly once per test run
-static BUILD_BINARY: Once = Once::new();
 
 /// Binary tags that can contain extractable image data
 /// Based on SUPPORTED-FORMATS.md embedded image extraction requirements
@@ -621,7 +617,7 @@ fn test_single_tag_extraction(
 
     // Extract with exif-oxide (use pre-built binary for speed)
     let binary_path = get_exif_oxide_binary();
-    let exif_oxide_output = Command::new(&binary_path)
+    let exif_oxide_output = Command::new(binary_path)
         .args(["-b", &format!("-{}", tag_name), &file_path_str])
         .output()?;
 
@@ -711,19 +707,9 @@ fn get_mime_type_from_exiftool_data(exiftool_data: &Value) -> String {
     "application/octet-stream".to_string()
 }
 
-/// Ensures exif-oxide binary is built and returns its path.
-/// Builds once per test run (debug profile for faster compilation).
-fn get_exif_oxide_binary() -> PathBuf {
-    BUILD_BINARY.call_once(|| {
-        println!("Building exif-oxide binary (this may take a moment)...");
-        let status = Command::new("cargo")
-            .args(["build", "--bin", "exif-oxide"])
-            .status()
-            .expect("Failed to run cargo build");
-        assert!(status.success(), "cargo build --bin exif-oxide failed");
-    });
-
-    PathBuf::from("./target/debug/exif-oxide")
+/// Returns the path to the exif-oxide binary built by cargo test.
+fn get_exif_oxide_binary() -> &'static str {
+    env!("CARGO_BIN_EXE_exif-oxide")
 }
 
 /// Detect manufacturer from file path (heuristic for statistics)
