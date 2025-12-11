@@ -154,7 +154,7 @@ Our architecture has all the right components but **no bridge** connecting them:
 
 ### The Specific Integration Gap
 
-**File:** `/home/mrm/src/exif-oxide/src/exif/ifd.rs`  
+**File:** `$REPO_ROOT/src/exif/ifd.rs`  
 **Function:** `process_maker_notes_with_signature_detection()`  
 **Lines:** 22-163
 

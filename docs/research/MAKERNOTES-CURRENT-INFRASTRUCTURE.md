@@ -28,9 +28,9 @@ This document analyzes exif-oxide's current MakerNotes processing infrastructure
 ### 1.1 Sony MakerNotes (`src/implementations/sony/`)
 
 **Files:**
-- `/home/mrm/src/exif-oxide/src/implementations/sony/makernote_detection.rs` (Lines 1-307)
-- `/home/mrm/src/exif-oxide/src/implementations/sony/mod.rs` (Lines 1-54)
-- `/home/mrm/src/exif-oxide/src/processor_registry/processors/sony.rs` (Lines 1-922)
+- `$REPO_ROOT/src/implementations/sony/makernote_detection.rs` (Lines 1-307)
+- `$REPO_ROOT/src/implementations/sony/mod.rs` (Lines 1-54)
+- `$REPO_ROOT/src/processor_registry/processors/sony.rs` (Lines 1-922)
 
 **Capabilities:**
 - **Signature Detection**: 7 different Sony signature patterns (DSC, CAM, MOBILE, PI, PREMI, PIC, Ericsson)
@@ -53,9 +53,9 @@ impl BinaryDataProcessor for SonyCameraInfoProcessor
 ### 1.2 Canon MakerNotes (`src/implementations/canon/`)
 
 **Files:**
-- `/home/mrm/src/exif-oxide/src/implementations/canon/mod.rs` (Lines 1-1092)
-- `/home/mrm/src/exif-oxide/src/implementations/canon/offset_schemes.rs`
-- `/home/mrm/src/exif-oxide/src/implementations/canon/binary_data.rs`
+- `$REPO_ROOT/src/implementations/canon/mod.rs` (Lines 1-1092)
+- `$REPO_ROOT/src/implementations/canon/offset_schemes.rs`
+- `$REPO_ROOT/src/implementations/canon/binary_data.rs`
 
 **Capabilities:**
 - **Signature Detection**: Canon manufacturer detection via Make field
@@ -76,9 +76,9 @@ process_subdirectories_with_printconv(exif_reader, "Canon", "Canon", ...)
 ### 1.3 Nikon MakerNotes (`src/implementations/nikon/`)
 
 **Files:**
-- `/home/mrm/src/exif-oxide/src/implementations/nikon/mod.rs` (Lines 1-149)
-- `/home/mrm/src/exif-oxide/src/implementations/nikon/encryption.rs`
-- `/home/mrm/src/exif-oxide/src/implementations/nikon/detection.rs`
+- `$REPO_ROOT/src/implementations/nikon/mod.rs` (Lines 1-149)
+- `$REPO_ROOT/src/implementations/nikon/encryption.rs`
+- `$REPO_ROOT/src/implementations/nikon/detection.rs`
 
 **Capabilities:**
 - **Format Detection**: Multi-format Nikon detection (Format1, Format2, Format3)
@@ -89,7 +89,7 @@ process_subdirectories_with_printconv(exif_reader, "Canon", "Canon", ...)
 
 ### 1.4 Olympus MakerNotes (Partial)
 
-**Processing Location**: `/home/mrm/src/exif-oxide/src/exif/ifd.rs` (Lines 67-98)
+**Processing Location**: `$REPO_ROOT/src/exif/ifd.rs` (Lines 67-98)
 
 **Capabilities:**
 - **Signature Detection**: OLYMPUS signature with 12-byte offset
@@ -102,7 +102,7 @@ process_subdirectories_with_printconv(exif_reader, "Canon", "Canon", ...)
 
 ### 2.1 Core Processing Function
 
-**Location**: `/home/mrm/src/exif-oxide/src/exif/processors.rs` (Lines 291-419)
+**Location**: `$REPO_ROOT/src/exif/processors.rs` (Lines 291-419)
 
 ```rust
 pub(crate) fn process_subdirectory_tag(
@@ -131,7 +131,7 @@ pub(crate) fn process_subdirectory_tag(
 
 ### 2.2 Subdirectory Context Detection
 
-**Location**: `/home/mrm/src/exif-oxide/src/exif/processors.rs` (Lines 524-592)
+**Location**: `$REPO_ROOT/src/exif/processors.rs` (Lines 524-592)
 
 ```rust
 pub(crate) fn is_subdirectory_tag(&self, tag_id: u16) -> bool
@@ -146,7 +146,7 @@ pub(crate) fn is_subdirectory_tag(&self, tag_id: u16) -> bool
 
 ### 3.1 Current Recognition Logic
 
-**Location**: `/home/mrm/src/exif-oxide/src/exif/ifd.rs` (Lines 522-574)
+**Location**: `$REPO_ROOT/src/exif/ifd.rs` (Lines 522-574)
 
 **Standard Tags** (Always recognized):
 - `0x8769` (ExifIFD) - Camera settings subdirectory
@@ -180,7 +180,7 @@ tag_kit::apply_print_conv(tag_id: u32, value: &TagValue) -> TagValue
 
 ### 4.1 Main Processing Flow
 
-**Entry Point**: `/home/mrm/src/exif-oxide/src/exif/ifd.rs` (Lines 22-163)
+**Entry Point**: `$REPO_ROOT/src/exif/ifd.rs` (Lines 22-163)
 
 ```rust
 fn process_maker_notes_with_signature_detection(
@@ -199,7 +199,7 @@ fn process_maker_notes_with_signature_detection(
 
 ### 4.2 Processor Registry Integration
 
-**Location**: `/home/mrm/src/exif-oxide/src/processor_registry/dispatch.rs` (Lines 456-519)
+**Location**: `$REPO_ROOT/src/processor_registry/dispatch.rs` (Lines 456-519)
 
 ```rust
 pub(crate) fn detect_makernote_processor(&self) -> Option<String>
@@ -214,7 +214,7 @@ pub(crate) fn detect_makernote_processor(&self) -> Option<String>
 
 ### 4.3 Dispatch Rules
 
-**Location**: `/home/mrm/src/exif-oxide/src/processor_registry/dispatch.rs` (Lines 76-647)
+**Location**: `$REPO_ROOT/src/processor_registry/dispatch.rs` (Lines 76-647)
 
 **Manufacturer-Specific Rules:**
 - **CanonDispatchRule** (Lines 76-223): Model-specific processor selection
@@ -226,7 +226,7 @@ pub(crate) fn detect_makernote_processor(&self) -> Option<String>
 
 ### 5.1 Detection Trigger
 
-**Location**: `/home/mrm/src/exif-oxide/src/exif/processors.rs` (Lines 697-709)
+**Location**: `$REPO_ROOT/src/exif/processors.rs` (Lines 697-709)
 
 ```rust
 // In fallback_to_existing_processing()
@@ -241,7 +241,7 @@ if sony::is_sony_makernote(make, "") {
 
 ### 5.2 Processing Implementation  
 
-**Location**: `/home/mrm/src/exif-oxide/src/implementations/sony/mod.rs` (Lines 33-53)
+**Location**: `$REPO_ROOT/src/implementations/sony/mod.rs` (Lines 33-53)
 
 ```rust
 pub fn process_sony_subdirectory_tags(exif_reader: &mut ExifReader) -> Result<()> {

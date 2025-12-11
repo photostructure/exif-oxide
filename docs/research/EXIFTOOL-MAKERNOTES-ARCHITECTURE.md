@@ -168,7 +168,7 @@ if ($$et{Make} =~ /^Canon/ and $$dirInfo{DirLen} > 8) {
 ### 5. Sony Processing Flow
 
 #### Entry Point: Sony::Main Tag Table
-**File:** `/home/mrm/src/exif-oxide/third-party/exiftool/lib/Image/ExifTool/Sony.pm`  
+**File:** `$REPO_ROOT/third-party/exiftool/lib/Image/ExifTool/Sony.pm`  
 **Lines:** 664-703
 
 ```perl
@@ -314,8 +314,8 @@ Sony extensively uses ProcessBinaryData for structured maker note data:
 ### 9. Key Reference Files
 
 **Primary Architecture:**
-- `/home/mrm/src/exif-oxide/third-party/exiftool/lib/Image/ExifTool/MakerNotes.pm` (lines 34-1102: dispatch table)
-- `/home/mrm/src/exif-oxide/third-party/exiftool/lib/Image/ExifTool/Sony.pm` (lines 664+: Sony::Main table)
+- `$REPO_ROOT/third-party/exiftool/lib/Image/ExifTool/MakerNotes.pm` (lines 34-1102: dispatch table)
+- `$REPO_ROOT/third-party/exiftool/lib/Image/ExifTool/Sony.pm` (lines 664+: Sony::Main table)
 
 **Critical Functions:**
 - `FixBase()` (MakerNotes.pm:1257-1459) - Offset repair system

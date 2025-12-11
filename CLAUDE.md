@@ -7,14 +7,14 @@
 **ALWAYS:**
 
 1. Run `pwd` first to check your current directory
-2. Use absolute paths: `cd /home/mrm/src/exif-oxide` or `cd /home/mrm/src/exif-oxide/codegen`
+2. Use absolute paths: `cd $HOME/src/exif-oxide` or `cd $HOME/src/exif-oxide/codegen`
 3. When in doubt, ask the user to confirm the intended directory
 
 ## 🚨 BEFORE ANY CODE CHANGES - RUN THESE CHECKS 🚨
 
 ```bash
 # 1. Are you in the right directory?
-pwd  # MUST show /home/mrm/src/exif-oxide or subdirectory
+pwd  # MUST show something equivalent to $REPO_ROOT or subdirectory
 
 # 2. Are you about to edit generated code?
 echo "Files in src/generated/ are AUTO-GENERATED. Edit codegen/src/ instead."

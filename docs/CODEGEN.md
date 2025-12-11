@@ -274,7 +274,7 @@ cargo t                         # Run tests (includes test-helpers feature)
 cargo run -p codegen --bin debug-ppi -- --verbose '$val + 4'
 
 # Debug strategy selection
-cd /home/mrm/src/exif-oxide/codegen && RUST_LOG=debug cargo run
+cd $REPO_ROOT/codegen && RUST_LOG=debug cargo run
 
 # Raw PPI AST (Perl only)
 codegen/scripts/ppi_ast.pl 'sprintf("%.2f", $val)'
@@ -352,7 +352,7 @@ Check that normalized AST shows `BinaryOperation` nodes for operators.
 ### Strategy Not Claiming Symbol
 
 ```bash
-cd /home/mrm/src/exif-oxide/codegen && RUST_LOG=trace cargo run
+cd $REPO_ROOT/codegen && RUST_LOG=trace cargo run
 ```
 
 Look for "Strategy X can_handle returned false for symbol Y" messages.
