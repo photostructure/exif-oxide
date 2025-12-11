@@ -142,6 +142,15 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             },
         ),
         (
+            13,
+            TagInfo {
+                name: "Canon_AFInfo2_0x000d",
+                format: "int16s[int(($val{2}+15)/16)+1]",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             14,
             TagInfo {
                 name: "PrimaryAFPoint",

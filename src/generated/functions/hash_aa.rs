@@ -56,3 +56,28 @@ pub fn ast_value_aae26d7e5adb6938(
                     val
                 ))
 }
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// my @v=reverse split(" ",$val);
+/// $$self{FujiLayout} and $v[0]/=2, $v[1]*=2;
+/// return "@v";
+/// ```
+/// Used by:
+/// - FujiFilm::RAF.RawImageSize
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_aa27a9340f19bccb(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my @v=reverse split(\" \",$val);\n                $$self{FujiLayout} and $v[0]/=2, $v[1]*=2;\n                return \"@v\";", // original expression
+                    val
+                ))
+}

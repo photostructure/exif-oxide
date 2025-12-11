@@ -62,6 +62,20 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            4,
+            TagInfo {
+                name: "FlashMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Auto"),
+                    ("2".to_string(), "On"),
+                    ("3".to_string(), "Off"),
+                    ("4".to_string(), "Red-eye Reduction"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
             5,
             TagInfo {
                 name: "FlashIntensity",

@@ -190,6 +190,15 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            20,
+            TagInfo {
+                name: "NRWData",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             22,
             TagInfo {
                 name: "ImageBoundary",
@@ -346,6 +355,15 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            35,
+            TagInfo {
+                name: "PictureControlData",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             36,
             TagInfo {
                 name: "WorldTime",
@@ -418,6 +436,15 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("81".to_string(), "Auto (Electronic Front Curtain)"),
                     ("96".to_string(), "Electronic (High Speed)"),
                 ]))),
+                value_conv: None,
+            },
+        ),
+        (
+            53,
+            TagInfo {
+                name: "HDRInfo2",
+                format: "unknown",
+                print_conv: None,
                 value_conv: None,
             },
         ),
@@ -610,6 +637,15 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            136,
+            TagInfo {
+                name: "AFInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             137,
             TagInfo {
                 name: "ShootingMode",
@@ -658,6 +694,15 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             144,
             TagInfo {
                 name: "LightSource",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            145,
+            TagInfo {
+                name: "ShotInfoUnknown",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -716,6 +761,24 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             150,
             TagInfo {
                 name: "NEFLinearizationTable",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            151,
+            TagInfo {
+                name: "ColorBalanceUnknown",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            152,
+            TagInfo {
+                name: "LensDataUnknown",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -817,6 +880,15 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            168,
+            TagInfo {
+                name: "FlashInfoUnknown",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             169,
             TagInfo {
                 name: "ImageOptimization",
@@ -862,6 +934,15 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            176,
+            TagInfo {
+                name: "MultiExposure2",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             177,
             TagInfo {
                 name: "HighISONoiseReduction",
@@ -893,6 +974,24 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 name: "PowerUpTime",
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                value_conv: None,
+            },
+        ),
+        (
+            183,
+            TagInfo {
+                name: "AFInfo2",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            184,
+            TagInfo {
+                name: "FileInfo",
+                format: "unknown",
+                print_conv: None,
                 value_conv: None,
             },
         ),
@@ -984,6 +1083,15 @@ pub static NIKON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             3600,
             TagInfo {
                 name: "NikonScanIFD",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            3603,
+            TagInfo {
+                name: "NikonCaptureEditVersions",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,

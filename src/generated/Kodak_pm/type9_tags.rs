@@ -10,11 +10,21 @@ use std::sync::LazyLock;
 use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
 use crate::generated::functions::hash_4d::ast_value_4d7b388271c29e88;
 use crate::generated::functions::hash_5f::ast_value_5fd665ca42e4d37a;
+use crate::generated::functions::hash_8e::ast_value_8e281e57f268ff8;
 use crate::generated::functions::hash_ca::ast_print_cab7be313d3e671f;
 
 /// Tag definitions for Kodak::Type9 table
 pub static KODAK_TYPE9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
+        (
+            12,
+            TagInfo {
+                name: "FNumber",
+                format: "int16u",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+            },
+        ),
         (
             16,
             TagInfo {

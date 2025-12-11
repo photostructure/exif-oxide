@@ -41,6 +41,7 @@ pub fn ast_print_3b5d8202349cb3c2(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Casio::Type2.PreviewImageSize
 /// - FujiFilm::RAF.RawImageCroppedSize
 /// - FujiFilm::RAF.RawImageFullSize
+/// - FujiFilm::RAF.RawImageSize
 /// - FujiFilm::RAF.RawZoomSize
 /// - FujiFilm::RAF.RawZoomTopLeft
 /// - Kodak::Type10.PreviewImageSize

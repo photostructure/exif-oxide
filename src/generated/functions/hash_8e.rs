@@ -47,6 +47,7 @@ pub fn ast_print_8e4e6485519821cd(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - HP::Type6.FNumber
 /// - Kodak::SubIFD2.ISO
 /// - Kodak::Type10.FNumber
+/// - Kodak::Type9.FNumber
 /// - Nikon::ROC.DigitalROC
 /// - Olympus::CameraSettings.ManometerPressure
 /// - Panasonic::Main.ManometerPressure

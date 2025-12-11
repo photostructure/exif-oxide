@@ -15,6 +15,29 @@ use crate::types::{ExifContext, TagValue};
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// $val =~ s/Luma:\s*//, $val
+/// ```
+/// Used by:
+/// - Sigma::Main.LuminanceNoiseReduction
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_47b833d6f30c1d14(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                             // tag_id will be filled at runtime
+        "UnknownTag",                  // tag_name will be filled at runtime
+        "UnknownGroup",                // group will be filled at runtime
+        "$val =~ s/Luma:\\s*//, $val", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// $val=~/^Rev(\d+)$/ ? sprintf("%.2f",$1/100) : $val
 /// ```
 /// Used by:

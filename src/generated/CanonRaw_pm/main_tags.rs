@@ -44,6 +44,15 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             },
         ),
         (
+            2053,
+            TagInfo {
+                name: "UserComment",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             2058,
             TagInfo {
                 name: "CanonRawMakeModel",
@@ -233,6 +242,15 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             },
         ),
         (
+            4147,
+            TagInfo {
+                name: "CustomFunctionsUnknown",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             4152,
             TagInfo {
                 name: "CanonAFInfo",
@@ -323,6 +341,15 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 name: "TargetDistanceSetting",
                 format: "float",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
+                value_conv: None,
+            },
+        ),
+        (
+            6155,
+            TagInfo {
+                name: "UnknownNumber",
+                format: "unknown",
+                print_conv: None,
                 value_conv: None,
             },
         ),
@@ -1094,6 +1121,32 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
         ),
     ])
 });
+
+/// Tag overrides for ImageDescription context (conditional tags)
+/// ExifTool uses these names when DIR_NAME eq 'ImageDescription'
+pub static CANON_RAW_MAIN_IMAGEDESCRIPTION_TAGS: LazyLock<HashMap<u16, TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([(
+            2053,
+            TagInfo {
+                name: "CanonFileDescription",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        )])
+    });
+
+/// Get tag info considering context (DIR_NAME)
+/// Returns context-specific TagInfo if available, otherwise falls back to default
+pub fn get_tag_info_with_context(tag_id: u16, dir_name: &str) -> Option<&'static TagInfo> {
+    match dir_name {
+        "ImageDescription" => CANON_RAW_MAIN_IMAGEDESCRIPTION_TAGS
+            .get(&tag_id)
+            .or_else(|| CANON_RAW_MAIN_TAGS.get(&tag_id)),
+        _ => CANON_RAW_MAIN_TAGS.get(&tag_id),
+    }
+}
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

@@ -15,8 +15,12 @@ use crate::generated::functions::hash_33::{
 };
 use crate::generated::functions::hash_3b::ast_print_3b6232f726868923;
 use crate::generated::functions::hash_47::ast_print_47b0b51c869a6209;
+use crate::generated::functions::hash_63::ast_value_634c7f2dc1ab326d;
 use crate::generated::functions::hash_67::ast_value_676f07102a6401b3;
-use crate::generated::functions::hash_7c::ast_print_7c85cf32a45b11ab;
+use crate::generated::functions::hash_7c::{
+    ast_print_7c85cf32a45b11ab, ast_print_7cc7a4bf3f82cb33,
+};
+use crate::generated::functions::hash_88::ast_value_88eb28e51bb0c866;
 use crate::generated::functions::hash_8e::ast_value_8e281e57f268ff8;
 use crate::generated::functions::hash_96::ast_print_965cc8da10a90f1;
 use crate::generated::functions::hash_a2::ast_value_a26d2224d57eefbf;
@@ -335,6 +339,50 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             },
         ),
         (
+            13,
+            TagInfo {
+                name: "FocusMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("1".to_string(), "Macro (1)"),
+                    ("2".to_string(), "Macro (2)"),
+                    ("3".to_string(), "Infinity"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
+            14,
+            TagInfo {
+                name: "AFPointSelected",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            15,
+            TagInfo {
+                name: "AFPointsInFocus",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Fixed Center or Multiple"),
+                    ("1".to_string(), "Top-left"),
+                    ("2".to_string(), "Top-center"),
+                    ("3".to_string(), "Top-right"),
+                    ("4".to_string(), "Left"),
+                    ("5".to_string(), "Center"),
+                    ("6".to_string(), "Right"),
+                    ("65535".to_string(), "None"),
+                    ("7".to_string(), "Bottom-left"),
+                    ("8".to_string(), "Bottom-center"),
+                    ("9".to_string(), "Bottom-right"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
             16,
             TagInfo {
                 name: "FocusPosition",
@@ -380,6 +428,15 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+            },
+        ),
+        (
+            22,
+            TagInfo {
+                name: "ExposureCompensation",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
+                value_conv: Some(ValueConv::Function(ast_value_88eb28e51bb0c866)),
             },
         ),
         (
@@ -470,6 +527,15 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_2019c96d765dcb89)),
+            },
+        ),
+        (
+            29,
+            TagInfo {
+                name: "FocalLength",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
+                value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
             },
         ),
         (
@@ -746,6 +812,15 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             },
         ),
         (
+            45,
+            TagInfo {
+                name: "EffectiveLV",
+                format: "int32s",
+                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+                value_conv: Some(ValueConv::Function(ast_value_634c7f2dc1ab326d)),
+            },
+        ),
+        (
             50,
             TagInfo {
                 name: "ImageEditing",
@@ -912,6 +987,15 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             },
         ),
         (
+            77,
+            TagInfo {
+                name: "FlashExposureComp",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             79,
             TagInfo {
                 name: "ImageTone",
@@ -1059,6 +1143,15 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+            },
+        ),
+        (
+            92,
+            TagInfo {
+                name: "ShakeReductionInfo",
+                format: "undef",
+                print_conv: None,
+                value_conv: None,
             },
         ),
         (
@@ -1433,6 +1526,18 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             },
         ),
         (
+            149,
+            TagInfo {
+                name: "SkinToneCorrection",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([(
+                    "0 0 0".to_string(),
+                    "Off",
+                )]))),
+                value_conv: None,
+            },
+        ),
+        (
             150,
             TagInfo {
                 name: "ClarityControl",
@@ -1481,6 +1586,42 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_47b0b51c869a6209)),
                 value_conv: Some(ValueConv::Function(ast_value_33727ac0bdbe4a81)),
+            },
+        ),
+        (
+            517,
+            TagInfo {
+                name: "CameraSettingsUnknown",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            518,
+            TagInfo {
+                name: "AEInfoUnknown",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            519,
+            TagInfo {
+                name: "LensInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            520,
+            TagInfo {
+                name: "FlashInfoUnknown",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
             },
         ),
         (
@@ -1715,6 +1856,24 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             },
         ),
         (
+            554,
+            TagInfo {
+                name: "FilterInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            555,
+            TagInfo {
+                name: "LevelInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             557,
             TagInfo {
                 name: "WBLevels",
@@ -1819,6 +1978,15 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 name: "DataDump",
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_29a2dcd776668ce0)),
+                value_conv: None,
+            },
+        ),
+        (
+            1023,
+            TagInfo {
+                name: "UnknownInfo",
+                format: "unknown",
+                print_conv: None,
                 value_conv: None,
             },
         ),

@@ -257,6 +257,15 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            547,
+            TagInfo {
+                name: "FaceInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             548,
             TagInfo {
                 name: "SequenceShotInterval",

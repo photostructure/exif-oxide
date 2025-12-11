@@ -82,6 +82,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Kodak::Type6.OpticalZoom
 /// - Panasonic::Main.TimeSincePowerOn
 /// - Pentax::Main.DigitalZoom
+/// - Pentax::Main.FocalLength
 /// - Sony::PMP.ExposureCompensation
 /// - Sony::PMP.FNumber
 /// - Sony::PMP.FocalLength
@@ -91,6 +92,30 @@ pub fn ast_value_c0027708ba7e42e3(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(val / 100i32)
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val=join(" ",unpack("N*",pack("V*",split(" ",$val))));\$val
+/// ```
+/// Used by:
+/// - Exif::Main.StripByteCounts
+/// - Exif::Main.StripOffsets
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_c0b6239c4fdbf340(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val=join(\" \",unpack(\"N*\",pack(\"V*\",split(\" \",$val))));\\$val", // original expression
+        val,
+    ))
 }
 
 /// Registry fallback: PrintConv implementation found

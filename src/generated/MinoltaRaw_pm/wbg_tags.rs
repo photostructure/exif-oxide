@@ -8,15 +8,26 @@ use std::sync::LazyLock;
 
 /// Tag definitions for MinoltaRaw::WBG table
 pub static MINOLTA_RAW_WBG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
-    HashMap::from([(
-        0,
-        TagInfo {
-            name: "WBScale",
-            format: "int8u[4]",
-            print_conv: None,
-            value_conv: None,
-        },
-    )])
+    HashMap::from([
+        (
+            0,
+            TagInfo {
+                name: "WBScale",
+                format: "int8u[4]",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            4,
+            TagInfo {
+                name: "WB_RGGBLevels",
+                format: "int16u[4]",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+    ])
 });
 
 /// Apply ValueConv transformation for tags in this table

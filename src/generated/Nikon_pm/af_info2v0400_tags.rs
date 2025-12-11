@@ -6,6 +6,11 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_33::ast_value_336e102973b1381;
+use crate::generated::functions::hash_8c::ast_value_8cf424424a0749dd;
+use crate::generated::functions::hash_f2::ast_value_f271602e8bb5b794;
+
 /// Tag definitions for Nikon::AFInfo2V0400 table
 pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
@@ -64,6 +69,17 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             },
         ),
         (
+            10,
+            TagInfo {
+                name: "AFPointsUsed",
+                format: "undef[29]",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Nikon::__ANON__]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_8cf424424a0749dd)),
+            },
+        ),
+        (
             62,
             TagInfo {
                 name: "AFImageWidth",
@@ -91,12 +107,34 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             },
         ),
         (
+            67,
+            TagInfo {
+                name: "FocusPositionHorizontal",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Nikon::__ANON__]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_f271602e8bb5b794)),
+            },
+        ),
+        (
             68,
             TagInfo {
                 name: "AFAreaYPosition",
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+            },
+        ),
+        (
+            69,
+            TagInfo {
+                name: "FocusPositionVertical",
+                format: "unknown",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Nikon::__ANON__]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_336e102973b1381)),
             },
         ),
         (

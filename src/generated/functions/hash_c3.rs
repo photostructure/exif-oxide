@@ -40,6 +40,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Matroska::Main.TrackTranslateEditionUID
 /// - Matroska::Main.TrackUID
 /// - Photoshop::Main.IPTCDigest
+/// - Ricoh::Main.InternalSerialNumber
 /// - SigmaRaw::Header.ImageUniqueID
 pub fn ast_value_c3ac357278ffbbb0(
     val: &TagValue,

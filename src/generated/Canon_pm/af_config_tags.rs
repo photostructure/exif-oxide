@@ -104,6 +104,19 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             },
         ),
         (
+            7,
+            TagInfo {
+                name: "USMLensElectronicMF",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Enable After AF"),
+                    ("1".to_string(), "Disable After AF"),
+                    ("2".to_string(), "Disable in AF Mode"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
             8,
             TagInfo {
                 name: "AFAssistBeam",

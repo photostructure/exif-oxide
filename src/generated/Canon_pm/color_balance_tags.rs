@@ -73,6 +73,15 @@ pub static CANON_COLORBALANCE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             },
         ),
         (
+            29,
+            TagInfo {
+                name: "BlackLevels",
+                format: "int16s[4]",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             33,
             TagInfo {
                 name: "WB_RGGBLevelsKelvin",

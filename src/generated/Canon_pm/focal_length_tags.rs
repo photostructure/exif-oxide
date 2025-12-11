@@ -34,6 +34,24 @@ pub static CANON_FOCALLENGTH_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 value_conv: Some(ValueConv::Function(ast_value_fd4074b621d9fc83)),
             },
         ),
+        (
+            2,
+            TagInfo {
+                name: "FocalPlaneXUnknown",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            3,
+            TagInfo {
+                name: "FocalPlaneYUnknown",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
     ])
 });
 

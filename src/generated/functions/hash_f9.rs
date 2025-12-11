@@ -15,6 +15,29 @@ use crate::types::{ExifContext, TagValue};
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// $val=~s/\xff+$//; $val
+/// ```
+/// Used by:
+/// - Canon::Main.InternalSerialNumber
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_f9514a94c36fb3b7(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                         // tag_id will be filled at runtime
+        "UnknownTag",              // tag_name will be filled at runtime
+        "UnknownGroup",            // group will be filled at runtime
+        "$val=~s/\\xff+$//; $val", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// my @v = split ' ', $val;
 /// return 'n/a' if $v[0] == 65535 or not $v[1] or not $v[3];
 /// sprintf "%.2g %.2g", $v[0]/$v[1], $v[2]/$v[3];

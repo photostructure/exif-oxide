@@ -25,6 +25,20 @@ pub fn ast_value_4ac91d308bf0a86e(
     Ok(val / 3600i32)
 }
 
+/// Original perl expression:
+/// ``` perl
+/// $val ? $val : "Off"
+/// ```
+/// Used by:
+/// - Casio::Type2.BestShotMode
+pub fn ast_print_4a9e0ebf52c1da71(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if val.is_truthy() {
+        val.clone()
+    } else {
+        Into::<TagValue>::into("Off")
+    }
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl

@@ -26,6 +26,7 @@ pub mod Jpeg2000_pm;
 pub mod Kodak_pm;
 pub mod KyoceraRaw_pm;
 pub mod MIE_pm;
+pub mod MWG_pm;
 pub mod MacOS_pm;
 pub mod Matroska_pm;
 pub mod Microsoft_pm;

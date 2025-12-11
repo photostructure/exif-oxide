@@ -84,6 +84,15 @@ pub static CANON_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 value_conv: None,
             },
         ),
+        (
+            11,
+            TagInfo {
+                name: "Canon_AFInfo_0x000b",
+                format: "int16u[8]",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
     ])
 });
 

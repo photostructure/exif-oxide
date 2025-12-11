@@ -10,6 +10,7 @@ use std::sync::LazyLock;
 use crate::generated::functions::hash_47::ast_print_475495c4db4ba791;
 use crate::generated::functions::hash_7c::ast_print_7cc7a4bf3f82cb33;
 use crate::generated::functions::hash_96::ast_print_965cc8da10a90f1;
+use crate::generated::functions::hash_c3::ast_value_c3ac357278ffbbb0;
 
 /// Tag definitions for Ricoh::Main table
 pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -30,6 +31,15 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_475495c4db4ba791)),
                 value_conv: None,
+            },
+        ),
+        (
+            5,
+            TagInfo {
+                name: "InternalSerialNumber",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
             },
         ),
         (
@@ -54,6 +64,23 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            4097,
+            TagInfo {
+                name: "ExposureProgram",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Auto"),
+                    ("2".to_string(), "Program AE"),
+                    ("3".to_string(), "Aperture-priority AE"),
+                    ("4".to_string(), "Shutter speed priority AE"),
+                    ("5".to_string(), "Shutter/aperture priority AE"),
+                    ("6".to_string(), "Manual"),
+                    ("7".to_string(), "Movie"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
             4098,
             TagInfo {
                 name: "DriveMode",
@@ -62,6 +89,29 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("0".to_string(), "Single-frame"),
                     ("1".to_string(), "Continuous"),
                     ("8".to_string(), "AF-priority Continuous"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
+            4099,
+            TagInfo {
+                name: "WhiteBalance",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Auto"),
+                    ("1".to_string(), "Multi-P Auto"),
+                    ("10".to_string(), "Manual"),
+                    ("11".to_string(), "Kelvin"),
+                    ("12".to_string(), "Shade"),
+                    ("2".to_string(), "Daylight"),
+                    ("3".to_string(), "Cloudy"),
+                    ("4".to_string(), "Incandescent 1"),
+                    ("5".to_string(), "Incandescent 2"),
+                    ("6".to_string(), "Daylight Fluorescent"),
+                    ("7".to_string(), "Neutral White Fluorescent"),
+                    ("8".to_string(), "Cool White Fluorescent"),
+                    ("9".to_string(), "Warm White Fluorescent"),
                 ]))),
                 value_conv: None,
             },
@@ -482,6 +532,15 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             5636,
             TagInfo {
                 name: "CroppedImageHeight",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            8193,
+            TagInfo {
+                name: "RicohRR1Subdir",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,

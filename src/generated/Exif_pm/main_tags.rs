@@ -29,6 +29,7 @@ use crate::generated::functions::hash_a1::ast_print_a1f6756c7e2030be;
 use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
 use crate::generated::functions::hash_b8::ast_print_b8d6a32d77c36946;
 use crate::generated::functions::hash_bb::ast_value_bb77e52729467611;
+use crate::generated::functions::hash_c0::ast_value_c0b6239c4fdbf340;
 use crate::generated::functions::hash_c3::ast_value_c3ac357278ffbbb0;
 use crate::generated::functions::hash_c7::ast_print_c75c30ea6d74d638;
 use crate::generated::functions::hash_c8::ast_print_c8bca6375178b51d;
@@ -155,6 +156,12 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             print_conv: None,
             value_conv: None,
         }),
+        (273, TagInfo {
+            name: "JpgFromRawStart",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
         (274, TagInfo {
             name: "Orientation",
             format: "unknown",
@@ -169,6 +176,12 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         }),
         (278, TagInfo {
             name: "RowsPerStrip",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (279, TagInfo {
+            name: "JpgFromRawLength",
             format: "unknown",
             print_conv: None,
             value_conv: None,
@@ -359,6 +372,12 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Clean"), ("1".to_string(), "Regenerated"), ("2".to_string(), "Unclean"), ]))),
             value_conv: None,
         }),
+        (330, TagInfo {
+            name: "A100DataOffset",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
         (332, TagInfo {
             name: "InkSet",
             format: "unknown",
@@ -435,6 +454,18 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "JPEGProc",
             format: "unknown",
             print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Baseline"), ("14".to_string(), "Lossless"), ]))),
+            value_conv: None,
+        }),
+        (513, TagInfo {
+            name: "OtherImageStart",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (514, TagInfo {
+            name: "OtherImageLength",
+            format: "unknown",
+            print_conv: None,
             value_conv: None,
         }),
         (519, TagInfo {
@@ -1089,6 +1120,12 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "SensingMethod",
             format: "unknown",
             print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Monochrome area"), ("2".to_string(), "One-chip color area"), ("3".to_string(), "Two-chip color area"), ("4".to_string(), "Three-chip color area"), ("5".to_string(), "Color sequential area"), ("6".to_string(), "Monochrome linear"), ("7".to_string(), "Trilinear"), ("8".to_string(), "Color sequential linear"), ]))),
+            value_conv: None,
+        }),
+        (37500, TagInfo {
+            name: "MakerNoteUnknown",
+            format: "undef",
+            print_conv: None,
             value_conv: None,
         }),
         (37510, TagInfo {
@@ -1847,6 +1884,12 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             print_conv: None,
             value_conv: None,
         }),
+        (50740, TagInfo {
+            name: "DNGPrivateData",
+            format: "undef",
+            print_conv: None,
+            value_conv: None,
+        }),
         (50741, TagInfo {
             name: "MakerNoteSafety",
             format: "unknown",
@@ -2533,6 +2576,224 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         }),
     ])
 });
+
+/// Tag overrides for IFD0 context (conditional tags)
+/// ExifTool uses these names when DIR_NAME eq 'IFD0'
+pub static EXIF_MAIN_IFD0_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
+    HashMap::from([
+        (
+            273,
+            TagInfo {
+                name: "StripOffsets",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_c0b6239c4fdbf340)),
+            },
+        ),
+        (
+            273,
+            TagInfo {
+                name: "StripOffsets",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_e32785f4df88dda7)),
+            },
+        ),
+        (
+            279,
+            TagInfo {
+                name: "StripByteCounts",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_c0b6239c4fdbf340)),
+            },
+        ),
+        (
+            279,
+            TagInfo {
+                name: "StripByteCounts",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_e32785f4df88dda7)),
+            },
+        ),
+        (
+            513,
+            TagInfo {
+                name: "ThumbnailOffset",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            513,
+            TagInfo {
+                name: "ThumbnailOffset",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            513,
+            TagInfo {
+                name: "PreviewImageStart",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            514,
+            TagInfo {
+                name: "ThumbnailLength",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            514,
+            TagInfo {
+                name: "PreviewImageLength",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+    ])
+});
+
+/// Tag overrides for IFD1 context (conditional tags)
+/// ExifTool uses these names when DIR_NAME eq 'IFD1'
+pub static EXIF_MAIN_IFD1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
+    HashMap::from([(
+        514,
+        TagInfo {
+            name: "ThumbnailLength",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        },
+    )])
+});
+
+/// Tag overrides for IFD2 context (conditional tags)
+/// ExifTool uses these names when DIR_NAME eq 'IFD2'
+pub static EXIF_MAIN_IFD2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
+    HashMap::from([
+        (
+            513,
+            TagInfo {
+                name: "JpgFromRawStart",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            514,
+            TagInfo {
+                name: "JpgFromRawLength",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+    ])
+});
+
+/// Tag overrides for MakerNotes context (conditional tags)
+/// ExifTool uses these names when DIR_NAME eq 'MakerNotes'
+pub static EXIF_MAIN_MAKERNOTES_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
+    HashMap::from([
+        (
+            513,
+            TagInfo {
+                name: "PreviewImageStart",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            514,
+            TagInfo {
+                name: "PreviewImageLength",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+    ])
+});
+
+/// Tag overrides for SubIFD context (conditional tags)
+/// ExifTool uses these names when DIR_NAME eq 'SubIFD'
+pub static EXIF_MAIN_SUBIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
+    HashMap::from([
+        (
+            513,
+            TagInfo {
+                name: "ThumbnailOffset",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            513,
+            TagInfo {
+                name: "JpgFromRawStart",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            514,
+            TagInfo {
+                name: "ThumbnailLength",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            514,
+            TagInfo {
+                name: "JpgFromRawLength",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+    ])
+});
+
+/// Get tag info considering context (DIR_NAME)
+/// Returns context-specific TagInfo if available, otherwise falls back to default
+pub fn get_tag_info_with_context(tag_id: u16, dir_name: &str) -> Option<&'static TagInfo> {
+    match dir_name {
+        "IFD0" => EXIF_MAIN_IFD0_TAGS
+            .get(&tag_id)
+            .or_else(|| EXIF_MAIN_TAGS.get(&tag_id)),
+        "IFD1" => EXIF_MAIN_IFD1_TAGS
+            .get(&tag_id)
+            .or_else(|| EXIF_MAIN_TAGS.get(&tag_id)),
+        "IFD2" => EXIF_MAIN_IFD2_TAGS
+            .get(&tag_id)
+            .or_else(|| EXIF_MAIN_TAGS.get(&tag_id)),
+        "MakerNotes" => EXIF_MAIN_MAKERNOTES_TAGS
+            .get(&tag_id)
+            .or_else(|| EXIF_MAIN_TAGS.get(&tag_id)),
+        "SubIFD" => EXIF_MAIN_SUBIFD_TAGS
+            .get(&tag_id)
+            .or_else(|| EXIF_MAIN_TAGS.get(&tag_id)),
+        _ => EXIF_MAIN_TAGS.get(&tag_id),
+    }
+}
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

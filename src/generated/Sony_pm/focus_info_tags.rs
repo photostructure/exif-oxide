@@ -14,6 +14,29 @@ use crate::generated::functions::hash_50::ast_print_50a2776f078ae807;
 pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
         (
+            14,
+            TagInfo {
+                name: "DriveMode2",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Single Frame"),
+                    ("10".to_string(), "Remote Commander"),
+                    ("11".to_string(), "Mirror Lock-up"),
+                    ("18".to_string(), "Continuous Low"),
+                    ("2".to_string(), "Continuous High"),
+                    ("24".to_string(), "White Balance Bracketing Low"),
+                    ("25".to_string(), "D-Range Optimizer Bracketing Low"),
+                    ("4".to_string(), "Self-timer 10 sec"),
+                    ("40".to_string(), "White Balance Bracketing High"),
+                    ("41".to_string(), "D-Range Optimizer Bracketing High"),
+                    ("5".to_string(), "Self-timer 2 sec, Mirror Lock-up"),
+                    ("6".to_string(), "Single-frame Bracketing"),
+                    ("7".to_string(), "Continuous Bracketing"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
             16,
             TagInfo {
                 name: "Rotation",

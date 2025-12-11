@@ -18,6 +18,7 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - FujiFilm::MOV.ExposureTime
+/// - RIFF::StreamHeader.StreamSampleRate
 pub fn ast_value_8226079554149ee(
     val: &TagValue,
     ctx: Option<&ExifContext>,

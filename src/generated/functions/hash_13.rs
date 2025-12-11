@@ -14,6 +14,19 @@ use crate::types::{ExifContext, TagValue};
 
 /// Original perl expression:
 /// ``` perl
+/// $val / 1000000
+/// ```
+/// Used by:
+/// - Sigma::Main.ExposureTime2
+pub fn ast_value_13d0cec9eec8a4fb(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(val / 1000000i32)
+}
+
+/// Original perl expression:
+/// ``` perl
 /// ($val & 0xffffff) + 1
 /// ```
 /// Used by:

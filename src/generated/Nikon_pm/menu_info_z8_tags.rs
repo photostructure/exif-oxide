@@ -7,7 +7,17 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Tag definitions for Nikon::MenuInfoZ8 table
-pub static NIKON_MENUINFOZ8_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
+pub static NIKON_MENUINFOZ8_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
+    HashMap::from([(
+        16,
+        TagInfo {
+            name: "MenuSettingsOffsetZ8v2",
+            format: "int32u",
+            print_conv: None,
+            value_conv: None,
+        },
+    )])
+});
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

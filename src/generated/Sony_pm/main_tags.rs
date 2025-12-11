@@ -22,6 +22,18 @@ use crate::generated::functions::hash_d8::ast_print_d87e2f7cfd46802c;
 /// Tag definitions for Sony::Main table
 pub static SONY_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
+        (16, TagInfo {
+            name: "CameraInfoUnknown",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (32, TagInfo {
+            name: "MoreInfo",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
         (258, TagInfo {
             name: "Quality",
             format: "unknown",
@@ -46,10 +58,22 @@ pub static SONY_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             print_conv: None,
             value_conv: None,
         }),
+        (276, TagInfo {
+            name: "CameraSettingsUnknown",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
         (277, TagInfo {
             name: "WhiteBalance",
             format: "unknown",
             print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Auto"), ("1".to_string(), "Color Temperature/Color Filter"), ("112".to_string(), "Custom"), ("128".to_string(), "Underwater"), ("16".to_string(), "Daylight"), ("32".to_string(), "Cloudy"), ("48".to_string(), "Shade"), ("64".to_string(), "Tungsten"), ("80".to_string(), "Flash"), ("96".to_string(), "Fluorescent"), ]))),
+            value_conv: None,
+        }),
+        (278, TagInfo {
+            name: "ExtraInfo3",
+            format: "unknown",
+            print_conv: None,
             value_conv: None,
         }),
         (3584, TagInfo {
@@ -154,6 +178,12 @@ pub static SONY_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "Low"), ("2".to_string(), "Mid"), ("3".to_string(), "High"), ("4294967295".to_string(), "n/a"), ]))),
             value_conv: None,
         }),
+        (8208, TagInfo {
+            name: "Tag_0x2010",
+            format: "unknown",
+            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
+            value_conv: Some(ValueConv::Function(ast_value_7c3d792bbefb801e)),
+        }),
         (8209, TagInfo {
             name: "VignettingCorrection",
             format: "unknown",
@@ -202,16 +232,40 @@ pub static SONY_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Manual"), ("2".to_string(), "AF-S"), ("3".to_string(), "AF-C"), ("4".to_string(), "AF-A"), ("6".to_string(), "DMF"), ("7".to_string(), "AF-D"), ]))),
             value_conv: None,
         }),
+        (8220, TagInfo {
+            name: "AFAreaModeSetting",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Wide"), ("12".to_string(), "Expanded Flexible Spot"), ("4".to_string(), "Flexible Spot"), ("8".to_string(), "Zone"), ("9".to_string(), "Center"), ]))),
+            value_conv: None,
+        }),
         (8221, TagInfo {
             name: "FlexibleSpotPosition",
             format: "unknown",
             print_conv: None,
             value_conv: None,
         }),
+        (8222, TagInfo {
+            name: "AFPointSelected",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "n/a"), ("1".to_string(), "Center Zone"), ("2".to_string(), "Top Zone"), ("3".to_string(), "Right Zone"), ("4".to_string(), "Left Zone"), ("5".to_string(), "Bottom Zone"), ("6".to_string(), "Bottom Right Zone"), ("7".to_string(), "Bottom Left Zone"), ("8".to_string(), "Top Left Zone"), ("9".to_string(), "Top Right Zone"), ]))),
+            value_conv: None,
+        }),
+        (8224, TagInfo {
+            name: "AFPointsUsed",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "(none)"), ]))),
+            value_conv: None,
+        }),
         (8225, TagInfo {
             name: "AFTracking",
             format: "unknown",
             print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "Face tracking"), ("2".to_string(), "Lock On AF"), ]))),
+            value_conv: None,
+        }),
+        (8226, TagInfo {
+            name: "FocalPlaneAFPointsUsed",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "(none)"), ]))),
             value_conv: None,
         }),
         (8227, TagInfo {
@@ -358,17 +412,53 @@ pub static SONY_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             print_conv: None,
             value_conv: None,
         }),
+        (36944, TagInfo {
+            name: "Sony_0x9050",
+            format: "unknown",
+            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
+            value_conv: Some(ValueConv::Function(ast_value_7c3d792bbefb801e)),
+        }),
+        (37888, TagInfo {
+            name: "Sony_0x9400",
+            format: "unknown",
+            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
+            value_conv: Some(ValueConv::Function(ast_value_7c3d792bbefb801e)),
+        }),
         (37889, TagInfo {
             name: "Tag9401",
             format: "unknown",
             print_conv: None,
             value_conv: None,
         }),
+        (37890, TagInfo {
+            name: "Sony_0x9402",
+            format: "unknown",
+            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
+            value_conv: Some(ValueConv::Function(ast_value_7c3d792bbefb801e)),
+        }),
         (37891, TagInfo {
             name: "Tag9403",
             format: "unknown",
             print_conv: None,
             value_conv: None,
+        }),
+        (37892, TagInfo {
+            name: "Sony_0x9404",
+            format: "unknown",
+            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
+            value_conv: Some(ValueConv::Function(ast_value_7c3d792bbefb801e)),
+        }),
+        (37893, TagInfo {
+            name: "Sony_0x9405",
+            format: "unknown",
+            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
+            value_conv: Some(ValueConv::Function(ast_value_7c3d792bbefb801e)),
+        }),
+        (37894, TagInfo {
+            name: "Sony_0x9406",
+            format: "unknown",
+            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
+            value_conv: Some(ValueConv::Function(ast_value_7c3d792bbefb801e)),
         }),
         (37895, TagInfo {
             name: "Sony_0x9407",
@@ -388,14 +478,32 @@ pub static SONY_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
             value_conv: Some(ValueConv::Function(ast_value_7c3d792bbefb801e)),
         }),
+        (37898, TagInfo {
+            name: "Sony_0x940a",
+            format: "unknown",
+            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
+            value_conv: Some(ValueConv::Function(ast_value_7c3d792bbefb801e)),
+        }),
         (37899, TagInfo {
             name: "Sony_0x940b",
             format: "unknown",
             print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
             value_conv: Some(ValueConv::Function(ast_value_7c3d792bbefb801e)),
         }),
+        (37900, TagInfo {
+            name: "Sony_0x940c",
+            format: "unknown",
+            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
+            value_conv: Some(ValueConv::Function(ast_value_7c3d792bbefb801e)),
+        }),
         (37901, TagInfo {
             name: "Sony_0x940d",
+            format: "unknown",
+            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
+            value_conv: Some(ValueConv::Function(ast_value_7c3d792bbefb801e)),
+        }),
+        (37902, TagInfo {
+            name: "Sony_0x940e",
             format: "unknown",
             print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::LimitLongValues]".to_string())),
             value_conv: Some(ValueConv::Function(ast_value_7c3d792bbefb801e)),
@@ -524,6 +632,12 @@ pub static SONY_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "FocusMode",
             format: "unknown",
             print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "AF-S"), ("2".to_string(), "AF-C"), ("4".to_string(), "Permanent-AF"), ("65535".to_string(), "n/a"), ]))),
+            value_conv: None,
+        }),
+        (45123, TagInfo {
+            name: "AFAreaMode",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Multi"), ("1".to_string(), "Center"), ("10".to_string(), "Selective (for Miniature effect)"), ("14".to_string(), "Tracking"), ("15".to_string(), "Face Tracking"), ("2".to_string(), "Spot"), ("255".to_string(), "Manual"), ("3".to_string(), "Flexible Spot"), ]))),
             value_conv: None,
         }),
         (45124, TagInfo {

@@ -15,6 +15,29 @@ use crate::types::{ExifContext, TagValue};
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// ($val>>16)|(($val&0xffff)<<16)
+/// ```
+/// Used by:
+/// - Canon::FileInfo.ShutterCount
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_6455db47e382c491(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                                // tag_id will be filled at runtime
+        "UnknownTag",                     // tag_name will be filled at runtime
+        "UnknownGroup",                   // group will be filled at runtime
+        "($val>>16)|(($val&0xffff)<<16)", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// sprintf("%.2x%.2x:%.2x:%.2x %.2x:%.2x:%.2x",
 /// split(' ', $val));
 /// ```

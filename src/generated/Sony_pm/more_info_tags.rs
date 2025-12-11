@@ -19,6 +19,15 @@ pub static SONY_MOREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             },
         ),
         (
+            2,
+            TagInfo {
+                name: "FaceInfoA",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             263,
             TagInfo {
                 name: "TiffMeteringImage",

@@ -92,6 +92,29 @@ pub fn ast_print_16b21079c21884ad(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// $val =~ s/Chro:\s*//, $val
+/// ```
+/// Used by:
+/// - Sigma::Main.ChrominanceNoiseReduction
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_16e90102d8826848(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                             // tag_id will be filled at runtime
+        "UnknownTag",                  // tag_name will be filled at runtime
+        "UnknownGroup",                // group will be filled at runtime
+        "$val =~ s/Chro:\\s*//, $val", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// $val=~tr/ /:/; $val
 /// ```
 /// Used by:

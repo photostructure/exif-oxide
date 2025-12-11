@@ -23,6 +23,24 @@ pub static FUJI_FILM_RAFDATA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             },
         ),
         (
+            4,
+            TagInfo {
+                name: "RawImageHeight",
+                format: "int32u",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_8fc30c76278103b9)),
+            },
+        ),
+        (
+            8,
+            TagInfo {
+                name: "RawImageHeight",
+                format: "int32u",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_8fc30c76278103b9)),
+            },
+        ),
+        (
             12,
             TagInfo {
                 name: "RawImageHeight",

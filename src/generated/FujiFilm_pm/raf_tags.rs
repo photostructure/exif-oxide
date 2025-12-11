@@ -12,6 +12,7 @@ use crate::generated::functions::hash_2d::ast_print_2d2c033a3b7919c2;
 use crate::generated::functions::hash_3b::ast_print_3b6232f726868923;
 use crate::generated::functions::hash_87::ast_value_871b0872a6d2e74a;
 use crate::generated::functions::hash_96::ast_print_965cc8da10a90f1;
+use crate::generated::functions::hash_aa::ast_value_aa27a9340f19bccb;
 use crate::generated::functions::hash_f3::ast_value_f36c97921b30afa4;
 
 /// Tag definitions for FujiFilm::RAF table
@@ -81,6 +82,15 @@ pub static FUJI_FILM_RAF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
                 value_conv: Some(ValueConv::Function(ast_value_871b0872a6d2e74a)),
+            },
+        ),
+        (
+            289,
+            TagInfo {
+                name: "RawImageSize",
+                format: "int16u",
+                print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
+                value_conv: Some(ValueConv::Function(ast_value_aa27a9340f19bccb)),
             },
         ),
         (

@@ -84,6 +84,7 @@ pub fn ast_print_529b9dfc5148650a(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// exp(-Image::ExifTool::Canon::CanonEv($val)*log(2))
 /// ```
 /// Used by:
+/// - Canon::ShotInfo.ExposureTime
 /// - Canon::ShotInfo.TargetExposureTime
 ///
 /// TODO: Add support for this expression pattern

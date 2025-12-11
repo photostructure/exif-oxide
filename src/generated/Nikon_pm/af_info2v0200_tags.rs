@@ -6,6 +6,9 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_8c::ast_value_8cf424424a0749dd;
+
 /// Tag definitions for Nikon::AFInfo2V0200 table
 pub static NIKON_AFINFO2V0200_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
@@ -43,6 +46,33 @@ pub static NIKON_AFINFO2V0200_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("6".to_string(), "On (105-point)"),
                 ]))),
                 value_conv: None,
+            },
+        ),
+        (
+            7,
+            TagInfo {
+                name: "PrimaryAFPoint",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "(none)"),
+                    ("115".to_string(), "F11 (Center)"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Nikon::__ANON__]",
+                    ),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
+            8,
+            TagInfo {
+                name: "AFPointsUsed",
+                format: "undef[29]",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Nikon::__ANON__]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_8cf424424a0749dd)),
             },
         ),
     ])

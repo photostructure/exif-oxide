@@ -22,6 +22,15 @@ pub static CANON_COLORDATA5_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             },
         ),
         (
+            71,
+            TagInfo {
+                name: "ColorCoefs2",
+                format: "undef[368]",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             186,
             TagInfo {
                 name: "ColorCalib2",

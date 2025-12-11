@@ -7,8 +7,10 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
+use crate::generated::functions::hash_82::ast_value_8226079554149ee;
 use crate::generated::functions::hash_be::ast_print_be18552a212307e5;
 use crate::generated::functions::hash_d7::ast_print_d780ed94ab5b10da;
+use crate::generated::functions::hash_dd::ast_print_dd3be644838b9531;
 
 /// Tag definitions for RIFF::StreamHeader table
 pub static RIFF_STREAMHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -25,6 +27,33 @@ pub static RIFF_STREAMHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("txts".to_string(), "Text"),
                     ("vids".to_string(), "Video"),
                 ]))),
+                value_conv: None,
+            },
+        ),
+        (
+            1,
+            TagInfo {
+                name: "Codec",
+                format: "string[4]",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            5,
+            TagInfo {
+                name: "StreamSampleRate",
+                format: "rational64u",
+                print_conv: Some(PrintConv::Function(ast_print_dd3be644838b9531)),
+                value_conv: Some(ValueConv::Function(ast_value_8226079554149ee)),
+            },
+        ),
+        (
+            8,
+            TagInfo {
+                name: "StreamSampleCount",
+                format: "unknown",
+                print_conv: None,
                 value_conv: None,
             },
         ),

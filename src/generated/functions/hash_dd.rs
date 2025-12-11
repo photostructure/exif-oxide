@@ -174,6 +174,7 @@ pub fn ast_value_dd83ee4563d6583e(
 /// - QuickTime::VideoProf.VideoAvgFrameRate
 /// - QuickTime::VideoProf.VideoMaxFrameRate
 /// - RIFF::AVIHeader.FrameRate
+/// - RIFF::StreamHeader.StreamSampleRate
 /// - Red::Main.OriginalFrameRate
 /// - Red::RED1.FrameRate
 /// - Red::RED2.FrameRate

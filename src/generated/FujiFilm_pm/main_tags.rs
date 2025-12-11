@@ -655,6 +655,20 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             },
         ),
         (
+            4352,
+            TagInfo {
+                name: "AutoBracketing",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                    ("2".to_string(), "No flash & flash"),
+                    ("6".to_string(), "Pixel Shift"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
             4353,
             TagInfo {
                 name: "SequenceNumber",

@@ -55,6 +55,15 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             },
         ),
         (
+            6,
+            TagInfo {
+                name: "CodecID",
+                format: "string",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             8,
             TagInfo {
                 name: "TrackDefault",

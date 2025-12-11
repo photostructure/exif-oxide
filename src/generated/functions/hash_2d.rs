@@ -21,6 +21,8 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::CameraSettings.FlashExposureCompSet
 /// - Sony::CameraSettings2.ExposureCompensationSet
 /// - Sony::CameraSettings2.FlashExposureCompSet
+/// - Sony::MoreSettings.ExposureCompensationSet
+/// - Sony::MoreSettings.FlashExposureCompSet
 pub fn ast_value_2da539a22da2bce2(
     val: &TagValue,
     ctx: Option<&ExifContext>,

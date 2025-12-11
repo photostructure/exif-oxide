@@ -69,6 +69,23 @@ pub fn ast_value_33bf8765c4bf097a(
         ))
 }
 
+/// Original perl expression:
+/// ``` perl
+/// int($$self{AFAreaYPosition} / 292 )
+/// ```
+/// Used by:
+/// - Nikon::AFInfo2V0300.FocusPositionVertical
+/// - Nikon::AFInfo2V0400.FocusPositionVertical
+pub fn ast_value_336e102973b1381(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::int(
+        ctx.and_then(|c| c.get_data_member("TimeScale").cloned())
+            .unwrap_or(TagValue::U32(1)),
+    ))
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl

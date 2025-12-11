@@ -8,9 +8,14 @@ use std::sync::LazyLock;
 
 // Generated imports for conversion functions
 use crate::generated::functions::hash_10::ast_print_101e3eed0a079327;
+use crate::generated::functions::hash_2d::ast_value_2da539a22da2bce2;
 use crate::generated::functions::hash_39::ast_value_39492c8ca08229b1;
+use crate::generated::functions::hash_4e::ast_value_4eab48f4e81df18f;
+use crate::generated::functions::hash_50::ast_print_50a2776f078ae807;
 use crate::generated::functions::hash_56::ast_value_560b6cca7eb11de6;
 use crate::generated::functions::hash_62::ast_value_62b71052f9215d46;
+use crate::generated::functions::hash_7c::ast_print_7cc7a4bf3f82cb33;
+use crate::generated::functions::hash_7e::ast_value_7e8fc5d758244b19;
 use crate::generated::functions::hash_96::ast_print_965cc8da10a90f1;
 use crate::generated::functions::hash_b8::ast_print_b8d6a32d77c36946;
 use crate::generated::functions::hash_d8::ast_print_d87e2f7cfd46802c;
@@ -380,6 +385,46 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             },
         ),
         (
+            30,
+            TagInfo {
+                name: "ExposureCompensationSet",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
+                value_conv: Some(ValueConv::Function(ast_value_2da539a22da2bce2)),
+            },
+        ),
+        (
+            31,
+            TagInfo {
+                name: "FlashExposureCompSet",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
+                value_conv: Some(ValueConv::Function(ast_value_2da539a22da2bce2)),
+            },
+        ),
+        (
+            32,
+            TagInfo {
+                name: "LiveViewAFMethod",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "n/a"),
+                    ("1".to_string(), "Phase-detect AF"),
+                    ("2".to_string(), "Contrast AF"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
+            33,
+            TagInfo {
+                name: "ISO",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_50a2776f078ae807)),
+                value_conv: Some(ValueConv::Function(ast_value_4eab48f4e81df18f)),
+            },
+        ),
+        (
             34,
             TagInfo {
                 name: "FNumber",
@@ -389,12 +434,39 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             },
         ),
         (
+            35,
+            TagInfo {
+                name: "ExposureTime",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_101e3eed0a079327)),
+                value_conv: Some(ValueConv::Function(ast_value_560b6cca7eb11de6)),
+            },
+        ),
+        (
             36,
             TagInfo {
                 name: "ExposureCompensation2",
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: Some(ValueConv::Function(ast_value_e263dcc51d0cc0f)),
+            },
+        ),
+        (
+            37,
+            TagInfo {
+                name: "ISO",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_50a2776f078ae807)),
+                value_conv: Some(ValueConv::Function(ast_value_4eab48f4e81df18f)),
+            },
+        ),
+        (
+            38,
+            TagInfo {
+                name: "FNumber",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
+                value_conv: Some(ValueConv::Function(ast_value_62b71052f9215d46)),
             },
         ),
         (
@@ -421,11 +493,52 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             },
         ),
         (
+            41,
+            TagInfo {
+                name: "FocalLength2",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
+                value_conv: Some(ValueConv::Function(ast_value_7e8fc5d758244b19)),
+            },
+        ),
+        (
+            42,
+            TagInfo {
+                name: "ExposureCompensation2",
+                format: "int16s",
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
+                value_conv: Some(ValueConv::Function(ast_value_e263dcc51d0cc0f)),
+            },
+        ),
+        (
             43,
             TagInfo {
                 name: "FocusPosition2",
                 format: "unknown",
                 print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            44,
+            TagInfo {
+                name: "FlashExposureCompSet2",
+                format: "int16s",
+                print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
+                value_conv: Some(ValueConv::Function(ast_value_e263dcc51d0cc0f)),
+            },
+        ),
+        (
+            46,
+            TagInfo {
+                name: "Orientation2",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Horizontal (normal)"),
+                    ("2".to_string(), "Rotate 180"),
+                    ("6".to_string(), "Rotate 90 CW"),
+                    ("8".to_string(), "Rotate 270 CW"),
+                ]))),
                 value_conv: None,
             },
         ),

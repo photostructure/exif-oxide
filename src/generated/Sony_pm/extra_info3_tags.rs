@@ -74,6 +74,38 @@ pub static SONY_EXTRAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             },
         ),
         (
+            20,
+            TagInfo {
+                name: "ModeDialPosition",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("248".to_string(), "No Flash"),
+                    ("249".to_string(), "Aperture-priority AE"),
+                    ("250".to_string(), "SCN"),
+                    ("251".to_string(), "Shutter speed priority AE"),
+                    ("252".to_string(), "Auto"),
+                    ("253".to_string(), "Program AE"),
+                    ("254".to_string(), "Panorama"),
+                    ("255".to_string(), "Manual"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
+            22,
+            TagInfo {
+                name: "CameraOrientation",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Horizontal (normal)"),
+                    ("1".to_string(), "Rotate 90 CW"),
+                    ("2".to_string(), "Rotate 270 CW"),
+                    ("3".to_string(), "Rotate 180"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
             24,
             TagInfo {
                 name: "CameraOrientation",

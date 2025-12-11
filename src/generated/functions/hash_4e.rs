@@ -22,6 +22,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::CameraSettings2.ISOSetting
 /// - Sony::FocusInfo.ISO
 /// - Sony::FocusInfo.ISOSetting
+/// - Sony::MoreSettings.ISO
 ///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_4eab48f4e81df18f(

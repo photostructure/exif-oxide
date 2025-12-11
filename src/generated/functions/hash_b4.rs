@@ -76,6 +76,7 @@ pub fn ast_print_b4577ab90e52c45f(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Pentax::AEInfo3.AEMaxAperture2
 /// - Pentax::Junk2.FNumber
 /// - Pentax::MOV.FNumber
+/// - Pentax::Main.EffectiveLV
 /// - Pentax::Main.FNumber
 /// - Pentax::PENT.FNumber
 /// - Samsung::MP4.FNumber

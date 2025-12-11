@@ -11,8 +11,10 @@ use crate::generated::functions::hash_13::ast_value_1304121df5fd2971;
 use crate::generated::functions::hash_42::ast_print_42be74113c76318c;
 use crate::generated::functions::hash_70::ast_value_7028cba42a48442b;
 use crate::generated::functions::hash_75::ast_print_75ff5d4ec38b0910;
+use crate::generated::functions::hash_9a::ast_print_9adcfe1358ee0d0d;
 use crate::generated::functions::hash_c0::ast_print_c033b0a1599fe562;
 use crate::generated::functions::hash_c3::ast_value_c3ac357278ffbbb0;
+use crate::generated::functions::hash_f9::ast_value_f9514a94c36fb3b7;
 
 /// Tag definitions for Canon::Main table
 pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -108,9 +110,36 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            12,
+            TagInfo {
+                name: "SerialNumber",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_9adcfe1358ee0d0d)),
+                value_conv: None,
+            },
+        ),
+        (
+            13,
+            TagInfo {
+                name: "CanonCameraInfoUnknown",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             14,
             TagInfo {
                 name: "CanonFileLength",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            15,
+            TagInfo {
+                name: "CustomFunctionsUnknown",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -984,6 +1013,15 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            150,
+            TagInfo {
+                name: "InternalSerialNumber",
+                format: "unknown",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_f9514a94c36fb3b7)),
+            },
+        ),
+        (
             151,
             TagInfo {
                 name: "DustRemovalData",
@@ -1168,6 +1206,15 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            16385,
+            TagInfo {
+                name: "ColorDataUnknown",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             16386,
             TagInfo {
                 name: "CRWParam",
@@ -1225,6 +1272,15 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             16403,
             TagInfo {
                 name: "AFMicroAdj",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            16405,
+            TagInfo {
+                name: "VignettingCorrUnknown2",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,

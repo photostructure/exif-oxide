@@ -7,8 +7,17 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Tag definitions for Nikon::CustomSettingsD500 table
-pub static NIKON_CUSTOMSETTINGSD500_TAGS: LazyLock<HashMap<u16, TagInfo>> =
-    LazyLock::new(HashMap::new);
+pub static NIKON_CUSTOMSETTINGSD500_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
+    HashMap::from([(
+        0,
+        TagInfo {
+            name: "CustomSettingsD500",
+            format: "undef[90]",
+            print_conv: None,
+            value_conv: None,
+        },
+    )])
+});
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

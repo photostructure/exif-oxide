@@ -19,6 +19,7 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - DJI::ThermalParams2.AmbientTemperature
 /// - DJI::ThermalParams2.ReflectedTemperature
+/// - Olympus::FocusInfo.SensorTemperature
 /// - Pentax::TempInfo.SensorTemperature
 /// - Pentax::TempInfo.SensorTemperature2
 /// - Sony::ExtraInfo.BatteryTemperature

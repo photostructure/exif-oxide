@@ -78,6 +78,30 @@ pub fn ast_print_8cf1d70236b67272(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// join(" ", unpack("H2"x29, $val))
+/// ```
+/// Used by:
+/// - Nikon::AFInfo2V0200.AFPointsUsed
+/// - Nikon::AFInfo2V0400.AFPointsUsed
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_8cf424424a0749dd(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                                      // tag_id will be filled at runtime
+        "UnknownTag",                           // tag_name will be filled at runtime
+        "UnknownGroup",                         // group will be filled at runtime
+        "join(\" \", unpack(\"H2\"x29, $val))", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// sprintf("%19d %4d %6d" . " %3d %4d %6d" x 8, split(" ",$val))
 /// ```
 /// Used by:

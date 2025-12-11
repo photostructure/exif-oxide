@@ -8,6 +8,7 @@ use std::sync::LazyLock;
 
 // Generated imports for conversion functions
 use crate::generated::functions::hash_32::ast_value_32180481d23c95e9;
+use crate::generated::functions::hash_64::ast_value_6455db47e382c491;
 use crate::generated::functions::hash_9f::ast_print_9fdbcf4006788a4b;
 use crate::generated::functions::hash_c0::ast_value_c0027708ba7e42e3;
 use crate::generated::functions::hash_f6::ast_print_f6928c7fdabd99df;
@@ -15,6 +16,15 @@ use crate::generated::functions::hash_f6::ast_print_f6928c7fdabd99df;
 /// Tag definitions for Canon::FileInfo table
 pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
+        (
+            1,
+            TagInfo {
+                name: "ShutterCount",
+                format: "int32u",
+                print_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_6455db47e382c491)),
+            },
+        ),
         (
             3,
             TagInfo {

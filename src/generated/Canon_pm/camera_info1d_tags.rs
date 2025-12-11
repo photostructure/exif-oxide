@@ -1073,6 +1073,15 @@ pub static CANON_CAMERAINFO1D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             },
         ),
         (
+            72,
+            TagInfo {
+                name: "Sharpness",
+                format: "int8s",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             74,
             TagInfo {
                 name: "WhiteBalance",

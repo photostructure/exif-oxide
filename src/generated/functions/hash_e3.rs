@@ -53,6 +53,8 @@ pub fn ast_print_e3ac2e6d5f0a434f(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// Used by:
 /// - Exif::Main.FreeByteCounts
 /// - Exif::Main.FreeOffsets
+/// - Exif::Main.StripByteCounts
+/// - Exif::Main.StripOffsets
 /// - Exif::Main.TileByteCounts
 /// - Exif::Main.TileOffsets
 /// - PanasonicRaw::Main.StripByteCounts

@@ -44,6 +44,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Canon::CameraInfoPowerShot.ExposureTime
 /// - Canon::CameraInfoPowerShot2.ExposureTime
 /// - Canon::ExposureInfo.ExposureTime
+/// - Canon::ShotInfo.ExposureTime
 /// - Canon::ShotInfo.TargetExposureTime
 /// - CanonCustom::PersonalFuncValues.PF4ExposureTimeMax
 /// - CanonCustom::PersonalFuncValues.PF4ExposureTimeMin

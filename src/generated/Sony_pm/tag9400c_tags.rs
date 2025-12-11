@@ -136,6 +136,21 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             },
         ),
         (
+            42,
+            TagInfo {
+                name: "Quality2",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "JPEG"),
+                    ("2".to_string(), "RAW"),
+                    ("3".to_string(), "RAW + JPEG"),
+                    ("4".to_string(), "HEIF"),
+                    ("6".to_string(), "RAW + HEIF"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
             83,
             TagInfo {
                 name: "ModelReleaseYear",

@@ -110,6 +110,15 @@ pub static CANON_COLORDATA4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             },
         ),
         (
+            719,
+            TagInfo {
+                name: "PerChannelBlackLevel",
+                format: "int16u[4]",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             720,
             TagInfo {
                 name: "SpecularWhiteLevel",

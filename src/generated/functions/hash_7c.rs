@@ -41,10 +41,12 @@ use crate::types::{ExifContext, TagValue};
 /// - Olympus::MOV2.FocalLength
 /// - Panasonic::FocusInfo.FocalLength
 /// - Pentax::MOV.FocalLength
+/// - Pentax::Main.FocalLength
 /// - Ricoh::Main.FocalLength
 /// - Sanyo::MOV.FocalLength
 /// - Sony::CameraInfo3.FocalLength
 /// - Sony::CameraInfo3.FocalLengthTeleZoom
+/// - Sony::MoreSettings.FocalLength2
 /// - Sony::PMP.FocalLength
 /// - Sony::Tag2010e.FocalLength
 /// - Sony::Tag2010e.MaxFocalLength
@@ -145,13 +147,23 @@ pub fn ast_print_7c85cf32a45b11ab(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// PrintHex($val)
 /// ```
 /// Used by:
+/// - Sony::Main.Sony_0x9050
+/// - Sony::Main.Sony_0x9400
+/// - Sony::Main.Sony_0x9402
+/// - Sony::Main.Sony_0x9404
+/// - Sony::Main.Sony_0x9405
+/// - Sony::Main.Sony_0x9406
 /// - Sony::Main.Sony_0x9407
 /// - Sony::Main.Sony_0x9408
 /// - Sony::Main.Sony_0x9409
+/// - Sony::Main.Sony_0x940a
 /// - Sony::Main.Sony_0x940b
+/// - Sony::Main.Sony_0x940c
 /// - Sony::Main.Sony_0x940d
+/// - Sony::Main.Sony_0x940e
 /// - Sony::Main.Sony_0x940f
 /// - Sony::Main.Sony_0x9411
+/// - Sony::Main.Tag_0x2010
 ///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_7c3d792bbefb801e(

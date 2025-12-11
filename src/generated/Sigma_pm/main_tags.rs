@@ -7,9 +7,12 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 // Generated imports for conversion functions
+use crate::generated::functions::hash_13::ast_value_13d0cec9eec8a4fb;
 use crate::generated::functions::hash_15::ast_print_15cac37473012c7a;
+use crate::generated::functions::hash_16::ast_value_16e90102d8826848;
 use crate::generated::functions::hash_35::ast_print_3575efbb289e3431;
 use crate::generated::functions::hash_3b::ast_print_3b6232f726868923;
+use crate::generated::functions::hash_47::ast_value_47b833d6f30c1d14;
 use crate::generated::functions::hash_77::ast_print_77d17dd4b5a01f0f;
 use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
 use crate::generated::functions::hash_c9::{ast_print_c9112886b2b0340d, ast_value_c9eb0334cb0e5f1};
@@ -19,385 +22,342 @@ use crate::generated::functions::hash_d9::ast_value_d91b1f7aca0906fb;
 /// Tag definitions for Sigma::Main table
 pub static SIGMA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
-        (
-            8,
-            TagInfo {
-                name: "ExposureMode",
-                format: "unknown",
-                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
-                    ("A".to_string(), "Aperture-priority AE"),
-                    ("M".to_string(), "Manual"),
-                    ("P".to_string(), "Program AE"),
-                    ("S".to_string(), "Shutter speed priority AE"),
-                ]))),
-                value_conv: None,
-            },
-        ),
-        (
-            9,
-            TagInfo {
-                name: "MeteringMode",
-                format: "unknown",
-                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
-                    ("8".to_string(), "Multi-segment"),
-                    ("A".to_string(), "Average"),
-                    ("C".to_string(), "Center-weighted average"),
-                ]))),
-                value_conv: None,
-            },
-        ),
-        (
-            22,
-            TagInfo {
-                name: "Quality",
-                format: "unknown",
-                print_conv: None,
-                value_conv: Some(ValueConv::Function(ast_value_c9eb0334cb0e5f1)),
-            },
-        ),
-        (
-            24,
-            TagInfo {
-                name: "Software",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            25,
-            TagInfo {
-                name: "AutoBracket",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_3575efbb289e3431)),
-                value_conv: None,
-            },
-        ),
-        (
-            30,
-            TagInfo {
-                name: "PreviewImageSize",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
-                value_conv: None,
-            },
-        ),
-        (
-            34,
-            TagInfo {
-                name: "FileFormat",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            36,
-            TagInfo {
-                name: "Calibration",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            38,
-            TagInfo {
-                name: "FileFormat",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            42,
-            TagInfo {
-                name: "LensFocalRange",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_15cac37473012c7a)),
-                value_conv: None,
-            },
-        ),
-        (
-            43,
-            TagInfo {
-                name: "LensMaxApertureRange",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_15cac37473012c7a)),
-                value_conv: None,
-            },
-        ),
-        (
-            44,
-            TagInfo {
-                name: "ColorMode",
-                format: "unknown",
-                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
-                    ("0".to_string(), "n/a"),
-                    ("1".to_string(), "Sepia"),
-                    ("2".to_string(), "B&W"),
-                    ("3".to_string(), "Standard"),
-                    ("4".to_string(), "Vivid"),
-                    ("5".to_string(), "Neutral"),
-                    ("6".to_string(), "Portrait"),
-                    ("7".to_string(), "Landscape"),
-                    ("8".to_string(), "FOV Classic Blue"),
-                ]))),
-                value_conv: None,
-            },
-        ),
-        (
-            49,
-            TagInfo {
-                name: "FNumber",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
-                value_conv: None,
-            },
-        ),
-        (
-            50,
-            TagInfo {
-                name: "ExposureTime",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
-                value_conv: None,
-            },
-        ),
-        (
-            51,
-            TagInfo {
-                name: "ExposureTime2",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
-                value_conv: Some(ValueConv::Function(ast_value_d91b1f7aca0906fb)),
-            },
-        ),
-        (
-            52,
-            TagInfo {
-                name: "BurstShot",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            53,
-            TagInfo {
-                name: "ExposureCompensation",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_77d17dd4b5a01f0f)),
-                value_conv: None,
-            },
-        ),
-        (
-            57,
-            TagInfo {
-                name: "SensorTemperature",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c9112886b2b0340d)),
-                value_conv: None,
-            },
-        ),
-        (
-            58,
-            TagInfo {
-                name: "FlashExposureComp",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            59,
-            TagInfo {
-                name: "Firmware",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            60,
-            TagInfo {
-                name: "WhiteBalance",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            61,
-            TagInfo {
-                name: "PictureMode",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            71,
-            TagInfo {
-                name: "ExposureCompensation",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_77d17dd4b5a01f0f)),
-                value_conv: None,
-            },
-        ),
-        (
-            72,
-            TagInfo {
-                name: "LensApertureRange",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            73,
-            TagInfo {
-                name: "FNumber",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
-                value_conv: None,
-            },
-        ),
-        (
-            74,
-            TagInfo {
-                name: "ExposureTime",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
-                value_conv: None,
-            },
-        ),
-        (
-            77,
-            TagInfo {
-                name: "ExposureCompensation",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_77d17dd4b5a01f0f)),
-                value_conv: None,
-            },
-        ),
-        (
-            85,
-            TagInfo {
-                name: "SensorTemperature",
-                format: "unknown",
-                print_conv: Some(PrintConv::Function(ast_print_c9112886b2b0340d)),
-                value_conv: None,
-            },
-        ),
-        (
-            86,
-            TagInfo {
-                name: "FlashExposureComp",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            87,
-            TagInfo {
-                name: "Firmware2",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            88,
-            TagInfo {
-                name: "WhiteBalance",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            89,
-            TagInfo {
-                name: "DigitalFilter",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            132,
-            TagInfo {
-                name: "Model",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            134,
-            TagInfo {
-                name: "ISO",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            275,
-            TagInfo {
-                name: "PictureModeStrength",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            287,
-            TagInfo {
-                name: "CameraCalibration",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            288,
-            TagInfo {
-                name: "WBSettings",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            289,
-            TagInfo {
-                name: "WBSettings2",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            312,
-            TagInfo {
-                name: "Fade",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
-        (
-            313,
-            TagInfo {
-                name: "Vignette",
-                format: "unknown",
-                print_conv: None,
-                value_conv: None,
-            },
-        ),
+        (8, TagInfo {
+            name: "ExposureMode",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("A".to_string(), "Aperture-priority AE"), ("M".to_string(), "Manual"), ("P".to_string(), "Program AE"), ("S".to_string(), "Shutter speed priority AE"), ]))),
+            value_conv: None,
+        }),
+        (9, TagInfo {
+            name: "MeteringMode",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("8".to_string(), "Multi-segment"), ("A".to_string(), "Average"), ("C".to_string(), "Center-weighted average"), ]))),
+            value_conv: None,
+        }),
+        (12, TagInfo {
+            name: "ExposureAdjust",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (13, TagInfo {
+            name: "Contrast",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (14, TagInfo {
+            name: "Shadow",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (15, TagInfo {
+            name: "Highlight",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (16, TagInfo {
+            name: "Saturation",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (17, TagInfo {
+            name: "Sharpness",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (18, TagInfo {
+            name: "X3FillLight",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (20, TagInfo {
+            name: "ColorAdjustment",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (22, TagInfo {
+            name: "Quality",
+            format: "unknown",
+            print_conv: None,
+            value_conv: Some(ValueConv::Function(ast_value_c9eb0334cb0e5f1)),
+        }),
+        (24, TagInfo {
+            name: "Software",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (25, TagInfo {
+            name: "AutoBracket",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_3575efbb289e3431)),
+            value_conv: None,
+        }),
+        (26, TagInfo {
+            name: "ChrominanceNoiseReduction",
+            format: "unknown",
+            print_conv: None,
+            value_conv: Some(ValueConv::Function(ast_value_16e90102d8826848)),
+        }),
+        (27, TagInfo {
+            name: "LuminanceNoiseReduction",
+            format: "unknown",
+            print_conv: None,
+            value_conv: Some(ValueConv::Function(ast_value_47b833d6f30c1d14)),
+        }),
+        (28, TagInfo {
+            name: "PreviewImageStart",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (29, TagInfo {
+            name: "PreviewImageLength",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (30, TagInfo {
+            name: "PreviewImageSize",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
+            value_conv: None,
+        }),
+        (31, TagInfo {
+            name: "MakerNoteVersion",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (34, TagInfo {
+            name: "FileFormat",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (36, TagInfo {
+            name: "Calibration",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (38, TagInfo {
+            name: "FileFormat",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (39, TagInfo {
+            name: "LensType",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1024".to_string(), "Sigma 19mm F2.8 EX DN"), ("1025".to_string(), "Sigma 24mm F1.4 DG HSM | A"), ("1041".to_string(), "Sigma 20mm F1.8 EX DG ASP RF"), ("1042".to_string(), "Sigma 20mm F1.4 DG HSM | A"), ("1074".to_string(), "Sigma 24mm F1.8 EX DG ASP Macro"), ("1088".to_string(), "Sigma 28mm F1.8 EX DG ASP Macro"), ("1104".to_string(), "Sigma 14mm F1.8 DH HSM | A"), ("1121".to_string(), "Sigma 14mm F2.8 EX ASP HSM"), ("1141".to_string(), "Sigma 15mm F2.8 EX Diagonal FishEye"), ("1142".to_string(), "Sigma 15mm F2.8 EX DG Diagonal Fisheye"), ("1143".to_string(), "Sigma 10mm F2.8 EX DC HSM Fisheye"), ("1155".to_string(), "Sigma 8mm F4 EX Circular Fisheye"), ("1156".to_string(), "Sigma 8mm F4 EX DG Circular Fisheye"), ("1157".to_string(), "Sigma 8mm F3.5 EX DG Circular Fisheye"), ("1158".to_string(), "Sigma 4.5mm F2.8 EX DC HSM Circular Fisheye"), ("1284".to_string(), "Sigma 70-300mm F4-5.6 Macro Super"), ("1285".to_string(), "Sigma APO 70-300mm F4-5.6 Macro Super"), ("1286".to_string(), "Sigma 70-300mm F4-5.6 APO Macro Super II"), ("1287".to_string(), "Sigma 70-300mm F4-5.6 DL Macro Super II"), ("1288".to_string(), "Sigma 70-300mm F4-5.6 DG APO Macro"), ("1289".to_string(), "Sigma 70-300mm F4-5.6 DG Macro"), ("1296".to_string(), "Sigma 17-35 F2.8-4 EX DG ASP"), ("1298".to_string(), "Sigma 15-30mm F3.5-4.5 EX DG ASP DF"), ("1299".to_string(), "Sigma 20-40mm F2.8 EX DG"), ("1305".to_string(), "Sigma 17-35 F2.8-4 EX ASP HSM"), ("1312".to_string(), "Sigma 100-300mm F4.5-6.7 DL"), ("1313".to_string(), "Sigma 18-50mm F3.5-5.6 DC Macro"), ("1319".to_string(), "Sigma 100-300mm F4 EX IF HSM"), ("1321".to_string(), "Sigma 120-300mm F2.8 EX HSM IF APO"), ("1349".to_string(), "Sigma 28-70mm F2.8 EX ASP DF"), ("1351".to_string(), "Sigma 24-60mm F2.8 EX DG"), ("1352".to_string(), "Sigma 24-70mm F2.8 EX DG Macro"), ("1353".to_string(), "Sigma 28-70mm F2.8 EX DG"), ("1382".to_string(), "Sigma 70-200mm F2.8 EX IF APO"), ("1383".to_string(), "Sigma 70-200mm F2.8 EX IF HSM APO"), ("1384".to_string(), "Sigma 70-200mm F2.8 EX DG IF HSM APO"), ("1385".to_string(), "Sigma 70-200 F2.8 EX DG HSM APO Macro"), ("1393".to_string(), "Sigma 24-70mm F2.8 IF EX DG HSM"), ("1394".to_string(), "Sigma 70-300mm F4-5.6 DG OS"), ("1398".to_string(), "Sigma 24-70mm F2.8 DG OS HSM | A"), ("1401".to_string(), "Sigma 70-200mm F2.8 EX DG HSM APO Macro"), ("1408".to_string(), "Sigma 18-50mm F2.8 EX DC"), ("1409".to_string(), "Sigma 18-50mm F2.8 EX DC Macro"), ("1410".to_string(), "Sigma 18-50mm F2.8 EX DC HSM Macro"), ("1411".to_string(), "Sigma 17-50mm F2.8 EX DC OS HSM"), ("1416".to_string(), "Sigma 24-35mm F2 DG HSM | A"), ("1417".to_string(), "Sigma APO 70-200mm F2.8 EX DG OS HSM"), ("1428".to_string(), "Sigma 300-800mm F5.6 EX HSM IF APO"), ("1429".to_string(), "Sigma 300-800mm F5.6 EX DG APO HSM"), ("1431".to_string(), "Sigma 200-500mm F2.8 APO EX DG"), ("1448".to_string(), "Sigma 70-300mm F4-5.6 APO DG Macro (Motorized)"), ("1449".to_string(), "Sigma 70-300mm F4-5.6 DG Macro (Motorized)"), ("1541".to_string(), "Sigma 24-70mm F3.5-5.6 ASP HF"), ("1587".to_string(), "Sigma 28-70mm F2.8-4 HS"), ("1588".to_string(), "Sigma 28-70mm F2.8-4 DG"), ("1589".to_string(), "Sigma 24-105mm F4 DG OS HSM | A"), ("16".to_string(), "Sigma 50mm F2.8 EX DG MACRO"), ("16.1".to_string(), "Sigma 70mm F2.8 EX DG Macro"), ("16.2".to_string(), "Sigma 105mm F2.8 EX DG Macro"), ("1604".to_string(), "Sigma 28-80mm F3.5-5.6 ASP HF Macro"), ("1625".to_string(), "Sigma 28-80mm F3.5-5.6 Mini Zoom Macro II ASP"), ("1633".to_string(), "Sigma 28-105mm F2.8-4 IF ASP"), ("1635".to_string(), "Sigma 28-105mm F3.8-5.6 IF UC-III ASP"), ("1636".to_string(), "Sigma 28-105mm F2.8-4 IF DG ASP"), ("16385".to_string(), "Lumix S 24-105mm F4 Macro OIS (S-R24105)"), ("16386".to_string(), "Lumix S 70-200mm F4 OIS (S-R70200)"), ("16387".to_string(), "Lumix S 50mm F1.4 (S-X50)"), ("1639".to_string(), "Sigma 24-135mm F2.8-4.5 IF ASP"), ("16390".to_string(), "Lumix S 24-70mm F2.8 (S-E2470)"), ("16391".to_string(), "Lumix S 16-35mm F4 (S-R1635)"), ("16392".to_string(), "Lumix S 70-200mm F2.8 OIS (S-E70200)"), ("16395".to_string(), "Lumix S 20-60mm F3.5-5.6 (S-R2060)"), ("16396".to_string(), "Lumix S 85mm F1.8 (S-S85)"), ("16397".to_string(), "Lumix S 70-300 F4.5-5.6 Macro OIS (S-R70300)"), ("16399".to_string(), "Lumix S 24mm F1.8 (S-S24)"), ("1640".to_string(), "Sigma 17-70mm F2.8-4 DC Macro OS HSM"), ("16400".to_string(), "Lumix S 35mm F1.8 (S-S35)"), ("16401".to_string(), "LUMIX S 18mm F1.8 (S-S18)"), ("1641".to_string(), "Sigma 17-70mm F2.8-4.5 DC HSM Macro"), ("1668".to_string(), "Sigma 55-200mm F4-5.6 DC"), ("1670".to_string(), "Sigma 50-200mm F4-5.6 DC OS HSM"), ("1673".to_string(), "Sigma 17-70mm F2.8-4.5 DC Macro"), ("1680".to_string(), "Sigma 50-150mm F2.8 EX DC HSM APO"), ("1681".to_string(), "Sigma 50-150mm F2.8 EX DC APO HSM II"), ("1682".to_string(), "Sigma APO 50-150mm F2.8 EX DC OS HSM"), ("1683".to_string(), "Sigma 50-100mm F1.8 DC HSM | A"), ("1801".to_string(), "Sigma 28-135mm F3.8-5.6 IF ASP Macro"), ("1827".to_string(), "Sigma 135-400mm F4.5-5.6 ASP APO"), ("1829".to_string(), "Sigma 80-400mm F4.5-5.6 EX OS"), ("1830".to_string(), "Sigma 80-400mm F4.5-5.6 EX DG OS APO"), ("1831".to_string(), "Sigma 135-400mm F4.5-5.6 DG ASP APO"), ("1832".to_string(), "Sigma 120-400mm F4.5-5.6 DG APO OS HSM"), ("1833".to_string(), "Sigma 100-400mm F5-6.3 DG OS HSM | C"), ("1840".to_string(), "Sigma 60-600mm F4.5-6.3 DG OS HSM | S"), ("1843".to_string(), "Sigma 170-500mm F5-6.3 ASP APO"), ("1844".to_string(), "Sigma 170-500mm F5-6.3 DG ASP APO"), ("1845".to_string(), "Sigma 50-500mm F4-6.3 EX RF HSM APO"), ("1846".to_string(), "Sigma 50-500mm F4-6.3 EX DG HSM APO"), ("1847".to_string(), "Sigma 150-500mm F5-6.3 APO DG OS HSM"), ("1848".to_string(), "Sigma 50-500mm F4.5-6.3 APO DG OS HSM"), ("1856".to_string(), "Sigma 150-600mm F5-6.3 DG OS HSM | S"), ("1861".to_string(), "Sigma 150-600mm F5-6.3 DG OS HSM | C"), ("1911".to_string(), "Sigma 18-200mm F3.5-6.3 DC"), ("1917".to_string(), "Sigma 18-200mm F3.5-6.3 DC (Motorized)"), ("1925".to_string(), "Sigma 28-200mm F3.5-5.6 DL ASP IF HZM Macro"), ("1927".to_string(), "Sigma 28-200mm F3.5-5.6 Compact ASP HZ Macro"), ("1929".to_string(), "Sigma 18-125mm F3.5-5.6 DC"), ("1936".to_string(), "Sigma 28-300mm F3.5-6.3 DL ASP IF HZM"), ("1939".to_string(), "Sigma 28-300mm F3.5-6.3 Macro"), ("1940".to_string(), "Sigma 28-200mm F3.5-5.6 DG Compact ASP HZ Macro"), ("1941".to_string(), "Sigma 28-300mm F3.5-6.3 DG Macro"), ("2083".to_string(), "Sigma 1.4X TC EX APO"), ("2084".to_string(), "Sigma 1.4X Teleconverter EX APO DG"), ("2131".to_string(), "Sigma 18-125mm F3.8-5.6 DC OS HSM"), ("2145".to_string(), "Sigma 18-50mm F2.8-4.5 DC OS HSM"), ("2160".to_string(), "Sigma 2.0X Teleconverter TC-2001"), ("2165".to_string(), "Sigma 2.0X TC EX APO"), ("2166".to_string(), "Sigma 2.0X Teleconverter EX APO DG"), ("2169".to_string(), "Sigma 1.4X Teleconverter TC-1401"), ("2176".to_string(), "Sigma 18-250mm F3.5-6.3 DC OS HSM"), ("2178".to_string(), "Sigma 18-200mm F3.5-6.3 II DC OS HSM"), ("2179".to_string(), "Sigma 18-250mm F3.5-6.3 DC Macro OS HSM"), ("2180".to_string(), "Sigma 17-70mm F2.8-4 DC OS HSM Macro | C"), ("2181".to_string(), "Sigma 18-200mm F3.5-6.3 DC OS HSM Macro | C"), ("2182".to_string(), "Sigma 18-300mm F3.5-6.3 DC OS HSM Macro | C"), ("2184".to_string(), "Sigma 18-200mm F3.5-6.3 DC OS"), ("2192".to_string(), "Sigma Mount Converter MC-11"), ("22".to_string(), "Sigma 18-50mm F3.5-5.6 DC"), ("2345".to_string(), "Sigma 60mm F2.8 DN | A"), ("24577".to_string(), "Sigma 150-600mm F5-6.3 DG OS HSM | S"), ("24579".to_string(), "Sigma 45mm F2.8 DG DN | C"), ("24581".to_string(), "Sigma 14-24mm F2.8 DG DN | A"), ("24582".to_string(), "Sigma 50mm F1.4 DG HSM | A"), ("24593".to_string(), "Sigma 24-70mm F2.8 DG DN | A"), ("24594".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C"), ("24595".to_string(), "Sigma 100-400mm F5-6.3 DG DN OS | C + TC-1411"), ("24597".to_string(), "Sigma 85mm F1.4 DG DN | A"), ("24599".to_string(), "Sigma 65mm F2 DG DN | C"), ("24600".to_string(), "Sigma 35mm F2 DG DN | C"), ("24602".to_string(), "Sigma 28-70mm F2.8 DG DN | C"), ("24603".to_string(), "Sigma 150-600mm F5-6.3 DG DN OS | S"), ("24608".to_string(), "Sigma 35mm F1.4 DG DN | A"), ("24609".to_string(), "Sigma 90mm F2.8 DG DN | C"), ("24611".to_string(), "Sigma 20mm F2 DG DN | C"), ("24613".to_string(), "Sigma 20mm F1.4 DG DN | A"), ("24614".to_string(), "Sigma 24mm F1.4 DG DN | A"), ("24620".to_string(), "Sigma 50mm F1.4 DG DN | A (2023)"), ("259".to_string(), "Sigma 180mm F3.5 EX IF HSM APO Macro"), ("260".to_string(), "Sigma 150mm F2.8 EX DG HSM APO Macro"), ("261".to_string(), "Sigma 180mm F3.5 EX DG HSM APO Macro"), ("262".to_string(), "Sigma 150mm F2.8 EX DG OS HSM APO Macro"), ("263".to_string(), "Sigma 180mm F2.8 EX DG OS HSM APO Macro"), ("297".to_string(), "Sigma Lens (0x129)"), ("297.1".to_string(), "Sigma 14mm F2.8 EX Aspherical"), ("297.2".to_string(), "Sigma 30mm F1.4"), ("305".to_string(), "Sigma Lens (0x131)"), ("305.1".to_string(), "Sigma 17-70mm F2.8-4.5 DC Macro"), ("305.2".to_string(), "Sigma 70-200mm F2.8 APO EX HSM"), ("305.3".to_string(), "Sigma 120-300mm F2.8 APO EX IF HSM"), ("308".to_string(), "Sigma 100-300mm F4 EX DG HSM APO"), ("309".to_string(), "Sigma 120-300mm F2.8 EX DG HSM APO"), ("310".to_string(), "Sigma 120-300mm F2.8 EX DG OS HSM APO"), ("311".to_string(), "Sigma 120-300mm F2.8 DG OS HSM | S"), ("323".to_string(), "Sigma 600mm F8 Mirror"), ("325".to_string(), "Sigma Lens (0x145)"), ("325.1".to_string(), "Sigma 15-30mm F3.5-4.5 EX DG Aspherical"), ("325.2".to_string(), "Sigma 18-50mm F2.8 EX DG"), ("325.3".to_string(), "Sigma 20-40mm F2.8 EX DG"), ("32773".to_string(), "Sigma 35mm F1.4 DG HSM | A"), ("32777".to_string(), "Sigma 18-35mm F1.8 DC HSM | A"), ("336".to_string(), "Sigma 30mm F1.4 DC HSM"), ("338".to_string(), "Sigma Lens (0x152)"), ("338.1".to_string(), "Sigma APO 800mm F5.6 EX DG HSM"), ("338.2".to_string(), "Sigma 12-24mm F4.5-5.6 EX DG ASP HSM"), ("338.3".to_string(), "Sigma 10-20mm F4-5.6 EX DC HSM"), ("35072".to_string(), "Sigma 70-300mm F4-5.6 DG OS"), ("357".to_string(), "Sigma 70-200mm F2.8 EX"), ("361".to_string(), "Sigma 18-50mm F2.8 EX DC"), ("387".to_string(), "Sigma 500mm F4.5 EX HSM APO"), ("388".to_string(), "Sigma 500mm F4.5 EX DG HSM APO"), ("389".to_string(), "Sigma 500mm F4 DG OS HSM | S"), ("404".to_string(), "Sigma 300mm F2.8 EX HSM APO"), ("405".to_string(), "Sigma 300mm F2.8 EX DG HSM APO"), ("4099".to_string(), "Sigma 19mm F2.8"), ("4100".to_string(), "Sigma 30mm F2.8"), ("4101".to_string(), "Sigma 50mm F2.8 Macro"), ("4102".to_string(), "Sigma 19mm F2.8"), ("4103".to_string(), "Sigma 30mm F2.8"), ("4104".to_string(), "Sigma 50mm F2.8 Macro"), ("4105".to_string(), "Sigma 14mm F4"), ("41216".to_string(), "Sigma 24-70mm F2.8 DG Macro"), ("512".to_string(), "Sigma 12-24mm F4.5-5.6 EX DG ASP HSM"), ("513".to_string(), "Sigma 10-20mm F4-5.6 EX DC HSM"), ("514".to_string(), "Sigma 10-20mm F3.5 EX DC HSM"), ("515".to_string(), "Sigma 8-16mm F4.5-5.6 DC HSM"), ("516".to_string(), "Sigma 12-24mm F4.5-5.6 DG HSM II"), ("517".to_string(), "Sigma 12-24mm F4 DG HSM | A"), ("528".to_string(), "Sigma 18-35mm F1.8 DC HSM | A"), ("576".to_string(), "Sigma 135mm F1.8 DG HSM | A"), ("598".to_string(), "Sigma 105mm F2.8 EX Macro"), ("599".to_string(), "Sigma 105mm F2.8 EX DG Macro"), ("600".to_string(), "Sigma 105mm F2.8 EX DG OS HSM Macro"), ("601".to_string(), "Sigma 105mm F1.4 DG HSM | A"), ("624".to_string(), "Sigma 70mm F2.8 EX DG Macro"), ("625".to_string(), "Sigma 70mm F2.8 DG Macro | A"), ("768".to_string(), "Sigma 30mm F1.4 EX DC HSM"), ("769".to_string(), "Sigma 30mm F1.4 DC HSM | A"), ("770".to_string(), "Sigma 30mm F1.4 DC DN | C"), ("784".to_string(), "Sigma 50mm F1.4 EX DG HSM"), ("785".to_string(), "Sigma 50mm F1.4 DG HSM | A"), ("800".to_string(), "Sigma 85mm F1.4 EX DG HSM"), ("801".to_string(), "Sigma 85mm F1.4 DG HSM | A"), ("816".to_string(), "Sigma 30mm F2.8 EX DN"), ("832".to_string(), "Sigma 35mm F1.4 DG HSM"), ("837".to_string(), "Sigma 50mm F2.8 EX Macro"), ("838".to_string(), "Sigma 50mm F2.8 EX DG Macro"), ("848".to_string(), "Sigma 60mm F2.8 DN | A"), ("Notes".to_string(), "\n        Sigma LensType values are hexadecimal numbers stored as a string (without\n        the leading \"0x\").\n    "), ]))),
+            value_conv: None,
+        }),
+        (42, TagInfo {
+            name: "LensFocalRange",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_15cac37473012c7a)),
+            value_conv: None,
+        }),
+        (43, TagInfo {
+            name: "LensMaxApertureRange",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_15cac37473012c7a)),
+            value_conv: None,
+        }),
+        (44, TagInfo {
+            name: "ColorMode",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "n/a"), ("1".to_string(), "Sepia"), ("2".to_string(), "B&W"), ("3".to_string(), "Standard"), ("4".to_string(), "Vivid"), ("5".to_string(), "Neutral"), ("6".to_string(), "Portrait"), ("7".to_string(), "Landscape"), ("8".to_string(), "FOV Classic Blue"), ]))),
+            value_conv: None,
+        }),
+        (48, TagInfo {
+            name: "Calibration",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (49, TagInfo {
+            name: "FNumber",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+            value_conv: None,
+        }),
+        (50, TagInfo {
+            name: "ExposureTime",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+            value_conv: None,
+        }),
+        (51, TagInfo {
+            name: "ExposureTime2",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+            value_conv: Some(ValueConv::Function(ast_value_d91b1f7aca0906fb)),
+        }),
+        (52, TagInfo {
+            name: "BurstShot",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (53, TagInfo {
+            name: "ExposureCompensation",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_77d17dd4b5a01f0f)),
+            value_conv: None,
+        }),
+        (57, TagInfo {
+            name: "SensorTemperature",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_c9112886b2b0340d)),
+            value_conv: None,
+        }),
+        (58, TagInfo {
+            name: "FlashExposureComp",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (59, TagInfo {
+            name: "Firmware",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (60, TagInfo {
+            name: "WhiteBalance",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (61, TagInfo {
+            name: "PictureMode",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (71, TagInfo {
+            name: "ExposureCompensation",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_77d17dd4b5a01f0f)),
+            value_conv: None,
+        }),
+        (72, TagInfo {
+            name: "LensApertureRange",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (73, TagInfo {
+            name: "FNumber",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
+            value_conv: None,
+        }),
+        (74, TagInfo {
+            name: "ExposureTime",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+            value_conv: None,
+        }),
+        (75, TagInfo {
+            name: "ExposureTime2",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+            value_conv: Some(ValueConv::Function(ast_value_13d0cec9eec8a4fb)),
+        }),
+        (77, TagInfo {
+            name: "ExposureCompensation",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_77d17dd4b5a01f0f)),
+            value_conv: None,
+        }),
+        (85, TagInfo {
+            name: "SensorTemperature",
+            format: "unknown",
+            print_conv: Some(PrintConv::Function(ast_print_c9112886b2b0340d)),
+            value_conv: None,
+        }),
+        (86, TagInfo {
+            name: "FlashExposureComp",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (87, TagInfo {
+            name: "Firmware2",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (88, TagInfo {
+            name: "WhiteBalance",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (89, TagInfo {
+            name: "DigitalFilter",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (132, TagInfo {
+            name: "Model",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (134, TagInfo {
+            name: "ISO",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (275, TagInfo {
+            name: "PictureModeStrength",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (287, TagInfo {
+            name: "CameraCalibration",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (288, TagInfo {
+            name: "WBSettings",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (289, TagInfo {
+            name: "WBSettings2",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (312, TagInfo {
+            name: "Fade",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
+        (313, TagInfo {
+            name: "Vignette",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+        }),
     ])
 });
 

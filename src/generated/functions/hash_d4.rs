@@ -23,3 +23,16 @@ use crate::types::{ExifContext, TagValue};
 pub fn ast_print_d43a7530ce810d01(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     Into::<TagValue>::into(format!("{} m/s", val))
 }
+
+/// Original perl expression:
+/// ``` perl
+/// 84 - 3 * $val / 26
+/// ```
+/// Used by:
+/// - Olympus::FocusInfo.SensorTemperature
+pub fn ast_value_d4d2d606f4e9315(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(84i32 - 3i32 * val / 26i32)
+}

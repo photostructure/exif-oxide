@@ -8,9 +8,11 @@ use std::sync::LazyLock;
 
 // Generated imports for conversion functions
 use crate::generated::functions::hash_36::ast_print_36cfa4c2513c137c;
+use crate::generated::functions::hash_91::ast_print_9111b408f0b1518a;
 use crate::generated::functions::hash_aa::ast_value_aae26d7e5adb6938;
 use crate::generated::functions::hash_b1::ast_print_b105a96821e32f2b;
 use crate::generated::functions::hash_b4::ast_print_b4577ab90e52c45f;
+use crate::generated::functions::hash_d4::ast_value_d4d2d606f4e9315;
 
 /// Tag definitions for Olympus::FocusInfo table
 pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
@@ -109,6 +111,24 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             },
         ),
         (
+            776,
+            TagInfo {
+                name: "AFPoint",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            795,
+            TagInfo {
+                name: "AFPointDetails",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             808,
             TagInfo {
                 name: "AFInfo",
@@ -192,6 +212,15 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+            },
+        ),
+        (
+            5376,
+            TagInfo {
+                name: "SensorTemperature",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
+                value_conv: Some(ValueConv::Function(ast_value_d4d2d606f4e9315)),
             },
         ),
         (

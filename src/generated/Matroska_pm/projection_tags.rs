@@ -24,6 +24,15 @@ pub static MATROSKA_PROJECTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             },
         ),
         (
+            30322,
+            TagInfo {
+                name: "ProjectionPrivate",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             30323,
             TagInfo {
                 name: "ProjectionPoseYaw",

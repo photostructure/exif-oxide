@@ -25,6 +25,19 @@ pub fn ast_print_63abe5c1769cd6fb(val: &TagValue, ctx: Option<&ExifContext>) -> 
 
 /// Original perl expression:
 /// ``` perl
+/// $val/1024
+/// ```
+/// Used by:
+/// - Pentax::Main.EffectiveLV
+pub fn ast_value_634c7f2dc1ab326d(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(val / 1024i32)
+}
+
+/// Original perl expression:
+/// ``` perl
 /// 100 * 2 ** ($val - 5)
 /// ```
 /// Used by:

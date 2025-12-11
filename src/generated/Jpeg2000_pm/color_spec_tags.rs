@@ -47,6 +47,15 @@ pub static JPEG2000_COLORSPEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 value_conv: None,
             },
         ),
+        (
+            3,
+            TagInfo {
+                name: "ColorSpecData",
+                format: "undef[$size-3]",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
     ])
 });
 

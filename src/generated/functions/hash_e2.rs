@@ -24,6 +24,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::MenuSettingsZ9v4.ISOAutoShutterTime
 /// - Pentax::AEInfo2.AEBXv
 /// - Sony::MoreSettings.ExposureCompensation2
+/// - Sony::MoreSettings.FlashExposureCompSet2
 pub fn ast_value_e263dcc51d0cc0f(
     val: &TagValue,
     ctx: Option<&ExifContext>,

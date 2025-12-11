@@ -6,6 +6,9 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_bf::ast_value_bf0a676164a29f9f;
+
 /// Tag definitions for Nikon::AFInfo2V0100 table
 pub static NIKON_AFINFO2V0100_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
@@ -32,6 +35,42 @@ pub static NIKON_AFINFO2V0100_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             },
         ),
         (
+            5,
+            TagInfo {
+                name: "AFAreaMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Contrast-detect"),
+                    ("1".to_string(), "Contrast-detect (normal area)"),
+                    ("128".to_string(), "Single"),
+                    ("129".to_string(), "Auto (41 points)"),
+                    ("130".to_string(), "Subject Tracking (41 points)"),
+                    ("131".to_string(), "Face Priority (41 points)"),
+                    ("192".to_string(), "Pinpoint"),
+                    ("193".to_string(), "Single"),
+                    ("194".to_string(), "Dynamic"),
+                    ("195".to_string(), "Wide (S)"),
+                    ("196".to_string(), "Wide (L)"),
+                    ("197".to_string(), "Auto"),
+                    ("198".to_string(), "Auto (People)"),
+                    ("199".to_string(), "Auto (Animal)"),
+                    ("2".to_string(), "Contrast-detect (wide area)"),
+                    ("200".to_string(), "Normal-area AF"),
+                    ("201".to_string(), "Wide-area AF"),
+                    ("202".to_string(), "Face-priority AF"),
+                    ("203".to_string(), "Subject-tracking AF"),
+                    ("204".to_string(), "Dynamic Area (S)"),
+                    ("205".to_string(), "Dynamic Area (M)"),
+                    ("206".to_string(), "Dynamic Area (L)"),
+                    ("207".to_string(), "3D-tracking"),
+                    ("208".to_string(), "Wide-Area (C1/C2)"),
+                    ("3".to_string(), "Contrast-detect (face priority)"),
+                    ("4".to_string(), "Contrast-detect (subject tracking)"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
             6,
             TagInfo {
                 name: "FocusPointSchema",
@@ -42,6 +81,30 @@ pub static NIKON_AFINFO2V0100_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("2".to_string(), "11-point"),
                     ("3".to_string(), "39-point"),
                 ]))),
+                value_conv: None,
+            },
+        ),
+        (
+            7,
+            TagInfo {
+                name: "PrimaryAFPoint",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([(
+                    "0".to_string(),
+                    "(none)",
+                )]))),
+                value_conv: None,
+            },
+        ),
+        (
+            8,
+            TagInfo {
+                name: "AFPointsUsed",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([(
+                    "0".to_string(),
+                    "(none)",
+                )]))),
                 value_conv: None,
             },
         ),
@@ -97,6 +160,17 @@ pub static NIKON_AFINFO2V0100_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+            },
+        ),
+        (
+            28,
+            TagInfo {
+                name: "AFPointsSelected",
+                format: "undef[20]",
+                print_conv: Some(PrintConv::Expression(
+                    "[Function: Image::ExifTool::Nikon::__ANON__]".to_string(),
+                )),
+                value_conv: Some(ValueConv::Function(ast_value_bf0a676164a29f9f)),
             },
         ),
     ])

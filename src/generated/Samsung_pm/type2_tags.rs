@@ -119,6 +119,15 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             },
         ),
         (
+            32,
+            TagInfo {
+                name: "SmartAlbumColor",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             33,
             TagInfo {
                 name: "PictureWizard",
@@ -140,6 +149,15 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             49,
             TagInfo {
                 name: "LocationName",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            53,
+            TagInfo {
+                name: "PreviewIFD",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,

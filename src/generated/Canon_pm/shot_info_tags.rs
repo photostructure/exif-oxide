@@ -259,6 +259,15 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             },
         ),
         (
+            22,
+            TagInfo {
+                name: "ExposureTime",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
+                value_conv: Some(ValueConv::Function(ast_value_527c9bdc7d50b8f1)),
+            },
+        ),
+        (
             23,
             TagInfo {
                 name: "MeasuredEV2",

@@ -28,6 +28,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::MenuSettingsZ9v3.FlashMasterCompensation
 /// - Nikon::MenuSettingsZ9v4.FlashMasterCompensation
 /// - Pentax::MOV.ExposureCompensation
+/// - Pentax::Main.ExposureCompensation
 /// - Pentax::Main.SensitivityAdjust
 /// - Pentax::PENT.ExposureCompensation
 /// - Ricoh::Main.FlashExposureComp
@@ -39,6 +40,9 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::CameraSettings2.FlashExposureCompSet
 /// - Sony::Main.ExposureStandardAdjustment
 /// - Sony::MoreSettings.ExposureCompensation2
+/// - Sony::MoreSettings.ExposureCompensationSet
+/// - Sony::MoreSettings.FlashExposureCompSet
+/// - Sony::MoreSettings.FlashExposureCompSet2
 /// - Sony::Tag2010a.ExposureCompensation
 /// - Sony::Tag2010b.ExposureCompensation
 /// - Sony::Tag2010c.ExposureCompensation

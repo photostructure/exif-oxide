@@ -8,6 +8,7 @@ use std::sync::LazyLock;
 
 // Generated imports for conversion functions
 use crate::generated::functions::hash_3b::ast_print_3b6232f726868923;
+use crate::generated::functions::hash_4a::ast_print_4a9e0ebf52c1da71;
 use crate::generated::functions::hash_57::ast_print_57ea43f3f55fc687;
 use crate::generated::functions::hash_7c::ast_print_7cc7a4bf3f82cb33;
 use crate::generated::functions::hash_94::ast_value_94506729aa7a1349;
@@ -257,6 +258,15 @@ pub static CASIO_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             },
         ),
         (
+            8329,
+            TagInfo {
+                name: "FaceInfoUnknown",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             8476,
             TagInfo {
                 name: "FacesDetected",
@@ -339,6 +349,15 @@ pub static CASIO_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 name: "HometownCity",
                 format: "unknown",
                 print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            12295,
+            TagInfo {
+                name: "BestShotMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_4a9e0ebf52c1da71)),
                 value_conv: None,
             },
         ),

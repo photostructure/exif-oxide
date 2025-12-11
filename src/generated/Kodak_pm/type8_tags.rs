@@ -10,6 +10,69 @@ use std::sync::LazyLock;
 pub static KODAK_TYPE8_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
         (
+            64512,
+            TagInfo {
+                name: "SubIFD0",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            64513,
+            TagInfo {
+                name: "SubIFD1",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            64514,
+            TagInfo {
+                name: "SubIFD2",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            64515,
+            TagInfo {
+                name: "SubIFD3",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            64516,
+            TagInfo {
+                name: "SubIFD4",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            64517,
+            TagInfo {
+                name: "SubIFD5",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            64518,
+            TagInfo {
+                name: "SubIFD6",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             64767,
             TagInfo {
                 name: "SubIFD255",

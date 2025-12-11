@@ -205,6 +205,15 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            1021,
+            TagInfo {
+                name: "ProcessingParameters",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             1022,
             TagInfo {
                 name: "ImageAbsoluteX",
@@ -271,6 +280,15 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             1029,
             TagInfo {
                 name: "CustomIlluminant",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            1030,
+            TagInfo {
+                name: "CameraTemperature",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,

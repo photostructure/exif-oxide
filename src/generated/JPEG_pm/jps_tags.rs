@@ -37,6 +37,20 @@ pub static JPEG_JPS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            12,
+            TagInfo {
+                name: "JPSLayout",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("1".to_string(), "Interleaved"),
+                    ("2".to_string(), "Side By Side"),
+                    ("3".to_string(), "Over Under"),
+                    ("4".to_string(), "Anaglyph"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
             13,
             TagInfo {
                 name: "JPSType",

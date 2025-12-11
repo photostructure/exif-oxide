@@ -32,6 +32,20 @@ pub static NIKON_VRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             },
         ),
         (
+            6,
+            TagInfo {
+                name: "VRMode",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Normal"),
+                    ("1".to_string(), "On (1)"),
+                    ("2".to_string(), "Active"),
+                    ("3".to_string(), "Sport"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
             8,
             TagInfo {
                 name: "VRType",

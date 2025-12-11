@@ -28,6 +28,29 @@ pub fn ast_value_882f6d908299e76b(
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// $val =~ s/ .*//; ($val - 50) / 10
+/// ```
+/// Used by:
+/// - Pentax::Main.ExposureCompensation
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_88eb28e51bb0c866(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                                   // tag_id will be filled at runtime
+        "UnknownTag",                        // tag_name will be filled at runtime
+        "UnknownGroup",                      // group will be filled at runtime
+        "$val =~ s/ .*//; ($val - 50) / 10", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// my @v=split " ",$val; "$v[0] (min $v[1], max $v[2])"
 /// ```
 /// Used by:

@@ -23,6 +23,15 @@ pub static SAMSUNG_TRAILER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             },
         ),
         (
+            1,
+            TagInfo {
+                name: "EmbeddedImage2",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             256,
             TagInfo {
                 name: "EmbeddedAudioFile",
@@ -316,6 +325,15 @@ pub static SAMSUNG_TRAILER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             },
         ),
         (
+            2737,
+            TagInfo {
+                name: "DepthMapData2",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
             2739,
             TagInfo {
                 name: "DualShotExtra",
@@ -337,6 +355,15 @@ pub static SAMSUNG_TRAILER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             2881,
             TagInfo {
                 name: "SingleShotDepthMap",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+            },
+        ),
+        (
+            2977,
+            TagInfo {
+                name: "OriginalPathHashKey",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,

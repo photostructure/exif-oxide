@@ -155,6 +155,22 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             },
         ),
         (
+            29,
+            TagInfo {
+                name: "AFStatusTop-right",
+                format: "int16s",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-32768".to_string(), "Out of Focus"),
+                    ("0".to_string(), "In Focus"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Minolta::__ANON__]",
+                    ),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
             31,
             TagInfo {
                 name: "AFStatusBottom-right",
@@ -195,6 +211,38 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("7".to_string(), "Near Left"),
                     ("8".to_string(), "Bottom (horizontal)"),
                     ("9".to_string(), "Top (vertical)"),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
+            33,
+            TagInfo {
+                name: "AFStatusBottom",
+                format: "int16s",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-32768".to_string(), "Out of Focus"),
+                    ("0".to_string(), "In Focus"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Minolta::__ANON__]",
+                    ),
+                ]))),
+                value_conv: None,
+            },
+        ),
+        (
+            35,
+            TagInfo {
+                name: "AFStatusMiddleHorizontal",
+                format: "int16s",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("-32768".to_string(), "Out of Focus"),
+                    ("0".to_string(), "In Focus"),
+                    (
+                        "OTHER".to_string(),
+                        "[Function: Image::ExifTool::Minolta::__ANON__]",
+                    ),
                 ]))),
                 value_conv: None,
             },

@@ -206,6 +206,12 @@ pub static SONY_TAG9050B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "On"), ]))),
             value_conv: None,
         }),
+        (540, TagInfo {
+            name: "APS-CSizeCapture",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Off"), ("1".to_string(), "On"), ]))),
+            value_conv: None,
+        }),
         (542, TagInfo {
             name: "LensSpecFeatures",
             format: "undef[2]",
