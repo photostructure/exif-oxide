@@ -46,6 +46,7 @@
       "lib/Image/ExifTool/Matroska.pm",
       "lib/Image/ExifTool/MIE.pm",
       "lib/Image/ExifTool/MinoltaRaw.pm",
+      "lib/Image/ExifTool/MWG.pm",
       "lib/Image/ExifTool/Ogg.pm",
       "lib/Image/ExifTool/Vorbis.pm",
       "lib/Image/ExifTool/PanasonicRaw.pm",

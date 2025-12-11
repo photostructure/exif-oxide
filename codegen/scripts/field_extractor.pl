@@ -67,6 +67,21 @@ if ($@) {
     die "Failed to load module $package_name: $@\n";
 }
 
+# Explicitly load XMP2.pl when processing XMP module
+# ExifTool.pm:8900 loads XMP2.pl lazily via GetTagTable, but we need the
+# cc, MediaPro, iptcExt namespace tables populated before symbol extraction.
+# See P03g-xmp2-mwg-codegen.md for details.
+if ( $module_name eq 'XMP' ) {
+    eval { require 'Image/ExifTool/XMP2.pl' };
+    if ($@) {
+        print STDERR "Note: Failed to load XMP2.pl: $@\n";
+    }
+    else {
+        print STDERR
+"  Loaded XMP2.pl for additional namespaces (cc, MediaPro, iptcExt)\n";
+    }
+}
+
 # Check if this module has composite tags (set by our patcher)
 my $has_composite_tags = 0;
 {

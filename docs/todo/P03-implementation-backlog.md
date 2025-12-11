@@ -114,7 +114,8 @@ Format fixes for basic EXIF tags are working. Remaining format issues are compos
 
 **Follow-up TPPs**:
 - **P03e**: DNGLensInfo (EXIF tag 0xc630) - ✅ **COMPLETE** (already in codegen)
-- **[P03f](P03f-xmp-namespace-tags.md)**: XMP Namespace Tags (15 tags) - NOT STARTED, implementation plan ready
+- **[P03f](P03f-xmp-namespace-tags.md)**: XMP Namespace Tags - ✅ **COMPLETE** (40 tables, 719 tags generated)
+- **[P03g](P03g-xmp2-mwg-codegen.md)**: XMP2.pl + MWG.pm Integration - 🔲 **NOT STARTED** (15 tags blocked)
 
 ---
 
@@ -144,21 +145,41 @@ cargo run -- third-party/exiftool/t/images/DNG.dng 2>/dev/null | grep DNGLensInf
 
 ## XMP Namespace Tags (P03f)
 
-**Status**: 🔲 **NOT STARTED** - Implementation plan ready
+**Status**: ✅ **COMPLETE** (validated 2025-12-11)
 
-**Problem**: XMP tags use string property names, but `TagKitStrategy` only handles numeric EXIF tag IDs. All 72 XMP namespace tables generate empty `HashMap::new()`.
+XmpTagStrategy created, 40 XMP namespace tables generated with 719 total tags.
 
-**Solution**: Create `XmpTagStrategy` that generates `HashMap<&'static str, XmpTagInfo>` tables.
+**Completed**:
+- XmpTagInfo type (`src/core/xmp_tag_info.rs`)
+- XmpTagStrategy (`codegen/src/strategies/xmp_tag.rs`)
+- 40 namespace tables in `src/generated/XMP_pm/`
+- xmp_lookup.rs wired to generated tables
 
-**Tags by namespace**:
+**Details**: See [P03f-xmp-namespace-tags.md](P03f-xmp-namespace-tags.md)
+
+---
+
+## XMP2.pl + MWG.pm Codegen (P03g)
+
+**Status**: ✅ **COMPLETE** (validated 2025-12-11)
+
+**Problem**: P03f generated XMP tables from XMP.pm, but XMP2.pl tables (cc, MediaPro, iptcExt) are lazily loaded and not captured. MWG.pm not in module list.
+
+**Root Cause**: ExifTool.pm:8900 loads XMP2.pl on-demand via GetTagTable, not during require.
+
+**Solution**:
+1. Modify field_extractor.pl to explicitly require XMP2.pl when processing XMP.pm
+2. Add MWG.pm to exiftool_modules.json
+3. Update xmp_lookup.rs with new namespace routing
+
+**Tags blocked** (15):
 - **XMP-cc** (8): License, AttributionName, AttributionURL, UseGuidelines, Permits, Requires, Prohibits, Jurisdiction
 - **XMP-mwg-rs** (1): RegionList
 - **XMP-mwg-kw** (2): KeywordInfo, HierarchicalKeywords
 - **XMP-Iptc4xmpExt** (2): PersonInImageWDetails, PersonInImageName
-- **XMP-xmpMM** (1): HistoryWhen
 - **XMP-mediapro** (1): People
 
-**Details**: See [P03f-xmp-namespace-tags.md](P03f-xmp-namespace-tags.md) for full implementation plan.
+**Details**: See [P03g-xmp2-mwg-codegen.md](P03g-xmp2-mwg-codegen.md)
 
 ---
 
@@ -169,22 +190,12 @@ cargo run -- third-party/exiftool/t/images/DNG.dng 2>/dev/null | grep DNGLensInf
 3. ⚠️ **P03c**: Composite tag infrastructure - **95% COMPLETE** (bugs remain)
 4. ✅ **P03d**: Research unknown tags - **COMPLETE**
 5. ✅ **P03e**: DNGLensInfo - **COMPLETE** (already in codegen)
-6. ⚠️ **P03f**: XMP Namespace Tags - **IN PROGRESS** (Tasks 1-3 complete, Task 4 in progress)
-
-### P03f Progress
-
-- ✅ XmpTagInfo type created (`src/core/xmp_tag_info.rs`)
-- ✅ XmpTagStrategy created (`codegen/src/strategies/xmp_tag.rs`)
-- ✅ PrintConv extraction working (inlined in XmpTagInfo)
-- ✅ 40 XMP namespace tables generated, 719 tags total
-- 🔶 Processor not yet wired to use generated tables
-- ⬜ Tests and documentation pending
+6. ✅ **P03f**: XMP Namespace Tags - **COMPLETE** (40 tables, 719 tags)
+7. ✅ **P03g**: XMP2.pl + MWG.pm Integration - **COMPLETE** (15 tags unblocked)
 
 ### Next Steps
 
-1. **P03f Task 4**: Wire `src/xmp/processor.rs` to use generated XMP tables (see P03f doc)
-2. **P03f Task 5-6**: Add tests and update documentation
-3. **P03c bugs**: Fix Megapixels sprintf, ShutterSpeed fallback, GPSPosition sign
+1. **P03c bugs**: Fix Megapixels sprintf, ShutterSpeed fallback, GPSPosition sign
 
 ---
 

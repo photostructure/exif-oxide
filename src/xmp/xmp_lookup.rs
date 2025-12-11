@@ -7,10 +7,11 @@ use crate::core::XmpTagInfo;
 
 // Import all generated XMP namespace tables
 use crate::generated::XMP_pm::{
-    album_tags::XMP_ALBUM_TAGS, aux_tags::XMP_AUX_TAGS, crs_tags::XMP_CRS_TAGS,
-    dc_tags::XMP_DC_TAGS, exif_ex_tags::XMP_EXIF_EX_TAGS, exif_tags::XMP_EXIF_TAGS,
-    exif_tool_tags::XMP_ET_TAGS, iptc_core_tags::XMP_IPTC4XMP_CORE_TAGS,
-    lightroom_tags::XMP_LR_TAGS, pdf_tags::XMP_PDF_TAGS, pdfx_tags::XMP_PDFX_TAGS,
+    album_tags::XMP_ALBUM_TAGS, aux_tags::XMP_AUX_TAGS, cc_tags::XMP_CC_TAGS,
+    crs_tags::XMP_CRS_TAGS, dc_tags::XMP_DC_TAGS, exif_ex_tags::XMP_EXIF_EX_TAGS,
+    exif_tags::XMP_EXIF_TAGS, exif_tool_tags::XMP_ET_TAGS, iptc_core_tags::XMP_IPTC4XMP_CORE_TAGS,
+    iptc_ext_tags::XMP_IPTC4XMP_EXT_TAGS, lightroom_tags::XMP_LR_TAGS,
+    media_pro_tags::XMP_MEDIAPRO_TAGS, pdf_tags::XMP_PDF_TAGS, pdfx_tags::XMP_PDFX_TAGS,
     photoshop_tags::XMP_PHOTOSHOP_TAGS, rdf_tags::XMP_RDF_TAGS, s_area_tags::XMP_ST_AREA_TAGS,
     s_dimensions_tags::XMP_ST_DIM_TAGS, s_font_tags::XMP_ST_FNT_TAGS,
     s_job_ref_tags::XMP_ST_JOB_TAGS, s_manifest_item_tags::XMP_ST_MFS_TAGS,
@@ -19,6 +20,9 @@ use crate::generated::XMP_pm::{
     xmp_bj_tags::XMP_XMP_BJ_TAGS, xmp_mm_tags::XMP_XMP_MM_TAGS, xmp_note_tags::XMP_XMP_NOTE_TAGS,
     xmp_rights_tags::XMP_XMP_RIGHTS_TAGS, xmp_tags::XMP_XMP_TAGS, xmp_tpg_tags::XMP_XMP_TPG_TAGS,
 };
+
+// Import MWG namespace tables
+use crate::generated::MWG_pm::{keywords_tags::XMP_MWG_KW_TAGS, regions_tags::XMP_MWG_RS_TAGS};
 
 /// Look up XMP tag information from generated tables
 ///
@@ -56,6 +60,17 @@ pub fn lookup_xmp_tag(namespace: &str, property: &str) -> Option<&'static XmpTag
 
         // IPTC
         "Iptc4xmpCore" | "iptc4xmpCore" => XMP_IPTC4XMP_CORE_TAGS.get(property),
+        "Iptc4xmpExt" | "iptc4xmpExt" => XMP_IPTC4XMP_EXT_TAGS.get(property),
+
+        // Creative Commons (from XMP2.pl)
+        "cc" => XMP_CC_TAGS.get(property),
+
+        // iView MediaPro (from XMP2.pl)
+        "mediapro" => XMP_MEDIAPRO_TAGS.get(property),
+
+        // Metadata Working Group (from MWG.pm)
+        "mwg-rs" => XMP_MWG_RS_TAGS.get(property),
+        "mwg-kw" => XMP_MWG_KW_TAGS.get(property),
 
         // PDF
         "pdf" => XMP_PDF_TAGS.get(property),
@@ -171,5 +186,52 @@ mod tests {
         // Both cases should work for IPTC
         assert!(lookup_xmp_tag("Iptc4xmpCore", "Location").is_some());
         assert!(lookup_xmp_tag("iptc4xmpCore", "Location").is_some());
+    }
+
+    #[test]
+    fn test_lookup_cc_tags() {
+        // Creative Commons namespace (from XMP2.pl)
+        let license = lookup_xmp_tag("cc", "license");
+        assert!(license.is_some());
+        assert_eq!(license.unwrap().name, "License");
+
+        let attribution = lookup_xmp_tag("cc", "attributionName");
+        assert!(attribution.is_some());
+        assert_eq!(attribution.unwrap().name, "AttributionName");
+
+        // Permits has PrintConv
+        let permits = lookup_xmp_tag("cc", "permits");
+        assert!(permits.is_some());
+        assert_eq!(permits.unwrap().name, "Permits");
+        assert!(permits.unwrap().print_conv.is_some());
+    }
+
+    #[test]
+    fn test_lookup_mediapro_tags() {
+        // iView MediaPro namespace (from XMP2.pl)
+        let people = lookup_xmp_tag("mediapro", "People");
+        assert!(people.is_some());
+        assert_eq!(people.unwrap().name, "People");
+    }
+
+    #[test]
+    fn test_lookup_iptc_ext_tags() {
+        // IPTC Extensions namespace (from XMP2.pl)
+        let person = lookup_xmp_tag("Iptc4xmpExt", "PersonInImage");
+        assert!(person.is_some());
+        assert_eq!(person.unwrap().name, "PersonInImage");
+    }
+
+    #[test]
+    fn test_lookup_mwg_tags() {
+        // MWG Regions namespace (from MWG.pm)
+        let regions = lookup_xmp_tag("mwg-rs", "RegionsRegionList");
+        assert!(regions.is_some());
+        assert_eq!(regions.unwrap().name, "RegionList");
+
+        // MWG Keywords namespace (from MWG.pm)
+        let keywords = lookup_xmp_tag("mwg-kw", "Keywords");
+        assert!(keywords.is_some());
+        assert_eq!(keywords.unwrap().name, "KeywordInfo");
     }
 }
