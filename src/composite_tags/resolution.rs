@@ -3,21 +3,59 @@
 //! This module handles the logic for determining whether composite tags can be built
 //! based on available dependencies, including group prefix handling and composite
 //! tag references.
+//!
+//! ## Three-Array System (ExifTool Compatibility)
+//!
+//! ExifTool populates three parallel arrays for composite tag evaluation
+//! (lib/Image/ExifTool.pm:3553-3560):
+//!
+//! - `@raw` - Unconverted raw values directly from storage
+//! - `@val` - Values after ValueConv applied
+//! - `@prt` - Values after PrintConv applied (human-readable)
+//!
+//! We mirror this with [`TagDependencyValues`] to properly support expressions
+//! that reference different conversion stages (e.g., `$prt[n]` for printed values).
 
 use std::collections::{HashMap, HashSet};
-use tracing::trace;
+use tracing::{debug, trace};
 
-// use crate::types::CompositeTagInfo;
+use crate::generated::composite_tags::CompositeTagDef;
 use crate::generated::Exif_pm::main_tags::EXIF_MAIN_TAGS;
 use crate::generated::GPS_pm::main_tags::GPS_MAIN_TAGS;
 use crate::types::TagValue;
 
-/// Build the initial available tags map from extracted tags with group prefixes
-/// This replaces the inline logic from the original single-pass implementation
+/// Holds the three conversion stages of a tag value for composite resolution.
+///
+/// This mirrors ExifTool's `@raw`, `@val`, `@prt` arrays used in composite tag
+/// evaluation (lib/Image/ExifTool.pm:3553-3560).
+///
+/// # ExifTool Reference
+///
+/// ```perl
+/// $raw[$_] = $$rawValue{$$val{$_}};  # Raw from storage
+/// ($val[$_], $prt[$_]) = $self->GetValue($$val{$_}, 'Both');  # Converted values
+/// ```
+#[derive(Debug, Clone)]
+pub struct TagDependencyValues {
+    /// Raw unconverted value from storage (Perl's `$raw[n]`)
+    pub raw: TagValue,
+    /// Value after ValueConv applied (Perl's `$val[n]`)
+    pub val: TagValue,
+    /// Value after PrintConv applied (Perl's `$prt[n]`)
+    pub prt: TagValue,
+}
+
+/// Build the initial available tags map from extracted tags with group prefixes.
+///
+/// This version uses the same value for raw/val/prt (simple case where conversions
+/// have already been applied). For proper ExifTool compatibility with separate
+/// raw/val/prt values, use [`build_available_tags_map_with_conversions`].
+///
+/// This is still used by code that only needs simple tag lookups.
 pub fn build_available_tags_map(
     extracted_tags: &HashMap<u16, TagValue>,
     tag_sources: &HashMap<u16, crate::types::TagSourceInfo>,
-) -> HashMap<String, TagValue> {
+) -> HashMap<String, TagDependencyValues> {
     let mut available_tags = HashMap::new();
 
     // Add extracted tags with group prefixes
@@ -56,35 +94,91 @@ pub fn build_available_tags_map(
             crate::exif::ExifReader::generate_tag_prefix_name(tag_id, source_info)
         };
 
+        // Create TagDependencyValues with same value for all three (fallback behavior)
+        // ExifTool: lib/Image/ExifTool.pm:3553-3560
+        // In proper implementation, raw should be the unconverted value
+        let dep_values = TagDependencyValues {
+            raw: value.clone(),
+            val: value.clone(),
+            prt: value.clone(),
+        };
+
         // Add with group prefix (e.g., "GPS:GPSLatitude")
         let prefixed_name = format!("{group_name}:{base_tag_name}");
-        available_tags.insert(prefixed_name, value.clone());
+        available_tags.insert(prefixed_name, dep_values.clone());
 
         // Also add without group prefix for broader matching (e.g., "GPSLatitude")
-        available_tags.insert(base_tag_name, value.clone());
+        available_tags.insert(base_tag_name, dep_values);
     }
 
     available_tags
 }
 
-/// Stub implementation while composite tags are not generated
-pub fn can_build_composite(
-    _composite_def: &str,
-    _available_tags: &HashMap<String, TagValue>,
-    _built_composites: &HashSet<String>,
-) -> bool {
-    false
+/// Build available tags map with proper raw/val/prt separation.
+///
+/// This is the ExifTool-compatible version that properly populates all three
+/// value stages for each tag. Use this when you need accurate `$raw[n]`,
+/// `$val[n]`, `$prt[n]` array values.
+///
+/// # Arguments
+///
+/// * `raw_tags` - Raw values before any conversion (used for `@raw`)
+/// * `val_tags` - Values after ValueConv (used for `@val`)
+/// * `prt_tags` - Values after PrintConv (used for `@prt`)
+///
+/// # ExifTool Reference
+///
+/// lib/Image/ExifTool.pm:3553-3560:
+/// ```perl
+/// $raw[$_] = $$rawValue{$$val{$_}};  # Raw from storage
+/// ($val[$_], $prt[$_]) = $self->GetValue($$val{$_}, 'Both');
+/// ```
+pub fn build_available_tags_map_with_conversions(
+    raw_tags: &HashMap<String, TagValue>,
+    val_tags: &HashMap<String, TagValue>,
+    prt_tags: &HashMap<String, TagValue>,
+) -> HashMap<String, TagDependencyValues> {
+    let mut available_tags = HashMap::new();
+
+    // Use val_tags as the canonical set of tag names
+    for (tag_name, val) in val_tags {
+        let raw = raw_tags.get(tag_name).cloned().unwrap_or(val.clone());
+        let prt = prt_tags.get(tag_name).cloned().unwrap_or(val.clone());
+
+        available_tags.insert(
+            tag_name.clone(),
+            TagDependencyValues {
+                raw,
+                val: val.clone(),
+                prt,
+            },
+        );
+    }
+
+    available_tags
 }
 
-// TODO: Re-enable when CompositeTagDef is generated
-/*
 /// Check if a composite tag can be built (all required dependencies available)
 /// This is the core dependency resolution logic for multi-pass building
+/// ExifTool: lib/Image/ExifTool.pm:3929-4115 BuildCompositeTags
 pub fn can_build_composite(
     composite_def: &CompositeTagDef,
-    available_tags: &HashMap<String, TagValue>,
+    available_tags: &HashMap<String, TagDependencyValues>,
     built_composites: &HashSet<String>,
 ) -> bool {
+    // Check inhibit tags first - if any inhibit tag exists, we can't build
+    // ExifTool: lib/Image/ExifTool.pm:4034-4036
+    for inhibit_tag in composite_def.inhibit {
+        if is_dependency_available(inhibit_tag, available_tags, built_composites) {
+            trace!(
+                "Composite {} inhibited by presence of {}",
+                composite_def.name,
+                inhibit_tag
+            );
+            return false;
+        }
+    }
+
     // Special case for ImageSize: ExifTool can build it with just desired dependencies
     // because the ValueConv has fallback logic
     if composite_def.name == "ImageSize" {
@@ -113,7 +207,7 @@ pub fn can_build_composite(
     // Special case: if there are no required dependencies, check if we have any desired ones
     if composite_def.require.is_empty() && !composite_def.desire.is_empty() {
         // Need at least one desired dependency
-        for tag_name in &composite_def.desire {
+        for tag_name in composite_def.desire {
             if is_dependency_available(tag_name, available_tags, built_composites) {
                 return true; // At least one desired dependency available
             }
@@ -127,7 +221,7 @@ pub fn can_build_composite(
     }
 
     // Check all required dependencies
-    for tag_name in &composite_def.require {
+    for tag_name in composite_def.require {
         if !is_dependency_available(tag_name, available_tags, built_composites) {
             trace!(
                 "Missing required dependency for {}: {}",
@@ -141,14 +235,83 @@ pub fn can_build_composite(
     // All required dependencies are available
     true
 }
-*/
+
+/// Resolve dependency arrays for composite tag function calls
+/// ExifTool: lib/Image/ExifTool.pm:3553-3560 - populates @raw, @val, @prt arrays
+///
+/// Returns tuple of (vals, prts, raws) where:
+/// - vals: Values after ValueConv applied (Perl's @val)
+/// - prts: Values after PrintConv applied (Perl's @prt)
+/// - raws: Raw unconverted values (Perl's @raw)
+///
+/// The arrays are ordered by dependency index: require deps first, then desire deps
+///
+/// # ExifTool Reference
+///
+/// lib/Image/ExifTool.pm:3553-3560:
+/// ```perl
+/// foreach (keys %$val) {
+///     next unless defined $$val{$_};
+///     $raw[$_] = $$rawValue{$$val{$_}};
+///     ($val[$_], $prt[$_]) = $self->GetValue($$val{$_}, 'Both');
+///     # ...
+/// }
+/// ```
+pub fn resolve_dependency_arrays(
+    composite_def: &CompositeTagDef,
+    available_tags: &HashMap<String, TagDependencyValues>,
+    built_composites: &HashSet<String>,
+) -> (Vec<TagValue>, Vec<TagValue>, Vec<TagValue>) {
+    let mut vals = Vec::new();
+    let mut prts = Vec::new();
+    let mut raws = Vec::new();
+
+    // Process required dependencies first (these map to $val[0], $val[1], etc.)
+    // ExifTool: Require'd tags are indexed 0, 1, 2, ... in order
+    for tag_name in composite_def.require {
+        let dep_values = resolve_tag_dependency(tag_name, available_tags, built_composites);
+        match dep_values {
+            Some(dv) => {
+                raws.push(dv.raw);
+                vals.push(dv.val);
+                prts.push(dv.prt);
+            }
+            None => {
+                // Tag not found - use Empty for all three
+                raws.push(TagValue::Empty);
+                vals.push(TagValue::Empty);
+                prts.push(TagValue::Empty);
+            }
+        }
+    }
+
+    // Then process desired dependencies (these continue the indexing)
+    // ExifTool: Desire'd tags continue the indexing after Require'd tags
+    for tag_name in composite_def.desire {
+        let dep_values = resolve_tag_dependency(tag_name, available_tags, built_composites);
+        match dep_values {
+            Some(dv) => {
+                raws.push(dv.raw);
+                vals.push(dv.val);
+                prts.push(dv.prt);
+            }
+            None => {
+                raws.push(TagValue::Empty);
+                vals.push(TagValue::Empty);
+                prts.push(TagValue::Empty);
+            }
+        }
+    }
+
+    (vals, prts, raws)
+}
 
 /// Check if a specific dependency (tag name) is available using ExifTool's dynamic resolution
 /// ExifTool: lib/Image/ExifTool.pm:3977-4005 BuildCompositeTags dependency resolution
 /// ExifTool: lib/Image/ExifTool.pm:4006-4026 tag value lookup from $$rawValue{$reqTag}
 pub fn is_dependency_available(
     tag_name: &str,
-    available_tags: &HashMap<String, TagValue>,
+    available_tags: &HashMap<String, TagDependencyValues>,
     built_composites: &HashSet<String>,
 ) -> bool {
     resolve_tag_dependency(tag_name, available_tags, built_composites).is_some()
@@ -158,11 +321,13 @@ pub fn is_dependency_available(
 /// ExifTool: lib/Image/ExifTool.pm:4006-4026 - dependency resolution from rawValue hash
 /// ExifTool: lib/Image/ExifTool.pm:3977-3983 - composite-to-composite dependency handling
 /// ExifTool: lib/Image/ExifTool.pm:4027-4055 - group matching and priority resolution
+///
+/// Returns the full [`TagDependencyValues`] with raw/val/prt values for the tag.
 pub fn resolve_tag_dependency(
     tag_name: &str,
-    available_tags: &HashMap<String, TagValue>,
+    available_tags: &HashMap<String, TagDependencyValues>,
     built_composites: &HashSet<String>,
-) -> Option<TagValue> {
+) -> Option<TagDependencyValues> {
     // Step 1: Check if the tag is a composite that has already been built
     // ExifTool: lib/Image/ExifTool.pm:3977-3983 composite dependency handling
     if built_composites.contains(tag_name) {
@@ -234,7 +399,12 @@ pub fn resolve_tag_dependency(
     // This handles cases like "ISO" where ExifTool would find EXIF:ISO tag 0x8827
     // but we want to provide consolidated ISO from multiple sources
     if let Some(computed_value) = try_manual_tag_computation(tag_name, available_tags) {
-        return Some(computed_value);
+        // For computed values, we use the same value for all three stages
+        return Some(TagDependencyValues {
+            raw: computed_value.clone(),
+            val: computed_value.clone(),
+            prt: computed_value,
+        });
     }
 
     None
@@ -245,8 +415,15 @@ pub fn resolve_tag_dependency(
 /// ExifTool equivalent: direct tag access, but we add consolidation for user convenience
 fn try_manual_tag_computation(
     tag_name: &str,
-    available_tags: &HashMap<String, TagValue>,
+    available_tags: &HashMap<String, TagDependencyValues>,
 ) -> Option<TagValue> {
+    // Convert to simple TagValue map using `.val` (ValueConv'd values).
+    // See orchestration.rs::try_manual_composite_computation for rationale.
+    let simple_map: HashMap<String, TagValue> = available_tags
+        .iter()
+        .map(|(k, v)| (k.clone(), v.val.clone()))
+        .collect();
+
     match tag_name {
         // ISO consolidation - provides unified ISO value from multiple sources
         // ExifTool: searches for any tag named "ISO" in rawValue hash
@@ -254,7 +431,7 @@ fn try_manual_tag_computation(
         "ISO" => {
             // Import the compute_iso function from implementations
             use crate::composite_tags::implementations::compute_iso;
-            compute_iso(available_tags)
+            compute_iso(&simple_map)
         }
         _ => None,
     }

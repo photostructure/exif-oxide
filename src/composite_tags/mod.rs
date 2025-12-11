@@ -5,19 +5,23 @@
 //!
 //! The main entry point is [`resolve_and_compute_composites`] which handles
 //! dependency resolution and computation across multiple passes.
+//!
+//! ## Architecture
+//!
+//! - **orchestration.rs**: Multi-pass loop that iterates through composite tags
+//! - **resolution.rs**: Dependency checking and array building for function calls
+//! - **implementations.rs**: Manual fallback implementations for complex composites
+//!
+//! Generated composite functions are in `src/generated/composite_tags.rs`
 
 mod dispatch;
-mod implementations;
+pub mod implementations;
 mod orchestration;
 mod resolution;
 
 // Re-export the main public API
-// TEMPORARILY COMMENTED OUT - apply_composite_conversions not generated yet
-// pub use orchestration::{apply_composite_conversions, resolve_and_compute_composites};
-pub use orchestration::resolve_and_compute_composites;
-pub use resolution::{build_available_tags_map, can_build_composite, is_dependency_available};
-
-// Re-export for testing and internal use
-// TEMPORARILY COMMENTED OUT - compute_composite_tag not generated yet
-// pub use dispatch::compute_composite_tag;
-pub use orchestration::handle_unresolved_composites;
+pub use orchestration::{handle_unresolved_composites, resolve_and_compute_composites};
+pub use resolution::{
+    build_available_tags_map, build_available_tags_map_with_conversions, can_build_composite,
+    is_dependency_available, resolve_dependency_arrays, TagDependencyValues,
+};
