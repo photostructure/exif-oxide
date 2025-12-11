@@ -1460,16 +1460,28 @@ fn extract_rw2_jpeg_preview_dimensions(
 /// Build composite tags from a collection of TagEntry objects
 /// This enables composite tag processing after all tags (including File group tags) are available
 fn build_composite_tags_from_entries(tag_entries: &[TagEntry]) -> Vec<TagEntry> {
+    use crate::composite_tags::TagDependencyValues;
+
     // Convert TagEntry collection to the format expected by composite tag processing
+    // TagEntry already has value (ValueConv'd) and print (PrintConv'd) - use these
     let mut available_tags = HashMap::new();
 
     for entry in tag_entries {
+        // Create TagDependencyValues from TagEntry
+        // raw = val = entry.value (ValueConv'd value, we don't have true raw here)
+        // prt = entry.print (PrintConv'd value)
+        let dep_values = TagDependencyValues {
+            raw: entry.value.clone(),
+            val: entry.value.clone(),
+            prt: entry.print.clone(),
+        };
+
         // Add with group prefix (e.g., "File:ImageWidth")
         let prefixed_name = format!("{}:{}", entry.group, entry.name);
-        available_tags.insert(prefixed_name, entry.value.clone());
+        available_tags.insert(prefixed_name, dep_values.clone());
 
         // Also add without group prefix for broader matching (e.g., "ImageWidth")
-        available_tags.insert(entry.name.clone(), entry.value.clone());
+        available_tags.insert(entry.name.clone(), dep_values);
     }
 
     // Delegate to the composite tag processing system
@@ -1887,7 +1899,9 @@ mod tests {
 
     #[test]
     fn test_xmp_exif_precedence_rules() {
-        // Test that EXIF tags take precedence over XMP tags following ExifTool behavior
+        // Test that tags with different Group0 values are ALL kept (they produce different JSON keys)
+        // This matches ExifTool's -j -G output behavior where "EXIF:Make" and "XMP:Make" are
+        // separate keys in the JSON output, not conflicts.
         let exif_tag = TagEntry {
             group: "EXIF".to_string(),
             group1: "EXIF".to_string(),
@@ -1923,37 +1937,38 @@ mod tests {
         let tags = vec![exif_tag, xmp_tag, file_tag, xmp_imagewidth];
         let resolved = apply_exiftool_precedence_rules(tags);
 
-        // Should have 2 tags total (Make and ImageWidth)
-        assert_eq!(resolved.len(), 2);
+        // Should have 4 tags total - all are kept because they have different "Group:Name" keys
+        // ExifTool with -G outputs "EXIF:Make", "XMP:Make", "File:ImageWidth", "XMP:ImageWidth"
+        // as separate keys - they're not considered conflicts.
+        assert_eq!(resolved.len(), 4);
 
-        // Find Make tag - should be EXIF version (Canon), not XMP version (Nikon)
-        let make_tag = resolved.iter().find(|t| t.name == "Make");
-        assert!(
-            make_tag.is_some(),
-            "Should have Make tag after precedence resolution"
-        );
-        if let Some(tag) = make_tag {
-            assert_eq!(tag.group, "EXIF", "EXIF:Make should win over XMP:Make");
-            assert_eq!(
-                tag.value.as_string(),
-                Some("Canon"),
-                "Should have EXIF value"
-            );
-        }
+        // Verify EXIF:Make exists
+        let exif_make = resolved
+            .iter()
+            .find(|t| t.group == "EXIF" && t.name == "Make");
+        assert!(exif_make.is_some(), "Should have EXIF:Make");
+        assert_eq!(exif_make.unwrap().value.as_string(), Some("Canon"));
 
-        // Find ImageWidth tag - should be File version (3000), not XMP version (2000)
-        let width_tag = resolved.iter().find(|t| t.name == "ImageWidth");
-        assert!(
-            width_tag.is_some(),
-            "Should have ImageWidth tag after precedence resolution"
-        );
-        if let Some(tag) = width_tag {
-            assert_eq!(
-                tag.group, "File",
-                "File:ImageWidth should win over XMP:ImageWidth"
-            );
-            assert_eq!(tag.value.as_u16(), Some(3000), "Should have File value");
-        }
+        // Verify XMP:Make also exists (both are kept with -G output)
+        let xmp_make = resolved
+            .iter()
+            .find(|t| t.group == "XMP" && t.name == "Make");
+        assert!(xmp_make.is_some(), "Should have XMP:Make");
+        assert_eq!(xmp_make.unwrap().value.as_string(), Some("Nikon"));
+
+        // Verify File:ImageWidth exists
+        let file_width = resolved
+            .iter()
+            .find(|t| t.group == "File" && t.name == "ImageWidth");
+        assert!(file_width.is_some(), "Should have File:ImageWidth");
+        assert_eq!(file_width.unwrap().value.as_u16(), Some(3000));
+
+        // Verify XMP:ImageWidth also exists
+        let xmp_width = resolved
+            .iter()
+            .find(|t| t.group == "XMP" && t.name == "ImageWidth");
+        assert!(xmp_width.is_some(), "Should have XMP:ImageWidth");
+        assert_eq!(xmp_width.unwrap().value.as_u16(), Some(2000));
     }
 
     #[test]
