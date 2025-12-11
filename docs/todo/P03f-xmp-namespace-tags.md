@@ -1,266 +1,333 @@
-# P03f: XMP Namespace Tags Implementation
+# P03f: XMP Tag Codegen Support
 
-**Status**: BLOCKED on XMP tag extraction infrastructure
-
-**Prerequisites**:
-- [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md)
-- P03d (Unknown Tags Research) complete
-- XMP tag extraction working in codegen (see Blocker section)
-
-**Research Reference**: [unknown-tags-research.md](../analysis/unknown-tags-research.md)
+**Status**: NOT STARTED
+**Priority**: High (critical tags blocked)
+**Prerequisites**: [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md), [CODEGEN.md](../CODEGEN.md)
 
 ---
 
-## Part 1: Define Success
+## Problem Statement
 
-**Problem**: 15 required XMP tags have been researched but cannot be implemented because XMP tag definitions aren't being extracted by codegen
+XMP tags cannot be extracted because `TagKitStrategy` skips string keys:
 
-**Why it matters**: Creative Commons licensing, face/region detection, hierarchical keywords, and person metadata are critical for photo management
-
-**Solution**:
-1. First: Fix codegen to extract XMP tag definitions from XMP.pm, XMP2.pl, MWG.pm
-2. Then: Wire extracted tags through XMP processor
-
-**Success test**:
-```bash
-# After XMP infrastructure fixed:
-cargo run --bin compare-with-exiftool -- test-images/xmp/cc-licensed.jpg 2>/dev/null | grep -E "License|Attribution"
-# Should show matching Creative Commons tags
+```rust
+// codegen/src/strategies/tag_kit.rs:315-323
+let tag_id = if let Ok(id) = tag_key.parse::<u16>() {
+    id
+} else {
+    return Ok(None);  // ALL XMP TAGS DISCARDED
+};
 ```
 
-**Key constraint**: XMP tags use string names (not numeric IDs) - codegen must handle this differently than EXIF tags
+**Result**: All 72 XMP namespace tables generate empty `HashMap::new()`.
+
+**Required tags blocked**: License, Permits, RegionList, HierarchicalKeywords, PersonInImageWDetails, etc.
 
 ---
 
-## Blocker: XMP Tag Extraction Gap
+## Solution
 
-### Current State
+Create `XmpTagStrategy` that extracts string-keyed XMP tag definitions and generates `HashMap<&'static str, XmpTagInfo>` tables.
 
-**Namespace URIs exist** (`src/generated/XMP_pm/ns_uri.rs`):
-```rust
-("cc", "http://creativecommons.org/ns#"),
-("mwg-rs", "http://www.metadataworkinggroup.com/schemas/regions/"),
-("mwg-kw", "http://www.metadataworkinggroup.com/schemas/keywords/"),
-("Iptc4xmpExt", "http://iptc.org/std/Iptc4xmpExt/2008-02-29/"),
-("mediapro", "http://ns.iview-multimedia.com/mediapro/1.0/"),
-```
+**Key simplification**: No struct flattening. Return full XML tree as `TagValue::Object` for struct tags (RegionList, HierarchicalKeywords). The XMP processor already parses nested structures - we just need tag name mappings.
 
-**Tag definition tables are empty**:
-```rust
-// src/generated/XMP_pm/dc_tags.rs
-pub static XMP_DC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
-```
+---
 
-### Root Cause
-
-`TagKitStrategy` is designed for EXIF-style numeric tag IDs. XMP tags use string property names within namespaces - they don't have numeric IDs.
-
-### Required Infrastructure Changes
-
-1. **New strategy or TagKitStrategy enhancement** to handle XMP tables:
-   - XMP tags keyed by property name (string), not tag ID (u16)
-   - Extract from `%Image::ExifTool::XMP::cc`, `%Image::ExifTool::XMP::MediaPro`, etc.
-
-2. **Generated table format change**:
-   ```rust
-   // Instead of HashMap<u16, TagInfo>:
-   pub static XMP_CC_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> = ...
-   ```
-
-3. **XMP processor integration**: Wire tag definitions to `src/xmp/processor.rs`
-
-### Investigation Commands
+## Success Criteria
 
 ```bash
-# Check what codegen does with XMP modules
-RUST_LOG=trace make codegen 2>&1 | grep -i "XMP"
+# 1. Generated tables are populated (not empty)
+rg "license.*XmpTagInfo" src/generated/XMP2_pl/
 
-# See what strategies handle XMP
-rg "XMP|xmp" codegen/src/strategies/ --type rust
+# 2. CC tags work with PrintConv
+cargo run -- cc-image.jpg | grep -E "Permits|Requires"
+# Shows "Sharing, Derivative Works" not "cc:Sharing"
 
-# Check field_extractor output for XMP
-./codegen/scripts/field_extractor.pl XMP 2>/dev/null | head -50
+# 3. Struct tags return nested objects
+cargo run -- face-tagged.jpg | grep RegionList
+# Shows nested JSON structure
+
+# 4. All tests pass
+cargo t xmp && make precommit
 ```
 
 ---
 
-## Part 2: Share Your Expertise (For Future Implementation)
+## Design
 
-### A. Tag Categories by Namespace
+### New Type: XmpTagInfo
 
-| Namespace | Tags | Source | Complexity |
-|-----------|------|--------|------------|
-| XMP-cc | 8 | XMP2.pl:1420-1470 | Low-Medium |
-| XMP-mwg-rs | 1 | MWG.pm:473-481 | Very High (struct) |
-| XMP-mwg-kw | 2 | MWG.pm:499-523 | Very High (recursive) |
-| XMP-Iptc4xmpExt | 2 | XMP2.pl:619-640 | Medium-High |
-| XMP-xmpMM | 1 | XMP.pm:341 | Medium |
-| XMP-mediapro | 1 | XMP2.pl:1523 | Low |
+```rust
+// src/core/xmp_tag_info.rs
 
-### B. Creative Commons Tags (8) - Easiest to Start
+/// XMP tag definition extracted from ExifTool
+#[derive(Debug, Clone)]
+pub struct XmpTagInfo {
+    /// Display name (e.g., "License", "RegionList")
+    pub name: &'static str,
+    /// Writable type: "string", "lang-alt", "integer", "real", "boolean"
+    pub writable: Option<&'static str>,
+    /// RDF container type
+    pub list: Option<XmpListType>,
+    /// True if value is a URI resource (not plain string)
+    pub resource: bool,
+    /// PrintConv lookup table
+    pub print_conv: Option<&'static PrintConv>,
+}
 
-These are simple string/URI properties with optional PrintConv hash maps:
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum XmpListType {
+    Bag,  // Unordered
+    Seq,  // Ordered
+    Alt,  // Language alternatives
+}
+```
 
+### New Strategy: XmpTagStrategy
+
+```rust
+// codegen/src/strategies/xmp_tag.rs
+
+pub struct XmpTagStrategy;
+
+impl ExtractionStrategy for XmpTagStrategy {
+    fn can_handle(&self, symbol: &FieldSymbol) -> bool {
+        // XMP tables have NAMESPACE key (not numeric tag IDs)
+        symbol.data.get("NAMESPACE").is_some()
+    }
+
+    fn process(&mut self, symbol: &FieldSymbol, ctx: &mut ExtractionContext) -> Result<()> {
+        // Extract namespace name
+        let namespace = symbol.data["NAMESPACE"].as_str()?;
+
+        // Process each property in the table
+        for (prop_name, prop_data) in symbol.data.as_object()? {
+            if is_metadata_key(prop_name) { continue; }
+
+            let tag_info = self.build_xmp_tag_entry(prop_name, prop_data, ctx)?;
+            // ... accumulate entries
+        }
+
+        // Generate: HashMap<&'static str, XmpTagInfo>
+        self.generate_xmp_tag_table(namespace, entries, ctx)
+    }
+}
+```
+
+**Detection**: XMP tables have `NAMESPACE` key. EXIF tables have numeric keys.
+
+### Generated Output
+
+```rust
+// src/generated/XMP2_pl/cc_tags.rs (generated)
+
+pub static XMP_CC_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> = LazyLock::new(|| {
+    HashMap::from([
+        ("license", XmpTagInfo {
+            name: "License",
+            writable: None,
+            list: None,
+            resource: true,
+            print_conv: None,
+        }),
+        ("permits", XmpTagInfo {
+            name: "Permits",
+            writable: None,
+            list: Some(XmpListType::Bag),
+            resource: true,
+            print_conv: Some(&CC_PERMITS_PRINTCONV),
+        }),
+        ("requires", XmpTagInfo {
+            name: "Requires",
+            writable: None,
+            list: Some(XmpListType::Bag),
+            resource: true,
+            print_conv: Some(&CC_REQUIRES_PRINTCONV),
+        }),
+        // ... all CC tags
+    ])
+});
+
+pub static CC_PERMITS_PRINTCONV: PrintConv = PrintConv::HashMap(&[
+    ("cc:Sharing", "Sharing"),
+    ("cc:DerivativeWorks", "Derivative Works"),
+    ("cc:Reproduction", "Reproduction"),
+    ("cc:Distribution", "Distribution"),
+]);
+```
+
+### Processor Integration
+
+```rust
+// src/xmp/processor.rs - replace hardcoded map_property_to_tag_name()
+
+fn lookup_xmp_tag(&self, namespace: &str, property: &str) -> Option<&'static XmpTagInfo> {
+    // Generated lookup tables indexed by namespace
+    match namespace {
+        "cc" => XMP_CC_TAGS.get(property),
+        "dc" => XMP_DC_TAGS.get(property),
+        "mwg-rs" => XMP_MWG_RS_TAGS.get(property),
+        "mwg-kw" => XMP_MWG_KW_TAGS.get(property),
+        // ... all 72 namespaces
+        _ => None,
+    }
+}
+
+fn process_xmp_property(&self, namespace: &str, property: &str, value: TagValue) -> TagEntry {
+    let tag_info = self.lookup_xmp_tag(namespace, property);
+
+    let name = tag_info.map(|t| t.name).unwrap_or(property);
+    let value = self.apply_xmp_print_conv(tag_info, value);
+
+    TagEntry::new(name, value)
+}
+
+fn apply_xmp_print_conv(&self, tag_info: Option<&XmpTagInfo>, value: TagValue) -> TagValue {
+    let Some(info) = tag_info else { return value };
+    let Some(print_conv) = info.print_conv else { return value };
+
+    match &value {
+        TagValue::String(s) => print_conv.lookup(s).map(TagValue::string).unwrap_or(value),
+        TagValue::Array(items) => {
+            // Apply PrintConv to each item in Bag/Seq
+            TagValue::Array(items.iter().map(|v| {
+                if let TagValue::String(s) = v {
+                    print_conv.lookup(s).map(TagValue::string).unwrap_or_else(|| v.clone())
+                } else {
+                    v.clone()
+                }
+            }).collect())
+        }
+        _ => value,
+    }
+}
+```
+
+**Struct tags**: No special handling. RegionList returns `TagValue::Object` with nested structure from XML parser.
+
+---
+
+## Files to Modify
+
+| File | Action | Lines |
+|------|--------|-------|
+| `src/core/xmp_tag_info.rs` | Create | ~40 |
+| `src/core/mod.rs` | Edit | +2 |
+| `codegen/src/strategies/xmp_tag.rs` | Create | ~250 |
+| `codegen/src/strategies/mod.rs` | Edit | +5 |
+| `src/xmp/processor.rs` | Edit | ~80 (replace hardcoded map) |
+| `src/generated/XMP_pm/*.rs` | Generated | Populated |
+| `src/generated/XMP2_pl/*.rs` | Generated | Populated |
+| `src/generated/MWG_pm/*.rs` | Generated | Populated |
+
+---
+
+## Tasks
+
+### Task 1: Create XmpTagInfo Type
+
+**File**: `src/core/xmp_tag_info.rs`
+
+Create the type as shown above. Export from `src/core/mod.rs`.
+
+**Validation**: `cargo check`
+
+### Task 2: Create XmpTagStrategy
+
+**File**: `codegen/src/strategies/xmp_tag.rs`
+
+1. Implement `can_handle()` - detect NAMESPACE key
+2. Implement `process()` - extract properties, skip metadata keys (GROUPS, NOTES, etc.)
+3. Implement `build_xmp_tag_entry()` - extract name, writable, list, resource
+4. Implement `generate_xmp_tag_table()` - emit Rust HashMap code
+5. Register in `mod.rs` before TagKitStrategy (so XMP tables don't fall through)
+
+**Key metadata keys to skip**: `NAMESPACE`, `GROUPS`, `NOTES`, `WRITE_GROUP`, `TABLE_DESC`, `STRUCT_NAME`
+
+**Validation**: `make codegen && rg "XmpTagInfo" src/generated/`
+
+### Task 3: Extract PrintConv
+
+Extend `XmpTagStrategy` to handle PrintConv:
+
+1. Detect `PrintConv` hash in property definition
+2. Generate static `PrintConv::HashMap` table
+3. Reference from `XmpTagInfo.print_conv`
+
+**Source patterns** (XMP2.pl:1437-1466):
 ```perl
-# XMP2.pl:1420-1470
-%Image::ExifTool::XMP::cc = (
-    license         => { Resource => 1 },           # Simple URI
-    attributionName => { },                          # Simple string
-    attributionURL  => { Resource => 1 },           # Simple URI
-    useGuidelines   => { Resource => 1 },           # Simple URI
-    jurisdiction    => { Resource => 1 },           # Simple URI
-    permits => {                                     # Bag with PrintConv
-        List => 'Bag',
-        Resource => 1,
-        PrintConv => {
-            'cc:Sharing' => 'Sharing',
-            'cc:DerivativeWorks' => 'Derivative Works',
-            # ...
-        },
+permits => {
+    List => 'Bag',
+    Resource => 1,
+    PrintConv => {
+        'cc:Sharing' => 'Sharing',
+        'cc:DerivativeWorks' => 'Derivative Works',
     },
-    requires => { ... },  # Similar to permits
-    prohibits => { ... }, # Similar to permits
-);
+},
 ```
 
-### C. Structured Tags (4) - Require XMP Struct Parsing
+**Validation**: `rg "CC_PERMITS_PRINTCONV" src/generated/`
 
-**RegionList** (MWG.pm:473-481):
-- Bag of MWG RegionStruct
-- Each region has: Area (x/y/w/h), Type, Name, Description
-- Deeply nested - requires full XMP struct support
+### Task 4: Wire Processor to Generated Tables
 
-**HierarchicalKeywords** (MWG.pm:506-523):
-- Recursive KeywordStruct (Keyword, Applied, Children)
-- ExifTool unrolls to 6 levels to prevent infinite recursion
-- Very complex - defer until basic XMP works
+**File**: `src/xmp/processor.rs`
 
-**PersonInImageWDetails** (XMP2.pl:619):
-- Bag of PersonDetails structs
-- Contains lang-alt fields (multi-language support)
-- Medium complexity
+1. Remove hardcoded `map_property_to_tag_name()` (lines 144-252)
+2. Add `lookup_xmp_tag()` function using generated tables
+3. Add `apply_xmp_print_conv()` for PrintConv application
+4. Update `process_xmp_property()` to use new lookup
 
-### D. Implementation Order Recommendation
-
-**Phase 1**: Fix codegen XMP extraction (prerequisite)
-
-**Phase 2**: Simple string tags (9 tags)
-- License, AttributionName, AttributionURL, UseGuidelines, Jurisdiction
-- People, PersonInImageName, HistoryWhen
-
-**Phase 3**: Tags with PrintConv (3 tags)
-- Permits, Requires, Prohibits
-
-**Phase 4**: Nested struct tags (4 tags) - may need separate TPP
-- KeywordInfo, PersonInImageWDetails
-- RegionList, HierarchicalKeywords
-
----
-
-## Part 3: Tasks (After Blocker Resolved)
-
-### Task 1: Verify XMP Tag Extraction Works
-
-**Success**: Generated XMP tag tables are populated, not empty
-
-**Implementation**:
+**Validation**:
 ```bash
-# After codegen infrastructure fixed:
-grep -v "HashMap::new()" src/generated/XMP_pm/cc_tags.rs
-# Should show actual tag definitions
+cargo run -- third-party/exiftool/t/images/XMP.jpg | head -20
+# Should show XMP tags with correct names
 ```
 
-**If not working**: This TPP is still blocked - return to blocker investigation.
+### Task 5: Test Critical Tags
 
----
+Write/update tests for:
 
-### Task 2: Implement Simple CC Tags (5)
+1. **CC namespace**: License, Permits (with PrintConv), Requires, Prohibits
+2. **MWG-rs**: RegionList (returns nested object)
+3. **MWG-kw**: HierarchicalKeywords (returns nested object)
+4. **IPTC4xmpExt**: PersonInImageWDetails
 
-**Tags**: License, AttributionName, AttributionURL, UseGuidelines, Jurisdiction
+**Test approach**: Compare against ExifTool JSON output structure.
 
-**Success**:
-```bash
-# With a CC-licensed image:
-cargo run --bin compare-with-exiftool -- cc-image.jpg | grep -E "License|Attribution|Jurisdiction"
-```
+**Validation**: `cargo t xmp`
 
-**Implementation**:
-1. Verify tags extracted from XMP2.pl:1420-1470
-2. Wire to XMP processor namespace handling
-3. Handle `Resource => 1` (URI) vs plain string
+### Task 6: Documentation
 
----
-
-### Task 3: Implement CC Tags with PrintConv (3)
-
-**Tags**: Permits, Requires, Prohibits
-
-**Success**:
-```bash
-cargo run -- cc-image.jpg | grep -E "Permits|Requires|Prohibits"
-# Should show "Sharing, Derivative Works" not "cc:Sharing, cc:DerivativeWorks"
-```
-
-**Implementation**:
-1. Extract PrintConv hash maps from XMP2.pl
-2. Apply during output (URI → human-readable)
-3. Handle Bag (list) type
-
----
-
-### Task 4: Implement Remaining Simple Tags (4)
-
-**Tags**: People, PersonInImageName, HistoryWhen
-
-**Success**:
-```bash
-cargo run --bin compare-with-exiftool -- image.jpg | grep -E "People|PersonInImage|HistoryWhen"
-```
-
-**Implementation**:
-- People: Simple Bag of strings (XMP2.pl:1523)
-- PersonInImageName: Flattened from PersonInImageWDetails (XMP2.pl:634)
-- HistoryWhen: DateTime within stEvt struct (XMP.pm:341)
-
----
-
-### Task 5: Implement Struct Tags (Separate TPP Recommended)
-
-**Tags**: KeywordInfo, PersonInImageWDetails, RegionList, HierarchicalKeywords
-
-These require XMP struct parsing infrastructure and should likely be a separate TPP after basic XMP tags work.
+Update this file:
+- Change status from NOT STARTED to COMPLETE
+- Document the XmpTagStrategy pattern
+- Note that struct tags return full XML tree (not flattened)
 
 ---
 
 ## Proof of Completion
 
-### Blocker Resolution
-- [ ] Codegen extracts XMP tag definitions (not empty HashMaps)
-- [ ] `rg "license|attributionName" src/generated/XMP_pm/` finds definitions
-
-### Tag Implementation
-- [ ] `cargo run -- cc-image.jpg | grep License` shows value
+- [ ] `rg "NAMESPACE" src/generated/ | wc -l` shows 72+ namespaces
 - [ ] `cargo run -- cc-image.jpg | grep Permits` shows "Sharing" not "cc:Sharing"
-- [ ] `cargo run --bin compare-with-exiftool -- cc-image.jpg` shows XMP matches
+- [ ] `cargo run -- face-image.jpg | grep RegionList` shows nested JSON
+- [ ] `map_property_to_tag_name()` removed from processor.rs
 - [ ] `cargo t` passes
 - [ ] `make precommit` passes
 
 ---
 
-## Emergency Recovery
+## Risk Mitigation
 
-```bash
-# If codegen changes break things
-git status
-git diff codegen/
-git checkout HEAD -- src/generated/
-make codegen && cargo t
-```
+**If PrintConv extraction is complex**: Ship without PrintConv first, add in follow-up. Tags will work but show raw values.
+
+**If namespace detection conflicts with TagKitStrategy**: XmpTagStrategy must run BEFORE TagKitStrategy in strategy order. Both have `can_handle()` - first match wins.
+
+**If generated code is too large**: Consider lazy loading or splitting by namespace prefix. Measure first.
 
 ---
 
 ## Related Work
 
-- **P03c**: Composite Tags - similar codegen challenges
-- **P03e**: DNGLensInfo - EXIF tag, can proceed independently
-- **Milestone ?**: XMP struct parsing infrastructure
+- **P03c**: Composite Tags - similar codegen pattern
+- **P03e**: DNGLensInfo - EXIF tag, independent
+- **[XMP.md](../../third-party/exiftool/doc/modules/XMP.md)**: ExifTool XMP module reference
