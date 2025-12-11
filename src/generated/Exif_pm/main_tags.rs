@@ -1826,7 +1826,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (50736, TagInfo {
             name: "DNGLensInfo",
             format: "unknown",
-            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Exif::PrintLensInfo]".to_string())),
+            print_conv: Some(PrintConv::Function(lensinfo_print_conv)),
             value_conv: None,
         }),
         (50737, TagInfo {

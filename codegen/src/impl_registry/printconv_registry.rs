@@ -279,6 +279,10 @@ static TAG_SPECIFIC_PRINTCONV: LazyLock<HashMap<&'static str, (&'static str, &'s
             "LensInfo",
             ("crate::implementations::print_conv", "lensinfo_print_conv"),
         );
+        m.insert(
+            "DNGLensInfo",
+            ("crate::implementations::print_conv", "lensinfo_print_conv"),
+        );
 
         // GPS reference tags (ComplexHash types)
         m.insert(

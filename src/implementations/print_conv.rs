@@ -1431,4 +1431,58 @@ mod tests {
             TagValue::string("0 deg 0' 0.00\"")
         );
     }
+
+    #[test]
+    fn test_lensinfo_print_conv() {
+        // Prime lens with constant aperture: "50mm f/1.8"
+        let prime = TagValue::RationalArray(vec![(50, 1), (50, 1), (18, 10), (18, 10)]);
+        assert_eq!(
+            lensinfo_print_conv(&prime, None),
+            TagValue::string("50mm f/1.8")
+        );
+
+        // Zoom lens with variable aperture: "18-55mm f/3.5-5.6"
+        let zoom_variable = TagValue::RationalArray(vec![(18, 1), (55, 1), (35, 10), (56, 10)]);
+        assert_eq!(
+            lensinfo_print_conv(&zoom_variable, None),
+            TagValue::string("18-55mm f/3.5-5.6")
+        );
+
+        // Zoom lens with constant aperture: "24-70mm f/2.8"
+        let zoom_constant = TagValue::RationalArray(vec![(24, 1), (70, 1), (28, 10), (28, 10)]);
+        assert_eq!(
+            lensinfo_print_conv(&zoom_constant, None),
+            TagValue::string("24-70mm f/2.8")
+        );
+
+        // Prime lens: "35mm f/2" (from test fixture: test_images_sigma_bf_dng.json)
+        let sigma = TagValue::RationalArray(vec![(35, 1), (35, 1), (2, 1), (2, 1)]);
+        assert_eq!(
+            lensinfo_print_conv(&sigma, None),
+            TagValue::string("35mm f/2")
+        );
+
+        // Unknown aperture (0/0): "18-55mm f/?" (from test fixture: DNG_dng.json)
+        let unknown_aperture = TagValue::RationalArray(vec![(18, 1), (55, 1), (0, 0), (0, 0)]);
+        assert_eq!(
+            lensinfo_print_conv(&unknown_aperture, None),
+            TagValue::string("18-55mm f/?")
+        );
+
+        // Wrong input type returns Unknown
+        let wrong_type = TagValue::U16(42);
+        let result = lensinfo_print_conv(&wrong_type, None);
+        assert!(matches!(result, TagValue::String(_)));
+        if let TagValue::String(s) = result {
+            assert!(s.starts_with("Unknown"));
+        }
+
+        // Wrong array length returns Unknown
+        let wrong_len = TagValue::RationalArray(vec![(50, 1), (50, 1)]);
+        let result = lensinfo_print_conv(&wrong_len, None);
+        assert!(matches!(result, TagValue::String(_)));
+        if let TagValue::String(s) = result {
+            assert!(s.starts_with("Unknown"));
+        }
+    }
 }

@@ -454,8 +454,13 @@ impl ExifReader {
 
             // Look up tag name and group, handling synthetic tags properly
             let (raw_group_name, base_tag_name, _tag_def) = if tag_id >= 0xC000 {
-                // Check synthetic tag names mapping first for Canon binary data tags
-                if let Some(synthetic_name) = self.synthetic_tag_names.get(&tag_id) {
+                // ExifTool: Uses unified Exif::Main table for ALL tags via hash lookup
+                // (see third-party/exiftool/lib/Image/ExifTool.pm:8652 and :9060)
+                // Check EXIF_MAIN_TAGS first for DNG/TIFF-EP tags, then synthetic/manufacturer
+                if let Some(tag_def) = EXIF_PM_TAG_KITS.get(&tag_id) {
+                    (namespace.as_str(), tag_def.name.to_string(), None::<()>)
+                } else if let Some(synthetic_name) = self.synthetic_tag_names.get(&tag_id) {
+                    // Check synthetic tag names mapping for Canon binary data tags
                     // Parse the full "Group:TagName" format from synthetic_tag_names
                     if let Some((group_part, name_part)) = synthetic_name.split_once(':') {
                         (group_part, name_part.to_string(), None::<()>)
