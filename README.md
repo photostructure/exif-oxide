@@ -1,5 +1,7 @@
 # exif-oxide: Rust translation of ExifTool
 
+> **⚠️ Under Heavy Development** — This project is not yet ready for production use. APIs may change without notice, and many features are incomplete. See [Current Status](#current-status) for details.
+
 High-performance Rust implementation of ExifTool's metadata extraction, translating ExifTool's battle-tested logic to provide a single binary solution with 10-100x faster performance.
 
 ## Why exif-oxide?
