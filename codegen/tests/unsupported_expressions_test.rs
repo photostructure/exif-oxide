@@ -52,8 +52,6 @@ fn test_foreach_expression_generates_placeholder() {
 
 #[test]
 fn test_tr_operator_generates_placeholder() {
-    clear_missing_conversions();
-
     let mut registry = PpiFunctionRegistry::new();
 
     // Perl tr/// operator that we can't translate
@@ -97,8 +95,6 @@ fn test_tr_operator_generates_placeholder() {
 
 #[test]
 fn test_complex_multiline_generates_placeholder() {
-    clear_missing_conversions();
-
     let mut registry = PpiFunctionRegistry::new();
 
     // Complex multi-line Perl that we can't translate
@@ -149,8 +145,6 @@ return(($a{$a} || "Unknown ($a)") . ', Shot ' . $b);"#;
 
 #[test]
 fn test_exiftool_function_call_generates_placeholder() {
-    clear_missing_conversions();
-
     let mut registry = PpiFunctionRegistry::new();
 
     // ExifTool function call that we can't translate

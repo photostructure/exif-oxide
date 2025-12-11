@@ -47,7 +47,7 @@ pub fn validate_config(config_path: &Path, schema_path: &Path) -> Result<()> {
     if !errors.is_empty() {
         let error_messages: Vec<String> = errors
             .iter()
-            .map(|error| format!("  - {}: {}", error.instance_path, error))
+            .map(|error| format!("  - {}: {}", error.instance_path(), error))
             .collect();
 
         return Err(anyhow::anyhow!(

@@ -62,7 +62,6 @@ fn test_placeholder_function_tracks_missing_valueconv() {
 #[test]
 fn test_placeholder_function_tracks_missing_printconv() {
     // Clear any previous missing conversions
-    clear_missing_conversions();
 
     // Create a registry and register a PrintConv expression that can't be translated
     let mut registry = PpiFunctionRegistry::new();
@@ -116,7 +115,6 @@ fn test_placeholder_function_tracks_missing_printconv() {
 #[test]
 fn test_placeholder_escapes_expression_properly() {
     // Clear any previous missing conversions
-    clear_missing_conversions();
 
     // Create a registry and register an expression with quotes and backslashes
     let mut registry = PpiFunctionRegistry::new();

@@ -111,33 +111,6 @@ enum TaggedTagValue {
     Empty,
 }
 
-impl From<TaggedTagValue> for TagValue {
-    fn from(tagged: TaggedTagValue) -> Self {
-        match tagged {
-            TaggedTagValue::U8(v) => TagValue::U8(v),
-            TaggedTagValue::U16(v) => TagValue::U16(v),
-            TaggedTagValue::U32(v) => TagValue::U32(v),
-            TaggedTagValue::U64(v) => TagValue::U64(v),
-            TaggedTagValue::I16(v) => TagValue::I16(v),
-            TaggedTagValue::I32(v) => TagValue::I32(v),
-            TaggedTagValue::F64(v) => TagValue::F64(v),
-            TaggedTagValue::String(v) => TagValue::String(v),
-            TaggedTagValue::Bool(v) => TagValue::Bool(v),
-            TaggedTagValue::Array(v) => TagValue::Array(v.into_iter().map(|t| t.into()).collect()),
-            TaggedTagValue::Binary(v) => TagValue::Binary(v),
-            TaggedTagValue::Rational(n, d) => TagValue::Rational(n, d),
-            TaggedTagValue::SRational(n, d) => TagValue::SRational(n, d),
-            TaggedTagValue::U8Array(v) => TagValue::U8Array(v),
-            TaggedTagValue::U16Array(v) => TagValue::U16Array(v),
-            TaggedTagValue::U32Array(v) => TagValue::U32Array(v),
-            TaggedTagValue::F64Array(v) => TagValue::F64Array(v),
-            TaggedTagValue::RationalArray(v) => TagValue::RationalArray(v),
-            TaggedTagValue::SRationalArray(v) => TagValue::SRationalArray(v),
-            TaggedTagValue::Empty => TagValue::Empty,
-        }
-    }
-}
-
 /// Generate the Rust code for a TagValue constructor
 fn generate_tag_value_constructor(tagged: &TaggedTagValue) -> String {
     match tagged {
