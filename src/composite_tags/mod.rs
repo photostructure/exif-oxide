@@ -10,12 +10,10 @@
 //!
 //! - **orchestration.rs**: Multi-pass loop that iterates through composite tags
 //! - **resolution.rs**: Dependency checking and array building for function calls
-//! - **implementations.rs**: Manual fallback implementations for complex composites
+//! - **crate::core::composite_fallbacks**: Manual fallback implementations for complex composites
 //!
 //! Generated composite functions are in `src/generated/composite_tags.rs`
 
-mod dispatch;
-pub mod implementations;
 mod orchestration;
 mod resolution;
 

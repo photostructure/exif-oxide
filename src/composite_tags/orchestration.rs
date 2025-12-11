@@ -39,8 +39,11 @@ pub fn handle_unresolved_composites(unresolved_composites: &[&CompositeTagDef]) 
     // strategy here for additional fallback resolution
 }
 
-/// Compute a composite tag value using the generated function pointer
-/// This replaces the old dispatch.rs match statement with direct function calls
+/// Compute a composite tag value using generated function or fallback registry
+///
+/// Priority order:
+/// 1. Generated ValueConv function pointer (from PPI translation)
+/// 2. COMPOSITE_FALLBACKS registry lookup (for complex expressions PPI can't translate)
 ///
 /// ExifTool: lib/Image/ExifTool.pm:4056-4080 - composite tag evaluation
 fn compute_composite_value(
@@ -48,12 +51,14 @@ fn compute_composite_value(
     available_tags: &HashMap<String, TagDependencyValues>,
     built_composites: &HashSet<String>,
 ) -> Option<TagValue> {
+    use crate::core::COMPOSITE_FALLBACKS;
+
     // Get the dependency arrays - now properly separated into raw/val/prt
     // ExifTool: lib/Image/ExifTool.pm:3553-3560
     let (vals, prts, raws) =
         resolve_dependency_arrays(composite_def, available_tags, built_composites);
 
-    // Call the generated ValueConv function if available
+    // Priority 1: Call the generated ValueConv function if available
     if let Some(value_conv_fn) = composite_def.value_conv {
         match value_conv_fn(&vals, &prts, &raws, None) {
             Ok(value) => {
@@ -62,7 +67,7 @@ fn compute_composite_value(
                     composite_def.name,
                     value
                 );
-                Some(value)
+                return Some(value);
             }
             Err(e) => {
                 trace!(
@@ -70,93 +75,38 @@ fn compute_composite_value(
                     composite_def.name,
                     e
                 );
-                None
+                // Fall through to try fallback
             }
         }
-    } else {
-        // No generated function - try fallback to manual implementations
-        // This handles complex expressions that PPI couldn't translate
-        try_manual_composite_computation(composite_def, available_tags, built_composites)
     }
-}
 
-/// Try manual computation for composites without generated functions
-/// This handles complex expressions like ImageSize, Megapixels, LensID
-fn try_manual_composite_computation(
-    composite_def: &CompositeTagDef,
-    available_tags: &HashMap<String, TagDependencyValues>,
-    _built_composites: &HashSet<String>,
-) -> Option<TagValue> {
-    use crate::composite_tags::implementations::*;
-
-    // Convert to simple TagValue map for legacy implementations.
-    // We extract the `.val` (ValueConv'd) value, which matches ExifTool's `$val[n]`.
-    //
-    // Note: This means manual implementations cannot access `@raw` values directly.
-    // Currently only Nikon LensID uses `@raw` in ExifTool (for hex formatting), and
-    // our compute_lens_id has its own implementation that doesn't need raw bytes.
-    // If future implementations need `@raw`, update them to take TagDependencyValues.
-    let simple_map: HashMap<String, TagValue> = available_tags
-        .iter()
-        .map(|(k, v)| (k.clone(), v.val.clone()))
-        .collect();
-
-    // Route to manual implementations for complex composites
-    match composite_def.name {
-        // Core composites with complex logic
-        "ImageSize" => compute_image_size(&simple_map),
-        "Megapixels" => compute_megapixels(&simple_map),
-        "GPSAltitude" => compute_gps_altitude(&simple_map),
-        "GPSPosition" => compute_gps_position(&simple_map),
-        "GPSLatitude" => compute_gps_latitude(&simple_map),
-        "GPSLongitude" => compute_gps_longitude(&simple_map),
-        "GPSDateTime" => compute_gps_datetime(&simple_map),
-        "ShutterSpeed" => compute_shutter_speed(&simple_map),
-        "Aperture" => compute_aperture(&simple_map),
-        "ISO" => compute_iso(&simple_map),
-
-        // Thumbnail/Preview
-        "ThumbnailImage" => compute_thumbnail_image(&simple_map),
-        "PreviewImage" => compute_preview_image(&simple_map),
-        "PreviewImageSize" => compute_preview_image_size(&simple_map),
-
-        // Date/Time composites
-        "DateTimeOriginal" => compute_datetime_original(&simple_map),
-        "DateTimeCreated" => compute_datetime_created(&simple_map),
-        "SubSecDateTimeOriginal" => compute_subsec_datetime_original(&simple_map),
-        "SubSecCreateDate" => compute_subsec_create_date(&simple_map),
-        "SubSecModifyDate" => compute_subsec_modify_date(&simple_map),
-
-        // Lens system
-        "Lens" => compute_lens(&simple_map),
-        "LensID" => compute_lens_id(&simple_map),
-        "LensSpec" => compute_lens_spec(&simple_map),
-        "LensType" => compute_lens_type(&simple_map),
-        "FocalLength35efl" => compute_focal_length_35efl(&simple_map),
-        "ScaleFactor35efl" => compute_scale_factor_35efl(&simple_map),
-
-        // Image dimensions
-        "ImageWidth" => compute_image_width(&simple_map),
-        "ImageHeight" => compute_image_height(&simple_map),
-        "Rotation" => compute_rotation(&simple_map),
-
-        // Advanced calculations
-        "CircleOfConfusion" => compute_circle_of_confusion(&simple_map),
-        "HyperfocalDistance" => compute_hyperfocal_distance(&simple_map),
-        "DOF" => compute_dof(&simple_map),
-        "FOV" => compute_fov(&simple_map),
-        "LightValue" => compute_light_value(&simple_map),
-        "Duration" => compute_duration(&simple_map),
-
-        _ => {
-            trace!(
-                "No implementation for composite {}, value_conv_expr: {:?}",
-                composite_def.name,
-                composite_def.value_conv_expr
-            );
-            None
+    // Priority 2: Check COMPOSITE_FALLBACKS registry
+    if let Some(fallback_fn) = COMPOSITE_FALLBACKS.get(composite_def.name) {
+        match fallback_fn(&vals, &prts, &raws, None) {
+            Ok(value) => {
+                trace!(
+                    "Computed composite {} via fallback registry: {:?}",
+                    composite_def.name,
+                    value
+                );
+                return Some(value);
+            }
+            Err(e) => {
+                trace!(
+                    "Fallback function failed for {}: {:?}",
+                    composite_def.name,
+                    e
+                );
+            }
         }
     }
+
+    trace!(
+        "No implementation for composite {}, value_conv_expr: {:?}",
+        composite_def.name,
+        composite_def.value_conv_expr
+    );
+    None
 }
 
 /// Apply PrintConv transformation to a computed composite value
@@ -166,6 +116,12 @@ fn try_manual_composite_computation(
 ///
 /// Note: This takes pre-computed dependency arrays to avoid duplicate resolution.
 /// The caller should compute these once via `resolve_dependency_arrays()`.
+///
+/// IMPORTANT: For tags computed via COMPOSITE_FALLBACKS (value_conv: None),
+/// the fallback functions already apply appropriate formatting. The generated
+/// PrintConv functions have a semantic mismatch - they use $val as vals[0]
+/// (the dependency) when ExifTool's PrintConv expects $val to be the ValueConv
+/// result. Until codegen is fixed, skip PrintConv for fallback-computed tags.
 fn apply_composite_print_conv(
     computed_value: &TagValue,
     composite_def: &CompositeTagDef,
@@ -184,7 +140,15 @@ fn apply_composite_print_conv(
         return computed_value.clone();
     }
 
-    // Try generated PrintConv function first
+    // Skip PrintConv for tags computed via COMPOSITE_FALLBACKS
+    // These fallback functions already apply appropriate formatting, and the
+    // generated PrintConv has a bug: it uses vals[0] for $val instead of the
+    // computed ValueConv result. See docs/todo/P03c-composite-tags.md.
+    if composite_def.value_conv.is_none() {
+        return computed_value.clone();
+    }
+
+    // Try generated PrintConv function (only for generated ValueConv tags)
     if let Some(print_conv_fn) = composite_def.print_conv {
         match print_conv_fn(vals, prts, raws, None) {
             Ok(print_value) => return print_value,

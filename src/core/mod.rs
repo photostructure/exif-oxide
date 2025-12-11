@@ -11,6 +11,7 @@
 //! - `test_support` - Utilities for testing generated code
 
 pub mod array_helpers;
+pub mod composite_fallbacks;
 pub mod data;
 pub mod fmt;
 pub mod math;
@@ -46,6 +47,9 @@ pub use string::{
     chr, concat, index_2arg, index_3arg, length_i32, length_string, regex_replace,
     regex_substitute_perl, substr_2arg, substr_3arg, uc,
 };
+
+// Re-export composite fallbacks registry for codegen and orchestration
+pub use composite_fallbacks::COMPOSITE_FALLBACKS;
 
 // Test support module - only available with test-helpers feature
 #[cfg(feature = "test-helpers")]

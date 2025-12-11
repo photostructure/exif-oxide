@@ -429,8 +429,8 @@ fn try_manual_tag_computation(
         // ExifTool: searches for any tag named "ISO" in rawValue hash
         // We enhance this by consolidating from multiple ISO sources
         "ISO" => {
-            // Import the compute_iso function from implementations
-            use crate::composite_tags::implementations::compute_iso;
+            // Import the compute_iso function from composite_fallbacks
+            use crate::core::composite_fallbacks::compute_iso;
             compute_iso(&simple_map)
         }
         _ => None,
