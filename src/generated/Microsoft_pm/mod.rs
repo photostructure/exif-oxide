@@ -5,6 +5,7 @@
 pub mod code_page;
 pub mod mp1_tags;
 pub mod mp_tags;
+pub mod s_regions_tags;
 pub mod stitch_tags;
 pub mod xmp_tags;
 pub mod xtra_tags;
