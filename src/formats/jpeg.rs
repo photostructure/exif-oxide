@@ -1223,8 +1223,7 @@ mod tests {
             0x00, 0x08, // SOS length (8 bytes)
             0x01, 0x00, 0x00, 0x3F, 0x00, 0x00, // SOS header data (6 bytes after length)
             // Scan data - some bytes that need no byte stuffing
-            0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC,
-            0xFF, 0xD9, // EOI
+            0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xFF, 0xD9, // EOI
         ];
 
         let mut cursor = Cursor::new(&jpeg_data);
@@ -1313,8 +1312,7 @@ mod tests {
             0x00, 0x04, // SOS length
             0x01, 0x00, // SOS header
             // Scan data
-            0xAB, 0xCD, 0xEF,
-            0xFF, 0xD9, // EOI
+            0xAB, 0xCD, 0xEF, 0xFF, 0xD9, // EOI
         ];
 
         let mut cursor = Cursor::new(&jpeg_data);

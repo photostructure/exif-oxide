@@ -235,6 +235,98 @@ pub fn create_png_tag_entries(ihdr: &IhdrData) -> Vec<TagEntry> {
     ]
 }
 
+/// Hash PNG image data chunks (IDAT, JDAT, JDAA) into the provided hasher
+///
+/// PNG files consist of chunks, each with:
+/// - Length: 4 bytes big-endian (length of data only, not including type or CRC)
+/// - Type: 4 bytes ASCII (e.g., "IHDR", "IDAT", "IEND")
+/// - Data: `length` bytes
+/// - CRC: 4 bytes big-endian (CRC32 of type + data)
+///
+/// ExifTool hashes only the DATA portion of image data chunks:
+/// - IDAT: PNG compressed image data
+/// - JDAT: JNG JPEG data (for JNG format)
+/// - JDAA: JNG alpha data (for JNG format)
+///
+/// ExifTool reference: PNG.pm lines 1519-1611, %isDatChunk definition line 92
+///
+/// Returns the total number of bytes hashed.
+pub fn hash_png_image_data(
+    data: &[u8],
+    hasher: &mut crate::hash::ImageDataHasher,
+) -> Result<usize> {
+    use tracing::debug;
+
+    // Verify PNG signature
+    if data.len() < PNG_SIGNATURE.len() || &data[..PNG_SIGNATURE.len()] != PNG_SIGNATURE {
+        return Err(crate::types::ExifError::InvalidFormat(
+            "Invalid PNG signature for hashing".to_string(),
+        ));
+    }
+
+    // Data chunks to hash (ExifTool %isDatChunk)
+    // PNG.pm line 92: our %isDatChunk = ( IDAT => 1, JDAT => 1, JDAA => 1 );
+    const IDAT: &[u8; 4] = b"IDAT";
+    const JDAT: &[u8; 4] = b"JDAT";
+    const JDAA: &[u8; 4] = b"JDAA";
+
+    let mut offset = PNG_SIGNATURE.len(); // Start after 8-byte PNG signature
+    let mut total_hashed = 0usize;
+
+    // Iterate through all chunks until we hit IEND or run out of data
+    while offset + 8 <= data.len() {
+        // Read chunk length (4 bytes big-endian)
+        let chunk_length = u32::from_be_bytes([
+            data[offset],
+            data[offset + 1],
+            data[offset + 2],
+            data[offset + 3],
+        ]) as usize;
+        offset += 4;
+
+        // Read chunk type (4 bytes ASCII)
+        let chunk_type = &data[offset..offset + 4];
+        offset += 4;
+
+        // Check for IEND (end of PNG)
+        if chunk_type == b"IEND" {
+            debug!(
+                "PNG hash: reached IEND, total {} bytes hashed",
+                total_hashed
+            );
+            break;
+        }
+
+        // Validate we have enough data for chunk content + CRC
+        if offset + chunk_length + 4 > data.len() {
+            debug!(
+                "PNG hash: truncated chunk at offset {}, expected {} bytes",
+                offset, chunk_length
+            );
+            break;
+        }
+
+        // Hash data chunks (IDAT, JDAT, JDAA)
+        // ExifTool PNG.pm lines 1587-1589 and 1611
+        if chunk_type == IDAT || chunk_type == JDAT || chunk_type == JDAA {
+            let chunk_data = &data[offset..offset + chunk_length];
+            hasher.update(chunk_data);
+            total_hashed += chunk_length;
+            debug!(
+                "PNG hash: hashed {} chunk, {} bytes (total: {})",
+                String::from_utf8_lossy(chunk_type),
+                chunk_length,
+                total_hashed
+            );
+        }
+
+        // Skip chunk data + CRC (4 bytes)
+        offset += chunk_length + 4;
+    }
+
+    Ok(total_hashed)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -303,5 +395,102 @@ mod tests {
             color_type_entry.print,
             TagValue::String("RGB with Alpha".to_string())
         );
+    }
+
+    #[test]
+    fn test_hash_png_image_data_minimal() {
+        use crate::hash::{ImageDataHasher, ImageHashType};
+
+        // Create a minimal valid PNG with one IDAT chunk
+        // PNG signature + IHDR (13 bytes) + IDAT (4 bytes of data) + IEND
+        let mut png_data = Vec::new();
+
+        // PNG signature
+        png_data.extend_from_slice(b"\x89PNG\r\n\x1a\n");
+
+        // IHDR chunk: length=13, type=IHDR, data (13 bytes), CRC (4 bytes)
+        png_data.extend_from_slice(&[0, 0, 0, 13]); // length
+        png_data.extend_from_slice(b"IHDR"); // type
+        png_data.extend_from_slice(&[0, 0, 0, 1]); // width=1
+        png_data.extend_from_slice(&[0, 0, 0, 1]); // height=1
+        png_data.extend_from_slice(&[8]); // bit depth
+        png_data.extend_from_slice(&[2]); // color type (RGB)
+        png_data.extend_from_slice(&[0]); // compression
+        png_data.extend_from_slice(&[0]); // filter
+        png_data.extend_from_slice(&[0]); // interlace
+        png_data.extend_from_slice(&[0, 0, 0, 0]); // CRC (placeholder)
+
+        // IDAT chunk: length=4, type=IDAT, data (4 bytes), CRC (4 bytes)
+        png_data.extend_from_slice(&[0, 0, 0, 4]); // length
+        png_data.extend_from_slice(b"IDAT"); // type
+        png_data.extend_from_slice(&[0xAB, 0xCD, 0xEF, 0x12]); // test data to hash
+        png_data.extend_from_slice(&[0, 0, 0, 0]); // CRC (placeholder)
+
+        // IEND chunk: length=0, type=IEND, CRC (4 bytes)
+        png_data.extend_from_slice(&[0, 0, 0, 0]); // length
+        png_data.extend_from_slice(b"IEND"); // type
+        png_data.extend_from_slice(&[0, 0, 0, 0]); // CRC (placeholder)
+
+        let mut hasher = ImageDataHasher::new(ImageHashType::Md5);
+        let bytes_hashed = hash_png_image_data(&png_data, &mut hasher).unwrap();
+
+        // Should have hashed 4 bytes (the IDAT data)
+        assert_eq!(bytes_hashed, 4);
+
+        // Verify hash exists (finalize returns None for empty hashes)
+        let hash = hasher.finalize();
+        assert!(hash.is_some());
+        assert!(!hash.unwrap().is_empty());
+    }
+
+    #[test]
+    fn test_hash_png_image_data_multiple_idat() {
+        use crate::hash::{ImageDataHasher, ImageHashType};
+
+        // Create PNG with multiple IDAT chunks (common for large images)
+        let mut png_data = Vec::new();
+
+        // PNG signature
+        png_data.extend_from_slice(b"\x89PNG\r\n\x1a\n");
+
+        // IHDR chunk
+        png_data.extend_from_slice(&[0, 0, 0, 13]); // length
+        png_data.extend_from_slice(b"IHDR"); // type
+        png_data.extend_from_slice(&[0, 0, 0, 1, 0, 0, 0, 1, 8, 2, 0, 0, 0]); // minimal IHDR
+        png_data.extend_from_slice(&[0, 0, 0, 0]); // CRC
+
+        // First IDAT chunk (3 bytes)
+        png_data.extend_from_slice(&[0, 0, 0, 3]); // length
+        png_data.extend_from_slice(b"IDAT"); // type
+        png_data.extend_from_slice(&[0x11, 0x22, 0x33]); // data
+        png_data.extend_from_slice(&[0, 0, 0, 0]); // CRC
+
+        // Second IDAT chunk (2 bytes)
+        png_data.extend_from_slice(&[0, 0, 0, 2]); // length
+        png_data.extend_from_slice(b"IDAT"); // type
+        png_data.extend_from_slice(&[0x44, 0x55]); // data
+        png_data.extend_from_slice(&[0, 0, 0, 0]); // CRC
+
+        // IEND chunk
+        png_data.extend_from_slice(&[0, 0, 0, 0]); // length
+        png_data.extend_from_slice(b"IEND"); // type
+        png_data.extend_from_slice(&[0, 0, 0, 0]); // CRC
+
+        let mut hasher = ImageDataHasher::new(ImageHashType::Md5);
+        let bytes_hashed = hash_png_image_data(&png_data, &mut hasher).unwrap();
+
+        // Should have hashed 5 bytes total (3 + 2)
+        assert_eq!(bytes_hashed, 5);
+    }
+
+    #[test]
+    fn test_hash_png_image_data_invalid_signature() {
+        use crate::hash::{ImageDataHasher, ImageHashType};
+
+        let invalid_data = b"not a png file";
+        let mut hasher = ImageDataHasher::new(ImageHashType::Md5);
+        let result = hash_png_image_data(invalid_data, &mut hasher);
+
+        assert!(result.is_err());
     }
 }

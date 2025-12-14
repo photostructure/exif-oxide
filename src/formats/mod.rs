@@ -1067,6 +1067,19 @@ pub fn extract_metadata(
                         );
                     }
                 }
+
+                // PNG ImageDataHash: hash IDAT chunks
+                // ExifTool reference: PNG.pm lines 1519-1611
+                if let Some(ref mut hasher) = image_data_hasher {
+                    match png::hash_png_image_data(&png_data, hasher) {
+                        Ok(bytes_hashed) => {
+                            debug!("PNG: hashed {} bytes of IDAT data", bytes_hashed);
+                        }
+                        Err(e) => {
+                            debug!("PNG hash error: {}", e);
+                        }
+                    }
+                }
             }
             "GIF" => {
                 // GIF format processing - extract dimensions from Logical Screen Descriptor

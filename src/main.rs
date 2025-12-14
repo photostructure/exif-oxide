@@ -184,6 +184,11 @@ fn main() {
             "  -b, --binary     Extract binary data (use with tag filters, outputs to stdout)\n",
             "                   Example: exif-oxide -b -ThumbnailImage image.jpg > thumb.jpg\n",
             "\n",
+            "IMAGE DATA HASH:\n",
+            "  --image-hash           Compute hash of image data (excludes metadata)\n",
+            "  --image-hash-type ALG  Hash algorithm: MD5 (default), SHA256, SHA512\n",
+            "                         Example: exif-oxide --image-hash --image-hash-type SHA256 image.jpg\n",
+            "\n",
             "EXIFTOOL COMPATIBILITY:\n",
             "  -ver             Print version number and exit\n",
             "  -j, -struct, -G  Ignored (we always output JSON with structure and groups)\n",
@@ -219,6 +224,31 @@ fn main() {
                 .help("Extract binary data for specified tag (outputs raw binary to stdout)")
                 .action(clap::ArgAction::SetTrue), // Boolean flag
         )
+        .arg(
+            Arg::new("image-hash")
+                .long("image-hash")
+                .help("Compute ImageDataHash (hash of image data, excluding metadata)")
+                .long_help(
+                    "Compute a cryptographic hash of the image data only, excluding metadata.\n\
+                     This allows detecting changes to image content while ignoring metadata edits.\n\
+                     The hash is output as Composite:ImageDataHash.\n\n\
+                     ExifTool equivalent: -api requesttags=imagedatahash"
+                )
+                .action(clap::ArgAction::SetTrue),
+        )
+        .arg(
+            Arg::new("image-hash-type")
+                .long("image-hash-type")
+                .help("Hash algorithm for --image-hash (default: MD5)")
+                .long_help(
+                    "Select the hash algorithm for ImageDataHash computation.\n\
+                     Options: MD5 (default), SHA256, SHA512\n\n\
+                     ExifTool equivalent: -api imagehashtype=MD5|SHA256|SHA512"
+                )
+                .value_name("ALGORITHM")
+                .value_parser(["MD5", "SHA256", "SHA512", "md5", "sha256", "sha512"])
+                .default_value("MD5"),
+        )
         .get_matches();
 
     // Extract all arguments and parse ExifTool-style filters
@@ -226,9 +256,34 @@ fn main() {
     let show_missing = matches.get_flag("show-missing");
     let show_warnings = matches.get_flag("warnings");
     let binary_extraction = matches.get_flag("binary");
+    let compute_image_hash = matches.get_flag("image-hash");
+    let image_hash_type_str = matches
+        .get_one::<String>("image-hash-type")
+        .map(|s| s.as_str())
+        .unwrap_or("MD5");
+
+    // Parse hash type from string
+    let image_hash_type = match image_hash_type_str.to_uppercase().as_str() {
+        "MD5" => ImageHashType::Md5,
+        "SHA256" => ImageHashType::Sha256,
+        "SHA512" => ImageHashType::Sha512,
+        _ => {
+            eprintln!(
+                "Error: Invalid hash type '{}'. Use MD5, SHA256, or SHA512.",
+                image_hash_type_str
+            );
+            std::process::exit(1);
+        }
+    };
 
     // Parse arguments into files and filter options using ExifTool patterns
-    let (file_paths, filter_options) = parse_exiftool_args(args);
+    let (file_paths, mut filter_options) = parse_exiftool_args(args);
+
+    // Apply image hash options to filter_options
+    if compute_image_hash {
+        filter_options.compute_image_hash = true;
+        filter_options.image_hash_type = image_hash_type;
+    }
 
     // Validate we have at least one file
     if file_paths.is_empty() {
@@ -243,6 +298,10 @@ fn main() {
     debug!("Show missing implementations: {}", show_missing);
     debug!("Show warnings: {}", show_warnings);
     debug!("Binary extraction mode: {}", binary_extraction);
+    debug!("Compute image hash: {}", compute_image_hash);
+    if compute_image_hash {
+        debug!("Image hash type: {:?}", image_hash_type);
+    }
     debug!("Filter options: {:?}", filter_options);
 
     // Validate binary extraction requirements
