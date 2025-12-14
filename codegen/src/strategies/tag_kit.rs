@@ -32,6 +32,19 @@ struct ProcessedTagTable {
     symbol_data: JsonValue,
 }
 
+/// Represents a conditional tag variant extracted from an array-style definition
+/// ExifTool Reference: Array-style tag definitions like tag 0x201 in Exif.pm
+#[derive(Debug, Clone)]
+struct ConditionalTagVariant {
+    /// Tag name (e.g., "ThumbnailOffset", "PreviewImageStart")
+    name: String,
+    /// DIR_NAME context this variant applies to (e.g., "IFD1", "MakerNotes")
+    /// None means default (matches when no other condition matches)
+    dir_name: Option<String>,
+    /// Full tag data object
+    data: serde_json::Map<String, JsonValue>,
+}
+
 impl Default for TagKitStrategy {
     fn default() -> Self {
         Self::new()
@@ -120,8 +133,13 @@ impl TagKitStrategy {
         // First collect all valid tag entries with their tag IDs for sorting
         // This will populate self.imports through processing
         let mut tag_entries = Vec::new();
+        // Track conditional tag overrides per context (DIR_NAME -> Vec<(tag_id, entry)>)
+        let mut context_overrides: std::collections::HashMap<String, Vec<(u16, String)>> =
+            std::collections::HashMap::new();
+
         for (tag_key, tag_data) in table_data {
             if let Some(tag_obj) = tag_data.as_object() {
+                // Standard object-style tag definition
                 if let Some((tag_id, entry)) = self.build_tag_entry(
                     tag_key,
                     tag_obj,
@@ -130,6 +148,58 @@ impl TagKitStrategy {
                     context,
                 )? {
                     tag_entries.push((tag_id, entry));
+                }
+            } else if let Some(tag_array) = tag_data.as_array() {
+                // Array-style conditional tag definition (like tags 0x201, 0x202)
+                // ExifTool Reference: Exif.pm lines 1125-1270 - tag 0x201 has 10 conditional variants
+                let variants = self.extract_conditional_variants(tag_key, tag_array)?;
+                if !variants.is_empty() {
+                    debug!(
+                        "Processing conditional tag {} with {} variants",
+                        tag_key,
+                        variants.len()
+                    );
+
+                    // Find the default variant (last one without condition) for main table
+                    let default_variant = variants
+                        .iter()
+                        .rev()
+                        .find(|v| v.dir_name.is_none())
+                        .or_else(|| variants.first());
+
+                    if let Some(default) = default_variant {
+                        if let Some((tag_id, entry)) = self.build_tag_entry(
+                            tag_key,
+                            &default.data,
+                            &symbol.module_name,
+                            &symbol.table_name,
+                            context,
+                        )? {
+                            tag_entries.push((tag_id, entry));
+
+                            // Generate context-specific overrides for non-default variants
+                            for variant in &variants {
+                                if let Some(ref dir_name) = variant.dir_name {
+                                    // Skip if this is the same as default
+                                    if variant.name == default.name {
+                                        continue;
+                                    }
+                                    if let Some((_, override_entry)) = self.build_tag_entry(
+                                        tag_key,
+                                        &variant.data,
+                                        &symbol.module_name,
+                                        &symbol.table_name,
+                                        context,
+                                    )? {
+                                        context_overrides
+                                            .entry(dir_name.clone())
+                                            .or_default()
+                                            .push((tag_id, override_entry));
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -211,11 +281,75 @@ impl TagKitStrategy {
                 "pub static {constant_name}: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {{\n"
             ));
             code.push_str("    HashMap::from([\n");
-            for (_, entry) in tag_entries {
-                code.push_str(&entry);
+            for (_, entry) in &tag_entries {
+                code.push_str(entry);
             }
             code.push_str("    ])\n");
             code.push_str("});\n\n");
+        }
+
+        // Generate context-specific override maps for conditional tags
+        // ExifTool Reference: Tags like 0x201 have different names based on DIR_NAME context
+        if !context_overrides.is_empty() {
+            // Sort context names for deterministic output
+            let mut sorted_contexts: Vec<_> = context_overrides.keys().collect();
+            sorted_contexts.sort();
+
+            for ctx_name in &sorted_contexts {
+                if let Some(overrides) = context_overrides.get(*ctx_name) {
+                    let ctx_constant_name = format!(
+                        "{}_{}_{}_TAGS",
+                        module_snake_case.to_uppercase(),
+                        symbol.table_name.to_uppercase(),
+                        ctx_name.to_uppercase()
+                    );
+
+                    code.push_str(&format!(
+                        "/// Tag overrides for {ctx_name} context (conditional tags)\n"
+                    ));
+                    code.push_str(&format!(
+                        "/// ExifTool uses these names when DIR_NAME eq '{ctx_name}'\n"
+                    ));
+                    code.push_str(&format!(
+                        "pub static {ctx_constant_name}: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {{\n"
+                    ));
+                    code.push_str("    HashMap::from([\n");
+
+                    // Sort overrides by tag ID
+                    let mut sorted_overrides = overrides.clone();
+                    sorted_overrides.sort_by_key(|(tag_id, _)| *tag_id);
+
+                    for (_, entry) in &sorted_overrides {
+                        code.push_str(entry);
+                    }
+                    code.push_str("    ])\n");
+                    code.push_str("});\n\n");
+                }
+            }
+
+            // Generate a helper function to get tags with context
+            code.push_str("/// Get tag info considering context (DIR_NAME)\n");
+            code.push_str(
+                "/// Returns context-specific TagInfo if available, otherwise falls back to default\n",
+            );
+            code.push_str(
+                "pub fn get_tag_info_with_context(tag_id: u16, dir_name: &str) -> Option<&'static TagInfo> {\n",
+            );
+            code.push_str("    match dir_name {\n");
+            for ctx_name in &sorted_contexts {
+                let ctx_constant_name = format!(
+                    "{}_{}_{}_TAGS",
+                    module_snake_case.to_uppercase(),
+                    symbol.table_name.to_uppercase(),
+                    ctx_name.to_uppercase()
+                );
+                code.push_str(&format!(
+                    "        \"{ctx_name}\" => {ctx_constant_name}.get(&tag_id).or_else(|| {constant_name}.get(&tag_id)),\n"
+                ));
+            }
+            code.push_str(&format!("        _ => {constant_name}.get(&tag_id),\n"));
+            code.push_str("    }\n");
+            code.push_str("}\n\n");
         }
 
         // Generate apply_value_conv function: TODO: can this be DRY'ed up and moved into src/ proper, not shoved into every generated file?
@@ -328,6 +462,11 @@ impl TagKitStrategy {
         // Process ValueConv if present
         let value_conv = self.process_value_conv(tag_data, module, name, table_name, context)?;
 
+        // Extract IsOffset attribute
+        // ExifTool: Exif.pm uses IsOffset => 1 for tags that contain TIFF-relative offsets
+        // that need to be adjusted by adding the base offset (e.g., ThumbnailOffset, PreviewImageStart)
+        let is_offset = Self::extract_is_offset(tag_data);
+
         // Build the formatted entry
         let mut entry = String::new();
         entry.push_str(&format!("        ({tag_id}, TagInfo {{\n"));
@@ -335,6 +474,7 @@ impl TagKitStrategy {
         entry.push_str(&format!("            format: \"{format}\",\n"));
         entry.push_str(&format!("            print_conv: {print_conv},\n"));
         entry.push_str(&format!("            value_conv: {value_conv},\n"));
+        entry.push_str(&format!("            is_offset: {is_offset},\n"));
         entry.push_str("        }),\n");
 
         Ok(Some((tag_id, entry)))
@@ -518,6 +658,104 @@ impl TagKitStrategy {
         Ok("None".to_string())
     }
 
+    /// Extract conditional tag variants from an array-style tag definition
+    /// ExifTool Reference: Array-style definitions like tag 0x201 in Exif.pm
+    ///
+    /// Each variant has a Condition that determines when to use it.
+    /// We extract the DIR_NAME from conditions like `$$self{DIR_NAME} eq 'IFD1'`
+    fn extract_conditional_variants(
+        &self,
+        tag_key: &str,
+        variants: &[JsonValue],
+    ) -> Result<Vec<ConditionalTagVariant>> {
+        use regex::Regex;
+
+        let mut result = Vec::new();
+
+        // Regex to extract DIR_NAME from conditions like:
+        // - $$self{DIR_NAME} eq 'IFD1'
+        // - $$self{DIR_NAME} eq "MakerNotes"
+        // - DIR_NAME} eq 'SubIFD'
+        let dir_name_regex =
+            Regex::new(r#"DIR_NAME\}\s*eq\s*["'](\w+)["']"#).expect("Invalid regex");
+
+        for (idx, variant_value) in variants.iter().enumerate() {
+            if let Some(variant_obj) = variant_value.as_object() {
+                let name = variant_obj
+                    .get("Name")
+                    .and_then(|v| v.as_str())
+                    .unwrap_or(tag_key)
+                    .to_string();
+
+                let condition = variant_obj
+                    .get("Condition")
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("");
+
+                // Extract DIR_NAME from condition
+                // We need to find ALL DIR_NAME matches because some conditions have multiple
+                // (e.g., tag 0x201 has `DIR_NAME eq 'IFD0'` in an if-statement, then `DIR_NAME eq 'IFD1'` later)
+                // We take the LAST match at the top level (outside if statements) or all unique matches
+                let dir_name = if condition.is_empty() {
+                    // No condition = default variant
+                    None
+                } else {
+                    // Find all DIR_NAME matches in the condition
+                    let all_matches: Vec<String> = dir_name_regex
+                        .captures_iter(condition)
+                        .filter_map(|caps| caps.get(1).map(|m| m.as_str().to_string()))
+                        .collect();
+
+                    if all_matches.is_empty() {
+                        None
+                    } else if all_matches.len() == 1 {
+                        // Only one match - use it
+                        Some(all_matches.into_iter().next().unwrap())
+                    } else {
+                        // Multiple matches - for conditional tags like 0x201, the condition often has:
+                        // - `DIR_NAME eq 'IFD0'` inside an if-statement (for side effects)
+                        // - `DIR_NAME eq 'IFD1'` as the actual condition to match
+                        // Prefer non-IFD0 matches since IFD0 is often used for special handling
+                        // If all matches are the same, use that; otherwise prefer IFD1/MakerNotes/etc.
+                        let unique_matches: std::collections::HashSet<_> =
+                            all_matches.iter().cloned().collect();
+                        if unique_matches.len() == 1 {
+                            Some(all_matches.into_iter().next().unwrap())
+                        } else {
+                            // Prefer IFD1 > MakerNotes > SubIFD > IFD0 for conditional tags
+                            all_matches
+                                .into_iter()
+                                .find(|m| m == "IFD1")
+                                .or_else(|| unique_matches.iter().find(|m| *m != "IFD0").cloned())
+                                .or_else(|| unique_matches.into_iter().next())
+                        }
+                    }
+                };
+
+                debug!(
+                    "Conditional tag {} variant {}: name={}, dir_name={:?}, condition={}",
+                    tag_key,
+                    idx,
+                    name,
+                    dir_name,
+                    if condition.len() > 50 {
+                        &condition[..50]
+                    } else {
+                        condition
+                    }
+                );
+
+                result.push(ConditionalTagVariant {
+                    name,
+                    dir_name,
+                    data: variant_obj.clone(),
+                });
+            }
+        }
+
+        Ok(result)
+    }
+
     /// Process AST expression during extract phase and return function name
     #[allow(clippy::too_many_arguments)]
     fn process_ast_expression(
@@ -559,6 +797,29 @@ impl TagKitStrategy {
 
         // Return just the function name
         Ok(function_spec.function_name)
+    }
+
+    /// Extract IsOffset attribute from tag definition
+    /// ExifTool: Tags with IsOffset => 1 contain TIFF-relative offsets that need base adjustment
+    /// ExifTool: Exif.pm:7052-7066 applies base offset to IsOffset tags during extraction
+    fn extract_is_offset(tag_data: &serde_json::Map<String, JsonValue>) -> bool {
+        if let Some(is_offset_value) = tag_data.get("IsOffset") {
+            // IsOffset can be:
+            // - 1 or "1": Standard offset adjustment (add base)
+            // - 2 or "2": Use parent directory base (firstBase)
+            // - 3 or "3": Already absolute, no adjustment needed
+            // - '$val > 0' or similar: Conditional (evaluate expression)
+            //
+            // For now, we only handle IsOffset => 1 (the most common case)
+            // which means "add base offset to convert TIFF-relative to absolute"
+            match is_offset_value {
+                JsonValue::Number(n) => n.as_i64() == Some(1),
+                JsonValue::String(s) => s == "1",
+                _ => false,
+            }
+        } else {
+            false
+        }
     }
 }
 

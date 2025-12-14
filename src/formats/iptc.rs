@@ -596,6 +596,7 @@ mod tests {
             format: "int16u",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         };
 
         let data = [0x00, 0x02]; // Big-endian 16-bit value: 2
@@ -619,6 +620,7 @@ mod tests {
             format: "digits[8]",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         };
 
         let data = b"12345678";

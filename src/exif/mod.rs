@@ -23,6 +23,7 @@ mod tags;
 // use crate::generated::FujiFilm_pm::main_model_detection::{
 //     ConditionalContext as FujiFilmConditionalContext, FujiFilmModelDetection,
 // }; // TODO: Generate FujiFilm model detection
+use crate::hash::ImageDataHasher;
 use crate::tiff_types::TiffHeader;
 use crate::types::{
     DataMemberValue, DirectoryInfo, ExifError, ProcessorDispatch, Result, TagSourceInfo, TagValue,
@@ -76,6 +77,13 @@ pub struct ExifReader {
     /// Mapping from synthetic tag IDs to their original tag names
     /// Used for Canon binary data tags that use synthetic IDs in the 0xC000 range
     pub(crate) synthetic_tag_names: HashMap<u16, String>,
+    /// Next IFD offset from IFD0 parsing (for IFD chain following)
+    /// ExifTool: lib/Image/ExifTool/Exif.pm:7109 - Get32u($dataPt, $dirEnd) for next IFD
+    pub(crate) ifd0_next_offset: Option<u32>,
+    /// Optional hasher for computing ImageDataHash during extraction
+    /// Created when FilterOptions.compute_image_hash is true
+    /// ExifTool: $$self{ImageDataHash} in lib/Image/ExifTool.pm:2766-2780
+    pub(crate) image_data_hasher: Option<ImageDataHasher>,
 }
 
 impl ExifReader {
@@ -103,7 +111,45 @@ impl ExifReader {
             original_file_type: None,
             overridden_file_type: None,
             synthetic_tag_names: HashMap::new(),
+            ifd0_next_offset: None,
+            image_data_hasher: None,
         }
+    }
+
+    /// Set the ImageDataHash hasher for computing image data hash during extraction
+    /// ExifTool: $$self{ImageDataHash} = Digest::MD5/SHA->new (lib/Image/ExifTool.pm:2766-2780)
+    pub fn set_image_data_hasher(&mut self, hasher: ImageDataHasher) {
+        self.image_data_hasher = Some(hasher);
+    }
+
+    /// Get mutable reference to the image data hasher (if set)
+    /// Used by format handlers to accumulate hash during parsing
+    pub fn image_data_hasher_mut(&mut self) -> Option<&mut ImageDataHasher> {
+        self.image_data_hasher.as_mut()
+    }
+
+    /// Take ownership of the image data hasher for finalization
+    /// Returns None if no hasher was set
+    pub fn take_image_data_hasher(&mut self) -> Option<ImageDataHasher> {
+        self.image_data_hasher.take()
+    }
+
+    /// Check if image data hashing is enabled
+    pub fn is_hashing_enabled(&self) -> bool {
+        self.image_data_hasher.is_some()
+    }
+
+    /// Set the TIFF base offset for IsOffset tag adjustment
+    /// ExifTool: Exif.pm:7052-7066 - when IsOffset=>1, add base to offset value
+    /// For JPEG files, this is the position in the file where the TIFF header starts
+    /// (after the "Exif\0\0" marker in APP1)
+    pub fn set_base_offset(&mut self, base: u64) {
+        self.base = base;
+        tracing::debug!(
+            "Set TIFF base offset to {:#x} ({}) for IsOffset tag adjustment",
+            base,
+            base
+        );
     }
 
     /// Set the original file type from detection
@@ -148,6 +194,22 @@ impl ExifReader {
             allow_reprocess: false,
         };
         self.process_subdirectory(&dir_info)?;
+
+        // Follow IFD chain to IFD1 for thumbnail data
+        // ExifTool: lib/Image/ExifTool/Exif.pm:7108-7129 follows IFD chain after IFD0
+        // The next_ifd_offset from IFD0 was stored during dispatch_processor_with_params
+        if let Some(next_offset) = self.ifd0_next_offset {
+            debug!("Following IFD chain to IFD1 at offset {:#x}", next_offset);
+            let ifd1_info = DirectoryInfo {
+                name: "IFD1".to_string(),
+                dir_start: next_offset as usize,
+                dir_len: 0,
+                base: 0,
+                data_pos: 0,
+                allow_reprocess: false,
+            };
+            self.process_subdirectory(&ifd1_info)?;
+        }
 
         // NOTE: Composite tag building moved to format processing level
         // to ensure File group tags are available as dependencies
@@ -238,6 +300,7 @@ impl ExifReader {
         tag_id: u16,
         source_info: Option<&TagSourceInfo>,
     ) -> String {
+        use crate::generated::Exif_pm::main_tags::get_tag_info_with_context;
         use crate::generated::Exif_pm::main_tags::EXIF_MAIN_TAGS as EXIF_PM_TAG_KITS;
         use crate::generated::GPS_pm::main_tags::GPS_MAIN_TAGS as GPS_PM_TAG_KITS;
         use crate::generated::Sony_pm::main_tags::SONY_MAIN_TAGS as SONY_PM_TAG_KITS;
@@ -283,6 +346,19 @@ impl ExifReader {
                         source.namespace
                     );
                 }
+            }
+
+            // Use context-aware lookup for standard EXIF IFDs (IFD0, IFD1, ExifIFD, etc.)
+            // ExifTool: Tags like 0x0201 have different names based on DIR_NAME context
+            // e.g., ThumbnailOffset in IFD1, OtherImageStart elsewhere
+            if let Some(tag_def) = get_tag_info_with_context(tag_id, &source.ifd_name) {
+                tracing::debug!(
+                    "Found context-aware tag name for 0x{:x} in {}: {}",
+                    tag_id,
+                    source.ifd_name,
+                    tag_def.name
+                );
+                return tag_def.name.to_string();
             }
         }
 
@@ -573,10 +649,13 @@ impl ExifReader {
                                     (name, None)
                                 }
 
-                                // All other contexts use global lookup
+                                // All other contexts use context-aware lookup for IFD-specific tags
+                                // ExifTool: Exif.pm uses DIR_NAME to determine tag names (e.g., ThumbnailOffset in IFD1)
                                 _ => {
-                                    let name = EXIF_PM_TAG_KITS
-                                        .get(&tag_id)
+                                    // Get IFD name for context-aware lookup
+                                    let ifd_name =
+                                        source_info.map(|s| s.ifd_name.as_str()).unwrap_or("");
+                                    let name = crate::generated::Exif_pm::main_tags::get_tag_info_with_context(tag_id, ifd_name)
                                         .map(|def| def.name.to_string())
                                         .or_else(|| {
                                             GPS_PM_TAG_KITS

@@ -72,6 +72,19 @@ pub fn extract_metadata(
     // Use default filter options if none provided (backward compatibility)
     let filter_opts = filter_options.clone().unwrap_or_default();
 
+    // Create image data hasher if requested
+    // ExifTool: lib/Image/ExifTool.pm:2766-2780 - hash object creation
+    // The hasher will be passed to format-specific handlers and accumulated during parsing
+    let mut image_data_hasher = if filter_opts.compute_image_hash {
+        debug!(
+            "Creating ImageDataHasher with algorithm {:?}",
+            filter_opts.image_hash_type
+        );
+        Some(crate::hash::ImageDataHasher::new(filter_opts.image_hash_type))
+    } else {
+        None
+    };
+
     // PERFORMANCE OPTIMIZATION: Check if only File group tags are requested
     // This allows early return without expensive format-specific parsing
     if filter_opts.is_file_group_only() {
@@ -478,6 +491,14 @@ pub fn extract_metadata(
 
                         // Parse EXIF data
                         let mut exif_reader = ExifReader::new();
+
+                        // Set the TIFF base offset for IsOffset tag adjustment
+                        // ExifTool: Exif.pm:7052-7066 - tags with IsOffset=>1 need their values
+                        // adjusted by adding the base offset to convert from TIFF-relative to
+                        // absolute file offsets. segment_info.offset is where the TIFF header
+                        // starts in the JPEG file (after "Exif\0\0" marker in APP1).
+                        exif_reader.set_base_offset(segment_info.offset);
+
                         match exif_reader.parse_exif_data(&exif_data) {
                             Ok(()) => {
                                 // Successfully parsed EXIF - extract all found tags using new TagEntry API

@@ -30,6 +30,7 @@ pub mod file_types;
 pub mod fmt;
 pub mod formats;
 pub mod generated;
+pub mod hash;
 
 pub mod implementations;
 pub mod processor_registry;
@@ -45,6 +46,7 @@ pub mod xmp;
 
 pub use file_detection::{FileDetectionError, FileTypeDetectionResult, FileTypeDetector};
 pub use generated::*;
+pub use hash::{ImageDataHasher, ImageHashType};
 pub use registry::Registry;
 pub use types::{ExifData, ExifError, FilterOptions, TagValue};
 
@@ -112,6 +114,7 @@ pub fn extract_metadata_json(file_path: &str) -> Result<Value, ExifError> {
 ///     extract_all: false,
 ///     numeric_tags,
 ///     glob_patterns: vec![],
+///     ..Default::default()
 /// };
 /// let result = extract_metadata_json_with_filter("image.jpg", Some(filter))?;
 ///
@@ -123,6 +126,7 @@ pub fn extract_metadata_json(file_path: &str) -> Result<Value, ExifError> {
 ///     extract_all: false,
 ///     numeric_tags: HashSet::new(),
 ///     glob_patterns: vec![],
+///     ..Default::default()
 /// };
 /// let result = extract_metadata_json_with_filter("image.jpg", Some(filter))?;
 ///
@@ -134,6 +138,7 @@ pub fn extract_metadata_json(file_path: &str) -> Result<Value, ExifError> {
 ///     extract_all: false,
 ///     numeric_tags: HashSet::new(),
 ///     glob_patterns: vec!["GPS*".to_string()],
+///     ..Default::default()
 /// };
 /// let result = extract_metadata_json_with_filter("image.jpg", Some(filter))?;
 /// # Ok::<(), exif_oxide::ExifError>(())

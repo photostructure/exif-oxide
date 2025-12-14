@@ -387,6 +387,10 @@ fn process_single_file(
 /// Extract binary data for the specified tag and write to stdout
 /// ExifTool: Follow the same pattern as ExifTool's binary extraction
 /// This function finds offset/length tags and streams binary data from the file
+///
+/// NOTE: ThumbnailOffset/PreviewImageStart values should already be absolute file offsets
+/// after IsOffset adjustment during EXIF parsing. See ExifTool Exif.pm lines 7052-7066.
+/// TODO: Implement IsOffset handling in EXIF parsing layer - see P0-IFD1-THUMBNAIL-EXTRACTION.md
 fn extract_binary_data(
     metadata: &exif_oxide::types::ExifData,
     requested_tag: &str,
@@ -445,6 +449,7 @@ fn extract_binary_data(
     let mut file = File::open(file_path)?;
 
     // Seek to offset position
+    // NOTE: Offset should be absolute file position after IsOffset adjustment in parsing
     file.seek(SeekFrom::Start(offset_value as u64))?;
 
     // Read binary data in chunks and stream to stdout

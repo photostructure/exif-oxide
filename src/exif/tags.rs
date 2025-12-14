@@ -19,6 +19,10 @@ impl ExifReader {
         value: TagValue,
         source_info: TagSourceInfo,
     ) {
+        // Apply IsOffset adjustment if this tag has IsOffset=>1
+        // ExifTool: Exif.pm:7052-7066 - adds base offset to convert TIFF-relative to absolute file offset
+        let value = self.apply_is_offset_adjustment(tag_id, value, &source_info);
+
         let key = (tag_id, source_info.namespace.clone());
 
         // Check if tag already exists in this namespace
@@ -83,6 +87,76 @@ impl ExifReader {
     pub fn legacy_insert_tag(&mut self, tag_id: u16, value: TagValue, namespace: &str) {
         let source_info = self.create_tag_source_info(namespace);
         self.store_tag_with_precedence(tag_id, value, source_info);
+    }
+
+    /// Apply IsOffset adjustment if this tag has IsOffset=>1
+    /// ExifTool: Exif.pm:7052-7066 - when IsOffset=>1, add base to convert TIFF-relative to absolute
+    fn apply_is_offset_adjustment(
+        &self,
+        tag_id: u16,
+        value: TagValue,
+        source_info: &TagSourceInfo,
+    ) -> TagValue {
+        use crate::generated::Exif_pm::main_tags;
+
+        // Skip if base is 0 (no adjustment needed, or TIFF file)
+        if self.base == 0 {
+            return value;
+        }
+
+        // Look up TagInfo to check is_offset flag
+        // Use context-aware lookup for IFD1-specific definitions (ThumbnailOffset vs StripOffsets)
+        let tag_info_opt = main_tags::get_tag_info_with_context(tag_id, &source_info.ifd_name);
+
+        if let Some(tag_info) = tag_info_opt {
+            if tag_info.is_offset {
+                // Apply base offset adjustment
+                let adjusted = match &value {
+                    TagValue::U32(v) => {
+                        let adjusted_val = *v as u64 + self.base;
+                        debug!(
+                            "IsOffset adjustment for tag 0x{:04x} ({}): {} + {} = {}",
+                            tag_id, tag_info.name, v, self.base, adjusted_val
+                        );
+                        // Return as U32 if it fits, otherwise U64
+                        if adjusted_val <= u32::MAX as u64 {
+                            TagValue::U32(adjusted_val as u32)
+                        } else {
+                            TagValue::U64(adjusted_val)
+                        }
+                    }
+                    TagValue::U64(v) => {
+                        let adjusted_val = v + self.base;
+                        debug!(
+                            "IsOffset adjustment for tag 0x{:04x} ({}): {} + {} = {}",
+                            tag_id, tag_info.name, v, self.base, adjusted_val
+                        );
+                        TagValue::U64(adjusted_val)
+                    }
+                    // U32Array or U64Array - adjust each element
+                    TagValue::U32Array(arr) => {
+                        let adjusted_arr: Vec<u32> =
+                            arr.iter().map(|v| (*v as u64 + self.base) as u32).collect();
+                        debug!(
+                            "IsOffset array adjustment for tag 0x{:04x} ({}): applied base {} to {} values",
+                            tag_id, tag_info.name, self.base, arr.len()
+                        );
+                        TagValue::U32Array(adjusted_arr)
+                    }
+                    _ => {
+                        // Non-numeric types shouldn't have IsOffset, but just return unchanged
+                        debug!(
+                            "IsOffset tag 0x{:04x} ({}) has non-numeric value type: {:?}",
+                            tag_id, tag_info.name, value
+                        );
+                        value
+                    }
+                };
+                return adjusted;
+            }
+        }
+
+        value
     }
 
     /// Create TagSourceInfo from IFD name with proper namespace mapping

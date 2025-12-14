@@ -181,7 +181,7 @@ impl ExifReader {
                 "Processing Sony MakerNotes as standard IFD at offset {:#x}",
                 adjusted_offset
             );
-            self.parse_ifd(adjusted_offset, "Sony")?;
+            let _ = self.parse_ifd(adjusted_offset, "Sony")?;
 
             // Then apply Sony subdirectory processing to extract subdirectory data
             // ExifTool: Sony.pm SubDirectory processing for binary data expansion (Tag2010, Tag9050, AFInfo, etc.)
@@ -256,9 +256,12 @@ impl ExifReader {
         result
     }
 
-    /// Parse a single IFD (Image File Directory)
+    /// Parse a single IFD (Image File Directory) and return the next IFD offset if present
     /// ExifTool: lib/Image/ExifTool/Exif.pm:6232-6342 IFD processing
-    pub(crate) fn parse_ifd(&mut self, ifd_offset: usize, ifd_name: &str) -> Result<()> {
+    /// ExifTool: lib/Image/ExifTool/Exif.pm:7109 - Get32u($dataPt, $dirEnd) reads next IFD offset
+    ///
+    /// Returns `Ok(Some(offset))` if there's a next IFD, `Ok(None)` if not.
+    pub(crate) fn parse_ifd(&mut self, ifd_offset: usize, ifd_name: &str) -> Result<Option<u32>> {
         if ifd_offset + 2 > self.data.len() {
             return Err(ExifError::ParseError(format!(
                 "IFD offset {ifd_offset:#x} beyond data bounds"
@@ -338,7 +341,22 @@ impl ExifReader {
             num_entries, ifd_name
         );
 
-        Ok(())
+        // Read the next IFD offset (4 bytes after all entries)
+        // ExifTool: lib/Image/ExifTool/Exif.pm:7109 - my $offset = Get32u($dataPt, $dirEnd) or last;
+        // ExifTool: lib/Image/ExifTool/Exif.pm:6320-6326 - Next IFD offset handling
+        let next_ifd_pos = ifd_offset + 2 + 12 * num_entries;
+        if next_ifd_pos + 4 <= self.data.len() {
+            let next_ifd_offset = byte_order.read_u32(&self.data, next_ifd_pos)?;
+            if next_ifd_offset != 0 && (next_ifd_offset as usize) < self.data.len() {
+                debug!(
+                    "IFD {} has next IFD at offset {:#x}",
+                    ifd_name, next_ifd_offset
+                );
+                return Ok(Some(next_ifd_offset));
+            }
+        }
+
+        Ok(None)
     }
 
     /// Parse a single IFD entry and extract tag value
@@ -836,8 +854,22 @@ impl ExifReader {
     /// Process standard EXIF IFD (renamed from parse_ifd)
     /// ExifTool: ProcessExif function for standard IFD processing
     pub fn process_exif_ifd(&mut self, ifd_offset: usize, ifd_name: &str) -> Result<()> {
-        // This is the existing parse_ifd logic, renamed for clarity
-        self.parse_ifd(ifd_offset, ifd_name)
+        // Parse the IFD and capture the next IFD offset
+        let next_ifd_offset = self.parse_ifd(ifd_offset, ifd_name)?;
+
+        // Store next IFD offset when processing IFD0 for later IFD1 chain following
+        // ExifTool: lib/Image/ExifTool/Exif.pm:7108-7129 follows IFD chain
+        if ifd_name == "IFD0" {
+            if let Some(offset) = next_ifd_offset {
+                debug!(
+                    "IFD0 has next IFD at offset {:#x}, storing for IFD chain",
+                    offset
+                );
+                self.ifd0_next_offset = Some(offset);
+            }
+        }
+
+        Ok(())
     }
 
     /// Get tag name from tag kits

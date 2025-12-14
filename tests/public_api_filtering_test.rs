@@ -41,6 +41,7 @@ fn test_extract_metadata_json_with_filter_numeric_control() {
         extract_all: false,
         numeric_tags,
         glob_patterns: vec![],
+        ..Default::default()
     };
 
     let result = extract_metadata_json_with_filter(TEST_IMAGE, Some(filter)).unwrap();
@@ -64,6 +65,7 @@ fn test_extract_metadata_json_with_filter_glob_pattern() {
         extract_all: false,
         numeric_tags: HashSet::new(),
         glob_patterns: vec!["*Image*".to_string()],
+        ..Default::default()
     };
 
     let result = extract_metadata_json_with_filter(TEST_IMAGE, Some(filter)).unwrap();
@@ -93,6 +95,7 @@ fn test_extract_metadata_json_with_filter_middle_wildcard() {
         extract_all: false,
         numeric_tags: HashSet::new(),
         glob_patterns: vec!["*Date*".to_string()],
+        ..Default::default()
     };
 
     let result = extract_metadata_json_with_filter(TEST_IMAGE, Some(filter)).unwrap();
@@ -176,6 +179,7 @@ fn test_extract_metadata_json_with_filter_group_all() {
         extract_all: false,
         numeric_tags: HashSet::new(),
         glob_patterns: vec![],
+        ..Default::default()
     };
 
     let result = extract_metadata_json_with_filter(TEST_IMAGE, Some(filter)).unwrap();

@@ -51,6 +51,7 @@ fn test_numeric_value_control() {
         extract_all: false,
         numeric_tags,
         glob_patterns: vec![],
+        ..Default::default()
     };
 
     let result = extract_metadata(Path::new(TEST_IMAGE_CANON), false, false, Some(filter)).unwrap();
@@ -75,6 +76,7 @@ fn test_group_all_filtering() {
         extract_all: false,
         numeric_tags: HashSet::new(),
         glob_patterns: vec![],
+        ..Default::default()
     };
 
     let result = extract_metadata(Path::new(TEST_IMAGE_CANON), false, false, Some(filter)).unwrap();
@@ -106,6 +108,7 @@ fn test_prefix_wildcard_gps() {
         extract_all: false,
         numeric_tags: HashSet::new(),
         glob_patterns: vec!["GPS*".to_string()],
+        ..Default::default()
     };
 
     let result = extract_metadata(Path::new(TEST_IMAGE_RICOH), false, false, Some(filter)).unwrap();
@@ -137,6 +140,7 @@ fn test_suffix_wildcard() {
         extract_all: false,
         numeric_tags: HashSet::new(),
         glob_patterns: vec!["*Width".to_string()],
+        ..Default::default()
     };
 
     let result = extract_metadata(Path::new(TEST_IMAGE_CANON), false, false, Some(filter)).unwrap();
@@ -168,6 +172,7 @@ fn test_middle_wildcard() {
         extract_all: false,
         numeric_tags: HashSet::new(),
         glob_patterns: vec!["*Image*".to_string()],
+        ..Default::default()
     };
 
     let result = extract_metadata(Path::new(TEST_IMAGE_CANON), false, false, Some(filter)).unwrap();
@@ -199,6 +204,7 @@ fn test_middle_wildcard_date_pattern() {
         extract_all: false,
         numeric_tags: HashSet::new(),
         glob_patterns: vec!["*Date*".to_string()],
+        ..Default::default()
     };
 
     let result = extract_metadata(Path::new(TEST_IMAGE_CANON), false, false, Some(filter)).unwrap();
@@ -240,6 +246,7 @@ fn test_complex_filtering_combination() {
         extract_all: false,
         numeric_tags,
         glob_patterns: vec!["GPS*".to_string()],
+        ..Default::default()
     };
 
     let result = extract_metadata(Path::new(TEST_IMAGE_RICOH), false, false, Some(filter)).unwrap();
@@ -315,6 +322,7 @@ fn test_group_qualified_glob_patterns() {
         extract_all: false,
         numeric_tags: HashSet::new(),
         glob_patterns: vec!["EXIF:GPS*".to_string()],
+        ..Default::default()
     };
 
     let result = extract_metadata(Path::new(TEST_IMAGE_RICOH), false, false, Some(filter)).unwrap();
@@ -338,6 +346,7 @@ fn test_no_matches_wildcard() {
         extract_all: false,
         numeric_tags: HashSet::new(),
         glob_patterns: vec!["NonExistent*".to_string()],
+        ..Default::default()
     };
 
     let result = extract_metadata(Path::new(TEST_IMAGE_CANON), false, false, Some(filter)).unwrap();
@@ -358,6 +367,7 @@ fn test_multiple_glob_patterns() {
         extract_all: false,
         numeric_tags: HashSet::new(),
         glob_patterns: vec!["*Date*".to_string(), "*Width*".to_string()],
+        ..Default::default()
     };
 
     let result = extract_metadata(Path::new(TEST_IMAGE_CANON), false, false, Some(filter)).unwrap();
@@ -406,6 +416,7 @@ fn test_case_insensitive_glob_patterns() {
         extract_all: false,
         numeric_tags: HashSet::new(),
         glob_patterns: vec!["gps*".to_string()], // lowercase
+        ..Default::default()
     };
 
     let result = extract_metadata(Path::new(TEST_IMAGE_RICOH), false, false, Some(filter)).unwrap();
@@ -438,6 +449,7 @@ fn test_numeric_with_glob_patterns() {
         extract_all: false,
         numeric_tags,
         glob_patterns: vec!["GPS*".to_string()],
+        ..Default::default()
     };
 
     let result = extract_metadata(Path::new(TEST_IMAGE_RICOH), false, false, Some(filter)).unwrap();

@@ -153,7 +153,22 @@ impl ExifReader {
                 "Using standard IFD parsing for {} (Trust ExifTool)",
                 dir_info.name
             );
-            return self.parse_ifd(dir_info.dir_start, &dir_info.name);
+            // Parse the IFD and capture the next IFD offset
+            let next_ifd_offset = self.parse_ifd(dir_info.dir_start, &dir_info.name)?;
+
+            // Store next IFD offset when processing IFD0 for later IFD1 chain following
+            // ExifTool: lib/Image/ExifTool/Exif.pm:7108-7129 follows IFD chain
+            if dir_info.name == "IFD0" {
+                if let Some(offset) = next_ifd_offset {
+                    debug!(
+                        "IFD0 has next IFD at offset {:#x}, storing for IFD chain",
+                        offset
+                    );
+                    self.ifd0_next_offset = Some(offset);
+                }
+            }
+
+            return Ok(());
         }
 
         debug!(

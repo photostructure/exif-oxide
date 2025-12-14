@@ -18,6 +18,13 @@ pub struct TagInfo {
 
     /// ValueConv conversion logic (if any)
     pub value_conv: Option<ValueConv>,
+
+    /// IsOffset flag - indicates this tag's value should be adjusted by adding
+    /// the TIFF base offset to convert from TIFF-relative to absolute file offset.
+    /// ExifTool: Exif.pm:7052-7066 IsOffset processing
+    /// - false (default): No offset adjustment
+    /// - true: Add base offset to value (IsOffset => 1)
+    pub is_offset: bool,
 }
 
 /// Binary data entry from ProcessBinaryData tables

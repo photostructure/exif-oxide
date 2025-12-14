@@ -516,6 +516,12 @@ impl XmpProcessor {
     }
 
     /// Process text content
+    ///
+    /// Following ExifTool's struct flattening approach (GetXMPTagID):
+    /// - Builds flattened tag ID by concatenating property names with ucfirst()
+    /// - Looks up the ID in generated tables to get the canonical tag name
+    /// - Example: xmpMM:History/stEvt:when → "HistoryWhen" → lookup → "HistoryWhen"
+    /// - Example: mwg-kw:Keywords/Hierarchy/Keyword → "KeywordsHierarchyKeyword" → lookup → "HierarchicalKeywords1"
     fn process_text_content(
         &self,
         text: String,
@@ -526,84 +532,59 @@ impl XmpProcessor {
             return Ok(()); // Not enough context
         }
 
-        // For RDF list items, we need to find the property element that contains the container
-        // Example stack: [rdf:Description, dc:creator, rdf:Seq, rdf:li]
-        let mut property_element = None;
-        let mut container_element = None;
+        // Build flattened tag ID from the full element stack
+        // This concatenates all property names: History + When = HistoryWhen
+        let Some((flattened_id, root_ns)) = Self::build_flattened_tag_id(element_stack) else {
+            return Ok(()); // No valid property path
+        };
 
-        // Walk up the stack to find the property and container
-        for i in (0..element_stack.len()).rev() {
-            let elem = &element_stack[i];
+        // Look up the flattened ID in generated tables to get canonical tag name
+        // Example: "KeywordsHierarchyKeyword" → "HierarchicalKeywords1"
+        let tag_name = super::xmp_lookup::lookup_xmp_tag(&root_ns, &flattened_id)
+            .map(|info| info.name.to_string())
+            .unwrap_or_else(|| Self::ucfirst(&flattened_id));
 
-            // Skip RDF structural elements
-            if elem.local_name == "li"
-                || elem.local_name == "Description"
-                || elem.local_name == "RDF"
-            {
-                continue;
-            }
+        // Find container element for array/alt handling
+        let container_element = element_stack
+            .iter()
+            .rev()
+            .find(|e| e.container_type.is_some());
 
-            // Found a container
-            if elem.container_type.is_some() {
-                container_element = Some(elem);
-                // The property should be the element before the container
-                if i > 0 {
-                    let prev = &element_stack[i - 1];
-                    if prev.namespace_prefix.is_some() && prev.container_type.is_none() {
-                        property_element = Some(prev);
-                        break;
+        // Get or create namespace object
+        let ns_object = namespace_objects.entry(root_ns).or_default();
+
+        // Handle based on container type
+        if let Some(container) = container_element {
+            match container.container_type {
+                Some(RdfContainerType::Bag) | Some(RdfContainerType::Seq) => {
+                    // Add to array
+                    let array = ns_object
+                        .entry(tag_name)
+                        .or_insert_with(|| TagValue::Array(Vec::new()));
+
+                    if let Some(arr) = array.as_array_mut() {
+                        arr.push(TagValue::string(text));
                     }
                 }
-            } else if elem.namespace_prefix.is_some() && property_element.is_none() {
-                // This might be a simple property without a container
-                property_element = Some(elem);
-                if container_element.is_some() {
-                    break;
-                }
-            }
-        }
+                Some(RdfContainerType::Alt) => {
+                    // Add to language alternatives object
+                    let alt_object = ns_object
+                        .entry(tag_name)
+                        .or_insert_with(|| TagValue::Object(HashMap::new()));
 
-        // Get the property namespace and name
-        if let Some(prop) = property_element {
-            if let Some(ns) = &prop.namespace_prefix {
-                let ns_object = namespace_objects.entry(ns.clone()).or_default();
-
-                let property_name = prop.local_name.clone();
-
-                // Handle based on container type
-                if let Some(container) = container_element {
-                    match container.container_type {
-                        Some(RdfContainerType::Bag) | Some(RdfContainerType::Seq) => {
-                            // Add to array
-                            let array = ns_object
-                                .entry(property_name)
-                                .or_insert_with(|| TagValue::Array(Vec::new()));
-
-                            if let Some(arr) = array.as_array_mut() {
-                                arr.push(TagValue::string(text));
-                            }
-                        }
-                        Some(RdfContainerType::Alt) => {
-                            // Add to language alternatives object
-                            let alt_object = ns_object
-                                .entry(property_name)
-                                .or_insert_with(|| TagValue::Object(HashMap::new()));
-
-                            if let Some(obj) = alt_object.as_object_mut() {
-                                let current = &element_stack[element_stack.len() - 1];
-                                let lang_key = current.language.as_deref().unwrap_or("x-default");
-                                obj.insert(lang_key.to_string(), TagValue::string(text));
-                            }
-                        }
-                        None => {
-                            // Should not happen if we have a container_element
-                        }
+                    if let Some(obj) = alt_object.as_object_mut() {
+                        let current = &element_stack[element_stack.len() - 1];
+                        let lang_key = current.language.as_deref().unwrap_or("x-default");
+                        obj.insert(lang_key.to_string(), TagValue::string(text));
                     }
-                } else {
-                    // Simple property without container
-                    ns_object.insert(property_name, TagValue::string(text));
+                }
+                None => {
+                    // Should not happen if we have a container_element
                 }
             }
+        } else {
+            // Simple property without container
+            ns_object.insert(tag_name, TagValue::string(text));
         }
 
         Ok(())
@@ -615,6 +596,72 @@ impl XmpProcessor {
         // Check our reverse URI to prefix mapping
         // This includes all standard namespaces from generated tables
         self.uri_to_prefix.get(uri).cloned()
+    }
+
+    /// Build ExifTool-style flattened tag ID from element stack
+    ///
+    /// Following ExifTool's GetXMPTagID() (XMP.pm:2990-3043):
+    /// - Concatenates property names with ucfirst() for PascalCase
+    /// - Skips RDF structural elements (li, Description, RDF, containers)
+    /// - Example: [xmpMM:History, stEvt:when] → "HistoryWhen"
+    /// - Example: [mwg-kw:Keywords, Hierarchy, Keyword] → "KeywordsHierarchyKeyword"
+    fn build_flattened_tag_id(element_stack: &[ElementContext]) -> Option<(String, String)> {
+        let mut tag_id = String::new();
+        let mut root_namespace = None;
+
+        for elem in element_stack {
+            // Skip RDF structural elements
+            if elem.local_name == "li"
+                || elem.local_name == "Description"
+                || elem.local_name == "RDF"
+            {
+                continue;
+            }
+
+            // Skip XMP wrapper elements
+            if elem.local_name == "xmpmeta" {
+                continue;
+            }
+
+            // Skip container elements (Bag, Seq, Alt)
+            if elem.container_type.is_some() {
+                continue;
+            }
+
+            // Skip elements without namespace prefix (not real properties)
+            // But still include them in the path if we already have a root namespace
+            let has_ns = elem.namespace_prefix.is_some();
+
+            // Track root namespace (first property's namespace)
+            if has_ns && root_namespace.is_none() {
+                root_namespace = elem.namespace_prefix.clone();
+            }
+
+            // Only include elements that have a namespace or are nested within a namespaced element
+            if root_namespace.is_some() {
+                // Concatenate with ucfirst for subsequent elements
+                if tag_id.is_empty() {
+                    tag_id = elem.local_name.clone();
+                } else {
+                    tag_id.push_str(&Self::ucfirst(&elem.local_name));
+                }
+            }
+        }
+
+        if tag_id.is_empty() {
+            None
+        } else {
+            root_namespace.map(|ns| (tag_id, ns))
+        }
+    }
+
+    /// Capitalize first letter of a string (ExifTool's ucfirst equivalent)
+    fn ucfirst(s: &str) -> String {
+        let mut chars = s.chars();
+        match chars.next() {
+            Some(c) => c.to_uppercase().collect::<String>() + chars.as_str(),
+            None => String::new(),
+        }
     }
 
     /// Extract a reasonable prefix from namespace URI
