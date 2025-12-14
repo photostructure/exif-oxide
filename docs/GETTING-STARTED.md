@@ -43,19 +43,23 @@ Read [guides/EXIFTOOL-GUIDE.md](guides/EXIFTOOL-GUIDE.md) sections 1-3:
 
 **Current baseline**: Node.js ExifTool wrapper. exif-oxide must beat this or provide no value.
 
-### The Scope: 125 Required Tags
+**Tag naming**: exif-oxide outputs group-prefixed tag names (e.g., `EXIF:Make`, `XMP:Title`, `GPS:GPSLatitude`) matching ExifTool's `-G` flag output format. PhotoStructure will be updated to consume this format directly, rather than the flattened tag names (e.g., `Make`, `Title`) previously used by exiftool-vendored.
 
-PhotoStructure needs exactly **125 tags** defined in `docs/required-tags.json`:
+### The Scope: 120 Required Tags
 
-| Group           | Count | Status                           |
-| --------------- | ----- | -------------------------------- |
-| XMP             | 49    | Mostly working                   |
-| Composite       | 37    | Partial                          |
-| MakerNotes      | 37    | Partial (Canon/Nikon/Sony exist) |
-| EXIF            | 36    | Mostly working                   |
-| QuickTime       | 18    | **NOT IMPLEMENTED** (video)      |
-| File            | 14    | Working                          |
-| IPTC/RIFF/Other | 12    | Partial                          |
+PhotoStructure needs exactly **120 tags** defined in `docs/required-tags.json`:
+
+| Group      | Count | Status                           |
+| ---------- | ----- | -------------------------------- |
+| XMP        | 29    | Mostly working                   |
+| Composite  | 25    | Partial                          |
+| EXIF       | 21    | Mostly working                   |
+| File       | 15    | Working                          |
+| GPS        | 9     | Working                          |
+| MakerNotes | 9     | Partial (Canon/Nikon/Sony exist) |
+| QuickTime  | 9     | **NOT IMPLEMENTED** (video)      |
+| IPTC       | 2     | Partial                          |
+| ExifTool   | 1     | Working                          |
 
 **What's NOT in scope**: Write support, tags not in required-tags.json, full ExifTool parity.
 
