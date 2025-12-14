@@ -5,6 +5,7 @@ use tracing::{debug, error, info};
 
 // Import our library modules
 use exif_oxide::formats::extract_metadata;
+use exif_oxide::hash::ImageHashType;
 use exif_oxide::types::FilterOptions;
 
 /// Parse command line arguments into file paths and filter options
@@ -97,6 +98,8 @@ fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
             extract_all: true,
             numeric_tags,
             glob_patterns: Vec::new(),
+            compute_image_hash: false,
+            image_hash_type: ImageHashType::default(),
         }
     } else if requested_tags.is_empty()
         && requested_groups.is_empty()
@@ -111,6 +114,8 @@ fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
             extract_all: true,
             numeric_tags,
             glob_patterns: Vec::new(),
+            compute_image_hash: false,
+            image_hash_type: ImageHashType::default(),
         }
     } else {
         // Specific filters requested
@@ -121,6 +126,8 @@ fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
             extract_all: false,
             numeric_tags,
             glob_patterns,
+            compute_image_hash: false,
+            image_hash_type: ImageHashType::default(),
         }
     };
 
@@ -306,6 +313,8 @@ fn process_files(
                         extract_all: true,
                         numeric_tags: std::collections::HashSet::new(),
                         glob_patterns: Vec::new(),
+                        compute_image_hash: false,
+                        image_hash_type: ImageHashType::default(),
                     };
                     match process_single_file(path, show_missing, show_warnings, &no_filters) {
                         Ok(full_metadata) => {

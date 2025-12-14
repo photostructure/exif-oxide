@@ -105,7 +105,7 @@ pub fn process_canon_makernotes(
         "Processing Canon MakerNotes as standard IFD at offset {:#x}",
         dir_start
     );
-    exif_reader.parse_ifd(dir_start, "Canon")?;
+    let _ = exif_reader.parse_ifd(dir_start, "Canon")?;
 
     // Apply Canon-specific PrintConv processing to main Canon table tags
     // ExifTool: Canon.pm Main table PrintConv entries need manual application

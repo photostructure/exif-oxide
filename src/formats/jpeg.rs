@@ -4,6 +4,7 @@
 //! following ExifTool's JPEG.pm implementation for segment parsing
 //! and EXIF data extraction.
 
+use crate::hash::ImageDataHasher;
 use crate::types::{ExifError, Result};
 use std::collections::{BTreeMap, HashMap};
 use std::io::{Read, Seek, SeekFrom};
@@ -838,6 +839,199 @@ pub fn extract_jpeg_iptc<R: Read + Seek>(
     }
 }
 
+/// Hash JPEG image data (scan data from SOS to EOI)
+///
+/// ExifTool Reference: lib/Image/ExifTool.pm:7217-7406
+///
+/// JPEG image data hashing includes:
+/// - SOS (Start of Scan) marker 0xFF 0xDA and its segment data
+/// - RST (Restart) markers 0xFF 0xD0-0xD7 within scan data
+/// - Stuffed bytes 0xFF 0x00 (representing literal 0xFF in image data)
+/// - All entropy-coded image data
+///
+/// Hashing stops at EOI (0xFF 0xD9).
+///
+/// The hash includes the marker bytes themselves (0xFF + marker type).
+pub fn hash_jpeg_scan_data<R: Read + Seek>(
+    reader: &mut R,
+    hasher: &mut ImageDataHasher,
+) -> Result<u64> {
+    // Verify JPEG magic bytes and scan to SOS
+    reader.seek(SeekFrom::Start(0))?;
+    let mut magic = [0u8; 2];
+    reader.read_exact(&mut magic)?;
+    if magic != [0xFF, 0xD8] {
+        return Err(ExifError::InvalidFormat(
+            "Not a valid JPEG file (missing 0xFFD8 magic bytes)".to_string(),
+        ));
+    }
+
+    // Scan through segments to find SOS
+    loop {
+        let mut marker_bytes = [0u8; 2];
+        if reader.read_exact(&mut marker_bytes).is_err() {
+            return Ok(0); // EOF before SOS
+        }
+
+        if marker_bytes[0] != 0xFF {
+            return Err(ExifError::ParseError(
+                "Invalid JPEG segment marker".to_string(),
+            ));
+        }
+
+        let marker = marker_bytes[1];
+
+        match marker {
+            0xD8 => continue,     // SOI - skip
+            0xD9 => return Ok(0), // EOI before SOS - no image data
+            0xDA => {
+                // SOS found - start hashing
+                // ExifTool: lib/Image/ExifTool.pm:7359-7364
+                // Hash the SOS marker
+                hasher.update(&[0xFF, 0xDA]);
+
+                // Read SOS segment length
+                let mut length_bytes = [0u8; 2];
+                reader.read_exact(&mut length_bytes)?;
+                let length = u16::from_be_bytes(length_bytes) as usize;
+
+                // Hash the length bytes as part of SOS
+                hasher.update(&length_bytes);
+
+                // Read and hash SOS segment data (headers before entropy data)
+                if length > 2 {
+                    let mut sos_header = vec![0u8; length - 2];
+                    reader.read_exact(&mut sos_header)?;
+                    hasher.update(&sos_header);
+                }
+
+                // Now hash entropy-coded data until EOI
+                // ExifTool: lib/Image/ExifTool.pm:7363-7406
+                break;
+            }
+            0x00 | 0xD0..=0xD7 | 0x01 => {
+                // Markers without length (standalone markers)
+                // RST0-RST7, TEM - these shouldn't appear before SOS
+                continue;
+            }
+            _ => {
+                // Regular segment with length - skip it
+                let mut length_bytes = [0u8; 2];
+                reader.read_exact(&mut length_bytes)?;
+                let length = u16::from_be_bytes(length_bytes);
+                let skip = length.saturating_sub(2) as i64;
+                reader.seek(SeekFrom::Current(skip))?;
+            }
+        }
+    }
+
+    // Now read entropy-coded data until EOI
+    // JPEG entropy data uses byte stuffing: 0xFF is followed by 0x00 for literal 0xFF
+    // Real markers are 0xFF followed by non-zero marker type
+    //
+    // ExifTool hashes:
+    // - 0xFF 0x00 (stuffed bytes) - includes the 0xFF00 in hash
+    // - 0xFF 0xD0-0xD7 (RST markers) - includes marker in hash
+    // - Regular data bytes
+    //
+    // ExifTool: lib/Image/ExifTool.pm:7366-7406
+    let mut bytes_hashed = 4u64; // Already hashed 0xFF 0xDA + length (2 bytes)
+
+    // Read in chunks for efficiency, but process byte-by-byte for marker detection
+    const CHUNK_SIZE: usize = 65536;
+    let mut buffer = vec![0u8; CHUNK_SIZE];
+    let mut pending_ff = false;
+
+    loop {
+        let bytes_read = reader.read(&mut buffer)?;
+        if bytes_read == 0 {
+            break; // EOF
+        }
+
+        let mut i = 0;
+        while i < bytes_read {
+            let byte = buffer[i];
+
+            if pending_ff {
+                pending_ff = false;
+
+                match byte {
+                    0x00 => {
+                        // Stuffed byte - hash 0xFF 0x00
+                        // ExifTool: lib/Image/ExifTool.pm:7366 - $marker == 0x00
+                        hasher.update(&[0xFF, 0x00]);
+                        bytes_hashed += 2;
+                    }
+                    0xD0..=0xD7 => {
+                        // RST marker - hash 0xFF + marker
+                        // ExifTool: lib/Image/ExifTool.pm:7367 - $marker >= 0xd0 and $marker <= 0xd7
+                        hasher.update(&[0xFF, byte]);
+                        bytes_hashed += 2;
+                    }
+                    0xD9 => {
+                        // EOI - end of image data
+                        // Don't hash EOI marker (ExifTool doesn't include it)
+                        return Ok(bytes_hashed);
+                    }
+                    0xDA => {
+                        // Another SOS (shouldn't happen in valid JPEG but handle it)
+                        // ExifTool: lib/Image/ExifTool.pm:7364 - $marker == 0xda
+                        hasher.update(&[0xFF, 0xDA]);
+                        bytes_hashed += 2;
+
+                        // Read and hash the SOS segment
+                        let mut length_bytes = [0u8; 2];
+                        // Need to read from buffer or refill
+                        if i + 2 < bytes_read {
+                            length_bytes[0] = buffer[i + 1];
+                            length_bytes[1] = buffer[i + 2];
+                            i += 2;
+                        } else {
+                            // Need to read more data
+                            reader.read_exact(&mut length_bytes)?;
+                        }
+                        hasher.update(&length_bytes);
+                        bytes_hashed += 2;
+
+                        let length = u16::from_be_bytes(length_bytes) as usize;
+                        if length > 2 {
+                            let mut sos_data = vec![0u8; length - 2];
+                            reader.read_exact(&mut sos_data)?;
+                            hasher.update(&sos_data);
+                            bytes_hashed += (length - 2) as u64;
+                        }
+                    }
+                    0xFF => {
+                        // 0xFF 0xFF - keep pending
+                        pending_ff = true;
+                    }
+                    _ => {
+                        // Other marker in scan data - unusual but skip
+                        // ExifTool skips these
+                        tracing::debug!("Unexpected marker 0x{:02X} in JPEG scan data", byte);
+                    }
+                }
+            } else if byte == 0xFF {
+                pending_ff = true;
+            } else {
+                // Regular data byte - hash it
+                hasher.update(&[byte]);
+                bytes_hashed += 1;
+            }
+
+            i += 1;
+        }
+    }
+
+    // Handle trailing 0xFF at EOF (shouldn't happen in valid JPEG)
+    if pending_ff {
+        hasher.update(&[0xFF]);
+        bytes_hashed += 1;
+    }
+
+    Ok(bytes_hashed)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1015,5 +1209,119 @@ mod tests {
 
         let xmp_data = result.unwrap();
         assert_eq!(xmp_data, xmp_packet);
+    }
+
+    #[test]
+    fn test_hash_jpeg_scan_data_minimal() {
+        use crate::hash::{ImageDataHasher, ImageHashType};
+
+        // Minimal JPEG with SOS and scan data
+        // Structure: SOI + SOS segment + scan data + EOI
+        let jpeg_data = vec![
+            0xFF, 0xD8, // SOI
+            0xFF, 0xDA, // SOS marker
+            0x00, 0x08, // SOS length (8 bytes)
+            0x01, 0x00, 0x00, 0x3F, 0x00, 0x00, // SOS header data (6 bytes after length)
+            // Scan data - some bytes that need no byte stuffing
+            0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC,
+            0xFF, 0xD9, // EOI
+        ];
+
+        let mut cursor = Cursor::new(&jpeg_data);
+        let mut hasher = ImageDataHasher::new(ImageHashType::Md5);
+
+        let bytes_hashed = hash_jpeg_scan_data(&mut cursor, &mut hasher).unwrap();
+        // SOS marker (2) + length (2) + header (6) + scan data (6) = 16 bytes
+        assert!(bytes_hashed > 0);
+
+        let hash = hasher.finalize().unwrap();
+        assert_eq!(hash.len(), 32); // MD5 = 32 hex chars
+    }
+
+    #[test]
+    fn test_hash_jpeg_scan_data_with_stuffed_bytes() {
+        use crate::hash::{ImageDataHasher, ImageHashType};
+
+        // JPEG with 0xFF in scan data (requires byte stuffing)
+        let jpeg_data = vec![
+            0xFF, 0xD8, // SOI
+            0xFF, 0xDA, // SOS marker
+            0x00, 0x04, // SOS length (4 bytes = 2 + 2 header bytes)
+            0x01, 0x00, // SOS header data (2 bytes)
+            // Scan data with stuffed byte (0xFF followed by 0x00)
+            0x12, 0xFF, 0x00, 0x34, // 0xFF 0x00 = literal 0xFF in data
+            0xFF, 0xD9, // EOI
+        ];
+
+        let mut cursor = Cursor::new(&jpeg_data);
+        let mut hasher = ImageDataHasher::new(ImageHashType::Md5);
+
+        let bytes_hashed = hash_jpeg_scan_data(&mut cursor, &mut hasher).unwrap();
+        assert!(bytes_hashed > 0);
+    }
+
+    #[test]
+    fn test_hash_jpeg_scan_data_with_rst_marker() {
+        use crate::hash::{ImageDataHasher, ImageHashType};
+
+        // JPEG with RST marker in scan data
+        let jpeg_data = vec![
+            0xFF, 0xD8, // SOI
+            0xFF, 0xDA, // SOS marker
+            0x00, 0x04, // SOS length
+            0x01, 0x00, // SOS header
+            // Scan data with RST0 marker
+            0x12, 0xFF, 0xD0, 0x34, // RST0 marker
+            0xFF, 0xD9, // EOI
+        ];
+
+        let mut cursor = Cursor::new(&jpeg_data);
+        let mut hasher = ImageDataHasher::new(ImageHashType::Md5);
+
+        let bytes_hashed = hash_jpeg_scan_data(&mut cursor, &mut hasher).unwrap();
+        assert!(bytes_hashed > 0);
+    }
+
+    #[test]
+    fn test_hash_jpeg_scan_data_no_sos() {
+        use crate::hash::{ImageDataHasher, ImageHashType};
+
+        // JPEG without SOS (just SOI + EOI)
+        let jpeg_data = vec![
+            0xFF, 0xD8, // SOI
+            0xFF, 0xD9, // EOI
+        ];
+
+        let mut cursor = Cursor::new(&jpeg_data);
+        let mut hasher = ImageDataHasher::new(ImageHashType::Md5);
+
+        let bytes_hashed = hash_jpeg_scan_data(&mut cursor, &mut hasher).unwrap();
+        assert_eq!(bytes_hashed, 0); // No scan data to hash
+    }
+
+    #[test]
+    fn test_hash_jpeg_scan_data_with_app_segment() {
+        use crate::hash::{ImageDataHasher, ImageHashType};
+
+        // JPEG with APP1 segment before SOS (common case)
+        let jpeg_data = vec![
+            0xFF, 0xD8, // SOI
+            0xFF, 0xE1, // APP1 marker
+            0x00, 0x06, // APP1 length (6 bytes = 2 + 4 data)
+            0x45, 0x78, 0x69, 0x66, // "Exif" (just header, no full EXIF)
+            0xFF, 0xDA, // SOS marker
+            0x00, 0x04, // SOS length
+            0x01, 0x00, // SOS header
+            // Scan data
+            0xAB, 0xCD, 0xEF,
+            0xFF, 0xD9, // EOI
+        ];
+
+        let mut cursor = Cursor::new(&jpeg_data);
+        let mut hasher = ImageDataHasher::new(ImageHashType::Md5);
+
+        let bytes_hashed = hash_jpeg_scan_data(&mut cursor, &mut hasher).unwrap();
+        // Should skip APP1 and only hash SOS + scan data
+        assert!(bytes_hashed > 0);
     }
 }

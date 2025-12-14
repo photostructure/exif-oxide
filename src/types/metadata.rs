@@ -3,6 +3,7 @@
 //! This module defines the core metadata structures including TagEntry,
 //! ExifData, and TagSourceInfo that represent extracted EXIF information.
 
+use crate::hash::ImageHashType;
 use crate::types::TagValue;
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
@@ -21,26 +22,19 @@ use std::collections::{HashMap, HashSet};
 /// use std::collections::HashSet;
 ///
 /// // Extract only MIMEType tag (performance optimized - no EXIF parsing needed)
-/// let mime_only = FilterOptions {
-///     requested_tags: vec!["MIMEType".to_string()],
-///     requested_groups: vec![],
-///     group_all_patterns: vec![],
-///     extract_all: false,
-///     numeric_tags: HashSet::new(),
-///     glob_patterns: vec![],
-/// };
+/// let mime_only = FilterOptions::tags_only(vec!["MIMEType".to_string()]);
 ///
 /// // Extract all EXIF group tags with some numeric values
 /// let mut numeric_tags = HashSet::new();
 /// numeric_tags.insert("Orientation".to_string());
-/// let exif_with_numeric = FilterOptions {
-///     requested_tags: vec![],
-///     requested_groups: vec![],
-///     group_all_patterns: vec!["EXIF:all".to_string()],
-///     extract_all: false,
-///     numeric_tags,
-///     glob_patterns: vec![],
-/// };
+/// let mut exif_with_numeric = FilterOptions::default();
+/// exif_with_numeric.group_all_patterns = vec!["EXIF:all".to_string()];
+/// exif_with_numeric.extract_all = false;
+/// exif_with_numeric.numeric_tags = numeric_tags;
+///
+/// // Compute ImageDataHash with SHA256
+/// use exif_oxide::hash::ImageHashType;
+/// let hash_only = FilterOptions::image_hash_only(ImageHashType::Sha256);
 /// ```
 #[derive(Debug, Clone, PartialEq)]
 pub struct FilterOptions {
@@ -68,6 +62,24 @@ pub struct FilterOptions {
     /// Examples: ["GPS*", "*tude", "*Date*", "Canon*"]
     /// Supports prefix (*), suffix (*), and middle (*) wildcards
     pub glob_patterns: Vec<String>,
+
+    /// Compute ImageDataHash during file processing
+    ///
+    /// When enabled, computes a cryptographic hash of the actual image data
+    /// (excluding metadata) and outputs it as `Composite:ImageDataHash`.
+    ///
+    /// ExifTool equivalent: `-api requesttags=imagedatahash`
+    ///
+    /// This option triggers hash computation during file parsing - the hash
+    /// accumulates as image data is encountered (SOS for JPEG, IDAT for PNG, etc.).
+    pub compute_image_hash: bool,
+
+    /// Hash algorithm for ImageDataHash computation
+    ///
+    /// ExifTool equivalent: `-api imagehashtype=MD5|SHA256|SHA512`
+    ///
+    /// Default: MD5 (matches ExifTool default)
+    pub image_hash_type: ImageHashType,
 }
 
 impl Default for FilterOptions {
@@ -79,6 +91,8 @@ impl Default for FilterOptions {
             extract_all: true, // Default to extracting all tags for backward compatibility
             numeric_tags: HashSet::new(),
             glob_patterns: Vec::new(),
+            compute_image_hash: false, // Only compute when explicitly requested
+            image_hash_type: ImageHashType::default(), // MD5, matching ExifTool default
         }
     }
 }
@@ -98,6 +112,8 @@ impl FilterOptions {
             extract_all: false,
             numeric_tags: HashSet::new(),
             glob_patterns: Vec::new(),
+            compute_image_hash: false,
+            image_hash_type: ImageHashType::default(),
         }
     }
 
@@ -110,6 +126,22 @@ impl FilterOptions {
             extract_all: false,
             numeric_tags: HashSet::new(),
             glob_patterns: Vec::new(),
+            compute_image_hash: false,
+            image_hash_type: ImageHashType::default(),
+        }
+    }
+
+    /// Create FilterOptions that only computes ImageDataHash
+    pub fn image_hash_only(hash_type: ImageHashType) -> Self {
+        Self {
+            requested_tags: Vec::new(),
+            requested_groups: Vec::new(),
+            group_all_patterns: Vec::new(),
+            extract_all: false,
+            numeric_tags: HashSet::new(),
+            glob_patterns: Vec::new(),
+            compute_image_hash: true,
+            image_hash_type: hash_type,
         }
     }
 
@@ -746,6 +778,8 @@ mod tests {
             extract_all: false,
             numeric_tags: HashSet::new(),
             glob_patterns: vec!["GPS*".to_string()],
+            compute_image_hash: false,
+            image_hash_type: ImageHashType::default(),
         };
 
         // Should match GPS tags
@@ -771,6 +805,8 @@ mod tests {
             extract_all: false,
             numeric_tags: HashSet::new(),
             glob_patterns: vec!["GPS*".to_string()],
+            compute_image_hash: false,
+            image_hash_type: ImageHashType::default(),
         };
         assert!(!gps_filter.is_file_group_only());
 
@@ -782,6 +818,8 @@ mod tests {
             extract_all: false,
             numeric_tags: HashSet::new(),
             glob_patterns: vec!["File*".to_string()],
+            compute_image_hash: false,
+            image_hash_type: ImageHashType::default(),
         };
         assert!(file_filter.is_file_group_only());
 
@@ -793,6 +831,8 @@ mod tests {
             extract_all: false,
             numeric_tags: HashSet::new(),
             glob_patterns: vec!["MIMEType*".to_string()],
+            compute_image_hash: false,
+            image_hash_type: ImageHashType::default(),
         };
         assert!(mime_filter.is_file_group_only());
     }

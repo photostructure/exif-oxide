@@ -71,6 +71,11 @@ indexmap = { version = "2.12", features = [
     "serde",
 ] } # Preserves insertion order for tag output
 
+# Cryptographic hashing for ImageDataHash support (ExifTool -api requesttags=imagedatahash)
+md-5 = "0.10"    # MD5 hashing (default algorithm, matches ExifTool default)
+sha2 = "0.10"    # SHA256/SHA512 support (optional algorithms)
+digest = "0.10"  # Common trait for hash algorithms
+
 [dev-dependencies]
 criterion = "0.8" # Benchmarking
 pretty_assertions = "1.4" # Better test assertions

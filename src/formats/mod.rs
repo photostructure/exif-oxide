@@ -18,8 +18,8 @@ pub use detection::{
 pub use gif::{create_gif_tag_entries, parse_gif_screen_descriptor, ScreenDescriptor};
 pub use iptc::{parse_iptc_from_app13, parse_iptc_metadata};
 pub use jpeg::{
-    extract_jpeg_exif, extract_jpeg_iptc, extract_jpeg_xmp, scan_jpeg_segments, JpegSegment,
-    JpegSegmentInfo, SofData,
+    extract_jpeg_exif, extract_jpeg_iptc, extract_jpeg_xmp, hash_jpeg_scan_data,
+    scan_jpeg_segments, JpegSegment, JpegSegmentInfo, SofData,
 };
 pub use tiff::{extract_tiff_exif, extract_tiff_xmp, get_tiff_endianness, validate_tiff_format};
 
@@ -80,7 +80,9 @@ pub fn extract_metadata(
             "Creating ImageDataHasher with algorithm {:?}",
             filter_opts.image_hash_type
         );
-        Some(crate::hash::ImageDataHasher::new(filter_opts.image_hash_type))
+        Some(crate::hash::ImageDataHasher::new(
+            filter_opts.image_hash_type,
+        ))
     } else {
         None
     };
@@ -640,6 +642,20 @@ pub fn extract_metadata(
                             "Warning:XmpScanError".to_string(),
                             TagValue::string(format!("Error scanning for XMP: {e}")),
                         );
+                    }
+                }
+
+                // Hash JPEG image data if requested
+                // ExifTool: lib/Image/ExifTool.pm:7217-7406 - JPEG scan data hashing
+                if let Some(ref mut hasher) = image_data_hasher {
+                    reader.seek(SeekFrom::Start(0))?;
+                    match hash_jpeg_scan_data(&mut reader, hasher) {
+                        Ok(bytes_hashed) => {
+                            debug!("JPEG: Hashed {} bytes of scan data", bytes_hashed);
+                        }
+                        Err(e) => {
+                            debug!("JPEG: Failed to hash scan data: {}", e);
+                        }
                     }
                 }
             }
@@ -1300,6 +1316,33 @@ pub fn extract_metadata(
     // Apply XMP/EXIF precedence rules following ExifTool's Priority system
     // This must happen after all tag extraction but before filtering
     all_tag_entries = apply_exiftool_precedence_rules(all_tag_entries);
+
+    // Finalize ImageDataHash if computed
+    // ExifTool: lib/Image/ExifTool.pm:4378-4386 - DoneExtract() finalizes hash
+    if let Some(hasher) = image_data_hasher.take() {
+        let bytes_hashed = hasher.bytes_hashed();
+        let hash_type = hasher.hash_type();
+        if let Some(hash_value) = hasher.finalize() {
+            debug!(
+                "ImageDataHash finalized: {} ({} bytes of image data, algorithm {:?})",
+                hash_value, bytes_hashed, hash_type
+            );
+            // Add ImageDataHash tag to File group
+            // ExifTool: ExifTool.pm:4382 - $self->FoundTag(ImageDataHash => $digest)
+            all_tag_entries.push(TagEntry {
+                group: "File".to_string(),
+                group1: "File".to_string(),
+                name: "ImageDataHash".to_string(),
+                value: TagValue::String(hash_value.clone()),
+                print: TagValue::String(hash_value),
+            });
+        } else {
+            debug!(
+                "ImageDataHash suppressed: empty hash (no image data found, {} bytes checked)",
+                bytes_hashed
+            );
+        }
+    }
 
     // P12: CENTRAL FILTERING CHOKEPOINT - Apply ExifTool-style filtering
     // Matches ExifTool's FoundTag architecture: all tags go through single filtering point

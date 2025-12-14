@@ -3,6 +3,7 @@
 //! This module provides functions to parse and apply ExifTool-style tag filters
 //! like `-EXIF:all`, `-Orientation#`, `-GPS*`, etc.
 
+use crate::hash::ImageHashType;
 use crate::types::FilterOptions;
 use serde_json::Value;
 use std::collections::{HashMap, HashSet};
@@ -85,6 +86,8 @@ pub fn parse_exiftool_filters(args: &[&str]) -> FilterOptions {
             extract_all: true,
             numeric_tags,
             glob_patterns: Vec::new(),
+            compute_image_hash: false,
+            image_hash_type: ImageHashType::default(),
         }
     } else if requested_tags.is_empty()
         && requested_groups.is_empty()
@@ -99,6 +102,8 @@ pub fn parse_exiftool_filters(args: &[&str]) -> FilterOptions {
             extract_all: true,
             numeric_tags,
             glob_patterns: Vec::new(),
+            compute_image_hash: false,
+            image_hash_type: ImageHashType::default(),
         }
     } else {
         // Specific filters requested
@@ -109,6 +114,8 @@ pub fn parse_exiftool_filters(args: &[&str]) -> FilterOptions {
             extract_all: false,
             numeric_tags,
             glob_patterns,
+            compute_image_hash: false,
+            image_hash_type: ImageHashType::default(),
         }
     }
 }
