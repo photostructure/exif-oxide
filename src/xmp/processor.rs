@@ -429,13 +429,70 @@ impl XmpProcessor {
                     }
                 }
                 Ok((_, Event::End(_))) => {
+                    // Check if element has rdf:resource value but no text content
+                    // Following ExifTool XMP.pm:4136-4143: use rdf:resource as value for empty elements
+                    if let Some(current) = element_stack.last() {
+                        if !current.has_text_content {
+                            if let Some(ref resource_value) = current.rdf_resource {
+                                // Emit the resource value as if it were text content
+                                self.process_rdf_resource_value(
+                                    resource_value.clone(),
+                                    &element_stack,
+                                    &mut namespace_objects,
+                                );
+                            }
+                        }
+                    }
+                    if !element_stack.is_empty() {
+                        element_stack.pop();
+                    }
+                }
+                // Handle self-closing elements like <cc:license rdf:resource="..."/>
+                // These generate Event::Empty instead of Start+End
+                Ok((ns_result, Event::Empty(e))) => {
+                    let element_local_name = e.local_name();
+                    let local_name = std::str::from_utf8(element_local_name.as_ref())
+                        .context("Invalid UTF-8 in element name")?;
+
+                    // Extract namespace URI from resolved result
+                    let namespace_uri = match ns_result {
+                        ResolveResult::Bound(Namespace(ns_bytes)) => Some(
+                            std::str::from_utf8(ns_bytes)
+                                .context("Invalid UTF-8 in namespace URI")?
+                                .to_string(),
+                        ),
+                        _ => None,
+                    };
+
+                    // Process start element to push context
+                    self.process_start_element(
+                        &e,
+                        local_name,
+                        namespace_uri.as_deref(),
+                        &reader,
+                        &mut element_stack,
+                        &mut namespace_objects,
+                    )?;
+
+                    // For empty elements, immediately check for rdf:resource and emit value
+                    if let Some(current) = element_stack.last() {
+                        if let Some(ref resource_value) = current.rdf_resource {
+                            self.process_rdf_resource_value(
+                                resource_value.clone(),
+                                &element_stack,
+                                &mut namespace_objects,
+                            );
+                        }
+                    }
+
+                    // Pop the element (it's self-closing)
                     if !element_stack.is_empty() {
                         element_stack.pop();
                     }
                 }
                 Ok((_, Event::Eof)) => break,
                 Err(e) => return Err(anyhow::anyhow!("XML parsing error: {}", e)),
-                _ => {} // Ignore other events
+                _ => {} // Ignore other events (comments, PI, etc.)
             }
             buf.clear();
         }
@@ -482,17 +539,37 @@ impl XmpProcessor {
             _ => None,
         };
 
-        // Extract attributes, especially xml:lang for Alt containers
+        // Extract attributes: xml:lang and RDF resource attributes
+        // Following ExifTool XMP.pm:4136-4143 priority order for resource attributes:
+        // 1. rdf:value (highest priority)
+        // 2. rdf:resource
+        // 3. rdf:about (fallback)
         let mut lang_attr = None;
+        let mut rdf_value = None;
+        let mut rdf_resource = None;
+        let mut rdf_about = None;
+
         for attr in element.attributes() {
             let attr = attr?;
+            let key = std::str::from_utf8(attr.key.as_ref())?;
             let (_, attr_local) = reader.resolve_attribute(attr.key);
             let attr_name = std::str::from_utf8(attr_local.as_ref())?;
 
             if attr_name == "lang" {
                 lang_attr = Some(std::str::from_utf8(&attr.value)?.to_string());
             }
+            // Check for RDF resource attributes by full qualified name
+            else if key == "rdf:value" {
+                rdf_value = Some(std::str::from_utf8(&attr.value)?.to_string());
+            } else if key == "rdf:resource" {
+                rdf_resource = Some(std::str::from_utf8(&attr.value)?.to_string());
+            } else if key == "rdf:about" {
+                rdf_about = Some(std::str::from_utf8(&attr.value)?.to_string());
+            }
         }
+
+        // Apply priority order: rdf:value > rdf:resource > rdf:about
+        let rdf_resource_value = rdf_value.or(rdf_resource).or(rdf_about);
 
         // Determine namespace prefix from resolved URI
         let property_ns = if let Some(uri) = namespace_uri {
@@ -507,6 +584,8 @@ impl XmpProcessor {
             namespace_prefix: property_ns,
             container_type,
             language: lang_attr,
+            rdf_resource: rdf_resource_value,
+            has_text_content: false,
             is_rdf_li: local_name == "li",
         };
 
@@ -587,7 +666,78 @@ impl XmpProcessor {
             ns_object.insert(tag_name, TagValue::string(text));
         }
 
+        // Mark this element as having received text content
+        if let Some(current) = element_stack.last_mut() {
+            current.has_text_content = true;
+        }
+
         Ok(())
+    }
+
+    /// Process RDF resource value for empty elements
+    ///
+    /// Following ExifTool XMP.pm:4136-4143: when element value is empty,
+    /// use rdf:resource (or rdf:value, rdf:about) attribute as the value.
+    fn process_rdf_resource_value(
+        &self,
+        resource_value: String,
+        element_stack: &[ElementContext],
+        namespace_objects: &mut HashMap<String, HashMap<String, TagValue>>,
+    ) {
+        if element_stack.len() < 2 {
+            return; // Not enough context
+        }
+
+        // Build flattened tag ID from the full element stack
+        let Some((flattened_id, root_ns)) = Self::build_flattened_tag_id(element_stack) else {
+            return; // No valid property path
+        };
+
+        // Look up the flattened ID in generated tables to get canonical tag name
+        let tag_name = super::xmp_lookup::lookup_xmp_tag(&root_ns, &flattened_id)
+            .map(|info| info.name.to_string())
+            .unwrap_or_else(|| Self::ucfirst(&flattened_id));
+
+        // Find container element for array/alt handling
+        let container_element = element_stack
+            .iter()
+            .rev()
+            .find(|e| e.container_type.is_some());
+
+        // Get or create namespace object
+        let ns_object = namespace_objects.entry(root_ns).or_default();
+
+        // Handle based on container type (same logic as process_text_content)
+        if let Some(container) = container_element {
+            match container.container_type {
+                Some(RdfContainerType::Bag) | Some(RdfContainerType::Seq) => {
+                    // Add to array
+                    let array = ns_object
+                        .entry(tag_name)
+                        .or_insert_with(|| TagValue::Array(Vec::new()));
+
+                    if let Some(arr) = array.as_array_mut() {
+                        arr.push(TagValue::string(resource_value));
+                    }
+                }
+                Some(RdfContainerType::Alt) => {
+                    // Add to language alternatives object
+                    let alt_object = ns_object
+                        .entry(tag_name)
+                        .or_insert_with(|| TagValue::Object(HashMap::new()));
+
+                    if let Some(obj) = alt_object.as_object_mut() {
+                        let current = &element_stack[element_stack.len() - 1];
+                        let lang_key = current.language.as_deref().unwrap_or("x-default");
+                        obj.insert(lang_key.to_string(), TagValue::string(resource_value));
+                    }
+                }
+                None => {}
+            }
+        } else {
+            // Simple property without container
+            ns_object.insert(tag_name, TagValue::string(resource_value));
+        }
     }
 
     /// Get namespace prefix from URI
@@ -707,6 +857,11 @@ struct ElementContext {
     namespace_prefix: Option<String>,
     container_type: Option<RdfContainerType>,
     language: Option<String>,
+    /// RDF resource URI from rdf:resource, rdf:value, or rdf:about attribute
+    /// Following ExifTool XMP.pm:4136-4143 priority order
+    rdf_resource: Option<String>,
+    /// Track whether this element has received text content
+    has_text_content: bool,
     /// TODO: Used for RDF list item context tracking in future implementation
     #[allow(dead_code)]
     is_rdf_li: bool,
@@ -1041,6 +1196,58 @@ mod tests {
                     assert_eq!(titles.get("en-US").unwrap().as_string(), Some("Test Photo"));
                 }
             }
+        }
+    }
+
+    #[test]
+    fn test_rdf_resource_extraction() {
+        // Test extraction of rdf:resource attribute values
+        // Following ExifTool XMP.pm:4136-4143
+        let xmp_data = r#"<?xml version="1.0"?>
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+           xmlns:cc="http://creativecommons.org/ns#">
+    <rdf:Description>
+      <cc:license rdf:resource="https://creativecommons.org/licenses/by/4.0/"/>
+    </rdf:Description>
+  </rdf:RDF>
+</x:xmpmeta>"#;
+
+        let mut processor = XmpProcessor::new();
+        let result = processor.process_xmp_data(xmp_data.as_bytes()).unwrap();
+
+        if let TagValue::Object(xmp) = &result.value {
+            eprintln!(
+                "RDF resource test - XMP keys: {:?}",
+                xmp.keys().collect::<Vec<_>>()
+            );
+            for (key, value) in xmp {
+                eprintln!("  {key}: {value:?}");
+            }
+
+            // Check that cc namespace was extracted
+            if let Some(TagValue::Object(cc)) = xmp.get("cc") {
+                eprintln!("  cc namespace keys: {:?}", cc.keys().collect::<Vec<_>>());
+                // The rdf:resource value should be extracted
+                // Note: Key is "License" (ucfirst applied by tag name mapping)
+                let license = cc.get("License");
+                eprintln!("  cc:License = {:?}", license);
+                assert!(
+                    license.is_some(),
+                    "Expected cc:License to be extracted from rdf:resource"
+                );
+                assert_eq!(
+                    license.unwrap().as_string(),
+                    Some("https://creativecommons.org/licenses/by/4.0/")
+                );
+            } else {
+                panic!(
+                    "Expected 'cc' namespace in XMP structure, got: {:?}",
+                    xmp.keys().collect::<Vec<_>>()
+                );
+            }
+        } else {
+            panic!("Expected Object, got {:?}", result.value);
         }
     }
 }
