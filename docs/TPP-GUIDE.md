@@ -21,6 +21,110 @@ Before writing any TPP, YOU MUST READ AND INCORPORATE THE TEACHINGS OF THESE DOC
 
 These documents ARE NOT OPTIONAL! They are pivotal to success.
 
+## Directory Convention
+
+- **`_todo/`** - Active TPPs. Name files with date prefix: `20260208-feature-name.md`
+- **`_done/`** - Completed TPPs for reference. Move here when all tasks are verified.
+- **`_paused/`** - Deferred work: a dated rationale note (not a full TPP) explaining why the work is parked and what would unblock it. See `_paused/WRITE-SUPPORT.md`.
+
+**Critical constraint**: Keep TPPs under 400 lines. The ReadTool truncates around 500 lines, so longer TPPs risk silent loss of content. Split large efforts into sub-TPPs (e.g., `P03a`, `P03b`).
+
+## Skills
+
+- **`/tpp [path]`** - Start or continue work on a TPP. Reads the plan, identifies the current phase, and executes work.
+- **`/handoff [path]`** - Update the TPP before context fills. Run this at 80-90% context usage so the next session has everything it needs.
+
+## Phase Workflow
+
+TPPs progress through these phases. Track the current phase with a checkbox list at the top of the TPP:
+
+```markdown
+## Current phase
+- [x] Research & Planning
+- [x] Write breaking tests
+- [ ] Design alternatives
+- [ ] Task breakdown
+- [ ] Implementation
+- [ ] Review & Refinement
+- [ ] Final Integration
+```
+
+### Research & Planning
+Read docs, explore code, study ExifTool source. Update the TPP with findings.
+
+### Write Breaking Tests
+Create failing tests that prove the bug or gap exists (per [TDD.md](./TDD.md)). Validate they fail for the right reason.
+
+### Design Alternatives
+Generate at least two approaches with pros/cons. Check existing patterns. Recommend one.
+
+### Task Breakdown
+Create specific tasks with clear deliverables, file paths, and verification commands.
+
+### Implementation
+Work through tasks in order. After each: run tests, update the TPP. Follow Trust ExifTool.
+
+### Review & Refinement
+Run clippy, check test coverage, look for DRY opportunities. Verify tasks are genuinely complete.
+
+### Final Integration
+Run `cargo t` for full test suite. Verify no regressions. Move TPP to `_done/` if everything passes.
+
+## Context Management
+
+LLM sessions have finite context. Don't wait until context is exhausted:
+
+1. **Run `/handoff` at 80-90% context usage** - preserve session knowledge
+2. **Each session trims redundancy** while keeping everything the next session needs
+3. **New sessions run `/tpp`** to pick up where the last session left off
+
+## TPP Template
+
+```markdown
+# TPP: Feature name
+
+## Summary
+Short description (under 10 lines)
+
+## Current phase
+- [ ] Research & Planning
+- [ ] Write breaking tests
+- [ ] Design alternatives
+- [ ] Task breakdown
+- [ ] Implementation
+- [ ] Review & Refinement
+- [ ] Final Integration
+
+## Required reading
+- [TRUST-EXIFTOOL.md](docs/TRUST-EXIFTOOL.md)
+- [TDD.md](docs/TDD.md)
+- Files and docs specific to this feature
+
+## Description
+Detailed context (under 20 lines)
+
+## Tribal knowledge
+- Non-obvious details saving time
+- Prior gotchas from previous sessions
+- Relevant functions, classes, historical context
+
+## Solutions
+
+### Option A (preferred)
+Description with pros/cons and code snippets
+
+### Option B (alternative)
+Why considered and why Option A is better
+
+## Tasks
+- [ ] Task 1: Clear deliverable, files, verification
+- [ ] Task 2: ...
+
+## Files referenced
+- ExifTool sources with file:line
+- exif-oxide sources with status
+```
+
 ## TPP Structure: Three Essential Parts
 
 ### Part 1: Define Success (5 minutes)
@@ -134,17 +238,17 @@ Each task needs:
 
 ## Common Anti-Patterns to Avoid
 
-### ❌ The "It Works" Trap
-
+### The "It Works" Trap
 Saying "I tested it and it works" without providing the exact test command.
 
-### ❌ Shelf-ware Code
-
+### Shelf-ware Code
 Beautiful implementation that nothing actually calls in production.
 
-### ❌ The 95% Done Delusion
-
+### The 95% Done Delusion
 "Just needs cleanup" usually means 50% more work remains.
+
+### The 800-Line TPP
+TPPs over 400 lines get silently truncated by the ReadTool. Split into sub-TPPs.
 
 ## Quality Checklist
 
@@ -157,6 +261,7 @@ Before marking your TPP complete:
 - [ ] Explained how to adapt if architecture changed
 - [ ] **Bug fixes start with failing test** ([TDD.md](TDD.md) requirement)
 - [ ] **Code follows Four Rules** ([SIMPLE-DESIGN.md](SIMPLE-DESIGN.md))
+- [ ] **TPP is under 400 lines**
 
 ## The Ultimate Test
 

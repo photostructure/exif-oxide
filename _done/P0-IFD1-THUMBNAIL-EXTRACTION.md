@@ -1,5 +1,7 @@
 # TPP: P0 - IFD1 Thumbnail Extraction
 
+**Moved to `_done/` 2026-07-01**: Re-ran the 3 named tests (`cargo t ifd1_thumbnail`, `cargo t ifd1_group_assignment`) - all pass (`test_ifd1_thumbnail_tags_extracted`, `test_ifd1_thumbnail_values`, `test_ifd1_group_assignment`). All 7 tasks below are checked complete.
+
 ## Part 1: Define Success
 
 **Problem**: Binary extraction for ThumbnailImage fails - offset values are TIFF-relative, not absolute file offsets

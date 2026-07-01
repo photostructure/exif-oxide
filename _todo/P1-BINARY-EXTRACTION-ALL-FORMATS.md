@@ -1,5 +1,16 @@
 # TPP: P1 - Binary Extraction for All Image Formats
 
+**Verified 2026-07-01**: Handoff table below is still accurate. `rg "TIFF_TYPE.*CR2|original_file_type.*CR2" src/exif/tags.rs` returns nothing (Task 2 CR2 exception not started). `find . -iname binary_extraction_test.rs` finds no file (Task 7 not started). No RAW test images present under `test-images/` (canon *.tiff, nikon *.NEF), so the "TIFF/DNG untested" claim also still holds - this TPP has had no code changes since last written.
+
+## Current phase
+- [x] Research & Planning
+- [ ] Write breaking tests (Task 7 - see Priority Order, listed first for a reason)
+- [x] Design alternatives
+- [x] Task breakdown
+- [ ] Implementation (JPEG only; TIFF untested; NEF/CR2/ARW/ORF not started)
+- [ ] Review & Refinement
+- [ ] Final Integration
+
 ## Part 1: Define Success
 
 **Problem**: Binary extraction (`-b -TagName`) only works for JPEG files. TIFF, RAW formats (NEF, CR2, ARW, DNG, ORF, RAF, etc.) have embedded previews and thumbnails that cannot be extracted because:

@@ -152,12 +152,12 @@ for (&(tag_id, _namespace), value) in &reader.extracted_tags
 - **Core implementation**: [`src/exif/mod.rs`](../../src/exif/mod.rs) lines 36-41, 242-333
 - **Tag storage**: [`src/exif/tags.rs`](../../src/exif/tags.rs) `store_tag_with_precedence` method  
 - **Migration example**: [`src/exif/processors.rs`](../../src/exif/processors.rs) Make/Model tag access updates
-- **Research documentation**: [`docs/todo/P10c-gps-ifd-parsing-bug.md`](../todo/P10c-gps-ifd-parsing-bug.md)
+- **Research documentation**: `P10c-gps-ifd-parsing-bug.md` (historical TPP, since removed)
 
 ## Related Documentation
 
 - **ExifTool behavior**: [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md)
-- **IFD processing**: [CORE-ARCHITECTURE.md](../guides/CORE-ARCHITECTURE.md)  
+- **IFD processing**: [ARCHITECTURE.md](../ARCHITECTURE.md)  
 - **Tag tables**: [EXIFTOOL-GUIDE.md](../guides/EXIFTOOL-GUIDE.md)
 
 *Document created: 2025-01-27 | Subject matter expert: GPS IFD parsing implementation team*

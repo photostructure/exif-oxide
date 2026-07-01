@@ -1,5 +1,7 @@
 # P03d: Unknown Tags Research
 
+**Moved to `_done/` 2026-07-01**: Re-ran `cargo test --features test-helpers,integration-tests --test xmp_namespace_integration_test` - 12 passed, 3 ignored (documented as blocked on rdf:resource/struct-flattening/mediapro work), 0 failed. `docs/analysis/unknown-tags-research.md` exists with 16 tags documented (`Source:` lines, one per tag). All Part 3 task checkboxes confirmed complete.
+
 **Status**: COMPLETE
 **Completed**: 2025-12-08
 **Prerequisites**: P01 complete, familiarity with ExifTool module structure

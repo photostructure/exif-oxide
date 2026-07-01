@@ -1,6 +1,17 @@
 # P10: RDF Resource Attributes Support
 
-**Status**: Phase 1 (P10a) COMPLETE - 2024-12-13
+**Status**: Phase 1 (P10a) COMPLETE - 2024-12-13. Phases 2-3 (P10b, P10c) not started.
+
+**Verified 2026-07-01**: `cargo test --features test-helpers,integration-tests --lib rdf_resource` - `xmp::processor::tests::test_rdf_resource_extraction` passes. Confirmed in `src/xmp/processor.rs` that `rdf:about` is only used as a same-priority fallback value (Phase 1 scope) - there is no separate `XMP:About` tag emission (Phase 2) and no `rdf:nodeID` blank-node handling (Phase 3). Keeping this TPP in `_todo/` until Phases 2-3 are addressed or explicitly deferred.
+
+## Current phase
+- [x] Research & Planning
+- [x] Write breaking tests
+- [x] Design alternatives
+- [x] Task breakdown
+- [x] Implementation (Phase 1 / P10a only)
+- [ ] Review & Refinement (Phases 2-3 not started)
+- [ ] Final Integration (Phases 2-3 not started)
 
 ## Problem
 

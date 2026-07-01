@@ -33,7 +33,7 @@ Read [guides/EXIFTOOL-GUIDE.md](guides/EXIFTOOL-GUIDE.md) sections 1-3:
 ### 3. Development Setup
 
 - `make check-deps` verifies that all linting, compiling, and codegen tooling is installed
-- All non-trivial development should start by creating a Technical Project Plan using our [TPP.md](TPP.md) style guide
+- All non-trivial development should start by creating a Technical Project Plan using our [TPP-GUIDE.md](TPP-GUIDE.md) style guide
 
 ## Current Project State (December 2025)
 
@@ -84,7 +84,7 @@ Analysis at `docs/analysis/expressions/required-expressions-analysis.json` shows
 
 ### Current Priority
 
-Check `docs/todo/` for active TPPs. The immediate focus is:
+Check `_todo/` for active TPPs (deferred work is parked in `_paused/`). The immediate focus is:
 
 1. Fix any build issues (`make precommit` must pass)
 2. Audit required tags against current implementation
@@ -96,7 +96,7 @@ After the 15-minute foundation, pick your path based on your task:
 
 ### 🔧 **I'm implementing a specific tag/conversion**
 
-→ Write a TPP using [TPP.md](TPP.md) template to plan your implementation
+→ Write a TPP using [TPP-GUIDE.md](TPP-GUIDE.md) template to plan your implementation
 → Reference [guides/EXIFTOOL-GUIDE.md](guides/EXIFTOOL-GUIDE.md) sections 4-5 as needed
 
 ### 🏗️ **I'm working on core architecture**
@@ -149,7 +149,7 @@ Keep these in mind throughout development:
 ### Development Guides
 
 - [guides/EXIFTOOL-GUIDE.md](guides/EXIFTOOL-GUIDE.md) - Complete ExifTool reference
-- [TPP.md](TPP.md) - Technical Project Plan template for feature development
+- [TPP-GUIDE.md](TPP-GUIDE.md) - TPP system: phase workflow, handoff process, and conventions
 - [ARCHITECTURE.md](ARCHITECTURE.md) - Complete system architecture including state management & offset calculations
 
 ### Reference Materials

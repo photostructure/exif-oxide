@@ -347,7 +347,7 @@ cargo run --bin debug-ppi -- --verbose '$val * 100'
 
 If you find these anti-patterns in the codebase:
 
-1. **String parsing of AST**: See `docs/todo/P07c-emergency-ppi-recovery.md`
+1. **String parsing of AST**: See `_todo/P07c-emergency-ppi-recovery.md` (if it exists)
 2. **Deleted pattern recognition**: Restore from `expressions_original.rs.bak`
 3. **Disabled infrastructure**: Re-enable with proper error handling
 4. **Manual ExifTool data**: Replace with generated tables via codegen

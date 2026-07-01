@@ -75,7 +75,7 @@ See https://github.com/anthropics/claude-code/issues/4711 for details.
 - [ARCHITECTURE.md](docs/ARCHITECTURE.md) - High-level system overview and philosophy
 - [MILESTONES.md](docs/MILESTONES.md) - Active development milestones
 - [EXCLUDED-TAGS.md](docs/EXCLUDED-TAGS.md) - Tags excluded from implementation scope
-- [TPP.md](docs/TPP.md) - Technical Project Plan template with priority naming conventions
+- [TPP-GUIDE.md](docs/TPP-GUIDE.md) - TPP system: phase workflow, handoff process, and conventions
 
 #### Design Documents
 
@@ -97,6 +97,15 @@ See https://github.com/anthropics/claude-code/issues/4711 for details.
 - [MANUFACTURER-FACTS.md](docs/reference/MANUFACTURER-FACTS.md) - Manufacturer-specific implementation facts
 - [SUPPORTED-FORMATS.md](docs/reference/SUPPORTED-FORMATS.md) - Currently supported file formats
 - [TROUBLESHOOTING.md](docs/reference/TROUBLESHOOTING.md) - Common issues and solutions
+
+### TPP Workflow
+
+Active TPPs live in `_todo/`, completed TPPs in `_done/`. Use these skills:
+
+- **`/tpp [path]`** - Start or continue work on a TPP
+- **`/handoff [path]`** - Update TPP before context fills (run at 80-90% usage)
+
+See [TPP-GUIDE.md](docs/TPP-GUIDE.md) for the full phase workflow and conventions.
 
 ### ExifTool Documentation
 

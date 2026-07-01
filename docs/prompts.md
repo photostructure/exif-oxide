@@ -1,10 +1,10 @@
 # Make a new TPP
 
-Excellent research. Please write a technical project plan, using our style guide, @docs/TPP.md, to docs/todo/... so we can hand this work off to another engineer. As the style guide states, include a description of the issue being addressed, code and docs they should study, relevant research you conducted, issues you've already addressed, success criteria, and any other tribal knowledge that you can pass down to help them to help them succeed. Ultrathink.
+Excellent research. Please write a technical project plan, using our style guide, @docs/TPP-GUIDE.md, to _todo/... so we can hand this work off to another engineer. As the style guide states, include a description of the issue being addressed, code and docs they should study, relevant research you conducted, issues you've already addressed, success criteria, and any other tribal knowledge that you can pass down to help them to help them succeed. Ultrathink.
 
 # Update TPP
 
-Well done. Please update your technical project plan (TPP) with your progress. Use our style guide, @docs/TPP.md. Please add any novel, additional context that could help the next engineer complete this work, or, if all the work is complete, so an Engineer of the Future will have more context to grok what was considered, designed, and implemented for this TPP, and include attempted (but unsuccessful) strategies so the next engineer can make _new_ mistakes.
+Well done. Please update your technical project plan (TPP) with your progress. Use our style guide, @docs/TPP-GUIDE.md. Please add any novel, additional context that could help the next engineer complete this work, or, if all the work is complete, so an Engineer of the Future will have more context to grok what was considered, designed, and implemented for this TPP, and include attempted (but unsuccessful) strategies so the next engineer can make _new_ mistakes.
 
 After updating the TPP, please continue work on the remaining incomplete tasks.
 
@@ -18,13 +18,13 @@ That's really great analysis! Since this touches core architecture, it needs tho
 
 # Refining an unsaved TPP
 
-That sounds great. This is critical infrastructure for this project, so let's do another iteration of research, analysis, and planning. Re-analyze and re-plan the TPP using the @docs/TPP.md style guide. Read and study **all** referenced documentation and source code before making any changes. Anything that we can clarify and discover at this point, especially if it is currently hand-wavy or nebulous, will save us time and effort in the future. As @CLAUDE.md states, ask clarifying questions for anything odd, confusing, nebulous, or to help decide between alternative strategies. Ultrathink.
+That sounds great. This is critical infrastructure for this project, so let's do another iteration of research, analysis, and planning. Re-analyze and re-plan the TPP using the @docs/TPP-GUIDE.md style guide. Read and study **all** referenced documentation and source code before making any changes. Anything that we can clarify and discover at this point, especially if it is currently hand-wavy or nebulous, will save us time and effort in the future. As @CLAUDE.md states, ask clarifying questions for anything odd, confusing, nebulous, or to help decide between alternative strategies. Ultrathink.
 
 # Ultraplan
 
 1. You have been asked to design a plan. You are going to **ultraplan**!
 2. This is critical infrastructure for this project, so let's do another iteration of research, analysis, and planning.
-3. Re-analyze and re-plan using our style guide, @docs/TPP.md to drive your Technical Project Plan, which we will hand over to another team to implement.
+3. Re-analyze and re-plan using our style guide, @docs/TPP-GUIDE.md to drive your Technical Project Plan, which we will hand over to another team to implement.
 4. As you design your plan, carefully consider the requirements, constraints, and existing solutions in this project. If there are any clarifying questions for the user, or there are any assumptive statements that you are making, state them and ask the user for clarification.
 5. Once you have your initial plan, generate a series of thorough critiques of your plan. These critiques should be applied to ensure the project balances simplicity with good software engineering practices, is maintainable, testable, DRY, scalable, and meets user requirements. Ensure any assumptions are validated by examining all elements of all code paths involved, and if any development is novel, validate APIs and libraries with web searches. For novel libraries and APIs, write HOWTO guides and documentation to $PROJECT_ROOT/docs
 6. While performing critiques, scrutinize for nebulous or "hand-wavy" aspects. Do not assume how things work -- study the code, and if indicated, web search to see if someone has solved a similar problem. Ideally, perform research necessary to reduce uncertainty, but minimally, note these aspects as risks in your plan.
@@ -36,9 +36,9 @@ That sounds great. This is critical infrastructure for this project, so let's do
 
 # Refining an existing TPP
 
-✏️ is a technical project plan: but it needs more due diligence research, analysis, and planning. Re-analyze and re-plan the TPP using the @docs/TPP.md style guide. Read and study **all** referenced documentation and source code before making any changes. This is critical infrastructure for this project, so we have a large time budget for research, planning, analysis, and validation for this work. As @CLAUDE.md states, ask clarifying questions for anything odd, confusing, nebulous, or to help decide between alternative strategies. Ultrathink.
+✏️ is a technical project plan: but it needs more due diligence research, analysis, and planning. Re-analyze and re-plan the TPP using the @docs/TPP-GUIDE.md style guide. Read and study **all** referenced documentation and source code before making any changes. This is critical infrastructure for this project, so we have a large time budget for research, planning, analysis, and validation for this work. As @CLAUDE.md states, ask clarifying questions for anything odd, confusing, nebulous, or to help decide between alternative strategies. Ultrathink.
 
-# Work on a TPP
+# Re-analyze a TPP
 
 ✏️ is a technical project plan: we're going to work on the remaining incomplete tasks. This represents critical work for our project, and requires comprehensive prerequisite research to be done by you before you start work. Read every referenced source and doc, and carefully validate the current situation, problem, and that the currently planned solution is still the best way forward. We have a large time budget for research, planning, analysis, and validation for this work. Take it step by step. Show your work. Prerequisite study material: @CLAUDE.md , @third-party/exiftool/doc/concepts/COMPOSITE_TAGS.md @docs/CODEGEN.md @docs/guides/PRINTCONV-VALUECONV-GUIDE.md @docs/TRUST-EXIFTOOL.md Ultrathink.
 
@@ -66,7 +66,7 @@ The next engineer MUST read these files completely before making changes:
 
 - List specific file paths with 1-2 sentence rationale for why each is essential
 - Include core docs: `@docs/TRUST-EXIFTOOL.md`, `@docs/ARCHITECTURE.md`, `@docs/CODEGEN.md`, `@CLAUDE.md`
-- If TPP active: the specific TPP file path in `docs/todo/`
+- If TPP active: the specific TPP file path in `_todo/`
 
 ## WORK CONTEXT
 
