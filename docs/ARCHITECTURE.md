@@ -235,7 +235,7 @@ pub struct ExifReader {
 3. Register function in appropriate registry
 4. Test with real camera files containing those tags
 
-**Strategy Development** (rare): Only needed when automatic pattern recognition misses new ExifTool symbol types. See [STRATEGY-DEVELOPMENT.md](STRATEGY-DEVELOPMENT.md) for detailed guidance.
+**Strategy Development** (rare): Only needed when automatic pattern recognition misses new ExifTool symbol types. See [CODEGEN.md](CODEGEN.md) for the strategy pattern system.
 
 ## Why This Architecture Works
 
@@ -298,7 +298,10 @@ See [MILESTONES.md](MILESTONES.md) for active development priorities.
 ### Future Capabilities
 - Additional manufacturers (Nikon, Panasonic) following the established patterns
 - Video metadata (MP4, QuickTime) using the same architecture
-- Write support maintaining full ExifTool compatibility
+
+**Write support is out of scope indefinitely.** exif-oxide is read-only for
+the foreseeable future; real ExifTool handles all writes. See
+[MILESTONES.md](MILESTONES.md) for the tiered scope and rationale.
 
 ## Related Documentation
 

@@ -30,13 +30,18 @@ ExifTool is the industry standard for metadata extraction, but modern antivirus 
 - **Olympus ORF** - 90% complete, resolving tag ID conflicts
 - **Canon CR2/CR3** - Implementing SHORT array extraction for binary data
 - **Sony ARW** - Tag naming complete, expanding ProcessBinaryData coverage
-- **Video metadata** - MP4, MOV, and other video formats (Milestone 18)
+- **Video metadata** - MP4, MOV, and other video formats
+- **Binary data extraction** - JPEG thumbnails working; RAW formats (CR2/NEF/ARW/ORF) in progress
 
 ### 📋 **Planned**
 
-- **Write support** - Tag modification and file updates (Milestones 21-22)
-- **Binary data extraction** - Thumbnails and embedded images (Milestone 19)
-- **Error classification** - Detailed error reporting (Milestone 20)
+- **Error classification** - Detailed error reporting
+
+See [MILESTONES.md](docs/MILESTONES.md) for current priorities.
+
+### ⛔ **Out of scope**
+
+- **Write support** - exif-oxide is read-only for the foreseeable future. Writes are delegated to real ExifTool. See [MILESTONES.md](docs/MILESTONES.md) for the rationale and tiered scope.
 
 ## Project Goals
 

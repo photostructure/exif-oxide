@@ -1,5 +1,14 @@
 # CLAUDE.md - MANDATORY CHECKLIST
 
+## Project Scope
+
+exif-oxide is **read-only for the foreseeable future**. Write support (Tier 4)
+is deferred indefinitely and delegated to real ExifTool. exif-oxide is the
+native fast path for supported tags/formats (Tiers 1-3); real ExifTool
+(vendored Perl, or a future WASM build) is the permanent fallback for
+everything else, reads and writes alike. See [MILESTONES.md](docs/MILESTONES.md)
+for the tier breakdown, rationale, and current priorities.
+
 ## 🚨 CRITICAL: ALWAYS USE ABSOLUTE PATHS 🚨
 
 **NEVER use `cd ..` or `cd ../..` - there have been devastating mistakes due to directory confusion.**
@@ -88,7 +97,6 @@ See https://github.com/anthropics/claude-code/issues/4711 for details.
 #### Guides
 
 - [GETTING-STARTED.md](docs/GETTING-STARTED.md) - Quick start guide for new contributors
-- [CORE-ARCHITECTURE.md](docs/guides/CORE-ARCHITECTURE.md) - Core system architecture and offset management
 - [EXIFTOOL-GUIDE.md](docs/guides/EXIFTOOL-GUIDE.md) - Complete guide to working with ExifTool source
 - [PROCESSOR-DISPATCH.md](docs/guides/PROCESSOR-DISPATCH.md) - Processor dispatch strategy
 

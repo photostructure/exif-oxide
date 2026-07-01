@@ -309,7 +309,7 @@ The API is currently focused on read-only metadata extraction with:
 ### Future Considerations
 
 - **Streaming API**: Currently all data is loaded into memory
-- **Write Support**: Planned for future milestones
+- **Write Support**: Out of scope indefinitely. exif-oxide is read-only; writes are delegated to real ExifTool. See [MILESTONES.md](../MILESTONES.md)
 - **Async Support**: Not currently planned but could be added
 
 ## Unknown Tag Handling
@@ -375,7 +375,7 @@ We could add ExifTool `-u` equivalent functionality:
 
 ## Related Documentation
 
-- [CORE-ARCHITECTURE.md](../guides/CORE-ARCHITECTURE.md) - Core system architecture and offset management
+- [ARCHITECTURE.md](../ARCHITECTURE.md) - Core system architecture and offset management
 - [CODEGEN.md](../CODEGEN.md) - Code generation and manual implementation system
 - [PRINTCONV-VALUECONV-GUIDE.md](../guides/PRINTCONV-VALUECONV-GUIDE.md) - PrintConv/ValueConv implementation guide
 - [TRUST-EXIFTOOL.md](../TRUST-EXIFTOOL.md) - Critical principle for all implementation work

@@ -61,7 +61,7 @@ PhotoStructure needs exactly **120 tags** defined in `docs/required-tags.json`:
 | IPTC       | 2     | Partial                          |
 | ExifTool   | 1     | Working                          |
 
-**What's NOT in scope**: Write support, tags not in required-tags.json, full ExifTool parity.
+**What's NOT in scope**: Write support (deferred indefinitely, delegated to real ExifTool), tags not in required-tags.json (served by the ExifTool fallback in the meantime), full ExifTool parity (aspirational). See [MILESTONES.md](MILESTONES.md) for the tiered scope.
 
 ### Expression Scope
 
