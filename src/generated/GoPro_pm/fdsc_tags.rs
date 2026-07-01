@@ -16,6 +16,7 @@ pub static GO_PRO_FDSC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "string[15]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static GO_PRO_FDSC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "string[16]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static GO_PRO_FDSC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "string[15]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +46,7 @@ pub static GO_PRO_FDSC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "string[16]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

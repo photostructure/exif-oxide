@@ -23,6 +23,7 @@ pub static CANON_CUSTOM_PERSONALFUNCVALUES_TAGS: LazyLock<HashMap<u16, TagInfo>>
                     format: "unknown",
                     print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                     value_conv: Some(ValueConv::Function(ast_value_8767b6a8d3f8ef64)),
+                    is_offset: false,
                 },
             ),
             (
@@ -32,6 +33,7 @@ pub static CANON_CUSTOM_PERSONALFUNCVALUES_TAGS: LazyLock<HashMap<u16, TagInfo>>
                     format: "unknown",
                     print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                     value_conv: Some(ValueConv::Function(ast_value_8767b6a8d3f8ef64)),
+                    is_offset: false,
                 },
             ),
             (
@@ -41,6 +43,7 @@ pub static CANON_CUSTOM_PERSONALFUNCVALUES_TAGS: LazyLock<HashMap<u16, TagInfo>>
                     format: "unknown",
                     print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
                     value_conv: Some(ValueConv::Function(ast_value_31a8ba0fed532190)),
+                    is_offset: false,
                 },
             ),
             (
@@ -50,6 +53,7 @@ pub static CANON_CUSTOM_PERSONALFUNCVALUES_TAGS: LazyLock<HashMap<u16, TagInfo>>
                     format: "unknown",
                     print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
                     value_conv: Some(ValueConv::Function(ast_value_31a8ba0fed532190)),
+                    is_offset: false,
                 },
             ),
         ])

@@ -18,6 +18,7 @@ pub static KODAK_TYPE7_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             format: "string[16]",
             print_conv: None,
             value_conv: Some(ValueConv::Function(ast_value_a06c82bf6b59eb39)),
+            is_offset: false,
         },
     )])
 });

@@ -25,6 +25,7 @@ pub static CANON_AMBIENCE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 ("8".to_string(), "Monochrome"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

@@ -16,6 +16,7 @@ pub static NIKON_HDRINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static NIKON_HDRINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On (normal)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +46,7 @@ pub static NIKON_HDRINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("5".to_string(), "Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

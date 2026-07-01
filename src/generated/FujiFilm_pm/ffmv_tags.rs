@@ -15,6 +15,7 @@ pub static FUJI_FILM_FFMV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             format: "string[34]",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

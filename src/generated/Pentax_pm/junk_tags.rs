@@ -15,6 +15,7 @@ pub static PENTAX_JUNK_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             format: "string[32]",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

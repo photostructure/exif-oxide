@@ -26,6 +26,7 @@ pub static PENTAX_LEVELINFOK3III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("5".to_string(), "Downwards"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -35,6 +36,7 @@ pub static PENTAX_LEVELINFOK3III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "int16s",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_db584f0afe19b808)),
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +46,7 @@ pub static PENTAX_LEVELINFOK3III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "int16s",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_db584f0afe19b808)),
+                is_offset: false,
             },
         ),
     ])

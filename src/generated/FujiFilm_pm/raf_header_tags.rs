@@ -16,6 +16,7 @@ pub static FUJI_FILM_RAFHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static FUJI_FILM_RAFHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("3".to_string(), "Lossy"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

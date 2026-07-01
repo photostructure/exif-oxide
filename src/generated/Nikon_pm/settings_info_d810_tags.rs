@@ -19,6 +19,7 @@ pub static NIKON_SETTINGSINFOD810_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 ("3".to_string(), "NEF Primary + JPG Secondary"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

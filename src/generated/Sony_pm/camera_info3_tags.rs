@@ -25,6 +25,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvLensSpec]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: Some(ValueConv::Function(ast_value_f26353ef662842e5)),
+                is_offset: false,
             },
         ),
         (
@@ -63,6 +66,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("9".to_string(), "Upper-left"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -77,6 +81,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("3".to_string(), "AF-A"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -95,6 +100,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("7".to_string(), "Bottom-left"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -110,6 +116,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("64".to_string(), "AF-S - Confirmed"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -126,6 +133,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -152,6 +160,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("9".to_string(), "Upper-left"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -168,6 +177,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -184,6 +194,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -213,6 +224,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("9".to_string(), "Top (vertical)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -229,6 +241,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -245,6 +258,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -261,6 +275,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -277,6 +292,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -293,6 +309,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -309,6 +326,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -325,6 +343,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -341,6 +360,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -357,6 +377,7 @@ pub static SONY_CAMERAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

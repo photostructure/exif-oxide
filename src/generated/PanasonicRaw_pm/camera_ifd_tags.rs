@@ -29,6 +29,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -38,6 +39,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -47,6 +49,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -59,6 +62,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -68,6 +72,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -80,6 +85,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -89,6 +95,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -98,6 +105,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_9edcd70970960c43)),
+                is_offset: false,
             },
         ),
         (
@@ -107,6 +115,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -116,6 +125,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_c52c83ef53c04e47)),
+                is_offset: false,
             },
         ),
         (
@@ -125,6 +135,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_dd83ee4563d6583e)),
+                is_offset: false,
             },
         ),
         (
@@ -134,6 +145,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_2019c96d765dcb89)),
+                is_offset: false,
             },
         ),
         (
@@ -146,6 +158,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -158,6 +171,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -167,6 +181,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -176,6 +191,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -185,6 +201,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -194,6 +211,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -219,6 +237,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("9".to_string(), "Custom#2"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -228,6 +247,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -237,6 +257,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -255,6 +276,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("8".to_string(), "Rotate 270 CW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -280,6 +302,7 @@ pub static PANASONIC_RAW_CAMERAIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("9".to_string(), "Custom#2"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

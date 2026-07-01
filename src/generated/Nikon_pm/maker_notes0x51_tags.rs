@@ -19,6 +19,7 @@ pub static NIKON_MAKERNOTES0X51_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "string[8]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_5a60f83c3aee8c9c)),
+                is_offset: false,
             },
         ),
         (
@@ -41,6 +42,7 @@ pub static NIKON_MAKERNOTES0X51_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("9".to_string(), "Packed 12 bits"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

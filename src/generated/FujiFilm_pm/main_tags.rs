@@ -25,6 +25,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_a12d0d9a4de49555)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +67,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("65535".to_string(), "n/a"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -93,6 +97,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("772".to_string(), "Living Room Warm White Fluorescent"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -123,6 +128,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("784".to_string(), "B&W Sepia"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -139,6 +145,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("512".to_string(), "Low"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -148,6 +155,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -161,6 +169,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("768".to_string(), "Low"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -170,6 +179,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_423b2eddff5b9cd3)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -183,6 +193,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("64".to_string(), "Low"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -202,6 +213,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("736".to_string(), "-4 (weakest)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -223,6 +235,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("5000".to_string(), "5"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -276,6 +289,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("59680".to_string(), "High Speed Sync (HSS)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -285,6 +299,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -297,6 +312,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -310,6 +326,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("65535".to_string(), "Movie"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -324,6 +341,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("512".to_string(), "Wide/Tracking"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -333,6 +351,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -342,6 +361,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -351,6 +371,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -360,6 +381,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -372,6 +394,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -415,6 +438,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("9".to_string(), "Beach & Snow"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -424,6 +448,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -436,6 +461,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Manual"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -449,6 +475,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("768".to_string(), "DR (Dynamic Range priority)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -463,6 +490,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("4".to_string(), "Dark"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -484,6 +512,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -505,6 +534,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -514,6 +544,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_e263dcc51d0cc0f)),
+                is_offset: false,
             },
         ),
         (
@@ -526,6 +557,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -539,6 +571,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("64".to_string(), "Strong"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -552,6 +585,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("64".to_string(), "Strong"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -561,6 +595,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8s",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -570,6 +605,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8s",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -583,6 +619,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("32".to_string(), "Large"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -598,6 +635,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("8".to_string(), "Digital Tele-Conv"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -611,6 +649,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("64".to_string(), "Strong"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -625,6 +664,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "Electronic Front Curtain"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -634,6 +674,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -643,6 +684,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -652,6 +694,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -666,6 +709,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("6".to_string(), "Pixel Shift"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -675,6 +719,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -688,6 +733,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("767".to_string(), "+/- 2"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -697,6 +743,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -706,6 +753,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -715,6 +763,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -731,6 +780,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("32".to_string(), "Panorama"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -740,6 +790,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -749,6 +800,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -758,6 +810,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -772,6 +825,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("4".to_string(), "Down"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -799,6 +853,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("65536".to_string(), "Pop Color"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -812,6 +867,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("48".to_string(), "B & W"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -824,6 +880,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Blur Warning"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -836,6 +893,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Out of focus"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -848,6 +906,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Bad exposure"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -857,6 +916,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -869,6 +929,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "Wide"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -898,6 +959,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("768".to_string(), "F3/Studio Portrait Ex"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -914,6 +976,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("513".to_string(), "Wide2 (400%)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -923,6 +986,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -932,6 +996,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -941,6 +1006,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -950,6 +1016,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -959,6 +1026,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -968,6 +1036,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b8461ac67efa7740)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -977,6 +1046,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -994,6 +1064,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("768".to_string(), "Night Scene"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1003,6 +1074,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1015,6 +1087,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Re-developed from RAW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1024,6 +1097,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_d3e4782628524fdc)),
+                is_offset: false,
             },
         ),
         (
@@ -1036,6 +1110,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Fixed"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1049,6 +1124,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "Plus"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1061,6 +1137,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Strong"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1070,6 +1147,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_5cce877bd666c22b)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1079,6 +1157,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1088,6 +1167,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1097,6 +1177,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1106,6 +1187,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1115,6 +1197,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1124,6 +1207,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1138,6 +1222,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("48".to_string(), "F-log2"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1150,6 +1235,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1162,6 +1248,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "All Intra"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1171,6 +1258,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1180,6 +1268,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1189,6 +1278,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1201,6 +1291,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1210,6 +1301,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1219,6 +1311,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1228,6 +1321,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1237,6 +1331,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1246,6 +1341,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1255,6 +1351,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1264,6 +1361,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1273,6 +1371,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1282,6 +1381,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1291,6 +1391,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1300,6 +1401,7 @@ pub static FUJI_FILM_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

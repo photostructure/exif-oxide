@@ -19,6 +19,7 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -49,6 +50,7 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "Spot AF"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -58,6 +60,7 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -67,6 +70,7 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -76,6 +80,7 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -85,6 +90,7 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -94,6 +100,7 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -103,6 +110,7 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16s[$val{2}]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -112,6 +120,7 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16s[$val{2}]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -121,6 +130,7 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16s[$val{2}]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -130,6 +140,7 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16s[$val{2}]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -139,6 +150,7 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16s[int(($val{2}+15)/16)]",
                 print_conv: Some(PrintConv::Function(ast_print_7b33002b58386905)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -148,6 +160,7 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16s[int(($val{2}+15)/16)+1]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -157,6 +170,7 @@ pub static CANON_AFINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -15,6 +15,7 @@ pub static SANYO_FACEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             format: "int32u[4]",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

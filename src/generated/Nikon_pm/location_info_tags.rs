@@ -19,6 +19,7 @@ pub static NIKON_LOCATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -32,6 +33,7 @@ pub static NIKON_LOCATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("2".to_string(), "UTF16"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -41,6 +43,7 @@ pub static NIKON_LOCATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "undef[3]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_82615a79142d97cd)),
+                is_offset: false,
             },
         ),
         (
@@ -50,6 +53,7 @@ pub static NIKON_LOCATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "undef[70]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

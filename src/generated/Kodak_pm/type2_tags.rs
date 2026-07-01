@@ -16,6 +16,7 @@ pub static KODAK_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "string[32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static KODAK_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "string[32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static KODAK_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +46,7 @@ pub static KODAK_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

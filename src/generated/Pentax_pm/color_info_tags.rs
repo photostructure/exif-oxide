@@ -16,6 +16,7 @@ pub static PENTAX_COLORINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static PENTAX_COLORINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -26,6 +26,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +44,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("32".to_string(), "Control"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +54,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "utf8",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +64,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +77,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +87,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -91,6 +97,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -100,6 +107,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -109,6 +117,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_f2e6eb92b211f31a)),
+                is_offset: false,
             },
         ),
         (
@@ -118,6 +127,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_f2e6eb92b211f31a)),
+                is_offset: false,
             },
         ),
         (
@@ -127,6 +137,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: Some(PrintConv::Function(ast_print_26ee0ff5e974d8e1)),
                 value_conv: Some(ValueConv::Function(ast_value_d99cb324d081e015)),
+                is_offset: false,
             },
         ),
         (
@@ -136,6 +147,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -145,6 +157,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -158,6 +171,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("2".to_string(), "Progressive"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -167,6 +181,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: Some(PrintConv::Function(ast_print_be9ef414392ffbfb)),
                 value_conv: Some(ValueConv::Function(ast_value_d99cb324d081e015)),
+                is_offset: false,
             },
         ),
         (
@@ -179,6 +194,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -188,6 +204,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -197,6 +214,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -206,6 +224,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -215,6 +234,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -224,6 +244,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -233,6 +254,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -242,6 +264,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -251,6 +274,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -260,6 +284,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -272,6 +297,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -281,6 +307,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -290,6 +317,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -299,6 +327,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -308,6 +337,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -317,6 +347,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: Some(PrintConv::Function(ast_print_26ee0ff5e974d8e1)),
                 value_conv: Some(ValueConv::Function(ast_value_d99cb324d081e015)),
+                is_offset: false,
             },
         ),
         (
@@ -326,6 +357,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "float",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -335,6 +367,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -344,6 +377,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -356,6 +390,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -365,6 +400,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -374,6 +410,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -383,6 +420,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -392,6 +430,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -401,6 +440,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -410,6 +450,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -419,6 +460,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -428,6 +470,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -437,6 +480,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -446,6 +490,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -455,6 +500,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -464,6 +510,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -473,6 +520,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: Some(PrintConv::Function(ast_print_26ee0ff5e974d8e1)),
                 value_conv: Some(ValueConv::Function(ast_value_d99cb324d081e015)),
+                is_offset: false,
             },
         ),
         (
@@ -482,6 +530,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -491,6 +540,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -500,6 +550,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -509,6 +560,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -518,6 +570,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -527,6 +580,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -536,6 +590,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -545,6 +600,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -554,6 +610,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "signed",
                 print_conv: Some(PrintConv::Function(ast_print_be9ef414392ffbfb)),
                 value_conv: Some(ValueConv::Function(ast_value_d99cb324d081e015)),
+                is_offset: false,
             },
         ),
         (
@@ -563,6 +620,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "signed",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -577,6 +635,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("3".to_string(), "Header Stripping"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -586,6 +645,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -595,6 +655,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -604,6 +665,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -613,6 +675,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -622,6 +685,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -631,6 +695,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -640,6 +705,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -649,6 +715,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -658,6 +725,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -667,6 +735,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -676,6 +745,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -685,6 +755,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "date",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -694,6 +765,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -706,6 +778,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -715,6 +788,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -724,6 +798,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "utf8",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -733,6 +808,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "float",
                 print_conv: Some(PrintConv::Function(ast_print_26ee0ff5e974d8e1)),
                 value_conv: Some(ValueConv::Function(ast_value_d99cb324d081e015)),
+                is_offset: false,
             },
         ),
         (
@@ -742,6 +818,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -751,6 +828,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -760,6 +838,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "utf8",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -769,6 +848,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -778,6 +858,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -787,6 +868,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -796,6 +878,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -805,6 +888,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -814,6 +898,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -823,6 +908,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -832,6 +918,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "utf8",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -841,6 +928,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -850,6 +938,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "utf8",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -859,6 +948,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -875,6 +965,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("5".to_string(), "AES"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -884,6 +975,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -893,6 +985,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -902,6 +995,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -914,6 +1008,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "RSA"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -927,6 +1022,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("2".to_string(), "MD5"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -936,6 +1032,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "utf8",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -945,6 +1042,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -954,6 +1052,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -963,6 +1062,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -975,6 +1075,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "Encryption"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -984,6 +1085,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -993,6 +1095,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1002,6 +1105,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1011,6 +1115,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "utf8",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1020,6 +1125,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1029,6 +1135,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "signed",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1038,6 +1145,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_e0ed297994b2308c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1047,6 +1155,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1056,6 +1165,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1065,6 +1175,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1074,6 +1185,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1089,6 +1201,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("4".to_string(), "Unknown"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1102,6 +1215,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("2".to_string(), "Fixed"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1111,6 +1225,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1120,6 +1235,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1129,6 +1245,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1138,6 +1255,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1150,6 +1268,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1159,6 +1278,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1168,6 +1288,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "utf8",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1177,6 +1298,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1186,6 +1308,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1195,6 +1318,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1204,6 +1328,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1213,6 +1338,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1222,6 +1348,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1231,6 +1358,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1248,6 +1376,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("70".to_string(), "Set / Package"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1257,6 +1386,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -1266,6 +1396,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -1275,6 +1406,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -1284,6 +1416,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -1293,6 +1426,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1302,6 +1436,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1311,6 +1446,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1320,6 +1456,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1332,6 +1469,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "DVD Menu"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1341,6 +1479,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -1350,6 +1489,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1359,6 +1499,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1368,6 +1509,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1381,6 +1523,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("2".to_string(), "After Chapter"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1390,6 +1533,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1399,6 +1543,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1408,6 +1553,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1420,6 +1566,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "DVD"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1429,6 +1576,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1441,6 +1589,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "DVD Menu"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1450,6 +1599,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -1459,6 +1609,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1468,6 +1619,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1477,6 +1629,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1486,6 +1639,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -1495,6 +1649,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -1504,6 +1659,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1513,6 +1669,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1522,6 +1679,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "utf8",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1531,6 +1689,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -1540,6 +1699,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -1549,6 +1709,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -1558,6 +1719,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -1567,6 +1729,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1576,6 +1739,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "float",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1585,6 +1749,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "utf8",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1594,6 +1759,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1603,6 +1769,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1612,6 +1779,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1621,6 +1789,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1630,6 +1799,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1639,6 +1809,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1648,6 +1819,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1657,6 +1829,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

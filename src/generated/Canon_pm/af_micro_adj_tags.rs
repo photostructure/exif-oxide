@@ -20,6 +20,7 @@ pub static CANON_AFMICROADJ_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("2".to_string(), "Adjust by lens"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static CANON_AFMICROADJ_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "rational64s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

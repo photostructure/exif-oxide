@@ -22,6 +22,7 @@ pub static CANON_CUSTOM_FUNCTIONS350D_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     ("4".to_string(), "Cross keys: AF point select"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static CANON_CUSTOM_FUNCTIONS350D_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +48,7 @@ pub static CANON_CUSTOM_FUNCTIONS350D_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     ("1".to_string(), "1/200 Fixed"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -60,6 +63,7 @@ pub static CANON_CUSTOM_FUNCTIONS350D_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     ("3".to_string(), "AE/AF, No AE lock"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +77,7 @@ pub static CANON_CUSTOM_FUNCTIONS350D_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     ("2".to_string(), "Only ext. flash emits"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -85,6 +90,7 @@ pub static CANON_CUSTOM_FUNCTIONS350D_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     ("1".to_string(), "1/2 Stop"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -97,6 +103,7 @@ pub static CANON_CUSTOM_FUNCTIONS350D_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     ("1".to_string(), "Enable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -109,6 +116,7 @@ pub static CANON_CUSTOM_FUNCTIONS350D_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     ("1".to_string(), "Average"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -121,6 +129,7 @@ pub static CANON_CUSTOM_FUNCTIONS350D_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     ("1".to_string(), "2nd-curtain sync"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -20,6 +20,7 @@ pub static PANASONIC_TIMEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "undef[8]",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_4cd6594ea26ecaa7)),
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static PANASONIC_TIMEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

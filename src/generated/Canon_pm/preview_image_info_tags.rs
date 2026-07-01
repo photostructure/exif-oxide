@@ -26,6 +26,7 @@ pub static CANON_PREVIEWIMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("7".to_string(), "CRAW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -35,6 +36,7 @@ pub static CANON_PREVIEWIMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +46,7 @@ pub static CANON_PREVIEWIMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

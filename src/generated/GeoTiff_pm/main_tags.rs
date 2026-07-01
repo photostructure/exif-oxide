@@ -16,6 +16,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("32767".to_string(), "User Defined"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("32767".to_string(), "User Defined"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -229,6 +232,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("4902".to_string(), "NDG Paris"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -396,6 +400,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("6902".to_string(), "Nord de Guerre"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -418,6 +423,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("8911".to_string(), "Stockholm"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -452,6 +458,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9108".to_string(), "Angular DMS Hemisphere"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -486,6 +493,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9108".to_string(), "Angular DMS Hemisphere"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -532,6 +540,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("7035".to_string(), "Sphere"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -566,6 +575,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9108".to_string(), "Angular DMS Hemisphere"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1571,6 +1581,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("3857".to_string(), "WGS 84 / Pseudo-Mercator"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2009,6 +2020,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("32767".to_string(), "User Defined"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2048,6 +2060,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "Lambert Conf Conic 1SP"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2082,6 +2095,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9108".to_string(), "Angular DMS Hemisphere"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2132,6 +2146,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("5106".to_string(), "Caspian Sea"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2182,6 +2197,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("5106".to_string(), "Caspian Sea"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2216,6 +2232,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9108".to_string(), "Angular DMS Hemisphere"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2237,6 +2254,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("47510".to_string(), "Inset"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2261,6 +2279,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("47613".to_string(), "Tropic Lower Low Water"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2295,6 +2314,7 @@ pub static GEO_TIFF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9108".to_string(), "Angular DMS Hemisphere"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

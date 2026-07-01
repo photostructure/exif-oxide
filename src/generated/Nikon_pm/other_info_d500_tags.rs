@@ -20,6 +20,7 @@ pub static NIKON_OTHERINFOD500_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 ("3".to_string(), "Highlight"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

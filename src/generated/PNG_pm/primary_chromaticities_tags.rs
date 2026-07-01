@@ -19,6 +19,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +39,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +49,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +59,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +69,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +79,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +89,7 @@ pub static PNG_PRIMARYCHROMATICITIES_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_ae080438eb4840af)),
+                is_offset: false,
             },
         ),
     ])

@@ -24,6 +24,7 @@ pub static GIMP_HEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("v002".to_string(), "2"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static GIMP_HEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -42,6 +44,7 @@ pub static GIMP_HEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +58,7 @@ pub static GIMP_HEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("2".to_string(), "Indexed Color"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

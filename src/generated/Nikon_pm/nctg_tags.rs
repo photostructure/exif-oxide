@@ -21,6 +21,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -39,6 +41,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_6a713bfccf5dd9c)),
+                is_offset: false,
             },
         ),
         (
@@ -48,6 +51,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_dd3be644838b9531)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -57,6 +61,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -66,6 +71,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -75,6 +81,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -84,6 +91,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -93,6 +101,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -102,6 +111,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -111,6 +121,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -123,6 +134,7 @@ pub static NIKON_NCTG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

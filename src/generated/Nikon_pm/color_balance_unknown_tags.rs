@@ -15,6 +15,7 @@ pub static NIKON_COLORBALANCEUNKNOWN_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
             format: "undef[4]",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

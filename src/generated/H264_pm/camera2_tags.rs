@@ -24,6 +24,7 @@ pub static H264_CAMERA2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 ),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

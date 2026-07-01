@@ -20,6 +20,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "string[0,1024]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -108,6 +110,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -117,6 +120,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -126,6 +130,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "string[0,10]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -135,6 +140,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "digits[8]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -144,6 +150,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "string[0,32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -159,6 +166,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("9".to_string(), "9 (user-defined priority)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -168,6 +176,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "digits[8]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
+                is_offset: false,
             },
         ),
         (
@@ -177,6 +186,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "string[11]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_135828bb10970bc4)),
+                is_offset: false,
             },
         ),
         (
@@ -188,6 +198,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     "[Function: Image::ExifTool::IPTC::PrintCodedCharset]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -197,6 +208,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "string[14,80]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -206,6 +218,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -215,6 +228,7 @@ pub static IPTC_ENVELOPERECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

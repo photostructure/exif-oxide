@@ -16,6 +16,7 @@ pub static QUICK_TIME_HINTSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static QUICK_TIME_HINTSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static QUICK_TIME_HINTSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

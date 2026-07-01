@@ -18,6 +18,7 @@ pub static KODAK_BORDERS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             format: "unknown",
             print_conv: Some(PrintConv::Function(ast_print_ec343c90317449df)),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

@@ -25,6 +25,7 @@ pub static SONY_TAG940C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("5".to_string(), "A-mount (5)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -516,6 +517,7 @@ pub static SONY_TAG940C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -525,6 +527,7 @@ pub static SONY_TAG940C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_d54898e66e3a2800)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -534,6 +537,7 @@ pub static SONY_TAG940C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_d54898e66e3a2800)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -543,6 +547,7 @@ pub static SONY_TAG940C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_c23821edccdd4b5c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

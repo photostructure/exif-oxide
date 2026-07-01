@@ -16,6 +16,7 @@ pub static CASIO_FACEINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static CASIO_FACEINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -39,6 +41,7 @@ pub static CASIO_FACEINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("3".to_string(), "Rotate 180"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -48,6 +51,7 @@ pub static CASIO_FACEINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -57,6 +61,7 @@ pub static CASIO_FACEINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -66,6 +71,7 @@ pub static CASIO_FACEINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -75,6 +81,7 @@ pub static CASIO_FACEINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -84,6 +91,7 @@ pub static CASIO_FACEINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -93,6 +101,7 @@ pub static CASIO_FACEINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -102,6 +111,7 @@ pub static CASIO_FACEINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -111,6 +121,7 @@ pub static CASIO_FACEINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -120,6 +131,7 @@ pub static CASIO_FACEINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -129,6 +141,7 @@ pub static CASIO_FACEINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

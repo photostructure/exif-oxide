@@ -19,6 +19,7 @@ pub static SONY_TAG9403_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static SONY_TAG9403_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "int8s",
                 print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

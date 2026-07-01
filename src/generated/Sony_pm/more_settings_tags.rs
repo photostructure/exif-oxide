@@ -44,6 +44,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("82".to_string(), "Self-timer 2 sec, Mirror Lock-up"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -86,6 +87,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("96".to_string(), "Anti Motion Blur"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -99,6 +101,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("3".to_string(), "Spot"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -112,6 +115,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("17".to_string(), "On (Manual)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -124,6 +128,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("2".to_string(), "Adobe RGB"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -140,6 +145,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("96".to_string(), "B&W"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -149,6 +155,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int8s",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -158,6 +165,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int8s",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -167,6 +175,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int8s",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -228,6 +237,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("99".to_string(), "Fluorescent (0)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -237,6 +247,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_f4716ca91121bc8d)),
                 value_conv: Some(ValueConv::Function(ast_value_39492c8ca08229b1)),
+                is_offset: false,
             },
         ),
         (
@@ -246,6 +257,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int8s",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -262,6 +274,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("20".to_string(), "Wireless"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -274,6 +287,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("16".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -287,6 +301,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("19".to_string(), "Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -302,6 +317,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("48".to_string(), "DMF"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -316,6 +332,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("255".to_string(), "None"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -329,6 +346,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("17".to_string(), "On (Manual)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -348,6 +366,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("41".to_string(), "6 EV"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -361,6 +380,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("34".to_string(), "Quick AF Live View"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -373,6 +393,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("16".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -382,6 +403,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16uRev[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -391,6 +413,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: Some(ValueConv::Function(ast_value_2da539a22da2bce2)),
+                is_offset: false,
             },
         ),
         (
@@ -400,6 +423,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: Some(ValueConv::Function(ast_value_2da539a22da2bce2)),
+                is_offset: false,
             },
         ),
         (
@@ -413,6 +437,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("2".to_string(), "Contrast AF"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -422,6 +447,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_50a2776f078ae807)),
                 value_conv: Some(ValueConv::Function(ast_value_4eab48f4e81df18f)),
+                is_offset: false,
             },
         ),
         (
@@ -431,6 +457,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
                 value_conv: Some(ValueConv::Function(ast_value_62b71052f9215d46)),
+                is_offset: false,
             },
         ),
         (
@@ -440,6 +467,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_101e3eed0a079327)),
                 value_conv: Some(ValueConv::Function(ast_value_560b6cca7eb11de6)),
+                is_offset: false,
             },
         ),
         (
@@ -449,6 +477,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: Some(ValueConv::Function(ast_value_e263dcc51d0cc0f)),
+                is_offset: false,
             },
         ),
         (
@@ -458,6 +487,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_50a2776f078ae807)),
                 value_conv: Some(ValueConv::Function(ast_value_4eab48f4e81df18f)),
+                is_offset: false,
             },
         ),
         (
@@ -467,6 +497,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
                 value_conv: Some(ValueConv::Function(ast_value_62b71052f9215d46)),
+                is_offset: false,
             },
         ),
         (
@@ -476,6 +507,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_101e3eed0a079327)),
                 value_conv: Some(ValueConv::Function(ast_value_560b6cca7eb11de6)),
+                is_offset: false,
             },
         ),
         (
@@ -490,6 +522,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("8".to_string(), "Rotate 270 CW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -499,6 +532,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: Some(ValueConv::Function(ast_value_7e8fc5d758244b19)),
+                is_offset: false,
             },
         ),
         (
@@ -508,6 +542,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: Some(ValueConv::Function(ast_value_e263dcc51d0cc0f)),
+                is_offset: false,
             },
         ),
         (
@@ -517,6 +552,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -526,6 +562,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: Some(ValueConv::Function(ast_value_e263dcc51d0cc0f)),
+                is_offset: false,
             },
         ),
         (
@@ -540,6 +577,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("8".to_string(), "Rotate 270 CW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -549,6 +587,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -561,6 +600,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("1".to_string(), "Fired"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -573,6 +613,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("1".to_string(), "MF"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -587,6 +628,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("4".to_string(), "External Flash fired (4)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -600,6 +642,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("136".to_string(), "Did not fire"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -613,6 +656,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("182".to_string(), "Fired, HSS"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -625,6 +669,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("2".to_string(), "External"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -638,6 +683,7 @@ pub static SONY_MORESETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("2".to_string(), "External"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

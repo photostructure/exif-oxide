@@ -24,6 +24,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "string[16]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_41e4fcf67a465f16)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -42,6 +44,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "undef[12]",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_28444edc8dbf0b8f)),
+                is_offset: false,
             },
         ),
         (
@@ -51,6 +54,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "undef[12]",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_28444edc8dbf0b8f)),
+                is_offset: false,
             },
         ),
         (
@@ -60,6 +64,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "undef[6]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_21c135941e609b5d)),
+                is_offset: false,
             },
         ),
         (
@@ -69,6 +74,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -78,6 +84,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -87,6 +94,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -96,6 +104,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -105,6 +114,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -114,6 +124,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -123,6 +134,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -132,6 +144,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -141,6 +154,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -150,6 +164,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -159,6 +174,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -168,6 +184,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -177,6 +194,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -186,6 +204,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -195,6 +214,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -204,6 +224,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -213,6 +234,7 @@ pub static OLYMPUS_WAV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
     ])

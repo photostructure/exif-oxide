@@ -16,6 +16,7 @@ pub static NIKON_HDRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "string[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static NIKON_HDRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("48".to_string(), "Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +46,7 @@ pub static NIKON_HDRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("3".to_string(), "3 EV"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -60,6 +63,7 @@ pub static NIKON_HDRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("48".to_string(), "Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -75,6 +79,7 @@ pub static NIKON_HDRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("3".to_string(), "3 EV"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

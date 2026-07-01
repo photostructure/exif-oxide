@@ -16,6 +16,7 @@ pub static CANON_VIGNETTINGCORRUNKNOWN_TAGS: LazyLock<HashMap<u16, TagInfo>> =
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         )])
     });

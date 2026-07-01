@@ -19,6 +19,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +39,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +49,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +59,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +69,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +79,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +89,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -91,6 +99,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -100,6 +109,7 @@ pub static SIGMA_RAW_HEADEREXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

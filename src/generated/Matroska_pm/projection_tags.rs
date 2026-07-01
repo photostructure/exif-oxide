@@ -21,6 +21,7 @@ pub static MATROSKA_PROJECTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("3".to_string(), "Mesh"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static MATROSKA_PROJECTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -39,6 +41,7 @@ pub static MATROSKA_PROJECTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "float",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -48,6 +51,7 @@ pub static MATROSKA_PROJECTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "float",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -57,6 +61,7 @@ pub static MATROSKA_PROJECTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "float",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

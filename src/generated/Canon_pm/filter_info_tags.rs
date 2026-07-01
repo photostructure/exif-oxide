@@ -22,6 +22,7 @@ pub static CANON_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +38,7 @@ pub static CANON_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +54,7 @@ pub static CANON_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -67,6 +70,7 @@ pub static CANON_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -79,6 +83,7 @@ pub static CANON_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("1".to_string(), "Vertical"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -94,6 +99,7 @@ pub static CANON_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -109,6 +115,7 @@ pub static CANON_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -124,6 +131,7 @@ pub static CANON_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

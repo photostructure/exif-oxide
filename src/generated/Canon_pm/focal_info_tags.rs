@@ -18,6 +18,7 @@ pub static CANON_FOCALINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             format: "rational32u",
             print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

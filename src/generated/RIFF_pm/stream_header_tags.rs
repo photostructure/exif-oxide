@@ -28,6 +28,7 @@ pub static RIFF_STREAMHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("vids".to_string(), "Video"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +38,7 @@ pub static RIFF_STREAMHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "string[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +48,7 @@ pub static RIFF_STREAMHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "rational64u",
                 print_conv: Some(PrintConv::Function(ast_print_dd3be644838b9531)),
                 value_conv: Some(ValueConv::Function(ast_value_8226079554149ee)),
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +58,7 @@ pub static RIFF_STREAMHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +68,7 @@ pub static RIFF_STREAMHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_be18552a212307e5)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +78,7 @@ pub static RIFF_STREAMHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_d780ed94ab5b10da)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -15,6 +15,7 @@ pub static NIKON_MENUINFOZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             format: "int32u",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

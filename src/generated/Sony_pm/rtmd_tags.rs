@@ -32,6 +32,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -41,6 +42,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -50,6 +52,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -59,6 +62,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -68,6 +72,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
                 value_conv: Some(ValueConv::Function(ast_value_9b826d8a33505bd4)),
+                is_offset: false,
             },
         ),
         (
@@ -77,6 +82,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -86,6 +92,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -95,6 +102,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -104,6 +112,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -113,6 +122,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -122,6 +132,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -131,6 +142,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -140,6 +152,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -149,6 +162,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -158,6 +172,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational64u",
                 print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -167,6 +182,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational64u",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -176,6 +192,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_1dcf63244ce05a2)),
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -185,6 +202,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -194,6 +212,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -203,6 +222,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -212,6 +232,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -221,6 +242,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -230,6 +252,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u",
                 print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -242,6 +265,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("S".to_string(), "South"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -251,6 +275,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational64u",
                 print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
                 value_conv: Some(ValueConv::Function(ast_value_8019a6d0d3ff2af4)),
+                is_offset: false,
             },
         ),
         (
@@ -263,6 +288,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("W".to_string(), "West"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -272,6 +298,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational64u",
                 print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
                 value_conv: Some(ValueConv::Function(ast_value_8019a6d0d3ff2af4)),
+                is_offset: false,
             },
         ),
         (
@@ -281,6 +308,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational64u",
                 print_conv: Some(PrintConv::Function(ast_print_10a121f3318d09c)),
                 value_conv: Some(ValueConv::Function(ast_value_f08f753887ef89a0)),
+                is_offset: false,
             },
         ),
         (
@@ -293,6 +321,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("V".to_string(), "Measurement Void"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -305,6 +334,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "3-Dimensional Measurement"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -314,6 +344,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -323,6 +354,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
+                is_offset: false,
             },
         ),
         (
@@ -332,6 +364,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -341,6 +374,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -350,6 +384,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -359,6 +394,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -375,6 +411,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("6".to_string(), "Custom"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -384,6 +421,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "undef",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_c39b61e775b07eeb)),
+                is_offset: false,
             },
         ),
         (
@@ -393,6 +431,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -402,6 +441,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -411,6 +451,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -420,6 +461,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -429,6 +471,7 @@ pub static SONY_RTMD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

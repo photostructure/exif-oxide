@@ -19,6 +19,7 @@ pub static NIKON_WORLDTIME_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_bd89e0bff1b83d5d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static NIKON_WORLDTIME_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +46,7 @@ pub static NIKON_WORLDTIME_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("2".to_string(), "D/M/Y"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

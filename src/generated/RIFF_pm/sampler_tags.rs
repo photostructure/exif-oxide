@@ -25,6 +25,7 @@ pub static RIFF_SAMPLER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("30".to_string(), "30 fps"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static RIFF_SAMPLER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_2ad70670162b2c7a)),
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static RIFF_SAMPLER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "undef[$size-40]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

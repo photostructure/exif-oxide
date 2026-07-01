@@ -39,6 +39,7 @@ pub static PANASONIC_RAW_WBINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("9".to_string(), "Fine Weather"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -48,6 +49,7 @@ pub static PANASONIC_RAW_WBINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "int16u[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -80,6 +82,7 @@ pub static PANASONIC_RAW_WBINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("9".to_string(), "Fine Weather"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -89,6 +92,7 @@ pub static PANASONIC_RAW_WBINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "int16u[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -121,6 +125,7 @@ pub static PANASONIC_RAW_WBINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("9".to_string(), "Fine Weather"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -130,6 +135,7 @@ pub static PANASONIC_RAW_WBINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "int16u[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -162,6 +168,7 @@ pub static PANASONIC_RAW_WBINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("9".to_string(), "Fine Weather"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -171,6 +178,7 @@ pub static PANASONIC_RAW_WBINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "int16u[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -203,6 +211,7 @@ pub static PANASONIC_RAW_WBINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("9".to_string(), "Fine Weather"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -212,6 +221,7 @@ pub static PANASONIC_RAW_WBINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "int16u[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -244,6 +254,7 @@ pub static PANASONIC_RAW_WBINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("9".to_string(), "Fine Weather"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -253,6 +264,7 @@ pub static PANASONIC_RAW_WBINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "int16u[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -285,6 +297,7 @@ pub static PANASONIC_RAW_WBINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("9".to_string(), "Fine Weather"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -294,6 +307,7 @@ pub static PANASONIC_RAW_WBINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "int16u[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

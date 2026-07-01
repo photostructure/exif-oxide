@@ -16,6 +16,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -68,6 +71,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("7".to_string(), "Normal/Super High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +86,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "Manual"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -91,6 +96,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -105,6 +111,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "Adjust Exposure"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -117,6 +124,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -129,6 +137,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -141,6 +150,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -153,6 +163,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -165,6 +176,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -177,6 +189,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "Press start, press stop"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -189,6 +202,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -201,6 +215,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -213,6 +228,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -225,6 +241,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -237,6 +254,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -254,6 +272,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("6".to_string(), "Lamp"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -263,6 +282,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -277,6 +297,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "20 frames/s"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -291,6 +312,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "Red eye"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -300,6 +322,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -309,6 +332,7 @@ pub static SANYO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

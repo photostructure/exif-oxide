@@ -288,6 +288,7 @@ pub static RIFF_AUDIOFORMAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -297,6 +298,7 @@ pub static RIFF_AUDIOFORMAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -306,6 +308,7 @@ pub static RIFF_AUDIOFORMAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

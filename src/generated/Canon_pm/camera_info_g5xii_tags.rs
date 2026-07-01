@@ -19,6 +19,7 @@ pub static CANON_CAMERAINFOG5XII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static CANON_CAMERAINFOG5XII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +39,7 @@ pub static CANON_CAMERAINFOG5XII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +49,7 @@ pub static CANON_CAMERAINFOG5XII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "int32u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
+                is_offset: false,
             },
         ),
     ])

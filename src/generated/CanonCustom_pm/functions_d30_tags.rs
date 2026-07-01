@@ -19,6 +19,7 @@ pub static CANON_CUSTOM_FUNCTIONSD30_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static CANON_CUSTOM_FUNCTIONSD30_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("3".to_string(), "AE+release/AE+AF"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -45,6 +47,7 @@ pub static CANON_CUSTOM_FUNCTIONSD30_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("1".to_string(), "Enable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -57,6 +60,7 @@ pub static CANON_CUSTOM_FUNCTIONSD30_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("1".to_string(), "1/3 Stop"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -71,6 +75,7 @@ pub static CANON_CUSTOM_FUNCTIONSD30_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("3".to_string(), "Emits/Does not fire"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -83,6 +88,7 @@ pub static CANON_CUSTOM_FUNCTIONSD30_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("1".to_string(), "1/200 Fixed"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -97,6 +103,7 @@ pub static CANON_CUSTOM_FUNCTIONSD30_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("3".to_string(), "-,0,+/Disabled"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -109,6 +116,7 @@ pub static CANON_CUSTOM_FUNCTIONSD30_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("1".to_string(), "2nd-curtain sync"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -122,6 +130,7 @@ pub static CANON_CUSTOM_FUNCTIONSD30_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("2".to_string(), "Lock AE and start timer"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -134,6 +143,7 @@ pub static CANON_CUSTOM_FUNCTIONSD30_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("1".to_string(), "Disable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -147,6 +157,7 @@ pub static CANON_CUSTOM_FUNCTIONSD30_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("2".to_string(), "Previous"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -161,6 +172,7 @@ pub static CANON_CUSTOM_FUNCTIONSD30_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("3".to_string(), "Change parameters"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -173,6 +185,7 @@ pub static CANON_CUSTOM_FUNCTIONSD30_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("1".to_string(), "Enable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -185,6 +198,7 @@ pub static CANON_CUSTOM_FUNCTIONSD30_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("1".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -197,6 +211,7 @@ pub static CANON_CUSTOM_FUNCTIONSD30_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("1".to_string(), "No"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

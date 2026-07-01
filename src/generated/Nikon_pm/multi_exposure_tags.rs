@@ -16,6 +16,7 @@ pub static NIKON_MULTIEXPOSURE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "string[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static NIKON_MULTIEXPOSURE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("3".to_string(), "HDR"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -42,6 +44,7 @@ pub static NIKON_MULTIEXPOSURE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

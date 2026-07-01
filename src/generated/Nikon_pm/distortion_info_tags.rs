@@ -19,6 +19,7 @@ pub static NIKON_DISTORTIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "string[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static NIKON_DISTORTIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("3".to_string(), "On (Required)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -42,6 +44,7 @@ pub static NIKON_DISTORTIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "rational64s",
                 print_conv: Some(PrintConv::Function(ast_print_58281d11fd553f56)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -51,6 +54,7 @@ pub static NIKON_DISTORTIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "rational64s",
                 print_conv: Some(PrintConv::Function(ast_print_58281d11fd553f56)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -60,6 +64,7 @@ pub static NIKON_DISTORTIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "rational64s",
                 print_conv: Some(PrintConv::Function(ast_print_58281d11fd553f56)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

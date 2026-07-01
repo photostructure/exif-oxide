@@ -22,6 +22,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter1]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter1]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +46,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter1]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +58,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter1]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -66,6 +70,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter1]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -77,6 +82,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter1]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -88,6 +94,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter1]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -99,6 +106,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter2]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -110,6 +118,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter2]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -121,6 +130,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter2]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -132,6 +142,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter2]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -143,6 +154,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter2]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -154,6 +166,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter2]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -165,6 +178,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter2]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -176,6 +190,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter2]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -187,6 +202,7 @@ pub static SONY_METERINFO9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvMeter2]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
     ])

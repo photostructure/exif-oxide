@@ -20,6 +20,7 @@ pub static DJI_GPSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unsigned",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static DJI_GPSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "double",
                 print_conv: Some(PrintConv::Function(ast_print_26ee01bf270f786b)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -38,6 +40,7 @@ pub static DJI_GPSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "double",
                 print_conv: Some(PrintConv::Function(ast_print_674572cac8977577)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -24,6 +24,7 @@ pub static NIKON_ROTATIONINFOD500_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("3".to_string(), "Rotate 180"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static NIKON_ROTATIONINFOD500_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_52df9ad712959d2)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -42,6 +44,7 @@ pub static NIKON_ROTATIONINFOD500_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_52df9ad712959d2)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -54,6 +57,7 @@ pub static NIKON_ROTATIONINFOD500_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("1".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

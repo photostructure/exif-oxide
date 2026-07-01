@@ -22,6 +22,7 @@ pub static CANON_RAW_EXPOSUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_cff599d69085933c)),
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static CANON_RAW_EXPOSUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_bb77e52729467611)),
+                is_offset: false,
             },
         ),
     ])

@@ -15,6 +15,7 @@ pub static KODAK_TYPE4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
             format: "string[12]",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

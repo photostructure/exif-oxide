@@ -25,6 +25,7 @@ pub static NIKON_AFTUNE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("3".to_string(), "On (Zoom)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static NIKON_AFTUNE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_be7395d3480fbf0d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static NIKON_AFTUNE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "int8s",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +55,7 @@ pub static NIKON_AFTUNE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "int8s",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

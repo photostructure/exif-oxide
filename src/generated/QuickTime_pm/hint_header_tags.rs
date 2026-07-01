@@ -19,6 +19,7 @@ pub static QUICK_TIME_HINTHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_21dfca2f396095a)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static QUICK_TIME_HINTHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_21dfca2f396095a)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

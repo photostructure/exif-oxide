@@ -22,6 +22,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -49,6 +52,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -58,6 +62,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -67,6 +72,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -76,6 +82,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -85,6 +92,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -94,6 +102,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -103,6 +112,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -112,6 +122,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -121,6 +132,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -130,6 +142,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -139,6 +152,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -148,6 +162,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -157,6 +172,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -166,6 +182,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -175,6 +192,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -184,6 +202,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -193,6 +212,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -202,6 +222,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -211,6 +232,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -220,6 +242,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -229,6 +252,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -238,6 +262,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -247,6 +272,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -256,6 +282,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -265,6 +292,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -274,6 +302,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -283,6 +312,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -292,6 +322,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -301,6 +332,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -310,6 +342,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -319,6 +352,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -328,6 +362,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -337,6 +372,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -346,6 +382,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -355,6 +392,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -364,6 +402,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -373,6 +412,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -382,6 +422,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -391,6 +432,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -400,6 +442,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -409,6 +452,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -418,6 +462,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -427,6 +472,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -436,6 +482,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -445,6 +492,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -454,6 +502,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -463,6 +512,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -472,6 +522,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -481,6 +532,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -490,6 +542,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -499,6 +552,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -508,6 +562,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -517,6 +572,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -526,6 +582,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -535,6 +592,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -544,6 +602,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -553,6 +612,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -562,6 +622,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -571,6 +632,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -580,6 +642,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -589,6 +652,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -598,6 +662,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -607,6 +672,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -616,6 +682,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -625,6 +692,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -634,6 +702,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -643,6 +712,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -652,6 +722,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -661,6 +732,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -670,6 +742,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -679,6 +752,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -688,6 +762,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -697,6 +772,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -706,6 +782,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -715,6 +792,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -724,6 +802,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -733,6 +812,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -742,6 +822,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -751,6 +832,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -760,6 +842,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -769,6 +852,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -778,6 +862,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -787,6 +872,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -796,6 +882,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -805,6 +892,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -814,6 +902,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -823,6 +912,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -832,6 +922,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -841,6 +932,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -850,6 +942,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -859,6 +952,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -868,6 +962,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -877,6 +972,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -886,6 +982,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -895,6 +992,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -904,6 +1002,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -913,6 +1012,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -922,6 +1022,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -931,6 +1032,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -940,6 +1042,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -949,6 +1052,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -958,6 +1062,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -967,6 +1072,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -976,6 +1082,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -985,6 +1092,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -994,6 +1102,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1003,6 +1112,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1012,6 +1122,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1021,6 +1132,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1030,6 +1142,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1039,6 +1152,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1048,6 +1162,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1057,6 +1172,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1066,6 +1182,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1075,6 +1192,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1084,6 +1202,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1093,6 +1212,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1102,6 +1222,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1111,6 +1232,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1120,6 +1242,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1129,6 +1252,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1138,6 +1262,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1147,6 +1272,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1156,6 +1282,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1165,6 +1292,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1174,6 +1302,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1183,6 +1312,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1192,6 +1322,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1201,6 +1332,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1210,6 +1342,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1219,6 +1352,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1228,6 +1362,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1237,6 +1372,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1246,6 +1382,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1255,6 +1392,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1264,6 +1402,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1273,6 +1412,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1282,6 +1422,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1291,6 +1432,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1300,6 +1442,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1309,6 +1452,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1318,6 +1462,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1327,6 +1472,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1336,6 +1482,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1345,6 +1492,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1354,6 +1502,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1363,6 +1512,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1372,6 +1522,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1381,6 +1532,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1390,6 +1542,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1399,6 +1552,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1408,6 +1562,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1417,6 +1572,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1426,6 +1582,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1435,6 +1592,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1444,6 +1602,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1453,6 +1612,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1462,6 +1622,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1471,6 +1632,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1480,6 +1642,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1489,6 +1652,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1498,6 +1662,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1507,6 +1672,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1516,6 +1682,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1525,6 +1692,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1534,6 +1702,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1543,6 +1712,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1552,6 +1722,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1561,6 +1732,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1570,6 +1742,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1579,6 +1752,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1588,6 +1762,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1597,6 +1772,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1606,6 +1782,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1615,6 +1792,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1624,6 +1802,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1633,6 +1812,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1642,6 +1822,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1651,6 +1832,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1660,6 +1842,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1669,6 +1852,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1678,6 +1862,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1687,6 +1872,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1696,6 +1882,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1705,6 +1892,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1714,6 +1902,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1723,6 +1912,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1732,6 +1922,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1741,6 +1932,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1750,6 +1942,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1759,6 +1952,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1768,6 +1962,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1777,6 +1972,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1786,6 +1982,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1795,6 +1992,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1804,6 +2002,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1813,6 +2012,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1822,6 +2022,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1831,6 +2032,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1840,6 +2042,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1849,6 +2052,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_5fd665ca42e4d37a)),
+                is_offset: false,
             },
         ),
         (
@@ -1858,6 +2062,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_5fd665ca42e4d37a)),
+                is_offset: false,
             },
         ),
         (
@@ -1867,6 +2072,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1876,6 +2082,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1885,6 +2092,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1894,6 +2102,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1903,6 +2112,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1918,6 +2128,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("4".to_string(), "Other Profile"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1927,6 +2138,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1941,6 +2153,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "TIFF RGB"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1955,6 +2168,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "25%"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1968,6 +2182,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("2".to_string(), "Low"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1982,6 +2197,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "Low"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2009,6 +2225,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("9".to_string(), "Portrait Hi Color"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2021,6 +2238,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "No"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2030,6 +2248,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2039,6 +2258,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2048,6 +2268,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2057,6 +2278,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2066,6 +2288,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2075,6 +2298,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2084,6 +2308,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2093,6 +2318,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2102,6 +2328,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2111,6 +2338,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2120,6 +2348,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2129,6 +2358,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2138,6 +2368,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2147,6 +2378,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2156,6 +2388,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2165,6 +2398,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2174,6 +2408,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2183,6 +2418,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2192,6 +2428,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2201,6 +2438,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2210,6 +2448,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "undef",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_2eea5e422c1a4a85)),
+                is_offset: false,
             },
         ),
         (
@@ -2219,6 +2458,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2228,6 +2468,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2237,6 +2478,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2246,6 +2488,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2255,6 +2498,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2267,6 +2511,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "Karnak"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2279,6 +2524,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "KLUT12"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2288,6 +2534,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2297,6 +2544,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2306,6 +2554,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2315,6 +2564,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2324,6 +2574,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2333,6 +2584,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2342,6 +2594,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2351,6 +2604,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2360,6 +2614,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2369,6 +2624,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2378,6 +2634,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2387,6 +2644,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2396,6 +2654,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2405,6 +2664,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2414,6 +2674,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2423,6 +2684,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2432,6 +2694,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2441,6 +2704,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2450,6 +2714,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2459,6 +2724,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2468,6 +2734,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2477,6 +2744,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2486,6 +2754,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2495,6 +2764,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2504,6 +2774,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2513,6 +2784,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2522,6 +2794,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2531,6 +2804,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2540,6 +2814,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2549,6 +2824,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2558,6 +2834,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2567,6 +2844,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2576,6 +2854,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2585,6 +2864,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2594,6 +2874,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2603,6 +2884,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2612,6 +2894,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2621,6 +2904,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2630,6 +2914,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2639,6 +2924,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2648,6 +2934,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2657,6 +2944,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2666,6 +2954,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2675,6 +2964,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2684,6 +2974,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2693,6 +2984,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2702,6 +2994,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2711,6 +3004,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2720,6 +3014,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2729,6 +3024,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2738,6 +3034,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2747,6 +3044,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2756,6 +3054,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2765,6 +3064,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2774,6 +3074,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2783,6 +3084,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2792,6 +3094,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2801,6 +3104,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2810,6 +3114,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2819,6 +3124,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2828,6 +3134,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2837,6 +3144,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2846,6 +3154,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2855,6 +3164,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2864,6 +3174,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2873,6 +3184,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2882,6 +3194,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2891,6 +3204,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2900,6 +3214,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2909,6 +3224,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2918,6 +3234,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2927,6 +3244,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2936,6 +3254,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2945,6 +3264,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2954,6 +3274,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2963,6 +3284,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2972,6 +3294,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2981,6 +3304,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2990,6 +3314,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2999,6 +3324,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3008,6 +3334,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3017,6 +3344,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3026,6 +3354,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3035,6 +3364,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3044,6 +3374,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3053,6 +3384,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3062,6 +3394,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3071,6 +3404,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3080,6 +3414,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3089,6 +3424,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3098,6 +3434,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3107,6 +3444,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3116,6 +3454,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3125,6 +3464,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3134,6 +3474,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3143,6 +3484,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3152,6 +3494,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3161,6 +3504,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3170,6 +3514,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3179,6 +3524,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3188,6 +3534,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3197,6 +3544,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3206,6 +3554,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3215,6 +3564,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3224,6 +3574,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3233,6 +3584,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3242,6 +3594,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3251,6 +3604,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3260,6 +3614,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3269,6 +3624,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3278,6 +3634,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3287,6 +3644,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3296,6 +3654,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3305,6 +3664,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3314,6 +3674,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3323,6 +3684,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3332,6 +3694,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3341,6 +3704,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3350,6 +3714,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3359,6 +3724,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3368,6 +3734,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3377,6 +3744,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3386,6 +3754,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3395,6 +3764,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3404,6 +3774,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3413,6 +3784,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3422,6 +3794,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3431,6 +3804,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3440,6 +3814,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3449,6 +3824,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3458,6 +3834,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3467,6 +3844,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3476,6 +3854,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -3485,6 +3864,7 @@ pub static KODAK_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

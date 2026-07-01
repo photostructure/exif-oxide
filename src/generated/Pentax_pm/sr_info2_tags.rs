@@ -16,6 +16,7 @@ pub static PENTAX_SRINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -38,6 +39,7 @@ pub static PENTAX_SRINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("8".to_string(), "Off (AA simulation type 1) (8)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

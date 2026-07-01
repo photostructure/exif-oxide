@@ -18,6 +18,7 @@ pub static KODAK_SPECIALEFFECTS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             format: "unknown",
             print_conv: Some(PrintConv::Function(ast_print_cfb87d34a95a9b93)),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

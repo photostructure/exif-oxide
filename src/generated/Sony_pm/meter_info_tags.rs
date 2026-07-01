@@ -20,6 +20,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[27]",
                 print_conv: Some(PrintConv::Function(ast_print_8cb1f3f2fa77517f)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[27]",
                 print_conv: Some(PrintConv::Function(ast_print_8cb1f3f2fa77517f)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -38,6 +40,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[27]",
                 print_conv: Some(PrintConv::Function(ast_print_8cb1f3f2fa77517f)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -47,6 +50,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[27]",
                 print_conv: Some(PrintConv::Function(ast_print_8cb1f3f2fa77517f)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -56,6 +60,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[27]",
                 print_conv: Some(PrintConv::Function(ast_print_8cb1f3f2fa77517f)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -65,6 +70,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[27]",
                 print_conv: Some(PrintConv::Function(ast_print_8cb1f3f2fa77517f)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -74,6 +80,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[27]",
                 print_conv: Some(PrintConv::Function(ast_print_8cb1f3f2fa77517f)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -83,6 +90,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[33]",
                 print_conv: Some(PrintConv::Function(ast_print_675d52609db63e9c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -92,6 +100,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[33]",
                 print_conv: Some(PrintConv::Function(ast_print_675d52609db63e9c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -101,6 +110,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[33]",
                 print_conv: Some(PrintConv::Function(ast_print_675d52609db63e9c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -110,6 +120,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[33]",
                 print_conv: Some(PrintConv::Function(ast_print_675d52609db63e9c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -119,6 +130,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[33]",
                 print_conv: Some(PrintConv::Function(ast_print_675d52609db63e9c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -128,6 +140,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[33]",
                 print_conv: Some(PrintConv::Function(ast_print_675d52609db63e9c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -137,6 +150,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[33]",
                 print_conv: Some(PrintConv::Function(ast_print_675d52609db63e9c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -146,6 +160,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[33]",
                 print_conv: Some(PrintConv::Function(ast_print_675d52609db63e9c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -155,6 +170,7 @@ pub static SONY_METERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u[33]",
                 print_conv: Some(PrintConv::Function(ast_print_675d52609db63e9c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

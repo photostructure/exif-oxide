@@ -21,6 +21,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int8s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int8s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -39,6 +41,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int8s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -48,6 +51,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_aaa5902222704349)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +68,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("5".to_string(), "Sports"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -81,6 +86,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -119,6 +125,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("7".to_string(), "Adobe RGB"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -128,6 +135,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -137,6 +145,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -146,6 +155,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -155,6 +165,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -164,6 +175,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -173,6 +185,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -182,6 +195,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -191,6 +205,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -200,6 +215,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -209,6 +225,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -218,6 +235,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int8s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -231,6 +249,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("2".to_string(), "Low Key"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -240,6 +259,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int8s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -249,6 +269,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_39492c8ca08229b1)),
+                is_offset: false,
             },
         ),
         (
@@ -262,6 +283,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("2".to_string(), "Low Key"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -271,6 +293,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_dccfee5faef77602)),
                 value_conv: Some(ValueConv::Function(ast_value_39492c8ca08229b1)),
+                is_offset: false,
             },
         ),
         (
@@ -280,6 +303,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -289,6 +313,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_dccfee5faef77602)),
                 value_conv: Some(ValueConv::Function(ast_value_39492c8ca08229b1)),
+                is_offset: false,
             },
         ),
         (
@@ -298,6 +323,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -307,6 +333,7 @@ pub static MINOLTA_RAW_RIF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

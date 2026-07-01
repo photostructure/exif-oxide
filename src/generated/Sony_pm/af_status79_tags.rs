@@ -23,6 +23,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -39,6 +40,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +57,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -71,6 +74,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -87,6 +91,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -103,6 +108,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -119,6 +125,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -135,6 +142,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -151,6 +159,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -167,6 +176,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -183,6 +193,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -199,6 +210,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -215,6 +227,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -231,6 +244,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -247,6 +261,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -263,6 +278,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -279,6 +295,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -295,6 +312,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -311,6 +329,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -327,6 +346,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -343,6 +363,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -359,6 +380,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -375,6 +397,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -391,6 +414,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -407,6 +431,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -423,6 +448,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -439,6 +465,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -455,6 +482,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -471,6 +499,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -487,6 +516,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -503,6 +533,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -519,6 +550,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -535,6 +567,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -551,6 +584,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -567,6 +601,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -583,6 +618,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -599,6 +635,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -615,6 +652,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -631,6 +669,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -647,6 +686,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -663,6 +703,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -679,6 +720,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -695,6 +737,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -711,6 +754,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -727,6 +771,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -743,6 +788,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -759,6 +805,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -775,6 +822,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -791,6 +839,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -807,6 +856,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -823,6 +873,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -839,6 +890,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -855,6 +907,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -871,6 +924,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -887,6 +941,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -903,6 +958,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -919,6 +975,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -935,6 +992,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -951,6 +1009,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -967,6 +1026,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -983,6 +1043,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -999,6 +1060,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1015,6 +1077,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1031,6 +1094,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1047,6 +1111,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1063,6 +1128,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1079,6 +1145,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1095,6 +1162,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1111,6 +1179,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1127,6 +1196,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1143,6 +1213,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1159,6 +1230,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1175,6 +1247,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1191,6 +1264,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1207,6 +1281,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1223,6 +1298,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1239,6 +1315,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1255,6 +1332,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1271,6 +1349,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1287,6 +1366,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1303,6 +1383,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1319,6 +1400,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1335,6 +1417,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1351,6 +1434,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1367,6 +1451,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1383,6 +1468,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1399,6 +1485,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1415,6 +1502,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1431,6 +1519,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1447,6 +1536,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1463,6 +1553,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1479,6 +1570,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1495,6 +1587,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1511,6 +1604,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1527,6 +1621,7 @@ pub static SONY_AFSTATUS79_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

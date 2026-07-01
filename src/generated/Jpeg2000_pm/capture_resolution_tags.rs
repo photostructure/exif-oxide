@@ -16,6 +16,7 @@ pub static JPEG2000_CAPTURERESOLUTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "rational32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static JPEG2000_CAPTURERESOLUTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "rational32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -45,6 +47,7 @@ pub static JPEG2000_CAPTURERESOLUTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     ("6".to_string(), "um"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -65,6 +68,7 @@ pub static JPEG2000_CAPTURERESOLUTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     ("6".to_string(), "um"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

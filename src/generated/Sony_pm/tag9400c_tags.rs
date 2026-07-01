@@ -50,6 +50,7 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "Continuous - HDR"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -59,6 +60,7 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -68,6 +70,7 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
+                is_offset: false,
             },
         ),
         (
@@ -92,6 +95,7 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "9 shots"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -101,6 +105,7 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
+                is_offset: false,
             },
         ),
         (
@@ -119,6 +124,7 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "9 files"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -133,6 +139,7 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("8".to_string(), "Rotate 270 CW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -148,6 +155,7 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("6".to_string(), "RAW + HEIF"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -157,6 +165,7 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int8u",
                 print_conv: Some(PrintConv::Function(ast_print_705d9237f5fcef3b)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -169,6 +178,7 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("7".to_string(), "Electronic"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -181,6 +191,7 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("7".to_string(), "Electronic"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -193,6 +204,7 @@ pub static SONY_TAG9400C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("7".to_string(), "Electronic"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

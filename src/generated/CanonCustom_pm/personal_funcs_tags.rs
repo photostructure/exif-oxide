@@ -18,6 +18,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -51,6 +54,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -62,6 +66,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +78,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -84,6 +90,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -95,6 +102,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -106,6 +114,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -117,6 +126,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -128,6 +138,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -139,6 +150,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -150,6 +162,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -161,6 +174,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -172,6 +186,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -183,6 +198,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -194,6 +210,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -205,6 +222,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -216,6 +234,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -227,6 +246,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -238,6 +258,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -249,6 +270,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -260,6 +282,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -271,6 +294,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -282,6 +306,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -293,6 +318,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -304,6 +330,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -315,6 +342,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -326,6 +354,7 @@ pub static CANON_CUSTOM_PERSONALFUNCS_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     "[Function: Image::ExifTool::CanonCustom::ConvertPfn]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

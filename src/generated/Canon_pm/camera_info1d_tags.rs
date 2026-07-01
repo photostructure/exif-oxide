@@ -21,6 +21,7 @@ pub static CANON_CAMERAINFO1D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int8u",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_55048b24234b7885)),
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static CANON_CAMERAINFO1D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -979,6 +981,7 @@ pub static CANON_CAMERAINFO1D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("95".to_string(), "Canon TS-E 24mm f/3.5L II"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -988,6 +991,7 @@ pub static CANON_CAMERAINFO1D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -997,6 +1001,7 @@ pub static CANON_CAMERAINFO1D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1013,6 +1018,7 @@ pub static CANON_CAMERAINFO1D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("5".to_string(), "Highest"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1022,6 +1028,7 @@ pub static CANON_CAMERAINFO1D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int8s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1054,6 +1061,7 @@ pub static CANON_CAMERAINFO1D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("9".to_string(), "Manual Temperature (Kelvin)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1070,6 +1078,7 @@ pub static CANON_CAMERAINFO1D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("5".to_string(), "Highest"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1079,6 +1088,7 @@ pub static CANON_CAMERAINFO1D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int8s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1111,6 +1121,7 @@ pub static CANON_CAMERAINFO1D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("9".to_string(), "Manual Temperature (Kelvin)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1145,6 +1156,7 @@ pub static CANON_CAMERAINFO1D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("7".to_string(), "CM Set 2"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1154,6 +1166,7 @@ pub static CANON_CAMERAINFO1D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1188,6 +1201,7 @@ pub static CANON_CAMERAINFO1D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("7".to_string(), "CM Set 2"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

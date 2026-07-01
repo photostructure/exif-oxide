@@ -21,6 +21,7 @@ pub static CANON_RAW_TIMESTAMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_da19f9751eeb9fa7)),
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static CANON_RAW_TIMESTAMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int32s",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_4ac91d308bf0a86e)),
+                is_offset: false,
             },
         ),
         (
@@ -39,6 +41,7 @@ pub static CANON_RAW_TIMESTAMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

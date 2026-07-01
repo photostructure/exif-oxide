@@ -19,6 +19,7 @@ pub static PENTAX_AWBINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static PENTAX_AWBINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Strong Correction"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

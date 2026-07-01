@@ -19,6 +19,7 @@ pub static NIKON_BAROMETERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static NIKON_BAROMETERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int32s",
                 print_conv: Some(PrintConv::Function(ast_print_2aa532acb8a29737)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -19,6 +19,7 @@ pub static PENTAX_EVSTEPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("1".to_string(), "1/3 EV Steps"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static PENTAX_EVSTEPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("1".to_string(), "As EV Steps"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static PENTAX_EVSTEPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

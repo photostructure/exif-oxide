@@ -16,6 +16,7 @@ pub static SONY_TAG940E_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static SONY_TAG940E_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -36,6 +38,7 @@ pub static SONY_TAG940E_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
     ])

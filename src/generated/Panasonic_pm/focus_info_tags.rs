@@ -21,6 +21,7 @@ pub static PANASONIC_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_5999c367bfc59178)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static PANASONIC_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
     ])

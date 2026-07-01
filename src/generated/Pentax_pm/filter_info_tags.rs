@@ -16,6 +16,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +66,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -103,6 +106,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -142,6 +146,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -181,6 +186,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -220,6 +226,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -259,6 +266,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -298,6 +306,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -337,6 +346,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -376,6 +386,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -415,6 +426,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -454,6 +466,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -493,6 +506,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -532,6 +546,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -571,6 +586,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -610,6 +626,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -649,6 +666,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -688,6 +706,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -727,6 +746,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -766,6 +786,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -805,6 +826,7 @@ pub static PENTAX_FILTERINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

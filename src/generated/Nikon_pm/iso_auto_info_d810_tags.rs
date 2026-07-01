@@ -54,6 +54,7 @@ pub static NIKON_ISOAUTOINFOD810_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("9".to_string(), "1/500 s"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -105,6 +106,7 @@ pub static NIKON_ISOAUTOINFOD810_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("96".to_string(), "ISO Hi 2.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -66,6 +66,7 @@ pub static NIKON_BRACKETINGINFOD500_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("80".to_string(), "AE Bracketing Disabled"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -103,6 +104,7 @@ pub static NIKON_BRACKETINGINFOD500_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("8".to_string(), "9F 1"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -119,6 +121,7 @@ pub static NIKON_BRACKETINGINFOD500_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("8".to_string(), "Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -134,6 +137,7 @@ pub static NIKON_BRACKETINGINFOD500_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("4".to_string(), "5 Shots"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

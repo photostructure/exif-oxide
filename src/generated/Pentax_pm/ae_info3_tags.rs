@@ -25,6 +25,7 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_ebf06338275430d8)),
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_62606f8de21c9e5a)),
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_2cea565875d218cc)),
                 value_conv: Some(ValueConv::Function(ast_value_2e5c68232ecbf706)),
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +55,7 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_62606f8de21c9e5a)),
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +65,7 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_62606f8de21c9e5a)),
+                is_offset: false,
             },
         ),
         (
@@ -70,6 +75,7 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_1f47b524bed353b1)),
                 value_conv: Some(ValueConv::Function(ast_value_62606f8de21c9e5a)),
+                is_offset: false,
             },
         ),
         (
@@ -79,6 +85,7 @@ pub static PENTAX_AEINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_ebf06338275430d8)),
+                is_offset: false,
             },
         ),
     ])

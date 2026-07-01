@@ -16,6 +16,7 @@ pub static QUICK_TIME_OTHERSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static QUICK_TIME_OTHERSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "rational64u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

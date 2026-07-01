@@ -15,6 +15,7 @@ pub static NIKON_FLASHINFOUNKNOWN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             format: "string[4]",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

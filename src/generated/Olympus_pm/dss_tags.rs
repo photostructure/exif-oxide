@@ -22,6 +22,7 @@ pub static OLYMPUS_DSS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "string[16]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static OLYMPUS_DSS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "string[12]",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_ccbc3d950c99a0d3)),
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static OLYMPUS_DSS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "string[12]",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_ccbc3d950c99a0d3)),
+                is_offset: false,
             },
         ),
         (
@@ -49,6 +52,7 @@ pub static OLYMPUS_DSS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "string[6]",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_a054955c957463bf)),
+                is_offset: false,
             },
         ),
         (
@@ -58,6 +62,7 @@ pub static OLYMPUS_DSS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "string[100]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

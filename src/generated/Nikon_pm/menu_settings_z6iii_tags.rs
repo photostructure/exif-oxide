@@ -27,6 +27,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +45,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("6".to_string(), "C15"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -57,6 +59,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "On (Series)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -66,6 +69,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -75,6 +79,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -84,6 +89,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -93,6 +99,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -102,6 +109,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -111,6 +119,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -123,6 +132,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -135,6 +145,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -144,6 +155,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -153,6 +165,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -162,6 +175,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_8d207d64d9ef2b8c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -174,6 +188,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -186,6 +201,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -226,6 +242,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("9".to_string(), "ISO 500"),
                 ]))),
                 value_conv: Some(ValueConv::Function(ast_value_b8b4108321f31a78)),
+                is_offset: false,
             },
         ),
         (
@@ -238,6 +255,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -250,6 +268,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -262,6 +281,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -276,6 +296,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("3".to_string(), "Highlight"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -291,6 +312,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("4".to_string(), "Repeating Flash"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -338,6 +360,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("9".to_string(), "0.9 m"),
                 ]))),
                 value_conv: Some(ValueConv::Function(ast_value_4cda13c3b726a013)),
+                is_offset: false,
             },
         ),
         (
@@ -347,6 +370,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3780eb052f6af33a)),
                 value_conv: Some(ValueConv::Function(ast_value_6a9f49c55c6fe127)),
+                is_offset: false,
             },
         ),
         (
@@ -361,6 +385,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("3".to_string(), "Radio AWL"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -374,6 +399,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Remote Repeating"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -388,6 +414,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("3".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -397,6 +424,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "int8s",
                 print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: Some(ValueConv::Function(ast_value_4c77cbba764059d5)),
+                is_offset: false,
             },
         ),
         (
@@ -406,6 +434,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3780eb052f6af33a)),
                 value_conv: Some(ValueConv::Function(ast_value_6a9f49c55c6fe127)),
+                is_offset: false,
             },
         ),
         (
@@ -426,6 +455,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("6".to_string(), "Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -439,6 +469,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Sport"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -454,6 +485,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("4".to_string(), "Active-D Lighting"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -471,6 +503,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("9".to_string(), "9F"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -493,6 +526,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("9".to_string(), "2.3"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -506,6 +540,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "On (Series)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -520,6 +555,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("3".to_string(), "JPG Primary + JPG Secondary"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -535,6 +571,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("4".to_string(), "Low"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -548,6 +585,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Small (3024x2016)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -565,6 +603,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("6".to_string(), "Airplanes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -578,6 +617,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Large"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -590,6 +630,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "HLG"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -604,6 +645,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("3".to_string(), "Mode 3"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -616,6 +658,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -629,6 +672,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "On (Series)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -643,6 +687,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("3".to_string(), "32"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -652,6 +697,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_1ed22ecb53d91772)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -661,6 +707,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_1ed22ecb53d91772)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -675,6 +722,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("3".to_string(), "Wide (S)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -687,6 +735,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -700,6 +749,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "On (5x)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -716,6 +766,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("6".to_string(), "NRAW 12-bit (NEV)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -730,6 +781,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("7".to_string(), "5376x3024"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -749,6 +801,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("8".to_string(), "24p"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -758,6 +811,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "undef[700]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -772,6 +826,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("7".to_string(), "French"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -806,6 +861,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("6".to_string(), "+08:00 (Beijing, Honk Kong, Sinapore)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -831,6 +887,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("9".to_string(), "4"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -843,6 +900,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Enable Release"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -855,6 +913,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -867,6 +926,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -879,6 +939,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -891,6 +952,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -903,6 +965,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

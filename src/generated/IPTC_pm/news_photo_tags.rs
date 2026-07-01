@@ -19,6 +19,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string[16]",
                 print_conv: Some(PrintConv::Function(ast_print_a0adcc7c3d51fb82)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +39,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +49,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +59,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +69,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -78,6 +84,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "Rasterized Caption"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -114,6 +121,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("773".to_string(), "3 Components, Special Interleaving"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -132,6 +140,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("8".to_string(), "sRGB"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -141,6 +150,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -150,6 +160,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -159,6 +170,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -168,6 +180,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -177,6 +190,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -186,6 +200,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -195,6 +210,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -208,6 +224,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "CompressionDependent"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -226,6 +243,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("7".to_string(), "Bottom-Top, R-L"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -235,6 +253,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8u",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -244,6 +263,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -262,6 +282,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("7".to_string(), "Gamma Compensated"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -271,6 +292,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -283,6 +305,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Allowed"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -292,6 +315,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -301,6 +325,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -310,6 +335,7 @@ pub static IPTC_NEWSPHOTO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

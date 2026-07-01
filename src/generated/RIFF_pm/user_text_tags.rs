@@ -25,6 +25,7 @@ pub static RIFF_USERTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static RIFF_USERTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "float[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static RIFF_USERTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "float",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +55,7 @@ pub static RIFF_USERTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "float",
                 print_conv: Some(PrintConv::Function(ast_print_26ee01bf270f786b)),
                 value_conv: Some(ValueConv::Function(ast_value_cb5ff933cbb4a1e7)),
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +65,7 @@ pub static RIFF_USERTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "float",
                 print_conv: Some(PrintConv::Function(ast_print_674572cac8977577)),
                 value_conv: Some(ValueConv::Function(ast_value_c3594cf9c6739806)),
+                is_offset: false,
             },
         ),
         (
@@ -70,6 +75,7 @@ pub static RIFF_USERTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_da19f9751eeb9fa7)),
+                is_offset: false,
             },
         ),
     ])

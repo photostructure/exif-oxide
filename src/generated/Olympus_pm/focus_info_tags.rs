@@ -24,6 +24,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -36,6 +37,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -45,6 +47,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -54,6 +57,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -63,6 +67,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -72,6 +77,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -81,6 +87,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -90,6 +97,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -99,6 +107,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -108,6 +117,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_b4577ab90e52c45f)),
                 value_conv: Some(ValueConv::Function(ast_value_aae26d7e5adb6938)),
+                is_offset: false,
             },
         ),
         (
@@ -117,6 +127,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -126,6 +137,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -135,6 +147,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -147,6 +160,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("1 0".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -156,6 +170,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -168,6 +183,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("1".to_string(), "Direct"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -177,6 +193,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -191,6 +208,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("1 0".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -200,6 +218,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b105a96821e32f2b)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -212,6 +231,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -221,6 +241,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
                 value_conv: Some(ValueConv::Function(ast_value_d4d2d606f4e9315)),
+                is_offset: false,
             },
         ),
         (
@@ -230,6 +251,7 @@ pub static OLYMPUS_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_36cfa4c2513c137c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

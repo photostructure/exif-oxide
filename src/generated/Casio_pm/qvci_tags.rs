@@ -25,6 +25,7 @@ pub static CASIO_QVCI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("4".to_string(), "Super Fine"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static CASIO_QVCI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static CASIO_QVCI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string[20]",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_4f4c73379877e602)),
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +55,7 @@ pub static CASIO_QVCI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string[7]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +65,7 @@ pub static CASIO_QVCI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string[9]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -70,6 +75,7 @@ pub static CASIO_QVCI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string[9]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

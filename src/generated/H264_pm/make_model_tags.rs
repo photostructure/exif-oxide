@@ -20,6 +20,7 @@ pub static H264_MAKEMODEL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 ("4356".to_string(), "JVC"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

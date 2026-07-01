@@ -15,6 +15,7 @@ pub static SONY_MOREINFO0401_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             format: "int32u",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

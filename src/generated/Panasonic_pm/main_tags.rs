@@ -45,6 +45,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("9".to_string(), "Motion Picture"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -54,6 +55,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: Some(ValueConv::Function(ast_value_c9162365d287d6f8)),
+                is_offset: false,
             },
         ),
         (
@@ -77,6 +79,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("8".to_string(), "Flash"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -94,6 +97,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("8".to_string(), "AF-F"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -127,6 +131,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("64 2".to_string(), "Face Detect (animal detect off)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -147,6 +152,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("9".to_string(), "Dual IS"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -161,6 +167,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("513".to_string(), "Macro Zoom"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -251,6 +258,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("92".to_string(), "Handheld Night Shot"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -264,6 +272,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "Stereo"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -273,6 +282,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -282,6 +292,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
                 value_conv: Some(ValueConv::Function(ast_value_ed1564c10478139e)),
+                is_offset: false,
             },
         ),
         (
@@ -291,6 +302,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
                 value_conv: Some(ValueConv::Function(ast_value_ed1564c10478139e)),
+                is_offset: false,
             },
         ),
         (
@@ -300,6 +312,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_2deedb011bde716b)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -309,6 +322,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -324,6 +338,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -341,6 +356,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("8".to_string(), "Vivid"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -352,6 +368,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     "[Function: Image::ExifTool::Panasonic::__ANON__]".to_string(),
                 )),
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -370,6 +387,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("8".to_string(), "White Balance Bracketing"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -379,6 +397,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -388,6 +407,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -410,6 +430,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("65535".to_string(), "-1"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -428,6 +449,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("778".to_string(), "3 photos after 10 s"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -442,6 +464,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("8".to_string(), "Rotate 270 CW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -456,6 +479,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("4".to_string(), "Disabled and Not Required"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -469,6 +493,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Vivid"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -478,6 +503,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_cf5807c439399953)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -490,6 +516,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Extended"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -504,6 +531,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("4".to_string(), "Macro"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -513,6 +541,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_ed84e8e3ffdd3d4d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -530,6 +559,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("8".to_string(), "Medium Low"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -545,6 +575,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -557,6 +588,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Destination"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -569,6 +601,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -586,6 +619,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -595,6 +629,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -607,6 +642,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -616,6 +652,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -631,6 +668,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -646,6 +684,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -666,6 +705,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("7".to_string(), "Smooth (B&W)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -681,6 +721,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("6".to_string(), "Very High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -690,6 +731,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -707,6 +749,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("6".to_string(), "7 Images, Sequence -/0/+"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -716,6 +759,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -725,6 +769,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -738,6 +783,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "2nd"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -750,6 +796,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -759,6 +806,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -768,6 +816,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -777,6 +826,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_22cf1298aade8342)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -786,6 +836,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_41a9f4269104a464)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -795,6 +846,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_e19b1ac6c7b6ad13)),
+                is_offset: false,
             },
         ),
         (
@@ -804,6 +856,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_e19b1ac6c7b6ad13)),
+                is_offset: false,
             },
         ),
         (
@@ -813,6 +866,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_e19b1ac6c7b6ad13)),
+                is_offset: false,
             },
         ),
         (
@@ -822,6 +876,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_e19b1ac6c7b6ad13)),
+                is_offset: false,
             },
         ),
         (
@@ -837,6 +892,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3 2".to_string(), "Stretch High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -851,6 +907,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -860,6 +917,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8u",
                 print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -869,6 +927,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -881,6 +940,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Yes (flash required but disabled)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -890,6 +950,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -899,6 +960,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -908,6 +970,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -917,6 +980,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -926,6 +990,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -935,6 +1000,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -944,6 +1010,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -953,6 +1020,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -968,6 +1036,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("4".to_string(), "Extended"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -977,6 +1046,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -986,6 +1056,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1000,6 +1071,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1012,6 +1084,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1021,6 +1094,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1030,6 +1104,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_9c34f7195c5f73e7)),
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
         (
@@ -1054,6 +1129,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("9".to_string(), "Cinelike V"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1066,6 +1142,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1075,6 +1152,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1084,6 +1162,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1093,6 +1172,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1102,6 +1182,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1118,6 +1199,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("5".to_string(), "Tilt Downwards"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1127,6 +1209,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16s",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
         (
@@ -1136,6 +1219,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16s",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_b9de0923ad0670f8)),
+                is_offset: false,
             },
         ),
         (
@@ -1145,6 +1229,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1160,6 +1245,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("4".to_string(), "Bottom to Top"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1169,6 +1255,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1183,6 +1270,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "Focus Bracketing"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1192,6 +1280,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1209,6 +1298,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("33068".to_string(), "3 EV (Auto)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1222,6 +1312,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Hybrid"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1255,6 +1346,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("0 8388608".to_string(), "Fantasy"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1264,6 +1356,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1273,6 +1366,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1285,6 +1379,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1300,6 +1395,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("4".to_string(), "Green"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1309,6 +1405,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1318,6 +1415,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1330,6 +1428,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("4".to_string(), "6K"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1343,6 +1442,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1355,6 +1455,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1375,6 +1476,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("72".to_string(), "4K Pre-burst"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1387,6 +1489,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1396,6 +1499,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1408,6 +1512,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1420,6 +1525,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     "Post Focus Auto Merging or None",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1432,6 +1538,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "4K or 6K"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1441,6 +1548,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1450,6 +1558,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_9edcd70970960c43)),
+                is_offset: false,
             },
         ),
         (
@@ -1462,6 +1571,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Standard"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1471,6 +1581,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1485,6 +1596,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1494,6 +1606,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1503,6 +1616,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_fec037aa2994a202)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1512,6 +1626,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_9edcd70970960c43)),
+                is_offset: false,
             },
         ),
         (
@@ -1521,6 +1636,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1545,6 +1661,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("9".to_string(), "Motorcycle (helmet priority)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1557,6 +1674,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1566,6 +1684,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1575,6 +1694,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1584,6 +1704,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "undef",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1675,6 +1796,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("92".to_string(), "Handheld Night Shot"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1688,6 +1810,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1700,6 +1823,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1709,6 +1833,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1718,6 +1843,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1727,6 +1853,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1739,6 +1866,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1751,6 +1879,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1760,6 +1889,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_cf5807c439399953)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1775,6 +1905,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3 2".to_string(), "Stretch High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

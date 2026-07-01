@@ -26,6 +26,7 @@ pub static QUICK_TIME_MOVIEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -35,6 +36,7 @@ pub static QUICK_TIME_MOVIEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_e8af3016409e62f1)),
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +46,7 @@ pub static QUICK_TIME_MOVIEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_e8af3016409e62f1)),
+                is_offset: false,
             },
         ),
         (
@@ -53,6 +56,7 @@ pub static QUICK_TIME_MOVIEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -62,6 +66,7 @@ pub static QUICK_TIME_MOVIEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_529b9dfc5148650a)),
                 value_conv: Some(ValueConv::Function(ast_value_fafc7ff7466a1cb8)),
+                is_offset: false,
             },
         ),
         (
@@ -71,6 +76,7 @@ pub static QUICK_TIME_MOVIEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_5c94fb903134d434)),
+                is_offset: false,
             },
         ),
         (
@@ -80,6 +86,7 @@ pub static QUICK_TIME_MOVIEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_ff6bef6967d85f9e)),
                 value_conv: Some(ValueConv::Function(ast_value_2019c96d765dcb89)),
+                is_offset: false,
             },
         ),
         (
@@ -89,6 +96,7 @@ pub static QUICK_TIME_MOVIEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "fixed32s[9]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_b28872dcf07de6a6)),
+                is_offset: false,
             },
         ),
         (
@@ -98,6 +106,7 @@ pub static QUICK_TIME_MOVIEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_529b9dfc5148650a)),
                 value_conv: Some(ValueConv::Function(ast_value_fafc7ff7466a1cb8)),
+                is_offset: false,
             },
         ),
         (
@@ -107,6 +116,7 @@ pub static QUICK_TIME_MOVIEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_529b9dfc5148650a)),
                 value_conv: Some(ValueConv::Function(ast_value_fafc7ff7466a1cb8)),
+                is_offset: false,
             },
         ),
         (
@@ -116,6 +126,7 @@ pub static QUICK_TIME_MOVIEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_529b9dfc5148650a)),
                 value_conv: Some(ValueConv::Function(ast_value_fafc7ff7466a1cb8)),
+                is_offset: false,
             },
         ),
         (
@@ -125,6 +136,7 @@ pub static QUICK_TIME_MOVIEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_529b9dfc5148650a)),
                 value_conv: Some(ValueConv::Function(ast_value_fafc7ff7466a1cb8)),
+                is_offset: false,
             },
         ),
         (
@@ -134,6 +146,7 @@ pub static QUICK_TIME_MOVIEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_529b9dfc5148650a)),
                 value_conv: Some(ValueConv::Function(ast_value_fafc7ff7466a1cb8)),
+                is_offset: false,
             },
         ),
         (
@@ -143,6 +156,7 @@ pub static QUICK_TIME_MOVIEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_529b9dfc5148650a)),
                 value_conv: Some(ValueConv::Function(ast_value_fafc7ff7466a1cb8)),
+                is_offset: false,
             },
         ),
     ])

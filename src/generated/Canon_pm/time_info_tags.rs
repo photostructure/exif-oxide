@@ -19,6 +19,7 @@ pub static CANON_TIMEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_20ac2063644a1265)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +65,7 @@ pub static CANON_TIMEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("9".to_string(), "Yangon"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -76,6 +78,7 @@ pub static CANON_TIMEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("60".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

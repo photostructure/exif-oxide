@@ -19,6 +19,7 @@ pub static QUICK_TIME_EQUI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_4bca35dfa05220ad)),
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static QUICK_TIME_EQUI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_4bca35dfa05220ad)),
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +39,7 @@ pub static QUICK_TIME_EQUI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_4bca35dfa05220ad)),
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +49,7 @@ pub static QUICK_TIME_EQUI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_4bca35dfa05220ad)),
+                is_offset: false,
             },
         ),
     ])

@@ -20,6 +20,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +55,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +65,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -70,6 +75,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +88,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -91,6 +98,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -103,6 +111,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("4".to_string(), "Original Image"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -112,6 +121,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -121,6 +131,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_adb279f4e37f5c8a)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -130,6 +141,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -139,6 +151,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -154,6 +167,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("2".to_string(), "Portrait"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -163,6 +177,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -172,6 +187,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -181,6 +197,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -190,6 +207,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -199,6 +217,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -208,6 +227,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -217,6 +237,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -226,6 +247,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -235,6 +257,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_fc66a6e6f446bc53)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -244,6 +267,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -253,6 +277,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -262,6 +287,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -271,6 +297,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -280,6 +307,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -293,6 +321,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("6".to_string(), "Front"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -302,6 +331,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -311,6 +341,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -320,6 +351,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -329,6 +361,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -340,6 +373,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -349,6 +383,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -360,6 +395,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -371,6 +407,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -382,6 +419,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -393,6 +431,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -404,6 +443,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -415,6 +455,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -426,6 +467,7 @@ pub static APPLE_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Apple::ConvertPLIST]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
     ])

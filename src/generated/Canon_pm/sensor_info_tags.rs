@@ -15,6 +15,7 @@ pub static CANON_SENSORINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             format: "unknown",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

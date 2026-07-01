@@ -21,6 +21,7 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("2".to_string(), "Hybrid"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -54,6 +56,7 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("208".to_string(), "Wide (C1/C2)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -66,6 +69,7 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -77,6 +81,7 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     "[Function: Image::ExifTool::Nikon::__ANON__]".to_string(),
                 )),
                 value_conv: Some(ValueConv::Function(ast_value_8cf424424a0749dd)),
+                is_offset: false,
             },
         ),
         (
@@ -86,6 +91,7 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -95,6 +101,7 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -104,6 +111,7 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -115,6 +123,7 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     "[Function: Image::ExifTool::Nikon::__ANON__]".to_string(),
                 )),
                 value_conv: Some(ValueConv::Function(ast_value_f271602e8bb5b794)),
+                is_offset: false,
             },
         ),
         (
@@ -124,6 +133,7 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -135,6 +145,7 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     "[Function: Image::ExifTool::Nikon::__ANON__]".to_string(),
                 )),
                 value_conv: Some(ValueConv::Function(ast_value_336e102973b1381)),
+                is_offset: false,
             },
         ),
         (
@@ -144,6 +155,7 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -153,6 +165,7 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -165,6 +178,7 @@ pub static NIKON_AFINFO2V0400_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("1".to_string(), "Focus"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

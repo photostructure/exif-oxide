@@ -16,6 +16,7 @@ pub static NIKON_SHOTINFOD4S_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "string[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static NIKON_SHOTINFOD4S_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "string[5]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -38,6 +40,7 @@ pub static NIKON_SHOTINFOD4S_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("3".to_string(), "NEF Primary + JPG Secondary"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -97,6 +100,7 @@ pub static NIKON_SHOTINFOD4S_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("80".to_string(), "AE Bracketing Disabled"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -134,6 +138,7 @@ pub static NIKON_SHOTINFOD4S_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("8".to_string(), "9F 1"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -150,6 +155,7 @@ pub static NIKON_SHOTINFOD4S_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("64".to_string(), "Quiet"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -159,6 +165,7 @@ pub static NIKON_SHOTINFOD4S_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "undef[56]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -172,6 +179,7 @@ pub static NIKON_SHOTINFOD4S_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("3".to_string(), "None"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -219,6 +227,7 @@ pub static NIKON_SHOTINFOD4S_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("9".to_string(), "1/500 s"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -270,6 +279,7 @@ pub static NIKON_SHOTINFOD4S_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("96".to_string(), "ISO Hi 2.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -279,6 +289,7 @@ pub static NIKON_SHOTINFOD4S_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "undef[56]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -288,6 +299,7 @@ pub static NIKON_SHOTINFOD4S_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "undef[12]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -302,6 +314,7 @@ pub static NIKON_SHOTINFOD4S_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("3".to_string(), "Rotate 180"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

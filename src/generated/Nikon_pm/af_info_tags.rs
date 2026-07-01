@@ -23,6 +23,7 @@ pub static NIKON_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("5".to_string(), "Dynamic Area (wide)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +45,7 @@ pub static NIKON_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("9".to_string(), "Far Left"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -56,6 +58,7 @@ pub static NIKON_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("2047".to_string(), "All 11 Points"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

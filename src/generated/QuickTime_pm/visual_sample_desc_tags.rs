@@ -17,6 +17,7 @@ pub static QUICK_TIME_VISUALSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> =
                     format: "string[4]",
                     print_conv: None,
                     value_conv: None,
+                    is_offset: false,
                 },
             ),
             (
@@ -46,6 +47,7 @@ pub static QUICK_TIME_VISUALSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> =
                         ("sany".to_string(), "Sanyo"),
                     ]))),
                     value_conv: None,
+                    is_offset: false,
                 },
             ),
             (
@@ -55,6 +57,7 @@ pub static QUICK_TIME_VISUALSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> =
                     format: "fixed32u",
                     print_conv: None,
                     value_conv: None,
+                    is_offset: false,
                 },
             ),
             (
@@ -64,6 +67,7 @@ pub static QUICK_TIME_VISUALSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> =
                     format: "fixed32u",
                     print_conv: None,
                     value_conv: None,
+                    is_offset: false,
                 },
             ),
             (
@@ -73,6 +77,7 @@ pub static QUICK_TIME_VISUALSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> =
                     format: "string[32]",
                     print_conv: None,
                     value_conv: None,
+                    is_offset: false,
                 },
             ),
         ])

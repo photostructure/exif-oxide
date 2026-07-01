@@ -16,6 +16,7 @@ pub static MINOLTA_RAW_WBG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int8u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static MINOLTA_RAW_WBG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

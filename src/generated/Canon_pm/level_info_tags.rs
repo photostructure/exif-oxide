@@ -22,6 +22,7 @@ pub static CANON_LEVELINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_e5ec7e4865db5e5a)),
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static CANON_LEVELINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_4a2b4f330f26f4a2)),
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static CANON_LEVELINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
         (
@@ -49,6 +52,7 @@ pub static CANON_LEVELINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
         (
@@ -58,6 +62,7 @@ pub static CANON_LEVELINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
     ])

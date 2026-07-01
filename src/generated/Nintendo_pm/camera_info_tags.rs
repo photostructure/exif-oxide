@@ -22,6 +22,7 @@ pub static NINTENDO_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static NINTENDO_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_cc07217c1f61b301)),
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static NINTENDO_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_352ee918eb5bec40)),
+                is_offset: false,
             },
         ),
         (
@@ -49,6 +52,7 @@ pub static NINTENDO_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "float",
                 print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -63,6 +67,7 @@ pub static NINTENDO_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("8192".to_string(), "Man"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -33,6 +33,7 @@ pub static SAMSUNG_PICTUREWIZARD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("9".to_string(), "Custom1"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -42,6 +43,7 @@ pub static SAMSUNG_PICTUREWIZARD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_9436fc85e670f4f5)),
+                is_offset: false,
             },
         ),
         (
@@ -51,6 +53,7 @@ pub static SAMSUNG_PICTUREWIZARD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_9436fc85e670f4f5)),
+                is_offset: false,
             },
         ),
         (
@@ -60,6 +63,7 @@ pub static SAMSUNG_PICTUREWIZARD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_9436fc85e670f4f5)),
+                is_offset: false,
             },
         ),
     ])

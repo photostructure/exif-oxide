@@ -23,6 +23,7 @@ pub static CANON_CONTRASTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 ),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

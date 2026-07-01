@@ -22,6 +22,7 @@ pub static GO_PRO_GPS5_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_26ee01bf270f786b)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static GO_PRO_GPS5_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_674572cac8977577)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static GO_PRO_GPS5_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_2aa532acb8a29737)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -49,6 +52,7 @@ pub static GO_PRO_GPS5_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_a7438a881b85f09a)),
+                is_offset: false,
             },
         ),
         (
@@ -58,6 +62,7 @@ pub static GO_PRO_GPS5_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_a7438a881b85f09a)),
+                is_offset: false,
             },
         ),
     ])

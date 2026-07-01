@@ -16,6 +16,7 @@ pub static PHOTOSHOP_SLICEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "var_ustr32",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static PHOTOSHOP_SLICEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -20,6 +20,7 @@ pub static NIKON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static NIKON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_164b7df7edda79e)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -38,6 +40,7 @@ pub static NIKON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_41e4fcf67a465f16)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

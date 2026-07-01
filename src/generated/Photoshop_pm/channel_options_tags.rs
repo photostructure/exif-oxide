@@ -25,6 +25,7 @@ pub static PHOTOSHOP_CHANNELOPTIONS_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("8".to_string(), "Grayscale"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static PHOTOSHOP_CHANNELOPTIONS_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static PHOTOSHOP_CHANNELOPTIONS_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b8461ac67efa7740)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -56,6 +59,7 @@ pub static PHOTOSHOP_CHANNELOPTIONS_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("2".to_string(), "Spot Color"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

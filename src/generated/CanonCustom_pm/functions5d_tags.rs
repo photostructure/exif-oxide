@@ -20,6 +20,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("2".to_string(), "Ee-S"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -35,6 +36,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("4".to_string(), "Image replay"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -48,6 +50,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("2".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -60,6 +63,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("1".to_string(), "1/200 Fixed"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -74,6 +78,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("3".to_string(), "AE/AF, No AE lock"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -86,6 +91,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("1".to_string(), "Does not emit"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -98,6 +104,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("1".to_string(), "1/2 Stop"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -110,6 +117,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("1".to_string(), "Does not fire"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -122,6 +130,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -136,6 +145,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("3".to_string(), "-,0,+/Disabled"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -148,6 +158,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("1".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -161,6 +172,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("2".to_string(), "Top"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -173,6 +185,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("1".to_string(), "Enable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -186,6 +199,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("2".to_string(), "Quick Control Dial direct"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -198,6 +212,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("1".to_string(), "Average"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -210,6 +225,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("1".to_string(), "2nd-curtain sync"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -222,6 +238,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("1".to_string(), "Enable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -234,6 +251,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("1".to_string(), "Expanded"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -246,6 +264,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("1".to_string(), "Also with * etc."),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -262,6 +281,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("5".to_string(), "IS start"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -274,6 +294,7 @@ pub static CANON_CUSTOM_FUNCTIONS5D_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

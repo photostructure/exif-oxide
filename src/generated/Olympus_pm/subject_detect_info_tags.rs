@@ -16,6 +16,7 @@ pub static OLYMPUS_SUBJECTDETECTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static OLYMPUS_SUBJECTDETECTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static OLYMPUS_SUBJECTDETECTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +55,7 @@ pub static OLYMPUS_SUBJECTDETECTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                     ("772".to_string(), "No Subject or Face Detected"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

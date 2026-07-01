@@ -25,6 +25,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +55,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +65,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -70,6 +75,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_79fe83c6e85843c7)),
+                is_offset: false,
             },
         ),
         (
@@ -79,6 +85,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -88,6 +95,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -97,6 +105,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -106,6 +115,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -115,6 +125,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8u",
                 print_conv: Some(PrintConv::Function(ast_print_b2688837e8cc9d23)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -124,6 +135,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -133,6 +145,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -142,6 +155,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -151,6 +165,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -160,6 +175,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -169,6 +185,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -178,6 +195,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -187,6 +205,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -196,6 +215,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -205,6 +225,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -214,6 +235,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -223,6 +245,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -232,6 +255,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -241,6 +265,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -250,6 +275,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -259,6 +285,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -268,6 +295,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -277,6 +305,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -286,6 +315,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -295,6 +325,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -304,6 +335,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -316,6 +348,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "True"),
                 ]))),
                 value_conv: Some(ValueConv::Function(ast_value_346603e685b2cac)),
+                is_offset: false,
             },
         ),
         (
@@ -325,6 +358,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -334,6 +368,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -343,6 +378,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_8a814e7eab2cdf95)),
+                is_offset: false,
             },
         ),
         (
@@ -352,6 +388,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -361,6 +398,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -370,6 +408,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -379,6 +418,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -388,6 +428,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -397,6 +438,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -406,6 +448,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -415,6 +458,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -424,6 +468,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -433,6 +478,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -442,6 +488,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_8a814e7eab2cdf95)),
+                is_offset: false,
             },
         ),
         (
@@ -451,6 +498,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -462,6 +510,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Photoshop::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -471,6 +520,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -480,6 +530,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -491,6 +542,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Photoshop::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -500,6 +552,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -509,6 +562,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -518,6 +572,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -527,6 +582,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -536,6 +592,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -545,6 +602,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -554,6 +612,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -563,6 +622,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -572,6 +632,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -581,6 +642,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -590,6 +652,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_21805eee515f1f)),
+                is_offset: false,
             },
         ),
         (
@@ -599,6 +662,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -608,6 +672,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -617,6 +682,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -626,6 +692,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -635,6 +702,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -644,6 +712,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -653,6 +722,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -662,6 +732,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -671,6 +742,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -680,6 +752,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -689,6 +762,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -698,6 +772,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -707,6 +782,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -716,6 +792,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -725,6 +802,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -734,6 +812,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -743,6 +822,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -752,6 +832,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_24ecca2f32aee364)),
+                is_offset: false,
             },
         ),
         (
@@ -761,6 +842,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -770,6 +852,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -779,6 +862,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -788,6 +872,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -797,6 +882,7 @@ pub static PHOTOSHOP_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

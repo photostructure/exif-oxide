@@ -19,6 +19,7 @@ pub static NIKON_AFINFO2V0101_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -32,6 +33,7 @@ pub static NIKON_AFINFO2V0101_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("2".to_string(), "Hybrid"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -68,6 +70,7 @@ pub static NIKON_AFINFO2V0101_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("4".to_string(), "Contrast-detect (subject tracking)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +85,7 @@ pub static NIKON_AFINFO2V0101_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("7".to_string(), "153-point"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -94,6 +98,7 @@ pub static NIKON_AFINFO2V0101_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     "(none)",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -105,6 +110,7 @@ pub static NIKON_AFINFO2V0101_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     "[Function: Image::ExifTool::Nikon::__ANON__]".to_string(),
                 )),
                 value_conv: Some(ValueConv::Function(ast_value_bf0a676164a29f9f)),
+                is_offset: false,
             },
         ),
         (
@@ -116,6 +122,7 @@ pub static NIKON_AFINFO2V0101_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     "[Function: Image::ExifTool::Nikon::__ANON__]".to_string(),
                 )),
                 value_conv: Some(ValueConv::Function(ast_value_bf0a676164a29f9f)),
+                is_offset: false,
             },
         ),
         (
@@ -128,6 +135,7 @@ pub static NIKON_AFINFO2V0101_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     "(none)",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -137,6 +145,7 @@ pub static NIKON_AFINFO2V0101_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -146,6 +155,7 @@ pub static NIKON_AFINFO2V0101_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -155,6 +165,7 @@ pub static NIKON_AFINFO2V0101_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -164,6 +175,7 @@ pub static NIKON_AFINFO2V0101_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -173,6 +185,7 @@ pub static NIKON_AFINFO2V0101_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -182,6 +195,7 @@ pub static NIKON_AFINFO2V0101_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -194,6 +208,7 @@ pub static NIKON_AFINFO2V0101_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

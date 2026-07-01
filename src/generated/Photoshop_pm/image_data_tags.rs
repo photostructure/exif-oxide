@@ -20,6 +20,7 @@ pub static PHOTOSHOP_IMAGEDATA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 ("3".to_string(), "ZIP with prediction"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

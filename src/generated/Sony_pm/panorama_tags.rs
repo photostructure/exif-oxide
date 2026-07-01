@@ -18,6 +18,7 @@ pub static SONY_PANORAMA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 ("1".to_string(), "Right or Down"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

@@ -26,6 +26,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "undef",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_20ed25c601606348)),
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +45,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("8".to_string(), "Rotate 270 CW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -53,6 +55,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "rational64u",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -62,6 +65,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "rational64u",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -71,6 +75,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "rational64s",
                 print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -80,6 +85,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "rational64u",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_bb77e52729467611)),
+                is_offset: false,
             },
         ),
         (
@@ -98,6 +104,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("6".to_string(), "Partial"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -107,6 +114,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -116,6 +124,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -125,6 +134,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "rational64u",
                 print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -134,6 +144,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "rational64u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -143,6 +154,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "rational64u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -156,6 +168,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("3".to_string(), "cm"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -165,6 +178,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -174,6 +188,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -183,6 +198,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -192,6 +208,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "rational64u",
                 print_conv: Some(PrintConv::Function(ast_print_b25e38f36bd6b390)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -201,6 +218,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -210,6 +228,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -219,6 +238,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "rational64u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -228,6 +248,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "rational64u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -237,6 +258,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -246,6 +268,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -255,6 +278,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -264,6 +288,7 @@ pub static NIKON_AVITAGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

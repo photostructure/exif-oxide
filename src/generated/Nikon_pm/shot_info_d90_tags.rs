@@ -20,6 +20,7 @@ pub static NIKON_SHOTINFOD90_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "string[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static NIKON_SHOTINFOD90_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "string[5]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -38,6 +40,7 @@ pub static NIKON_SHOTINFOD90_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_2cea565875d218cc)),
                 value_conv: Some(ValueConv::Function(ast_value_81dbf53c19dbd53f)),
+                is_offset: false,
             },
         ),
         (
@@ -47,6 +50,7 @@ pub static NIKON_SHOTINFOD90_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -56,6 +60,7 @@ pub static NIKON_SHOTINFOD90_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "undef[36]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

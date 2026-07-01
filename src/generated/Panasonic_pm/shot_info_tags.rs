@@ -15,6 +15,7 @@ pub static PANASONIC_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
             format: "int16u",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

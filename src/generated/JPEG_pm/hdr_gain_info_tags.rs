@@ -16,6 +16,7 @@ pub static JPEG_HDRGAININFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static JPEG_HDRGAININFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int32uRev[$val{6}]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

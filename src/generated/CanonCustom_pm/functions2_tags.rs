@@ -19,6 +19,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "1/2 Stop"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "1 Stop"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +58,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -68,6 +72,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "+,0,-"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +87,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("7 3".to_string(), "7 shots"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -94,6 +100,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Enable (use active AF point)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -107,6 +114,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Enable (ISO speed)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -116,6 +124,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -125,6 +134,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -140,6 +150,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("4".to_string(), "Center-weighted average"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -149,6 +160,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -158,6 +170,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -167,6 +180,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -180,6 +194,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "1/200 Fixed"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -189,6 +204,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -198,6 +214,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -212,6 +229,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("3".to_string(), "Shutter Speed"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -224,6 +242,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Disable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -233,6 +252,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -246,6 +266,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -258,6 +279,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -270,6 +292,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Enable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -282,6 +305,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Disable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -294,6 +318,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Average"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -306,6 +331,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "2nd-curtain sync"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -318,6 +344,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Does not fire"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -330,6 +357,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Enable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -342,6 +370,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -354,6 +383,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Displays camera settings"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -363,6 +393,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -375,6 +406,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Outlined"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -387,6 +419,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Outlined"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -400,6 +433,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Disable in AF mode"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -415,6 +449,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Fast"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -429,6 +464,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("3".to_string(), "1: Release, 2: Tracking"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -441,6 +477,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Continuous AF track priority"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -453,6 +490,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Focus search off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -471,6 +509,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("7".to_string(), "Spot AF"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -480,6 +519,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -494,6 +534,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("3".to_string(), "All 45 points area"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -516,6 +557,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -528,6 +570,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Enable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -541,6 +584,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Control-direct:enable/Main:enable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -556,6 +600,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("4".to_string(), "Disable display"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -568,6 +613,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Brighter"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -582,6 +628,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("3".to_string(), "IR AF assist beam only"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -600,6 +647,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -612,6 +660,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -625,6 +674,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Live mode"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -634,6 +684,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -646,6 +697,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Continuous"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -658,6 +710,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Disable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -670,6 +723,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Disable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -682,6 +736,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Select different AF points"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -694,6 +749,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "AF point selection"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -703,6 +759,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -716,6 +773,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Focus priority"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -729,6 +787,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Focus priority"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -741,6 +800,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Main dial"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -753,6 +813,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Disable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -762,6 +823,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -775,6 +837,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Manual AF point"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -788,6 +851,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Enable: Down with Set"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -797,6 +861,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -806,6 +871,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -815,6 +881,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -830,6 +897,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("4".to_string(), "Metering + AF start/disable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -842,6 +910,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Enable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -860,6 +929,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("4".to_string(), "ISO speed swapped with Exposure comp"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -878,6 +948,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("7".to_string(), "Image playback"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -890,6 +961,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Tv=Control/Av=Main"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -902,6 +974,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Reversed"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -914,6 +987,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Enable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -927,6 +1001,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Off (disable button)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -936,6 +1011,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -948,6 +1024,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Disable main, Control, Multi-control"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -963,6 +1040,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("4".to_string(), "Live view function settings"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -972,6 +1050,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -984,6 +1063,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Quick start (FEL button)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -996,6 +1076,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "ISO speed"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1005,6 +1086,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1017,6 +1099,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Depth-of-field preview"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1029,6 +1112,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Enable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1041,6 +1125,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Reversed"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1053,6 +1138,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Reversed"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1065,6 +1151,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Linked To Rotation Angle"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1074,6 +1161,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1088,6 +1176,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("3".to_string(), "Ec-N,R"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1097,6 +1186,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1109,6 +1199,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Enable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1126,6 +1217,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("6".to_string(), "5:7"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1138,6 +1230,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1150,6 +1243,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Enable (simulates exposure)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1162,6 +1256,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Retain power off status"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1174,6 +1269,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Low (8 kHz)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1188,6 +1284,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("3".to_string(), "Erase non-RAW selected"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1200,6 +1297,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Disable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1212,6 +1310,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Enable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1224,6 +1323,7 @@ pub static CANON_CUSTOM_FUNCTIONS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Disable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

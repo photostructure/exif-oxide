@@ -20,6 +20,7 @@ pub static RED_RED2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string[1]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static RED_RED2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -38,6 +40,7 @@ pub static RED_RED2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -47,6 +50,7 @@ pub static RED_RED2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u[3]",
                 print_conv: Some(PrintConv::Function(ast_print_dd3be644838b9531)),
                 value_conv: Some(ValueConv::Function(ast_value_fe43e57cbf611581)),
+                is_offset: false,
             },
         ),
     ])

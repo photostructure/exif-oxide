@@ -16,6 +16,7 @@ pub static PHOTOSHOP_HEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static PHOTOSHOP_HEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static PHOTOSHOP_HEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("9".to_string(), "Lab"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

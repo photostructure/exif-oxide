@@ -16,6 +16,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +46,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +56,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +66,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -70,6 +76,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -79,6 +86,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -88,6 +96,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -97,6 +106,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -106,6 +116,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -115,6 +126,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -124,6 +136,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -133,6 +146,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -142,6 +156,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -151,6 +166,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -160,6 +176,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -169,6 +186,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -178,6 +196,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -187,6 +206,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -196,6 +216,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -205,6 +226,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -214,6 +236,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -223,6 +246,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -232,6 +256,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -241,6 +266,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -250,6 +276,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -259,6 +286,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -268,6 +296,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -277,6 +306,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -286,6 +316,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -295,6 +326,7 @@ pub static PENTAX_FACEPOS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

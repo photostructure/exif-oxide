@@ -20,6 +20,7 @@ pub static CANON_HDRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("2".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -35,6 +36,7 @@ pub static CANON_HDRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("4".to_string(), "Art (embossed)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -19,6 +19,7 @@ pub static DJI_GIMBALINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int64s",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static DJI_GIMBALINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int64s",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +39,7 @@ pub static DJI_GIMBALINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int64s",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
     ])

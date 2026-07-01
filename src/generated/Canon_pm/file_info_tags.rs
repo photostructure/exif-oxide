@@ -23,6 +23,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_6455db47e382c491)),
+                is_offset: false,
             },
         ),
         (
@@ -38,6 +39,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("4".to_string(), "WB"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -57,6 +59,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("7".to_string(), "CRAW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -86,6 +89,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("9".to_string(), "Widescreen"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -100,6 +104,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("4".to_string(), "Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -113,6 +118,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "On (shift GM)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -128,6 +134,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("4".to_string(), "Green"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -143,6 +150,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("4".to_string(), "Green"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -152,6 +160,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_9fdbcf4006788a4b)),
                 value_conv: Some(ValueConv::Function(ast_value_32180481d23c95e9)),
+                is_offset: false,
             },
         ),
         (
@@ -164,6 +173,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -173,6 +183,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_f6928c7fdabd99df)),
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -182,6 +193,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_f6928c7fdabd99df)),
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -195,6 +207,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Electronic"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -207,6 +220,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -219,6 +233,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -323,6 +338,7 @@ pub static CANON_FILEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("330".to_string(), "Canon RF 45mm F1.2 STM"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

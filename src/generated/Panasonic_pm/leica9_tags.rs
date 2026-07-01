@@ -21,6 +21,7 @@ pub static PANASONIC_LEICA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static PANASONIC_LEICA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "rational64s",
                 print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -39,6 +41,7 @@ pub static PANASONIC_LEICA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "rational64s",
                 print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -48,6 +51,7 @@ pub static PANASONIC_LEICA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -63,6 +67,7 @@ pub static PANASONIC_LEICA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -72,6 +77,7 @@ pub static PANASONIC_LEICA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -81,6 +87,7 @@ pub static PANASONIC_LEICA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -90,6 +97,7 @@ pub static PANASONIC_LEICA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -99,6 +107,7 @@ pub static PANASONIC_LEICA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -108,6 +117,7 @@ pub static PANASONIC_LEICA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

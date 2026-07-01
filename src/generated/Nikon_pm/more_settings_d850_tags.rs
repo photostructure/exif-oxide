@@ -21,6 +21,7 @@ pub static NIKON_MORESETTINGSD850_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("3".to_string(), "D"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static NIKON_MORESETTINGSD850_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("1".to_string(), "SD Card"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

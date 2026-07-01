@@ -16,6 +16,7 @@ pub static OLYMPUS_AFTARGETINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static OLYMPUS_AFTARGETINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static OLYMPUS_AFTARGETINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

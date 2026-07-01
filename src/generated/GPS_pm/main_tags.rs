@@ -26,6 +26,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -42,6 +43,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("S".to_string(), "South"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -51,6 +53,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
                 value_conv: Some(ValueConv::Function(ast_value_ba67c805f3851db9)),
+                is_offset: false,
             },
         ),
         (
@@ -67,6 +70,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("W".to_string(), "West"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -76,6 +80,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
                 value_conv: Some(ValueConv::Function(ast_value_ba67c805f3851db9)),
+                is_offset: false,
             },
         ),
         (
@@ -94,6 +99,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -103,6 +109,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_62c1ef1851063b19)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -112,6 +119,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_10a121f3318d09c)),
                 value_conv: Some(ValueConv::Function(ast_value_7bda4a4d82582552)),
+                is_offset: false,
             },
         ),
         (
@@ -121,6 +129,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -133,6 +142,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("V".to_string(), "Measurement Void"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -145,6 +155,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "3-Dimensional Measurement"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -154,6 +165,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -167,6 +179,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("N".to_string(), "knots"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -176,6 +189,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -188,6 +202,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("T".to_string(), "True North"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -197,6 +212,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -209,6 +225,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("T".to_string(), "True North"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -218,6 +235,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -227,6 +245,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -243,6 +262,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("S".to_string(), "South"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -252,6 +272,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
                 value_conv: Some(ValueConv::Function(ast_value_ba67c805f3851db9)),
+                is_offset: false,
             },
         ),
         (
@@ -268,6 +289,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("W".to_string(), "West"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -277,6 +299,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
                 value_conv: Some(ValueConv::Function(ast_value_ba67c805f3851db9)),
+                is_offset: false,
             },
         ),
         (
@@ -289,6 +312,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("T".to_string(), "True North"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -298,6 +322,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -311,6 +336,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("N".to_string(), "Nautical Miles"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -320,6 +346,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -329,6 +356,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -338,6 +366,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -347,6 +376,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "undef",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
+                is_offset: false,
             },
         ),
         (
@@ -359,6 +389,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "Differential Corrected"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -368,6 +399,7 @@ pub static GPS_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_2aa532acb8a29737)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

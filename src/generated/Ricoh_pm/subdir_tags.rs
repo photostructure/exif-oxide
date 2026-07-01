@@ -16,6 +16,7 @@ pub static RICOH_SUBDIR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static RICOH_SUBDIR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static RICOH_SUBDIR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +46,7 @@ pub static RICOH_SUBDIR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -57,6 +61,7 @@ pub static RICOH_SUBDIR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("3".to_string(), "Max"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -66,6 +71,7 @@ pub static RICOH_SUBDIR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -167,6 +167,7 @@ pub static PENTAX_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("78560".to_string(), "GR IV"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -176,6 +177,7 @@ pub static PENTAX_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_8d0fef0c52482fb5)),
+                is_offset: false,
             },
         ),
         (
@@ -185,6 +187,7 @@ pub static PENTAX_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int32u[2]",
                 print_conv: Some(PrintConv::Function(ast_print_ba0399c7192e8c6c)),
                 value_conv: Some(ValueConv::Function(ast_value_a24e3c619aa3ac61)),
+                is_offset: false,
             },
         ),
     ])

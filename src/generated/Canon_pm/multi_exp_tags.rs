@@ -20,6 +20,7 @@ pub static CANON_MULTIEXP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "On (RAW)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static CANON_MULTIEXP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "Dark (comparative)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

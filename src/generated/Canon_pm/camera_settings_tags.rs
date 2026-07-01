@@ -30,6 +30,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("2".to_string(), "Normal"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -39,6 +40,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_76cfbd458e230bac)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -58,6 +60,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("7".to_string(), "CRAW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -77,6 +80,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("6".to_string(), "Red-eye reduction (On)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -97,6 +101,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("9".to_string(), "Single, Silent"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -120,6 +125,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("6".to_string(), "Manual Focus (6)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -144,6 +150,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("9".to_string(), "MOV"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -173,6 +180,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("9".to_string(), "Widescreen"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -258,6 +266,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("93".to_string(), "HDR Art Bold"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -272,6 +281,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("3".to_string(), "Other"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -287,6 +297,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -302,6 +313,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -311,6 +323,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -320,6 +333,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_23bd74b0abec6c74)),
+                is_offset: false,
             },
         ),
         (
@@ -336,6 +350,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("5".to_string(), "Center-weighted average"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -357,6 +372,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("9".to_string(), "Super Macro"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -375,6 +391,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("8197".to_string(), "Manual AF point selection"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -394,6 +411,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("8".to_string(), "Flexible-priority AE"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1343,6 +1361,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("95".to_string(), "Canon TS-E 24mm f/3.5L II"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1352,6 +1371,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: Some(ValueConv::Function(ast_value_fd4074b621d9fc83)),
+                is_offset: false,
             },
         ),
         (
@@ -1361,6 +1381,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: Some(ValueConv::Function(ast_value_fd4074b621d9fc83)),
+                is_offset: false,
             },
         ),
         (
@@ -1370,6 +1391,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_615911c2f9c7546)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1379,6 +1401,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
                 value_conv: Some(ValueConv::Function(ast_value_75ea21c3208d8187)),
+                is_offset: false,
             },
         ),
         (
@@ -1388,6 +1411,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
                 value_conv: Some(ValueConv::Function(ast_value_75ea21c3208d8187)),
+                is_offset: false,
             },
         ),
         (
@@ -1397,6 +1421,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1409,6 +1434,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     "(none)",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1422,6 +1448,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("8".to_string(), "Manual"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1437,6 +1464,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("4".to_string(), "No AE"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1457,6 +1485,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("4".to_string(), "Dynamic"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1466,6 +1495,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
         (
@@ -1478,6 +1508,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("1".to_string(), "AF Point"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1496,6 +1527,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("6".to_string(), "Custom"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1511,6 +1543,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("32767".to_string(), "n/a"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1526,6 +1559,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1539,6 +1573,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("2".to_string(), "sRAW2 (sRAW)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1551,6 +1586,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("1".to_string(), "Enable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1566,6 +1602,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1579,6 +1616,7 @@ pub static CANON_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

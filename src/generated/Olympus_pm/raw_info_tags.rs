@@ -16,6 +16,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +46,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +56,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +66,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -70,6 +76,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -79,6 +86,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -88,6 +96,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -97,6 +106,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -106,6 +116,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -115,6 +126,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -124,6 +136,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -133,6 +146,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -142,6 +156,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -151,6 +166,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -160,6 +176,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "rational32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -169,6 +186,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -178,6 +196,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -187,6 +206,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -196,6 +216,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -205,6 +226,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -227,6 +249,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("512".to_string(), "Custom 1-4"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -236,6 +259,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -245,6 +269,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -254,6 +279,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -263,6 +289,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -272,6 +299,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -281,6 +309,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -290,6 +319,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -299,6 +329,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -308,6 +339,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -317,6 +349,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -326,6 +359,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -335,6 +369,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -344,6 +379,7 @@ pub static OLYMPUS_RAWINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

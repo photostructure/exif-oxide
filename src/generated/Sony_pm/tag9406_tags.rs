@@ -21,6 +21,7 @@ pub static SONY_TAG9406_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
                 value_conv: Some(ValueConv::Function(ast_value_fc578fda6da96dc8)),
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static SONY_TAG9406_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b8461ac67efa7740)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -39,6 +41,7 @@ pub static SONY_TAG9406_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b8461ac67efa7740)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -48,6 +51,7 @@ pub static SONY_TAG9406_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b8461ac67efa7740)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

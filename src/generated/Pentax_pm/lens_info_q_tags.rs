@@ -19,6 +19,7 @@ pub static PENTAX_LENSINFOQ_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "string[30]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static PENTAX_LENSINFOQ_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "string[20]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_1722246d8e5fe078)),
+                is_offset: false,
             },
         ),
     ])

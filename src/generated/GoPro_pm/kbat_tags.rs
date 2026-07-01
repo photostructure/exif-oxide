@@ -25,6 +25,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_9c532d14777c2531)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_fec170c109dc18e7)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_9559c4f6a17cf903)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +55,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +65,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_31fb3a3d2e56449d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -70,6 +75,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_31fb3a3d2e56449d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -79,6 +85,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_31fb3a3d2e56449d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -88,6 +95,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_31fb3a3d2e56449d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -97,6 +105,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3d7e2c3002e829b4)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -106,6 +115,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_63abe5c1769cd6fb)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -115,6 +125,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -124,6 +135,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -133,6 +145,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -142,6 +155,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -151,6 +165,7 @@ pub static GO_PRO_KBAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_63abe5c1769cd6fb)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

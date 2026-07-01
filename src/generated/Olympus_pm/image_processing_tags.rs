@@ -19,6 +19,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +39,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +49,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +59,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +69,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +79,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +89,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -91,6 +99,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -100,6 +109,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -109,6 +119,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -118,6 +129,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -127,6 +139,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -136,6 +149,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -145,6 +159,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -154,6 +169,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -163,6 +179,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -172,6 +189,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -181,6 +199,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -190,6 +209,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -199,6 +219,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -208,6 +229,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -217,6 +239,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -226,6 +249,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -235,6 +259,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -244,6 +269,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -253,6 +279,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -262,6 +289,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -271,6 +299,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -280,6 +309,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -289,6 +319,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -298,6 +329,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -307,6 +339,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -316,6 +349,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -325,6 +359,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -334,6 +369,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -343,6 +379,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -352,6 +389,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -361,6 +399,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -370,6 +409,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -379,6 +419,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -388,6 +429,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -397,6 +439,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -406,6 +449,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -415,6 +459,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -424,6 +469,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -436,6 +482,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     "(none)",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -448,6 +495,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -460,6 +508,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -469,6 +518,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -478,6 +528,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -487,6 +538,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -511,6 +563,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("9 9".to_string(), "3:4"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -520,6 +573,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -529,6 +583,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -538,6 +593,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -547,6 +603,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -556,6 +613,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -565,6 +623,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -574,6 +633,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "int16s",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_54869e713bc69679)),
+                is_offset: false,
             },
         ),
         (
@@ -586,6 +646,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("0 1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -598,6 +659,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "Horizontal"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -607,6 +669,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -620,6 +683,7 @@ pub static OLYMPUS_IMAGEPROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Soft"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

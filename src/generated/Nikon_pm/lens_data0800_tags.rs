@@ -33,6 +33,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "string[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -42,6 +43,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "undef[17]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -51,6 +53,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: Some(ValueConv::Function(ast_value_503cb8adfb2500ed)),
+                is_offset: false,
             },
         ),
         (
@@ -60,6 +63,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_7f1d9c1519aa804e)),
+                is_offset: false,
             },
         ),
         (
@@ -69,6 +73,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_c63abe95c8d1d776)),
                 value_conv: Some(ValueConv::Function(ast_value_33bf8765c4bf097a)),
+                is_offset: false,
             },
         ),
         (
@@ -78,6 +83,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: Some(ValueConv::Function(ast_value_89ad23b9d14ff5d)),
+                is_offset: false,
             },
         ),
         (
@@ -87,6 +93,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -96,6 +103,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
                 value_conv: Some(ValueConv::Function(ast_value_ddfddd5e1e0df35b)),
+                is_offset: false,
             },
         ),
         (
@@ -105,6 +113,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: Some(ValueConv::Function(ast_value_89ad23b9d14ff5d)),
+                is_offset: false,
             },
         ),
         (
@@ -114,6 +123,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: Some(ValueConv::Function(ast_value_89ad23b9d14ff5d)),
+                is_offset: false,
             },
         ),
         (
@@ -123,6 +133,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_7f1d9c1519aa804e)),
+                is_offset: false,
             },
         ),
         (
@@ -132,6 +143,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_7f1d9c1519aa804e)),
+                is_offset: false,
             },
         ),
         (
@@ -141,6 +153,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -150,6 +163,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_7f1d9c1519aa804e)),
+                is_offset: false,
             },
         ),
         (
@@ -159,6 +173,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "undef[17]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -214,6 +229,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("9".to_string(), "Nikkor Z 50mm f/1.8 S"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -223,6 +239,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_92c6488dcbb07233)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -232,6 +249,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_45da59cc778d70f6)),
+                is_offset: false,
             },
         ),
         (
@@ -241,6 +259,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_45da59cc778d70f6)),
+                is_offset: false,
             },
         ),
         (
@@ -250,6 +269,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -259,6 +279,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -268,6 +289,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_295976b8397965ca)),
                 value_conv: Some(ValueConv::Function(ast_value_4b31c9adbe0665ee)),
+                is_offset: false,
             },
         ),
         (
@@ -277,6 +299,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -286,6 +309,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -295,6 +319,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int32s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -307,6 +332,7 @@ pub static NIKON_LENSDATA0800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("1".to_string(), "F-mount"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

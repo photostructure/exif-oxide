@@ -20,6 +20,7 @@ pub static NIKON_SHOTINFOD300A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "string[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static NIKON_SHOTINFOD300A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_2cea565875d218cc)),
                 value_conv: Some(ValueConv::Function(ast_value_81dbf53c19dbd53f)),
+                is_offset: false,
             },
         ),
         (
@@ -38,6 +40,7 @@ pub static NIKON_SHOTINFOD300A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -89,6 +92,7 @@ pub static NIKON_SHOTINFOD300A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("8387".to_string(), "-9"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -98,6 +102,7 @@ pub static NIKON_SHOTINFOD300A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "undef[24]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

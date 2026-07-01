@@ -24,6 +24,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -42,6 +44,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -51,6 +54,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -65,6 +69,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "Rotate 90 CW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -78,6 +83,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("8".to_string(), "Snap Shot"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -87,6 +93,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string[19]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -96,6 +103,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u[6]",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_6cf30d9ec8de1ddc)),
+                is_offset: false,
             },
         ),
         (
@@ -105,6 +113,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u[6]",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_6cf30d9ec8de1ddc)),
+                is_offset: false,
             },
         ),
         (
@@ -114,6 +123,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_40d2585686539f95)),
+                is_offset: false,
             },
         ),
         (
@@ -123,6 +133,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16s",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -132,6 +143,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16s",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -141,6 +153,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -153,6 +166,7 @@ pub static SONY_PMP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "Fired"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

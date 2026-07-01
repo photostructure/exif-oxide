@@ -23,6 +23,7 @@ pub static CANON_FOCALLENGTH_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("2".to_string(), "Zoom"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -32,6 +33,7 @@ pub static CANON_FOCALLENGTH_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: Some(ValueConv::Function(ast_value_fd4074b621d9fc83)),
+                is_offset: false,
             },
         ),
         (
@@ -41,6 +43,7 @@ pub static CANON_FOCALLENGTH_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -50,6 +53,7 @@ pub static CANON_FOCALLENGTH_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -16,6 +16,7 @@ pub static KODAK_SCRN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static KODAK_SCRN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "undef[$val{2}]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

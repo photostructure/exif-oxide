@@ -21,6 +21,7 @@ pub static NIKON_MENUSETTINGSD850_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 ("4".to_string(), "1:1 (24x24)"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

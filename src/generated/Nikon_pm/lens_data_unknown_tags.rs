@@ -15,6 +15,7 @@ pub static NIKON_LENSDATAUNKNOWN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
             format: "string[4]",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

@@ -22,6 +22,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "float",
                 print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "float",
                 print_conv: Some(PrintConv::Function(ast_print_52836b45c0320e15)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "float",
                 print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -49,6 +52,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "float",
                 print_conv: Some(PrintConv::Function(ast_print_3903820e7e53c0b1)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -58,6 +62,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "float",
                 print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -67,6 +72,7 @@ pub static DJI_THERMALPARAMS2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "string[16]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

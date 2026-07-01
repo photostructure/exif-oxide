@@ -20,6 +20,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::ConvLensSpec]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +41,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("9".to_string(), "Upper-left"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +57,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("4".to_string(), "DMF"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +76,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("7".to_string(), "Bottom-left"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -89,6 +93,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -105,6 +110,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -121,6 +127,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -137,6 +144,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -153,6 +161,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -169,6 +178,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -185,6 +195,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -201,6 +212,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -217,6 +229,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -233,6 +246,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -249,6 +263,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -265,6 +280,7 @@ pub static SONY_CAMERAINFO2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

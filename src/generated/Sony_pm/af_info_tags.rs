@@ -20,6 +20,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("3".to_string(), "79-point"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -36,6 +37,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -51,6 +53,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("6".to_string(), "DMF"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -91,6 +94,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("9".to_string(), "Far Left (vertical)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -132,6 +136,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("9".to_string(), "Far Left (vertical)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -173,6 +178,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("9".to_string(), "Far Left (vertical)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -187,6 +193,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("3".to_string(), "Zone"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -203,6 +210,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("7".to_string(), "AF-D"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -215,6 +223,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     "(none)",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -224,6 +233,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int16s[30]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -330,6 +340,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("94".to_string(), "E6 Center F2.8"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -436,6 +447,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("94".to_string(), "E6 Center F2.8"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -542,6 +554,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("95".to_string(), "(none)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -557,6 +570,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("4".to_string(), "Expanded Flexible Spot"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -573,6 +587,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -616,6 +631,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("9".to_string(), "Landscape"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -625,6 +641,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int8s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -634,6 +651,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int16s[95]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -646,6 +664,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     "(none)",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -655,6 +674,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int8s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -698,6 +718,7 @@ pub static SONY_AFINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("9".to_string(), "Landscape"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

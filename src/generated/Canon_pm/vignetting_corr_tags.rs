@@ -16,6 +16,7 @@ pub static CANON_VIGNETTINGCORR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static CANON_VIGNETTINGCORR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static CANON_VIGNETTINGCORR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +55,7 @@ pub static CANON_VIGNETTINGCORR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +68,7 @@ pub static CANON_VIGNETTINGCORR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +78,7 @@ pub static CANON_VIGNETTINGCORR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -19,6 +19,7 @@ pub static PENTAX_JUNK2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "string[24]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static PENTAX_JUNK2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "string[24]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +39,7 @@ pub static PENTAX_JUNK2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "rational64u",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +49,7 @@ pub static PENTAX_JUNK2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "string[24]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +59,7 @@ pub static PENTAX_JUNK2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "string[24]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +69,7 @@ pub static PENTAX_JUNK2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +79,7 @@ pub static PENTAX_JUNK2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +89,7 @@ pub static PENTAX_JUNK2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -91,6 +99,7 @@ pub static PENTAX_JUNK2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "undef[$val{0x12f}]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

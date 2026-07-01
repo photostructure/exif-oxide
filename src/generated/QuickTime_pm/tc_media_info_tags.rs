@@ -22,6 +22,7 @@ pub static QUICK_TIME_TCMEDIAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     "System",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static QUICK_TIME_TCMEDIAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     "Plain",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static QUICK_TIME_TCMEDIAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +55,7 @@ pub static QUICK_TIME_TCMEDIAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +65,7 @@ pub static QUICK_TIME_TCMEDIAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -70,6 +75,7 @@ pub static QUICK_TIME_TCMEDIAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "pstring",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_b2cfc23602deafa5)),
+                is_offset: false,
             },
         ),
     ])

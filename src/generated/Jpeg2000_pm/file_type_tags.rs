@@ -26,6 +26,7 @@ pub static JPEG2000_FILETYPE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("jxl ".to_string(), "JPEG XL Image (.JXL)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -35,6 +36,7 @@ pub static JPEG2000_FILETYPE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_cec214fb85ae5247)),
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +46,7 @@ pub static JPEG2000_FILETYPE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "undef[$size-8]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_59f47cb5510f6577)),
+                is_offset: false,
             },
         ),
     ])

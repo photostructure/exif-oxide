@@ -19,6 +19,7 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +39,7 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int8u[7]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_64e8c9b28abc66d4)),
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +49,7 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +59,7 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -68,6 +73,7 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("2".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -80,6 +86,7 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -93,6 +100,7 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("2".to_string(), "Soft"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -111,6 +119,7 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("9".to_string(), "Multi-pattern Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -124,6 +133,7 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("9".to_string(), "Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -141,6 +151,7 @@ pub static RICOH_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("9".to_string(), "Vivid"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

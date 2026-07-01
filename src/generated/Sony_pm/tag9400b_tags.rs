@@ -21,6 +21,7 @@ pub static SONY_TAG9400B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static SONY_TAG9400B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
+                is_offset: false,
             },
         ),
         (
@@ -69,6 +71,7 @@ pub static SONY_TAG9400B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "Continuous - HDR"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -81,6 +84,7 @@ pub static SONY_TAG9400B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -90,6 +94,7 @@ pub static SONY_TAG9400B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -110,6 +115,7 @@ pub static SONY_TAG9400B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("6".to_string(), "6 shots"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -124,6 +130,7 @@ pub static SONY_TAG9400B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("8".to_string(), "Rotate 270 CW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -138,6 +145,7 @@ pub static SONY_TAG9400B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("3".to_string(), "JPEG + MPO"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -147,6 +155,7 @@ pub static SONY_TAG9400B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_b6e6102cd296c43c)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -156,6 +165,7 @@ pub static SONY_TAG9400B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int8u",
                 print_conv: Some(PrintConv::Function(ast_print_705d9237f5fcef3b)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

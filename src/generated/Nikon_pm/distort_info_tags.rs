@@ -16,6 +16,7 @@ pub static NIKON_DISTORTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static NIKON_DISTORTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("2".to_string(), "On (underwater)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

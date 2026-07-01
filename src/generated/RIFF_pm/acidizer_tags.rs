@@ -19,6 +19,7 @@ pub static RIFF_ACIDIZER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32u",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -53,6 +54,7 @@ pub static RIFF_ACIDIZER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("71".to_string(), "High B"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -62,6 +64,7 @@ pub static RIFF_ACIDIZER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -71,6 +74,7 @@ pub static RIFF_ACIDIZER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16u[2]",
                 print_conv: Some(PrintConv::Function(ast_print_8c8ef9aa17053210)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -80,6 +84,7 @@ pub static RIFF_ACIDIZER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "float",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

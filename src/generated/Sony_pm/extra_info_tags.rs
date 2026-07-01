@@ -23,6 +23,7 @@ pub static SONY_EXTRAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
                 value_conv: Some(ValueConv::Function(ast_value_fc578fda6da96dc8)),
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static SONY_EXTRAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -45,6 +47,7 @@ pub static SONY_EXTRAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -60,6 +63,7 @@ pub static SONY_EXTRAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("246".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -69,6 +73,7 @@ pub static SONY_EXTRAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b8461ac67efa7740)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -78,6 +83,7 @@ pub static SONY_EXTRAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int8u[4]",
                 print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

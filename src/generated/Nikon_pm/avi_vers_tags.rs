@@ -18,6 +18,7 @@ pub static NIKON_AVIVERS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             format: "int8u",
             print_conv: None,
             value_conv: Some(ValueConv::Function(ast_value_4ff3f573ca64de1f)),
+            is_offset: false,
         },
     )])
 });

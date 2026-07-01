@@ -22,6 +22,7 @@ pub static RIFF_BROADCASTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "string[256]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static RIFF_BROADCASTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "string[32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static RIFF_BROADCASTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "string[32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -49,6 +52,7 @@ pub static RIFF_BROADCASTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "string[18]",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_b7ac49cbeefb8652)),
+                is_offset: false,
             },
         ),
         (
@@ -58,6 +62,7 @@ pub static RIFF_BROADCASTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int32u[2]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_75ad43e334570127)),
+                is_offset: false,
             },
         ),
         (
@@ -67,6 +72,7 @@ pub static RIFF_BROADCASTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -76,6 +82,7 @@ pub static RIFF_BROADCASTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "undef[64]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_8e0f058500d5dea1)),
+                is_offset: false,
             },
         ),
         (
@@ -85,6 +92,7 @@ pub static RIFF_BROADCASTEXT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "string[$size-602]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

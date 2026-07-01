@@ -16,6 +16,7 @@ pub static OLYMPUS_RAWDEVELOPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static OLYMPUS_RAWDEVELOPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static OLYMPUS_RAWDEVELOPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +46,7 @@ pub static OLYMPUS_RAWDEVELOPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +56,7 @@ pub static OLYMPUS_RAWDEVELOPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +66,7 @@ pub static OLYMPUS_RAWDEVELOPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -70,6 +76,7 @@ pub static OLYMPUS_RAWDEVELOPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -79,6 +86,7 @@ pub static OLYMPUS_RAWDEVELOPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -88,6 +96,7 @@ pub static OLYMPUS_RAWDEVELOPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -101,6 +110,7 @@ pub static OLYMPUS_RAWDEVELOPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("2".to_string(), "Pro Photo RGB"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -115,6 +125,7 @@ pub static OLYMPUS_RAWDEVELOPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("3".to_string(), "Advanced High Function"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -127,6 +138,7 @@ pub static OLYMPUS_RAWDEVELOPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     "(none)",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -141,6 +153,7 @@ pub static OLYMPUS_RAWDEVELOPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("8".to_string(), "Edited (Portrait)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -153,6 +166,7 @@ pub static OLYMPUS_RAWDEVELOPMENT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     "(none)",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

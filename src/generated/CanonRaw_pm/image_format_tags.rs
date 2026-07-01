@@ -21,6 +21,7 @@ pub static CANON_RAW_IMAGEFORMAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("65539".to_string(), "JPEG (lossy/non-quantization toggled)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static CANON_RAW_IMAGEFORMAT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "float",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

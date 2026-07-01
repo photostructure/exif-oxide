@@ -21,6 +21,7 @@ pub static CANON_EXPOSUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "rational32u",
                 print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static CANON_EXPOSUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "rational32u",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -39,6 +41,7 @@ pub static CANON_EXPOSUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int32u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_d378c181cb02c26d)),
+                is_offset: false,
             },
         ),
     ])

@@ -21,6 +21,7 @@ pub static KODAK_TYPE6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_63c413f7e986d282)),
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static KODAK_TYPE6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -39,6 +41,7 @@ pub static KODAK_TYPE6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int16u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -48,6 +51,7 @@ pub static KODAK_TYPE6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -57,6 +61,7 @@ pub static KODAK_TYPE6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int16u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -66,6 +71,7 @@ pub static KODAK_TYPE6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int16u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -78,6 +84,7 @@ pub static KODAK_TYPE6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("1".to_string(), "Fired"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

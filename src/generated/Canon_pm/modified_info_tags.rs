@@ -23,6 +23,7 @@ pub static CANON_MODIFIEDINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("2".to_string(), "Custom"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -32,6 +33,7 @@ pub static CANON_MODIFIEDINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -48,6 +50,7 @@ pub static CANON_MODIFIEDINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("5".to_string(), "Highest"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -80,6 +83,7 @@ pub static CANON_MODIFIEDINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("9".to_string(), "Manual Temperature (Kelvin)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -114,6 +118,7 @@ pub static CANON_MODIFIEDINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("7".to_string(), "CM Set 2"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -123,6 +128,7 @@ pub static CANON_MODIFIEDINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
     ])

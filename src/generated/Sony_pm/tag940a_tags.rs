@@ -23,6 +23,7 @@ pub static SONY_TAG940A_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 ("98844".to_string(), "Right Zone"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

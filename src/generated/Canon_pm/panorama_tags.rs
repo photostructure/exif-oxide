@@ -21,6 +21,7 @@ pub static CANON_PANORAMA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 ("4".to_string(), "2x2 Matrix (Clockwise)"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

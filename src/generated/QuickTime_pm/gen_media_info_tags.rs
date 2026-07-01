@@ -16,6 +16,7 @@ pub static QUICK_TIME_GENMEDIAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "int8u[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -57,6 +58,7 @@ pub static QUICK_TIME_GENMEDIAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("9".to_string(), "patOr"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -66,6 +68,7 @@ pub static QUICK_TIME_GENMEDIAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "int16u[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -75,6 +78,7 @@ pub static QUICK_TIME_GENMEDIAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "fixed16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

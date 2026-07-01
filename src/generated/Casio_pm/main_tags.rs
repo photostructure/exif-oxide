@@ -31,6 +31,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("7".to_string(), "Panorama"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +45,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "Fine"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -59,6 +61,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("7".to_string(), "Spot AF"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +76,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("4".to_string(), "Red-eye Reduction"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -88,6 +92,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("15".to_string(), "Strong"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -97,6 +102,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_2aa532acb8a29737)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -113,6 +119,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("5".to_string(), "Shade"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -129,6 +136,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("65537".to_string(), "2x"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -145,6 +153,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("2".to_string(), "Hard"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -161,6 +170,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("2".to_string(), "High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -177,6 +187,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("2".to_string(), "High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -186,6 +197,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -195,6 +207,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "undef",
                 print_conv: Some(PrintConv::Function(ast_print_16b21079c21884ad)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -210,6 +223,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("5".to_string(), "Flesh Tones"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -229,6 +243,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("9".to_string(), "Purple"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -256,6 +271,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("9".to_string(), "Top Near-right"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -269,6 +285,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "Strong"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -278,6 +295,7 @@ pub static CASIO_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

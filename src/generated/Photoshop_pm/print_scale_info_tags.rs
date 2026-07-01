@@ -20,6 +20,7 @@ pub static PHOTOSHOP_PRINTSCALEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("2".to_string(), "User Defined"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static PHOTOSHOP_PRINTSCALEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "float[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -38,6 +40,7 @@ pub static PHOTOSHOP_PRINTSCALEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "float",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

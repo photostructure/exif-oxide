@@ -34,6 +34,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("7".to_string(), "Continuous Bracketing"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -47,6 +48,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Rotate 90 CW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -59,6 +61,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +76,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "Advanced Level"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +86,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -95,6 +100,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -104,6 +110,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -117,6 +124,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -126,6 +134,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -150,6 +159,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("9".to_string(), "Program Shift S"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -174,6 +184,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("9".to_string(), "Adobe RGB"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -183,6 +194,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_50a2776f078ae807)),
                 value_conv: Some(ValueConv::Function(ast_value_4eab48f4e81df18f)),
+                is_offset: false,
             },
         ),
         (
@@ -192,6 +204,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_50a2776f078ae807)),
                 value_conv: Some(ValueConv::Function(ast_value_4eab48f4e81df18f)),
+                is_offset: false,
             },
         ),
         (
@@ -206,6 +219,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "Advanced Level"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -215,6 +229,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -224,6 +239,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -235,6 +251,7 @@ pub static SONY_FOCUSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Sony::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
     ])

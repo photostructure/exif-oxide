@@ -19,6 +19,7 @@ pub static NIKON_INTERVALINFOZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_7deab36bb4993610)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static NIKON_INTERVALINFOZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +46,7 @@ pub static NIKON_INTERVALINFOZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("6".to_string(), "16:9"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

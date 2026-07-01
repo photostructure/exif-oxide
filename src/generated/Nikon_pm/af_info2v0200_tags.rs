@@ -19,6 +19,7 @@ pub static NIKON_AFINFO2V0200_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static NIKON_AFINFO2V0200_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("131".to_string(), "Face Priority (41 points)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +48,7 @@ pub static NIKON_AFINFO2V0200_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("6".to_string(), "On (105-point)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -62,6 +65,7 @@ pub static NIKON_AFINFO2V0200_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +77,7 @@ pub static NIKON_AFINFO2V0200_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     "[Function: Image::ExifTool::Nikon::__ANON__]".to_string(),
                 )),
                 value_conv: Some(ValueConv::Function(ast_value_8cf424424a0749dd)),
+                is_offset: false,
             },
         ),
     ])

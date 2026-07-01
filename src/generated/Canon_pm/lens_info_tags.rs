@@ -18,6 +18,7 @@ pub static CANON_LENSINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             format: "undef[5]",
             print_conv: None,
             value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+            is_offset: false,
         },
     )])
 });

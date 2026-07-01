@@ -19,6 +19,7 @@ pub static NIKON_COLORBALANCEB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static NIKON_COLORBALANCEB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int32u[4]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +39,7 @@ pub static NIKON_COLORBALANCEB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int32u[4]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +49,7 @@ pub static NIKON_COLORBALANCEB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int32u[4]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +59,7 @@ pub static NIKON_COLORBALANCEB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int32u[4]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +69,7 @@ pub static NIKON_COLORBALANCEB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int32u[4]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +79,7 @@ pub static NIKON_COLORBALANCEB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int32u[4]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +89,7 @@ pub static NIKON_COLORBALANCEB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int32u[4]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
+                is_offset: false,
             },
         ),
         (
@@ -91,6 +99,7 @@ pub static NIKON_COLORBALANCEB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int32u[4]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c52632c7b0b6c3b9)),
+                is_offset: false,
             },
         ),
     ])

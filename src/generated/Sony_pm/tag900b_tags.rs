@@ -26,6 +26,7 @@ pub static SONY_TAG900B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("98".to_string(), "1"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -38,6 +39,7 @@ pub static SONY_TAG900B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("98".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

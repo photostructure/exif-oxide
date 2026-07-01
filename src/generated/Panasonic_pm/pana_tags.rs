@@ -19,6 +19,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string[22]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string[16]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +39,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string[16]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +49,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "undef[$size-0x10]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +59,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string[30]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +69,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string[14]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +79,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "string[14]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +89,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "undef[0x600]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -91,6 +99,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -100,6 +109,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -109,6 +119,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -118,6 +129,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "undef[16384]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_2394a139821fa381)),
+                is_offset: false,
             },
         ),
         (
@@ -127,6 +139,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32uRev",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -136,6 +149,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32uRev",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -145,6 +159,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32uRev",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -154,6 +169,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "undef[$val{0x53e}]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -163,6 +179,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32uRev",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -172,6 +189,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32uRev",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -181,6 +199,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int32uRev",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -190,6 +209,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "undef[$val{0x556}]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -199,6 +219,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -208,6 +229,7 @@ pub static PANASONIC_PANA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

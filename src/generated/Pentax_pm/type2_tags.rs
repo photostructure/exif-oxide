@@ -20,6 +20,7 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("2".to_string(), "Manual"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("2".to_string(), "Best"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -45,6 +47,7 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("3".to_string(), "Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -59,6 +62,7 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("6".to_string(), "Red-eye reduction"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -75,6 +79,7 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("5".to_string(), "Manual"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -84,6 +89,7 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -97,6 +103,7 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("2".to_string(), "Hard"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -110,6 +117,7 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("2".to_string(), "High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -123,6 +131,7 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("2".to_string(), "High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -135,6 +144,7 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("65535".to_string(), "Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -148,6 +158,7 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("3".to_string(), "Sepia"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -157,6 +168,7 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -166,6 +178,7 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -175,6 +188,7 @@ pub static PENTAX_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

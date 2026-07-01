@@ -16,6 +16,7 @@ pub static NIKON_SHOTINFOD7500_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "string[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static NIKON_SHOTINFOD7500_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "string[5]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static NIKON_SHOTINFOD7500_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

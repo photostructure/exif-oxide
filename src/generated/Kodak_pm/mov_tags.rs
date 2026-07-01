@@ -23,6 +23,7 @@ pub static KODAK_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string[21]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -32,6 +33,7 @@ pub static KODAK_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string[42]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -41,6 +43,7 @@ pub static KODAK_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string[8]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -50,6 +53,7 @@ pub static KODAK_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_e60461d3e144eea5)),
+                is_offset: false,
             },
         ),
         (
@@ -59,6 +63,7 @@ pub static KODAK_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational64u",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -68,6 +73,7 @@ pub static KODAK_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational64s",
                 print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -77,6 +83,7 @@ pub static KODAK_MOV_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational64u",
                 print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

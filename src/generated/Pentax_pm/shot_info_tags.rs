@@ -22,6 +22,7 @@ pub static PENTAX_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 ("96".to_string(), "Downwards"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

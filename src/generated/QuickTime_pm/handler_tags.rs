@@ -19,6 +19,7 @@ pub static QUICK_TIME_HANDLER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("mhlr".to_string(), "Media Handler"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -54,6 +55,7 @@ pub static QUICK_TIME_HANDLER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("vide".to_string(), "Video Track"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -83,6 +85,7 @@ pub static QUICK_TIME_HANDLER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("sany".to_string(), "Sanyo"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -92,6 +95,7 @@ pub static QUICK_TIME_HANDLER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -15,6 +15,7 @@ pub static PANASONIC_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             format: "string[4]",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

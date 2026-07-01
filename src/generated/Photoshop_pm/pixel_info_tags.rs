@@ -15,6 +15,7 @@ pub static PHOTOSHOP_PIXELINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
             format: "double",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

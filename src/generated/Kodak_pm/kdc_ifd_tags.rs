@@ -16,6 +16,7 @@ pub static KODAK_KDC_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static KODAK_KDC_IFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("6".to_string(), "Shade"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

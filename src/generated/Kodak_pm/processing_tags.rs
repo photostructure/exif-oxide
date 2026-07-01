@@ -18,6 +18,7 @@ pub static KODAK_PROCESSING_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             format: "int16u[3]",
             print_conv: None,
             value_conv: Some(ValueConv::Function(ast_value_c978d7a3061a06bd)),
+            is_offset: false,
         },
     )])
 });

@@ -26,6 +26,7 @@ pub static CANON_CAMERAINFOPOWERSHOT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_1f47b524bed353b1)),
                 value_conv: Some(ValueConv::Function(ast_value_c24b98dfe8227aef)),
+                is_offset: false,
             },
         ),
         (
@@ -35,6 +36,7 @@ pub static CANON_CAMERAINFOPOWERSHOT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
                 value_conv: Some(ValueConv::Function(ast_value_1fe8870e96a60dd1)),
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +46,7 @@ pub static CANON_CAMERAINFOPOWERSHOT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_92fe5916ea96cdf7)),
+                is_offset: false,
             },
         ),
         (
@@ -53,6 +56,7 @@ pub static CANON_CAMERAINFOPOWERSHOT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -62,6 +66,7 @@ pub static CANON_CAMERAINFOPOWERSHOT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -71,6 +76,7 @@ pub static CANON_CAMERAINFOPOWERSHOT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -80,6 +86,7 @@ pub static CANON_CAMERAINFOPOWERSHOT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -89,6 +96,7 @@ pub static CANON_CAMERAINFOPOWERSHOT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

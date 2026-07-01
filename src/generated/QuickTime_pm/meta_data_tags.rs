@@ -21,6 +21,7 @@ pub static QUICK_TIME_METADATA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_c215f0f9463fb4)),
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static QUICK_TIME_METADATA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -39,6 +41,7 @@ pub static QUICK_TIME_METADATA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_8cf1d70236b67272)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -48,6 +51,7 @@ pub static QUICK_TIME_METADATA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_c215f0f9463fb4)),
+                is_offset: false,
             },
         ),
     ])

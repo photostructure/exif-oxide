@@ -20,6 +20,7 @@ pub static RIFF_VP8X_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static RIFF_VP8X_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_133a2729aa715f5f)),
+                is_offset: false,
             },
         ),
         (
@@ -38,6 +40,7 @@ pub static RIFF_VP8X_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_b1ee7ff9667afb05)),
+                is_offset: false,
             },
         ),
     ])

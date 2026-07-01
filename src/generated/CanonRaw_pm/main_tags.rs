@@ -23,6 +23,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -32,6 +33,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "undef",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -41,6 +43,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -50,6 +53,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -59,6 +63,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -68,6 +73,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -77,6 +83,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -86,6 +93,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -95,6 +103,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -104,6 +113,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -113,6 +123,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -122,6 +133,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -134,6 +146,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Written Document"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -146,6 +159,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Continuous Shooting"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -158,6 +172,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Priority on focus"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -167,6 +182,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -176,6 +192,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -185,6 +202,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -194,6 +212,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -203,6 +222,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -212,6 +232,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -221,6 +242,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -230,6 +252,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -239,6 +262,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -248,6 +272,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -257,6 +282,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -266,6 +292,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -275,6 +302,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -284,6 +312,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -297,6 +326,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("65535".to_string(), "Uncalibrated"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -306,6 +336,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -315,6 +346,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -324,6 +356,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -333,6 +366,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b25e38f36bd6b390)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -342,6 +376,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "float",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -351,6 +386,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -360,6 +396,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -369,6 +406,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -378,6 +416,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -387,6 +426,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "float",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_10ca38d85eb04aba)),
+                is_offset: false,
             },
         ),
         (
@@ -396,6 +436,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3b5d8202349cb3c2)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -405,6 +446,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1006,6 +1048,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("68681728".to_string(), "PowerShot G1 X Mark III"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1015,6 +1058,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1027,6 +1071,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2684354560".to_string(), "Format 2"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1036,6 +1081,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1045,6 +1091,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1054,6 +1101,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1063,6 +1111,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1072,6 +1121,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1081,6 +1131,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1090,6 +1141,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1099,6 +1151,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1108,6 +1161,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1117,6 +1171,7 @@ pub static CANON_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])
@@ -1133,6 +1188,7 @@ pub static CANON_RAW_MAIN_IMAGEDESCRIPTION_TAGS: LazyLock<HashMap<u16, TagInfo>>
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         )])
     });

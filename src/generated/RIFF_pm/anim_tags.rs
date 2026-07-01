@@ -19,6 +19,7 @@ pub static RIFF_ANIM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static RIFF_ANIM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_cbdfe9256b8c5e45)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

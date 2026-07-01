@@ -22,6 +22,7 @@ pub static CANON_MOVIEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static CANON_MOVIEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static CANON_MOVIEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -49,6 +52,7 @@ pub static CANON_MOVIEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "rational32u",
                 print_conv: Some(PrintConv::Function(ast_print_dd3be644838b9531)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -58,6 +62,7 @@ pub static CANON_MOVIEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -67,6 +72,7 @@ pub static CANON_MOVIEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_21dfca2f396095a)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -76,6 +82,7 @@ pub static CANON_MOVIEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -85,6 +92,7 @@ pub static CANON_MOVIEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -94,6 +102,7 @@ pub static CANON_MOVIEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

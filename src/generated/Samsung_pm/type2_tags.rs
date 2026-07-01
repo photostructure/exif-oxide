@@ -25,6 +25,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +41,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("8192".to_string(), "High-end NX Camera"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -107,6 +109,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("94371870".to_string(), "WB5500 / VLUU WB5500 / HZ50W"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -116,6 +119,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -125,6 +129,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -134,6 +139,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -143,6 +149,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "undef",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_f4bd1553bca2b9aa)),
+                is_offset: false,
             },
         ),
         (
@@ -152,6 +159,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -161,6 +169,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -173,6 +182,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "Big-endian (Motorola, MM)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -185,6 +195,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "Manual"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -194,6 +205,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_76c7cc600804b004)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -207,6 +219,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("65535".to_string(), "Roll"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -219,6 +232,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -231,6 +245,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -240,6 +255,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -249,6 +265,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -258,6 +275,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -267,6 +285,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -276,6 +295,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -285,6 +305,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -294,6 +315,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -306,6 +328,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "Adobe RGB"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -318,6 +341,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -327,6 +351,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -336,6 +361,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -345,6 +371,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_68a0386b1983f2b)),
+                is_offset: false,
             },
         ),
         (
@@ -354,6 +381,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_68a0386b1983f2b)),
+                is_offset: false,
             },
         ),
         (
@@ -363,6 +391,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
         (
@@ -372,6 +401,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -381,6 +411,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -390,6 +421,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -399,6 +431,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -408,6 +441,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -417,6 +451,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -426,6 +461,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -435,6 +471,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -444,6 +481,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -453,6 +491,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -462,6 +501,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -471,6 +511,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -480,6 +521,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -489,6 +531,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -498,6 +541,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -507,6 +551,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -516,6 +561,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -525,6 +571,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -534,6 +581,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -543,6 +591,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -552,6 +601,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -561,6 +611,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -570,6 +621,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -579,6 +631,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -588,6 +641,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -597,6 +651,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -606,6 +661,7 @@ pub static SAMSUNG_TYPE2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

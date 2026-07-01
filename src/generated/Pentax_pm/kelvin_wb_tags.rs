@@ -18,6 +18,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -51,6 +54,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -62,6 +66,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +78,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -84,6 +90,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -95,6 +102,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -106,6 +114,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -117,6 +126,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -128,6 +138,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -139,6 +150,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -150,6 +162,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -161,6 +174,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -172,6 +186,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -183,6 +198,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -194,6 +210,7 @@ pub static PENTAX_KELVINWB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
     ])

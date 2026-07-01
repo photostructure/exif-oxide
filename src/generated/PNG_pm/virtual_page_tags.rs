@@ -15,6 +15,7 @@ pub static PNG_VIRTUALPAGE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             format: "int8u",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

@@ -104,6 +104,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("65535".to_string(), "Unknown"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -113,6 +114,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -122,6 +124,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "int32u",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -131,6 +134,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -205,6 +209,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("9".to_string(), "CenterSurround"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -214,6 +219,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "int32u",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -223,6 +229,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "float[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -297,6 +304,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("9".to_string(), "CenterSurround"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -306,6 +314,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "int32u",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -315,6 +324,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "float[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -389,6 +399,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("9".to_string(), "CenterSurround"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -398,6 +409,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "int32u",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -407,6 +419,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "float[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -481,6 +494,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("9".to_string(), "CenterSurround"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -490,6 +504,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "int32u",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -499,6 +514,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "float[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -573,6 +589,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("9".to_string(), "CenterSurround"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -582,6 +599,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "int32u",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -591,6 +609,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "float[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -665,6 +684,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("9".to_string(), "CenterSurround"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -674,6 +694,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "int32u",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -683,6 +704,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "float[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -757,6 +779,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("9".to_string(), "CenterSurround"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -766,6 +789,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "int32u",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -775,6 +799,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "float[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -849,6 +874,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("9".to_string(), "CenterSurround"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -858,6 +884,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "int32u",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -867,6 +894,7 @@ pub static QUICK_TIME_CHANNELLAYOUT_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                 format: "float[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

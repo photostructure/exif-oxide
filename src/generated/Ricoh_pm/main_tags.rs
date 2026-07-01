@@ -22,6 +22,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_475495c4db4ba791)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -49,6 +52,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +65,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "DNG"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -78,6 +83,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("7".to_string(), "Movie"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -91,6 +97,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("8".to_string(), "AF-priority Continuous"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -114,6 +121,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("9".to_string(), "Warm White Fluorescent"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -123,6 +131,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -142,6 +151,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("9".to_string(), "Pinpoint AF"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -159,6 +169,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("9".to_string(), "AE"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -171,6 +182,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -190,6 +202,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("8".to_string(), "Auto, Did not fire"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -199,6 +212,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -221,6 +235,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("0".to_string(), "Full"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -233,6 +248,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -247,6 +263,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("5".to_string(), "Strong"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -261,6 +278,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "Strong"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -284,6 +302,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("9".to_string(), "High-contrast B&W"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -298,6 +317,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -313,6 +333,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -322,6 +343,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -331,6 +353,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -349,6 +372,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("7".to_string(), "Color"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -366,6 +390,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("6".to_string(), "Cool"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -378,6 +403,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("2".to_string(), "Attached"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -391,6 +417,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("2".to_string(), "On (47mm)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -403,6 +430,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -412,6 +440,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -424,6 +453,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "In Focus"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -433,6 +463,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -442,6 +473,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -451,6 +483,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -460,6 +493,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -472,6 +506,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("2".to_string(), "Manual"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -481,6 +516,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -490,6 +526,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -499,6 +536,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -508,6 +546,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -517,6 +556,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -526,6 +566,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -535,6 +576,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -544,6 +586,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -553,6 +596,7 @@ pub static RICOH_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

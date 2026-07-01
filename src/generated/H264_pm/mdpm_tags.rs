@@ -33,6 +33,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_d93e86a41ac94e29)),
+                is_offset: false,
             },
         ),
         (
@@ -42,6 +43,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_2e1e97c3e20b75a2)),
+                is_offset: false,
             },
         ),
         (
@@ -51,6 +53,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -60,6 +63,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -69,6 +73,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -78,6 +83,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational32u",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -87,6 +93,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -106,6 +113,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("8".to_string(), "Landscape"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -115,6 +123,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational32s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -124,6 +133,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational32s",
                 print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -133,6 +143,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational32u",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_bb77e52729467611)),
+                is_offset: false,
             },
         ),
         (
@@ -189,6 +200,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -201,6 +213,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "Custom"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -213,6 +226,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "Manual"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -222,6 +236,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational32u",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -236,6 +251,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "Night"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -245,6 +261,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u",
                 print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -257,6 +274,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("S".to_string(), "South"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -266,6 +284,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational32u",
                 print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
                 value_conv: Some(ValueConv::Function(ast_value_ba67c805f3851db9)),
+                is_offset: false,
             },
         ),
         (
@@ -278,6 +297,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("W".to_string(), "West"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -287,6 +307,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational32u",
                 print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
                 value_conv: Some(ValueConv::Function(ast_value_ba67c805f3851db9)),
+                is_offset: false,
             },
         ),
         (
@@ -299,6 +320,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "Below Sea Level"),
                 ]))),
                 value_conv: Some(ValueConv::Function(ast_value_371d7ee27915143)),
+                is_offset: false,
             },
         ),
         (
@@ -308,6 +330,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -317,6 +340,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational32u",
                 print_conv: Some(PrintConv::Function(ast_print_10a121f3318d09c)),
                 value_conv: Some(ValueConv::Function(ast_value_7bda4a4d82582552)),
+                is_offset: false,
             },
         ),
         (
@@ -329,6 +353,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("V".to_string(), "Measurement Void"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -341,6 +366,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "3-Dimensional Measurement"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -350,6 +376,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -363,6 +390,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("N".to_string(), "knots"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -372,6 +400,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -384,6 +413,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("T".to_string(), "True North"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -393,6 +423,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -405,6 +436,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("T".to_string(), "True North"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -414,6 +446,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "rational32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -423,6 +456,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -432,6 +466,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
+                is_offset: false,
             },
         ),
         (
@@ -441,6 +476,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -450,6 +486,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -459,6 +496,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -468,6 +506,7 @@ pub static H264_MDPM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

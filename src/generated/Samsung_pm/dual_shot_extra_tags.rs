@@ -16,6 +16,7 @@ pub static SAMSUNG_DUALSHOTEXTRA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "undef[64]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static SAMSUNG_DUALSHOTEXTRA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static SAMSUNG_DUALSHOTEXTRA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

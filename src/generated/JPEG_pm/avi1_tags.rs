@@ -19,6 +19,7 @@ pub static JPEG_AVI1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 ("2".to_string(), "Even"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

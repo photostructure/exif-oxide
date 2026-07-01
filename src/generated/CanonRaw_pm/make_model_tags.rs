@@ -16,6 +16,7 @@ pub static CANON_RAW_MAKEMODEL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "string[6]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static CANON_RAW_MAKEMODEL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

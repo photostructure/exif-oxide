@@ -20,6 +20,7 @@ pub static NIKON_ISOINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_2cea565875d218cc)),
                 value_conv: Some(ValueConv::Function(ast_value_81dbf53c19dbd53f)),
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +56,7 @@ pub static NIKON_ISOINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("516".to_string(), "Lo 1.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +66,7 @@ pub static NIKON_ISOINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_2cea565875d218cc)),
                 value_conv: Some(ValueConv::Function(ast_value_81dbf53c19dbd53f)),
+                is_offset: false,
             },
         ),
         (
@@ -87,6 +90,7 @@ pub static NIKON_ISOINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("516".to_string(), "Lo 1.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

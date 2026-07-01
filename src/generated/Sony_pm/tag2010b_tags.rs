@@ -28,6 +28,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +38,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
+                is_offset: false,
             },
         ),
         (
@@ -76,6 +78,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "Continuous - HDR"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -85,6 +88,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "undef[7]",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_f8758473ef76ce15)),
+                is_offset: false,
             },
         ),
         (
@@ -103,6 +107,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("8".to_string(), "n/a"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -112,6 +117,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32u[486]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -129,6 +135,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "Single Burst Shooting"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -168,6 +175,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "Continuous - HDR"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -181,6 +189,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("2".to_string(), "Self-timer 2 s"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -197,6 +206,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("6".to_string(), "Wireless"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -206,6 +216,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_b3e8606718d2531e)),
                 value_conv: Some(ValueConv::Function(ast_value_26c9608b5bf2210d)),
+                is_offset: false,
             },
         ),
         (
@@ -215,6 +226,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_ce66549ef9c04ed6)),
+                is_offset: false,
             },
         ),
         (
@@ -233,6 +245,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("8".to_string(), "n/a"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -251,6 +264,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "HDR 4 EV"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -260,6 +274,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: Some(ValueConv::Function(ast_value_98168eda1a41d331)),
+                is_offset: false,
             },
         ),
         (
@@ -297,6 +312,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "Gamma Still - Real"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -334,6 +350,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "Gamma Still - Real"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -358,6 +375,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "HDR Painting"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -371,6 +389,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("2".to_string(), "RAW + JPEG"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -386,6 +405,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("5".to_string(), "Highlight"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -429,6 +449,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "Landscape"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -438,6 +459,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16u[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -447,6 +469,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_1f47b524bed353b1)),
                 value_conv: Some(ValueConv::Function(ast_value_161c6918edf43c3f)),
+                is_offset: false,
             },
         ),
         (
@@ -456,6 +479,7 @@ pub static SONY_TAG2010B_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16s[16]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -22,6 +22,7 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     "[Function: Image::ExifTool::Nikon::FormatString]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +46,7 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     "[Function: Image::ExifTool::Nikon::FormatString]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -57,6 +60,7 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("2".to_string(), "Full Control"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -66,6 +70,7 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_be7ee827727a50d1)),
                 value_conv: Some(ValueConv::Function(ast_value_922de111bc6e29e)),
+                is_offset: false,
             },
         ),
         (
@@ -75,6 +80,7 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_19075ce26854d0a)),
                 value_conv: Some(ValueConv::Function(ast_value_922de111bc6e29e)),
+                is_offset: false,
             },
         ),
         (
@@ -84,6 +90,7 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_19075ce26854d0a)),
                 value_conv: Some(ValueConv::Function(ast_value_922de111bc6e29e)),
+                is_offset: false,
             },
         ),
         (
@@ -93,6 +100,7 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_19075ce26854d0a)),
                 value_conv: Some(ValueConv::Function(ast_value_922de111bc6e29e)),
+                is_offset: false,
             },
         ),
         (
@@ -102,6 +110,7 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_ad3a21a0c80cff63)),
                 value_conv: Some(ValueConv::Function(ast_value_922de111bc6e29e)),
+                is_offset: false,
             },
         ),
         (
@@ -111,6 +120,7 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_19075ce26854d0a)),
                 value_conv: Some(ValueConv::Function(ast_value_922de111bc6e29e)),
+                is_offset: false,
             },
         ),
         (
@@ -120,6 +130,7 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_19075ce26854d0a)),
                 value_conv: Some(ValueConv::Function(ast_value_922de111bc6e29e)),
+                is_offset: false,
             },
         ),
         (
@@ -136,6 +147,7 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("255".to_string(), "n/a"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -157,6 +169,7 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("255".to_string(), "n/a"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -166,6 +179,7 @@ pub static NIKON_PICTURECONTROL2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_19075ce26854d0a)),
                 value_conv: Some(ValueConv::Function(ast_value_922de111bc6e29e)),
+                is_offset: false,
             },
         ),
     ])

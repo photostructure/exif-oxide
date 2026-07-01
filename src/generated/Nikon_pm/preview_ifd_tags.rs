@@ -40,6 +40,7 @@ pub static NIKON_PREVIEWIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("9".to_string(), "Depth map of reduced-resolution image"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -112,6 +113,7 @@ pub static NIKON_PREVIEWIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("99".to_string(), "JPEG"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -125,6 +127,7 @@ pub static NIKON_PREVIEWIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("3".to_string(), "cm"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -134,6 +137,7 @@ pub static NIKON_PREVIEWIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -143,6 +147,7 @@ pub static NIKON_PREVIEWIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -155,6 +160,7 @@ pub static NIKON_PREVIEWIFD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("2".to_string(), "Co-sited"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

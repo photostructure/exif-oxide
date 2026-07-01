@@ -24,6 +24,7 @@ pub static SONY_TAG9050D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_8cb98c82cbc27d63)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static SONY_TAG9050D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_101e3eed0a079327)),
                 value_conv: Some(ValueConv::Function(ast_value_689cac30223ecfb0)),
+                is_offset: false,
             },
         ),
         (
@@ -42,6 +44,7 @@ pub static SONY_TAG9050D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_95bfd9578fbdb0ab)),
+                is_offset: false,
             },
         ),
         (
@@ -81,6 +84,7 @@ pub static SONY_TAG9050D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "Continuous - HDR"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -90,6 +94,7 @@ pub static SONY_TAG9050D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "int8u[6]",
                 print_conv: Some(PrintConv::Function(ast_print_202062b94dbf7029)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

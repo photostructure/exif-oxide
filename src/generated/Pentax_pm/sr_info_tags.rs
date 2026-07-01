@@ -25,6 +25,7 @@ pub static PENTAX_SRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     "Not stabilized",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -45,6 +46,7 @@ pub static PENTAX_SRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("7".to_string(), "On (7)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -54,6 +56,7 @@ pub static PENTAX_SRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b41bd13e5416819e)),
                 value_conv: Some(ValueConv::Function(ast_value_4df6f963709ce74f)),
+                is_offset: false,
             },
         ),
         (
@@ -63,6 +66,7 @@ pub static PENTAX_SRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: Some(ValueConv::Function(ast_value_b06dbcceb3b34517)),
+                is_offset: false,
             },
         ),
     ])

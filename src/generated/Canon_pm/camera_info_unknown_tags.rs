@@ -19,6 +19,7 @@ pub static CANON_CAMERAINFOUNKNOWN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "undef[5]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c3ac357278ffbbb0)),
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static CANON_CAMERAINFOUNKNOWN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "string[6]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

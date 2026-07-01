@@ -23,6 +23,7 @@ pub static QUICK_TIME_MEDIAHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -32,6 +33,7 @@ pub static QUICK_TIME_MEDIAHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_e8af3016409e62f1)),
+                is_offset: false,
             },
         ),
         (
@@ -41,6 +43,7 @@ pub static QUICK_TIME_MEDIAHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_e8af3016409e62f1)),
+                is_offset: false,
             },
         ),
         (
@@ -50,6 +53,7 @@ pub static QUICK_TIME_MEDIAHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -59,6 +63,7 @@ pub static QUICK_TIME_MEDIAHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_9b70d43f79fc1751)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -68,6 +73,7 @@ pub static QUICK_TIME_MEDIAHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_90dee963b13ef4e1)),
                 value_conv: Some(ValueConv::Function(ast_value_4ab1082138915ea5)),
+                is_offset: false,
             },
         ),
     ])

@@ -16,6 +16,7 @@ pub static MINOLTA_RAW_PRD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "string[8]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static MINOLTA_RAW_PRD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static MINOLTA_RAW_PRD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +46,7 @@ pub static MINOLTA_RAW_PRD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +56,7 @@ pub static MINOLTA_RAW_PRD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +66,7 @@ pub static MINOLTA_RAW_PRD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -70,6 +76,7 @@ pub static MINOLTA_RAW_PRD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +89,7 @@ pub static MINOLTA_RAW_PRD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("89".to_string(), "Linear"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -94,6 +102,7 @@ pub static MINOLTA_RAW_PRD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("4".to_string(), "GBRG"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

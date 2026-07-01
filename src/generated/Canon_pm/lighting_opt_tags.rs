@@ -19,6 +19,7 @@ pub static CANON_LIGHTINGOPT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static CANON_LIGHTINGOPT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("3".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +48,7 @@ pub static CANON_LIGHTINGOPT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("2".to_string(), "Enhanced"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -59,6 +62,7 @@ pub static CANON_LIGHTINGOPT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("2".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +77,7 @@ pub static CANON_LIGHTINGOPT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("3".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -86,6 +91,7 @@ pub static CANON_LIGHTINGOPT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("2".to_string(), "High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -98,6 +104,7 @@ pub static CANON_LIGHTINGOPT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -19,6 +19,7 @@ pub static PHOTOSHOP_JPEG_QUALITY_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_8e4e6485519821cd)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -32,6 +33,7 @@ pub static PHOTOSHOP_JPEG_QUALITY_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("257".to_string(), "Progressive"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -45,6 +47,7 @@ pub static PHOTOSHOP_JPEG_QUALITY_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("3".to_string(), "5 Scans"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

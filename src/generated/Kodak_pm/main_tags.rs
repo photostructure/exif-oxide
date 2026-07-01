@@ -27,6 +27,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "string[8]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -39,6 +40,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("2".to_string(), "Normal"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -51,6 +53,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -60,6 +63,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -69,6 +73,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -78,6 +83,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -87,6 +93,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u[2]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_44d7c3c8b6f27a4a)),
+                is_offset: false,
             },
         ),
         (
@@ -96,6 +103,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u[4]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_36280449f269c1dd)),
+                is_offset: false,
             },
         ),
         (
@@ -105,6 +113,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -118,6 +127,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("8".to_string(), "Aperture Priority"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -131,6 +141,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("2".to_string(), "Spot"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -140,6 +151,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -149,6 +161,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_63c413f7e986d282)),
+                is_offset: false,
             },
         ),
         (
@@ -158,6 +171,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+                is_offset: false,
             },
         ),
         (
@@ -167,6 +181,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -176,6 +191,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -185,6 +201,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -194,6 +211,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -203,6 +221,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -215,6 +234,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("2".to_string(), "Macro"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -224,6 +244,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -233,6 +254,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -242,6 +264,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -256,6 +279,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("3".to_string(), "Daylight"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -273,6 +297,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("64".to_string(), "Red-Eye?"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -285,6 +310,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -294,6 +320,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_dccfee5faef77602)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -303,6 +330,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -312,6 +340,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -321,6 +350,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_6140e01247d46827)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -341,6 +371,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("8192".to_string(), "B&W"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -350,6 +381,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -365,6 +397,7 @@ pub static KODAK_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

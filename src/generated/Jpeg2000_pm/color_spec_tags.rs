@@ -21,6 +21,7 @@ pub static JPEG2000_COLORSPEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("4".to_string(), "Vendor Color"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static JPEG2000_COLORSPEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -45,6 +47,7 @@ pub static JPEG2000_COLORSPEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                     ("4".to_string(), "Poor Quality"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -54,6 +57,7 @@ pub static JPEG2000_COLORSPEC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "undef[$size-3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

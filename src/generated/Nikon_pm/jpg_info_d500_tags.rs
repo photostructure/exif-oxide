@@ -18,6 +18,7 @@ pub static NIKON_JPGINFOD500_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 ("1".to_string(), "Optimal Quality"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

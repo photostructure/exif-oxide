@@ -19,6 +19,7 @@ pub static JPEG_SPIFF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u[2]",
                 print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static JPEG_SPIFF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("4".to_string(), "Continuous-tone Facsimile"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static JPEG_SPIFF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +55,7 @@ pub static JPEG_SPIFF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -74,6 +78,7 @@ pub static JPEG_SPIFF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("9".to_string(), "PhotoYCC"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -93,6 +98,7 @@ pub static JPEG_SPIFF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("5".to_string(), "JPEG"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -106,6 +112,7 @@ pub static JPEG_SPIFF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("2".to_string(), "cm"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -115,6 +122,7 @@ pub static JPEG_SPIFF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -124,6 +132,7 @@ pub static JPEG_SPIFF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

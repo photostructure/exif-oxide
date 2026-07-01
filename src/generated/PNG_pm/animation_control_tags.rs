@@ -19,6 +19,7 @@ pub static PNG_ANIMATIONCONTROL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static PNG_ANIMATIONCONTROL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_cbdfe9256b8c5e45)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

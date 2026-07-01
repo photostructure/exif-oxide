@@ -19,6 +19,7 @@ pub static QUICK_TIME_SPATIALAUDIO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     "Periphonic",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static QUICK_TIME_SPATIALAUDIO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static QUICK_TIME_SPATIALAUDIO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     "ACN",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +55,7 @@ pub static QUICK_TIME_SPATIALAUDIO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     "SN3D",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +65,7 @@ pub static QUICK_TIME_SPATIALAUDIO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -70,6 +75,7 @@ pub static QUICK_TIME_SPATIALAUDIO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "int32u[$val{8}]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -16,6 +16,7 @@ pub static QUICK_TIME_METASAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static QUICK_TIME_METASAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
                 format: "undef[$size-8]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

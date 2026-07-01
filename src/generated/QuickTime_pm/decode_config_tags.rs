@@ -15,6 +15,7 @@ pub static QUICK_TIME_DECODECONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
             format: "undef[4]",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

@@ -22,6 +22,7 @@ pub static PENTAX_TEMPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static PENTAX_TEMPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static PENTAX_TEMPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
         (
@@ -49,6 +52,7 @@ pub static PENTAX_TEMPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -58,6 +62,7 @@ pub static PENTAX_TEMPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -67,6 +72,7 @@ pub static PENTAX_TEMPINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16s",
                 print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
     ])

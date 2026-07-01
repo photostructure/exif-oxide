@@ -25,6 +25,7 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_2d66b9944b9eb1b1)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +55,7 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +65,7 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_21dfca2f396095a)),
                 value_conv: Some(ValueConv::Function(ast_value_dd746112419bd2e9)),
+                is_offset: false,
             },
         ),
         (
@@ -70,6 +75,7 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_21dfca2f396095a)),
                 value_conv: Some(ValueConv::Function(ast_value_dd746112419bd2e9)),
+                is_offset: false,
             },
         ),
         (
@@ -79,6 +85,7 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "fixed32u",
                 print_conv: Some(PrintConv::Function(ast_print_dd3be644838b9531)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -88,6 +95,7 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "fixed32u",
                 print_conv: Some(PrintConv::Function(ast_print_dd3be644838b9531)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -97,6 +105,7 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "int16u[2]",
                 print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -106,6 +115,7 @@ pub static QUICK_TIME_VIDEOPROF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "int16u[2]",
                 print_conv: Some(PrintConv::Function(ast_print_162adcf46fcf983d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

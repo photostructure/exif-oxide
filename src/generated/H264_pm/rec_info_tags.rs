@@ -21,6 +21,7 @@ pub static H264_RECINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 ("7".to_string(), "MXP"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

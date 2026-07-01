@@ -48,6 +48,7 @@ pub static QUICK_TIME_VIDEOHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("9".to_string(), "patOr"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -57,6 +58,7 @@ pub static QUICK_TIME_VIDEOHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

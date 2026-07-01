@@ -19,6 +19,7 @@ pub static RICOH_RDTB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "float[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static RICOH_RDTB_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int64u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_1211b0f9da1adb0a)),
+                is_offset: false,
             },
         ),
     ])

@@ -18,6 +18,7 @@ pub static PENTAX_PIXELSHIFTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 ("1".to_string(), "On"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

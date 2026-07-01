@@ -16,6 +16,7 @@ pub static RICOH_FIRMWAREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "string[12]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static RICOH_FIRMWAREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "string[12]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

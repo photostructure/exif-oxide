@@ -19,6 +19,7 @@ pub static RIFF_ANMF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             format: "int32u",
             print_conv: Some(PrintConv::Function(ast_print_cfce5cd5c31bbe17)),
             value_conv: Some(ValueConv::Function(ast_value_3346505e2ab784dc)),
+            is_offset: false,
         },
     )])
 });

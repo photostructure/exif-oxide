@@ -16,6 +16,7 @@ pub static MICROSOFT_STITCH_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static MICROSOFT_STITCH_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("5".to_string(), "Homography"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -45,6 +47,7 @@ pub static MICROSOFT_STITCH_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("258".to_string(), "Vertical Spherical"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

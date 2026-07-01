@@ -19,6 +19,7 @@ pub static KODAK_SUBIFD5_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             format: "unknown",
             print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
             value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+            is_offset: false,
         },
     )])
 });

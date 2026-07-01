@@ -24,6 +24,7 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("5".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_2c5616f5b0afd52d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -56,6 +58,7 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("9".to_string(), "1 Min"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -79,6 +82,7 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("9".to_string(), "3 Sec"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -88,6 +92,7 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_17c4eccbacff8df4)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -97,6 +102,7 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_17c4eccbacff8df4)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -106,6 +112,7 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_ad2eac416d617233)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -115,6 +122,7 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -124,6 +132,7 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -133,6 +142,7 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -147,6 +157,7 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                     ("3".to_string(), "Vehicle"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

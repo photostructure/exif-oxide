@@ -34,6 +34,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "undef[0x184]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +44,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int8u",
                 print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
                 value_conv: Some(ValueConv::Function(ast_value_f6e40ca85ff284cf)),
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +54,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int8u",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_55048b24234b7885)),
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +64,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int8u",
                 print_conv: Some(PrintConv::Function(ast_print_1f47b524bed353b1)),
                 value_conv: Some(ValueConv::Function(ast_value_1743afee82a78f9d)),
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +77,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -88,6 +93,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("6".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -97,6 +103,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int8u",
                 print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: Some(ValueConv::Function(ast_value_25c85203cdf230c8)),
+                is_offset: false,
             },
         ),
         (
@@ -106,6 +113,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_9fdbcf4006788a4b)),
                 value_conv: Some(ValueConv::Function(ast_value_32180481d23c95e9)),
+                is_offset: false,
             },
         ),
         (
@@ -115,6 +123,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16uRev",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -128,6 +137,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("2".to_string(), "Rotate 270 CW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -137,6 +147,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16uRev",
                 print_conv: Some(PrintConv::Function(ast_print_f6928c7fdabd99df)),
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -146,6 +157,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16uRev",
                 print_conv: Some(PrintConv::Function(ast_print_f6928c7fdabd99df)),
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -178,6 +190,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("9".to_string(), "Manual Temperature (Kelvin)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -187,6 +200,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -221,6 +235,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("7".to_string(), "CM Set 2"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -235,6 +250,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("3".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -249,6 +265,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("3".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1198,6 +1215,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("95".to_string(), "Canon TS-E 24mm f/3.5L II"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1207,6 +1225,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16uRev",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1216,6 +1235,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16uRev",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1225,6 +1245,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[6]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1234,6 +1255,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int32u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
+                is_offset: false,
             },
         ),
         (
@@ -1243,6 +1265,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int32u",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_7153130e168cf02a)),
+                is_offset: false,
             },
         ),
         (
@@ -1252,6 +1275,7 @@ pub static CANON_CAMERAINFO5DMKII_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

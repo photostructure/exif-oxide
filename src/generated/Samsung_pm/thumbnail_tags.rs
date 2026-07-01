@@ -15,6 +15,7 @@ pub static SAMSUNG_THUMBNAIL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             format: "unknown",
             print_conv: None,
             value_conv: None,
+            is_offset: true,
         },
     )])
 });

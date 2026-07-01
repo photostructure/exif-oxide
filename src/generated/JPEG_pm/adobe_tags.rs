@@ -19,6 +19,7 @@ pub static JPEG_ADOBE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     "(none)",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static JPEG_ADOBE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     "(none)",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +46,7 @@ pub static JPEG_ADOBE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("2".to_string(), "YCCK"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

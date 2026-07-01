@@ -16,6 +16,7 @@ pub static QUICK_TIME_AUDIOSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -45,6 +46,7 @@ pub static QUICK_TIME_AUDIOSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                     ("sany".to_string(), "Sanyo"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -54,6 +56,7 @@ pub static QUICK_TIME_AUDIOSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -63,6 +66,7 @@ pub static QUICK_TIME_AUDIOSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -72,6 +76,7 @@ pub static QUICK_TIME_AUDIOSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
                 format: "fixed32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

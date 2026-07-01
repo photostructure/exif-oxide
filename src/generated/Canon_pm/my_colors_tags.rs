@@ -30,6 +30,7 @@ pub static CANON_MYCOLORS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 ("9".to_string(), "Custom"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

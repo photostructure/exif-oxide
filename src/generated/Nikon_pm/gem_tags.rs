@@ -18,6 +18,7 @@ pub static NIKON_GEM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             format: "unknown",
             print_conv: None,
             value_conv: Some(ValueConv::Function(ast_value_cd271f48a4863d1a)),
+            is_offset: false,
         },
     )])
 });

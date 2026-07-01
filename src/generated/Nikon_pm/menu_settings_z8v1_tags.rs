@@ -19,6 +19,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "undef[943]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "undef[730]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -62,6 +64,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("6".to_string(), "+08:00 (Beijing, Honk Kong, Sinapore)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -87,6 +90,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("9".to_string(), "4"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -101,6 +105,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("7".to_string(), "French"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -113,6 +118,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -122,6 +128,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -131,6 +138,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -140,6 +148,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -149,6 +158,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -158,6 +168,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -167,6 +178,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -176,6 +188,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -185,6 +198,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -194,6 +208,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -203,6 +218,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -212,6 +228,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -221,6 +238,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -230,6 +248,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -239,6 +258,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -248,6 +268,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -257,6 +278,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -266,6 +288,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -275,6 +298,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -284,6 +308,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -293,6 +318,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_293f60b26e489f86)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -326,6 +352,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -359,6 +386,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -392,6 +420,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -425,6 +454,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -458,6 +488,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -491,6 +522,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -524,6 +556,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -557,6 +590,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -590,6 +624,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -623,6 +658,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -656,6 +692,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -689,6 +726,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -722,6 +760,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -755,6 +794,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -788,6 +828,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -821,6 +862,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -854,6 +896,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -887,6 +930,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -920,6 +964,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -953,6 +998,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("96".to_string(), "f/4.0"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -969,6 +1015,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("5".to_string(), "720p"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -981,6 +1028,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -993,6 +1041,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("1".to_string(), "Enable Release"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1005,6 +1054,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1017,6 +1067,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1029,6 +1080,7 @@ pub static NIKON_MENUSETTINGSZ8V1_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("1".to_string(), "Closes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

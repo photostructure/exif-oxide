@@ -15,6 +15,7 @@ pub static PANASONIC_SERIALINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
             format: "string[8]",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

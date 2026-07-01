@@ -16,6 +16,7 @@ pub static QUICK_TIME_FLIP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "string[16]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static QUICK_TIME_FLIP_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "undef[$val{13}]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

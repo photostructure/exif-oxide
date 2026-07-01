@@ -15,6 +15,7 @@ pub static QUICK_TIME_AUDIOHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             format: "fixed16s",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

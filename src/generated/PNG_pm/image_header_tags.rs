@@ -16,6 +16,7 @@ pub static PNG_IMAGEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static PNG_IMAGEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static PNG_IMAGEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("6".to_string(), "RGB with Alpha"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +55,7 @@ pub static PNG_IMAGEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     "Deflate/Inflate",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +68,7 @@ pub static PNG_IMAGEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     "Adaptive",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -76,6 +81,7 @@ pub static PNG_IMAGEHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("1".to_string(), "Adam7 Interlace"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

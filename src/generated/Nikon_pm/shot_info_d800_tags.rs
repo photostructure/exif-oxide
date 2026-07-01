@@ -23,6 +23,7 @@ pub static NIKON_SHOTINFOD800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "string[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -32,6 +33,7 @@ pub static NIKON_SHOTINFOD800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "string[5]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -41,6 +43,7 @@ pub static NIKON_SHOTINFOD800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_2c21dc5576b94e50)),
+                is_offset: false,
             },
         ),
         (
@@ -50,6 +53,7 @@ pub static NIKON_SHOTINFOD800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_270a5dae063a1f32)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -59,6 +63,7 @@ pub static NIKON_SHOTINFOD800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -68,6 +73,7 @@ pub static NIKON_SHOTINFOD800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int8s",
                 print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
                 value_conv: Some(ValueConv::Function(ast_value_19012828a00d9b7)),
+                is_offset: false,
             },
         ),
         (
@@ -77,6 +83,7 @@ pub static NIKON_SHOTINFOD800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_270a5dae063a1f32)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -86,6 +93,7 @@ pub static NIKON_SHOTINFOD800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -95,6 +103,7 @@ pub static NIKON_SHOTINFOD800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -104,6 +113,7 @@ pub static NIKON_SHOTINFOD800_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::
                 format: "undef[48]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

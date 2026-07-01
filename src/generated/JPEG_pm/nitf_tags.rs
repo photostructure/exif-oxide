@@ -21,6 +21,7 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int8u[2]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_4d65e4f0f2c777b1)),
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     "IMode B",
                 )]))),
                 value_conv: Some(ValueConv::Function(ast_value_3d23e42e940d6624)),
+                is_offset: false,
             },
         ),
         (
@@ -42,6 +44,7 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -51,6 +54,7 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -63,6 +67,7 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     "Monochrome",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -75,6 +80,7 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ("4".to_string(), "Tactical Imagery"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -93,6 +99,7 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -105,6 +112,7 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     "Monochrome",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -114,6 +122,7 @@ pub static JPEG_NITF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_f7d9673b93ac13f)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

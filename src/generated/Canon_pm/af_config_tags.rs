@@ -26,6 +26,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ),
                 ]))),
                 value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
+                is_offset: false,
             },
         ),
         (
@@ -42,6 +43,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -58,6 +60,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +76,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -86,6 +90,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Focus Priority"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -101,6 +106,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("4".to_string(), "Focus High Priority"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -114,6 +120,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Disable in AF Mode"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -128,6 +135,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "LED AF Assist Beam Only"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -140,6 +148,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Release Priority"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -152,6 +161,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Disable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -164,6 +174,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Stop Focus Search"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -173,6 +184,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -185,6 +197,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Main Dial"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -198,6 +211,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Separate Area+Points"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -210,6 +224,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Continuous"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -225,6 +240,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("4".to_string(), "Disabled"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -238,6 +254,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Disable"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -250,6 +267,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Show Outside View"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -263,6 +281,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -278,6 +297,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("4".to_string(), "Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -291,6 +311,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Switch Subject"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -305,6 +326,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "Right Eye"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -317,6 +339,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -329,6 +352,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "Case Manual"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -343,6 +367,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2147483647".to_string(), "n/a"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -355,6 +380,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -368,6 +394,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("2".to_string(), "Volleyball"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

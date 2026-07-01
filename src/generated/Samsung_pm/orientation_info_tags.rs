@@ -16,6 +16,7 @@ pub static SAMSUNG_ORIENTATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static SAMSUNG_ORIENTATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static SAMSUNG_ORIENTATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

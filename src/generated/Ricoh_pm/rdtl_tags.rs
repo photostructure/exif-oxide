@@ -22,6 +22,7 @@ pub static RICOH_RDTL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "double",
                 print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
                 value_conv: Some(ValueConv::Function(ast_value_551d2c3da692067)),
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static RICOH_RDTL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "double",
                 print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -40,6 +42,7 @@ pub static RICOH_RDTL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "double",
                 print_conv: Some(PrintConv::Function(ast_print_fa4db9894c421895)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -49,6 +52,7 @@ pub static RICOH_RDTL_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                 format: "double",
                 print_conv: Some(PrintConv::Function(ast_print_f58cef9820a3c7fa)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

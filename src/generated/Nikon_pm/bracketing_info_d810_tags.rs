@@ -66,6 +66,7 @@ pub static NIKON_BRACKETINGINFOD810_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("80".to_string(), "AE Bracketing Disabled"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -103,6 +104,7 @@ pub static NIKON_BRACKETINGINFOD810_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("8".to_string(), "9F 1"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -117,6 +119,7 @@ pub static NIKON_BRACKETINGINFOD810_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
                     ("3".to_string(), "Highlight"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

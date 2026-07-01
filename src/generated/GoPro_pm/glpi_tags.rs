@@ -25,6 +25,7 @@ pub static GO_PRO_GLPI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::GoPro::ConvertSystemTime]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static GO_PRO_GLPI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_26ee01bf270f786b)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static GO_PRO_GLPI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_674572cac8977577)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +55,7 @@ pub static GO_PRO_GLPI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_2aa532acb8a29737)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +65,7 @@ pub static GO_PRO_GLPI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_2aa532acb8a29737)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -70,6 +75,7 @@ pub static GO_PRO_GLPI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_d43a7530ce810d01)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -79,6 +85,7 @@ pub static GO_PRO_GLPI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_d43a7530ce810d01)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -88,6 +95,7 @@ pub static GO_PRO_GLPI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_d43a7530ce810d01)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -97,6 +105,7 @@ pub static GO_PRO_GLPI_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

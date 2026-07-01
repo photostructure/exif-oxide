@@ -26,6 +26,7 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::KyoceraRaw::ReverseString]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +38,7 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::KyoceraRaw::ReverseString]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -48,6 +50,7 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::KyoceraRaw::ReverseString]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -59,6 +62,7 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::KyoceraRaw::ReverseString]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -68,6 +72,7 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int32u",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -77,6 +82,7 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_793021431aff9620)),
+                is_offset: false,
             },
         ),
         (
@@ -86,6 +92,7 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int32u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -95,6 +102,7 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
                 value_conv: Some(ValueConv::Function(ast_value_24a12bba5a03a937)),
+                is_offset: false,
             },
         ),
         (
@@ -104,6 +112,7 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
                 value_conv: Some(ValueConv::Function(ast_value_24a12bba5a03a937)),
+                is_offset: false,
             },
         ),
         (
@@ -113,6 +122,7 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_dd22782e5ba8c7cb)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -122,6 +132,7 @@ pub static KYOCERA_RAW_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "string[32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

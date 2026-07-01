@@ -16,6 +16,7 @@ pub static CANON_RAW_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "float",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static CANON_RAW_IMAGEINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int32s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

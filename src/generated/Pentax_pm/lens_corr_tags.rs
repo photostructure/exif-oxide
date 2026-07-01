@@ -19,6 +19,7 @@ pub static PENTAX_LENSCORR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static PENTAX_LENSCORR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static PENTAX_LENSCORR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +58,7 @@ pub static PENTAX_LENSCORR_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("16".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

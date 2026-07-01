@@ -20,6 +20,7 @@ pub static NIKON_ORIENTATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "fixed32u",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_5ec63730e4985b7)),
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static NIKON_ORIENTATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "fixed32u",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_5ec63730e4985b7)),
+                is_offset: false,
             },
         ),
         (
@@ -38,6 +40,7 @@ pub static NIKON_ORIENTATIONINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 format: "fixed32u",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_5ec63730e4985b7)),
+                is_offset: false,
             },
         ),
     ])

@@ -16,6 +16,7 @@ pub static NIKON_COLORBALANCEA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static NIKON_COLORBALANCEA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int16u[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static NIKON_COLORBALANCEA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int16u[14]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +46,7 @@ pub static NIKON_COLORBALANCEA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int16u[14]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +56,7 @@ pub static NIKON_COLORBALANCEA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int16u[6]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +66,7 @@ pub static NIKON_COLORBALANCEA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int16u[14]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -70,6 +76,7 @@ pub static NIKON_COLORBALANCEA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int16u[14]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -79,6 +86,7 @@ pub static NIKON_COLORBALANCEA_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "int16u[14]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -21,6 +21,7 @@ pub static CANON_RAW_RAWJPGINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("5".to_string(), "Superfine"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static CANON_RAW_RAWJPGINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("2".to_string(), "Small"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

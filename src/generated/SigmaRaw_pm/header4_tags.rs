@@ -18,6 +18,7 @@ pub static SIGMA_RAW_HEADER4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
             format: "unknown",
             print_conv: None,
             value_conv: Some(ValueConv::Function(ast_value_9d90e808fc13dd1)),
+            is_offset: false,
         },
     )])
 });

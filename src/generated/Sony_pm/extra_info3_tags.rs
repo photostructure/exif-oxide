@@ -23,6 +23,7 @@ pub static SONY_EXTRAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -32,6 +33,7 @@ pub static SONY_EXTRAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_9111b408f0b1518a)),
                 value_conv: Some(ValueConv::Function(ast_value_fc578fda6da96dc8)),
+                is_offset: false,
             },
         ),
         (
@@ -41,6 +43,7 @@ pub static SONY_EXTRAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b8461ac67efa7740)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -50,6 +53,7 @@ pub static SONY_EXTRAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_139aec60e3135c33)),
                 value_conv: Some(ValueConv::Function(ast_value_52fd700bac71f2a3)),
+                is_offset: false,
             },
         ),
         (
@@ -59,6 +63,7 @@ pub static SONY_EXTRAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_139aec60e3135c33)),
                 value_conv: Some(ValueConv::Function(ast_value_52fd700bac71f2a3)),
+                is_offset: false,
             },
         ),
         (
@@ -71,6 +76,7 @@ pub static SONY_EXTRAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("64".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -89,6 +95,7 @@ pub static SONY_EXTRAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("255".to_string(), "Manual"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -103,6 +110,7 @@ pub static SONY_EXTRAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("3".to_string(), "Rotate 180"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -117,6 +125,7 @@ pub static SONY_EXTRAINFO3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("3".to_string(), "Rotate 180"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

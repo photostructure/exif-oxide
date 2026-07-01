@@ -21,6 +21,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("19".to_string(), "19 (90D/850D/M6mkII/M200)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -30,6 +31,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -39,6 +41,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -48,6 +51,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -57,6 +61,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -66,6 +71,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -75,6 +81,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -84,6 +91,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -93,6 +101,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -102,6 +111,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -111,6 +121,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -120,6 +131,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -129,6 +141,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -138,6 +151,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -147,6 +161,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -156,6 +171,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -165,6 +181,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -174,6 +191,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -183,6 +201,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -192,6 +211,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -201,6 +221,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -210,6 +231,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -219,6 +241,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -228,6 +251,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -237,6 +261,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -246,6 +271,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -255,6 +281,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -264,6 +291,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -273,6 +301,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -282,6 +311,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -291,6 +321,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -300,6 +331,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -309,6 +341,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -318,6 +351,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -327,6 +361,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -336,6 +371,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -345,6 +381,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -354,6 +391,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -363,6 +401,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -372,6 +411,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -381,6 +421,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -390,6 +431,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -399,6 +441,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -408,6 +451,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -417,6 +461,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -426,6 +471,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -435,6 +481,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -444,6 +491,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -453,6 +501,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -462,6 +511,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -471,6 +521,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -480,6 +531,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -489,6 +541,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -498,6 +551,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -507,6 +561,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -516,6 +571,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -525,6 +581,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -534,6 +591,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -543,6 +601,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -552,6 +611,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -561,6 +621,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -570,6 +631,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -579,6 +641,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -588,6 +651,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -597,6 +661,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -606,6 +671,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -615,6 +681,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -624,6 +691,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -633,6 +701,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -642,6 +711,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "undef[120]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -651,6 +721,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16u[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -660,6 +731,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -669,6 +741,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -678,6 +751,7 @@ pub static CANON_COLORDATA9_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

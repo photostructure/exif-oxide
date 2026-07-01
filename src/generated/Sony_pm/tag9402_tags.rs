@@ -19,6 +19,7 @@ pub static SONY_TAG9402_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static SONY_TAG9402_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "int8s",
                 print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static SONY_TAG9402_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("6".to_string(), "DMF"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -66,6 +69,7 @@ pub static SONY_TAG9402_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("3".to_string(), "Flexible Spot"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -75,6 +79,7 @@ pub static SONY_TAG9402_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

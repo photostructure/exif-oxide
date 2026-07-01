@@ -50,6 +50,7 @@ pub static SONY_TAG9404C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("9".to_string(), "Landscape"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -62,6 +63,7 @@ pub static SONY_TAG9404C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

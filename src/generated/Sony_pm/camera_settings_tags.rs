@@ -35,6 +35,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_101e3eed0a079327)),
                 value_conv: Some(ValueConv::Function(ast_value_560b6cca7eb11de6)),
+                is_offset: false,
             },
         ),
         (
@@ -44,6 +45,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
                 value_conv: Some(ValueConv::Function(ast_value_62b71052f9215d46)),
+                is_offset: false,
             },
         ),
         (
@@ -56,6 +58,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -65,6 +68,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: Some(ValueConv::Function(ast_value_2da539a22da2bce2)),
+                is_offset: false,
             },
         ),
         (
@@ -88,6 +92,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("7".to_string(), "Continuous Bracketing"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -109,6 +114,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("7".to_string(), "Flash"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -118,6 +124,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_6b222e48ef3dd475)),
+                is_offset: false,
             },
         ),
         (
@@ -127,6 +134,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_f4716ca91121bc8d)),
                 value_conv: Some(ValueConv::Function(ast_value_39492c8ca08229b1)),
+                is_offset: false,
             },
         ),
         (
@@ -136,6 +144,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: Some(ValueConv::Function(ast_value_6b222e48ef3dd475)),
+                is_offset: false,
             },
         ),
         (
@@ -145,6 +154,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_f4716ca91121bc8d)),
                 value_conv: Some(ValueConv::Function(ast_value_39492c8ca08229b1)),
+                is_offset: false,
             },
         ),
         (
@@ -154,6 +164,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: Some(ValueConv::Function(ast_value_6b222e48ef3dd475)),
+                is_offset: false,
             },
         ),
         (
@@ -174,6 +185,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("7".to_string(), "Flash"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -189,6 +201,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("4".to_string(), "DMF"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -202,6 +215,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("2".to_string(), "Spot"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -223,6 +237,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("9".to_string(), "Upper-left"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -239,6 +254,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("6".to_string(), "Slow Sync"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -248,6 +264,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: Some(ValueConv::Function(ast_value_2da539a22da2bce2)),
+                is_offset: false,
             },
         ),
         (
@@ -261,6 +278,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("4".to_string(), "Spot"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -270,6 +288,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_50a2776f078ae807)),
                 value_conv: Some(ValueConv::Function(ast_value_4eab48f4e81df18f)),
+                is_offset: false,
             },
         ),
         (
@@ -284,6 +303,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("3".to_string(), "Advanced Level"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -293,6 +313,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -317,6 +338,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("9".to_string(), "Adobe RGB"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -330,6 +352,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("5".to_string(), "Adobe RGB (A700)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -339,6 +362,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: Some(ValueConv::Function(ast_value_177632e357627b0e)),
+                is_offset: false,
             },
         ),
         (
@@ -348,6 +372,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: Some(ValueConv::Function(ast_value_177632e357627b0e)),
+                is_offset: false,
             },
         ),
         (
@@ -357,6 +382,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: Some(ValueConv::Function(ast_value_177632e357627b0e)),
+                is_offset: false,
             },
         ),
         (
@@ -366,6 +392,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: Some(ValueConv::Function(ast_value_177632e357627b0e)),
+                is_offset: false,
             },
         ),
         (
@@ -375,6 +402,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_d87e2f7cfd46802c)),
                 value_conv: Some(ValueConv::Function(ast_value_177632e357627b0e)),
+                is_offset: false,
             },
         ),
         (
@@ -388,6 +416,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("2".to_string(), "Manual"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -400,6 +429,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("1".to_string(), "Release"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -412,6 +442,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("1".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -424,6 +455,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("1".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -436,6 +468,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -450,6 +483,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("3".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -475,6 +509,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("9".to_string(), "Adobe RGB"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -487,6 +522,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("1".to_string(), "Manual"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -496,6 +532,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_101e3eed0a079327)),
                 value_conv: Some(ValueConv::Function(ast_value_560b6cca7eb11de6)),
+                is_offset: false,
             },
         ),
         (
@@ -505,6 +542,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
                 value_conv: Some(ValueConv::Function(ast_value_62b71052f9215d46)),
+                is_offset: false,
             },
         ),
         (
@@ -529,6 +567,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("9".to_string(), "Program Shift S"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -541,6 +580,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -555,6 +595,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("3".to_string(), "External Flash, Fired"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -568,6 +609,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("2".to_string(), "Rotate 270 CW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -580,6 +622,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("2".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -599,6 +642,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("6".to_string(), "Fired, Slow Sync"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -614,6 +658,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("4".to_string(), "DMF"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -629,6 +674,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("6".to_string(), "Full"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -638,6 +684,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b8461ac67efa7740)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -650,6 +697,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("4".to_string(), "Not confirmed, Tracking"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -663,6 +711,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("3".to_string(), "Small"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -675,6 +724,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("2".to_string(), "16:9"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -692,6 +742,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("48".to_string(), "Standard"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -704,6 +755,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("50".to_string(), "1/2 EV"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -716,6 +768,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -725,6 +778,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_164b7df7edda79e)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -734,6 +788,7 @@ pub static SONY_CAMERASETTINGS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_41e4fcf67a465f16)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

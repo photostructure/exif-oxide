@@ -18,6 +18,7 @@ pub static NIKON_PORTRAITINFOZ7II_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
             format: "int8u[2]",
             print_conv: Some(PrintConv::Function(ast_print_c77d76da738bc03a)),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

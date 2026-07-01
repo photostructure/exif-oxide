@@ -20,6 +20,7 @@ pub static PHOTOSHOP_RESOLUTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_a30bb45410af5d6d)),
                 value_conv: Some(ValueConv::Function(ast_value_5c94fb903134d434)),
+                is_offset: false,
             },
         ),
         (
@@ -32,6 +33,7 @@ pub static PHOTOSHOP_RESOLUTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("2".to_string(), "cm"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -41,6 +43,7 @@ pub static PHOTOSHOP_RESOLUTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                 format: "int32u",
                 print_conv: Some(PrintConv::Function(ast_print_a30bb45410af5d6d)),
                 value_conv: Some(ValueConv::Function(ast_value_5c94fb903134d434)),
+                is_offset: false,
             },
         ),
         (
@@ -53,6 +56,7 @@ pub static PHOTOSHOP_RESOLUTION_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
                     ("2".to_string(), "cm"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

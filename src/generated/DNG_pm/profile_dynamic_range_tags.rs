@@ -16,6 +16,7 @@ pub static DNG_PROFILEDYNAMICRANGE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static DNG_PROFILEDYNAMICRANGE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "High"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +39,7 @@ pub static DNG_PROFILEDYNAMICRANGE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "float",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

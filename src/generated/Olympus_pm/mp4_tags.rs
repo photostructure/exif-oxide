@@ -20,6 +20,7 @@ pub static OLYMPUS_MP4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "string[24]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -39,6 +40,7 @@ pub static OLYMPUS_MP4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("SG575".to_string(), "SP-620UZ"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -48,6 +50,7 @@ pub static OLYMPUS_MP4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "rational64u",
                 print_conv: Some(PrintConv::Function(ast_print_b8d6a32d77c36946)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -57,6 +60,7 @@ pub static OLYMPUS_MP4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "rational64s",
                 print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -66,6 +70,7 @@ pub static OLYMPUS_MP4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -75,6 +80,7 @@ pub static OLYMPUS_MP4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

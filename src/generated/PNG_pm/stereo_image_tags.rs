@@ -18,6 +18,7 @@ pub static PNG_STEREOIMAGE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                 ("1".to_string(), "Diverging-fuse Layout"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

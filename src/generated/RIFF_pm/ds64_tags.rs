@@ -18,6 +18,7 @@ pub static RIFF_DS64_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     "[Function: Image::ExifTool::ConvertFileSize]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static RIFF_DS64_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
                     "[Function: Image::ExifTool::ConvertFileSize]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

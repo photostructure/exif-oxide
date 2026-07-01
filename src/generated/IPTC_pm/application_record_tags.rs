@@ -24,6 +24,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -33,6 +34,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[3,67]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -42,6 +44,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[4,68]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -51,6 +54,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,64]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -60,6 +64,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,64]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -72,6 +77,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     "Additional language",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -87,6 +93,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("9".to_string(), "9 (user-defined priority)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -96,6 +103,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[13,236]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -105,6 +113,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -114,6 +123,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -123,6 +133,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -132,6 +143,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,64]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -141,6 +153,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -150,6 +163,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,64]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -159,6 +173,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "digits[8]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
+                is_offset: false,
             },
         ),
         (
@@ -168,6 +183,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[11]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_135828bb10970bc4)),
+                is_offset: false,
             },
         ),
         (
@@ -177,6 +193,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "digits[8]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
+                is_offset: false,
             },
         ),
         (
@@ -186,6 +203,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[11]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_135828bb10970bc4)),
+                is_offset: false,
             },
         ),
         (
@@ -195,6 +213,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,256]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -210,6 +229,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("04".to_string(), "Object Reference"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -219,6 +239,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,10]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -228,6 +249,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "digits[8]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
+                is_offset: false,
             },
         ),
         (
@@ -237,6 +259,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "digits[8]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -246,6 +269,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "digits[8]",
                 print_conv: Some(PrintConv::Function(ast_print_f06853894c258287)),
                 value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
+                is_offset: false,
             },
         ),
         (
@@ -255,6 +279,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[11]",
                 print_conv: Some(PrintConv::Function(ast_print_d3d0a75db4fdaf7b)),
                 value_conv: Some(ValueConv::Function(ast_value_135828bb10970bc4)),
+                is_offset: false,
             },
         ),
         (
@@ -264,6 +289,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "digits[8]",
                 print_conv: Some(PrintConv::Function(ast_print_f06853894c258287)),
                 value_conv: Some(ValueConv::Function(ast_value_e137a069f73b6d7)),
+                is_offset: false,
             },
         ),
         (
@@ -273,6 +299,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[11]",
                 print_conv: Some(PrintConv::Function(ast_print_d3d0a75db4fdaf7b)),
                 value_conv: Some(ValueConv::Function(ast_value_135828bb10970bc4)),
+                is_offset: false,
             },
         ),
         (
@@ -282,6 +309,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -291,6 +319,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,10]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -304,6 +333,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("p".to_string(), "Evening"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -313,6 +343,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -322,6 +353,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -331,6 +363,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -340,6 +373,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -349,6 +383,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -358,6 +393,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -367,6 +403,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,64]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -376,6 +413,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -385,6 +423,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,256]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -394,6 +433,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -403,6 +443,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -412,6 +453,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,128]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -421,6 +463,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,128]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -430,6 +473,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,2000]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -439,6 +483,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,256]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -448,6 +493,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -457,6 +503,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "undef[7360]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -466,6 +513,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -479,6 +527,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("S".to_string(), "Square"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -488,6 +537,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[2,3]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -515,6 +565,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ("2W".to_string(), "Stereo Wrap"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -524,6 +575,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "digits[6]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -533,6 +585,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "digits[2]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -542,6 +595,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "digits[6]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -551,6 +605,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,64]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -560,6 +615,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,64]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -569,6 +625,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,256]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -578,6 +635,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,64]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -587,6 +645,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,128]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -596,6 +655,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,128]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -675,6 +735,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -684,6 +745,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "int16u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -693,6 +755,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "undef[0,256000]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -702,6 +765,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,64]",
                 print_conv: Some(PrintConv::Function(ast_print_ba991dc311849c0d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -711,6 +775,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,64]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -720,6 +785,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,32]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -729,6 +795,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,1024]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -738,6 +805,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,256]",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_80d49a8ed80bae91)),
+                is_offset: false,
             },
         ),
         (
@@ -747,6 +815,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,4096]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -756,6 +825,7 @@ pub static IPTC_APPLICATIONRECORD_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLo
                 format: "string[0,256]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

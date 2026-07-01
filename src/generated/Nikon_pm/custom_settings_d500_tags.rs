@@ -15,6 +15,7 @@ pub static NIKON_CUSTOMSETTINGSD500_TAGS: LazyLock<HashMap<u16, TagInfo>> = Lazy
             format: "undef[90]",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

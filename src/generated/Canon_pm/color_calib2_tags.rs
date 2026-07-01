@@ -19,6 +19,7 @@ pub static CANON_COLORCALIB2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s[5]",
                 print_conv: Some(PrintConv::Function(ast_print_7c512da46b991446)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -28,6 +29,7 @@ pub static CANON_COLORCALIB2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s[5]",
                 print_conv: Some(PrintConv::Function(ast_print_7c512da46b991446)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +39,7 @@ pub static CANON_COLORCALIB2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s[5]",
                 print_conv: Some(PrintConv::Function(ast_print_7c512da46b991446)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +49,7 @@ pub static CANON_COLORCALIB2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s[5]",
                 print_conv: Some(PrintConv::Function(ast_print_7c512da46b991446)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +59,7 @@ pub static CANON_COLORCALIB2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s[5]",
                 print_conv: Some(PrintConv::Function(ast_print_7c512da46b991446)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +69,7 @@ pub static CANON_COLORCALIB2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s[5]",
                 print_conv: Some(PrintConv::Function(ast_print_7c512da46b991446)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +79,7 @@ pub static CANON_COLORCALIB2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s[5]",
                 print_conv: Some(PrintConv::Function(ast_print_7c512da46b991446)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +89,7 @@ pub static CANON_COLORCALIB2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s[5]",
                 print_conv: Some(PrintConv::Function(ast_print_7c512da46b991446)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -91,6 +99,7 @@ pub static CANON_COLORCALIB2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s[5]",
                 print_conv: Some(PrintConv::Function(ast_print_7c512da46b991446)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -100,6 +109,7 @@ pub static CANON_COLORCALIB2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s[5]",
                 print_conv: Some(PrintConv::Function(ast_print_7c512da46b991446)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -109,6 +119,7 @@ pub static CANON_COLORCALIB2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s[5]",
                 print_conv: Some(PrintConv::Function(ast_print_7c512da46b991446)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -118,6 +129,7 @@ pub static CANON_COLORCALIB2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s[5]",
                 print_conv: Some(PrintConv::Function(ast_print_7c512da46b991446)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -127,6 +139,7 @@ pub static CANON_COLORCALIB2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s[5]",
                 print_conv: Some(PrintConv::Function(ast_print_7c512da46b991446)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -136,6 +149,7 @@ pub static CANON_COLORCALIB2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s[5]",
                 print_conv: Some(PrintConv::Function(ast_print_7c512da46b991446)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -145,6 +159,7 @@ pub static CANON_COLORCALIB2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                 format: "int16s[5]",
                 print_conv: Some(PrintConv::Function(ast_print_7c512da46b991446)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

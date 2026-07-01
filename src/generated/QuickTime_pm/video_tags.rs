@@ -22,6 +22,7 @@ pub static QUICK_TIME_VIDEO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("4".to_string(), "Current Size"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +35,7 @@ pub static QUICK_TIME_VIDEO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

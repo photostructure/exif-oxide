@@ -37,6 +37,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_1f47b524bed353b1)),
                 value_conv: Some(ValueConv::Function(ast_value_ac1882d7bbda423d)),
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +47,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_1f47b524bed353b1)),
                 value_conv: Some(ValueConv::Function(ast_value_749a6f02fbbfbd9e)),
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +57,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_aec511ac08c0f1fc)),
                 value_conv: Some(ValueConv::Function(ast_value_7d5556964101c1fd)),
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +67,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
                 value_conv: Some(ValueConv::Function(ast_value_75ea21c3208d8187)),
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +77,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_527c9bdc7d50b8f1)),
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +87,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
                 value_conv: Some(ValueConv::Function(ast_value_d072b458cc55883)),
+                is_offset: false,
             },
         ),
         (
@@ -114,6 +120,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("9".to_string(), "Manual Temperature (Kelvin)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -129,6 +136,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "None"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -138,6 +146,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -147,6 +156,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_d901a6256d76c6f4)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -156,6 +166,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: Some(ValueConv::Function(ast_value_25c85203cdf230c8)),
+                is_offset: false,
             },
         ),
         (
@@ -165,6 +176,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_e3fe456be97babfa)),
+                is_offset: false,
             },
         ),
         (
@@ -183,6 +195,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("12295".to_string(), "All"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -192,6 +205,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
                 value_conv: Some(ValueConv::Function(ast_value_d072b458cc55883)),
+                is_offset: false,
             },
         ),
         (
@@ -207,6 +221,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "On (shot 3)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -216,6 +231,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_e50dfd1aa09ed50e)),
                 value_conv: Some(ValueConv::Function(ast_value_d072b458cc55883)),
+                is_offset: false,
             },
         ),
         (
@@ -229,6 +245,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "Computer Remote Control"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -238,6 +255,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_f6928c7fdabd99df)),
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -247,6 +265,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_f6928c7fdabd99df)),
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -256,6 +275,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_f013e387a9d36985)),
                 value_conv: Some(ValueConv::Function(ast_value_75ea21c3208d8187)),
+                is_offset: false,
             },
         ),
         (
@@ -265,6 +285,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_cab7be313d3e671f)),
                 value_conv: Some(ValueConv::Function(ast_value_527c9bdc7d50b8f1)),
+                is_offset: false,
             },
         ),
         (
@@ -274,6 +295,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_b75f4ccbc4c7c305)),
+                is_offset: false,
             },
         ),
         (
@@ -283,6 +305,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
         (
@@ -298,6 +321,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("255".to_string(), "DV Camera"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -313,6 +337,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("3".to_string(), "Rotate 270 CW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -326,6 +351,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -335,6 +361,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
         (
@@ -344,6 +371,7 @@ pub static CANON_SHOTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

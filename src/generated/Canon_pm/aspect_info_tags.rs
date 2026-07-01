@@ -24,6 +24,7 @@ pub static CANON_ASPECTINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 ("8".to_string(), "4:5"),
             ]))),
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

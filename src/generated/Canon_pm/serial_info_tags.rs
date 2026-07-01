@@ -15,6 +15,7 @@ pub static CANON_SERIALINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
             format: "string",
             print_conv: None,
             value_conv: None,
+            is_offset: false,
         },
     )])
 });

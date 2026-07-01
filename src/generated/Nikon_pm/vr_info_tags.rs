@@ -16,6 +16,7 @@ pub static NIKON_VRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -29,6 +30,7 @@ pub static NIKON_VRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("2".to_string(), "Off"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +45,7 @@ pub static NIKON_VRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("3".to_string(), "Sport"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +58,7 @@ pub static NIKON_VRINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("3".to_string(), "In-body + Lens"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

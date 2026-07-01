@@ -16,6 +16,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +39,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Gray Point"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +49,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -55,6 +59,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +69,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -73,6 +79,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -82,6 +89,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -91,6 +99,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -100,6 +109,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -113,6 +123,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("2".to_string(), "Pro Photo RGB"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -125,6 +136,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     "(none)",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -137,6 +149,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "High Function"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -152,6 +165,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("512".to_string(), "Sepia"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -161,6 +175,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -170,6 +185,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -179,6 +195,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -194,6 +211,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("5".to_string(), "Green"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -209,6 +227,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("5".to_string(), "Green"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -218,6 +237,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -227,6 +247,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -239,6 +260,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -248,6 +270,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -257,6 +280,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -266,6 +290,7 @@ pub static OLYMPUS_RAWDEVELOPMENT2_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

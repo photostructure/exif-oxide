@@ -22,6 +22,7 @@ pub static CANON_COLORINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -37,6 +38,7 @@ pub static CANON_COLORINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -49,6 +51,7 @@ pub static CANON_COLORINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
                     ("2".to_string(), "Adobe RGB"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

@@ -16,6 +16,7 @@ pub static DNG_IMAGESEQ_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "var_string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static DNG_IMAGESEQ_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "var_string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static DNG_IMAGESEQ_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "var_string",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -43,6 +46,7 @@ pub static DNG_IMAGESEQ_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -52,6 +56,7 @@ pub static DNG_IMAGESEQ_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "int32u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -64,6 +69,7 @@ pub static DNG_IMAGESEQ_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

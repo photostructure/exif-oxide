@@ -47,6 +47,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_7c85cf32a45b11ab)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -56,6 +57,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -65,6 +67,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -74,6 +77,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -83,6 +87,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -238,6 +243,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("78560".to_string(), "GR IV"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -247,6 +253,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_676f07102a6401b3)),
+                is_offset: false,
             },
         ),
         (
@@ -256,6 +263,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c6a064d658e6a1a2)),
+                is_offset: false,
             },
         ),
         (
@@ -276,6 +284,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("9".to_string(), "Monochrome"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -318,6 +327,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("9".to_string(), "3072x2304"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -327,6 +337,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_cedbb1b70a73dd28)),
+                is_offset: false,
             },
         ),
         (
@@ -336,6 +347,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -350,6 +362,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("3".to_string(), "Infinity"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -359,6 +372,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -380,6 +394,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("9".to_string(), "Bottom-right"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -389,6 +404,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -398,6 +414,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_c72e80290d210ffe)),
                 value_conv: Some(ValueConv::Function(ast_value_b8f4d8c7ca0965f)),
+                is_offset: false,
             },
         ),
         (
@@ -407,6 +424,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+                is_offset: false,
             },
         ),
         (
@@ -419,6 +437,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("65535".to_string(), "Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -428,6 +447,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -437,6 +457,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: Some(ValueConv::Function(ast_value_88eb28e51bb0c866)),
+                is_offset: false,
             },
         ),
         (
@@ -451,6 +472,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("6".to_string(), "Highlight"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -462,6 +484,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -489,6 +512,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("9".to_string(), "Flash"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -509,6 +533,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("8".to_string(), "Auto (White Fluorescent)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -518,6 +543,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_2019c96d765dcb89)),
+                is_offset: false,
             },
         ),
         (
@@ -527,6 +553,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_2019c96d765dcb89)),
+                is_offset: false,
             },
         ),
         (
@@ -536,6 +563,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_7cc7a4bf3f82cb33)),
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -545,6 +573,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_c0027708ba7e42e3)),
+                is_offset: false,
             },
         ),
         (
@@ -554,6 +583,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -563,6 +593,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -572,6 +603,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -584,6 +616,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("1".to_string(), "Destination"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -669,6 +702,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("9".to_string(), "Chicago"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -754,6 +788,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("9".to_string(), "Chicago"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -766,6 +801,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -778,6 +814,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("1".to_string(), "Yes"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -789,6 +826,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -800,6 +838,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -809,6 +848,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -818,6 +858,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int32s",
                 print_conv: Some(PrintConv::Function(ast_print_b44b87d319f681cc)),
                 value_conv: Some(ValueConv::Function(ast_value_634c7f2dc1ab326d)),
+                is_offset: false,
             },
         ),
         (
@@ -837,6 +878,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("8 0 0 0".to_string(), "Red-eye Correction"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -846,6 +888,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -855,6 +898,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -864,6 +908,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int16u",
                 print_conv: Some(PrintConv::Function(ast_print_2a136ebabb3d5340)),
                 value_conv: Some(ValueConv::Function(ast_value_33e465b277d8995a)),
+                is_offset: false,
             },
         ),
         (
@@ -876,6 +921,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("1".to_string(), "Adobe RGB"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -885,6 +931,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -894,6 +941,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_e3ac2e6d5f0a434f)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -906,6 +954,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     "(none)",
                 )]))),
                 value_conv: Some(ValueConv::Function(ast_value_a26d2224d57eefbf)),
+                is_offset: false,
             },
         ),
         (
@@ -915,6 +964,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -924,6 +974,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -933,6 +984,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -942,6 +994,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_965cc8da10a90f1)),
                 value_conv: Some(ValueConv::Function(ast_value_c6ef25cf23665b03)),
+                is_offset: false,
             },
         ),
         (
@@ -951,6 +1004,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -960,6 +1014,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -972,6 +1027,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -984,6 +1040,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -993,6 +1050,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1030,6 +1088,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("9".to_string(), "Radiant"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1039,6 +1098,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Function(ast_value_ce42a84d72bc5d72)),
+                is_offset: false,
             },
         ),
         (
@@ -1052,6 +1112,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -1065,6 +1126,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -1078,6 +1140,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -1091,6 +1154,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -1104,6 +1168,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -1117,6 +1182,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -1130,6 +1196,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -1143,6 +1210,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -1152,6 +1220,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "undef",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1163,6 +1232,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 value_conv: Some(ValueConv::Expression(
                     "[Function: Image::ExifTool::Pentax::CryptShutterCount]".to_string(),
                 )),
+                is_offset: false,
             },
         ),
         (
@@ -1172,6 +1242,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "undef",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1202,6 +1273,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("9".to_string(), "9 (Q)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1214,6 +1286,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("65535".to_string(), "None"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1223,6 +1296,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "undef",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1232,6 +1306,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1241,6 +1316,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "undef",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1250,6 +1326,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1259,6 +1336,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1268,6 +1346,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Complex),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1280,6 +1359,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("1".to_string(), "On"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1289,6 +1369,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1298,6 +1379,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1307,6 +1389,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1326,6 +1409,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("8".to_string(), "Infrared"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1338,6 +1422,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     "None",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1347,6 +1432,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1356,6 +1442,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1374,6 +1461,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("2 4".to_string(), "Auto"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1383,6 +1471,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1401,6 +1490,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("4".to_string(), "Preset 3"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1410,6 +1500,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "undef",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1419,6 +1510,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1439,6 +1531,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("8".to_string(), "Cyan"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1453,6 +1546,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("3".to_string(), "1:1"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1462,6 +1556,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1471,6 +1566,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1483,6 +1579,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("1".to_string(), "Electronic"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1499,6 +1596,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ("1 2".to_string(), "On (Auto)"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1508,6 +1606,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1523,6 +1622,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1535,6 +1635,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     "Off",
                 )]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1550,6 +1651,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1559,6 +1661,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1568,6 +1671,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1577,6 +1681,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_47b0b51c869a6209)),
                 value_conv: Some(ValueConv::Function(ast_value_33727ac0bdbe4a81)),
+                is_offset: false,
             },
         ),
         (
@@ -1586,6 +1691,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_47b0b51c869a6209)),
                 value_conv: Some(ValueConv::Function(ast_value_33727ac0bdbe4a81)),
+                is_offset: false,
             },
         ),
         (
@@ -1595,6 +1701,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1604,6 +1711,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1613,6 +1721,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1622,6 +1731,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1633,6 +1743,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1644,6 +1755,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1655,6 +1767,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                     "[Function: Image::ExifTool::Pentax::__ANON__]".to_string(),
                 )),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1664,6 +1777,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1673,6 +1787,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1682,6 +1797,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1691,6 +1807,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1700,6 +1817,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1709,6 +1827,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1718,6 +1837,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1727,6 +1847,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1736,6 +1857,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "undef",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1745,6 +1867,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1754,6 +1877,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1763,6 +1887,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1772,6 +1897,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int16s",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1781,6 +1907,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1790,6 +1917,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1799,6 +1927,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1808,6 +1937,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1817,6 +1947,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1826,6 +1957,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1835,6 +1967,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1844,6 +1977,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1853,6 +1987,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1862,6 +1997,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1871,6 +2007,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1880,6 +2017,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1889,6 +2027,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1898,6 +2037,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1907,6 +2047,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1916,6 +2057,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1925,6 +2067,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "int8u",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1934,6 +2077,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1943,6 +2087,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1952,6 +2097,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1961,6 +2107,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1970,6 +2117,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1979,6 +2127,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_29a2dcd776668ce0)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1988,6 +2137,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -1997,6 +2147,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_29a2dcd776668ce0)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2006,6 +2157,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: Some(PrintConv::Function(ast_print_29a2dcd776668ce0)),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2015,6 +2167,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2024,6 +2177,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2033,6 +2187,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -2042,6 +2197,7 @@ pub static PENTAX_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| 
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

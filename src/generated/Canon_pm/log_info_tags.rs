@@ -22,6 +22,7 @@ pub static CANON_LOGINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("4".to_string(), "RAW"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -31,6 +32,7 @@ pub static CANON_LOGINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -46,6 +48,7 @@ pub static CANON_LOGINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -61,6 +64,7 @@ pub static CANON_LOGINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -74,6 +78,7 @@ pub static CANON_LOGINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("2".to_string(), "CinemaGamut"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -86,6 +91,7 @@ pub static CANON_LOGINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("1".to_string(), "Neutral"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
         (
@@ -100,6 +106,7 @@ pub static CANON_LOGINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                     ("3".to_string(), "CLogV3"),
                 ]))),
                 value_conv: None,
+                is_offset: false,
             },
         ),
     ])

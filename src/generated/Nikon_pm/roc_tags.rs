@@ -18,6 +18,7 @@ pub static NIKON_ROC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             format: "unknown",
             print_conv: None,
             value_conv: Some(ValueConv::Function(ast_value_8e281e57f268ff8)),
+            is_offset: false,
         },
     )])
 });

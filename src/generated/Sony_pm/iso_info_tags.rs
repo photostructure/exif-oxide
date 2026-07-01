@@ -16,6 +16,7 @@ pub static SONY_ISOINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Complex),
+                is_offset: false,
             },
         ),
         (
@@ -25,6 +26,7 @@ pub static SONY_ISOINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Complex),
+                is_offset: false,
             },
         ),
         (
@@ -34,6 +36,7 @@ pub static SONY_ISOINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
                 format: "unknown",
                 print_conv: None,
                 value_conv: Some(ValueConv::Complex),
+                is_offset: false,
             },
         ),
     ])
