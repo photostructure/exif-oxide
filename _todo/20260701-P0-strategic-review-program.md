@@ -91,9 +91,9 @@ tier, and land the reliability foundations as discrete TPPs.
 | 0 | Docs/planning re-scope (MILESTONES.md, scope language, TPP migration, TODO rewrite) | commits `9e72960e`, `dcc38b20` | ✅ DONE 2026-07-01 |
 | 1 | ExifTool v13.43→13.59+ catch-up + `docs/guides/EXIFTOOL-UPGRADE.md` runbook | `_done/20260701-P0-exiftool-version-catchup.md`, commit `f2bdb304` | ✅ DONE 2026-07-02 (zero ports needed; 3 codegen bugs fixed; compat 42%→43%) |
 | 1b | Pre-existing lint rot (75 clippy errors at HEAD from toolchain upgrade) | commit `7fa2fd78` | ✅ DONE 2026-07-02 (`make lint` gates again; deleted 6 dead legacy normalizer passes) |
-| 2 | Snapshot-oracle integrity (make compat test assert; allowlist; version-skew guard) | `_todo/20260701-P1-snapshot-oracle-integrity.md` | ⬜ not started (sequence after or with #1 — snapshots regenerate during the bump) |
-| 3 | cargo-fuzz infrastructure | `_todo/20260701-P1-fuzzing-infrastructure.md` | ⬜ not started (independent; parallelizable) |
-| 4 | GPSPosition composite sign bug | `_todo/P03-implementation-backlog.md` (Next Steps) | ⬜ open (small, well-diagnosed) |
+| 2 | Snapshot-oracle integrity (make compat test assert; allowlist; version-skew guard) | `_todo/20260701-P1-snapshot-oracle-integrity.md` | 🟨 IN PROGRESS — Task 1 (breaking test) done via the GPS fix (`tests/snapshot_oracle_tests.rs`, commit `141c4167`); Tasks 2-8 (assertive test, allowlist, version-skew guard) not started |
+| 3 | cargo-fuzz infrastructure | `_todo/20260701-P1-fuzzing-infrastructure.md` | 🟨 IN PROGRESS, **UNCOMMITTED** — 9 targets built, 3 real crash bugs found AND fixed (alloc-bomb, 2 overflows); see that TPP's HANDOFF STATE for the resume checklist (review gate + commit pending) |
+| 4 | GPSPosition composite sign bug | `_todo/P03-implementation-backlog.md` (Next Steps) | ✅ DONE 2026-07-02, commit `141c4167` (byte-exact; review-gated; compat 84/191) |
 | 5 | Video/QuickTime read support (22 blocked tags) | **no TPP yet — needs authoring** | ⬜ not started |
 | 6 | napi-rs Node binding spike | `_todo/20260701-P3-napi-node-binding-spike.md` | ⬜ not started (its Task 1 is the licensing question below) |
 
@@ -114,6 +114,30 @@ tier, and land the reliability foundations as discrete TPPs.
 - **Ground truth** for disputed findings: real ExifTool — the vendored
   `third-party/exiftool/exiftool` script and
   `cargo run --bin compare-with-exiftool <image> [group]`.
+
+## Session state at pause (2026-07-03) — resume here
+
+- **Committed, NOT pushed** (push to main was blocked by the auto-mode
+  classifier; Matthew should `git push origin main` or approve the
+  prompt): `f2bdb304` (13.59 bump, item #1), `e19553f5` (tracker),
+  `7fa2fd78` (lint rot), `141c4167` (GPSPosition, item #4). The
+  submodule fork push DID land (`origin/docs` = "Update to 13.59").
+- **Uncommitted working tree = item #3 (fuzzing) only** — see
+  `_todo/20260701-P1-fuzzing-infrastructure.md` HANDOFF STATE for the
+  4-step resume checklist (fuzz re-validation, review gate, commit).
+  `cargo t` verified green on this tree at pause (690 passed / 0 failed).
+- **Next after #3 closes**: item #2 remaining tasks (assertive compat
+  test + allowlist + version-skew guard — its TPP session log has the
+  current 84/191 numbers), then #5 (author video TPP with a fable
+  subagent), then #6 (napi spike; licensing answered above).
+- Also uncommitted: `.claude/settings.local.json` (Matthew's, leave) and
+  `docs/chats/` (Matthew's, leave).
+- New composite-registry follow-up discovered during #4: name-keyed
+  `COMPOSITE_TAGS` collision (GPS vs Sony vs QuickTime defs) suppresses
+  `Composite:GPSLatitude/GPSLongitude/GPSAltitude/GPSDateTime` — worth
+  its own small TPP (make the registry first-buildable-wins per
+  ExifTool's rules; the GPSPosition special-case in
+  `src/composite_tags/orchestration.rs` can then be simplified away).
 
 ## Follow-up candidates (small, non-blocking; found 2026-07-02)
 
