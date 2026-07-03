@@ -16,9 +16,7 @@
       "Bash(cat:*)",
       "Bash(curl:*)",
       "Bash(find:*)",
-      "Bash(git add:*)",
-      "Bash(git log:*)",
-      "Bash(git show:*)",
+      "Bash(git:*)",
       "Bash(gpg:*)",
       "Bash(grep:*)",
       "Bash(ls:*)",
@@ -30,13 +28,23 @@
       "Bash(timeout 120 make:*)",
       "Bash(wc:*)",
       "Bash(while read tag)",
-      "WebSearch"
+      "WebSearch",
+      "Bash(printf:*)",
+      "Bash(PS_LOG_LEVEL=debug cargo run:*)",
+      "Bash(RUST_LOG=debug cargo run:*)",
+      "Bash(RUST_LOG=exif_oxide=debug cargo run:*)",
+      "Bash(RUST_LOG=exif_oxide=trace cargo run:*)",
+      "Bash(xxd:*)",
+      "Bash(/home/mrm/src/exif-oxide/third-party/exiftool/exiftool:*)",
+      "Bash(third-party/exiftool/exiftool:*)",
+      "Bash(git apply *)"
     ],
     "deny": [],
     "additionalDirectories": [
       "../PPI/",
       "../test-images/",
-      "/tmp/"
+      "/tmp/",
+      "/home/mrm/src/photostructure"
     ]
   }
 }

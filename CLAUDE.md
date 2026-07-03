@@ -9,6 +9,13 @@ native fast path for supported tags/formats (Tiers 1-3); real ExifTool
 everything else, reads and writes alike. See [MILESTONES.md](docs/MILESTONES.md)
 for the tier breakdown, rationale, and current priorities.
 
+## Git in this repo
+
+Unlike the global "always ask before git commit/push" rule, in **this repo**
+Claude may commit and push without asking (per Matthew, 2026-07-01). Keep
+commits small and Conventional; still never run git commands inside the
+`third-party/exiftool` submodule without coordinating with the user.
+
 ## 🚨 CRITICAL: ALWAYS USE ABSOLUTE PATHS 🚨
 
 **NEVER use `cd ..` or `cd ../..` - there have been devastating mistakes due to directory confusion.**
