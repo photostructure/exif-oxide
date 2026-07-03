@@ -71,6 +71,8 @@ static FTYP_LOOKUP_DATA: &[(&str, &'static str)] = &[
     ("aax ", "Audible Enhanced Audiobook (.AAX)"),
     ("avc1", "MP4 Base w/ AVC ext [ISO 14496-12:2005]"),
     ("avif", "AV1 Image File Format (.AVIF)"),
+    ("avio", "AV1 Intra-Only Image (.AVIF)"),
+    ("avis", "AV1 Image Sequence (.AVIF)"),
     ("caqv", "Casio Digital Camera"),
     ("crx ", "Canon Raw (.CRX)"),
     (
@@ -158,6 +160,7 @@ static FTYP_LOOKUP_DATA: &[(&str, &'static str)] = &[
     ("isom", "MP4 Base Media v1 [IS0 14496-12:2003]"),
     ("jpm ", "JPEG 2000 Compound Image (.JPM) [ISO 15444-6]"),
     ("jpx ", "JPEG 2000 with extensions (.JPX) [ISO 15444-2]"),
+    ("miaf", "Multi-Image Application Format (.AVIF)"),
     ("mif1", "High Efficiency Image Format still image (.HEIF)"),
     ("mj2s", "Motion JPEG 2000 [ISO 15444-3] Simple Profile"),
     ("mjp2", "Motion JPEG 2000 [ISO 15444-3] General Profile"),

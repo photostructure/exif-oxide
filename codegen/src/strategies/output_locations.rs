@@ -70,6 +70,12 @@ pub fn module_name_to_directory(module_name: &str) -> String {
 /// # Returns
 /// String converted to snake_case
 ///
+/// If the snake_case result collides with a Rust keyword (e.g. "use", "type",
+/// "mod"), a trailing `_` is appended so the output is always a valid Rust
+/// identifier / module name. This is the single choke point through which all
+/// generated file names, module declarations, constants, and lookup-function
+/// names flow, so guarding here keeps every derivation consistent.
+///
 /// # Examples
 /// ```
 /// # use codegen::strategies::output_locations::to_snake_case;
@@ -77,6 +83,7 @@ pub fn module_name_to_directory(module_name: &str) -> String {
 /// assert_eq!(to_snake_case("canonWhiteBalance"), "canon_white_balance");
 /// assert_eq!(to_snake_case("GPS"), "gps");
 /// assert_eq!(to_snake_case("AFInfo2"), "af_info2");
+/// assert_eq!(to_snake_case("use"), "use_");
 /// ```
 static SNAKE_CASE_PATTERN: LazyLock<Regex> = LazyLock::new(|| {
     // Insert underscores before uppercase letters, with special handling for acronyms
@@ -129,7 +136,80 @@ pub fn to_snake_case(name: &str) -> String {
     // Convert to lowercase and clean up any multiple underscores
     let cleaned = result.to_lowercase();
     let parts: Vec<&str> = cleaned.split('_').filter(|s| !s.is_empty()).collect();
-    parts.join("_")
+    let joined = parts.join("_");
+
+    // Guard against Rust keyword collisions (e.g. a symbol literally named
+    // "use" would otherwise emit `pub mod use;`, which does not compile).
+    if is_rust_keyword(&joined) {
+        format!("{joined}_")
+    } else {
+        joined
+    }
+}
+
+/// Returns true if `s` is a Rust keyword that cannot be used as a bare
+/// identifier or module name. Covers strict, reserved (future), and weak
+/// keywords per the Rust Reference. `Self` is intentionally omitted because
+/// snake_case output is always lowercase and never produces it.
+fn is_rust_keyword(s: &str) -> bool {
+    matches!(
+        s,
+        // Strict keywords
+        "as" | "break"
+            | "const"
+            | "continue"
+            | "crate"
+            | "dyn"
+            | "else"
+            | "enum"
+            | "extern"
+            | "false"
+            | "fn"
+            | "for"
+            | "if"
+            | "impl"
+            | "in"
+            | "let"
+            | "loop"
+            | "match"
+            | "mod"
+            | "move"
+            | "mut"
+            | "pub"
+            | "ref"
+            | "return"
+            | "self"
+            | "static"
+            | "struct"
+            | "super"
+            | "trait"
+            | "true"
+            | "type"
+            | "unsafe"
+            | "use"
+            | "where"
+            | "while"
+            // Strict keywords added in the 2018 edition
+            | "async"
+            | "await"
+            // Reserved for future use
+            | "abstract"
+            | "become"
+            | "box"
+            | "do"
+            | "final"
+            | "macro"
+            | "override"
+            | "priv"
+            | "typeof"
+            | "unsized"
+            | "virtual"
+            | "yield"
+            // Weak keywords (contextual, but avoid to be safe)
+            | "gen"
+            | "try"
+            | "union"
+    )
 }
 
 #[cfg(test)]
@@ -294,5 +374,45 @@ mod tests {
 
         // Empty string
         assert_eq!(to_snake_case(""), "");
+    }
+
+    /// Symbols whose snake_case form collides with a Rust keyword must be
+    /// suffixed with `_` so they are valid module names / identifiers.
+    /// Regression: ExifTool 13.59 Exif.pm added a `%use` hash (C2PA AI tags)
+    /// which produced `pub mod use;` and failed to compile.
+    #[test]
+    fn test_to_snake_case_avoids_rust_keywords() {
+        // Strict keywords
+        assert_eq!(to_snake_case("use"), "use_");
+        assert_eq!(to_snake_case("mod"), "mod_");
+        assert_eq!(to_snake_case("type"), "type_");
+        assert_eq!(to_snake_case("fn"), "fn_");
+        assert_eq!(to_snake_case("impl"), "impl_");
+        assert_eq!(to_snake_case("crate"), "crate_");
+        assert_eq!(to_snake_case("self"), "self_");
+        assert_eq!(to_snake_case("super"), "super_");
+        assert_eq!(to_snake_case("match"), "match_");
+        assert_eq!(to_snake_case("move"), "move_");
+        // Reserved keywords
+        assert_eq!(to_snake_case("box"), "box_");
+        assert_eq!(to_snake_case("try"), "try_");
+        assert_eq!(to_snake_case("virtual"), "virtual_");
+
+        // camelCase inputs that reduce to a keyword are also guarded
+        assert_eq!(to_snake_case("Use"), "use_");
+        assert_eq!(to_snake_case("Type"), "type_");
+
+        // Non-keywords that merely contain a keyword substring are untouched
+        assert_eq!(to_snake_case("user"), "user");
+        assert_eq!(to_snake_case("used"), "used");
+        assert_eq!(to_snake_case("useCount"), "use_count");
+        assert_eq!(to_snake_case("typeName"), "type_name");
+        assert_eq!(to_snake_case("selfTimer"), "self_timer");
+    }
+
+    #[test]
+    fn test_generate_module_path_keyword_safe() {
+        // The %use hash from Exif.pm must land in a keyword-safe module file.
+        assert_eq!(generate_module_path("Exif", "use"), "Exif_pm/use_.rs");
     }
 }

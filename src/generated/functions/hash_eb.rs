@@ -17,6 +17,8 @@ use crate::types::{ExifContext, TagValue};
 /// 24*exp(-($val-32)*log(2)/8)
 /// ```
 /// Used by:
+/// - Pentax::AEInfo.AEExposureTime
+/// - Pentax::AEInfo.AEMinExposureTime
 /// - Pentax::AEInfo2.AEExposureTime
 /// - Pentax::AEInfo2.AEMinExposureTime
 /// - Pentax::AEInfo3.AEExposureTime

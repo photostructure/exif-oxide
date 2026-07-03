@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/sony/a7r.jpg",
   "File:FileSize": 6619136,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "a7r.jpg",
   "File:Directory": "test-images/sony",
   "File:FileModifyDate": "2025:07:28 12:56:15-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:41:29-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:09-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -47,10 +47,10 @@
   "File:ImageWidth": 7360,
   "File:ImageHeight": 4912,
   "Composite:Aperture": 1.8,
-  "Composite:ImageSize": "7360x4912",
-  "Composite:LensID": "Sony FE 55mm F1.8 ZA",
-  "Composite:Megapixels": 36.2,
   "Composite:ShutterSpeed": "1/1000",
   "EXIF:ThumbnailImage": "(Binary data 8799 bytes, use -b option to extract)",
-  "MPF:PreviewImage": "(Binary data 380435 bytes, use -b option to extract)"
+  "MPF:PreviewImage": "(Binary data 380435 bytes, use -b option to extract)",
+  "Composite:ImageSize": "7360x4912",
+  "Composite:LensID": "Sony FE 55mm F1.8 ZA",
+  "Composite:Megapixels": 36.2
 }

@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/phase_one/iq4_150mp.dng",
   "File:FileSize": 302759908,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "iq4_150mp.dng",
   "File:Directory": "test-images/phase_one",
   "File:FileModifyDate": "2025:07:28 13:03:38-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:23:07-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:04-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "DNG",
   "File:FileTypeExtension": "dng",
@@ -39,9 +39,9 @@
   "EXIF:LensModel": "Schneider Kreuznach LS 80mm f/2.8",
   "EXIF:LensSerialNumber": "TE003674",
   "Composite:Aperture": 2.8,
+  "Composite:ShutterSpeed": "1/250",
   "Composite:ImageSize": "14204x10652",
   "Composite:Megapixels": 151.3,
-  "Composite:ShutterSpeed": "1/250",
   "EXIF:ThumbnailTIFF": "(Binary data 57816 bytes, use -b option to extract)",
   "Composite:LensID": "Schneider Kreuznach LS 80mm f/2.8"
 }

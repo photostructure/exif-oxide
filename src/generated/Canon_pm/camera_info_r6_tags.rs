@@ -6,18 +6,34 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_25::ast_value_25c85203cdf230c8;
+use crate::generated::functions::hash_c8::ast_print_c8bca6375178b51d;
+
 /// Tag definitions for Canon::CameraInfoR6 table
 pub static CANON_CAMERAINFOR6_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
-    HashMap::from([(
-        2801,
-        TagInfo {
-            name: "ShutterCount",
-            format: "int32u",
-            print_conv: None,
-            value_conv: None,
-            is_offset: false,
-        },
-    )])
+    HashMap::from([
+        (
+            2522,
+            TagInfo {
+                name: "CameraTemperature",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_c8bca6375178b51d)),
+                value_conv: Some(ValueConv::Function(ast_value_25c85203cdf230c8)),
+                is_offset: false,
+            },
+        ),
+        (
+            2801,
+            TagInfo {
+                name: "ShutterCount",
+                format: "int32u",
+                print_conv: None,
+                value_conv: None,
+                is_offset: false,
+            },
+        ),
+    ])
 });
 
 /// Apply ValueConv transformation for tags in this table

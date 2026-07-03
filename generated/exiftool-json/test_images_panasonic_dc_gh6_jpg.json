@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/panasonic/dc-gh6.jpg",
   "File:FileSize": 11582976,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "dc-gh6.jpg",
   "File:Directory": "test-images/panasonic",
   "File:FileModifyDate": "2020:01:02 12:34:56-08:00",
-  "File:FileInodeChangeDate": "2025:07:27 22:19:59-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:01-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -43,8 +43,6 @@
   "File:ImageWidth": 5776,
   "File:ImageHeight": 4336,
   "Composite:Aperture": 4.0,
-  "Composite:ImageSize": "5776x4336",
-  "Composite:Megapixels": 25.0,
   "Composite:ShutterSpeed": "1/250",
   "Composite:SubSecCreateDate": "2022:02:14 12:41:41.996-05:00",
   "Composite:SubSecDateTimeOriginal": "2022:02:14 12:41:41.996-05:00",
@@ -52,5 +50,7 @@
   "EXIF:ThumbnailImage": "(Binary data 7807 bytes, use -b option to extract)",
   "MPF:PreviewImage": "(Binary data 865063 bytes, use -b option to extract)",
   "Composite:LensType": "Leica DG Vario-Elmarit 12-60mm F2.8-4 Asph. Power OIS",
-  "Composite:LensID": "Leica DG Vario-Elmarit 12-60mm F2.8-4 Asph. Power OIS"
+  "Composite:ImageSize": "5776x4336",
+  "Composite:LensID": "Leica DG Vario-Elmarit 12-60mm F2.8-4 Asph. Power OIS",
+  "Composite:Megapixels": 25.0
 }

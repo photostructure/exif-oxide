@@ -152,6 +152,7 @@ static PENTAX_MODEL_ID_DATA: &[(u32, &'static str)] = &[
     (78520, "KF"),
     (78550, "K-3 Mark III Monochrome"),
     (78560, "GR IV"),
+    (78640, "GR IV Monochrome"),
 ];
 
 /// pentaxModelID lookup table

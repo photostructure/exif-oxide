@@ -24,7 +24,7 @@ pub fn ast_value_fc578fda6da96dc8(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    Ok(val - 32i32 as f64 / 1.8f64)
+    Ok((val - 32i32) / 1.8f64)
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

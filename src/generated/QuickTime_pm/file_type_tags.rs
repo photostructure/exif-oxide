@@ -128,6 +128,8 @@ pub static QUICK_TIME_FILETYPE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                         "MP4 Base w/ AVC ext [ISO 14496-12:2005]",
                     ),
                     ("avif".to_string(), "AV1 Image File Format (.AVIF)"),
+                    ("avio".to_string(), "AV1 Intra-Only Image (.AVIF)"),
+                    ("avis".to_string(), "AV1 Image Sequence (.AVIF)"),
                     ("caqv".to_string(), "Casio Digital Camera"),
                     ("crx ".to_string(), "Canon Raw (.CRX)"),
                     (
@@ -230,6 +232,7 @@ pub static QUICK_TIME_FILETYPE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
                         "jpx ".to_string(),
                         "JPEG 2000 with extensions (.JPX) [ISO 15444-2]",
                     ),
+                    ("miaf".to_string(), "Multi-Image Application Format (.AVIF)"),
                     (
                         "mif1".to_string(),
                         "High Efficiency Image Format still image (.HEIF)",

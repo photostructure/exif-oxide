@@ -1713,6 +1713,46 @@ pub trait PpiVisitor {
         Ok(format!("crate::core::negate({operand})"))
     }
 
+    /// Re-add source-level parentheses around an infix operand.
+    ///
+    /// `visit_list` intentionally drops the parentheses of a single-element
+    /// grouping so that self-delimiting operands (atoms, function-call
+    /// arguments) don't pick up redundant parens. When that grouping is an
+    /// operand of an *infix* operator, though, the parentheses are load-bearing:
+    /// `($val - 1) * 3` must stay `(val - 1) * 3`, not `val - 1 * 3`.
+    fn parenthesize_grouping(&self, operand: &PpiNode, rendered: String) -> String {
+        if operand.class == "PPI::Structure::List" && Self::grouping_is_compound(operand) {
+            format!("({rendered})")
+        } else {
+            rendered
+        }
+    }
+
+    /// Whether a `PPI::Structure::List` grouping wraps a compound expression
+    /// that renders *infix* and therefore needs its parentheses preserved when
+    /// used as an operand. Atoms, array access, and the function-call-style
+    /// operators (`**` → `power()`, `.` → `concat()`) are already
+    /// self-delimiting, so their grouping needs no parentheses.
+    fn grouping_is_compound(list: &PpiNode) -> bool {
+        let mut meaningful = list.children.iter().filter(|c| {
+            !matches!(
+                c.class.as_str(),
+                "PPI::Token::Whitespace" | "PPI::Token::Comment"
+            )
+        });
+        let (Some(child), None) = (meaningful.next(), meaningful.next()) else {
+            // Zero or multiple items: `visit_list` renders these as a `(a, b)`
+            // tuple that is already parenthesized, so don't add more.
+            return false;
+        };
+        match child.class.as_str() {
+            "BinaryOperation" => !matches!(child.content.as_deref(), Some("**") | Some(".")),
+            "TernaryOperation" | "TernaryOp" | "SafeDivision" => true,
+            "PPI::Structure::List" => Self::grouping_is_compound(child),
+            _ => false,
+        }
+    }
+
     /// Visit normalized binary operation nodes
     /// These are created by the BinaryOperatorNormalizer to group mathematical expressions
     fn visit_normalized_binary_operation(&self, node: &PpiNode) -> Result<String, CodeGenError> {
@@ -1733,6 +1773,11 @@ pub trait PpiVisitor {
         // Generate appropriate Rust code for the binary operation
         match operator.as_str() {
             "*" | "/" | "+" | "-" | "%" => {
+                // Preserve source grouping: an operand that came from an explicit
+                // `( ... )` around a compound sub-expression must keep its parens so
+                // this operator can't rebind it (e.g. ($val - 1) * 3, 1 / (1 + $val)).
+                let left = self.parenthesize_grouping(&node.children[0], left);
+                let right = self.parenthesize_grouping(&node.children[1], right);
                 // Arithmetic operations with TagValue - ops crate handles these.
                 // For pure numeric literal division (254.5 / 60), Rust requires matching
                 // types. Cast integers to f64 when mixed with floats.
@@ -1889,7 +1934,10 @@ pub trait PpiVisitor {
                 Ok(format!("{left_str} {rust_op} {right_str}"))
             }
             "==" | "!=" | "<" | ">" | "<=" | ">=" => {
-                // Numeric comparisons - no parentheses needed
+                // Numeric comparisons - preserve source grouping on either operand
+                // so a compound sub-expression isn't rebound (e.g. ($val + 1) > 2).
+                let left = self.parenthesize_grouping(&node.children[0], left);
+                let right = self.parenthesize_grouping(&node.children[1], right);
                 Ok(format!("{left} {operator} {right}"))
             }
             "&&" => {

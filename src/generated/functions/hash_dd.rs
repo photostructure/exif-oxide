@@ -95,6 +95,12 @@ use crate::types::{ExifContext, TagValue};
 /// - H264::MDPM.FocalLengthIn35mmFormat
 /// - Kodak::Type10.FocalLength
 /// - KyoceraRaw::Main.FocalLength
+/// - Nikon::FlashInfo0100.FlashFocalLength
+/// - Nikon::FlashInfo0102.FlashFocalLength
+/// - Nikon::FlashInfo0103.FlashFocalLength
+/// - Nikon::FlashInfo0106.FlashFocalLength
+/// - Nikon::FlashInfo0107.FlashFocalLength
+/// - Nikon::FlashInfo0300.FlashFocalLength
 /// - Nikon::LensData0800.FocalLength
 /// - Olympus::Equipment.FocalPlaneDiagonal
 /// - Olympus::Main.FocalPlaneDiagonal

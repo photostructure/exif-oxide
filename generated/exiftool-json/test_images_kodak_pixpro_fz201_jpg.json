@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/kodak/pixpro_fz201.jpg",
   "File:FileSize": 4273221,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "pixpro_fz201.jpg",
   "File:Directory": "test-images/kodak",
   "File:FileModifyDate": "2025:07:28 13:12:51-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:43:59-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:52-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -34,8 +34,8 @@
   "File:ImageWidth": 4608,
   "File:ImageHeight": 3456,
   "Composite:Aperture": 5.0,
-  "Composite:ShutterSpeed": "1/170",
-  "EXIF:ThumbnailImage": "(Binary data 7553 bytes, use -b option to extract)",
   "Composite:ImageSize": "4608x3456",
-  "Composite:Megapixels": 15.9
+  "Composite:Megapixels": 15.9,
+  "Composite:ShutterSpeed": "1/170",
+  "EXIF:ThumbnailImage": "(Binary data 7553 bytes, use -b option to extract)"
 }

@@ -5,6 +5,7 @@
 pub mod composite_tags;
 pub mod compression;
 pub mod flash;
+pub mod ind;
 pub mod light_source;
 pub mod main_tags;
 pub mod orientation;
@@ -21,6 +22,7 @@ pub mod rggb_lookup_8;
 pub mod sample_format;
 pub mod save_for_validate;
 pub mod unknown_tags;
+pub mod use_;
 
 // Re-export commonly used items
 pub use main_tags::EXIF_MAIN_TAGS;

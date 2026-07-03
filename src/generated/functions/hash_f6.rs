@@ -97,6 +97,27 @@ pub fn ast_value_f6e40ca85ff284cf(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(crate::core::exp(
-        val - 8i32 / 16i32 * crate::core::log(2i32),
+        (val - 8i32) / 16i32 * crate::core::log(2i32),
     ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val=~s/ /x/; $val
+/// ```
+/// Used by:
+/// - Pentax::AFInfoK3III.AFAreaSize
+/// - Pentax::AFInfoK3III.AFFrameSize
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_print_f67d275ec420a684(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    crate::core::missing::missing_print_conv(
+        0,                    // tag_id will be filled at runtime
+        "UnknownTag",         // tag_name will be filled at runtime
+        "UnknownGroup",       // group will be filled at runtime
+        "$val=~s/ /x/; $val", // original expression
+        val,
+    )
 }

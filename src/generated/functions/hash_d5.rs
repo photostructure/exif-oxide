@@ -17,6 +17,7 @@ use crate::types::{ExifContext, TagValue};
 /// sprintf("%x.%.2x",$val>>8,$val&0xff)
 /// ```
 /// Used by:
+/// - Sony::CameraSettings3.LensE-mountVersion
 /// - Sony::Tag940c.CameraE-mountVersion
 /// - Sony::Tag940c.LensE-mountVersion
 pub fn ast_print_d54898e66e3a2800(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {

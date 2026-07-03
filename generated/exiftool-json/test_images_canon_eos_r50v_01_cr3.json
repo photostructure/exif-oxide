@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/canon/eos_r50v_01.cr3",
   "File:FileSize": 28456870,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "eos_r50v_01.cr3",
   "File:Directory": "test-images/canon",
   "File:FileModifyDate": "2025:06:30 10:16:37-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:27:31-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:39-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "CR3",
   "File:FileTypeExtension": "cr3",
@@ -63,12 +63,12 @@
   "Composite:ISO": 100,
   "Composite:Lens": "14.0 - 30.0 mm",
   "Composite:Aperture": 4.0,
+  "Composite:ImageSize": "6000x4000",
+  "Composite:LensID": "Canon RF-S 14-30mm F4-6.3 IS STM PZ",
+  "Composite:Megapixels": 24.0,
   "Composite:ShutterSpeed": "1/200",
   "Composite:SubSecCreateDate": "2025:03:19 11:16:02.22+00:00",
   "Composite:SubSecDateTimeOriginal": "2025:03:19 11:16:02.22+00:00",
   "Composite:SubSecModifyDate": "2025:03:19 11:16:02.22+00:00",
-  "Composite:Rotation": 0,
-  "Composite:ImageSize": "6000x4000",
-  "Composite:LensID": "Canon RF-S 14-30mm F4-6.3 IS STM PZ",
-  "Composite:Megapixels": 24.0
+  "Composite:Rotation": 0
 }

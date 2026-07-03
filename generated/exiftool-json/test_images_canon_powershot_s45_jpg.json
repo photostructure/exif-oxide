@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/canon/powershot_s45.jpg",
   "File:FileSize": 889536,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "powershot_s45.jpg",
   "File:Directory": "test-images/canon",
   "File:FileModifyDate": "2020:01:03 12:34:56-08:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:30:15-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:43-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -37,9 +37,9 @@
   "Composite:ISO": 50,
   "Composite:Lens": "7.1 - 21.3 mm",
   "Composite:Aperture": 2.8,
-  "Composite:ShutterSpeed": "1/200",
-  "EXIF:ThumbnailImage": "(Binary data 5721 bytes, use -b option to extract)",
   "Composite:ImageSize": "2272x1704",
   "Composite:LensID": "Unknown 7-21mm",
-  "Composite:Megapixels": 3.9
+  "Composite:Megapixels": 3.9,
+  "Composite:ShutterSpeed": "1/200",
+  "EXIF:ThumbnailImage": "(Binary data 5721 bytes, use -b option to extract)"
 }

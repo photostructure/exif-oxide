@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/sony/zv_e10m2.jpg",
   "File:FileSize": 15452187,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "zv_e10m2.jpg",
   "File:Directory": "test-images/sony",
   "File:FileModifyDate": "2020:01:02 12:34:56-08:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:41:40-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:13-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -47,13 +47,13 @@
   "File:ImageWidth": 6192,
   "File:ImageHeight": 4128,
   "Composite:Aperture": 5.6,
-  "Composite:ImageSize": "6192x4128",
-  "Composite:LensID": "Sony E PZ 16-50mm F3.5-5.6 OSS II",
-  "Composite:Megapixels": 25.6,
   "Composite:ShutterSpeed": "1/50",
   "Composite:SubSecCreateDate": "2024:07:09 09:36:58.303+01:00",
   "Composite:SubSecDateTimeOriginal": "2024:07:09 09:36:58.303+01:00",
   "Composite:SubSecModifyDate": "2024:07:09 09:36:58.303+01:00",
   "EXIF:ThumbnailImage": "(Binary data 10974 bytes, use -b option to extract)",
-  "MPF:PreviewImage": "(Binary data 260123 bytes, use -b option to extract)"
+  "MPF:PreviewImage": "(Binary data 260123 bytes, use -b option to extract)",
+  "Composite:ImageSize": "6192x4128",
+  "Composite:LensID": "Sony E PZ 16-50mm F3.5-5.6 OSS II",
+  "Composite:Megapixels": 25.6
 }

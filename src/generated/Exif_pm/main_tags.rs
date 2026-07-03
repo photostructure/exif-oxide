@@ -16,6 +16,7 @@ use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
 use crate::generated::functions::hash_3f::ast_print_3fbf626e8f5baf04;
 use crate::generated::functions::hash_4d::ast_value_4dbfa1ab67f3dd58;
 use crate::generated::functions::hash_6b::ast_print_6b0aa669c8d8e892;
+use crate::generated::functions::hash_6d::ast_value_6d9f685f256a775a;
 use crate::generated::functions::hash_71::ast_value_718699e08034e1ee;
 use crate::generated::functions::hash_7c::{
     ast_print_7c85cf32a45b11ab, ast_print_7cc7a4bf3f82cb33,
@@ -107,7 +108,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (259, TagInfo {
             name: "Compression",
             format: "unknown",
-            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Uncompressed"), ("10".to_string(), "JBIG Color"), ("2".to_string(), "CCITT 1D"), ("262".to_string(), "Kodak 262"), ("3".to_string(), "T4/Group 3 Fax"), ("32766".to_string(), "Next"), ("32767".to_string(), "Sony ARW Compressed"), ("32769".to_string(), "Packed RAW"), ("32770".to_string(), "Samsung SRW Compressed"), ("32771".to_string(), "CCIRLEW"), ("32772".to_string(), "Samsung SRW Compressed 2"), ("32773".to_string(), "PackBits"), ("32809".to_string(), "Thunderscan"), ("32867".to_string(), "Kodak KDC Compressed"), ("32895".to_string(), "IT8CTPAD"), ("32896".to_string(), "IT8LW"), ("32897".to_string(), "IT8MP"), ("32898".to_string(), "IT8BL"), ("32908".to_string(), "PixarFilm"), ("32909".to_string(), "PixarLog"), ("32946".to_string(), "Deflate"), ("32947".to_string(), "DCS"), ("33003".to_string(), "Aperio JPEG 2000 YCbCr"), ("33005".to_string(), "Aperio JPEG 2000 RGB"), ("34661".to_string(), "JBIG"), ("34676".to_string(), "SGILog"), ("34677".to_string(), "SGILog24"), ("34712".to_string(), "JPEG 2000"), ("34713".to_string(), "Nikon NEF Compressed"), ("34715".to_string(), "JBIG2 TIFF FX"), ("34718".to_string(), "Microsoft Document Imaging (MDI) Binary Level Codec"), ("34719".to_string(), "Microsoft Document Imaging (MDI) Progressive Transform Codec"), ("34720".to_string(), "Microsoft Document Imaging (MDI) Vector"), ("34887".to_string(), "ESRI Lerc"), ("34892".to_string(), "Lossy JPEG"), ("34925".to_string(), "LZMA2"), ("34926".to_string(), "Zstd (old)"), ("34927".to_string(), "WebP (old)"), ("34933".to_string(), "PNG"), ("34934".to_string(), "JPEG XR"), ("4".to_string(), "T6/Group 4 Fax"), ("5".to_string(), "LZW"), ("50000".to_string(), "Zstd"), ("50001".to_string(), "WebP"), ("50002".to_string(), "JPEG XL (old)"), ("52546".to_string(), "JPEG XL"), ("6".to_string(), "JPEG (old-style)"), ("65000".to_string(), "Kodak DCR Compressed"), ("65535".to_string(), "Pentax PEF Compressed"), ("7".to_string(), "JPEG"), ("8".to_string(), "Adobe Deflate"), ("9".to_string(), "JBIG B&W"), ("99".to_string(), "JPEG"), ]))),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("1".to_string(), "Uncompressed"), ("10".to_string(), "JBIG Color"), ("2".to_string(), "CCITT 1D"), ("262".to_string(), "Kodak 262"), ("3".to_string(), "T4/Group 3 Fax"), ("32766".to_string(), "NeXt or Sony ARW Compressed 2"), ("32767".to_string(), "Sony ARW Compressed"), ("32769".to_string(), "Packed RAW"), ("32770".to_string(), "Samsung SRW Compressed"), ("32771".to_string(), "CCIRLEW"), ("32772".to_string(), "Samsung SRW Compressed 2"), ("32773".to_string(), "PackBits"), ("32809".to_string(), "Thunderscan"), ("32867".to_string(), "Kodak KDC Compressed"), ("32895".to_string(), "IT8CTPAD"), ("32896".to_string(), "IT8LW"), ("32897".to_string(), "IT8MP"), ("32898".to_string(), "IT8BL"), ("32908".to_string(), "PixarFilm"), ("32909".to_string(), "PixarLog"), ("32946".to_string(), "Deflate"), ("32947".to_string(), "DCS"), ("33003".to_string(), "Aperio JPEG 2000 YCbCr"), ("33005".to_string(), "Aperio JPEG 2000 RGB"), ("34661".to_string(), "JBIG"), ("34676".to_string(), "SGILog"), ("34677".to_string(), "SGILog24"), ("34712".to_string(), "JPEG 2000"), ("34713".to_string(), "Nikon NEF Compressed"), ("34715".to_string(), "JBIG2 TIFF FX"), ("34718".to_string(), "Microsoft Document Imaging (MDI) Binary Level Codec"), ("34719".to_string(), "Microsoft Document Imaging (MDI) Progressive Transform Codec"), ("34720".to_string(), "Microsoft Document Imaging (MDI) Vector"), ("34887".to_string(), "ESRI Lerc"), ("34892".to_string(), "Lossy JPEG"), ("34925".to_string(), "LZMA2"), ("34926".to_string(), "Zstd (old)"), ("34927".to_string(), "WebP (old)"), ("34933".to_string(), "PNG"), ("34934".to_string(), "JPEG XR"), ("4".to_string(), "T6/Group 4 Fax"), ("5".to_string(), "LZW"), ("50000".to_string(), "Zstd"), ("50001".to_string(), "WebP"), ("50002".to_string(), "JPEG XL (old)"), ("52546".to_string(), "JPEG XL"), ("6".to_string(), "JPEG (old-style)"), ("65000".to_string(), "Kodak DCR Compressed"), ("65535".to_string(), "Pentax PEF Compressed"), ("7".to_string(), "JPEG"), ("8".to_string(), "Adobe Deflate"), ("9".to_string(), "JBIG B&W or VC-5"), ("99".to_string(), "JPEG"), ]))),
             value_conv: None,
             is_offset: false,
         }),
@@ -688,7 +689,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (28672, TagInfo {
             name: "SonyRawFileType",
             format: "unknown",
-            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Sony Uncompressed 14-bit RAW"), ("1".to_string(), "Sony Uncompressed 12-bit RAW"), ("2".to_string(), "Sony Compressed RAW"), ("3".to_string(), "Sony Lossless Compressed RAW"), ("4".to_string(), "Sony Lossless Compressed RAW 2"), ]))),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Sony Uncompressed 14-bit RAW"), ("1".to_string(), "Sony Uncompressed 12-bit RAW"), ("2".to_string(), "Sony Compressed RAW"), ("3".to_string(), "Sony Lossless Compressed RAW"), ("4".to_string(), "Sony Lossless Compressed RAW 2"), ("6".to_string(), "Sony Compressed RAW 2"), ]))),
             value_conv: None,
             is_offset: false,
         }),
@@ -1227,7 +1228,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (37384, TagInfo {
             name: "LightSource",
             format: "unknown",
-            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Daylight"), ("10".to_string(), "Cloudy"), ("11".to_string(), "Shade"), ("12".to_string(), "Daylight Fluorescent"), ("13".to_string(), "Day White Fluorescent"), ("14".to_string(), "Cool White Fluorescent"), ("15".to_string(), "White Fluorescent"), ("16".to_string(), "Warm White Fluorescent"), ("17".to_string(), "Standard Light A"), ("18".to_string(), "Standard Light B"), ("19".to_string(), "Standard Light C"), ("2".to_string(), "Fluorescent"), ("20".to_string(), "D55"), ("21".to_string(), "D65"), ("22".to_string(), "D75"), ("23".to_string(), "D50"), ("24".to_string(), "ISO Studio Tungsten"), ("255".to_string(), "Other"), ("3".to_string(), "Tungsten (Incandescent)"), ("4".to_string(), "Flash"), ("9".to_string(), "Fine Weather"), ]))),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Daylight"), ("10".to_string(), "Cloudy"), ("11".to_string(), "Shade"), ("12".to_string(), "Daylight Fluorescent"), ("13".to_string(), "Day White Fluorescent"), ("14".to_string(), "Cool White Fluorescent"), ("15".to_string(), "White Fluorescent"), ("16".to_string(), "Warm White Fluorescent"), ("17".to_string(), "Standard Light A"), ("18".to_string(), "Standard Light B"), ("19".to_string(), "Standard Light C"), ("2".to_string(), "Fluorescent"), ("20".to_string(), "D55"), ("21".to_string(), "D65"), ("22".to_string(), "D75"), ("23".to_string(), "D50"), ("24".to_string(), "ISO Studio Tungsten"), ("25".to_string(), "Daylight"), ("255".to_string(), "Other"), ("26".to_string(), "Day White"), ("27".to_string(), "Cool White"), ("28".to_string(), "White"), ("29".to_string(), "Warm White"), ("3".to_string(), "Tungsten (Incandescent)"), ("30".to_string(), "Daylight LED"), ("31".to_string(), "Day White LED"), ("32".to_string(), "Cool White LED"), ("33".to_string(), "White LED"), ("34".to_string(), "Warm White LED"), ("4".to_string(), "Flash"), ("9".to_string(), "Fine Weather"), ]))),
             value_conv: None,
             is_offset: false,
         }),
@@ -1312,6 +1313,13 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "UserComment",
             format: "undef",
             print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (37511, TagInfo {
+            name: "LearningOptOutIn",
+            format: "int16u",
+            print_conv: Some(PrintConv::Expression("[Function: Image::ExifTool::Exif::__ANON__]".to_string())),
             value_conv: None,
             is_offset: false,
         }),
@@ -1683,6 +1691,48 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             name: "SubjectDistanceRange",
             format: "unknown",
             print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Macro"), ("2".to_string(), "Close"), ("3".to_string(), "Distant"), ]))),
+            value_conv: None,
+            is_offset: false,
+        }),
+        (41997, TagInfo {
+            name: "DevelopmentType",
+            format: "unknown",
+            print_conv: None,
+            value_conv: Some(ValueConv::Function(ast_value_6d9f685f256a775a)),
+            is_offset: false,
+        }),
+        (41998, TagInfo {
+            name: "DevelopmentTypeDescription",
+            format: "unknown",
+            print_conv: None,
+            value_conv: Some(ValueConv::Function(ast_value_718699e08034e1ee)),
+            is_offset: false,
+        }),
+        (41999, TagInfo {
+            name: "DistortionCorrection",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "No"), ("1".to_string(), "Yes"), ]))),
+            value_conv: None,
+            is_offset: false,
+        }),
+        (42000, TagInfo {
+            name: "ChromaticAberrationCorrection",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "No"), ("1".to_string(), "Yes"), ]))),
+            value_conv: None,
+            is_offset: false,
+        }),
+        (42001, TagInfo {
+            name: "ShadingCorrection",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "No"), ("1".to_string(), "Yes"), ]))),
+            value_conv: None,
+            is_offset: false,
+        }),
+        (42002, TagInfo {
+            name: "NoiseReduction",
+            format: "unknown",
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "No"), ("1".to_string(), "Yes"), ]))),
             value_conv: None,
             is_offset: false,
         }),
@@ -2214,14 +2264,14 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (50778, TagInfo {
             name: "CalibrationIlluminant1",
             format: "unknown",
-            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Daylight"), ("10".to_string(), "Cloudy"), ("11".to_string(), "Shade"), ("12".to_string(), "Daylight Fluorescent"), ("13".to_string(), "Day White Fluorescent"), ("14".to_string(), "Cool White Fluorescent"), ("15".to_string(), "White Fluorescent"), ("16".to_string(), "Warm White Fluorescent"), ("17".to_string(), "Standard Light A"), ("18".to_string(), "Standard Light B"), ("19".to_string(), "Standard Light C"), ("2".to_string(), "Fluorescent"), ("20".to_string(), "D55"), ("21".to_string(), "D65"), ("22".to_string(), "D75"), ("23".to_string(), "D50"), ("24".to_string(), "ISO Studio Tungsten"), ("255".to_string(), "Other"), ("3".to_string(), "Tungsten (Incandescent)"), ("4".to_string(), "Flash"), ("9".to_string(), "Fine Weather"), ]))),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Daylight"), ("10".to_string(), "Cloudy"), ("11".to_string(), "Shade"), ("12".to_string(), "Daylight Fluorescent"), ("13".to_string(), "Day White Fluorescent"), ("14".to_string(), "Cool White Fluorescent"), ("15".to_string(), "White Fluorescent"), ("16".to_string(), "Warm White Fluorescent"), ("17".to_string(), "Standard Light A"), ("18".to_string(), "Standard Light B"), ("19".to_string(), "Standard Light C"), ("2".to_string(), "Fluorescent"), ("20".to_string(), "D55"), ("21".to_string(), "D65"), ("22".to_string(), "D75"), ("23".to_string(), "D50"), ("24".to_string(), "ISO Studio Tungsten"), ("25".to_string(), "Daylight"), ("255".to_string(), "Other"), ("26".to_string(), "Day White"), ("27".to_string(), "Cool White"), ("28".to_string(), "White"), ("29".to_string(), "Warm White"), ("3".to_string(), "Tungsten (Incandescent)"), ("30".to_string(), "Daylight LED"), ("31".to_string(), "Day White LED"), ("32".to_string(), "Cool White LED"), ("33".to_string(), "White LED"), ("34".to_string(), "Warm White LED"), ("4".to_string(), "Flash"), ("9".to_string(), "Fine Weather"), ]))),
             value_conv: None,
             is_offset: false,
         }),
         (50779, TagInfo {
             name: "CalibrationIlluminant2",
             format: "unknown",
-            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Daylight"), ("10".to_string(), "Cloudy"), ("11".to_string(), "Shade"), ("12".to_string(), "Daylight Fluorescent"), ("13".to_string(), "Day White Fluorescent"), ("14".to_string(), "Cool White Fluorescent"), ("15".to_string(), "White Fluorescent"), ("16".to_string(), "Warm White Fluorescent"), ("17".to_string(), "Standard Light A"), ("18".to_string(), "Standard Light B"), ("19".to_string(), "Standard Light C"), ("2".to_string(), "Fluorescent"), ("20".to_string(), "D55"), ("21".to_string(), "D65"), ("22".to_string(), "D75"), ("23".to_string(), "D50"), ("24".to_string(), "ISO Studio Tungsten"), ("255".to_string(), "Other"), ("3".to_string(), "Tungsten (Incandescent)"), ("4".to_string(), "Flash"), ("9".to_string(), "Fine Weather"), ]))),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Daylight"), ("10".to_string(), "Cloudy"), ("11".to_string(), "Shade"), ("12".to_string(), "Daylight Fluorescent"), ("13".to_string(), "Day White Fluorescent"), ("14".to_string(), "Cool White Fluorescent"), ("15".to_string(), "White Fluorescent"), ("16".to_string(), "Warm White Fluorescent"), ("17".to_string(), "Standard Light A"), ("18".to_string(), "Standard Light B"), ("19".to_string(), "Standard Light C"), ("2".to_string(), "Fluorescent"), ("20".to_string(), "D55"), ("21".to_string(), "D65"), ("22".to_string(), "D75"), ("23".to_string(), "D50"), ("24".to_string(), "ISO Studio Tungsten"), ("25".to_string(), "Daylight"), ("255".to_string(), "Other"), ("26".to_string(), "Day White"), ("27".to_string(), "Cool White"), ("28".to_string(), "White"), ("29".to_string(), "Warm White"), ("3".to_string(), "Tungsten (Incandescent)"), ("30".to_string(), "Daylight LED"), ("31".to_string(), "Day White LED"), ("32".to_string(), "Cool White LED"), ("33".to_string(), "White LED"), ("34".to_string(), "Warm White LED"), ("4".to_string(), "Flash"), ("9".to_string(), "Fine Weather"), ]))),
             value_conv: None,
             is_offset: false,
         }),
@@ -2725,7 +2775,7 @@ pub static EXIF_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
         (52529, TagInfo {
             name: "CalibrationIlluminant3",
             format: "unknown",
-            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Daylight"), ("10".to_string(), "Cloudy"), ("11".to_string(), "Shade"), ("12".to_string(), "Daylight Fluorescent"), ("13".to_string(), "Day White Fluorescent"), ("14".to_string(), "Cool White Fluorescent"), ("15".to_string(), "White Fluorescent"), ("16".to_string(), "Warm White Fluorescent"), ("17".to_string(), "Standard Light A"), ("18".to_string(), "Standard Light B"), ("19".to_string(), "Standard Light C"), ("2".to_string(), "Fluorescent"), ("20".to_string(), "D55"), ("21".to_string(), "D65"), ("22".to_string(), "D75"), ("23".to_string(), "D50"), ("24".to_string(), "ISO Studio Tungsten"), ("255".to_string(), "Other"), ("3".to_string(), "Tungsten (Incandescent)"), ("4".to_string(), "Flash"), ("9".to_string(), "Fine Weather"), ]))),
+            print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([("0".to_string(), "Unknown"), ("1".to_string(), "Daylight"), ("10".to_string(), "Cloudy"), ("11".to_string(), "Shade"), ("12".to_string(), "Daylight Fluorescent"), ("13".to_string(), "Day White Fluorescent"), ("14".to_string(), "Cool White Fluorescent"), ("15".to_string(), "White Fluorescent"), ("16".to_string(), "Warm White Fluorescent"), ("17".to_string(), "Standard Light A"), ("18".to_string(), "Standard Light B"), ("19".to_string(), "Standard Light C"), ("2".to_string(), "Fluorescent"), ("20".to_string(), "D55"), ("21".to_string(), "D65"), ("22".to_string(), "D75"), ("23".to_string(), "D50"), ("24".to_string(), "ISO Studio Tungsten"), ("25".to_string(), "Daylight"), ("255".to_string(), "Other"), ("26".to_string(), "Day White"), ("27".to_string(), "Cool White"), ("28".to_string(), "White"), ("29".to_string(), "Warm White"), ("3".to_string(), "Tungsten (Incandescent)"), ("30".to_string(), "Daylight LED"), ("31".to_string(), "Day White LED"), ("32".to_string(), "Cool White LED"), ("33".to_string(), "White LED"), ("34".to_string(), "Warm White LED"), ("4".to_string(), "Flash"), ("9".to_string(), "Fine Weather"), ]))),
             value_conv: None,
             is_offset: false,
         }),

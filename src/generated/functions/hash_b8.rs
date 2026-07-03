@@ -59,7 +59,7 @@ pub fn ast_value_b8b4108321f31a78(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    Ok(val - 104i32 / 8i32)
+    Ok((val - 104i32) / 8i32)
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -103,6 +103,7 @@ pub fn ast_value_b8f4d8c7ca0965f(
 /// - Sony::CameraSettings.FNumber
 /// - Sony::CameraSettings2.ApertureSetting
 /// - Sony::CameraSettings2.FNumber
+/// - Sony::CameraSettings3.ApertureSetting
 /// - Sony::MoreSettings.FNumber
 /// - Sony::rtmd.FNumber
 pub fn ast_print_b8d6a32d77c36946(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {

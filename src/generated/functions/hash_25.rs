@@ -37,6 +37,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Canon::CameraInfo750D.CameraTemperature
 /// - Canon::CameraInfo7D.CameraTemperature
 /// - Canon::CameraInfo80D.CameraTemperature
+/// - Canon::CameraInfoR6.CameraTemperature
 /// - Canon::ShotInfo.CameraTemperature
 pub fn ast_value_25c85203cdf230c8(
     val: &TagValue,

@@ -41,6 +41,30 @@ pub fn ast_value_95bfd9578fbdb0ab(
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(crate::core::power(
         Into::<TagValue>::into(2i32),
-        Into::<TagValue>::into(val / 256i32 - 16i32 / 2i32),
+        Into::<TagValue>::into((val / 256i32 - 16i32) / 2i32),
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val * 4e-8 + 0.27219
+/// ```
+/// Used by:
+/// - Pentax::BatteryInfo.BodyBatteryVoltage
+/// - Pentax::BatteryInfo.GripBatteryVoltage
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_95e559107de1a65c(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                       // tag_id will be filled at runtime
+        "UnknownTag",            // tag_name will be filled at runtime
+        "UnknownGroup",          // group will be filled at runtime
+        "$val * 4e-8 + 0.27219", // original expression
+        val,
     ))
 }

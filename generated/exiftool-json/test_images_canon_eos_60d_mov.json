@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/canon/eos_60d.mov",
   "File:FileSize": 64949492,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "eos_60d.mov",
   "File:Directory": "test-images/canon",
   "File:FileModifyDate": "2025:07:28 12:50:18-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:27:31-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:37-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "MOV",
   "File:FileTypeExtension": "mov",
@@ -57,12 +57,12 @@
   "QuickTime:MediaDuration": "11.12 s",
   "Composite:Lens": "18.0 - 200.0 mm",
   "Composite:Aperture": "undef",
+  "Composite:ImageSize": "1920x1080",
+  "Composite:LensID": "Canon EF-S 18-200mm f/3.5-5.6 IS",
+  "Composite:Megapixels": 2.1,
   "Composite:ShutterSpeed": "undef",
   "Composite:SubSecCreateDate": "2010:10:13 14:00:50.78",
   "Composite:SubSecDateTimeOriginal": "2010:10:13 14:00:50.78",
   "Composite:SubSecModifyDate": "2010:10:13 14:00:50.78",
-  "Composite:Rotation": 0,
-  "Composite:ImageSize": "1920x1080",
-  "Composite:LensID": "Canon EF-S 18-200mm f/3.5-5.6 IS",
-  "Composite:Megapixels": 2.1
+  "Composite:Rotation": 0
 }

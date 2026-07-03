@@ -14,6 +14,44 @@ use crate::types::{ExifContext, TagValue};
 
 /// Original perl expression:
 /// ``` perl
+/// $$self{TimecodeScale} ? $val * $$self{TimecodeScale} / 1e9 : $val / 1000
+/// ```
+/// Used by:
+/// - Matroska::Main.Duration
+pub fn ast_value_984abc3c82dcf40d(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(
+        if (ctx
+            .and_then(|c| c.get_data_member("TimeScale").cloned())
+            .unwrap_or(TagValue::U32(1)))
+        .is_truthy()
+        {
+            val * ctx
+                .and_then(|c| c.get_data_member("TimeScale").cloned())
+                .unwrap_or(TagValue::U32(1))
+        } else {
+            Into::<TagValue>::into(val / 1000i32)
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// ($val - 1) * 3
+/// ```
+/// Used by:
+/// - H264::Camera1.Gain
+pub fn ast_value_98968232e1520ada(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok((val - 1i32) * 3i32)
+}
+
+/// Original perl expression:
+/// ``` perl
 /// -$val/256
 /// ```
 /// Used by:

@@ -25,6 +25,6 @@ pub fn ast_value_7e8fc5d758244b19(
     Ok(10i32
         * crate::core::power(
             Into::<TagValue>::into(2i32),
-            Into::<TagValue>::into(val - 28i32 / 16i32),
+            Into::<TagValue>::into((val - 28i32) / 16i32),
         ))
 }

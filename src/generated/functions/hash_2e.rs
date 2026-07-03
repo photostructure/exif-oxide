@@ -17,6 +17,7 @@ use crate::types::{ExifContext, TagValue};
 /// 100*exp(($val-32)*log(2)/8)
 /// ```
 /// Used by:
+/// - Pentax::AEInfo.AE_ISO
 /// - Pentax::AEInfo2.AE_ISO
 /// - Pentax::AEInfo3.AE_ISO
 pub fn ast_value_2e5c68232ecbf706(

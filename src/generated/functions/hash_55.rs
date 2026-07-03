@@ -45,8 +45,8 @@ pub fn ast_value_55048b24234b7885(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(crate::core::exp(
-        4i32 * crate::core::log(2i32) * 1i32
-            - crate::implementations::canon::canon_ev(val - 24i32, ctx),
+        4i32 * crate::core::log(2i32)
+            * (1i32 - crate::implementations::canon::canon_ev(val - 24i32, ctx)),
     ))
 }
 

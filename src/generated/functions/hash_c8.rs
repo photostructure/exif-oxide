@@ -39,6 +39,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Canon::CameraInfo80D.CameraTemperature
 /// - Canon::CameraInfoPowerShot.CameraTemperature
 /// - Canon::CameraInfoPowerShot2.CameraTemperature
+/// - Canon::CameraInfoR6.CameraTemperature
 /// - Canon::CameraInfoUnknown32.CameraTemperature
 /// - Canon::ShotInfo.CameraTemperature
 /// - Exif::Main.AmbientTemperature

@@ -84,6 +84,16 @@ pub static SAMSUNG_TRAILER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new
             },
         ),
         (
+            2611,
+            TagInfo {
+                name: "MotionPhotoAutoPlayVideo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+                is_offset: false,
+            },
+        ),
+        (
             2721,
             TagInfo {
                 name: "MCCData",

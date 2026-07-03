@@ -4,7 +4,7 @@
 
 pub mod camera_ifd_tags;
 pub mod composite_tags;
-pub mod distortion_info;
+pub mod distortion_info_tags;
 pub mod jpg_from_raw_map;
 pub mod main_tags;
 pub mod panasonic_white_balance;

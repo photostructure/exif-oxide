@@ -66,8 +66,7 @@ pub fn composite_valueconv_exif_circleofconfusion(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(crate::core::sqrt(24i32 * 24i32 + 36i32 * 36i32)
-        / vals.first().cloned().unwrap_or(TagValue::Empty)
-        * 1440i32)
+        / (vals.first().cloned().unwrap_or(TagValue::Empty) * 1440i32))
 }
 
 /// Original perl expression:
@@ -693,11 +692,11 @@ pub fn composite_valueconv_canon_lens35efl(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(vals.get(3).cloned().unwrap_or(TagValue::Empty)
-        * if (vals.get(2).cloned().unwrap_or(TagValue::Empty)).is_truthy() {
+        * (if (vals.get(2).cloned().unwrap_or(TagValue::Empty)).is_truthy() {
             vals.get(2).cloned().unwrap_or(TagValue::Empty)
         } else {
             Into::<TagValue>::into(1i32)
-        })
+        }))
 }
 
 /// Original perl expression:
@@ -1424,7 +1423,7 @@ pub static COMPOSITE_EXIF_FOV: CompositeTagDef = CompositeTagDef {
 };
 
 /// FocalLength35efl composite tag definition from Exif module
-/// Focal Length
+/// Focal Length 35mm Equiv
 pub static COMPOSITE_EXIF_FOCALLENGTH35EFL: CompositeTagDef = CompositeTagDef {
     name: "FocalLength35efl",
     module: "Exif",
@@ -1439,7 +1438,7 @@ pub static COMPOSITE_EXIF_FOCALLENGTH35EFL: CompositeTagDef = CompositeTagDef {
     print_conv: Some(composite_printconv_exif_focallength35efl),
     value_conv_expr: Some("ToFloat(@val); ($val[0] || 0) * ($val[1] || 1)"),
     print_conv_expr: Some("$val[1] ? sprintf(\"%.1f mm (35 mm equivalent: %.1f mm)\", $val[0], $val) : sprintf(\"%.1f mm\", $val)"),
-    description: Some("Focal Length"),
+    description: Some("Focal Length 35mm Equiv"),
     groups: &[
         (0, "Composite"),
         (1, "Composite"),
@@ -1752,7 +1751,7 @@ pub static COMPOSITE_EXIF_SUBSECCREATEDATE: CompositeTagDef = CompositeTagDef {
     name: "SubSecCreateDate",
     module: "Exif",
     require: &["EXIF:CreateDate"],
-    desire: &["SubSecTimeDigitized", "OffsetTimeDigitized"],
+    desire: &["EXIF:SubSecTimeDigitized", "EXIF:OffsetTimeDigitized"],
     inhibit: &[],
     value_conv: None,
     print_conv: None, // PPI generation failed
@@ -1768,7 +1767,7 @@ pub static COMPOSITE_EXIF_SUBSECDATETIMEORIGINAL: CompositeTagDef = CompositeTag
     name: "SubSecDateTimeOriginal",
     module: "Exif",
     require: &["EXIF:DateTimeOriginal"],
-    desire: &["SubSecTimeOriginal", "OffsetTimeOriginal"],
+    desire: &["EXIF:SubSecTimeOriginal", "EXIF:OffsetTimeOriginal"],
     inhibit: &[],
     value_conv: None,
     print_conv: None, // PPI generation failed
@@ -1784,7 +1783,7 @@ pub static COMPOSITE_EXIF_SUBSECMODIFYDATE: CompositeTagDef = CompositeTagDef {
     name: "SubSecModifyDate",
     module: "Exif",
     require: &["EXIF:ModifyDate"],
-    desire: &["SubSecTime", "OffsetTime"],
+    desire: &["EXIF:SubSecTime", "EXIF:OffsetTime"],
     inhibit: &[],
     value_conv: None,
     print_conv: None, // PPI generation failed
@@ -2756,7 +2755,7 @@ pub static COMPOSITE_QUICKTIME_GPSALTITUDE2: CompositeTagDef = CompositeTagDef {
     inhibit: &[],
     value_conv: None, // PPI generation failed
     print_conv: Some(composite_printconv_quicktime_gpsaltitude2),
-    value_conv_expr: Some(r"$val =~ /Alt=([-+.\d]+)/; abs($1)"),
+    value_conv_expr: Some(r"$val =~ /Alt=([-+.\d]+)/ ? abs($1) : undef"),
     print_conv_expr: Some("\"$val m\""),
     description: None,
     groups: &[(0, "Composite"), (1, "Composite"), (2, "Location")],
@@ -2786,7 +2785,7 @@ pub static COMPOSITE_QUICKTIME_GPSALTITUDEREF2: CompositeTagDef = CompositeTagDe
     inhibit: &[],
     value_conv: None, // PPI generation failed
     print_conv: None,
-    value_conv_expr: Some(r"$val =~ /Alt=([-+.\d]+)/; $1 < 0 ? 1 : 0"),
+    value_conv_expr: Some(r"$val =~ /Alt=([-+.\d]+)/ ? ($1 < 0 ? 1 : 0) : undef"),
     print_conv_expr: None,
     description: None,
     groups: &[(0, "Composite"), (1, "Composite"), (2, "Location")],
@@ -2816,7 +2815,7 @@ pub static COMPOSITE_QUICKTIME_GPSLATITUDE2: CompositeTagDef = CompositeTagDef {
     inhibit: &[],
     value_conv: None, // PPI generation failed
     print_conv: None, // PPI generation failed
-    value_conv_expr: Some(r"$val =~ /Lat=([-+.\d]+)/; $1"),
+    value_conv_expr: Some(r"$val =~ /Lat=([-+.\d]+)/ ? $1 : undef"),
     print_conv_expr: Some("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"N\")"),
     description: None,
     groups: &[(0, "Composite"), (1, "Composite"), (2, "Location")],
@@ -2846,7 +2845,7 @@ pub static COMPOSITE_QUICKTIME_GPSLONGITUDE2: CompositeTagDef = CompositeTagDef 
     inhibit: &[],
     value_conv: None, // PPI generation failed
     print_conv: None, // PPI generation failed
-    value_conv_expr: Some(r"$val =~ /Lon=([-+.\d]+)/; $1"),
+    value_conv_expr: Some(r"$val =~ /Lon=([-+.\d]+)/ ? $1 : undef"),
     print_conv_expr: Some("Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")"),
     description: None,
     groups: &[(0, "Composite"), (1, "Composite"), (2, "Location")],

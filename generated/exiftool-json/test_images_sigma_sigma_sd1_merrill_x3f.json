@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/sigma/sigma_sd1_merrill.x3f",
   "File:FileSize": 44943104,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "sigma_sd1_merrill.x3f",
   "File:Directory": "test-images/sigma",
   "File:FileModifyDate": "2025:07:28 13:09:31-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:23:10-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:05-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "X3F",
   "File:FileTypeExtension": "x3f",
@@ -37,10 +37,10 @@
   "File:ImageWidth": 4704,
   "File:ImageHeight": 3136,
   "Composite:Aperture": 8.0,
-  "Composite:ImageSize": "4704x3136",
-  "Composite:LensID": "Sigma 17-50mm F2.8 EX DC OS HSM",
-  "Composite:Megapixels": 14.8,
   "MakerNotes:PreviewImage": "(Binary data 41233 bytes, use -b option to extract)",
   "Composite:ShutterSpeed": "1/100",
-  "EXIF:ThumbnailImage": "(Binary data 15232 bytes, use -b option to extract)"
+  "EXIF:ThumbnailImage": "(Binary data 15232 bytes, use -b option to extract)",
+  "Composite:ImageSize": "4704x3136",
+  "Composite:LensID": "Sigma 17-50mm F2.8 EX DC OS HSM",
+  "Composite:Megapixels": 14.8
 }

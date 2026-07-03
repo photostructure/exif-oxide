@@ -17,6 +17,7 @@ use crate::types::{ExifContext, TagValue};
 /// 2 ** (-$val/6)
 /// ```
 /// Used by:
+/// - Nikon::FlashInfo0300.FlashOutput
 /// - Nikon::ShotInfoD800.RepeatingFlashOutputExternal
 pub fn ast_value_2c21dc5576b94e50(
     val: &TagValue,
@@ -39,10 +40,14 @@ pub fn ast_value_2c21dc5576b94e50(
 /// - Nikon::ShotInfoD300S.ISO2
 /// - Nikon::ShotInfoD300a.ISO2
 /// - Nikon::ShotInfoD300b.ISO2
+/// - Nikon::ShotInfoD3S.ISO2
 /// - Nikon::ShotInfoD3X.ISO2
+/// - Nikon::ShotInfoD3a.ISO2
+/// - Nikon::ShotInfoD3b.ISO2
 /// - Nikon::ShotInfoD5000.ISO2
 /// - Nikon::ShotInfoD700.ISO2
 /// - Nikon::ShotInfoD90.ISO2
+/// - Pentax::AEInfo.AE_ISO
 /// - Pentax::AEInfo2.AE_ISO
 /// - Pentax::AEInfo3.AE_ISO
 pub fn ast_print_2cea565875d218cc(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {

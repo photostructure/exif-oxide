@@ -56,6 +56,20 @@ pub fn ast_print_d780ed94ab5b10da(val: &TagValue, ctx: Option<&ExifContext>) -> 
     }
 }
 
+/// Original perl expression:
+/// ``` perl
+/// -$val
+/// ```
+/// Used by:
+/// - Pentax::LevelInfo.CompositionAdjustX
+/// - Pentax::LevelInfo.CompositionAdjustY
+pub fn ast_value_d77131ce3c8c832c(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::negate(val))
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl

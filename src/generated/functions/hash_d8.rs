@@ -35,6 +35,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::CameraSettings2.Contrast
 /// - Sony::CameraSettings2.Saturation
 /// - Sony::CameraSettings2.Sharpness
+/// - Sony::CameraSettings3.ColorCompensationFilterSet
+/// - Sony::CameraSettings3.ContrastSetting
+/// - Sony::CameraSettings3.SaturationSetting
+/// - Sony::CameraSettings3.SharpnessSetting
 /// - Sony::Main.Brightness
 /// - Sony::Main.Clarity
 /// - Sony::Main.Contrast

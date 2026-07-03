@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/pentax/k_1_mk_ii.jpg",
   "File:FileSize": 11787469,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "k_1_mk_ii.jpg",
   "File:Directory": "test-images/pentax",
   "File:FileModifyDate": "2025:07:28 13:11:41-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:39:48-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:02-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -38,10 +38,10 @@
   "File:ImageWidth": 7360,
   "File:ImageHeight": 4912,
   "Composite:Aperture": 2.8,
-  "Composite:ImageSize": "7360x4912",
-  "Composite:LensID": "HD PENTAX-D FA 24-70mm F2.8 ED SDM WR",
-  "Composite:Megapixels": 36.2,
   "MakerNotes:PreviewImage": "(Binary data 57110 bytes, use -b option to extract)",
   "Composite:ShutterSpeed": "1/100",
-  "EXIF:ThumbnailImage": "(Binary data 7117 bytes, use -b option to extract)"
+  "EXIF:ThumbnailImage": "(Binary data 7117 bytes, use -b option to extract)",
+  "Composite:ImageSize": "7360x4912",
+  "Composite:LensID": "HD PENTAX-D FA 24-70mm F2.8 ED SDM WR",
+  "Composite:Megapixels": 36.2
 }

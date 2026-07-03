@@ -50,6 +50,16 @@ pub static SONY_TAG9401_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(||
             },
         ),
         (
+            1107,
+            TagInfo {
+                name: "ISOInfo",
+                format: "int8u[5]",
+                print_conv: None,
+                value_conv: None,
+                is_offset: false,
+            },
+        ),
+        (
             1176,
             TagInfo {
                 name: "ISOInfo",

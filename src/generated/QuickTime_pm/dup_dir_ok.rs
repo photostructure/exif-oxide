@@ -11,6 +11,9 @@ pub static DUP_DIR_O_K: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     set.insert("----");
     set.insert("ipco");
     set.insert("iref");
+    set.insert("moof");
+    set.insert("sdpd");
+    set.insert("traf");
     set
 });
 

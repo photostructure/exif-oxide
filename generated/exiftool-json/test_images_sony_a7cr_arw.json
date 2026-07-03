@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/sony/a7cr.arw",
   "File:FileSize": 127234048,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "a7cr.arw",
   "File:Directory": "test-images/sony",
   "File:FileModifyDate": "2020:01:02 12:34:56-08:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:41:20-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:08-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "ARW",
   "File:FileTypeExtension": "arw",
@@ -48,14 +48,14 @@
   "EXIF:LensInfo": "16mm f/1.8",
   "EXIF:LensModel": "FE 16mm F1.8 G",
   "Composite:Aperture": 1.8,
-  "Composite:ImageSize": "9600x6376",
   "EXIF:JpgFromRaw": "(Binary data 4434826 bytes, use -b option to extract)",
-  "Composite:LensID": "FE 16mm F1.8 G",
-  "Composite:Megapixels": 61.2,
   "EXIF:PreviewImage": "(Binary data 181178 bytes, use -b option to extract)",
   "Composite:ShutterSpeed": "1/60",
   "Composite:SubSecCreateDate": "2025:02:19 16:01:13.938+00:00",
   "Composite:SubSecDateTimeOriginal": "2025:02:19 16:01:13.938+00:00",
   "Composite:SubSecModifyDate": "2025:02:19 16:01:13.938+00:00",
-  "EXIF:ThumbnailImage": "(Binary data 7525 bytes, use -b option to extract)"
+  "EXIF:ThumbnailImage": "(Binary data 7525 bytes, use -b option to extract)",
+  "Composite:ImageSize": "9600x6376",
+  "Composite:LensID": "FE 16mm F1.8 G",
+  "Composite:Megapixels": 61.2
 }

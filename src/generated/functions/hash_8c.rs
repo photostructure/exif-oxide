@@ -24,17 +24,6 @@ pub fn ast_print_8ca73d52cc1cee99(val: &TagValue, ctx: Option<&ExifContext>) -> 
     TagValue::String(crate::core::sprintf_perl("%.0f%%", &[val / 10.24f64]))
 }
 
-/// Original perl expression:
-/// ``` perl
-/// sprintf("%6d",$val)
-/// ```
-/// Used by:
-/// - Sony::Tag9050c.ShutterCount
-/// - Sony::Tag9050d.ShutterCount
-pub fn ast_print_8cb98c82cbc27d63(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%6d", &[val.clone()]))
-}
-
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl

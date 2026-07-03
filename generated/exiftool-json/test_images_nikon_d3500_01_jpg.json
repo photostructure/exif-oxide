@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/nikon/d3500_01.jpg",
   "File:FileSize": 16022089,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "d3500_01.jpg",
   "File:Directory": "test-images/nikon",
   "File:FileModifyDate": "2025:07:27 22:53:15-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:02:56-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:53-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -52,5 +52,5 @@
   "EXIF:ThumbnailImage": "(Binary data 16304 bytes, use -b option to extract)",
   "Composite:DateTimeCreated": "2019:11:20 14:59:21",
   "Composite:DigitalCreationDateTime": "2019:11:20 14:59:21",
-  "Composite:LensID": "AF-P DX Nikkor 18-55mm f/3.5-5.6G VR or AF-P DX Nikkor 18-55mm f/3.5-5.6G"
+  "Composite:LensID": "AF-P DX Nikkor 18-55mm f/3.5-5.6G or AF-P DX Nikkor 18-55mm f/3.5-5.6G VR"
 }

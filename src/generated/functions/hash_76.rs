@@ -35,6 +35,29 @@ pub fn ast_print_76c7cc600804b004(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// exp(Image::ExifTool::Pentax::PentaxEv($val-68)*log(2)/2)
+/// ```
+/// Used by:
+/// - Pentax::CameraSettings.AvApertureSetting
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_76a70de7f6a5937a(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                                                          // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "exp(Image::ExifTool::Pentax::PentaxEv($val-68)*log(2)/2)", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// return 'Off' unless $val;
 /// return (($val&0xfff) / 10) . ' s' . ($val & 0x4000 ? ', Custom' : '');
 /// ```

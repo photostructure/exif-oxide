@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/leica_camera_ag/leica_m10-r.jpg",
   "File:FileSize": 16200299,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "leica_m10-r.jpg",
   "File:Directory": "test-images/leica_camera_ag",
   "File:FileModifyDate": "2025:07:28 13:00:19-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:23:04-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:53-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",

@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/sony/a7_iii_01.arw",
   "File:FileSize": 49235456,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "a7_iii_01.arw",
   "File:Directory": "test-images/sony",
   "File:FileModifyDate": "2025:07:27 22:44:25-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:44:03-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:06-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "ARW",
   "File:FileTypeExtension": "arw",
@@ -48,13 +48,13 @@
   "EXIF:LensInfo": "16-35mm f/2.8",
   "EXIF:LensModel": "FE 16-35mm F2.8 GM",
   "Composite:Aperture": 8.0,
-  "Composite:ImageSize": "6048x4024",
-  "Composite:LensID": "Sony FE 16-35mm F2.8 GM",
-  "Composite:Megapixels": 24.3,
   "EXIF:PreviewImage": "(Binary data 410328 bytes, use -b option to extract)",
   "Composite:ShutterSpeed": "1/25",
   "Composite:SubSecCreateDate": "2018:02:28 16:44:14-04:00",
   "Composite:SubSecDateTimeOriginal": "2018:02:28 16:44:14-04:00",
   "Composite:SubSecModifyDate": "2018:02:28 16:44:14-04:00",
-  "EXIF:ThumbnailImage": "(Binary data 6532 bytes, use -b option to extract)"
+  "EXIF:ThumbnailImage": "(Binary data 6532 bytes, use -b option to extract)",
+  "Composite:ImageSize": "6048x4024",
+  "Composite:LensID": "Sony FE 16-35mm F2.8 GM",
+  "Composite:Megapixels": 24.3
 }

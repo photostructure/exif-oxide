@@ -40,6 +40,6 @@ pub fn ast_value_4b31c9adbe0665ee(
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(crate::core::power(
         Into::<TagValue>::into(2i32),
-        Into::<TagValue>::into(val - 80i32 / 12i32),
+        Into::<TagValue>::into((val - 80i32) / 12i32),
     ))
 }

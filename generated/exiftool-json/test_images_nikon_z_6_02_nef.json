@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/nikon/z_6_02.nef",
   "File:FileSize": 30997007,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "z_6_02.nef",
   "File:Directory": "test-images/nikon",
   "File:FileModifyDate": "2025:07:27 22:54:07-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:03:11-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:57-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "NEF",
   "File:FileTypeExtension": "nef",

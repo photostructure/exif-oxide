@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/canon/powershot_s110.jpg",
   "File:FileSize": 2513930,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "powershot_s110.jpg",
   "File:Directory": "test-images/canon",
   "File:FileModifyDate": "2025:07:28 12:41:34-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:27:31-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:43-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -46,11 +46,11 @@
   "Composite:ISO": 75,
   "Composite:Lens": "5.2 - 26.0 mm",
   "Composite:Aperture": 5.9,
+  "Composite:ImageSize": "4000x3000",
+  "Composite:LensID": "Canon 5.2-26.0 mm",
+  "Composite:Megapixels": 12.0,
   "Composite:ShutterSpeed": "1/800",
   "EXIF:ThumbnailImage": "(Binary data 3103 bytes, use -b option to extract)",
   "Composite:DateTimeCreated": "2012:11:25 16:16:14",
-  "MPF:PreviewImage": "(Binary data 305390 bytes, use -b option to extract)",
-  "Composite:ImageSize": "4000x3000",
-  "Composite:LensID": "Canon 5.2-26.0 mm",
-  "Composite:Megapixels": 12.0
+  "MPF:PreviewImage": "(Binary data 305390 bytes, use -b option to extract)"
 }

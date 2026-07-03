@@ -17,6 +17,12 @@ use crate::types::{ExifContext, TagValue};
 /// "$val Hz"
 /// ```
 /// Used by:
+/// - Nikon::FlashInfo0100.RepeatingFlashRate
+/// - Nikon::FlashInfo0102.RepeatingFlashRate
+/// - Nikon::FlashInfo0103.RepeatingFlashRate
+/// - Nikon::FlashInfo0106.RepeatingFlashRate
+/// - Nikon::FlashInfo0107.RepeatingFlashRate
+/// - Nikon::FlashInfo0300.RepeatingFlashRate
 /// - Nikon::ShotInfoD800.RepeatingFlashRateBuilt-in
 /// - Nikon::ShotInfoD800.RepeatingFlashRateExternal
 pub fn ast_print_270a5dae063a1f32(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {

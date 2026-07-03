@@ -76,10 +76,13 @@ use crate::types::{ExifContext, TagValue};
 /// - Olympus::MOV2.ExposureTime
 /// - Olympus::Main.ShutterSpeedValue
 /// - PanasonicRaw::CameraIFD.ShutterSpeedValue
+/// - Pentax::AEInfo.AEExposureTime
+/// - Pentax::AEInfo.AEMinExposureTime
 /// - Pentax::AEInfo2.AEExposureTime
 /// - Pentax::AEInfo2.AEMinExposureTime
 /// - Pentax::AEInfo3.AEExposureTime
 /// - Pentax::AEInfo3.AEMinExposureTime
+/// - Pentax::CameraSettings.TvExposureTimeSetting
 /// - Pentax::MOV.ExposureTime
 /// - Pentax::PENT.ExposureTime
 /// - Samsung::MP4.ExposureTime

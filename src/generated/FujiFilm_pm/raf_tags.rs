@@ -212,6 +212,16 @@ pub static FUJI_FILM_RAF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             },
         ),
         (
+            9232,
+            TagInfo {
+                name: "WB_GRGBLevelsFlash",
+                format: "int16u",
+                print_conv: None,
+                value_conv: None,
+                is_offset: false,
+            },
+        ),
+        (
             12272,
             TagInfo {
                 name: "WB_GRGBLevels",

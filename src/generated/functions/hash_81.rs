@@ -15,6 +15,29 @@ use crate::types::{ExifContext, TagValue};
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// ($val >> 4) * ($val & 0x0f)
+/// ```
+/// Used by:
+/// - Pentax::CAFPointInfo.NumCAFPoints
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_815bd09165f3fde6(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                             // tag_id will be filled at runtime
+        "UnknownTag",                  // tag_name will be filled at runtime
+        "UnknownGroup",                // group will be filled at runtime
+        "($val >> 4) * ($val & 0x0f)", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// 100*exp(($val/12-5)*log(2))
 /// ```
 /// Used by:
@@ -23,7 +46,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::ShotInfoD300S.ISO2
 /// - Nikon::ShotInfoD300a.ISO2
 /// - Nikon::ShotInfoD300b.ISO2
+/// - Nikon::ShotInfoD3S.ISO2
 /// - Nikon::ShotInfoD3X.ISO2
+/// - Nikon::ShotInfoD3a.ISO2
+/// - Nikon::ShotInfoD3b.ISO2
 /// - Nikon::ShotInfoD5000.ISO2
 /// - Nikon::ShotInfoD700.ISO2
 /// - Nikon::ShotInfoD90.ISO2

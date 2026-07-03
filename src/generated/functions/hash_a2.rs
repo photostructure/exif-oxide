@@ -25,6 +25,20 @@ pub fn ast_value_a26d2224d57eefbf(
     Ok(val & 0x7ffu32)
 }
 
+/// Original perl expression:
+/// ``` perl
+/// $val>0.99 ? "Full" : sprintf("%.0f%%",$val*100)
+/// ```
+/// Used by:
+/// - Nikon::FlashInfo0300.FlashOutput
+pub fn ast_print_a2e2c62119aee928(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if val > 0.99f64 {
+        Into::<TagValue>::into("Full")
+    } else {
+        TagValue::String(crate::core::sprintf_perl("%.0f%%", &[val * 100i32]))
+    }
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl

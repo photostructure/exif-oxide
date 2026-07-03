@@ -14,6 +14,16 @@ use crate::types::{ExifContext, TagValue};
 
 /// Original perl expression:
 /// ``` perl
+/// "$val ms"
+/// ```
+/// Used by:
+/// - Pentax::AFInfo.AFIntegrationTime
+pub fn ast_print_5612defc7b723962(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    Into::<TagValue>::into(format!("{} ms", val))
+}
+
+/// Original perl expression:
+/// ``` perl
 /// $val ? 2 ** (6 - $val/8) : 0
 /// ```
 /// Used by:
@@ -21,6 +31,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::CameraSettings.ShutterSpeedSetting
 /// - Sony::CameraSettings2.ExposureTime
 /// - Sony::CameraSettings2.ShutterSpeedSetting
+/// - Sony::CameraSettings3.ShutterSpeedSetting
 /// - Sony::MoreSettings.ExposureTime
 pub fn ast_value_560b6cca7eb11de6(
     val: &TagValue,

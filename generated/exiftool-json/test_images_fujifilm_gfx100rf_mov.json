@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/fujifilm/gfx100rf.mov",
   "File:FileSize": 316525568,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "gfx100rf.mov",
   "File:Directory": "test-images/fujifilm",
   "File:FileModifyDate": "2025:07:28 13:14:26-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:23:08-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:45-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "MOV",
   "File:FileTypeExtension": "mov",

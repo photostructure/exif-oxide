@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/hasselblad/x1d_ii_50c.jpg",
   "File:FileSize": 18435453,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "x1d_ii_50c.jpg",
   "File:Directory": "test-images/hasselblad",
   "File:FileModifyDate": "2025:07:28 13:06:32-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:23:05-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:52-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -35,10 +35,10 @@
   "File:ImageWidth": 6200,
   "File:ImageHeight": 8272,
   "Composite:Aperture": 13.0,
+  "Composite:ImageSize": "6200x8272",
+  "Composite:Megapixels": 51.3,
   "Composite:ShutterSpeed": 0.6,
   "Composite:SubSecModifyDate": "2020:02:04 11:44:47-08:00",
   "EXIF:ThumbnailImage": "(Binary data 12612 bytes, use -b option to extract)",
-  "Composite:DateTimeCreated": "2020:01:20 17:43:02",
-  "Composite:ImageSize": "6200x8272",
-  "Composite:Megapixels": 51.3
+  "Composite:DateTimeCreated": "2020:01:20 17:43:02"
 }

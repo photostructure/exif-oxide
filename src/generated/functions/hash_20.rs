@@ -25,6 +25,7 @@ use crate::types::{ExifContext, TagValue};
 /// - PanasonicRaw::Main.RedBalance
 /// - Pentax::Main.BlueBalance
 /// - Pentax::Main.RedBalance
+/// - QuickTime::HEVCConfig.AverageFrameRate
 /// - QuickTime::MovieHeader.PreferredVolume
 /// - QuickTime::TrackHeader.TrackVolume
 pub fn ast_value_2019c96d765dcb89(

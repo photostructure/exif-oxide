@@ -9,6 +9,7 @@ use std::sync::LazyLock;
 // Generated imports for conversion functions
 use crate::generated::functions::hash_26::ast_print_26ee0ff5e974d8e1;
 use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_98::ast_value_984abc3c82dcf40d;
 use crate::generated::functions::hash_be::ast_print_be9ef414392ffbfb;
 use crate::generated::functions::hash_c3::ast_value_c3ac357278ffbbb0;
 use crate::generated::functions::hash_cf::ast_print_cfce5cd5c31bbe17;
@@ -807,7 +808,7 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
                 name: "Duration",
                 format: "float",
                 print_conv: Some(PrintConv::Function(ast_print_26ee0ff5e974d8e1)),
-                value_conv: Some(ValueConv::Function(ast_value_d99cb324d081e015)),
+                value_conv: Some(ValueConv::Function(ast_value_984abc3c82dcf40d)),
                 is_offset: false,
             },
         ),
@@ -1497,7 +1498,15 @@ pub static MATROSKA_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "TargetTypeValue",
                 format: "unsigned",
-                print_conv: None,
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("10".to_string(), "Shot"),
+                    ("20".to_string(), "Scene/Subtrack"),
+                    ("30".to_string(), "Chapter/Track"),
+                    ("40".to_string(), "Session"),
+                    ("50".to_string(), "Movie/Album"),
+                    ("60".to_string(), "Season/Edition"),
+                    ("70".to_string(), "Collection"),
+                ]))),
                 value_conv: None,
                 is_offset: false,
             },

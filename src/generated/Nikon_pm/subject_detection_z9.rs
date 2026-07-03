@@ -14,6 +14,7 @@ static SUBJECT_DETECTION_Z9_DATA: &[(u8, &'static str)] = &[
     (4, "Vehicles"),
     (5, "Birds"),
     (6, "Airplanes"),
+    (7, "Faces"),
 ];
 
 /// subjectDetectionZ9 lookup table

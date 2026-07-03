@@ -7,8 +7,18 @@ use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Tag definitions for CanonRaw::WhiteSample table
-pub static CANON_RAW_WHITESAMPLE_TAGS: LazyLock<HashMap<u16, TagInfo>> =
-    LazyLock::new(HashMap::new);
+pub static CANON_RAW_WHITESAMPLE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
+    HashMap::from([(
+        55,
+        TagInfo {
+            name: "BlackLevels",
+            format: "int16u[4]",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        },
+    )])
+});
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

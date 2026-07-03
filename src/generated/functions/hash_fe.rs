@@ -64,3 +64,26 @@ pub fn ast_value_fe43e57cbf611581(
         val,
     ))
 }
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// my @a=split " ",$val;$_>32767 and $_-=65536 foreach @a;join " ",@a
+/// ```
+/// Used by:
+/// - Pentax::AFInfo.AFPointValues
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_fea450b60686e1cf(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "my @a=split \" \",$val;$_>32767 and $_-=65536 foreach @a;join \" \",@a", // original expression
+        val,
+    ))
+}

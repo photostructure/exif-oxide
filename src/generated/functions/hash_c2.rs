@@ -17,6 +17,7 @@ use crate::types::{ExifContext, TagValue};
 /// sprintf("Ver.%.2x.%.3d",$val>>8,$val&0xff)
 /// ```
 /// Used by:
+/// - Sony::CameraSettings3.LensFirmwareVersion
 /// - Sony::Tag940c.LensFirmwareVersion
 pub fn ast_print_c23821edccdd4b5c(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(crate::core::sprintf_perl(

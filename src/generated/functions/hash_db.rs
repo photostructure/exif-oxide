@@ -17,6 +17,9 @@ use crate::types::{ExifContext, TagValue};
 /// -$val / 2
 /// ```
 /// Used by:
+/// - Pentax::LevelInfo.CompositionAdjustRotation
+/// - Pentax::LevelInfo.PitchAngle
+/// - Pentax::LevelInfo.RollAngle
 /// - Pentax::LevelInfoK3III.PitchAngle
 /// - Pentax::LevelInfoK3III.RollAngle
 pub fn ast_value_db584f0afe19b808(

@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/samsung/sm_g980f.jpg",
   "File:FileSize": 3505408,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "sm_g980f.jpg",
   "File:Directory": "test-images/samsung",
   "File:FileModifyDate": "2025:07:27 23:08:46-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:12:07-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:05-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",

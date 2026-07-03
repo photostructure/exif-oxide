@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/canon/powershot_v1.jpg",
   "File:FileSize": 9365789,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "powershot_v1.jpg",
   "File:Directory": "test-images/canon",
   "File:FileModifyDate": "2025:07:27 23:09:58-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:12:07-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:43-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -49,14 +49,14 @@
   "Composite:ISO": 130,
   "Composite:Lens": "8.2 - 25.6 mm",
   "Composite:Aperture": 4.5,
+  "Composite:ImageSize": "5760x3840",
+  "Composite:LensID": "Unknown 8-25mm",
+  "Composite:Megapixels": 22.1,
   "Composite:ShutterSpeed": "1/640",
   "Composite:SubSecCreateDate": "2025:05:04 14:23:26.89-08:00",
   "Composite:SubSecDateTimeOriginal": "2025:05:04 14:23:26.89-08:00",
   "Composite:SubSecModifyDate": "2025:05:04 14:23:26.89-08:00",
   "EXIF:ThumbnailImage": "(Binary data 23467 bytes, use -b option to extract)",
   "Composite:DateTimeCreated": "2025:05:04 14:23:26-08:00",
-  "MPF:PreviewImage": "(Binary data 631987 bytes, use -b option to extract)",
-  "Composite:ImageSize": "5760x3840",
-  "Composite:LensID": "Unknown 8-25mm",
-  "Composite:Megapixels": 22.1
+  "MPF:PreviewImage": "(Binary data 631987 bytes, use -b option to extract)"
 }

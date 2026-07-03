@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/leica_camera_ag/leica_m10-r.dng",
   "File:FileSize": 41492344,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "leica_m10-r.dng",
   "File:Directory": "test-images/leica_camera_ag",
   "File:FileModifyDate": "2025:07:28 13:00:23-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:23:06-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:53-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "DNG",
   "File:FileTypeExtension": "dng",

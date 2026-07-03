@@ -17,6 +17,29 @@ use crate::types::{ExifContext, TagValue};
 /// -$val/6
 /// ```
 /// Used by:
+/// - Nikon::FlashInfo0100.FlashCompensation
+/// - Nikon::FlashInfo0100.FlashGroupACompensation
+/// - Nikon::FlashInfo0100.FlashGroupBCompensation
+/// - Nikon::FlashInfo0102.FlashCompensation
+/// - Nikon::FlashInfo0102.FlashGroupACompensation
+/// - Nikon::FlashInfo0102.FlashGroupBCompensation
+/// - Nikon::FlashInfo0102.FlashGroupCCompensation
+/// - Nikon::FlashInfo0103.ExternalFlashCompensation
+/// - Nikon::FlashInfo0103.FlashCompensation
+/// - Nikon::FlashInfo0103.FlashExposureComp3
+/// - Nikon::FlashInfo0103.FlashExposureComp4
+/// - Nikon::FlashInfo0103.FlashGroupACompensation
+/// - Nikon::FlashInfo0103.FlashGroupBCompensation
+/// - Nikon::FlashInfo0103.FlashGroupCCompensation
+/// - Nikon::FlashInfo0106.FlashCompensation
+/// - Nikon::FlashInfo0106.FlashGroupACompensation
+/// - Nikon::FlashInfo0106.FlashGroupBCompensation
+/// - Nikon::FlashInfo0106.FlashGroupCCompensation
+/// - Nikon::FlashInfo0107.FlashCompensation
+/// - Nikon::FlashInfo0107.FlashGroupACompensation
+/// - Nikon::FlashInfo0107.FlashGroupBCompensation
+/// - Nikon::FlashInfo0107.FlashGroupCCompensation
+/// - Nikon::FlashInfo0300.FlashCompensation
 /// - Nikon::ShotInfoD800.FlashExposureComp2
 pub fn ast_value_19012828a00d9b7(
     val: &TagValue,

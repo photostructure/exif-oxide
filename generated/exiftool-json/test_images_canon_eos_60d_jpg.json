@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/canon/eos_60d.jpg",
   "File:FileSize": 7197150,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "eos_60d.jpg",
   "File:Directory": "test-images/canon",
   "File:FileModifyDate": "2025:07:28 12:49:52-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:27:31-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:37-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -57,12 +57,12 @@
   "File:ImageWidth": 3456,
   "File:ImageHeight": 5184,
   "Composite:Aperture": 4.0,
+  "Composite:ImageSize": "3456x5184",
+  "Composite:Megapixels": 17.9,
   "Composite:ShutterSpeed": "1/2000",
   "Composite:SubSecCreateDate": "2000:01:01 00:03:18.44",
   "Composite:SubSecDateTimeOriginal": "2000:01:01 00:03:18.44",
   "Composite:SubSecModifyDate": "2010:09:20 16:20:32.44",
   "EXIF:ThumbnailImage": "(Binary data 5006 bytes, use -b option to extract)",
-  "Composite:ImageSize": "3456x5184",
-  "Composite:Megapixels": 17.9,
   "Composite:LensID": "EF24-105mm f/4L IS USM"
 }

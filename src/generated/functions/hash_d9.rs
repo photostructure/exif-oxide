@@ -20,7 +20,6 @@ use crate::types::{ExifContext, TagValue};
 /// - Matroska::Main.BlockDuration
 /// - Matroska::Main.CueRefTime
 /// - Matroska::Main.CueTime
-/// - Matroska::Main.Duration
 /// - Matroska::Main.ReferenceBlock
 /// - Matroska::Main.TimeCode
 pub fn ast_value_d99cb324d081e015(
@@ -54,6 +53,30 @@ pub fn ast_print_d901a6256d76c6f4(val: &TagValue, ctx: Option<&ExifContext>) -> 
     } else {
         val.clone()
     }
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $self->Options("Unknown") ? $val : $val & 0x7ff
+/// ```
+/// Used by:
+/// - Pentax::AFInfo.AFPointsUnknown1
+/// - Pentax::AFInfo.AFPointsUnknown2
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_d9d6c5d68eff95f8(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                                                   // tag_id will be filled at runtime
+        "UnknownTag",                                        // tag_name will be filled at runtime
+        "UnknownGroup",                                      // group will be filled at runtime
+        "$self->Options(\"Unknown\") ? $val : $val & 0x7ff", // original expression
+        val,
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

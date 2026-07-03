@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/nikon/d750_02.jpg",
   "File:FileSize": 13335322,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "d750_02.jpg",
   "File:Directory": "test-images/nikon",
   "File:FileModifyDate": "2025:07:27 22:46:37-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:02:56-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:55-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",

@@ -22,6 +22,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::MenuSettingsZ9.ISOAutoShutterTime
 /// - Nikon::MenuSettingsZ9v3.ISOAutoShutterTime
 /// - Nikon::MenuSettingsZ9v4.ISOAutoShutterTime
+/// - Pentax::AEInfo.AEBXv
 /// - Pentax::AEInfo2.AEBXv
 /// - Sony::MoreSettings.ExposureCompensation2
 /// - Sony::MoreSettings.FlashExposureCompSet2

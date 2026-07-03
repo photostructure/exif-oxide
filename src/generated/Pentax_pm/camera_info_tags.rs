@@ -165,6 +165,7 @@ pub static PENTAX_CAMERAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
                     ("78520".to_string(), "KF"),
                     ("78550".to_string(), "K-3 Mark III Monochrome"),
                     ("78560".to_string(), "GR IV"),
+                    ("78640".to_string(), "GR IV Monochrome"),
                 ]))),
                 value_conv: None,
                 is_offset: false,

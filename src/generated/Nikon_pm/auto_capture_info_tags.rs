@@ -9,6 +9,7 @@ use std::sync::LazyLock;
 // Generated imports for conversion functions
 use crate::generated::functions::hash_17::ast_print_17c4eccbacff8df4;
 use crate::generated::functions::hash_2c::ast_print_2c5616f5b0afd52d;
+use crate::generated::functions::hash_6a::ast_value_6a2b983323e78027;
 use crate::generated::functions::hash_ad::ast_print_ad2eac416d617233;
 
 /// Tag definitions for Nikon::AutoCaptureInfo table
@@ -151,12 +152,16 @@ pub static NIKON_AUTOCAPTUREINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
                 name: "AutoCaptureCriteriaSubjectType",
                 format: "unknown",
                 print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
-                    ("0".to_string(), "Auto (all)"),
-                    ("1".to_string(), "People"),
-                    ("2".to_string(), "Animals"),
-                    ("3".to_string(), "Vehicle"),
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "Auto"),
+                    ("2".to_string(), "People"),
+                    ("3".to_string(), "Animals"),
+                    ("4".to_string(), "Vehicles"),
+                    ("5".to_string(), "Birds"),
+                    ("6".to_string(), "Airplanes"),
+                    ("7".to_string(), "Faces"),
                 ]))),
-                value_conv: None,
+                value_conv: Some(ValueConv::Function(ast_value_6a2b983323e78027)),
                 is_offset: false,
             },
         ),

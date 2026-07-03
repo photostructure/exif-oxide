@@ -1566,6 +1566,10 @@ static NIKON_LENS_IDS_DATA: &[(&str, &'static str)] = &[
         "Sigma 70-300mm F4-5.6 APO DG Macro HSM",
     ),
     (
+        "E0 40 2D 98 2C 41 DF 0E",
+        "Tamron 18-400mm f/3.5-6.3 Di II VC HLD (B028)",
+    ),
+    (
         "E0 40 2D 98 2C 41 DF 4E",
         "Tamron 18-400mm f/3.5-6.3 Di II VC HLD (B028)",
     ),
@@ -1736,6 +1740,10 @@ static NIKON_LENS_IDS_DATA: &[(&str, &'static str)] = &[
     (
         "FC 40 2D 80 2C 40 DF 06",
         "Tamron AF 18-200mm f/3.5-6.3 XR Di II LD Aspherical (IF) Macro (A14NII)",
+    ),
+    (
+        "FD 00 3C 3C 18 18 DF 00",
+        "Voigtlander APO-Lanthar 28mm F2 Aspherical",
     ),
     ("FD 00 44 44 18 18 DF 00", "Voigtlander APO-Lanthar 35mm F2"),
     (

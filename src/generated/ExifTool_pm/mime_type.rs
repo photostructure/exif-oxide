@@ -78,6 +78,7 @@ static MIME_TYPE_MAP: LazyLock<HashMap<&'static str, &'static str>> = LazyLock::
     map.insert("EXR", "image/x-exr");
     map.insert("EXV", "image/x-exv");
     map.insert("FFF", "image/x-hasselblad-fff");
+    map.insert("FIT", "application/fit");
     map.insert("FITS", "image/fits");
     map.insert("FLA", "application/vnd.adobe.fla");
     map.insert("FLAC", "audio/flac");

@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/google/pixel_7_pro.dng",
   "File:FileSize": 12671788,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "pixel_7_pro.dng",
   "File:Directory": "test-images/google",
   "File:FileModifyDate": "2025:07:28 13:07:45-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:23:09-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:51-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "DNG",
   "File:FileTypeExtension": "dng",

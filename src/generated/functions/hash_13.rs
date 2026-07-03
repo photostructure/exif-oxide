@@ -40,9 +40,13 @@ pub fn ast_value_133a2729aa715f5f(
 
 /// Original perl expression:
 /// ``` perl
-/// sprintf("%.2f V",$val)
+/// sprintf("%.2f V", $val)
 /// ```
 /// Used by:
+/// - Pentax::BatteryInfo.BodyBatteryVoltage
+/// - Pentax::BatteryInfo.BodyBatteryVoltage3
+/// - Pentax::BatteryInfo.BodyBatteryVoltage4
+/// - Pentax::BatteryInfo.GripBatteryVoltage
 /// - Sony::ExtraInfo.BatteryVoltage
 /// - Sony::ExtraInfo3.BatteryVoltage1
 /// - Sony::ExtraInfo3.BatteryVoltage2
@@ -73,6 +77,29 @@ pub fn ast_value_135828bb10970bc4(
         "UnknownTag",                            // tag_name will be filled at runtime
         "UnknownGroup",                          // group will be filled at runtime
         "Image::ExifTool::Exif::ExifTime($val)", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// Image::ExifTool::Pentax::PentaxEv($val)
+/// ```
+/// Used by:
+/// - Pentax::AEInfo.FlashExposureCompSet
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_13b75c0babf8de5d(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                                         // tag_id will be filled at runtime
+        "UnknownTag",                              // tag_name will be filled at runtime
+        "UnknownGroup",                            // group will be filled at runtime
+        "Image::ExifTool::Pentax::PentaxEv($val)", // original expression
         val,
     ))
 }

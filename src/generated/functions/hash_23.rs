@@ -57,3 +57,26 @@ pub fn ast_value_23bd74b0abec6c74(
         val,
     ))
 }
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// Image::ExifTool::Pentax::PentaxEv(64-$val)
+/// ```
+/// Used by:
+/// - Pentax::CameraSettings.BaseExposureCompensation
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_23f77f7e794a8f21(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                                            // tag_id will be filled at runtime
+        "UnknownTag",                                 // tag_name will be filled at runtime
+        "UnknownGroup",                               // group will be filled at runtime
+        "Image::ExifTool::Pentax::PentaxEv(64-$val)", // original expression
+        val,
+    ))
+}

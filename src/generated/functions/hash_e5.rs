@@ -48,6 +48,15 @@ pub fn ast_value_e5ec7e4865db5e5a(
 /// - H264::MDPM.ExposureCompensation
 /// - Kodak::MOV.ExposureCompensation
 /// - Nikon::AVITags.ExposureCompensation
+/// - Nikon::FlashInfo0100.FlashCompensation
+/// - Nikon::FlashInfo0102.FlashCompensation
+/// - Nikon::FlashInfo0103.ExternalFlashCompensation
+/// - Nikon::FlashInfo0103.FlashCompensation
+/// - Nikon::FlashInfo0103.FlashExposureComp3
+/// - Nikon::FlashInfo0103.FlashExposureComp4
+/// - Nikon::FlashInfo0106.FlashCompensation
+/// - Nikon::FlashInfo0107.FlashCompensation
+/// - Nikon::FlashInfo0300.FlashCompensation
 /// - Nikon::MOV.ExposureCompensation
 /// - Nikon::Main.ExposureTuning
 /// - Nikon::Main.ExternalFlashExposureComp

@@ -81,6 +81,8 @@ use crate::types::{ExifContext, TagValue};
 /// - Kodak::Type6.FNumber
 /// - Kodak::Type6.OpticalZoom
 /// - Panasonic::Main.TimeSincePowerOn
+/// - Pentax::BatteryInfo.BodyBatteryVoltage3
+/// - Pentax::BatteryInfo.BodyBatteryVoltage4
 /// - Pentax::Main.DigitalZoom
 /// - Pentax::Main.FocalLength
 /// - Sony::PMP.ExposureCompensation

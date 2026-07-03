@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/sigma/sigma_sd1.jpg",
   "File:FileSize": 7103677,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "sigma_sd1.jpg",
   "File:Directory": "test-images/sigma",
   "File:FileModifyDate": "2025:07:28 13:05:12-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:23:05-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:05-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -41,11 +41,11 @@
   "File:ImageWidth": 4704,
   "File:ImageHeight": 3136,
   "Composite:Aperture": 7.1,
-  "Composite:ImageSize": "4704x3136",
-  "Composite:LensID": "Sigma 18-50mm F2.8-4.5 DC OS HSM",
-  "Composite:Megapixels": 14.8,
   "MakerNotes:PreviewImage": "(Binary data 39371 bytes, use -b option to extract)",
   "Composite:ShutterSpeed": "1/125",
   "EXIF:ThumbnailImage": "(Binary data 11456 bytes, use -b option to extract)",
-  "Composite:DateTimeCreated": "2011:01:14 23:13:22"
+  "Composite:DateTimeCreated": "2011:01:14 23:13:22",
+  "Composite:ImageSize": "4704x3136",
+  "Composite:LensID": "Sigma 18-50mm F2.8-4.5 DC OS HSM",
+  "Composite:Megapixels": 14.8
 }

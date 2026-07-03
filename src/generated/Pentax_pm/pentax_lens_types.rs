@@ -31,6 +31,7 @@ static PENTAX_LENS_TYPES_DATA: &[(&str, &'static str)] = &[
     ("13 253", "HD PENTAX-DA 645 28-45mm F4.5 ED AW SR"),
     ("13 254", "smc PENTAX-DA 645 25mm F4 AL [IF] SDM AW"),
     ("2 0", "A Series Lens"),
+    ("20 0", "Pentax Q Manual Lens (Q, Q10)"),
     ("21 0", "Pentax Q Manual Lens"),
     ("21 1", "01 Standard Prime 8.5mm F1.9"),
     ("21 2", "02 Standard Zoom 5-15mm F2.8-4.5"),

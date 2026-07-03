@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/nikon/e950.jpg",
   "File:FileSize": 437256,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "e950.jpg",
   "File:Directory": "test-images/nikon",
   "File:FileModifyDate": "2025:07:27 23:32:27-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:32:27-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:55-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",

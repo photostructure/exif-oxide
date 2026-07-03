@@ -45,12 +45,26 @@ pub fn ast_value_3908f6cc855d9bf8(
 /// - Sony::CameraSettings.ColorTemperatureSet
 /// - Sony::CameraSettings2.ColorTemperatureCustom
 /// - Sony::CameraSettings2.ColorTemperatureSet
+/// - Sony::CameraSettings3.ColorTemperatureSetting
 /// - Sony::MoreSettings.ColorTemperatureSetting
 pub fn ast_value_39492c8ca08229b1(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(val * 100i32)
+}
+
+/// Original perl expression:
+/// ``` perl
+/// 1 / (1 + $val/32768)
+/// ```
+/// Used by:
+/// - PanasonicRaw::DistortionInfo.DistortionScale
+pub fn ast_value_39adce28b7459aa3(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(1i32 / (1i32 + val / 32768i32))
 }
 
 /// Original perl expression:

@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/fujifilm/x_t3_03.raf",
   "File:FileSize": 56400192,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "x_t3_03.raf",
   "File:Directory": "test-images/fujifilm",
   "File:FileModifyDate": "2020:01:02 12:34:56-08:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:31:52-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:49-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "RAF",
   "File:FileTypeExtension": "raf",

@@ -265,6 +265,11 @@ pub static REGEX_MAGIC_NUMBERS: LazyLock<HashMap<&'static str, Regex>> = LazyLoc
         map.insert("EXIF", regex);
     }
 
+    // Pattern: .{8}\\.FIT
+    if let Ok(regex) = RegexBuilder::new(r".{8}\.FIT").unicode(false).build() {
+        map.insert("FIT", regex);
+    }
+
     // Pattern: SIMPLE  = {20}T
     if let Ok(regex) = RegexBuilder::new(r"SIMPLE  = {20}T").unicode(false).build() {
         map.insert("FITS", regex);
@@ -367,6 +372,15 @@ pub static REGEX_MAGIC_NUMBERS: LazyLock<HashMap<&'static str, Regex>> = LazyLoc
         .build()
     {
         map.insert("JXL", regex);
+    }
+
+    // Pattern: .{2}\\0\\0[A-Z].{31}(CHAR|BOOL|[US](8|16|32|64)|FLOAT|DOUBLE)\\0
+    if let Ok(regex) =
+        RegexBuilder::new(r".{2}\x00\x00[A-Z].{31}(CHAR|BOOL|[US](8|16|32|64)|FLOAT|DOUBLE)\x00")
+            .unicode(false)
+            .build()
+    {
+        map.insert("KVAR", regex);
     }
 
     // Pattern: \\x70\\0{3}.{4}\\x2a.{4}<\\0

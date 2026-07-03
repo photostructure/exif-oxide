@@ -23,7 +23,7 @@ pub fn ast_value_51bd40f5c5652bea(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(val
-        / if val >= 1024i32 {
+        / (if val >= 1024i32 {
             Into::<TagValue>::into(1024i32)
         } else {
             if val >= 256i32 {
@@ -31,7 +31,7 @@ pub fn ast_value_51bd40f5c5652bea(
             } else {
                 Into::<TagValue>::into(100i32)
             }
-        })
+        }))
 }
 
 /// Original perl expression:
@@ -49,7 +49,7 @@ pub fn ast_value_517a89fe0a7b3a4(
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(crate::core::power(
         Into::<TagValue>::into(2i32),
-        Into::<TagValue>::into(val / 8i32 - 1.06f64 / 2i32 as f64),
+        Into::<TagValue>::into((val / 8i32 - 1.06f64) / 2i32 as f64),
     ))
 }
 

@@ -16,7 +16,7 @@ use crate::types::{ExifContext, TagValue};
 /// Original perl expression:
 /// ``` perl
 /// return 'Off' if $val == 0 ;
-/// my $i = sprintf("Frame %.0f of %.0f",$val, $$self{FocusShiftNumberShots}); # something like Frame 1 of 100"   
+/// my $i = sprintf("Frame %.0f of %.0f",$val, $$self{FocusShiftNumberShots}); # something like Frame 1 of 100"
 /// if ($$self{PixelShiftActive} and $$self{PixelShiftActive} eq 1) {$i = sprintf("Frame %.0f",$val);}   #for the Z8 fw3 with PixelShift Enabled, the frame count is correct, but the frame total needs to be multiplied by the number of PixelShift frames (which I cannot find)
 /// return "On: $i"
 /// ```
@@ -30,7 +30,7 @@ pub fn ast_print_73b066728dc7efc5(val: &TagValue, ctx: Option<&ExifContext>) -> 
                     0, // tag_id will be filled at runtime
                     "UnknownTag", // tag_name will be filled at runtime
                     "UnknownGroup", // group will be filled at runtime
-                    "return \'Off\' if $val == 0 ;\n            my $i = sprintf(\"Frame %.0f of %.0f\",$val, $$self{FocusShiftNumberShots}); # something like Frame 1 of 100\"   \n            if ($$self{PixelShiftActive} and $$self{PixelShiftActive} eq 1) {$i = sprintf(\"Frame %.0f\",$val);}   #for the Z8 fw3 with PixelShift Enabled, the frame count is correct, but the frame total needs to be multiplied by the number of PixelShift frames (which I cannot find)\n            return \"On: $i\"", // original expression
+                    "return \'Off\' if $val == 0 ;\n            my $i = sprintf(\"Frame %.0f of %.0f\",$val, $$self{FocusShiftNumberShots}); # something like Frame 1 of 100\"\n            if ($$self{PixelShiftActive} and $$self{PixelShiftActive} eq 1) {$i = sprintf(\"Frame %.0f\",$val);}   #for the Z8 fw3 with PixelShift Enabled, the frame count is correct, but the frame total needs to be multiplied by the number of PixelShift frames (which I cannot find)\n            return \"On: $i\"", // original expression
                     val
                 )
 }

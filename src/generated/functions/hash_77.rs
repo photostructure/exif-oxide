@@ -31,3 +31,23 @@ pub fn ast_print_77d17dd4b5a01f0f(val: &TagValue, ctx: Option<&ExifContext>) -> 
         val,
     )
 }
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// Image::ExifTool::Pentax::DecodeAFPoints($val,$$self{NumCAFPoints},2,0x02)
+/// ```
+/// Used by:
+/// - Pentax::CAFPointInfo.CAFPointsInFocus
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_print_77a9eb0a5d64f5a2(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    crate::core::missing::missing_print_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "Image::ExifTool::Pentax::DecodeAFPoints($val,$$self{NumCAFPoints},2,0x02)", // original expression
+        val,
+    )
+}

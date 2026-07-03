@@ -14,6 +14,20 @@ use crate::types::{ExifContext, TagValue};
 
 /// Original perl expression:
 /// ``` perl
+/// $val + 8
+/// ```
+/// Used by:
+/// - QuickTime::HEVCConfig.BitDepthChroma
+/// - QuickTime::HEVCConfig.BitDepthLuma
+pub fn ast_value_ab156e988c8a2929(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(val + 8i32)
+}
+
+/// Original perl expression:
+/// ``` perl
 /// -($val-64)/8
 /// ```
 /// Used by:

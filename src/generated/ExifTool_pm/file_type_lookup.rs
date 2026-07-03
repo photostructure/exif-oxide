@@ -24,7 +24,6 @@ static EXTENSION_ALIASES: LazyLock<HashMap<&'static str, &'static str>> = LazyLo
     map.insert("EPS2", "EPS");
     map.insert("EPS3", "EPS");
     map.insert("EPSF", "EPS");
-    map.insert("FIT", "FITS");
     map.insert("GZ", "GZIP");
     map.insert("HIF", "HEIF");
     map.insert("HTM", "HTML");
@@ -194,6 +193,13 @@ static FILE_TYPE_FORMATS: LazyLock<HashMap<&'static str, (Vec<&'static str>, &'s
             "FFF",
             (vec!["TIFF", "FLIR"], "Hasselblad Flexible File Format"),
         );
+        map.insert(
+            "FIT",
+            (
+                vec!["FIT"],
+                "Garmin Flexible and Interoperable data Transfer",
+            ),
+        );
         map.insert("FITS", (vec!["FITS"], "Flexible Image Transport System"));
         map.insert("FLA", (vec!["FPX"], "Macromedia/Adobe Flash project"));
         map.insert("FLAC", (vec!["FLAC"], "Free Lossless Audio Codec"));
@@ -252,6 +258,7 @@ static FILE_TYPE_FORMATS: LazyLock<HashMap<&'static str, (Vec<&'static str>, &'s
         map.insert("KDC", (vec!["TIFF"], "Kodak Digital Camera RAW"));
         map.insert("KEY", (vec!["ZIP"], "Apple Keynote presentation"));
         map.insert("KTH", (vec!["ZIP"], "Apple Keynote Theme"));
+        map.insert("KVAR", (vec!["KVAR"], "Kandao Video Asset Resource"));
         map.insert("LA", (vec!["RIFF"], "Lossless Audio"));
         map.insert("LFP", (vec!["LFP"], "Lytro Light Field Picture"));
         map.insert("LIF", (vec!["LIF"], "Leica Image File"));

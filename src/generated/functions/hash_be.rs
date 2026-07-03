@@ -37,6 +37,7 @@ pub fn ast_print_be9ef414392ffbfb(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Nikon::AFTune.AFFineTuneIndex
+/// - Pentax::AEInfo.AEApertureSteps
 /// - Pentax::AEInfo2.AEApertureSteps
 pub fn ast_print_be7395d3480fbf0d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val == 255i32 {

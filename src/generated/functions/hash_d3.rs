@@ -58,3 +58,24 @@ pub fn ast_print_d3d0a75db4fdaf7b(val: &TagValue, ctx: Option<&ExifContext>) -> 
         val,
     )
 }
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// my $foc = ($val & 0x7e) / (($val & 0x01) ? 40 : 400);
+/// return(($val & 0x80 ? 'Manual' : 'Auto') . " ($foc)");
+/// ```
+/// Used by:
+/// - H264::Camera1.Focus
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_print_d38773903cd41f86(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    crate::core::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my $foc = ($val & 0x7e) / (($val & 0x01) ? 40 : 400);\n            return(($val & 0x80 ? \'Manual\' : \'Auto\') . \" ($foc)\");", // original expression
+                    val
+                )
+}

@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/phase_one/iq4_150mp.jpg",
   "File:FileSize": 33762752,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "iq4_150mp.jpg",
   "File:Directory": "test-images/phase_one",
   "File:FileModifyDate": "2025:07:28 13:03:27-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:23:04-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:05-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -38,12 +38,12 @@
   "File:ImageWidth": 14204,
   "File:ImageHeight": 10652,
   "Composite:Aperture": 2.8,
-  "Composite:ImageSize": "14204x10652",
-  "Composite:Megapixels": 151.3,
   "Composite:ShutterSpeed": "1/250",
   "Composite:SubSecModifyDate": "2019:09:13 12:24:57-07:00",
   "EXIF:ThumbnailImage": "(Binary data 15843 bytes, use -b option to extract)",
   "Composite:DateTimeCreated": "2019:08:29 16:01:05",
   "Composite:DigitalCreationDateTime": "2019:08:29 16:01:05",
+  "Composite:ImageSize": "14204x10652",
+  "Composite:Megapixels": 151.3,
   "Composite:LensID": "Schneider Kreuznach LS 80mm f/2.8"
 }

@@ -49,6 +49,7 @@ pub fn ast_value_7153130e168cf02a(
 /// Used by:
 /// - Exif::Main.AsShotProfileName
 /// - Exif::Main.CameraCalibrationSig
+/// - Exif::Main.DevelopmentTypeDescription
 /// - Exif::Main.LocalizedCameraModel
 /// - Exif::Main.OriginalRawFileName
 /// - Exif::Main.PanasonicTitle

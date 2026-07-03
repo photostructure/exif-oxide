@@ -11,11 +11,11 @@
   "Composite:GPSAltitude": 6.18,
   "Composite:GPSPosition": "48.6833566666667 -122.961303333333",
   "File:FileSize": 6616552,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "powershot_g7_x_mark_iii.jpg",
   "File:Directory": "test-images/canon",
   "File:FileModifyDate": "2025:07:28 12:39:04-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:27:31-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:43-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -65,6 +65,9 @@
   "Composite:ISO": 130,
   "Composite:Lens": "8.8 - 36.8 mm",
   "Composite:Aperture": 4.5,
+  "Composite:ImageSize": "5472x3648",
+  "Composite:LensID": "Unknown 8-36mm",
+  "Composite:Megapixels": 20.0,
   "Composite:ShutterSpeed": "1/1600",
   "Composite:SubSecCreateDate": "2019:09:05 14:52:46.27-07:00",
   "Composite:SubSecDateTimeOriginal": "2019:09:05 14:52:46.27-07:00",
@@ -74,8 +77,5 @@
   "Composite:DateTimeCreated": "2019:09:05 14:52:46-07:00",
   "MPF:PreviewImage": "(Binary data 500046 bytes, use -b option to extract)",
   "Composite:GPSLatitudeRef": "North",
-  "Composite:GPSLongitudeRef": "West",
-  "Composite:ImageSize": "5472x3648",
-  "Composite:LensID": "Unknown 8-36mm",
-  "Composite:Megapixels": 20.0
+  "Composite:GPSLongitudeRef": "West"
 }

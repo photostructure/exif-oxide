@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/google/pixel_9_pro_01.jpg",
   "File:FileSize": 2776667,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "pixel_9_pro_01.jpg",
   "File:Directory": "test-images/google",
   "File:FileModifyDate": "2025:07:27 23:02:10-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:02:56-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:51-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",

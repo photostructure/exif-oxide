@@ -402,6 +402,16 @@ pub static XMP_CRS_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> = LazyLock:
             },
         ),
         (
+            "ColorVariance",
+            XmpTagInfo {
+                name: "ColorVariance",
+                writable: Some("real"),
+                list: Some(XmpListType::Seq),
+                resource: false,
+                print_conv: None,
+            },
+        ),
+        (
             "CompatibleVersion",
             XmpTagInfo {
                 name: "CompatibleVersion",
@@ -486,6 +496,16 @@ pub static XMP_CRS_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> = LazyLock:
             XmpTagInfo {
                 name: "CropBottom",
                 writable: Some("real"),
+                list: None,
+                resource: false,
+                print_conv: None,
+            },
+        ),
+        (
+            "CropConstrainToUnitSquare",
+            XmpTagInfo {
+                name: "CropConstrainToUnitSquare",
+                writable: Some("integer"),
                 list: None,
                 resource: false,
                 print_conv: None,
@@ -954,6 +974,16 @@ pub static XMP_CRS_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> = LazyLock:
             XmpTagInfo {
                 name: "HDREditMode",
                 writable: Some("integer"),
+                list: None,
+                resource: false,
+                print_conv: None,
+            },
+        ),
+        (
+            "HDRMaxValue",
+            XmpTagInfo {
+                name: "HDRMaxValue",
+                writable: Some("real"),
                 list: None,
                 resource: false,
                 print_conv: None,
@@ -1695,6 +1725,16 @@ pub static XMP_CRS_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> = LazyLock:
                 name: "PerspectiveY",
                 writable: Some("real"),
                 list: None,
+                resource: false,
+                print_conv: None,
+            },
+        ),
+        (
+            "PointColors",
+            XmpTagInfo {
+                name: "PointColors",
+                writable: Some("string"),
+                list: Some(XmpListType::Seq),
                 resource: false,
                 print_conv: None,
             },

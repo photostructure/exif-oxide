@@ -16,6 +16,7 @@ pub static DUP_TAG_O_K: LazyLock<HashSet<&'static str>> = LazyLock::new(|| {
     set.insert("infe");
     set.insert("maxr");
     set.insert("mdat");
+    set.insert("moof");
     set.insert("sbgp");
     set.insert("sgpd");
     set.insert("trak");

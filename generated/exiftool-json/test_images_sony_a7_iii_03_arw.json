@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/sony/a7_iii_03.arw",
   "File:FileSize": 25025518,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "a7_iii_03.arw",
   "File:Directory": "test-images/sony",
   "File:FileModifyDate": "2025:07:27 23:14:46-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:44:03-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:07-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "ARW",
   "File:FileTypeExtension": "arw",
@@ -49,13 +49,13 @@
   "EXIF:Software": "ILCE-7M3 v1.00",
   "EXIF:ModifyDate": "2018:03:21 11:49:53",
   "Composite:Aperture": 2.8,
-  "Composite:ImageSize": "6048x4024",
-  "Composite:LensID": "Sony FE 90mm F2.8 Macro G OSS",
-  "Composite:Megapixels": 24.3,
   "EXIF:PreviewImage": "(Binary data 529352 bytes, use -b option to extract)",
   "Composite:ShutterSpeed": "1/1250",
   "Composite:SubSecCreateDate": "2018:03:21 11:49:53-07:00",
   "Composite:SubSecDateTimeOriginal": "2018:03:21 11:49:53-07:00",
   "Composite:SubSecModifyDate": "2018:03:21 11:49:53-07:00",
-  "EXIF:ThumbnailImage": "(Binary data 10890 bytes, use -b option to extract)"
+  "EXIF:ThumbnailImage": "(Binary data 10890 bytes, use -b option to extract)",
+  "Composite:ImageSize": "6048x4024",
+  "Composite:LensID": "Sony FE 90mm F2.8 Macro G OSS",
+  "Composite:Megapixels": 24.3
 }

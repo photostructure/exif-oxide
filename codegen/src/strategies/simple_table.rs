@@ -235,7 +235,12 @@ impl ExtractionStrategy for SimpleTableStrategy {
                 k.contains('.') && k.parse::<f64>().is_ok() // Decimal keys like "2.1"
             });
 
-            (all_strings && !has_tag_markers) || is_known_lookup || has_mixed_keys
+            // A tag-definition table (ProcessBinaryData / SubDirectory) can also
+            // contain fractional keys for bit-field subtags (e.g. Nikon
+            // MakerNotes0x56's "4.1"/"4.2" Burst tags added in ExifTool 13.59).
+            // Those must fall through to TagKitStrategy, so the mixed-key path
+            // only claims tables that carry no tag-table markers.
+            ((all_strings || has_mixed_keys) && !has_tag_markers) || is_known_lookup
         } else {
             false
         }
@@ -385,6 +390,62 @@ mod tests {
             },
         };
         assert!(!strategy.can_handle(&mixed_values));
+    }
+
+    /// A ProcessBinaryData tag table (has GROUPS/WRITABLE markers and tag-def
+    /// object values) must NOT be claimed by SimpleTableStrategy even when it
+    /// contains fractional/bit-field keys like "4.1". Regression for
+    /// ExifTool 13.59 Nikon::MakerNotes0x56, whose new fractional Burst subtags
+    /// caused it to be misrouted here (dropping its ValueConv function and
+    /// leaving a dangling TagKit reference). See simple_table.rs can_handle.
+    #[test]
+    fn test_can_handle_rejects_tag_table_with_fractional_keys() {
+        let strategy = SimpleTableStrategy::new();
+
+        // Mirrors the shape of Nikon::MakerNotes0x56 as extracted in 13.59:
+        // binary-data table attributes + integer/fractional tag-id keys whose
+        // values are tag-definition objects.
+        let binary_data_table = FieldSymbol {
+            symbol_type: "hash".to_string(),
+            name: "MakerNotes0x56".to_string(),
+            data: json!({
+                "GROUPS": {"0": "MakerNotes"},
+                "WRITABLE": 1,
+                "PROCESS_PROC": "[Function: Image::ExifTool::ProcessBinaryData]",
+                "0": {"Name": "FirmwareVersion56", "Format": "string[4]",
+                       "ValueConv": "$val =~ s/(\\d{2})/$1./; $val"},
+                "4": {"Name": "BurstFlag", "RawConv": "$$self{BurstFlag} = $val; undef"},
+                "4.1": {"Name": "BurstStartSlotNumber", "Format": "int32u"},
+                "4.2": {"Name": "BurstStartFolderNumber", "Format": "int32u"},
+                "12": {"Name": "PixelShiftID", "Format": "unknown"},
+            }),
+            module: "Nikon".to_string(),
+            metadata: FieldMetadata {
+                size: 15,
+                is_composite_table: 0,
+            },
+        };
+        assert!(
+            !strategy.can_handle(&binary_data_table),
+            "tag tables with fractional keys must fall through to TagKitStrategy"
+        );
+
+        // A genuine mixed-key lookup (decimal keys, no tag-table markers) must
+        // still be claimed here, e.g. canonLensTypes-style tables.
+        let mixed_key_lookup = FieldSymbol {
+            symbol_type: "hash".to_string(),
+            name: "someLensTypes".to_string(),
+            data: json!({"1": "Lens A", "2.1": "Lens B", "2.2": "Lens C"}),
+            module: "Canon".to_string(),
+            metadata: FieldMetadata {
+                size: 3,
+                is_composite_table: 0,
+            },
+        };
+        assert!(
+            strategy.can_handle(&mixed_key_lookup),
+            "mixed-key lookup tables without tag markers must still be claimed"
+        );
     }
 
     #[test]

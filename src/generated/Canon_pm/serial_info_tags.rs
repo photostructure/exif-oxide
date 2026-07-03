@@ -8,16 +8,28 @@ use std::sync::LazyLock;
 
 /// Tag definitions for Canon::SerialInfo table
 pub static CANON_SERIALINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
-    HashMap::from([(
-        9,
-        TagInfo {
-            name: "InternalSerialNumber",
-            format: "string",
-            print_conv: None,
-            value_conv: None,
-            is_offset: false,
-        },
-    )])
+    HashMap::from([
+        (
+            0,
+            TagInfo {
+                name: "InternalSerialNumber2",
+                format: "string[9]",
+                print_conv: None,
+                value_conv: None,
+                is_offset: false,
+            },
+        ),
+        (
+            9,
+            TagInfo {
+                name: "InternalSerialNumber",
+                format: "string",
+                print_conv: None,
+                value_conv: None,
+                is_offset: false,
+            },
+        ),
+    ])
 });
 
 /// Apply ValueConv transformation for tags in this table

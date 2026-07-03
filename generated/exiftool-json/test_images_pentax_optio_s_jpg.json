@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/pentax/optio_s.jpg",
   "File:FileSize": 1003854,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "optio_s.jpg",
   "File:Directory": "test-images/pentax",
   "File:FileModifyDate": "2025:07:27 23:39:15-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:39:15-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:03-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -34,9 +34,9 @@
   "File:ImageWidth": 2048,
   "File:ImageHeight": 1536,
   "Composite:Aperture": 3.1,
-  "Composite:ImageSize": "2048x1536",
-  "Composite:Megapixels": 3.1,
   "MakerNotes:PreviewImage": "(Binary data 31030 bytes, use -b option to extract)",
   "Composite:ShutterSpeed": "1/13",
-  "EXIF:ThumbnailImage": "(Binary data 8400 bytes, use -b option to extract)"
+  "EXIF:ThumbnailImage": "(Binary data 8400 bytes, use -b option to extract)",
+  "Composite:ImageSize": "2048x1536",
+  "Composite:Megapixels": 3.1
 }

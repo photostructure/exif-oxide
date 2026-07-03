@@ -35,6 +35,19 @@ pub fn ast_value_8fc30c76278103b9(
     )
 }
 
+/// Original perl expression:
+/// ``` perl
+/// $val - 20
+/// ```
+/// Used by:
+/// - Sony::CameraInfo.AFMicroAdjValue
+pub fn ast_value_8ff9a8173e637a2f(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(val - 20i32)
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl

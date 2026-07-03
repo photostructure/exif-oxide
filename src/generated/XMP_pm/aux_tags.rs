@@ -134,6 +134,16 @@ pub static XMP_AUX_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> = LazyLock:
             },
         ),
         (
+            "FujiRatingAlreadyApplied",
+            XmpTagInfo {
+                name: "FujiRatingAlreadyApplied",
+                writable: Some("boolean"),
+                list: None,
+                resource: false,
+                print_conv: None,
+            },
+        ),
+        (
             "ImageNumber",
             XmpTagInfo {
                 name: "ImageNumber",

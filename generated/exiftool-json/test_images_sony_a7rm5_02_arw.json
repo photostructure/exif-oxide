@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/sony/a7rm5_02.arw",
   "File:FileSize": 84135936,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "a7rm5_02.arw",
   "File:Directory": "test-images/sony",
   "File:FileModifyDate": "2025:07:27 22:48:20-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:03:10-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:12-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "ARW",
   "File:FileTypeExtension": "arw",
@@ -50,14 +50,14 @@
   "EXIF:LensInfo": "24-70mm f/2.8",
   "EXIF:LensModel": "FE 24-70mm F2.8 GM II",
   "Composite:Aperture": 2.8,
-  "Composite:ImageSize": "9728x6656",
   "EXIF:JpgFromRaw": "(Binary data 5250860 bytes, use -b option to extract)",
-  "Composite:LensID": "Sony FE 24-70mm F2.8 GM II",
-  "Composite:Megapixels": 64.7,
   "EXIF:PreviewImage": "(Binary data 305249 bytes, use -b option to extract)",
   "Composite:ShutterSpeed": "1/250",
   "Composite:SubSecCreateDate": "2022:12:18 16:29:26.748-07:00",
   "Composite:SubSecDateTimeOriginal": "2022:12:18 16:29:26.748-07:00",
   "Composite:SubSecModifyDate": "2022:12:18 16:29:26.748-07:00",
-  "EXIF:ThumbnailImage": "(Binary data 9730 bytes, use -b option to extract)"
+  "EXIF:ThumbnailImage": "(Binary data 9730 bytes, use -b option to extract)",
+  "Composite:ImageSize": "9728x6656",
+  "Composite:LensID": "Sony FE 24-70mm F2.8 GM II",
+  "Composite:Megapixels": 64.7
 }

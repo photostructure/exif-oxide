@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/canon/eos_d60.jpg",
   "File:FileSize": 3742593,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "eos_d60.jpg",
   "File:Directory": "test-images/canon",
   "File:FileModifyDate": "2025:07:28 12:42:44-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:27:31-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:37-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -38,9 +38,9 @@
   "Composite:ISO": 400,
   "Composite:Lens": "28.0 - 70.0 mm",
   "Composite:Aperture": 6.3,
-  "Composite:ShutterSpeed": "1/15",
-  "EXIF:ThumbnailImage": "(Binary data 11264 bytes, use -b option to extract)",
   "Composite:ImageSize": "2048x3072",
   "Composite:LensID": "Unknown 28-70mm",
-  "Composite:Megapixels": 6.3
+  "Composite:Megapixels": 6.3,
+  "Composite:ShutterSpeed": "1/15",
+  "EXIF:ThumbnailImage": "(Binary data 11264 bytes, use -b option to extract)"
 }

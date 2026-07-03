@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/sony/xq_be62_01.jpg",
   "File:FileSize": 2328084,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "xq_be62_01.jpg",
   "File:Directory": "test-images/sony",
   "File:FileModifyDate": "2025:07:27 23:03:22-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:12:08-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:12-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -35,11 +35,11 @@
   "File:ImageWidth": 4032,
   "File:ImageHeight": 3024,
   "Composite:Aperture": 2.0,
-  "Composite:ImageSize": "4032x3024",
-  "Composite:Megapixels": 12.2,
   "Composite:ShutterSpeed": "1/640",
   "Composite:SubSecCreateDate": "2021:10:22 12:22:47.560291-07:00",
   "Composite:SubSecDateTimeOriginal": "2021:10:22 12:22:47.560291-07:00",
   "Composite:SubSecModifyDate": "2021:10:22 12:22:47.560291-07:00",
-  "EXIF:ThumbnailImage": "(Binary data 8314 bytes, use -b option to extract)"
+  "EXIF:ThumbnailImage": "(Binary data 8314 bytes, use -b option to extract)",
+  "Composite:ImageSize": "4032x3024",
+  "Composite:Megapixels": 12.2
 }

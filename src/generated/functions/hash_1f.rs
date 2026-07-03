@@ -65,6 +65,7 @@ pub fn ast_value_1fe8870e96a60dd1(
 /// - Canon::CameraInfoPowerShot2.ISO
 /// - Canon::ShotInfo.AutoISO
 /// - Canon::ShotInfo.BaseISO
+/// - Pentax::AEInfo.AEMinAperture
 /// - Pentax::AEInfo2.AEMinAperture
 /// - Pentax::AEInfo3.AEMinAperture
 /// - Sony::Tag2010b.SonyISO

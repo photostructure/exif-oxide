@@ -11,8 +11,8 @@ pub static CANON_CAMERAINFOR6M3_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
     HashMap::from([(
         2157,
         TagInfo {
-            name: "ShutterCount",
-            format: "int32u",
+            name: "ImageCount",
+            format: "int16u",
             print_conv: None,
             value_conv: None,
             is_offset: false,

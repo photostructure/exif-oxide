@@ -12,6 +12,20 @@
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
 
+/// Original perl expression:
+/// ``` perl
+/// $val==42 ? "Out of range" : "$val dB"
+/// ```
+/// Used by:
+/// - H264::Camera1.Gain
+pub fn ast_print_e8362eee1a97a77d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if val == 42i32 {
+        Into::<TagValue>::into("Out of range")
+    } else {
+        Into::<TagValue>::into(format!("{} dB", val))
+    }
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl

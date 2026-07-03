@@ -12,7 +12,7 @@ static COMPRESSION_DATA: &[(u16, &'static str)] = &[
     (2, "CCITT 1D"),
     (262, "Kodak 262"),
     (3, "T4/Group 3 Fax"),
-    (32766, "Next"),
+    (32766, "NeXt or Sony ARW Compressed 2"),
     (32767, "Sony ARW Compressed"),
     (32769, "Packed RAW"),
     (32770, "Samsung SRW Compressed"),
@@ -61,7 +61,7 @@ static COMPRESSION_DATA: &[(u16, &'static str)] = &[
     (65535, "Pentax PEF Compressed"),
     (7, "JPEG"),
     (8, "Adobe Deflate"),
-    (9, "JBIG B&W"),
+    (9, "JBIG B&W or VC-5"),
     (99, "JPEG"),
 ];
 

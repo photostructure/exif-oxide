@@ -275,7 +275,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             175,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown11",
+                name: "WB_RGGBLevelsUnknown12",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -285,7 +285,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             179,
             TagInfo {
-                name: "ColorTempUnknown11",
+                name: "ColorTempUnknown12",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -295,7 +295,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             180,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown12",
+                name: "WB_RGGBLevelsUnknown13",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -305,7 +305,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             184,
             TagInfo {
-                name: "ColorTempUnknown12",
+                name: "ColorTempUnknown13",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -315,7 +315,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             185,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown13",
+                name: "WB_RGGBLevelsUnknown14",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -325,7 +325,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             189,
             TagInfo {
-                name: "ColorTempUnknown13",
+                name: "ColorTempUnknown14",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -335,7 +335,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             190,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown14",
+                name: "WB_RGGBLevelsUnknown15",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -345,7 +345,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             194,
             TagInfo {
-                name: "ColorTempUnknown14",
+                name: "ColorTempUnknown15",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -355,7 +355,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             195,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown15",
+                name: "WB_RGGBLevelsUnknown16",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -365,7 +365,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             199,
             TagInfo {
-                name: "ColorTempUnknown15",
+                name: "ColorTempUnknown16",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -375,7 +375,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             200,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown16",
+                name: "WB_RGGBLevelsUnknown17",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -385,7 +385,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             204,
             TagInfo {
-                name: "ColorTempUnknown16",
+                name: "ColorTempUnknown17",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -465,7 +465,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             240,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown17",
+                name: "WB_RGGBLevelsUnknown18",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -475,7 +475,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             244,
             TagInfo {
-                name: "ColorTempUnknown17",
+                name: "ColorTempUnknown18",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -485,7 +485,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             245,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown18",
+                name: "WB_RGGBLevelsUnknown19",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -495,7 +495,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             249,
             TagInfo {
-                name: "ColorTempUnknown18",
+                name: "ColorTempUnknown19",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -505,7 +505,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             250,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown19",
+                name: "WB_RGGBLevelsUnknown20",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -515,7 +515,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             254,
             TagInfo {
-                name: "ColorTempUnknown19",
+                name: "ColorTempUnknown20",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -525,7 +525,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             255,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown20",
+                name: "WB_RGGBLevelsUnknown21",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -535,7 +535,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             259,
             TagInfo {
-                name: "ColorTempUnknown20",
+                name: "ColorTempUnknown21",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -545,7 +545,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             260,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown21",
+                name: "WB_RGGBLevelsUnknown22",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -555,7 +555,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             264,
             TagInfo {
-                name: "ColorTempUnknown21",
+                name: "ColorTempUnknown22",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -565,7 +565,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             265,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown22",
+                name: "WB_RGGBLevelsUnknown23",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -575,7 +575,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             269,
             TagInfo {
-                name: "ColorTempUnknown22",
+                name: "ColorTempUnknown23",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -585,7 +585,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             270,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown23",
+                name: "WB_RGGBLevelsUnknown24",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -595,7 +595,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             274,
             TagInfo {
-                name: "ColorTempUnknown23",
+                name: "ColorTempUnknown24",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -605,7 +605,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             275,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown24",
+                name: "WB_RGGBLevelsUnknown25",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -615,7 +615,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             279,
             TagInfo {
-                name: "ColorTempUnknown24",
+                name: "ColorTempUnknown25",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -625,7 +625,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             280,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown25",
+                name: "WB_RGGBLevelsUnknown26",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -635,7 +635,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             284,
             TagInfo {
-                name: "ColorTempUnknown25",
+                name: "ColorTempUnknown26",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -645,7 +645,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             285,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown26",
+                name: "WB_RGGBLevelsUnknown27",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -655,7 +655,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             289,
             TagInfo {
-                name: "ColorTempUnknown26",
+                name: "ColorTempUnknown27",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,
@@ -665,7 +665,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             290,
             TagInfo {
-                name: "WB_RGGBLevelsUnknown27",
+                name: "WB_RGGBLevelsUnknown28",
                 format: "int16s[4]",
                 print_conv: None,
                 value_conv: None,
@@ -675,7 +675,7 @@ pub static CANON_COLORDATA11_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::n
         (
             294,
             TagInfo {
-                name: "ColorTempUnknown27",
+                name: "ColorTempUnknown28",
                 format: "unknown",
                 print_conv: None,
                 value_conv: None,

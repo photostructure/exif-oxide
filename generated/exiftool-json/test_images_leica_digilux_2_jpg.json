@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/leica/digilux_2.jpg",
   "File:FileSize": 3569361,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "digilux_2.jpg",
   "File:Directory": "test-images/leica",
   "File:FileModifyDate": "2025:07:28 12:59:03-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:23:05-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:52-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",

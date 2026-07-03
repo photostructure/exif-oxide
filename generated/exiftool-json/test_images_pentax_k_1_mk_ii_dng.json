@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/pentax/k_1_mk_ii.dng",
   "File:FileSize": 45303056,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "k_1_mk_ii.dng",
   "File:Directory": "test-images/pentax",
   "File:FileModifyDate": "2025:07:28 13:11:37-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:39:48-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:02-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "DNG",
   "File:FileTypeExtension": "dng",
@@ -36,11 +36,11 @@
   "MakerNotes:LensType": "HD PENTAX-D FA 24-70mm F2.8 ED SDM WR",
   "MakerNotes:InternalSerialNumber": 2037138,
   "Composite:Aperture": 2.8,
-  "Composite:ImageSize": "7392x4950",
-  "Composite:LensID": "HD PENTAX-D FA 24-70mm F2.8 ED SDM WR",
-  "Composite:Megapixels": 36.6,
   "EXIF:PreviewImage": "(Binary data 4697488 bytes, use -b option to extract)",
   "MakerNotes:PreviewImage": "(Binary data 57110 bytes, use -b option to extract)",
   "Composite:ShutterSpeed": "1/100",
+  "Composite:ImageSize": "7392x4950",
+  "Composite:LensID": "HD PENTAX-D FA 24-70mm F2.8 ED SDM WR",
+  "Composite:Megapixels": 36.6,
   "EXIF:ThumbnailTIFF": "(Binary data 57816 bytes, use -b option to extract)"
 }

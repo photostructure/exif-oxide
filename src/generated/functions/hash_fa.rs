@@ -49,7 +49,11 @@ pub fn ast_value_fafc7ff7466a1cb8(
 /// $val ? sprintf("%.2fV", $val * 5 / 186) : "n/a"
 /// ```
 /// Used by:
+/// - Canon::ColorData10.FlashBatteryLevel
+/// - Canon::ColorData12.FlashBatteryLevel
 /// - Canon::ColorData3.FlashBatteryLevel
+/// - Canon::ColorData4.FlashBatteryLevel
+/// - Canon::ColorData7.FlashBatteryLevel
 pub fn ast_print_fa6707f1bb13135d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val.is_truthy() {
         TagValue::String(crate::core::sprintf_perl("%.2fV", &[val * 5i32 / 186i32]))

@@ -12,7 +12,7 @@ pub static FUJI_FILM_RAFHEADER_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock:
         (
             60,
             TagInfo {
-                name: "RAFVersion",
+                name: "FirmwareVersion",
                 format: "undef[4]",
                 print_conv: None,
                 value_conv: None,

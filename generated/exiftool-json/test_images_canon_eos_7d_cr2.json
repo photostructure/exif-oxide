@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/canon/eos_7d.cr2",
   "File:FileSize": 22078630,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "eos_7d.cr2",
   "File:Directory": "test-images/canon",
   "File:FileModifyDate": "2025:07:28 12:53:08-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:27:31-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:37-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "CR2",
   "File:FileTypeExtension": "cr2",
@@ -45,13 +45,13 @@
   "Composite:ISO": 200,
   "Composite:Lens": "18.0 - 135.0 mm",
   "Composite:Aperture": 5.6,
+  "Composite:ImageSize": "5184x3456",
+  "Composite:LensID": "Canon EF-S 18-135mm f/3.5-5.6 IS",
+  "Composite:Megapixels": 17.9,
   "EXIF:PreviewImage": "(Binary data 1576766 bytes, use -b option to extract)",
   "Composite:ShutterSpeed": "1/100",
   "Composite:SubSecCreateDate": "2009:10:12 12:36:23.18",
   "Composite:SubSecDateTimeOriginal": "2009:10:12 12:36:23.18",
   "Composite:SubSecModifyDate": "2009:10:12 12:36:23.18",
-  "EXIF:ThumbnailImage": "(Binary data 13703 bytes, use -b option to extract)",
-  "Composite:ImageSize": "5184x3456",
-  "Composite:LensID": "Canon EF-S 18-135mm f/3.5-5.6 IS",
-  "Composite:Megapixels": 17.9
+  "EXIF:ThumbnailImage": "(Binary data 13703 bytes, use -b option to extract)"
 }

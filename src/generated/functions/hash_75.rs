@@ -34,6 +34,29 @@ pub fn ast_value_75ea21c3208d8187(
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// exp(-Image::ExifTool::Pentax::PentaxEv($val-68)*log(2))
+/// ```
+/// Used by:
+/// - Pentax::CameraSettings.TvExposureTimeSetting
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_75338eadb914a809(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                                                         // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "exp(-Image::ExifTool::Pentax::PentaxEv($val-68)*log(2))", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// my $rev = sprintf("%.8x", $val);
 /// my ($rel, $v1, $v2, $r1, $r2) = ($rev =~ /^(.)(.)(..)0?(.+)(..)$/);
 /// my %r = ( a => 'Alpha ', b => 'Beta ', '0' => '' );

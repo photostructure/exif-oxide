@@ -58,6 +58,30 @@ pub fn ast_value_4f4c73379877e602(
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// int(100*exp(Image::ExifTool::Pentax::PentaxEv($val-32)*log(2))+0.5)
+/// ```
+/// Used by:
+/// - Pentax::CameraSettings.ISOFloor
+/// - Pentax::CameraSettings.SvISOSetting
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_4f660c767f964836(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "int(100*exp(Image::ExifTool::Pentax::PentaxEv($val-32)*log(2))+0.5)", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// my @a = reverse split " ", $val; join ".", @a;
 /// ```
 /// Used by:

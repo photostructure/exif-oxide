@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/kodak/p850.jpg",
   "File:FileSize": 1653805,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "p850.jpg",
   "File:Directory": "test-images/kodak",
   "File:FileModifyDate": "2025:07:27 23:30:36-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:30:36-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:52-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -35,8 +35,8 @@
   "File:ImageWidth": 2592,
   "File:ImageHeight": 1944,
   "Composite:Aperture": 2.8,
-  "Composite:ShutterSpeed": "1/125",
-  "EXIF:ThumbnailImage": "(Binary data 9278 bytes, use -b option to extract)",
   "Composite:ImageSize": "2592x1944",
-  "Composite:Megapixels": 5.0
+  "Composite:Megapixels": 5.0,
+  "Composite:ShutterSpeed": "1/125",
+  "EXIF:ThumbnailImage": "(Binary data 9278 bytes, use -b option to extract)"
 }

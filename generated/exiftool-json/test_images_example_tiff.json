@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/example.tiff",
   "File:FileSize": 136613,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "example.tiff",
   "File:Directory": "test-images",
   "File:FileModifyDate": "2025:07:23 12:53:25-07:00",
-  "File:FileInodeChangeDate": "2025:07:23 12:53:25-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:34-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "TIFF",
   "File:FileTypeExtension": "tif",

@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/sony/a230.arw",
   "File:FileSize": 10485760,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "a230.arw",
   "File:Directory": "test-images/sony",
   "File:FileModifyDate": "2025:07:28 12:54:24-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:41:36-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:05-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "ARW",
   "File:FileTypeExtension": "arw",
@@ -40,10 +40,10 @@
   "MakerNotes:ImageHeight": 2592,
   "MakerNotes:ImageWidth": 3872,
   "Composite:Aperture": 8.0,
-  "Composite:ImageSize": "3872x2592",
-  "Composite:LensID": "Sony DT 18-55mm F3.5-5.6 SAM (SAL1855)",
-  "Composite:Megapixels": 10.0,
   "EXIF:PreviewImage": "(Binary data 860664 bytes, use -b option to extract)",
   "Composite:ShutterSpeed": "1/60",
-  "EXIF:ThumbnailImage": "(Binary data 4494 bytes, use -b option to extract)"
+  "EXIF:ThumbnailImage": "(Binary data 4494 bytes, use -b option to extract)",
+  "Composite:ImageSize": "3872x2592",
+  "Composite:LensID": "Sony DT 18-55mm F3.5-5.6 SAM (SAL1855)",
+  "Composite:Megapixels": 10.0
 }

@@ -10,7 +10,6 @@ use std::sync::LazyLock;
 use crate::generated::functions::hash_10::ast_print_101e3eed0a079327;
 use crate::generated::functions::hash_20::ast_print_202062b94dbf7029;
 use crate::generated::functions::hash_68::ast_value_689cac30223ecfb0;
-use crate::generated::functions::hash_8c::ast_print_8cb98c82cbc27d63;
 use crate::generated::functions::hash_95::ast_value_95bfd9578fbdb0ab;
 use crate::generated::functions::hash_b4::ast_print_b44b87d319f681cc;
 
@@ -56,7 +55,7 @@ pub static SONY_TAG9050C_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|
             TagInfo {
                 name: "ShutterCount",
                 format: "int32u",
-                print_conv: Some(PrintConv::Function(ast_print_8cb98c82cbc27d63)),
+                print_conv: None,
                 value_conv: None,
                 is_offset: false,
             },

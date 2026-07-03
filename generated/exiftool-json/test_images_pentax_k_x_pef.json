@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/pentax/k-x.pef",
   "File:FileSize": 12438757,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "k-x.pef",
   "File:Directory": "test-images/pentax",
   "File:FileModifyDate": "2025:07:28 13:10:19-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:39:48-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:02-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "PEF",
   "File:FileTypeExtension": "pef",
@@ -35,11 +35,11 @@
   "MakerNotes:LensType": "smc PENTAX-DA L 18-55mm F3.5-5.6",
   "MakerNotes:InternalSerialNumber": 8007725,
   "Composite:Aperture": 5.6,
-  "Composite:ImageSize": "4352x2868",
   "EXIF:JpgFromRaw": "(Binary data 1322853 bytes, use -b option to extract)",
-  "Composite:LensID": "smc PENTAX-DA L 18-55mm F3.5-5.6",
-  "Composite:Megapixels": 12.5,
   "MakerNotes:PreviewImage": "(Binary data 25304 bytes, use -b option to extract)",
   "Composite:ShutterSpeed": "1/100",
-  "EXIF:ThumbnailImage": "(Binary data 8135 bytes, use -b option to extract)"
+  "EXIF:ThumbnailImage": "(Binary data 8135 bytes, use -b option to extract)",
+  "Composite:ImageSize": "4352x2868",
+  "Composite:LensID": "smc PENTAX-DA L 18-55mm F3.5-5.6",
+  "Composite:Megapixels": 12.5
 }

@@ -25,8 +25,18 @@ pub static NIKON_MAKERNOTES0X56_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
         (
             4,
             TagInfo {
-                name: "BurstGroupID",
-                format: "int16u",
+                name: "BurstFlag",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+                is_offset: false,
+            },
+        ),
+        (
+            8,
+            TagInfo {
+                name: "BurstShotNumber",
+                format: "int32u",
                 print_conv: None,
                 value_conv: None,
                 is_offset: false,
@@ -35,9 +45,12 @@ pub static NIKON_MAKERNOTES0X56_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
         (
             12,
             TagInfo {
-                name: "PixelShiftID",
+                name: "PixelShiftActive",
                 format: "unknown",
-                print_conv: None,
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "No"),
+                    ("1".to_string(), "Yes"),
+                ]))),
                 value_conv: None,
                 is_offset: false,
             },

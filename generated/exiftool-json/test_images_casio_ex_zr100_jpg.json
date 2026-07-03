@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/casio/ex_zr100.jpg",
   "File:FileSize": 5117612,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "ex_zr100.jpg",
   "File:Directory": "test-images/casio",
   "File:FileModifyDate": "2025:07:27 23:39:15-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:39:15-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:43-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",

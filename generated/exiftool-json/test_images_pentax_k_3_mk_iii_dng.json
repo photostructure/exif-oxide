@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/pentax/k_3_mk_iii.dng",
   "File:FileSize": 31945549,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "k_3_mk_iii.dng",
   "File:Directory": "test-images/pentax",
   "File:FileModifyDate": "2025:07:27 23:39:15-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:39:15-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:03-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "DNG",
   "File:FileTypeExtension": "dng",
@@ -40,14 +40,14 @@
   "MakerNotes:LensType": "HD PENTAX-DA 20-40mm F2.8-4 ED Limited DC WR",
   "MakerNotes:InternalSerialNumber": 2008535,
   "Composite:Aperture": 4.0,
-  "Composite:ImageSize": "6304x4224",
-  "Composite:LensID": "HD PENTAX-DA 20-40mm F2.8-4 ED Limited DC WR",
-  "Composite:Megapixels": 26.6,
   "EXIF:PreviewImage": "(Binary data 3066467 bytes, use -b option to extract)",
   "MakerNotes:PreviewImage": "(Binary data 55752 bytes, use -b option to extract)",
   "Composite:ShutterSpeed": "1/100",
   "Composite:SubSecCreateDate": "2021:08:22 18:07:02.805",
   "Composite:SubSecDateTimeOriginal": "2021:08:22 18:07:02.805",
-  "EXIF:ThumbnailTIFF": "(Binary data 57816 bytes, use -b option to extract)",
-  "Composite:DateTimeCreated": "2021:08:22 18:07:02-07:00"
+  "Composite:DateTimeCreated": "2021:08:22 18:07:02-07:00",
+  "Composite:ImageSize": "6304x4224",
+  "Composite:LensID": "HD PENTAX-DA 20-40mm F2.8-4 ED Limited DC WR",
+  "Composite:Megapixels": 26.6,
+  "EXIF:ThumbnailTIFF": "(Binary data 57816 bytes, use -b option to extract)"
 }

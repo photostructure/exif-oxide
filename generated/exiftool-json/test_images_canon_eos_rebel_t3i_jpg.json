@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/canon/eos_rebel_t3i.jpg",
   "File:FileSize": 5469898,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "eos_rebel_t3i.jpg",
   "File:Directory": "test-images/canon",
   "File:FileModifyDate": "2025:07:18 10:41:47-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:29:41-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:42-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -51,12 +51,12 @@
   "Composite:ISO": 100,
   "Composite:Lens": "24.0 - 105.0 mm",
   "Composite:Aperture": 4.0,
+  "Composite:ImageSize": "5184x3456",
+  "Composite:LensID": "Canon EF 24-105mm f/4L IS USM",
+  "Composite:Megapixels": 17.9,
   "Composite:ShutterSpeed": "1/2000",
   "Composite:SubSecCreateDate": "2016:11:25 20:16:03.00",
   "Composite:SubSecDateTimeOriginal": "2016:11:25 20:16:03.00",
   "Composite:SubSecModifyDate": "2016:11:25 20:16:03.00",
-  "EXIF:ThumbnailImage": "(Binary data 15696 bytes, use -b option to extract)",
-  "Composite:ImageSize": "5184x3456",
-  "Composite:LensID": "Canon EF 24-105mm f/4L IS USM",
-  "Composite:Megapixels": 17.9
+  "EXIF:ThumbnailImage": "(Binary data 15696 bytes, use -b option to extract)"
 }

@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/sony/a7rm5.arw",
   "File:FileSize": 73314304,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "a7rm5.arw",
   "File:Directory": "test-images/sony",
   "File:FileModifyDate": "2020:01:02 12:34:56-08:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:41:24-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:11-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "ARW",
   "File:FileTypeExtension": "arw",
@@ -50,14 +50,14 @@
   "EXIF:LensInfo": "400-800mm f/6.3-8",
   "EXIF:LensModel": "FE 400-800mm F6.3-8 G OSS",
   "Composite:Aperture": 7.1,
-  "Composite:ImageSize": "9728x6656",
   "EXIF:JpgFromRaw": "(Binary data 5783401 bytes, use -b option to extract)",
-  "Composite:LensID": "Sony FE 400-800mm F6.3-8 G OSS",
-  "Composite:Megapixels": 64.7,
   "EXIF:PreviewImage": "(Binary data 351953 bytes, use -b option to extract)",
   "Composite:ShutterSpeed": "1/800",
   "Composite:SubSecCreateDate": "2025:02:05 16:17:43.201-08:00",
   "Composite:SubSecDateTimeOriginal": "2025:02:05 16:17:43.201-08:00",
   "Composite:SubSecModifyDate": "2025:02:05 16:17:43.201-08:00",
-  "EXIF:ThumbnailImage": "(Binary data 7443 bytes, use -b option to extract)"
+  "EXIF:ThumbnailImage": "(Binary data 7443 bytes, use -b option to extract)",
+  "Composite:ImageSize": "9728x6656",
+  "Composite:LensID": "Sony FE 400-800mm F6.3-8 G OSS",
+  "Composite:Megapixels": 64.7
 }

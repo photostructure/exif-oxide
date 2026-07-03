@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/apple/iphone_15_pro_max.jpg",
   "File:FileSize": 33211031,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "iphone_15_pro_max.jpg",
   "File:Directory": "test-images/apple",
   "File:FileModifyDate": "2025:07:27 23:02:55-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:03:10-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:35-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",

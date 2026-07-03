@@ -6,6 +6,11 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_5a::ast_value_5acdb8bd32a91a9e;
+use crate::generated::functions::hash_6a::ast_print_6aba033c223c39a4;
+use crate::generated::functions::hash_fa::ast_print_fa6707f1bb13135d;
+
 /// Tag definitions for Canon::ColorData4 table
 pub static CANON_COLORDATA4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
@@ -53,6 +58,26 @@ pub static CANON_COLORDATA4_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::ne
                 name: "AverageBlackLevel",
                 format: "int16u[4]",
                 print_conv: None,
+                value_conv: None,
+                is_offset: false,
+            },
+        ),
+        (
+            619,
+            TagInfo {
+                name: "FlashOutput",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_6aba033c223c39a4)),
+                value_conv: Some(ValueConv::Function(ast_value_5acdb8bd32a91a9e)),
+                is_offset: false,
+            },
+        ),
+        (
+            620,
+            TagInfo {
+                name: "FlashBatteryLevel",
+                format: "unknown",
+                print_conv: Some(PrintConv::Function(ast_print_fa6707f1bb13135d)),
                 value_conv: None,
                 is_offset: false,
             },

@@ -1460,6 +1460,16 @@ pub static CANON_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
             },
         ),
         (
+            16467,
+            TagInfo {
+                name: "FocusBracketingInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+                is_offset: false,
+            },
+        ),
+        (
             16473,
             TagInfo {
                 name: "LevelInfo",

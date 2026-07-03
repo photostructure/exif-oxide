@@ -601,6 +601,7 @@ pub static NIKON_MENUSETTINGSZ6III_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyL
                     ("4".to_string(), "Vehicles"),
                     ("5".to_string(), "Birds"),
                     ("6".to_string(), "Airplanes"),
+                    ("7".to_string(), "Faces"),
                 ]))),
                 value_conv: None,
                 is_offset: false,

@@ -56,6 +56,7 @@ pub fn ast_print_16bbaa15266fbc78(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// Used by:
 /// - Nikon::FileInfo.DirectoryNumber
 /// - Sony::CameraSettings.FolderNumber
+/// - Sony::CameraSettings3.FolderNumber
 pub fn ast_print_164b7df7edda79e(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(crate::core::sprintf_perl("%.3d", &[val.clone()]))
 }

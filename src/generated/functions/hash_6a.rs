@@ -40,6 +40,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Canon::CameraInfo7D.FileIndex
 /// - Canon::CameraInfo80D.FileIndex
 /// - Canon::CameraInfoG5XII.FileIndex
+/// - Nikon::AutoCaptureInfo.AutoCaptureCriteriaSubjectType
 /// - Pentax::TempInfo.ShotNumber
 /// - Sony::Tag2010b.SequenceFileNumber
 /// - Sony::Tag2010b.SequenceImageNumber
@@ -69,7 +70,11 @@ pub fn ast_value_6a2b983323e78027(
 /// $val == 255 ? "Strobe or Misfire" : sprintf("%.0f%%", $val * 100)
 /// ```
 /// Used by:
+/// - Canon::ColorData10.FlashOutput
+/// - Canon::ColorData12.FlashOutput
 /// - Canon::ColorData3.FlashOutput
+/// - Canon::ColorData4.FlashOutput
+/// - Canon::ColorData7.FlashOutput
 pub fn ast_print_6aba033c223c39a4(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val == 255i32 {
         Into::<TagValue>::into("Strobe or Misfire")

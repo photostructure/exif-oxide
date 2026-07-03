@@ -12,6 +12,23 @@
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
 
+/// Original perl expression:
+/// ``` perl
+/// $val == 0xff ? undef : $val
+/// ```
+/// Used by:
+/// - H264::Camera1.Focus
+pub fn ast_value_97197b1f1f207a54(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(if val == 0xffu32 {
+        TagValue::String("".to_string())
+    } else {
+        val.clone()
+    })
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl

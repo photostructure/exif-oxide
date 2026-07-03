@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/sigma/bf.jpg",
   "File:FileSize": 8222512,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "bf.jpg",
   "File:Directory": "test-images/sigma",
   "File:FileModifyDate": "2025:07:27 23:10:26-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:12:07-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:05-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",
@@ -42,13 +42,13 @@
   "File:ImageWidth": 6016,
   "File:ImageHeight": 4012,
   "Composite:Aperture": 4.0,
-  "Composite:ImageSize": "6016x4012",
-  "Composite:LensID": "Sigma 35mm F2 DG DN | C",
-  "Composite:Megapixels": 24.1,
   "Composite:ShutterSpeed": "1/160",
   "Composite:SubSecCreateDate": "2025:04:05 11:00:35+00:00",
   "Composite:SubSecDateTimeOriginal": "2025:04:05 11:00:35+00:00",
   "Composite:SubSecModifyDate": "2025:04:05 11:00:35+00:00",
   "EXIF:ThumbnailImage": "(Binary data 12048 bytes, use -b option to extract)",
-  "MPF:PreviewImage": "(Binary data 657553 bytes, use -b option to extract)"
+  "MPF:PreviewImage": "(Binary data 657553 bytes, use -b option to extract)",
+  "Composite:ImageSize": "6016x4012",
+  "Composite:LensID": "Sigma 35mm F2 DG DN | C",
+  "Composite:Megapixels": 24.1
 }

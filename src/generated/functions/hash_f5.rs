@@ -32,3 +32,16 @@ pub fn ast_print_f58cef9820a3c7fa(val: &TagValue, ctx: Option<&ExifContext>) -> 
         &Into::<TagValue>::into(" Sea Level"),
     )
 }
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%d (level %.1f)", $val, $val/30)
+/// ```
+/// Used by:
+/// - QuickTime::HEVCConfig.GeneralLevelIDC
+pub fn ast_print_f54796978b4c899f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    TagValue::String(crate::core::sprintf_perl(
+        "%d (level %.1f)",
+        &[val.clone(), val / 30i32],
+    ))
+}

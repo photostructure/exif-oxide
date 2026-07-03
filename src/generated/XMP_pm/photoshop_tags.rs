@@ -32,6 +32,26 @@ pub static XMP_PHOTOSHOP_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> = Laz
             },
         ),
         (
+            "CameraProfilesPerspectiveModelVignetteModelVignetteModelParam1",
+            XmpTagInfo {
+                name: "CameraProfilesPerspectiveModelVignetteModelParam1",
+                writable: Some("string"),
+                list: None,
+                resource: false,
+                print_conv: None,
+            },
+        ),
+        (
+            "CameraProfilesPerspectiveModelVignetteModelVignetteModelPiecewiseParam",
+            XmpTagInfo {
+                name: "CameraProfilesPerspectiveModelVignetteModelPiecewiseParam",
+                writable: Some("string"),
+                list: None,
+                resource: false,
+                print_conv: None,
+            },
+        ),
+        (
             "CaptionWriter",
             XmpTagInfo {
                 name: "CaptionWriter",
@@ -164,6 +184,16 @@ pub static XMP_PHOTOSHOP_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> = Laz
             "Instructions",
             XmpTagInfo {
                 name: "Instructions",
+                writable: Some("string"),
+                list: None,
+                resource: false,
+                print_conv: None,
+            },
+        ),
+        (
+            "LabelColor",
+            XmpTagInfo {
+                name: "LabelColor",
                 writable: Some("string"),
                 list: None,
                 resource: false,

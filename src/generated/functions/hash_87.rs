@@ -12,6 +12,23 @@
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
 
+/// Original perl expression:
+/// ``` perl
+/// $val / 32768
+/// ```
+/// Used by:
+/// - PanasonicRaw::DistortionInfo.DistortionParam02
+/// - PanasonicRaw::DistortionInfo.DistortionParam04
+/// - PanasonicRaw::DistortionInfo.DistortionParam08
+/// - PanasonicRaw::DistortionInfo.DistortionParam09
+/// - PanasonicRaw::DistortionInfo.DistortionParam11
+pub fn ast_value_87bc4ea3c0f83966(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(val / 32768i32)
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl

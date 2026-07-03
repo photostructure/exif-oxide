@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/panasonic/dc-s1rm2.rw2",
   "File:FileSize": 64876032,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "dc-s1rm2.rw2",
   "File:Directory": "test-images/panasonic",
   "File:FileModifyDate": "2020:01:02 12:34:56-08:00",
-  "File:FileInodeChangeDate": "2025:07:27 22:20:00-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:02-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "RW2",
   "File:FileTypeExtension": "rw2",

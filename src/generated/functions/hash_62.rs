@@ -35,6 +35,21 @@ pub fn ast_print_62c1ef1851063b19(val: &TagValue, ctx: Option<&ExifContext>) -> 
 
 /// Original perl expression:
 /// ``` perl
+/// -($val-2)/6
+/// ```
+/// Used by:
+/// - Nikon::FlashInfo0300.FlashGroupACompensation
+/// - Nikon::FlashInfo0300.FlashGroupBCompensation
+/// - Nikon::FlashInfo0300.FlashGroupCCompensation
+pub fn ast_value_62786f400980bd6c(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::negate(val - 2i32) / 6i32)
+}
+
+/// Original perl expression:
+/// ``` perl
 /// 2 ** (($val/8 - 1) / 2)
 /// ```
 /// Used by:
@@ -42,6 +57,7 @@ pub fn ast_print_62c1ef1851063b19(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Sony::CameraSettings.FNumber
 /// - Sony::CameraSettings2.ApertureSetting
 /// - Sony::CameraSettings2.FNumber
+/// - Sony::CameraSettings3.ApertureSetting
 /// - Sony::MoreSettings.FNumber
 pub fn ast_value_62b71052f9215d46(
     val: &TagValue,
@@ -49,7 +65,7 @@ pub fn ast_value_62b71052f9215d46(
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(crate::core::power(
         Into::<TagValue>::into(2i32),
-        Into::<TagValue>::into(val / 8i32 - 1i32 / 2i32),
+        Into::<TagValue>::into((val / 8i32 - 1i32) / 2i32),
     ))
 }
 
@@ -58,6 +74,10 @@ pub fn ast_value_62b71052f9215d46(
 /// exp(($val-68)*log(2)/16)
 /// ```
 /// Used by:
+/// - Pentax::AEInfo.AEAperture
+/// - Pentax::AEInfo.AEMaxAperture
+/// - Pentax::AEInfo.AEMaxAperture2
+/// - Pentax::AEInfo.AEMinAperture
 /// - Pentax::AEInfo2.AEAperture
 /// - Pentax::AEInfo2.AEMaxAperture
 /// - Pentax::AEInfo2.AEMaxAperture2

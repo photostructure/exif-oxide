@@ -14,6 +14,19 @@ use crate::types::{ExifContext, TagValue};
 
 /// Original perl expression:
 /// ``` perl
+/// $val * 2
+/// ```
+/// Used by:
+/// - Pentax::AFInfo.AFIntegrationTime
+pub fn ast_value_10edd887820170de(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(val * 2i32)
+}
+
+/// Original perl expression:
+/// ``` perl
 /// $val + 5
 /// ```
 /// Used by:
@@ -23,6 +36,28 @@ pub fn ast_value_10ca38d85eb04aba(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(val + 5i32)
+}
+
+/// Original perl expression:
+/// ``` perl
+/// sprintf("0x%.2x", $val)
+/// ```
+/// Used by:
+/// - Pentax::LensData.LC1
+/// - Pentax::LensData.LC10
+/// - Pentax::LensData.LC11
+/// - Pentax::LensData.LC12
+/// - Pentax::LensData.LC14
+/// - Pentax::LensData.LC15
+/// - Pentax::LensData.LC3
+/// - Pentax::LensData.LC4
+/// - Pentax::LensData.LC5
+/// - Pentax::LensData.LC6
+/// - Pentax::LensData.LC7
+/// - Pentax::LensData.LC8
+/// - Pentax::LensData.LensKind
+pub fn ast_print_10d4206d59f12958(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    TagValue::String(crate::core::sprintf_perl("0x%.2x", &[val.clone()]))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
@@ -35,6 +70,7 @@ pub fn ast_value_10ca38d85eb04aba(
 /// - Sony::CameraSettings.ShutterSpeedSetting
 /// - Sony::CameraSettings2.ExposureTime
 /// - Sony::CameraSettings2.ShutterSpeedSetting
+/// - Sony::CameraSettings3.ShutterSpeedSetting
 /// - Sony::MoreSettings.ExposureTime
 /// - Sony::Tag9050a.SonyExposureTime
 /// - Sony::Tag9050b.SonyExposureTime

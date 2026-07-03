@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/fujifilm/x_t3.jpg",
   "File:FileSize": 14908582,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "x_t3.jpg",
   "File:Directory": "test-images/fujifilm",
   "File:FileModifyDate": "2025:07:27 22:54:43-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:02:47-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:48-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",

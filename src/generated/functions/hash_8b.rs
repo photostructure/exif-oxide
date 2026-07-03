@@ -14,6 +14,20 @@ use crate::types::{ExifContext, TagValue};
 
 /// Original perl expression:
 /// ``` perl
+/// $val == 90 ? "n/a" : $val
+/// ```
+/// Used by:
+/// - Pentax::AEInfo.LevelIndicator
+pub fn ast_print_8b61d93238d39ea1(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    if val == 90i32 {
+        Into::<TagValue>::into("n/a")
+    } else {
+        val.clone()
+    }
+}
+
+/// Original perl expression:
+/// ``` perl
 /// sprintf("0x%.8x", $val)
 /// ```
 /// Used by:

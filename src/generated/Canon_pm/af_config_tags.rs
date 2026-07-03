@@ -309,6 +309,7 @@ pub static CANON_AFCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("0".to_string(), "Initial Priority"),
                     ("1".to_string(), "On Subject"),
                     ("2".to_string(), "Switch Subject"),
+                    ("2147483647".to_string(), "n/a"),
                 ]))),
                 value_conv: None,
                 is_offset: false,

@@ -117,6 +117,7 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("16".to_string(), "Normal?"),
                     ("16 0".to_string(), "1-area"),
                     ("16 16".to_string(), "1-area (high speed)"),
+                    ("16 225".to_string(), "225-area 2"),
                     ("16 32".to_string(), "1-area +"),
                     ("17 0".to_string(), "Full Area"),
                     ("240 0".to_string(), "Tracking"),
@@ -1600,6 +1601,19 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
             },
         ),
         (
+            212,
+            TagInfo {
+                name: "HybridLogGamma",
+                format: "unknown",
+                print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                    ("0".to_string(), "Off"),
+                    ("1".to_string(), "On"),
+                ]))),
+                value_conv: None,
+                is_offset: false,
+            },
+        ),
+        (
             214,
             TagInfo {
                 name: "NoiseReductionStrength",
@@ -1673,6 +1687,46 @@ pub static PANASONIC_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(
                     ("0".to_string(), "Off"),
                     ("1".to_string(), "On"),
                 ]))),
+                value_conv: None,
+                is_offset: false,
+            },
+        ),
+        (
+            241,
+            TagInfo {
+                name: "LUT1Name",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+                is_offset: false,
+            },
+        ),
+        (
+            243,
+            TagInfo {
+                name: "LUT1Opacity",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+                is_offset: false,
+            },
+        ),
+        (
+            244,
+            TagInfo {
+                name: "LUT2Name",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+                is_offset: false,
+            },
+        ),
+        (
+            245,
+            TagInfo {
+                name: "LUT2Opacity",
+                format: "unknown",
+                print_conv: None,
                 value_conv: None,
                 is_offset: false,
             },

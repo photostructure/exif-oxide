@@ -17,12 +17,13 @@ use crate::types::{ExifContext, TagValue};
 /// ($val-64)/8
 /// ```
 /// Used by:
+/// - Pentax::AEInfo.AEXv
 /// - Pentax::AEInfo2.AEXv
 pub fn ast_value_da19baf479baa47d(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    Ok(val - 64i32 / 8i32)
+    Ok((val - 64i32) / 8i32)
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/example.gif",
   "File:FileSize": 123955,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "example.gif",
   "File:Directory": "test-images",
   "File:FileModifyDate": "2025:07:23 12:33:39-07:00",
-  "File:FileInodeChangeDate": "2025:07:23 12:33:43-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:34-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "GIF",
   "File:FileTypeExtension": "gif",

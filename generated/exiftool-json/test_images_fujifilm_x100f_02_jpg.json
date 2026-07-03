@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/fujifilm/x100f_02.jpg",
   "File:FileSize": 15269722,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "x100f_02.jpg",
   "File:Directory": "test-images/fujifilm",
   "File:FileModifyDate": "2025:07:27 22:55:37-07:00",
-  "File:FileInodeChangeDate": "2025:07:27 23:03:08-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:21:47-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",

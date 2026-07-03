@@ -21,6 +21,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::CameraSettings.ColorTemperatureSet
 /// - Sony::CameraSettings2.ColorTemperatureCustom
 /// - Sony::CameraSettings2.ColorTemperatureSet
+/// - Sony::CameraSettings3.ColorTemperatureSetting
 /// - Sony::MoreSettings.ColorTemperatureSetting
 pub fn ast_print_f4716ca91121bc8d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     Into::<TagValue>::into(format!("{} K", val))

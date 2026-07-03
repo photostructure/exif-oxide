@@ -12,6 +12,22 @@
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
 
+/// Original perl expression:
+/// ``` perl
+/// 2**($val/4)
+/// ```
+/// Used by:
+/// - Pentax::LensData.NominalMaxAperture
+pub fn ast_value_7b3534ab8a6d6c4b(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::power(
+        Into::<TagValue>::into(2i32),
+        Into::<TagValue>::into(val / 4i32),
+    ))
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl

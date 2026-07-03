@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/oneplus/gm1917.jpg",
   "File:FileSize": 662157,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "gm1917.jpg",
   "File:Directory": "test-images/oneplus",
   "File:FileModifyDate": "2020:01:03 12:34:56-08:00",
-  "File:FileInodeChangeDate": "2025:07:27 22:20:00-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:00-07:00",
   "File:FilePermissions": "-rwxrwxr-x",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",

@@ -17,7 +17,11 @@ use crate::types::{ExifContext, TagValue};
 /// $val >= 255 ? 255 : exp(($val-200)/16*log(2))
 /// ```
 /// Used by:
+/// - Canon::ColorData10.FlashOutput
+/// - Canon::ColorData12.FlashOutput
 /// - Canon::ColorData3.FlashOutput
+/// - Canon::ColorData4.FlashOutput
+/// - Canon::ColorData7.FlashOutput
 pub fn ast_value_5acdb8bd32a91a9e(
     val: &TagValue,
     ctx: Option<&ExifContext>,
@@ -25,7 +29,7 @@ pub fn ast_value_5acdb8bd32a91a9e(
     Ok(if val >= 255i32 {
         Into::<TagValue>::into(255i32)
     } else {
-        crate::core::exp(val - 200i32 / 16i32 * crate::core::log(2i32))
+        crate::core::exp((val - 200i32) / 16i32 * crate::core::log(2i32))
     })
 }
 

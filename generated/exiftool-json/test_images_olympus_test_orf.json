@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/olympus/test.orf",
   "File:FileSize": 15167970,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "test.orf",
   "File:Directory": "test-images/olympus",
   "File:FileModifyDate": "2025:07:18 10:41:50-07:00",
-  "File:FileInodeChangeDate": "2025:07:23 10:36:33-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:00-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "ORF",
   "File:FileTypeExtension": "orf",

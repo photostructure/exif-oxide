@@ -1,11 +1,11 @@
 {
   "SourceFile": "test-images/panasonic/dmc-lx3.jpg",
   "File:FileSize": 4109229,
-  "ExifTool:ExifToolVersion": 13.31,
+  "ExifTool:ExifToolVersion": 13.59,
   "File:FileName": "dmc-lx3.jpg",
   "File:Directory": "test-images/panasonic",
   "File:FileModifyDate": "2025:07:28 13:02:16-07:00",
-  "File:FileInodeChangeDate": "2025:07:28 13:23:05-07:00",
+  "File:FileInodeChangeDate": "2026:05:03 12:22:02-07:00",
   "File:FilePermissions": "-rw-rw-r--",
   "File:FileType": "JPEG",
   "File:FileTypeExtension": "jpg",

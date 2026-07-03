@@ -94,6 +94,29 @@ pub fn ast_print_5f49e36c478dfb01(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// ($val and $val < 254) ? exp(($val/8-6)*log(2))*100 : $val
+/// ```
+/// Used by:
+/// - Sony::CameraSettings3.ISOSetting
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_5f1e8f9ffcfc28ba(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                                                           // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "($val and $val < 254) ? exp(($val/8-6)*log(2))*100 : $val", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// my @v = split(' ',$val);
 /// $v[0] &= 0x0f;
 /// $v[1] = $v[2] * 256 + $v[3]; # (always high byte first)
