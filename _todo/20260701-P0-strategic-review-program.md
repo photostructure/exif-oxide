@@ -44,12 +44,19 @@ tier, and land the reliability foundations as discrete TPPs.
    extraction, 379-snapshot compat harness, 328+193-image corpus,
    manufacturer offset logic) outweigh the fragility, which is concentrated
    in one subsystem (see next).
-4. **Freeze the PPI transpiler.** The Perl→Rust expression transpiler
-   (normalizer ~4.7k LOC + visitor ~2k LOC) is where every recorded
-   emergency recovery originated. Treat as stable, change-averse code.
-   **Re-evaluate a runtime expression interpreter instead** only if (a) we
-   chase expression coverage far beyond the required-tags list, or (b) the
-   transpiler causes another emergency. Do not rewrite it proactively.
+4. **PPI transpiler: maintenance mode, not frozen** (revised 2026-07-02
+   after Matthew pushed back on "freeze" — the transpiler is pivotal for
+   absorbing future ExifTool updates, since every version bump pushes new
+   Perl expressions through `make codegen`). The Perl→Rust expression
+   transpiler (normalizer ~4.7k LOC + visitor ~2k LOC) is where every
+   recorded emergency recovery originated, so it stays change-averse:
+   extend it **reactively and narrowly** when a bump or required tag hits
+   an expression it can't handle (with expression-level tests per change);
+   no proactive rewrites/refactors. The ExifTool-fallback tier absorbs
+   untranslatable expressions, so a transpiler gap degrades to "falls
+   back", not "blocks the bump". **Re-evaluate a runtime expression
+   interpreter** only if (a) we chase coverage far beyond required-tags,
+   or (b) the transpiler causes another emergency.
 
 ## Findings worth preserving (verified, with corrections)
 
@@ -82,25 +89,50 @@ tier, and land the reliability foundations as discrete TPPs.
 | # | Work item | Where | Status |
 |---|-----------|-------|--------|
 | 0 | Docs/planning re-scope (MILESTONES.md, scope language, TPP migration, TODO rewrite) | commits `9e72960e`, `dcc38b20` | ✅ DONE 2026-07-01 |
-| 1 | ExifTool v13.43→13.59+ catch-up + `docs/guides/EXIFTOOL-UPGRADE.md` runbook | `_todo/20260701-P0-exiftool-version-catchup.md` | ⬜ not started — **do this first** |
+| 1 | ExifTool v13.43→13.59+ catch-up + `docs/guides/EXIFTOOL-UPGRADE.md` runbook | `_done/20260701-P0-exiftool-version-catchup.md`, commit `f2bdb304` | ✅ DONE 2026-07-02 (zero ports needed; 3 codegen bugs fixed; compat 42%→43%; lint-rot cleanup follow-up pending) |
 | 2 | Snapshot-oracle integrity (make compat test assert; allowlist; version-skew guard) | `_todo/20260701-P1-snapshot-oracle-integrity.md` | ⬜ not started (sequence after or with #1 — snapshots regenerate during the bump) |
 | 3 | cargo-fuzz infrastructure | `_todo/20260701-P1-fuzzing-infrastructure.md` | ⬜ not started (independent; parallelizable) |
 | 4 | GPSPosition composite sign bug | `_todo/P03-implementation-backlog.md` (Next Steps) | ⬜ open (small, well-diagnosed) |
 | 5 | Video/QuickTime read support (22 blocked tags) | **no TPP yet — needs authoring** | ⬜ not started |
 | 6 | napi-rs Node binding spike | `_todo/20260701-P3-napi-node-binding-spike.md` | ⬜ not started (its Task 1 is the licensing question below) |
 
+## Orchestration guidance (from Matthew, 2026-07-02)
+
+- Work this program via `/tpp-orchestrate`: delegate each child TPP to a
+  subagent, review-gate the result, land one coherent commit per TPP.
+- **Be token-efficient**: implementation subagents should run **opus** (or
+  sonnet for tightly-pinned work); reserve fable for orchestration and for
+  redesigning under-baked TPPs.
+- **Treat child TPP task breakdowns as only directionally correct** — they
+  were written by interns. If a TPP is not fully baked, spin a **fable**
+  subagent to redesign/rebuild it before implementing.
+- After each work item, run a `/review` subagent; weigh its findings like
+  intern feedback (vet empirically, veto with evidence), apply accepted
+  fixes until copacetic, then commit (use `/coding:stage` for coherent
+  partial staging).
+- **Ground truth** for disputed findings: real ExifTool — the vendored
+  `third-party/exiftool/exiftool` script and
+  `cargo run --bin compare-with-exiftool <image> [group]`.
+
 ## Open questions (user decisions pending)
 
-- **AGPL vs. napi linking**: exif-oxide is `AGPL-3.0-or-later`
-  (`Cargo.toml:11`). A napi addon links AGPL code directly into
-  PhotoStructure's process — materially different from spawning GPL
-  ExifTool as a subprocess. The user owns the copyright and can
-  dual-license; needs a deliberate decision before the napi spike is
-  treated as a production path.
-- **`third-party/exiftool/doc/concepts/IMAGE_DATA_HASH.md`** is untracked
-  inside the submodule (the other doc/concepts files are committed to the
-  photostructure/exiftool fork). Commit it to the fork or relocate to
-  `docs/`; until then the parent repo shows the submodule as dirty.
+- **AGPL vs. napi linking — ANSWERED 2026-07-02**: Matthew confirmed the
+  dual-license path ("we're the author — we can dual-license for
+  ourselves"). Correct: AGPL binds licensees, not the copyright holder;
+  PhotoStructure can use exif-oxide under whatever terms Matthew grants
+  it. Two diligence items before productionizing (not blockers for the
+  spike): (a) confirm no external contributors hold copyright on any
+  retained code (`git shortlog -sne`), and (b) note `src/generated/**` is
+  derived from ExifTool source, which is "same terms as Perl" (dual
+  GPL-1+ / Artistic) — the Artistic option permits this, but record the
+  attribution reasoning in the napi TPP.
+- ~~**`third-party/exiftool/doc/concepts/IMAGE_DATA_HASH.md`** untracked~~
+  **RESOLVED 2026-07-02**: Matthew committed it to the fork (`eb2279b9`).
+  The parent gitlink still points at `a66d7bfe`; fold the gitlink update
+  into the version-catchup commit. Note the fork carries doc-only commits
+  on top of upstream 13.43 (`3a79a582`, `eb2279b9`) that CLAUDE.md links
+  to — the bump must preserve them (rebase onto the new tag or relocate
+  the docs).
 
 ## Tribal knowledge
 
