@@ -3,6 +3,11 @@
 //! These tests compare exif-oxide output against stored ExifTool reference snapshots
 //! to ensure compatibility. ExifTool snapshots are the authoritative reference.
 //!
+//! `test_exiftool_compatibility` is a hard gate, not a dashboard: every tag whose
+//! value diverges from the committed ExifTool snapshot must be listed in
+//! `config/compat_known_gaps.json` with a reason + reference, or the test fails.
+//! Allowlisted tags that start matching again also fail the test (the ratchet).
+//!
 //! Note: These tests require the `integration-tests` feature to be enabled and
 //! external test assets to be available. They are automatically skipped in published crates.
 
@@ -10,13 +15,11 @@
 
 use exif_oxide::compat::{
     analyze_tag_differences, filter_to_custom_tags, filter_to_supported_tags,
-    normalize_for_comparison, run_exif_oxide, CompatibilityReport, DifferenceType,
+    normalize_for_comparison, run_exif_oxide, CompatibilityReport, DifferenceType, KnownGaps,
+    TagDifference,
 };
 use serde_json::Value;
-use similar::{ChangeTag, TextDiff};
 use std::path::Path;
-
-mod common;
 
 /// Files to exclude from testing (problematic files to deal with later)
 const EXCLUDED_FILES: &[&str] = &[
@@ -38,6 +41,19 @@ fn parse_tags_filter() -> Option<Vec<String>> {
             .filter(|s| !s.is_empty())
             .collect()
     })
+}
+
+/// Human-readable label for a difference type, used in gate failure messages
+/// and the COMPAT_DUMP_GAPS machine-readable dump.
+fn difference_type_label(dt: &DifferenceType) -> &'static str {
+    match dt {
+        DifferenceType::Working => "Working",
+        DifferenceType::ValueFormatMismatch => "ValueFormatMismatch",
+        DifferenceType::Missing => "Missing",
+        DifferenceType::DependencyFailure => "DependencyFailure",
+        DifferenceType::TypeMismatch => "TypeMismatch",
+        DifferenceType::OnlyInOurs => "OnlyInOurs",
+    }
 }
 
 /// Load ExifTool reference snapshot for a file
@@ -82,199 +98,72 @@ fn load_exiftool_snapshot(file_path: &str) -> Result<Value, Box<dyn std::error::
     Ok(json)
 }
 
-/// Compare ExifTool snapshot and exif-oxide output for a specific file
-#[allow(dead_code)]
-fn compare_file_output(file_path: &str) -> Result<(), Box<dyn std::error::Error>> {
-    // Load ExifTool reference snapshot
-    let exiftool_output = load_exiftool_snapshot(file_path)
-        .map_err(|e| format!("Snapshot not found for {file_path}: {e}"))?;
-
-    // Get exif-oxide output (test)
-    let exif_oxide_output = match run_exif_oxide(file_path) {
-        Ok(output) => output,
-        Err(e) => {
-            println!("  Skipping: exif-oxide failed: {e}");
-            return Ok(());
-        }
-    };
-
-    // Filter both to supported tags (or custom tags if TAGS_FILTER is set)
-    let (mut filtered_exiftool, mut filtered_exif_oxide) =
-        if let Some(custom_tags) = parse_tags_filter() {
-            println!("  Using custom tag filter: {:?}", custom_tags);
-            let tag_refs: Vec<&str> = custom_tags.iter().map(|s| s.as_str()).collect();
-            (
-                filter_to_custom_tags(&exiftool_output, &tag_refs),
-                filter_to_custom_tags(&exif_oxide_output, &tag_refs),
-            )
-        } else {
-            (
-                filter_to_supported_tags(&exiftool_output),
-                filter_to_supported_tags(&exif_oxide_output),
-            )
-        };
-
-    // Remove known missing tags for this file type
-    remove_known_missing_tags(&mut filtered_exiftool, file_path);
-    remove_known_missing_tags(&mut filtered_exif_oxide, file_path);
-
-    // Normalize for comparison
-    let normalized_exiftool = normalize_for_comparison(filtered_exiftool, true);
-    let normalized_exif_oxide = normalize_for_comparison(filtered_exif_oxide, false);
-
-    // TODO: Add manufacturer-specific missing MakerNotes tag documentation
-    let manufacturer_info = detect_manufacturer_from_path(file_path);
-    if let Some(info) = manufacturer_info {
-        match info.as_str() {
-            "sony" => {
-                // TODO: Missing Sony MakerNotes tags tracked in MILESTONE-17e-Sony-RAW
-                // Expected missing: MakerNotes:ExposureTime, MakerNotes:FocalLength
-                // These will be implemented with Sony.pm codegen extraction
-            }
-            "nikon" => {
-                // TODO: Missing Nikon MakerNotes tags - no milestone yet
-                // Expected missing: MakerNotes:ISO, MakerNotes:FocalLength, MakerNotes:Lens
-                // Requires Nikon-specific tag extraction implementation
-            }
-            "canon" => {
-                // TODO: Missing Canon MakerNotes tags tracked in MILESTONE-17d-Canon-RAW
-                // Expected missing: Various Canon-specific MakerNotes
-                // Includes Canon lens database and binary data extraction
-            }
-            "casio" => {
-                // TODO: Missing Casio MakerNotes - not yet scheduled
-                // Multiple Casio files failing, needs manufacturer-specific implementation
-            }
-            "minolta" => {
-                // TODO: Missing Minolta MakerNotes - not yet scheduled
-                // Both MRW and JPG files failing, needs Minolta-specific implementation
-            }
-            "pentax" => {
-                // TODO: Missing Pentax MakerNotes - mentioned in MILESTONE-MOAR-CODEGEN
-                // Pentax lens types and model mappings (~5-8 tables planned)
-            }
-            "kodak" => {
-                // TODO: Missing Kodak MakerNotes - not yet scheduled
-                // Kodak files failing, needs manufacturer-specific implementation
-            }
-            "panasonic" => {
-                // TODO: Missing Panasonic MakerNotes - mentioned in MILESTONE-MOAR-CODEGEN
-                // Panasonic lens databases and quality settings (~8-12 tables planned)
-            }
-            _ => {}
-        }
+/// Parse a Perl `$VERSION = '13.59';` assignment, returning the version string.
+fn parse_version_line(line: &str) -> Option<String> {
+    let rest = line.trim_start().strip_prefix("$VERSION")?;
+    let rest = rest.trim_start().strip_prefix('=')?.trim_start();
+    let quote = rest.chars().next()?;
+    if quote != '\'' && quote != '"' {
+        return None;
     }
-
-    // Compare JSON objects directly (ignores field order)
-    if normalized_exiftool != normalized_exif_oxide {
-        // Pretty print both for diff display
-        let exiftool_json = serde_json::to_string_pretty(&normalized_exiftool)?;
-        let exif_oxide_json = serde_json::to_string_pretty(&normalized_exif_oxide)?;
-
-        let diff = TextDiff::from_lines(&exiftool_json, &exif_oxide_json);
-
-        println!("\n❌ MISMATCH for {file_path}");
-        println!("ExifTool snapshot (reference) vs exif-oxide (test):\n");
-
-        for change in diff.iter_all_changes() {
-            let sign = match change.tag() {
-                ChangeTag::Delete => "-",
-                ChangeTag::Insert => "+",
-                ChangeTag::Equal => " ",
-            };
-            print!("{sign}{change}");
-        }
-
-        return Err(format!("Output mismatch for {file_path}").into());
-    }
-
-    Ok(())
+    let after = &rest[1..];
+    let end = after.find(quote)?;
+    Some(after[..end].to_string())
 }
 
-/// Get known missing tags for specific file types/manufacturers
-/// These are tags that are documented as missing due to incomplete implementations
-#[allow(dead_code)]
-fn get_known_missing_tags(file_path: &str) -> Vec<&'static str> {
-    let path_lower = file_path.to_lowercase();
+/// Guard against snapshot/submodule ExifTool version skew.
+///
+/// `tools/generate_exiftool_json.sh` uses the vendored `third-party/exiftool/exiftool`
+/// and records its version in `generated/exiftool-json/.exiftool-version`. That marker
+/// must match `$VERSION` in the pinned submodule; otherwise the snapshots were generated
+/// against a different ExifTool than the one the repo claims to track (a live skew hazard,
+/// since the machine's PATH exiftool is often an older release).
+#[test]
+fn test_snapshot_exiftool_version_matches_submodule() {
+    let pm_path = "third-party/exiftool/lib/Image/ExifTool.pm";
+    let pm = std::fs::read_to_string(pm_path).unwrap_or_else(|e| {
+        panic!("failed to read {pm_path}: {e} (is the ExifTool submodule initialized?)")
+    });
+    let submodule_version = pm
+        .lines()
+        .find_map(parse_version_line)
+        .unwrap_or_else(|| panic!("could not find `$VERSION = '...'` line in {pm_path}"));
 
-    // Panasonic RW2 files - missing tags due to incomplete IFD chaining and MakerNotes
-    // See: docs/todo/HANDOFF-panasonic-rw2-complete-resolution.md
-    if 1 > 2
-        && (path_lower.contains("panasonic") || path_lower.contains("lumix"))
-        && path_lower.contains("rw2")
-    {
-        vec![
-            "EXIF:ResolutionUnit",   // Located in IFD1 (requires IFD chaining)
-            "EXIF:YCbCrPositioning", // Located in IFD1 (requires IFD chaining)
-            "EXIF:ColorSpace",       // Located in ExifIFD (requires ExifIFD chaining)
-            "EXIF:WhiteBalance",     // Located in MakerNotes (requires MakerNotes processing)
-        ]
-    } else {
-        vec![]
-    }
+    let marker_path = "generated/exiftool-json/.exiftool-version";
+    let marker = std::fs::read_to_string(marker_path).unwrap_or_else(|e| {
+        panic!(
+            "missing snapshot version marker {marker_path}: {e}\n\
+             → Run `make compat-gen-force` to regenerate snapshots with the vendored ExifTool."
+        )
+    });
+
+    assert_eq!(
+        marker.trim(),
+        submodule_version.trim(),
+        "\nSnapshot/submodule ExifTool version skew!\n  \
+         submodule ({pm_path}) = {sub}\n  \
+         snapshots ({marker_path}) = {mark}\n\
+         → Run `make compat-gen-force` to regenerate all snapshots with the pinned submodule ExifTool.",
+        sub = submodule_version.trim(),
+        mark = marker.trim(),
+    );
 }
 
-/// Remove known missing tags from a JSON value
-/// This allows compatibility tests to pass for documented missing features
-#[allow(dead_code)]
-fn remove_known_missing_tags(json: &mut serde_json::Value, file_path: &str) {
-    let missing_tags = get_known_missing_tags(file_path);
-
-    if !missing_tags.is_empty() {
-        if let Some(obj) = json.as_object_mut() {
-            for tag in missing_tags {
-                obj.remove(tag);
-            }
-        }
-    }
-}
-
-/// Detect manufacturer from file path for TODO tracking
-/// Returns lowercase manufacturer name if detected in path
-#[allow(dead_code)]
-fn detect_manufacturer_from_path(file_path: &str) -> Option<String> {
-    let path_lower = file_path.to_lowercase();
-
-    // Check directory names and file names for manufacturer hints
-    if path_lower.contains("sony") || path_lower.contains("ilce") || path_lower.contains("a7c") {
-        Some("sony".to_string())
-    } else if path_lower.contains("nikon")
-        || path_lower.contains("d70")
-        || path_lower.contains("d2hs")
-        || path_lower.contains("nikon_z8")
-    {
-        Some("nikon".to_string())
-    } else if path_lower.contains("canon")
-        || path_lower.contains("t3i")
-        || path_lower.contains("1dmk")
-        || path_lower.contains("eos")
-    {
-        Some("canon".to_string())
-    } else if path_lower.contains("casio")
-        || path_lower.contains("qv")
-        || path_lower.contains("ex-z")
-    {
-        Some("casio".to_string())
-    } else if path_lower.contains("minolta") || path_lower.contains("dimage") {
-        Some("minolta".to_string())
-    } else if path_lower.contains("pentax") || path_lower.contains("k-1") {
-        Some("pentax".to_string())
-    } else if path_lower.contains("kodak") || path_lower.contains("dc4800") {
-        Some("kodak".to_string())
-    } else if path_lower.contains("panasonic") || path_lower.contains("lumix") {
-        Some("panasonic".to_string())
-    } else {
-        None
-    }
-}
-
-/// Test ExifTool compatibility using stored snapshots
+/// Test ExifTool compatibility using stored snapshots.
+///
+/// This is a GATE: it fails on any tag that diverges from the ExifTool snapshot
+/// without a matching entry in `config/compat_known_gaps.json`, and also fails when
+/// an allowlisted tag starts matching again (stale-entry ratchet). Set `TAGS_FILTER`
+/// for a non-asserting debugging run, or `COMPAT_DUMP_GAPS=1` to emit the machine-readable
+/// gap list used to (re)seed the allowlist.
 #[test]
 fn test_exiftool_compatibility() {
     // Discover snapshots
     let snapshots_dir = Path::new("generated/exiftool-json");
     if !snapshots_dir.exists() {
-        println!("Reference JSON directory not found. Run 'make compat-gen' first.");
+        // The oracle is missing entirely; the version-skew guard test covers this
+        // case with a hard failure. Nothing to compare here.
+        println!("Reference JSON directory not found. Run 'make compat-gen-force' first.");
         return;
     }
 
@@ -329,6 +218,11 @@ fn test_exiftool_compatibility() {
         return;
     }
 
+    // Deterministic iteration order: read_dir order is filesystem-dependent, and the
+    // per-tag aggregation below depends on a stable order to pick a representative
+    // sample file for each difference.
+    snapshot_files.sort();
+
     println!(
         "Running ExifTool compatibility tests using {} snapshots",
         snapshot_files.len()
@@ -336,6 +230,7 @@ fn test_exiftool_compatibility() {
 
     let mut compatibility_report = CompatibilityReport::new();
     let mut tested_files = 0;
+    let mut missing_source_files = 0;
     let mut all_tag_differences = std::collections::HashMap::new(); // tag -> TagDifference
 
     for file_path in snapshot_files {
@@ -352,8 +247,12 @@ fn test_exiftool_compatibility() {
             continue;
         }
 
-        // Skip if file doesn't exist
+        // Skip if file doesn't exist (test-images/ is B2-synced, not in git).
+        // Absent files mean fewer observations, which can only under-report
+        // gaps — but it would make the stale-entry ratchet below false-fire,
+        // so we count them and disable that assertion when any are missing.
         if !Path::new(&file_path).exists() {
+            missing_source_files += 1;
             continue;
         }
 
@@ -366,7 +265,7 @@ fn test_exiftool_compatibility() {
         ) {
             (Ok(exiftool_data), Ok(our_data)) => {
                 // Filter both to supported tags (or custom tags if TAGS_FILTER is set)
-                let (mut filtered_exiftool, mut filtered_exif_oxide) =
+                let (filtered_exiftool, filtered_exif_oxide) =
                     if let Some(custom_tags) = parse_tags_filter() {
                         let tag_refs: Vec<&str> = custom_tags.iter().map(|s| s.as_str()).collect();
                         (
@@ -380,10 +279,6 @@ fn test_exiftool_compatibility() {
                         )
                     };
 
-                // Remove known missing tags for this file type
-                remove_known_missing_tags(&mut filtered_exiftool, &file_path);
-                remove_known_missing_tags(&mut filtered_exif_oxide, &file_path);
-
                 // Normalize for comparison
                 let normalized_exiftool = normalize_for_comparison(filtered_exiftool, true);
                 let normalized_exif_oxide = normalize_for_comparison(filtered_exif_oxide, false);
@@ -394,10 +289,24 @@ fn test_exiftool_compatibility() {
                     &normalized_exif_oxide,
                 );
 
-                // Aggregate differences by tag (keep the first example of each tag difference)
+                // Aggregate differences by tag. A non-Working difference always
+                // replaces a Working entry, a Working result never replaces a
+                // non-Working entry, and among non-Working results the first (in
+                // sorted file order) wins. This closes the hole where a tag that
+                // is Working in an early file masks a regression in a later file.
                 for diff in file_differences {
-                    if !all_tag_differences.contains_key(&diff.tag) {
-                        all_tag_differences.insert(diff.tag.clone(), diff);
+                    match all_tag_differences.get(&diff.tag) {
+                        None => {
+                            all_tag_differences.insert(diff.tag.clone(), diff);
+                        }
+                        Some(existing) => {
+                            let existing_working =
+                                existing.difference_type == DifferenceType::Working;
+                            let new_working = diff.difference_type == DifferenceType::Working;
+                            if existing_working && !new_working {
+                                all_tag_differences.insert(diff.tag.clone(), diff);
+                            }
+                        }
                     }
                 }
             }
@@ -438,21 +347,121 @@ fn test_exiftool_compatibility() {
     // Print the enhanced compatibility report
     compatibility_report.print_summary();
 
-    // Report critical issues but don't fail the test - this is for tracking progress
-    let critical_failures =
-        compatibility_report.missing_tags.len() + compatibility_report.type_mismatches.len();
-    let dependency_failures = compatibility_report.dependency_failures.len();
+    // Collect every non-Working difference across all five categories.
+    let non_working: Vec<&TagDifference> = compatibility_report
+        .value_format_mismatches
+        .iter()
+        .chain(&compatibility_report.missing_tags)
+        .chain(&compatibility_report.dependency_failures)
+        .chain(&compatibility_report.type_mismatches)
+        .chain(&compatibility_report.only_in_ours)
+        .collect();
 
-    if critical_failures > 0 || dependency_failures > 0 {
+    // COMPAT_DUMP_GAPS=1 emits a machine-readable list of every current gap, used
+    // to (re)seed config/compat_known_gaps.json.
+    if std::env::var("COMPAT_DUMP_GAPS").is_ok() {
+        let mut dump: Vec<_> = non_working
+            .iter()
+            .map(|d| {
+                serde_json::json!({
+                    "tag": d.tag,
+                    "type": difference_type_label(&d.difference_type),
+                    "sample_file": d.sample_file,
+                })
+            })
+            .collect();
+        dump.sort_by(|a, b| a["tag"].as_str().cmp(&b["tag"].as_str()));
         println!(
-            "\n⚠️  Tracking {} compatibility gaps: {} missing tags, {} dependency failures, {} type mismatches",
-            critical_failures + dependency_failures,
-            compatibility_report.missing_tags.len(),
-            dependency_failures,
-            compatibility_report.type_mismatches.len()
+            "COMPAT_DUMP_GAPS_JSON_BEGIN\n{}\nCOMPAT_DUMP_GAPS_JSON_END",
+            serde_json::to_string_pretty(&dump).unwrap()
         );
-        println!("This test tracks progress towards ExifTool compatibility - failures are expected during development.");
-    } else {
-        println!("\n🎉 Perfect ExifTool compatibility achieved!");
     }
+
+    // TAGS_FILTER is a debugging mode (arbitrary tag subset). The allowlist is
+    // written against the full supported-tag set, so assertions don't apply.
+    if parse_tags_filter().is_some() {
+        println!(
+            "\nℹ️  TAGS_FILTER is set — debugging mode; ExifTool oracle assertions are skipped."
+        );
+        return;
+    }
+
+    // Load the reviewed allowlist. A malformed config (duplicate tag, empty
+    // reason/reference) fails the gate loudly.
+    let known_gaps = KnownGaps::load()
+        .unwrap_or_else(|e| panic!("failed to load config/compat_known_gaps.json: {e}"));
+
+    // (1) Every non-Working difference must be allowlisted.
+    let mut unexpected: Vec<&TagDifference> = non_working
+        .iter()
+        .copied()
+        .filter(|d| !known_gaps.contains(&d.tag))
+        .collect();
+    unexpected.sort_by(|a, b| a.tag.cmp(&b.tag));
+
+    // (2) Every allowlisted tag must actually reproduce as a non-Working difference
+    // (stale-entry detection: the ratchet that removes entries once they pass).
+    // Only meaningful when every snapshot's source image was on disk: with an
+    // unsynced test-images/ corpus (160 of the 168 entries anchor there), absent
+    // files would make correct allowlist entries look stale and the failure
+    // message would wrongly advise deleting them.
+    let non_working_tags: std::collections::HashSet<&str> =
+        non_working.iter().map(|d| d.tag.as_str()).collect();
+    let mut stale: Vec<&str> = if missing_source_files == 0 {
+        known_gaps
+            .tags()
+            .filter(|t| !non_working_tags.contains(t))
+            .collect()
+    } else {
+        println!(
+            "\nℹ️  {missing_source_files} source image(s) missing (run `make pull-test-images`); \
+             stale-entry ratchet skipped."
+        );
+        Vec::new()
+    };
+    stale.sort();
+
+    let mut failure = String::new();
+
+    if !unexpected.is_empty() {
+        failure.push_str(&format!(
+            "\n❌ {} tag(s) diverge from ExifTool but are NOT in the allowlist:\n",
+            unexpected.len()
+        ));
+        for d in &unexpected {
+            failure.push_str(&format!(
+                "  {} [{}] sample={} expected={} got={}\n",
+                d.tag,
+                difference_type_label(&d.difference_type),
+                d.sample_file,
+                TagDifference::format_value_truncated(&d.expected),
+                TagDifference::format_value_truncated(&d.actual),
+            ));
+        }
+        failure.push_str(
+            "\n→ Fix each tag, or add it to config/compat_known_gaps.json with a reason + reference.\n",
+        );
+    }
+
+    if !stale.is_empty() {
+        failure.push_str(&format!(
+            "\n❌ {} allowlisted tag(s) now MATCH ExifTool and must be removed from \
+             config/compat_known_gaps.json (ratchet):\n",
+            stale.len()
+        ));
+        for t in &stale {
+            failure.push_str(&format!("  {t}\n"));
+        }
+    }
+
+    assert!(
+        failure.is_empty(),
+        "ExifTool compatibility gate failed:{failure}"
+    );
+
+    println!(
+        "\n✅ ExifTool compatibility gate passed: {} working tag(s), {} allowlisted gap(s), 0 unexpected divergences.",
+        compatibility_report.working_tags.len(),
+        known_gaps.tags().count(),
+    );
 }

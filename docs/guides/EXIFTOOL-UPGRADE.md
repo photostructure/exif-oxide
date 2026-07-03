@@ -16,8 +16,8 @@ early if that's not true.
 [ ] 5. cargo build — build breaks here are codegen bugs; fix codegen/src/
 [ ] 6. Triage the .pm diff (table vs procedural; read-path only)
 [ ] 7. Port procedural changes (if any) with TDD + file:line citations
-[ ] 8. Discard codegen's submodule patches; regen snapshots with NEW exiftool
-[ ] 9. make compat-test — compare against the pre-bump baseline
+[ ] 8. Discard codegen's submodule patches; `make compat-gen-force` (MANDATORY on every bump)
+[ ] 9. make compat-test — version-skew guard + gate; compare against the pre-bump baseline
 [ ] 10. Push fork, commit gitlink + generated churn + ports together
 ```
 
@@ -188,11 +188,19 @@ git -C third-party/exiftool checkout -- .
 ```
 
 Snapshots must come from the **submodule's** exiftool, not whatever's on
-`$PATH` (the system one is usually older):
+`$PATH` (the system one is usually older). `tools/generate_exiftool_json.sh`
+now hard-codes the vendored `third-party/exiftool/exiftool`, so no PATH
+override is needed — just run it. **This step is mandatory on every submodule
+bump**, even if you think nothing relevant changed: the committed
+`generated/exiftool-json/.exiftool-version` marker (checked by the §9
+version-skew guard) is only rewritten by a fully successful `--force` run,
+and incremental runs (`make compat-gen`, and therefore `make compat`) abort
+on a marker mismatch so a bump can't silently mix oracle versions.
 
 ```bash
-PATH="$PWD/third-party/exiftool:$PATH" ./tools/generate_exiftool_json.sh --force
-# Spot-check: grep '"ExifToolVersion"' generated/exiftool-json/<any>.json
+make compat-gen-force
+# Spot-check the recorded version marker:
+cat generated/exiftool-json/.exiftool-version   # must match $VERSION (§1)
 ```
 
 ## 9. Compat test against baseline
@@ -210,8 +218,17 @@ interesting part is the *delta*, which mixes:
   13.59 examples: FujiFilm `RAFVersion`→`FirmwareVersion`, Pentax
   `AFInfo`→`AFInfoK3III`, composite `FocalLength35efl` description.
 
-(As of this writing the compat test never fails on its own — asserting
-is the snapshot-oracle TPP's job. Read the printed report.)
+`make compat-test` now runs two hard gates (per the snapshot-oracle TPP):
+
+- `test_snapshot_exiftool_version_matches_submodule` fails until you've run
+  `make compat-gen-force` (§8) so the `.exiftool-version` marker matches the
+  pinned submodule `$VERSION`. If you skipped §8, this is what catches it.
+- `test_exiftool_compatibility` fails on any tag that diverges from the
+  snapshot without an entry in `config/compat_known_gaps.json`, and also on
+  any allowlisted tag that starts matching again (the ratchet). A legitimate
+  upstream behavior change therefore means editing the allowlist (with a
+  reason + reference) or removing a now-passing entry — not just eyeballing
+  the report.
 
 ## 10. Land it
 

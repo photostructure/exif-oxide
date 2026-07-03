@@ -90,7 +90,7 @@ tier, and land the reliability foundations as discrete TPPs.
 | 0 | Docs/planning re-scope (MILESTONES.md, scope language, TPP migration, TODO rewrite) | commits `9e72960e`, `dcc38b20` | ✅ DONE 2026-07-01 |
 | 1 | ExifTool v13.43→13.59+ catch-up + `docs/guides/EXIFTOOL-UPGRADE.md` runbook | `_done/20260701-P0-exiftool-version-catchup.md`, commit `f2bdb304` | ✅ DONE 2026-07-02 (zero ports needed; 3 codegen bugs fixed; compat 42%→43%) |
 | 1b | Pre-existing lint rot (75 clippy errors at HEAD from toolchain upgrade) | commit `7fa2fd78` | ✅ DONE 2026-07-02 (`make lint` gates again; deleted 6 dead legacy normalizer passes) |
-| 2 | Snapshot-oracle integrity (make compat test assert; allowlist; version-skew guard) | `_todo/20260701-P1-snapshot-oracle-integrity.md` | 🟨 IN PROGRESS — Task 1 (breaking test) done via the GPS fix (`tests/snapshot_oracle_tests.rs`, commit `141c4167`); Tasks 2-8 (assertive test, allowlist, version-skew guard) not started |
+| 2 | Snapshot-oracle integrity (make compat test assert; allowlist; version-skew guard) | `_done/20260701-P1-snapshot-oracle-integrity.md` | ✅ DONE 2026-07-03 — compat test is a hard gate (allowlist + stale-entry ratchet in `config/compat_known_gaps.json`, 168 triaged gaps in 14 root-cause groups); version-skew guard (committed `.exiftool-version` marker, vendored-exiftool-only generator, incremental regen aborts on skew). **Headline metric reframed: 94/191 under old first-seen-wins counting = 23/191 under honest works-in-every-file counting — not a regression.** Newly visible bugs: HEIC EXIF extraction (0/32 on IMG_9757.heic), Nikon Z-series NEF→NRW misdetection |
 | 3 | cargo-fuzz infrastructure | `_done/20260701-P1-fuzzing-infrastructure.md` | ✅ DONE 2026-07-03 — 9 targets, nightly CI job, 5 real crash bugs found AND fixed (alloc-bomb, 3 overflow panics, makernote-recursion stack overflow); double-review (Claude 8-angle + codex) each caught a distinct real bug; reproducers committed under fuzz/artifacts/ |
 | 4 | GPSPosition composite sign bug | `_todo/P03-implementation-backlog.md` (Next Steps) | ✅ DONE 2026-07-02, commit `141c4167` (byte-exact; review-gated; compat 84/191) |
 | 5 | Video/QuickTime read support (22 blocked tags) | `_todo/20260703-P1-quicktime-video-read.md` | 🟨 TPP authored 2026-07-03 (fable agent, citations spot-verified); implementation not started. Key findings: generated QuickTime tables half-empty (tag_kit.rs parses keys as u16, dropping `'mvhd'`-style atom IDs); `function_registry.rs:193-210` maps to a nonexistent `implementations::quicktime` module (silent-stub trap); 20 CR3 snapshots also blocked on the same walker |
@@ -115,10 +115,20 @@ tier, and land the reliability foundations as discrete TPPs.
   `third-party/exiftool/exiftool` script and
   `cargo run --bin compare-with-exiftool <image> [group]`.
 
-## Session state (2026-07-03, second session) — resume here
+## Session state (2026-07-03, third session) — resume here
 
-- **Everything committed AND pushed through `2551f6e5`.** Compat is
-  **94/191 (49%)**. This session ran item #7 end-to-end: researched the
+- **Items #2 and #5-authoring landed 2026-07-03 (third session)**: the
+  compat gate (see table row #2 — headline is now an honest **23/191**
+  with 168 triaged+allowlisted gaps) and the QuickTime TPP (`2d654d4d`).
+  Orchestration pattern held: opus implementation subagent → adversarial
+  opus review subagent → orchestrator vets findings empirically → fix →
+  one commit. The reviewer confirmed the orchestrator-found HIGH hole
+  (marker rewritten on incremental regen would defeat the skew guard)
+  and added two real ones (marker not committed; stale-ratchet
+  false-fire without the B2 corpus).
+- Earlier 2026-07-03 (second session), pushed through `2551f6e5`:
+  item #7 (XMP value conversion) took compat 86→94 under the old
+  counting. That session ran item #7 end-to-end: researched the
   root cause inline, authored the child TPP, delegated implementation to
   an opus subagent, adversarially reviewed, fixed the review findings,
   committed `0116b472` + follow-up `2551f6e5` (de-stubbed
@@ -154,10 +164,19 @@ tier, and land the reliability foundations as discrete TPPs.
   corrupted `~/.cargo/registry/src/.../rustversion-1.0.22` extraction
   blocks that install, `rm -rf` the dir); dead `schemas/tag_kit.rs`
   removed (`f010615e`).
-- **Next**: item #2 remaining tasks (assertive compat test + allowlist +
-  version-skew guard — allowlist triage surface is 92 gaps at 94/191),
-  then #5 (author video TPP with a fable subagent), then #6 (napi
-  spike; licensing answered below).
+- **Next**: implement the video TPP (`_todo/20260703-P1-quicktime-video-read.md`,
+  item #5 — biggest single win: 32 allowlisted tags + 20 CR3 snapshots),
+  or #6 (napi spike; licensing answered below), or the HEIC extraction
+  bug (33 allowlisted tags, `test-images/apple/IMG_9757.heic` extracts 0
+  EXIF — needs a TPP/backlog entry, untriaged).
+- **Working the gate (post-#2)**: when a fix lands, the stale-entry
+  ratchet fails `make compat-test` until the tag is removed from
+  `config/compat_known_gaps.json` — that's the intended workflow, not a
+  bug. `COMPAT_DUMP_GAPS=1` dumps the machine-readable gap list.
+  Composite:LensID snapshots for nikon/d3500* churn randomly on
+  `compat-gen-force` (ExifTool Perl hash-order for tied lens candidates —
+  verified both orderings from the same binary); safe to discard or
+  commit, the tag is an allowlisted gap either way.
 - Local-only files, leave alone: `.claude/settings.local.json`,
   `docs/chats/`.
 
@@ -243,8 +262,10 @@ tier, and land the reliability foundations as discrete TPPs.
 - [x] Task 1: Complete child TPP #1 (version catch-up). **Proof**: TPP in
       `_done/`, `docs/guides/EXIFTOOL-UPGRADE.md` exists. (DONE 2026-07-02,
       commit `f2bdb304`.)
-- [ ] Task 2: Complete child TPP #2 (snapshot oracle). **Proof**: TPP in
+- [x] Task 2: Complete child TPP #2 (snapshot oracle). **Proof**: TPP in
       `_done/`, `make compat-test` exits non-zero on an undocumented diff.
+      (DONE 2026-07-03; proven by removing an allowlist entry → gate
+      fails; version skew → generator and test both fail.)
 - [x] Task 3: Complete child TPP #3 (fuzzing). **Proof**: TPP in `_done/`,
       CI fuzz job green. (2026-07-03: TPP in `_done/`; job is wired and
       validated locally — first nightly run pending on GitHub.)

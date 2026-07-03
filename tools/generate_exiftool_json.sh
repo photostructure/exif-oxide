@@ -26,14 +26,18 @@ echo "Generating ExifTool reference snapshots for exif-oxide compatibility testi
 echo "Project root: $PROJECT_ROOT"
 echo "Snapshots directory: $SNAPSHOTS_DIR"
 
-# Check if ExifTool is available
-if ! command -v exiftool &>/dev/null; then
-  echo "Error: ExifTool is not installed or not in PATH"
-  echo "Please install ExifTool: https://exiftool.org/"
+# Use the vendored ExifTool from the git submodule as the single oracle version.
+# Never use `command -v exiftool` here: whatever's on $PATH is often an older
+# release, and generating even one snapshot with it silently poisons the oracle.
+# ExifTool locates its own lib/ relative to this script path.
+EXIFTOOL="$PROJECT_ROOT/third-party/exiftool/exiftool"
+if [ ! -x "$EXIFTOOL" ]; then
+  echo "Error: vendored ExifTool not found (or not executable) at: $EXIFTOOL"
+  echo "The git submodule is not initialized. Run: git submodule update --init --recursive"
   exit 1
 fi
 
-echo "ExifTool version: $(exiftool -ver)"
+echo "ExifTool version: $("$EXIFTOOL" -ver) (vendored: $EXIFTOOL)"
 
 # Create snapshots directory if it doesn't exist
 mkdir -p "$SNAPSHOTS_DIR"
@@ -44,6 +48,24 @@ if [ "${1:-}" = "--force" ]; then
   FORCE_REGENERATE=true
   echo "Force regeneration enabled - all snapshots will be recreated"
   rm -f "$SNAPSHOTS_DIR"/*.json
+fi
+
+# The committed .exiftool-version marker records which ExifTool generated the
+# snapshots. It is only (re)written by a fully successful --force run; an
+# incremental run must refuse to mix oracle versions, otherwise a submodule
+# bump followed by plain `make compat-gen` / `make compat` would stamp the new
+# version over stale snapshots and silently defeat the version-skew guard.
+MARKER_FILE="$SNAPSHOTS_DIR/.exiftool-version"
+VENDORED_VERSION="$("$EXIFTOOL" -ver)"
+if [ "$FORCE_REGENERATE" = false ]; then
+  MARKER_VERSION="$(cat "$MARKER_FILE" 2>/dev/null || true)"
+  if [ "$MARKER_VERSION" != "$VENDORED_VERSION" ]; then
+    echo "Error: snapshot/ExifTool version skew detected."
+    echo "  snapshots were generated with: ${MARKER_VERSION:-<no marker file>}"
+    echo "  vendored submodule ExifTool is: $VENDORED_VERSION"
+    echo "Incremental generation would mix oracle versions. Run: make compat-gen-force"
+    exit 1
+  fi
 fi
 
 # Create temporary file for all supported image data
@@ -81,7 +103,7 @@ done
 # Note: Using default ExifTool behavior (rational arrays) for Milestone 6
 # Milestone 8c: Using -G flag to get group-prefixed tag names (e.g., "EXIF:Make", "GPS:GPSLatitude")
 
-if ! exiftool -r -json -struct -G -GPSLatitude\# -GPSLongitude\# -GPSAltitude\# -GPSPosition\# -FileSize\# -all -if "$FILTER_CONDITION" \
+if ! "$EXIFTOOL" -r -json -struct -G -GPSLatitude\# -GPSLongitude\# -GPSAltitude\# -GPSPosition\# -FileSize\# -all -if "$FILTER_CONDITION" \
   "$PROJECT_ROOT/test-images" \
   "$PROJECT_ROOT/third-party/exiftool/t/images" \
   >"$TEMP_JSON" 2>/dev/null; then
@@ -167,6 +189,15 @@ jq -c '.[]' "$TEMP_JSON" | while IFS= read -r file_data; do
 
   # echo "Created: $SNAPSHOT_FILE (for $SOURCE_FILE)"
 done
+
+# Record the oracle version, but ONLY after a fully successful --force run:
+# only then is every snapshot guaranteed to come from this ExifTool. (set -e +
+# pipefail abort the script before this line if generation failed partway.)
+# Incremental runs already proved the marker matches above and must not touch it.
+if [ "$FORCE_REGENERATE" = true ]; then
+  echo "$VENDORED_VERSION" >"$MARKER_FILE"
+  echo "Recorded ExifTool version marker: $MARKER_FILE ($VENDORED_VERSION)"
+fi
 
 echo ""
 echo "Snapshot generation complete!"

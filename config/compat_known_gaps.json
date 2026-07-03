@@ -1,0 +1,256 @@
+{
+  "groups": [
+    {
+      "reason": "Video/QuickTime read support is not implemented. These tags come from .MOV/.mov files (QuickTime containers that also embed EXIF/XMP/derived tags); exif-oxide does not parse video, and real ExifTool is the permanent fallback (CLAUDE.md Tier policy).",
+      "reference": "_todo/20260701-P0-strategic-review-program.md item #5 (author the video/QuickTime read TPP)",
+      "tags": [
+        "Composite:GPSAltitudeRef",
+        "Composite:GPSLatitudeRef",
+        "Composite:GPSLongitudeRef",
+        "Composite:GPSPosition",
+        "Composite:ImageSize",
+        "Composite:Megapixels",
+        "Composite:Rotation",
+        "EXIF:Copyright",
+        "EXIF:LensSerialNumber",
+        "EXIF:SerialNumber",
+        "EXIF:SubSecTime",
+        "File:ImageHeight",
+        "File:ImageWidth",
+        "QuickTime:CompressorName",
+        "QuickTime:CreateDate",
+        "QuickTime:CreationDate",
+        "QuickTime:Duration",
+        "QuickTime:HandlerDescription",
+        "QuickTime:ImageHeight",
+        "QuickTime:ImageWidth",
+        "QuickTime:Make",
+        "QuickTime:MediaCreateDate",
+        "QuickTime:MediaDuration",
+        "QuickTime:MediaModifyDate",
+        "QuickTime:Model",
+        "QuickTime:ModifyDate",
+        "QuickTime:Software",
+        "QuickTime:TrackCreateDate",
+        "QuickTime:TrackDuration",
+        "QuickTime:TrackModifyDate",
+        "XMP:GPSLatitude",
+        "XMP:GPSLongitude"
+      ]
+    },
+    {
+      "reason": "RIFF/WebP container read support is not implemented; these tags come from .webp (RIFF) files exif-oxide does not parse.",
+      "reference": "_todo/20260701-P0-strategic-review-program.md item #5 (video/RIFF read support)",
+      "tags": [
+        "RIFF:ImageHeight",
+        "RIFF:ImageWidth",
+        "XMP:Subject"
+      ]
+    },
+    {
+      "reason": "HEIC/HEIF EXIF extraction gap: exif-oxide extracts zero EXIF tags from certain HEIC files (e.g. IMG_9757.heic: 0 of 32 supported EXIF tags), so these otherwise-supported tags are missing for that format. Needs HEIC metadata-extraction investigation.",
+      "reference": "_todo/20260701-P0-strategic-review-program.md (Follow-up candidates — untriaged HEIC extraction; needs its own TPP)",
+      "tags": [
+        "EXIF:ApertureValue",
+        "EXIF:CreateDate",
+        "EXIF:DateTimeOriginal",
+        "EXIF:ExifImageHeight",
+        "EXIF:ExifImageWidth",
+        "EXIF:ExposureProgram",
+        "EXIF:ExposureTime",
+        "EXIF:FNumber",
+        "EXIF:Flash",
+        "EXIF:FocalLength",
+        "EXIF:GPSAltitude",
+        "EXIF:GPSAltitudeRef",
+        "EXIF:GPSDateStamp",
+        "EXIF:GPSLatitude",
+        "EXIF:GPSLatitudeRef",
+        "EXIF:GPSLongitude",
+        "EXIF:GPSLongitudeRef",
+        "EXIF:GPSTimeStamp",
+        "EXIF:ISO",
+        "EXIF:LensInfo",
+        "EXIF:LensMake",
+        "EXIF:LensModel",
+        "EXIF:Make",
+        "EXIF:MeteringMode",
+        "EXIF:Model",
+        "EXIF:ModifyDate",
+        "EXIF:Orientation",
+        "EXIF:ResolutionUnit",
+        "EXIF:ShutterSpeedValue",
+        "EXIF:Software",
+        "EXIF:SubSecTimeDigitized",
+        "EXIF:SubSecTimeOriginal",
+        "EXIF:YCbCrPositioning"
+      ]
+    },
+    {
+      "reason": "RAW EXIF extraction gap: these otherwise-supported EXIF tags are not extracted from the sampled RAW files (per-format IFD chaining / offset gaps).",
+      "reference": "_todo/P03-implementation-backlog.md",
+      "tags": [
+        "EXIF:ImageHeight",
+        "EXIF:ImageWidth"
+      ]
+    },
+    {
+      "reason": "Binary-payload extraction (embedded previews, thumbnails, JpgFromRaw, PreviewTIFF) is not implemented across these formats, so exif-oxide omits the tag (or, for Composite:PreviewImage, over-emits one vs ExifTool).",
+      "reference": "_todo/P1-BINARY-EXTRACTION-ALL-FORMATS.md",
+      "tags": [
+        "Composite:PreviewImage",
+        "EXIF:JpgFromRaw",
+        "EXIF:PreviewImage",
+        "EXIF:PreviewTIFF",
+        "EXIF:ThumbnailImage",
+        "EXIF:ThumbnailTIFF",
+        "File:PreviewImage",
+        "FlashPix:PreviewImage",
+        "MPF:PreviewImage",
+        "MakerNotes:PreviewImage",
+        "MakerNotes:ThumbnailImage"
+      ]
+    },
+    {
+      "reason": "Manufacturer MakerNotes extraction gaps: exif-oxide does not yet decode these maker-note tags (or over-emits one), pending per-manufacturer codegen extraction.",
+      "reference": "_todo/P03-implementation-backlog.md",
+      "tags": [
+        "MakerNotes:CameraID",
+        "MakerNotes:City",
+        "MakerNotes:Country",
+        "MakerNotes:DateTimeOriginal",
+        "MakerNotes:DateTimeUTC",
+        "MakerNotes:ExposureTime",
+        "MakerNotes:FNumber",
+        "MakerNotes:FileNumber",
+        "MakerNotes:FocalLength",
+        "MakerNotes:ISO",
+        "MakerNotes:ImageHeight",
+        "MakerNotes:ImageWidth",
+        "MakerNotes:InternalSerialNumber",
+        "MakerNotes:Lens",
+        "MakerNotes:LensID",
+        "MakerNotes:LensInfo",
+        "MakerNotes:LensModel",
+        "MakerNotes:LensSpec",
+        "MakerNotes:LensType",
+        "MakerNotes:LensType2",
+        "MakerNotes:LensType3",
+        "MakerNotes:Make",
+        "MakerNotes:Model",
+        "MakerNotes:Rating",
+        "MakerNotes:Rotation",
+        "MakerNotes:ShutterCount2",
+        "MakerNotes:ShutterCount3",
+        "MakerNotes:Software",
+        "MakerNotes:SonyExposureTime",
+        "MakerNotes:SonyFNumber",
+        "MakerNotes:SonyISO",
+        "MakerNotes:Title"
+      ]
+    },
+    {
+      "reason": "XMP extraction / value-conversion gaps: these XMP tags are not extracted, or not converted (incl. GPS DMS->decimal ToDegrees), for the sampled files.",
+      "reference": "_todo/20260701-P0-strategic-review-program.md Follow-up candidates (d) XMP GPS ToDegrees + #7 XMP value conversion",
+      "tags": [
+        "XMP:ApertureValue",
+        "XMP:CreateDate",
+        "XMP:CreatorTool",
+        "XMP:DateTimeDigitized",
+        "XMP:DateTimeOriginal",
+        "XMP:Description",
+        "XMP:ExposureTime",
+        "XMP:FNumber",
+        "XMP:FocalLength",
+        "XMP:GPSAltitude",
+        "XMP:GPSAltitudeRef",
+        "XMP:GPSDateTime",
+        "XMP:HistoryWhen",
+        "XMP:Lens",
+        "XMP:LensID",
+        "XMP:LensInfo",
+        "XMP:LensModel",
+        "XMP:Make",
+        "XMP:MetadataDate",
+        "XMP:Model",
+        "XMP:ModifyDate",
+        "XMP:Orientation",
+        "XMP:Rating",
+        "XMP:ShutterSpeedValue",
+        "XMP:Title"
+      ]
+    },
+    {
+      "reason": "IPTC/XMP-adjacent metadata (IPTC:, XML:, MWG:) extraction gaps: exif-oxide does not yet extract these tags from the sampled files.",
+      "reference": "_todo/P03-implementation-backlog.md",
+      "tags": [
+        "IPTC:City",
+        "IPTC:ObjectName",
+        "IPTC:Source"
+      ]
+    },
+    {
+      "reason": "Name-keyed COMPOSITE_TAGS registry collision (GPS vs Sony vs QuickTime defs) suppresses these GPS composites on non-video files. Fix is to make the registry first-buildable-wins.",
+      "reference": "_todo/20260701-P0-strategic-review-program.md Follow-up candidates (b) COMPOSITE_TAGS collision",
+      "tags": [
+        "Composite:GPSAltitude",
+        "Composite:GPSDateTime",
+        "Composite:GPSLatitude",
+        "Composite:GPSLongitude"
+      ]
+    },
+    {
+      "reason": "Composite lens identification (LensID/LensSpec/LensType/Lens) depends on MakerNotes lens tables exif-oxide has not fully extracted, so the composite is missing for the sampled files.",
+      "reference": "_todo/P03-implementation-backlog.md",
+      "tags": [
+        "Composite:Lens",
+        "Composite:LensID",
+        "Composite:LensSpec",
+        "Composite:LensType"
+      ]
+    },
+    {
+      "reason": "Composite:DateTimeOriginal is emitted where ExifTool suppresses it: codegen drops ExifTool's composite Condition (Exif.pm:4952) and orchestration never evaluates it. Needs a condition field on CompositeTagDef + runtime evaluation.",
+      "reference": "_todo/20260701-P0-strategic-review-program.md Follow-up candidates (a) composite Condition support",
+      "tags": [
+        "Composite:DateTimeOriginal"
+      ]
+    },
+    {
+      "reason": "Composite tag missing because a required dependency tag is not yet extracted for the sampled file (RAW/HEIC EXIF or MakerNotes gaps upstream).",
+      "reference": "_todo/P03-implementation-backlog.md",
+      "tags": [
+        "Composite:Aperture",
+        "Composite:DateTimeCreated",
+        "Composite:FileNumber",
+        "Composite:ISO",
+        "Composite:ImageHeight",
+        "Composite:ImageWidth",
+        "Composite:ShutterSpeed",
+        "Composite:SubSecCreateDate",
+        "Composite:SubSecDateTimeOriginal",
+        "Composite:SubSecModifyDate"
+      ]
+    },
+    {
+      "reason": "Known distinct-root-cause type mismatches: IPTC:Keywords list accumulation, EXIF:XPKeywords UCS-2 decode, EXIF:GPSProcessingMethod encoding-prefix strip, MakerNotes:Categories (Canon), XMP:Source apostrophe truncation.",
+      "reference": "_todo/20260701-P0-strategic-review-program.md Follow-up candidates (c) the remaining type mismatches",
+      "tags": [
+        "EXIF:GPSProcessingMethod",
+        "EXIF:XPKeywords",
+        "IPTC:Keywords",
+        "MakerNotes:Categories",
+        "XMP:Source"
+      ]
+    },
+    {
+      "reason": "File-type disambiguation bug: exif-oxide misidentifies some Nikon NEF files as NRW, so File:FileType/FileTypeExtension/MIMEType diverge. Untriaged; needs investigation.",
+      "reference": "_todo/20260701-P0-strategic-review-program.md (Follow-up candidates — untriaged file-type detection; needs investigation)",
+      "tags": [
+        "File:FileType",
+        "File:FileTypeExtension",
+        "File:MIMEType"
+      ]
+    }
+  ]
+}

@@ -11,11 +11,13 @@
 
 pub mod comparison;
 pub mod filtering;
+pub mod known_gaps;
 pub mod normalization;
 pub mod reporting;
 
 pub use comparison::*;
 pub use filtering::*;
+pub use known_gaps::*;
 pub use normalization::*;
 pub use reporting::*;
 
