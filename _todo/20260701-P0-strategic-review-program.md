@@ -60,12 +60,11 @@ tier, and land the reliability foundations as discrete TPPs.
 
 ## Findings worth preserving (verified, with corrections)
 
-- **Version facts**: pinned submodule is **v13.43** (read `$VERSION` in
-  `third-party/exiftool/lib/Image/ExifTool.pm`; `git describe` reports a
-  misleading `11.18-265` because only the 11.18 tag is annotated). Upstream
-  was 13.59 (2026-05-27): 16 releases behind, including 4 security releases.
-  Earlier "v13.10 / 42 releases behind" figures were artifacts of the
-  `git describe` gotcha.
+- **Version facts**: pinned submodule is now **v13.59** (since item #1,
+  `f2bdb304`; was v13.43 at review time). Ground truth is `$VERSION` in
+  `third-party/exiftool/lib/Image/ExifTool.pm` — never `git describe`,
+  which reports a misleading `11.18-265` because only the 11.18 tag is
+  annotated.
 - **Release churn**: ~80% of a typical ExifTool release is table data that
   `make codegen` absorbs with zero human work; ~20% is procedural logic
   (Geotag interpolation, QuickTime parsing, Canon extender regex) needing
@@ -74,9 +73,9 @@ tier, and land the reliability foundations as discrete TPPs.
 - **The compat test never fails.** `test_exiftool_compatibility` prints a
   report and returns Ok unconditionally; its known-failures mechanism is
   dead code (`if 1 > 2`). Every mismatch currently "passes."
-- **Composite bugs**: Megapixels and ShutterSpeed are already fixed; only
-  GPSPosition remains (longitude sign + precision,
-  `src/core/composite_fallbacks.rs:391`, tracked in P03 backlog).
+- **Composite bugs from the review**: all fixed — Megapixels/ShutterSpeed
+  pre-review, GPSPosition 2026-07-02 (item #4, `141c4167`). Remaining
+  composite work is the `Condition` + registry-collision follow-ups below.
 - **Landscape** (2026-07 web survey): no alternative meets full-fidelity +
   write + permissive-license + embeddable. Exiv2 is GPL and admits less
   coverage than ExifTool; little_exif write is toy-scale; kamadak-exif /
@@ -116,75 +115,80 @@ tier, and land the reliability foundations as discrete TPPs.
   `third-party/exiftool/exiftool` script and
   `cargo run --bin compare-with-exiftool <image> [group]`.
 
-## Session state (2026-07-03 end of session) — resume here
+## Session state (2026-07-03, second session) — resume here
 
-- **Everything is committed AND pushed** through `f792da07`
-  (Matthew's precommit→`verify` Makefile rename). Earlier "committed,
-  not pushed" backlog is resolved. Highlights this session:
-  - `cb3506ca` — item #3 (fuzzing) landed; TPP in `_done/`; 5 crash bugs
-    fixed. First nightly fuzz CI run pending on GitHub (07:00 UTC cron).
-  - `1438c0c4` — compat 84→86 (see next bullet).
-  - `f4e2a58d` — **security**: quick-xml 0.38→0.41 (RUSTSEC-2026-0194/0195,
-    two HIGH DoS on the untrusted-XMP path), bytes 1.12.0, anyhow 1.0.103.
-    `make audit` was crashing on the advisory DB's new CVSS 4.0 vectors —
-    fixed by `cargo install cargo-audit` (0.22.2); anyone else hitting
-    "unsupported CVSS version: 4.0" needs the same upgrade. Also: a
-    corrupted `~/.cargo/registry/src/.../rustversion-1.0.22` blocked the
-    install; `rm -rf` of that extracted dir fixed it.
-  - `f010615e` — deleted dead `codegen/src/schemas/tag_kit.rs` (source of
-    the 7 dead_code warnings in every `make codegen`).
+- **Everything committed AND pushed through `2551f6e5`.** Compat is
+  **94/191 (49%)**. This session ran item #7 end-to-end: researched the
+  root cause inline, authored the child TPP, delegated implementation to
+  an opus subagent, adversarially reviewed, fixed the review findings,
+  committed `0116b472` + follow-up `2551f6e5` (de-stubbed
+  `xmp_date_value_conv`, which the codegen impl_registry maps to
+  ExifTool's ConvertXMPDate expression — it was a silent no-op waiting
+  to be wired by a future codegen run, the same trap the IPTC
+  ExifDate/ExifTime stubs sprang).
+- **The review gate keeps earning its keep** (implement → adversarial
+  review subagent → vet each finding empirically vs vendored exiftool →
+  fix → commit): this round it caught 2 missing PrintConv arms
+  (ExposureCompensation, SubjectDistance) and exposed that the
+  pre-existing shared `print_fraction` printed every negative EV as a
+  wrong whole number (`floor`+`abs` vs Perl's signed
+  truncate-toward-zero `int`, Exif.pm:5524) — latent because no compat
+  snapshot carries a negative EV.
+- **Subagent latency gotcha**: two background research agents' final
+  reports arrived 30-60+ min late (implementation/review agents were
+  fine). Don't block the critical path on research subagents — do
+  must-have research inline and treat late reports as cross-checks
+  (both eventually confirmed the shipped work and surfaced the de-stub
+  item).
 - **Shelf-ware candidate (Matthew to decide)**:
   `examples/validate_quick_xml_xmp_v3.rs` is a 517-line quick-xml
   evaluation spike predating the shipped `src/xmp/processor.rs`. It has
-  now broken on BOTH quick-xml bumps (`e6ab6393`, and again this session —
-  migrated to 0.41 to keep the build green). Suggest deleting it; the
-  processor + tests + fuzz_xmp cover its purpose.
-- **Compat 84→86 (43%→45%), 2026-07-03**: two root-cause fixes — (a) codegen
-  treated standalone double-quoted interpolated strings as literals, so 9
-  composite ValueConvs (IPTC DateTimeCreated/DigitalCreationDateTime, GPS+Sony
-  GPSDateTime, PreviewImageSize, Kodak DateCreated, Nikon LensSpec, Olympus
-  LensType, Panasonic AdvancedSceneMode) returned the raw Perl text; (b) the
-  IPTC parser never applied per-tag ValueConv, and ExifDate/ExifTime were
-  stubs — now implemented (Exif.pm:6068-6094), covering 10 IPTC date/time
-  tags. **Follow-up found**: `Composite:DateTimeOriginal` is emitted with a
-  correct value on files where ExifTool suppresses it — codegen drops
-  ExifTool's composite `Condition` (e.g. `not defined
-  $$self{VALUE}{DateTimeOriginal}`, Exif.pm:4952) and orchestration never
-  evaluates it. Needs a `condition` field on CompositeTagDef + runtime
-  evaluation; would clear 1 of the 5 only-in-exif-oxide gaps.
-- **Item #7 landed 2026-07-03 (compat 86→94/191, 49%)**: XMP read-time
-  value conversion (`_done/20260703-P1-xmp-value-conversion.md`). Worth
-  remembering: the adversarial review caught that the pre-existing
-  `print_fraction` (EXIF ExposureCompensation path) printed every
-  negative EV as a whole number (`floor` vs Perl's truncate-toward-zero
-  `int`) — latent because no compat snapshot has a negative EV. Pattern
-  held: implement → adversarial review → empirically vet each finding
-  against vendored exiftool → fix → commit.
-- **Next after #7**: item #2 remaining tasks (assertive compat
-  test + allowlist + version-skew guard — the allowlist triage surface
-  is now 92 gaps at 94/191), then #5 (author video TPP with a fable
-  subagent), then #6 (napi spike; licensing answered above).
-- Also uncommitted: `.claude/settings.local.json` (Matthew's, leave) and
-  `docs/chats/` (Matthew's, leave).
-- New composite-registry follow-up discovered during #4: name-keyed
-  `COMPOSITE_TAGS` collision (GPS vs Sony vs QuickTime defs) suppresses
-  `Composite:GPSLatitude/GPSLongitude/GPSAltitude/GPSDateTime` — worth
-  its own small TPP (make the registry first-buildable-wins per
-  ExifTool's rules; the GPSPosition special-case in
-  `src/composite_tags/orchestration.rs` can then be simplified away).
+  now broken on BOTH quick-xml bumps (`e6ab6393`, then the 0.41 bump —
+  migrated to keep the build green). Suggest deleting it; the processor
+  + tests + fuzz_xmp cover its purpose.
+- **Prior-session highlights** (2026-07-03 morning, all pushed): fuzzing
+  item #3 (`cb3506ca`, first nightly CI run was pending); IPTC ValueConv
+  + composite string-interpolation fixes, compat 84→86 (`1438c0c4`);
+  quick-xml 0.38→0.41 security bump (`f4e2a58d` — if `make audit` dies
+  with "unsupported CVSS version: 4.0", install cargo-audit ≥0.22.2; a
+  corrupted `~/.cargo/registry/src/.../rustversion-1.0.22` extraction
+  blocks that install, `rm -rf` the dir); dead `schemas/tag_kit.rs`
+  removed (`f010615e`).
+- **Next**: item #2 remaining tasks (assertive compat test + allowlist +
+  version-skew guard — allowlist triage surface is 92 gaps at 94/191),
+  then #5 (author video TPP with a fable subagent), then #6 (napi
+  spike; licensing answered below).
+- Local-only files, leave alone: `.claude/settings.local.json`,
+  `docs/chats/`.
 
 ## Follow-up candidates (small, non-blocking)
 
-- **Next compat moves (post-#7, 94/191)**: (a) composite `Condition`
-  support (see session state above, ~1-2 tags but correctness); (b) the
-  name-keyed COMPOSITE_TAGS collision below (~4 GPS tags); (c) the 5
-  remaining type mismatches, each a distinct small root cause:
-  IPTC:Keywords list accumulation, EXIF:XPKeywords UCS-2 decode,
-  EXIF:GPSProcessingMethod encoding-prefix strip, MakerNotes:Categories
-  (Canon), XMP:Source apostrophe truncation (possible XML quote-parsing
-  bug — worth a look, could corrupt other values); (d) XMP
-  GPSLatitude/GPSLongitude DMS→decimal (`ToDegrees`) conversion, noted
-  during #7 on iphone_x.jpg.
+- **Next compat moves (post-#7, 94/191)**:
+  - (a) **composite `Condition` support** (~1-2 tags but correctness):
+    codegen drops ExifTool's composite `Condition` (e.g. `not defined
+    $$self{VALUE}{DateTimeOriginal}`, Exif.pm:4952) and orchestration
+    never evaluates it, so `Composite:DateTimeOriginal` is emitted on
+    files where ExifTool suppresses it. Needs a `condition` field on
+    CompositeTagDef + runtime evaluation; clears 1 of the 5
+    only-in-exif-oxide gaps.
+  - (b) **name-keyed `COMPOSITE_TAGS` collision** (~4 GPS tags): GPS vs
+    Sony vs QuickTime defs collide, suppressing
+    `Composite:GPSLatitude/GPSLongitude/GPSAltitude/GPSDateTime`. Make
+    the registry first-buildable-wins per ExifTool's rules; the
+    GPSPosition special-case in `src/composite_tags/orchestration.rs`
+    can then be simplified away. Worth its own small TPP.
+  - (c) the 5 remaining type mismatches, each a distinct small root
+    cause: IPTC:Keywords list accumulation, EXIF:XPKeywords UCS-2
+    decode, EXIF:GPSProcessingMethod encoding-prefix strip,
+    MakerNotes:Categories (Canon), XMP:Source apostrophe truncation
+    (possible XML quote-parsing bug — worth a look, could corrupt other
+    values).
+  - (d) XMP GPSLatitude/GPSLongitude DMS→decimal (`ToDegrees`)
+    conversion, noted during #7 on iphone_x.jpg.
+  - Known documented micro-gaps from #7 (fine to ignore): XMPAutoConv
+    for unknown tags; `inf`/`undef` reaching Layer-2 conversions;
+    attribute-form RDF in standalone .xmp not extracted (pre-existing,
+    see `_todo/P10-RDF-RESOURCE-ATTRIBUTES.md`).
 
 - **codegen should prune stale `src/generated/` files** — staleness turned
   two 13.59 codegen bugs into build breaks (details in
@@ -221,10 +225,12 @@ tier, and land the reliability foundations as discrete TPPs.
 
 ## Tribal knowledge
 
-- The submodule working tree accumulates codegen's mechanical `my` → `our`
-  patches when a codegen run doesn't clean up. Verified safe to discard
-  with `git -C third-party/exiftool checkout -- .` after confirming the
-  diff is only `my`/`our` rewrites — but always sample the diff first.
+- The submodule working tree accumulates codegen's mechanical patches
+  (`my`→`our`, glob-alias exports, `# EXIF-OXIDE PATCHED` markers) when a
+  codegen run doesn't clean up. The sanctioned cleanup is
+  `bash codegen/scripts/exiftool-patcher-undo.sh` (used successfully
+  2026-07-03) — still sample the diff first to confirm it's only patcher
+  residue before discarding anything.
 - MILESTONES.md priority order is deliberate: the catch-up bump (#1)
   regenerates all snapshots, so doing oracle-integrity (#2) simultaneously
   or immediately after avoids triaging compat diffs twice.
