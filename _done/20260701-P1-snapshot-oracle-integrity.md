@@ -17,12 +17,58 @@ against.
 
 ## Current phase
 - [x] Research & Planning
-- [ ] Write breaking tests
-- [ ] Design alternatives
-- [ ] Task breakdown
-- [ ] Implementation
-- [ ] Review & Refinement
-- [ ] Final Integration
+- [x] Write breaking tests
+- [x] Design alternatives
+- [x] Task breakdown
+- [x] Implementation (2026-07-03, opus subagent + orchestrator fixes)
+- [x] Review & Refinement (adversarial review; 5 findings, all resolved)
+- [x] Final Integration (gate green: 23 working / 168 allowlisted / 0 unexpected)
+
+## Review outcome (2026-07-03) — what the gate looks like now
+
+- **Option A shipped**: `test_exiftool_compatibility` is a hard gate.
+  Every non-Working tag (all 5 categories) must be in
+  `config/compat_known_gaps.json` (grouped: reason + reference + tags;
+  duplicate tag across groups = config error); every allowlisted tag must
+  still reproduce (stale-entry ratchet) or the test fails telling you to
+  remove it. `TAGS_FILTER` skips assertions (debug mode);
+  `COMPAT_DUMP_GAPS=1` emits the machine-readable gap list.
+- **Headline metric changed meaning — do not read 23/191 as a regression
+  from 94/191.** The old aggregation kept the *first-seen* per-tag state
+  over unsorted read_dir order, so a tag Working in one early file masked
+  failures everywhere else. Now a tag is Working only if it matches in
+  every file that carries it. Same binary, same snapshots: 94/191 under
+  the old (broken) counting = 23/191 under honest counting, 168 gap tags,
+  each allowlisted with a root cause. Newly *visible* (not newly broken):
+  HEIC EXIF extraction gap (IMG_9757.heic: 0 of 32 supported EXIF tags
+  extracted — 33 allowlisted tags), Nikon Z-series NEF misdetected as NRW
+  (z_5_2/z_6_3/z_8 report FileType NRW; D-series fine).
+- **Version-skew guard**: generator hard-codes the vendored
+  `third-party/exiftool/exiftool`, writes the committed
+  `generated/exiftool-json/.exiftool-version` marker ONLY on a fully
+  successful `--force` run, and incremental runs abort on marker mismatch
+  ("Run: make compat-gen-force"). `test_snapshot_exiftool_version_matches_submodule`
+  asserts marker == `ExifTool.pm` `$VERSION`. Proven: marker→13.53 fails
+  both the script (exit 1) and the test with actionable messages.
+- **Adversarial review findings (all verified empirically, then fixed)**:
+  (F1, HIGH) marker was written on every run — an incremental
+  `make compat-gen`/`make compat` after a bump would stamp the new version
+  over stale snapshots, silently defeating the guard → fixed as above;
+  (F2) marker wasn't committed → fresh clones would panic → committed;
+  (F3) machines without the B2 `test-images/` corpus (160/168 allowlist
+  entries anchor there) would false-fire the stale ratchet with advice to
+  delete correct entries → ratchet now skipped with a "run
+  `make pull-test-images`" note when any source image is missing (the
+  unexpected-gap check still runs — missing files can only under-report);
+  (F4) Composite:LensID "A or B" ordering for tied Nikon lens candidates
+  is genuinely nondeterministic (same exiftool, 8 runs, both orders — Perl
+  hash-order feeding `join ' or '`), so the 3 churned d3500 snapshots were
+  reverted; harmless to the gate (tag is an allowlisted Missing gap, value
+  never compared) but expect random churn on future `compat-gen-force`;
+  (F5) HEIC group reason overstated the count (43→"0 of 32") → corrected.
+- **Not done, deliberate**: CI does not run `make compat-test` (no
+  workflow references it) — wiring it into CI needs the corpus story
+  solved first (B2 sync in CI or t/images-only mode).
 
 ## Session log (2026-07-02)
 
@@ -58,6 +104,39 @@ against.
   `GetRational64u` yields those strings), we wrongly treated them as 0.0;
   (2) non-finite Perl casing is `Inf`/`NaN`, not `inf`/`nan`. Fixes +
   pinning tests applied before commit.
+
+## Session log (2026-07-03, design pass)
+
+- **Task 2 DONE**: `make compat-test` exits **0** while printing
+  "Tracking 92 compatibility gaps: 87 missing, 0 dependency failures,
+  5 type mismatches" at 94/191 (49%) — contradiction confirmed on
+  current HEAD (`727c5ecc`). Plus 5 only-in-exif-oxide → 97 gap tags.
+- **TPP premise correction (Task 6)**: snapshots do **not** carry
+  `ExifToolVersion` — the jq filter in `tools/generate_exiftool_json.sh`
+  strips everything not in `supported_tags.json`... and while
+  `ExifTool:ExifToolVersion` is listed there, 0/379 snapshot files
+  contain it (raw `-G` output key survives filtering only if emitted;
+  verified by grep). Revised design: (a) generator must invoke the
+  **vendored** `third-party/exiftool/exiftool`, not PATH lookup —
+  Matthew's machine has 13.53 on PATH vs submodule 13.59, a live skew
+  that would have poisoned any missing snapshot on today's run; (b)
+  generator writes `generated/exiftool-json/.exiftool-version`; (c) a
+  test in `tests/exiftool_compatibility_tests.rs` (so `make compat-test`
+  runs it) asserts marker == `$VERSION` in
+  `third-party/exiftool/lib/Image/ExifTool.pm:32`.
+- **Task 3 design (allowlist)**: `config/compat_known_gaps.json`,
+  grouped schema: `{"groups": [{"reason", "reference", "tags": [...]}]}`.
+  Union of tags = allowlist; duplicate tag across groups = config error
+  = test failure. Test fails on (1) any non-Working tag not allowlisted
+  (regression/new gap), (2) any allowlisted tag now fully Working
+  (stale entry — remove it, ratchet the number up). Assertions skipped
+  when `TAGS_FILTER` is set (debugging mode).
+- **Aggregation fix folded in**: current loop keeps the *first-seen*
+  state per tag over unsorted `read_dir` order — a tag Working in an
+  early file masks a regression in a later file, nondeterministically.
+  Fix: sort snapshot list; non-Working state always beats Working.
+  This may honestly reclassify some "working" tags (rate could dip
+  below 94/191); allowlist absorbs them with reasons.
 
 ## Required reading
 - [TDD.md](../docs/TDD.md) — start with a failing test, this TPP's Task 1 IS that test
@@ -215,65 +294,44 @@ temporarily with a tracking issue to consolidate.
 
 ## Tasks
 
-- [ ] **Task 1: Write the breaking test.** Add a focused test (e.g. in
-      `tests/exiftool_compatibility_tests.rs` or a new
-      `tests/snapshot_oracle_tests.rs`) that runs
-      `compare-with-exiftool`-equivalent logic against
-      `test-images/apple/iphone_13_pro.jpg` and asserts
-      `Composite:GPSPosition` matches ExifTool's snapshot value exactly.
-      **Proof it fails for the right reason**: `cargo t
-      <new_test_name>` fails with a message showing the sign/precision
-      mismatch, not a setup error (missing file, etc).
+- [x] **Task 1: Write the breaking test.** DONE 2026-07-02 via the
+      GPSPosition fix (`tests/snapshot_oracle_tests.rs`, commit `141c4167`).
 
-- [ ] **Task 2: Confirm current state.** Run `make compat-test 2>&1 |
-      tail -40` and confirm it exits 0 despite printed differences (the
-      root-cause bug). **Proof**: paste the exit code and the "Perfect
-      ExifTool compatibility" / "tracking N compatibility gaps" line
-      showing the contradiction.
+- [x] **Task 2: Confirm current state.** DONE 2026-07-03: exit code 0
+      alongside "⚠️ Tracking 92 compatibility gaps: 87 missing tags, 0
+      dependency failures, 5 type mismatches" at 94/191.
 
-- [ ] **Task 3: Design the allowlist schema.** Decide JSON file vs.
-      Rust const (lean toward JSON for reviewability + reason strings;
-      check if `config/` already has a place for this). Include: tag
-      name, file pattern (or "all"), reason, and a reference (this
-      TPP, a `_todo/` backlog entry, or a `TRUST-EXIFTOOL.md` section).
-      **Proof**: schema documented in this TPP or a short design note,
-      reviewed against `TRUST-EXIFTOOL.md`'s allowed-deviations list so
-      it doesn't become a bug dumping ground.
+- [x] **Task 3: Design the allowlist schema.** DONE — grouped JSON in
+      `config/compat_known_gaps.json` (see design session log above);
+      loader/validator in `src/compat/known_gaps.rs` with unit tests.
 
-- [ ] **Task 4: Make `test_exiftool_compatibility` assertive.** Replace
-      the `println!`-only branch (lines ~441-457) with logic that
-      loads the allowlist, subtracts matched entries, and
-      `panic!`s/`assert!`s on anything left over. Also assert every
-      allowlist entry actually reproduced (stale-entry detection).
-      **Proof**: `cargo t test_exiftool_compatibility` fails before the
-      allowlist is populated with real current gaps, passes after.
+- [x] **Task 4: Make `test_exiftool_compatibility` assertive.** DONE.
+      **Proof**: removing `EXIF:Make` from the allowlist fails with
+      `❌ 1 tag(s) diverge … NOT in the allowlist`; adding a bogus tag
+      fails with the stale-entry ratchet message; restored config passes.
 
-- [ ] **Task 5: Triage current real differences into fix-or-allowlist.**
-      Run the now-assertive test, get the full list of failures, and
-      for each: either fix it (small ones), or add a justified allowlist
-      entry citing `TRUST-EXIFTOOL.md` or a backlog TPP. The GPSPosition
-      bug from Task 1 either gets fixed here or gets an allowlist entry
-      pointing at `_todo/P03-implementation-backlog.md`.
-      **Proof**: `cargo t test_exiftool_compatibility` passes cleanly.
+- [x] **Task 5: Triage differences into fix-or-allowlist.** DONE — 168
+      tags in 14 root-cause groups, each with reason + TPP reference; no
+      untriaged catch-all needed. Spot-verified by orchestrator +
+      adversarial reviewer (HEIC, NEF-as-NRW, video group, type
+      mismatches). GPSPosition itself was fixed back in Task 1.
 
-- [ ] **Task 6: Version-skew guard.** Add a test or `make` target
-      that reads `third-party/exiftool/lib/Image/ExifTool.pm`'s
-      `$VERSION` and asserts it matches the `ExifToolVersion` field in
-      every file under `generated/exiftool-json/`.
-      **Proof**: passes today (both should be 13.43); manually edit one
-      snapshot's version field and confirm the guard fails.
+- [x] **Task 6: Version-skew guard.** DONE (revised design — snapshots
+      never carried `ExifToolVersion`; see session log):
+      `.exiftool-version` marker + `test_snapshot_exiftool_version_matches_submodule`
+      + incremental-generation abort on mismatch. **Proof**: marker set
+      to 13.53 → script exits 1, test fails with skew message; restored.
 
-- [ ] **Task 7: Automate regeneration on submodule bump.** Wire
-      snapshot regeneration into whatever process bumps the submodule
-      (see `_todo/20260701-P0-exiftool-version-catchup.md`) — at
-      minimum, document in `docs/guides/EXIFTOOL-UPGRADE.md` (created by
-      that TPP) that `make compat-gen-force` must run and Task 6's guard
-      must pass before merging a version bump.
-      **Proof**: cross-reference exists in both TPPs.
+- [x] **Task 7: Regeneration on submodule bump.** DONE —
+      `docs/guides/EXIFTOOL-UPGRADE.md` §8/§9 mandate `make
+      compat-gen-force` per bump and describe both gates; the generator
+      itself enforces it (incremental aborts on skew).
 
-- [ ] **Task 8: Final validation.** `make codegen fmt lint t` clean;
-      `make compat` (compat-gen + compat-test + test-mime-compat)
-      passes with exit code 0. Move to `_done/`.
+- [x] **Task 8: Final validation.** DONE 2026-07-03: `cargo fmt` +
+      `make lint` clean; full `cargo t` green (50 suites, subagent) and
+      compat + known_gaps suites re-run green after review fixes;
+      `make compat-test` exit 0 (gate passed: 23/168/0). `make codegen`
+      deliberately not run — no codegen inputs changed. Moved to `_done/`.
 
 ## Files referenced
 
