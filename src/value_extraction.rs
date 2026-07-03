@@ -180,12 +180,16 @@ pub fn extract_short_array_value(
     entry: &IfdEntry,
     byte_order: ByteOrder,
 ) -> Result<Vec<u16>> {
+    // Do not pre-allocate from entry.count: it is attacker-controlled (up to
+    // 0xFFFFFFFF) and would let a malformed IFD request a multi-GB Vec before any
+    // bounds check (fuzz_exif_ifd OOM). Allocate only after the byte range is
+    // validated against `data`.
     let count = entry.count as usize;
-    let mut values = Vec::with_capacity(count);
 
     if entry.is_inline() && count <= 2 {
         // Value stored inline - up to 2 SHORT values can fit in 4 bytes
         // ExifTool: lib/Image/ExifTool/Exif.pm:6372 inline value handling
+        let mut values = Vec::with_capacity(count);
         let bytes = entry.value_or_offset.to_le_bytes();
 
         // Convert bytes based on IFD byte order (not necessarily LE)
@@ -204,16 +208,19 @@ pub fn extract_short_array_value(
             "SHORT array with count {count} cannot be stored inline"
         )))
     } else {
-        // Value stored at offset
+        // Value stored at offset. Bounds math in u64: `count * 2` and
+        // `offset + size` would overflow usize on 32-bit targets.
         let offset = entry.value_or_offset as usize;
-        let total_size = count * 2; // 2 bytes per SHORT
+        let total_size = count as u64 * 2; // 2 bytes per SHORT
 
-        if offset + total_size > data.len() {
+        if offset as u64 + total_size > data.len() as u64 {
             return Err(ExifError::ParseError(format!(
                 "SHORT array offset {offset:#x} + size {total_size} beyond data bounds"
             )));
         }
 
+        // Bounds validated above, so count is bounded by data.len(); safe to size now.
+        let mut values = Vec::with_capacity(count);
         // Read each SHORT value with proper byte order
         for i in 0..count {
             let value_offset = offset + (i * 2);
@@ -252,33 +259,40 @@ pub fn extract_long_array(
     entry: &IfdEntry,
     byte_order: ByteOrder,
 ) -> Result<Vec<u32>> {
-    let mut values = Vec::with_capacity(entry.count as usize);
-    let bytes_per_value = 4; // Each LONG is 4 bytes
-    let total_bytes = entry.count as usize * bytes_per_value;
+    // Do not pre-allocate from entry.count: it is attacker-controlled (up to
+    // 0xFFFFFFFF) and would let a malformed IFD request a multi-GB Vec before any
+    // bounds check (fuzz_exif_ifd OOM). Allocate only after the byte range is
+    // validated against `data`. Bounds math in u64: `count * 4` and
+    // `offset + size` would overflow usize on 32-bit targets.
+    let bytes_per_value = 4u64; // Each LONG is 4 bytes
+    let total_bytes = entry.count as u64 * bytes_per_value;
 
     debug!(
         "Extracting LONG array: count={}, total_bytes={}",
         entry.count, total_bytes
     );
 
-    if entry.is_inline() && entry.count == 1 {
+    let values = if entry.is_inline() && entry.count == 1 {
         // Single value stored inline
-        values.push(entry.value_or_offset);
+        vec![entry.value_or_offset]
     } else {
         // Multiple values or single value stored at offset
         let offset = entry.value_or_offset as usize;
-        if offset + total_bytes > data.len() {
+        if offset as u64 + total_bytes > data.len() as u64 {
             return Err(ExifError::ParseError(format!(
                 "LONG array offset {offset:#x} + {total_bytes} bytes beyond data bounds"
             )));
         }
 
+        // Bounds validated above, so count is bounded by data.len(); safe to size now.
+        let mut values = Vec::with_capacity(entry.count as usize);
         for i in 0..entry.count {
-            let value_offset = offset + (i as usize * bytes_per_value);
+            let value_offset = offset + (i as usize * 4);
             let value = byte_order.read_u32(data, value_offset)?;
             values.push(value);
         }
-    }
+        values
+    };
 
     debug!("Successfully extracted {} LONG values", values.len());
     Ok(values)
@@ -450,6 +464,39 @@ mod tests {
         let data = &[];
         let result = extract_long_value(data, &entry, ByteOrder::BigEndian).unwrap();
         assert_eq!(result, 0x12345678);
+    }
+
+    #[test]
+    fn test_short_array_huge_count_does_not_oom() {
+        // Regression (fuzz_exif_ifd): a malformed IFD SHORT entry with count 0xFFFFFFFF
+        // pre-allocated `Vec::with_capacity(count)` = ~8GB before any bounds check.
+        // The offset+size is now validated first, so an out-of-range count returns Err
+        // without allocating. (The transient over-allocation is verified gone by
+        // `cargo +nightly fuzz run fuzz_exif_ifd`; this guards the validate-before-
+        // allocate ordering.)
+        let entry = IfdEntry {
+            tag_id: 0x0100,
+            format: TiffFormat::Short,
+            count: 0xFFFF_FFFF,
+            value_or_offset: 0, // treated as an offset into `data`
+        };
+        let data = [0u8; 4];
+        let result = extract_short_array_value(&data, &entry, ByteOrder::LittleEndian);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn test_long_array_huge_count_does_not_oom() {
+        // Same allocation-bomb class as above, for the LONG-array extractor.
+        let entry = IfdEntry {
+            tag_id: 0x0100,
+            format: TiffFormat::Long,
+            count: 0xFFFF_FFFF,
+            value_or_offset: 0,
+        };
+        let data = [0u8; 4];
+        let result = extract_long_array(&data, &entry, ByteOrder::LittleEndian);
+        assert!(result.is_err());
     }
 
     #[test]

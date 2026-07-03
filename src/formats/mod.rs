@@ -11,7 +11,10 @@ mod jpeg;
 mod png;
 mod tiff;
 
-pub use avif::{create_avif_tag_entries, extract_avif_dimensions, AvifImageProperties};
+pub use avif::{
+    create_avif_tag_entries, extract_avif_dimensions, extract_heic_dimensions_primary_item,
+    parse_box_header, AvifImageProperties, IsoBox,
+};
 pub use detection::{
     detect_file_format, detect_file_format_from_path, get_format_properties, FileFormat,
 };
@@ -21,6 +24,7 @@ pub use jpeg::{
     extract_jpeg_exif, extract_jpeg_iptc, extract_jpeg_xmp, hash_jpeg_scan_data,
     scan_jpeg_segments, JpegSegment, JpegSegmentInfo, SofData,
 };
+pub use png::{parse_png_ihdr, IhdrData};
 pub use tiff::{extract_tiff_exif, extract_tiff_xmp, get_tiff_endianness, validate_tiff_format};
 
 use crate::exif::ExifReader;

@@ -87,7 +87,7 @@ impl IptcParser {
             let marker = data[pos];
             let record = data[pos + 1];
             let dataset = data[pos + 2];
-            let mut length = u16::from_be_bytes([data[pos + 3], data[pos + 4]]);
+            let length = u16::from_be_bytes([data[pos + 3], data[pos + 4]]);
             pos += 5;
 
             // ExifTool: Check for valid IPTC marker (lines 1132-1141)
@@ -103,8 +103,11 @@ impl IptcParser {
                 break;
             }
 
-            // ExifTool: Handle extended IPTC entry (lines 1144-1155)
-            if length & 0x8000 != 0 {
+            // ExifTool: Handle extended IPTC entry (IPTC.pm:1143-1155). The size is a
+            // big-endian, variable-width integer of up to 8 bytes; ExifTool accumulates
+            // it into an unbounded Perl scalar, so we use u64 here — a u16 overflows
+            // (and panics under debug/overflow-checks) once more than two bytes are read.
+            let data_length: u64 = if length & 0x8000 != 0 {
                 let n = (length & 0x7fff) as usize; // Number of length bytes
                 if pos + n > data_len || n > 8 {
                     warn!(
@@ -115,25 +118,31 @@ impl IptcParser {
                 }
 
                 // Read variable-length size (big-endian)
-                length = 0;
+                let mut extended = 0u64;
                 for _ in 0..n {
-                    length = length * 256 + data[pos] as u16;
+                    extended = extended * 256 + data[pos] as u64;
                     pos += 1;
                 }
-            }
+                extended
+            } else {
+                length as u64
+            };
 
-            // ExifTool: Validate data length (lines 1156-1160)
-            if pos + length as usize > data_len {
+            // ExifTool: Validate data length (IPTC.pm:1156-1160). Compared in u64,
+            // matching ExifTool's unbounded scalar; pos <= data_len here, so
+            // data_len - pos is valid, and the cast below is safe once in range.
+            if data_length > (data_len - pos) as u64 {
                 warn!(
                     "Invalid IPTC entry (dataset {}:{}, len {})",
-                    record, dataset, length
+                    record, dataset, data_length
                 );
                 break;
             }
+            let data_length = data_length as usize;
 
             // Extract data
-            let tag_data = data[pos..pos + length as usize].to_vec();
-            pos += length as usize;
+            let tag_data = data[pos..pos + data_length].to_vec();
+            pos += data_length;
 
             // Look up tag definition
             if let Some(tag_def) = self.tag_definitions.get(&(record, dataset)) {
@@ -362,6 +371,22 @@ mod tests {
 
         let tags = result.unwrap();
         assert!(tags.is_empty()); // Should stop parsing on invalid marker
+    }
+
+    #[test]
+    fn test_extended_iptc_length_does_not_overflow() {
+        // Regression (fuzz_jpeg): a panic "attempt to multiply with overflow" fired
+        // at the extended-IPTC length accumulation. Length field 0x8003 marks an
+        // extended entry whose byte-count is a 3-byte big-endian int; accumulating
+        // three bytes into a u16 overflows on the third byte. ExifTool (IPTC.pm:1152)
+        // reads this into an unbounded Perl scalar, so the accumulator must be wide
+        // enough not to panic. Minimized reproducer from fuzz/artifacts/fuzz_jpeg.
+        let data = vec![0x1c, 0x02, 0x05, 0x80, 0x03, 0x01, 0x00, 0x00];
+        // Must not panic; the declared length exceeds the remaining bytes, so the
+        // entry is rejected and no tags are produced.
+        let result = parse_iptc_metadata(&data);
+        assert!(result.is_ok());
+        assert!(result.unwrap().is_empty());
     }
 
     #[test]

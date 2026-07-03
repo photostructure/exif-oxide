@@ -1,0 +1,104 @@
+name: Fuzz
+
+# exif-oxide parses untrusted input, so every format parser is fuzzed. Targets
+# run as a parallel matrix (one job each) so wall-clock time is ~the per-target
+# budget, not the sum.
+#
+# Cadence: nightly schedule + manual dispatch, NOT a per-PR blocking gate.
+# Rationale: fuzzing is non-deterministic and readily surfaces pre-existing
+# latent bugs that are unrelated to whatever a given PR changes, which makes a
+# poor (flaky) merge signal. Run it nightly against the seed corpus, where
+# a crash is a tracked finding uploaded as an artifact, and promote it to a
+# per-PR smoke once the corpus has run clean across several nightly cycles.
+on:
+  schedule:
+    - cron: "0 7 * * *" # 07:00 UTC nightly
+  workflow_dispatch:
+    inputs:
+      max_total_time:
+        description: "Seconds to run each fuzz target"
+        required: false
+        default: "300"
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+# Both triggers run on the default branch, so they share one group. Queue
+# rather than cancel: a scheduled nightly must not kill a long manual
+# dispatch run mid-fuzz (or vice versa) — a cancelled run uploads no crash
+# artifacts.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  fuzz:
+    name: Fuzz ${{ matrix.target }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false # one target's crash must not cancel the others
+      matrix:
+        target:
+          - fuzz_exif_ifd
+          - fuzz_jpeg
+          - fuzz_tiff
+          - fuzz_png
+          - fuzz_avif
+          - fuzz_gif
+          - fuzz_iptc
+          - fuzz_xmp
+          - fuzz_whole_file
+    steps:
+      # NOTE: test-images/ is NOT available in CI (it is gitignored and synced
+      # from Backblaze B2 via `make pull-test-images`, which needs credentials),
+      # so seed-corpus.sh only finds third-party/exiftool/t/images here — a
+      # thinner corpus than local runs. The exiftool set is still the best
+      # adversarial seed source (25 years of files that once broke ExifTool).
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          submodules: true # third-party/exiftool/t/images is the adversarial seed set
+
+      - name: Setup Rust nightly
+        uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9 # stable
+        with:
+          toolchain: nightly
+
+      - name: Cache Cargo dependencies
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            fuzz/target/
+          key: cargo-fuzz-${{ runner.os }}-${{ hashFiles('fuzz/Cargo.lock', '**/Cargo.lock') }}
+          restore-keys: |
+            cargo-fuzz-${{ runner.os }}-
+
+      - name: Cache cargo-fuzz binary
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.cargo/bin/cargo-fuzz
+          key: cargo-fuzz-bin-${{ runner.os }}-0.13
+
+      - name: Install cargo-fuzz
+        run: command -v cargo-fuzz >/dev/null || cargo install cargo-fuzz --locked
+
+      - name: Seed corpus
+        run: fuzz/seed-corpus.sh
+
+      - name: Fuzz ${{ matrix.target }}
+        run: |
+          # Scheduled runs have no inputs, so fall back to the dispatch default.
+          cargo +nightly fuzz run ${{ matrix.target }} -- \
+            -max_total_time=${{ github.event.inputs.max_total_time || '300' }} \
+            -rss_limit_mb=4096
+
+      - name: Upload crash artifacts
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: fuzz-crash-${{ matrix.target }}
+          path: fuzz/artifacts/${{ matrix.target }}/
+          if-no-files-found: ignore

@@ -248,8 +248,14 @@ pub fn scan_jpeg_segments<R: Read + Seek>(
                     let segment_start = current_pos; // Start of segment data
 
                     // Try EXIF first (6 bytes: "Exif\0\0")
+                    // The identifier only counts if it fits inside the declared
+                    // segment (length field 2 + "Exif\0\0" 6 = 8); ExifTool
+                    // matches against $$segDataPt, which holds exactly the
+                    // declared bytes, so a shorter segment can never match
+                    // (lib/Image/ExifTool.pm:7697). Guards `length - 8` below.
                     let mut exif_header = [0u8; 6];
-                    if reader.read_exact(&mut exif_header).is_ok()
+                    if length >= 8
+                        && reader.read_exact(&mut exif_header).is_ok()
                         && &exif_header[0..4] == b"Exif"
                         && exif_header[4] == 0
                         && exif_header[5] == 0
@@ -264,9 +270,12 @@ pub fn scan_jpeg_segments<R: Read + Seek>(
                         });
                     } else {
                         // Reset and try XMP (29 bytes: "http://ns.adobe.com/xap/1.0/\0")
+                        // Same declared-length gate as EXIF above (2 + 29 = 31);
+                        // guards `length - 31` below.
                         reader.seek(SeekFrom::Start(segment_start))?;
                         let mut xmp_header = [0u8; 29];
-                        if reader.read_exact(&mut xmp_header).is_ok()
+                        if length >= 31
+                            && reader.read_exact(&mut xmp_header).is_ok()
                             && &xmp_header == b"http://ns.adobe.com/xap/1.0/\0"
                         {
                             // Found XMP - store it and continue scanning
@@ -388,8 +397,13 @@ pub fn scan_jpeg_xmp_segments<R: Read + Seek>(mut reader: R) -> Result<XmpScanRe
                 let segment_start = current_pos;
 
                 // Check for regular XMP identifier
+                // The identifier only counts if it fits inside the declared
+                // segment (length field 2 + identifier 29 = 31); ExifTool
+                // matches against $$segDataPt, which holds exactly the declared
+                // bytes (lib/Image/ExifTool.pm:7697). Guards `length - 31` below.
                 let mut xmp_header = [0u8; 29];
-                if reader.read_exact(&mut xmp_header).is_ok()
+                if length >= 31
+                    && reader.read_exact(&mut xmp_header).is_ok()
                     && &xmp_header == b"http://ns.adobe.com/xap/1.0/\0"
                 {
                     // Store first regular XMP segment only
@@ -412,11 +426,27 @@ pub fn scan_jpeg_xmp_segments<R: Read + Seek>(mut reader: R) -> Result<XmpScanRe
                 }
 
                 // Reset and check for Extended XMP identifier
+                // Signature gate: 2 (length field) + 35 (signature) = 37, same
+                // declared-length rule as the regular-XMP branch above.
                 reader.seek(SeekFrom::Start(segment_start))?;
                 let mut ext_xmp_header = [0u8; 35];
-                if reader.read_exact(&mut ext_xmp_header).is_ok()
+                if length >= 37
+                    && reader.read_exact(&mut ext_xmp_header).is_ok()
                     && &ext_xmp_header[0..35] == b"http://ns.adobe.com/xmp/extension/\0"
                 {
+                    // ExifTool: lib/Image/ExifTool.pm:7840-7858 - the 75-byte
+                    // extended-XMP header must fit in the declared segment data
+                    // ("if ($length > 75)", where $length excludes the 2 length
+                    // bytes); otherwise warn and skip. Guards the `length - 77`
+                    // chunk_length arithmetic below.
+                    if length < 78 {
+                        tracing::debug!("Invalid extended XMP segment (length {})", length);
+                        reader.seek(SeekFrom::Start(segment_start))?;
+                        let segment_data_length = length.saturating_sub(2) as u64;
+                        reader.seek(SeekFrom::Current(segment_data_length as i64))?;
+                        current_pos = segment_start + segment_data_length;
+                        continue;
+                    }
                     // Read Extended XMP header fields
                     // ExifTool: lib/Image/ExifTool.pm:7738-7751
                     // off len -- extended XMP header (75 bytes total):
@@ -1065,6 +1095,56 @@ mod tests {
         assert_eq!(JpegSegment::Sof(0xC0).marker_byte(), 0xC0);
         assert_eq!(JpegSegment::Sof(0xC2).marker_byte(), 0xC2);
         assert_eq!(JpegSegment::Eoi.marker_byte(), 0xD9);
+    }
+
+    #[test]
+    fn test_exif_segment_shorter_than_header_does_not_underflow() {
+        // Regression (fuzz_jpeg class): `length - 8` underflowed when an APP1
+        // segment declared a length smaller than the 8 bytes of length field +
+        // "Exif\0\0" identifier, but the identifier was still present in the
+        // stream. ExifTool matches identifiers against the declared segment
+        // data only ($$segDataPt holds exactly $length bytes), so a too-short
+        // segment can never reach the subtraction (lib/Image/ExifTool.pm:7697).
+        let mut data = vec![0xFF, 0xD8, 0xFF, 0xE1, 0x00, 0x04]; // APP1, declared length 4 < 8
+        data.extend_from_slice(b"Exif\0\0");
+        // Must not panic; the skipped segment leaves the reader on garbage,
+        // which is reported as an invalid segment marker.
+        assert!(scan_jpeg_segments(Cursor::new(&data)).is_err());
+    }
+
+    #[test]
+    fn test_xmp_segment_shorter_than_identifier_does_not_underflow() {
+        // Same class as above for the XMP branch: `length - 31` with a
+        // declared length shorter than length field (2) + XMP identifier (29).
+        let mut data = vec![0xFF, 0xD8, 0xFF, 0xE1, 0x00, 0x05]; // APP1, declared length 5 < 31
+        data.extend_from_slice(b"http://ns.adobe.com/xap/1.0/\0");
+        assert!(scan_jpeg_segments(Cursor::new(&data)).is_err());
+    }
+
+    #[test]
+    fn test_xmp_scan_short_segment_does_not_underflow() {
+        // Same class in scan_jpeg_xmp_segments' regular-XMP branch (`length - 31`).
+        let mut data = vec![0xFF, 0xD8, 0xFF, 0xE1, 0x00, 0x05]; // APP1, declared length 5 < 31
+        data.extend_from_slice(b"http://ns.adobe.com/xap/1.0/\0");
+        assert!(scan_jpeg_xmp_segments(Cursor::new(&data)).is_err());
+    }
+
+    #[test]
+    fn test_extended_xmp_short_segment_does_not_underflow() {
+        // Regression (fuzz_jpeg): panic "attempt to subtract with overflow" at
+        // the `length - 77` extended-XMP chunk_length computation. The APP1
+        // segment declares a length smaller than the 75-byte extended-XMP
+        // header + 2-byte length field, but the signature/GUID/size reads come
+        // from the stream rather than the declared segment, so the branch was
+        // reached anyway. ExifTool warns "Invalid extended XMP segment" when
+        // $length <= 75 (lib/Image/ExifTool.pm:7840-7858). Minimized from
+        // fuzz/artifacts/fuzz_jpeg/crash-3126bc0f4ddfbedf482cf4e172b4ef3ec955d093.
+        let mut data = vec![0xFF, 0xD8, 0xFF, 0xE1, 0x00, 0x30]; // APP1, declared length 48 < 78
+        data.extend_from_slice(b"http://ns.adobe.com/xmp/extension/\0");
+        data.extend_from_slice(&[b'A'; 32]); // alphanumeric GUID
+        data.extend_from_slice(&[0, 0, 0, 16]); // total size
+        data.extend_from_slice(&[0, 0, 0, 0]); // chunk offset
+        assert!(scan_jpeg_xmp_segments(Cursor::new(&data)).is_err());
     }
 
     #[test]

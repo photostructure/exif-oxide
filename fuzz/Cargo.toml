@@ -1,0 +1,88 @@
+[package]
+name = "exif-oxide-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+# Detach the fuzz crate from the parent workspace (members = [".", "codegen"]).
+# This keeps `make lint`/`make t` (stable toolchain, --all-features) from ever
+# trying to build the libFuzzer targets, which require +nightly and sanitizer
+# flags. The fuzz crate carries its own Cargo.lock.
+[workspace]
+
+[dependencies]
+libfuzzer-sys = "0.4"
+tempfile = "3"
+
+[dependencies.exif-oxide]
+path = ".."
+
+# --- Per-format targets (Option A): in-memory Cursor<&[u8]>, one entry point each ---
+
+[[bin]]
+name = "fuzz_exif_ifd"
+path = "fuzz_targets/fuzz_exif_ifd.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_jpeg"
+path = "fuzz_targets/fuzz_jpeg.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_tiff"
+path = "fuzz_targets/fuzz_tiff.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_png"
+path = "fuzz_targets/fuzz_png.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_avif"
+path = "fuzz_targets/fuzz_avif.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_gif"
+path = "fuzz_targets/fuzz_gif.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_iptc"
+path = "fuzz_targets/fuzz_iptc.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "fuzz_xmp"
+path = "fuzz_targets/fuzz_xmp.rs"
+test = false
+doc = false
+bench = false
+
+# --- Secondary whole-file target (Option B): slow, filesystem-backed dispatch ---
+
+[[bin]]
+name = "fuzz_whole_file"
+path = "fuzz_targets/fuzz_whole_file.rs"
+test = false
+doc = false
+bench = false

@@ -67,7 +67,10 @@ pub struct IsoBox {
 ///
 /// ExifTool reference: QuickTime.pm:3254-3280 (ReadAtom function)
 pub fn parse_box_header(data: &[u8], offset: usize) -> Result<(IsoBox, usize)> {
-    if data.len() < offset + BOX_HEADER_SIZE {
+    // Overflow-safe remaining-bytes count: `offset` is caller-supplied (this is
+    // a pub fn), so `offset + header size` could wrap usize.
+    let remaining = data.len().saturating_sub(offset);
+    if remaining < BOX_HEADER_SIZE {
         return Err(crate::types::ExifError::InvalidFormat(
             "Not enough data for box header".to_string(),
         ));
@@ -87,7 +90,7 @@ pub fn parse_box_header(data: &[u8], offset: usize) -> Result<(IsoBox, usize)> {
 
     let (box_size, header_size) = if size32 == 1 {
         // Extended size: next 8 bytes contain the actual size
-        if data.len() < offset + 16 {
+        if remaining < 16 {
             return Err(crate::types::ExifError::InvalidFormat(
                 "Not enough data for extended box size".to_string(),
             ));
@@ -108,23 +111,24 @@ pub fn parse_box_header(data: &[u8], offset: usize) -> Result<(IsoBox, usize)> {
     };
 
     // Calculate data size (total box size minus header size)
-    let data_size = if box_size >= header_size as u64 {
-        (box_size - header_size as u64) as usize
-    } else {
+    if box_size < header_size as u64 {
         return Err(crate::types::ExifError::InvalidFormat(
             "Invalid box size".to_string(),
         ));
-    };
+    }
+    let data_size = box_size - header_size as u64;
 
-    // Read box data
+    // The box content must fit in the buffer. Compare in u64: a malformed
+    // 64-bit box size would otherwise overflow usize (or silently truncate on
+    // 32-bit targets). `data_start <= data.len()` holds via the `remaining`
+    // checks above, so the subtraction and the cast below are safe.
     let data_start = offset + header_size;
-    let data_end = data_start + data_size;
-
-    if data.len() < data_end {
+    if data_size > (data.len() - data_start) as u64 {
         return Err(crate::types::ExifError::InvalidFormat(
             "Not enough data for box content".to_string(),
         ));
     }
+    let data_end = data_start + data_size as usize;
 
     let box_data = data[data_start..data_end].to_vec();
 
@@ -811,6 +815,21 @@ pub fn create_avif_tag_entries(props: &AvifImageProperties) -> Vec<TagEntry> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_box_header_huge_size_does_not_overflow() {
+        // Regression (fuzz_avif): a panic "attempt to add with overflow" fired at
+        // `data_end = data_start + data_size` when a 64-bit extended box size is near
+        // u64::MAX and the box begins at a nonzero offset. Such a box claims to extend
+        // past the buffer, so it must be rejected, not overflow usize.
+        let mut data = vec![0u8; 32];
+        // Box header at offset 16: size32 == 1 selects the 64-bit extended size.
+        data[16..20].copy_from_slice(&[0x00, 0x00, 0x00, 0x01]);
+        data[20..24].copy_from_slice(b"ftyp");
+        data[24..32].copy_from_slice(&[0xFF; 8]); // extended size = u64::MAX
+                                                  // Must return Err (not enough data), not panic.
+        assert!(parse_box_header(&data, 16).is_err());
+    }
 
     #[test]
     fn test_box_header_parsing() {

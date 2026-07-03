@@ -1,0 +1,5 @@
+target
+corpus
+coverage
+# Keep fuzz/artifacts/ tracked: crash/oom reproducers found by fuzzing are the
+# regression corpus for the corresponding #[test] fixes — they must be committed.

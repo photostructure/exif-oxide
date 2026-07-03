@@ -92,7 +92,7 @@ tier, and land the reliability foundations as discrete TPPs.
 | 1 | ExifTool v13.43→13.59+ catch-up + `docs/guides/EXIFTOOL-UPGRADE.md` runbook | `_done/20260701-P0-exiftool-version-catchup.md`, commit `f2bdb304` | ✅ DONE 2026-07-02 (zero ports needed; 3 codegen bugs fixed; compat 42%→43%) |
 | 1b | Pre-existing lint rot (75 clippy errors at HEAD from toolchain upgrade) | commit `7fa2fd78` | ✅ DONE 2026-07-02 (`make lint` gates again; deleted 6 dead legacy normalizer passes) |
 | 2 | Snapshot-oracle integrity (make compat test assert; allowlist; version-skew guard) | `_todo/20260701-P1-snapshot-oracle-integrity.md` | 🟨 IN PROGRESS — Task 1 (breaking test) done via the GPS fix (`tests/snapshot_oracle_tests.rs`, commit `141c4167`); Tasks 2-8 (assertive test, allowlist, version-skew guard) not started |
-| 3 | cargo-fuzz infrastructure | `_todo/20260701-P1-fuzzing-infrastructure.md` | 🟨 IN PROGRESS, **UNCOMMITTED** — 9 targets built, 3 real crash bugs found AND fixed (alloc-bomb, 2 overflows); see that TPP's HANDOFF STATE for the resume checklist (review gate + commit pending) |
+| 3 | cargo-fuzz infrastructure | `_done/20260701-P1-fuzzing-infrastructure.md` | ✅ DONE 2026-07-03 — 9 targets, nightly CI job, 5 real crash bugs found AND fixed (alloc-bomb, 3 overflow panics, makernote-recursion stack overflow); double-review (Claude 8-angle + codex) each caught a distinct real bug; reproducers committed under fuzz/artifacts/ |
 | 4 | GPSPosition composite sign bug | `_todo/P03-implementation-backlog.md` (Next Steps) | ✅ DONE 2026-07-02, commit `141c4167` (byte-exact; review-gated; compat 84/191) |
 | 5 | Video/QuickTime read support (22 blocked tags) | **no TPP yet — needs authoring** | ⬜ not started |
 | 6 | napi-rs Node binding spike | `_todo/20260701-P3-napi-node-binding-spike.md` | ⬜ not started (its Task 1 is the licensing question below) |
@@ -122,10 +122,10 @@ tier, and land the reliability foundations as discrete TPPs.
   prompt): `f2bdb304` (13.59 bump, item #1), `e19553f5` (tracker),
   `7fa2fd78` (lint rot), `141c4167` (GPSPosition, item #4). The
   submodule fork push DID land (`origin/docs` = "Update to 13.59").
-- **Uncommitted working tree = item #3 (fuzzing) only** — see
-  `_todo/20260701-P1-fuzzing-infrastructure.md` HANDOFF STATE for the
-  4-step resume checklist (fuzz re-validation, review gate, commit).
-  `cargo t` verified green on this tree at pause (690 passed / 0 failed).
+- ~~Uncommitted working tree = item #3 (fuzzing) only~~ CLOSED 2026-07-03:
+  item #3 committed and moved to `_done/` (two more fuzz-found crashes fixed
+  during final validation; see that TPP's COMPLETION STATE). First nightly
+  fuzz CI run happens after this lands on GitHub.
 - **Next after #3 closes**: item #2 remaining tasks (assertive compat
   test + allowlist + version-skew guard — its TPP session log has the
   current 84/191 numbers), then #5 (author video TPP with a fable
@@ -193,8 +193,9 @@ tier, and land the reliability foundations as discrete TPPs.
       `_done/`, `docs/guides/EXIFTOOL-UPGRADE.md` exists.
 - [ ] Task 2: Complete child TPP #2 (snapshot oracle). **Proof**: TPP in
       `_done/`, `make compat-test` exits non-zero on an undocumented diff.
-- [ ] Task 3: Complete child TPP #3 (fuzzing). **Proof**: TPP in `_done/`,
-      CI fuzz job green.
+- [x] Task 3: Complete child TPP #3 (fuzzing). **Proof**: TPP in `_done/`,
+      CI fuzz job green. (2026-07-03: TPP in `_done/`; job is wired and
+      validated locally — first nightly run pending on GitHub.)
 - [ ] Task 4: Fix GPSPosition sign bug per P03 backlog. **Proof**:
       `compare-with-exiftool test-images/apple/IMG_3755.JPG` shows no
       GPSPosition diff.

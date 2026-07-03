@@ -128,6 +128,31 @@ impl ExifReader {
             )));
         }
 
+        // Recursion prevention: a malformed file can nest a MakerNotes tag
+        // (0x927C) inside its own MakerNotes IFD, sending the manufacturer
+        // dispatch below back through this function at the same offset forever
+        // (fuzz_exif_ifd stack overflow). ExifTool catches this because
+        // MakerNotes subdirectories route through ProcessDirectory's PROCESSED
+        // tracking; the Canon/Sony dispatch below bypasses process_subdirectory,
+        // so apply the same guard here. Do NOT insert into `processed` yet: the
+        // generic fallback delegates to process_subdirectory, which does its
+        // own check with the same address (when base == 0) and would wrongly
+        // skip a legitimate first visit — only the direct-dispatch branches
+        // below register the address.
+        // ExifTool: $$self{PROCESSED} in ProcessDirectory (lib/Image/ExifTool.pm)
+        let addr = adjusted_offset as u64 + self.base;
+        if let Some(prev_dir) = self.processed.get(&addr) {
+            warn!(
+                "Circular reference detected: MakerNotes already processed at address {:#x} (was {})",
+                addr, prev_dir
+            );
+            self.warnings.push(format!(
+                "Circular reference detected: MakerNotes already processed at address {:#x} (was {})",
+                addr, prev_dir
+            ));
+            return Ok(());
+        }
+
         // Process MakerNotes as subdirectory with adjusted offset
         let tag_name = "MakerNotes";
         debug!(
@@ -144,6 +169,9 @@ impl ExifReader {
         // ExifTool: MakerNotes.pm conditional dispatch based on $$self{Make}
         if make.starts_with("Canon") {
             debug!("Detected Canon camera, calling Canon-specific MakerNotes processing");
+            // Register before descending: parse_ifd below re-enters
+            // parse_ifd_entry -> this function for nested 0x927C tags.
+            self.processed.insert(addr, "MakerNotes".to_string());
             // Call Canon-specific processing directly
             // ExifTool: Canon.pm Main table processing
             crate::implementations::canon::process_canon_makernotes(self, adjusted_offset, size)?;
@@ -174,6 +202,8 @@ impl ExifReader {
             }
         } else if make.starts_with("SONY") || is_sony_makernote(&make, &model) {
             debug!("Detected Sony camera, calling Sony-specific MakerNotes processing");
+            // Register before descending (see Canon branch above).
+            self.processed.insert(addr, "MakerNotes".to_string());
             // First process the MakerNotes IFD to extract raw tag values with Sony namespace
             // ExifTool: Sony.pm Main table processing
             // Fix Group1 assignment: Use "Sony" as ifd_name for group1="Sony" instead of "MakerNotes"
