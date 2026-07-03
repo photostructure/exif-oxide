@@ -36,6 +36,26 @@ pub fn ast_value_bb77e52729467611(
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// $val =~ s/^(\d+) (\d+) (\d+) (\d+)/${3}x$4/; $val
+/// ```
+/// Used by:
+/// - QuickTime::Meta.MetaImageSize
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_print_bb67dc5b291c02e8(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    crate::core::missing::missing_print_conv(
+        0,                                                       // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val =~ s/^(\\d+) (\\d+) (\\d+) (\\d+)/${3}x$4/; $val", // original expression
+        val,
+    )
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// my @v = split(' ',$val);
 /// $v[0] &= 0x0f;
 /// $v[1] = $v[3] * 256 + $v[4]; # (always high byte first)

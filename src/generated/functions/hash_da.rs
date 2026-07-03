@@ -52,3 +52,27 @@ pub fn ast_value_da19f9751eeb9fa7(
         val,
     ))
 }
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// return '<err>' unless length $val >= 8;
+/// unpack('x7C', $val);
+/// ```
+/// Used by:
+/// - QuickTime::UserData.UserRating
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_daa2263a6e691c79(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "return \'<err>\' unless length $val >= 8;\n            unpack(\'x7C\', $val);", // original expression
+        val,
+    ))
+}

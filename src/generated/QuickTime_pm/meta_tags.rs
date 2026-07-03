@@ -6,8 +6,191 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_52::ast_value_5228014e8243cb2b;
+use crate::generated::functions::hash_bb::ast_print_bb67dc5b291c02e8;
+
 /// Tag definitions for QuickTime::Meta table
 pub static QUICK_TIME_META_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::Meta table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_META_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"bxml".as_slice(),
+                TagInfo {
+                    name: "BinaryXML",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"dinf".as_slice(),
+                TagInfo {
+                    name: "DataInfo",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"free".as_slice(),
+                TagInfo {
+                    name: "Free",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"grpl".as_slice(),
+                TagInfo {
+                    name: "Unknown_grpl",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"hdlr".as_slice(),
+                TagInfo {
+                    name: "Handler",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"idat".as_slice(),
+                TagInfo {
+                    name: "MetaImageSize",
+                    format: "int16u",
+                    print_conv: Some(PrintConv::Function(ast_print_bb67dc5b291c02e8)),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"iinf".as_slice(),
+                TagInfo {
+                    name: "ItemInformation",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"iloc".as_slice(),
+                TagInfo {
+                    name: "ItemLocation",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"ilst".as_slice(),
+                TagInfo {
+                    name: "ItemList",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"ipmc".as_slice(),
+                TagInfo {
+                    name: "IPMPControl",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"ipro".as_slice(),
+                TagInfo {
+                    name: "ItemProtection",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"iprp".as_slice(),
+                TagInfo {
+                    name: "ItemProperties",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"iref".as_slice(),
+                TagInfo {
+                    name: "ItemReference",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"keys".as_slice(),
+                TagInfo {
+                    name: "Keys",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"pitm".as_slice(),
+                TagInfo {
+                    name: "PrimaryItemReference",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"uuid".as_slice(),
+                TagInfo {
+                    name: "UUID-Unknown",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: Some(ValueConv::Function(ast_value_5228014e8243cb2b)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"xml ".as_slice(),
+                TagInfo {
+                    name: "XML",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

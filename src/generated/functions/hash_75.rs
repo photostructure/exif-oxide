@@ -34,6 +34,26 @@ pub fn ast_value_75ea21c3208d8187(
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// $val=~s/ /, /;$val
+/// ```
+/// Used by:
+/// - QuickTime::HintTrackInfo.PayloadType
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_print_751f06764d997d79(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    crate::core::missing::missing_print_conv(
+        0,                    // tag_id will be filled at runtime
+        "UnknownTag",         // tag_name will be filled at runtime
+        "UnknownGroup",       // group will be filled at runtime
+        "$val=~s/ /, /;$val", // original expression
+        val,
+    )
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// exp(-Image::ExifTool::Pentax::PentaxEv($val-68)*log(2))
 /// ```
 /// Used by:

@@ -40,6 +40,9 @@ use crate::types::{ExifContext, TagValue};
 /// - Matroska::Main.TrackTranslateEditionUID
 /// - Matroska::Main.TrackUID
 /// - Photoshop::Main.IPTCDigest
+/// - QuickTime::SchemeInfo.InitializationVector
+/// - QuickTime::UserData.MediaUID
+/// - QuickTime::UserData.SerialNumberHash
 /// - Ricoh::Main.InternalSerialNumber
 /// - SigmaRaw::Header.ImageUniqueID
 pub fn ast_value_c3ac357278ffbbb0(
@@ -47,6 +50,29 @@ pub fn ast_value_c3ac357278ffbbb0(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::Array(crate::core::unpack_binary("H*", &val)))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// join ".", unpack("ncc", pack("N",$val))
+/// ```
+/// Used by:
+/// - QuickTime::EncodingParams.AudioComponentVersion
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_c33ab7e5a878aae(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                                               // tag_id will be filled at runtime
+        "UnknownTag",                                    // tag_name will be filled at runtime
+        "UnknownGroup",                                  // group will be filled at runtime
+        "join \".\", unpack(\"ncc\", pack(\"N\",$val))", // original expression
+        val,
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

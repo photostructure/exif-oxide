@@ -6,8 +6,290 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_52::ast_value_5228014e8243cb2b;
+use crate::generated::functions::hash_97::ast_value_975fa5d29bb03ab4;
+use crate::generated::functions::hash_c1::ast_value_c16793225dc03522;
+
 /// Tag definitions for QuickTime::Main table
 pub static QUICK_TIME_MAIN_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::Main table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_MAIN_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> = LazyLock::new(
+    || {
+        HashMap::from([
+        (b"GPS ".as_slice(), TagInfo {
+            name: "GPSDataList2",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"IDIT".as_slice(), TagInfo {
+            name: "DateTimeOriginal",
+            format: "string",
+            print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+            value_conv: Some(ValueConv::Function(ast_value_c16793225dc03522)),
+            is_offset: false,
+        }),
+        (b"PICT".as_slice(), TagInfo {
+            name: "PreviewPICT",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"SEAL".as_slice(), TagInfo {
+            name: "SEAL",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"_htc".as_slice(), TagInfo {
+            name: "HTCInfo",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"ardt".as_slice(), TagInfo {
+            name: "ARDroneFile",
+            format: "unknown",
+            print_conv: None,
+            value_conv: Some(ValueConv::Function(ast_value_975fa5d29bb03ab4)),
+            is_offset: false,
+        }),
+        (b"cust".as_slice(), TagInfo {
+            name: "CustomInfo",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"frea".as_slice(), TagInfo {
+            name: "Kodak_frea",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"free".as_slice(), TagInfo {
+            name: "free",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"ftyp".as_slice(), TagInfo {
+            name: "FileType",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"gdat".as_slice(), TagInfo {
+            name: "GPSData",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"gps0".as_slice(), TagInfo {
+            name: "GPSTrack",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"gsen".as_slice(), TagInfo {
+            name: "GSensor",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"inst".as_slice(), TagInfo {
+            name: "Insta360Info",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"junk".as_slice(), TagInfo {
+            name: "junk",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"kfix".as_slice(), TagInfo {
+            name: "KFIX",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"kstb".as_slice(), TagInfo {
+            name: "KSTB",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"kvar".as_slice(), TagInfo {
+            name: "KVAR",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"mdat".as_slice(), TagInfo {
+            name: "MediaData",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"mdat-offset".as_slice(), TagInfo {
+            name: "MediaDataOffset",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"mdat-size".as_slice(), TagInfo {
+            name: "MediaDataSize",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"meco".as_slice(), TagInfo {
+            name: "OtherMeta",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"meta".as_slice(), TagInfo {
+            name: "Meta",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"moof".as_slice(), TagInfo {
+            name: "MovieFragment",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"moov".as_slice(), TagInfo {
+            name: "Movie",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"mpvd".as_slice(), TagInfo {
+            name: "MotionPhotoVideo",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"nbmt".as_slice(), TagInfo {
+            name: "NextbaseMeta",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"pict".as_slice(), TagInfo {
+            name: "PreviewPICT",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"pnot".as_slice(), TagInfo {
+            name: "Preview",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"prrt".as_slice(), TagInfo {
+            name: "ARDroneTelemetry",
+            format: "unknown",
+            print_conv: None,
+            value_conv: Some(ValueConv::Expression("my $size = length $val;\n            return \\$val if $size < 12 or not $$self{OPTIONS}{Binary};\n            my $len = Get16u(\\$val, 2);\n            my $str = '';\n            SetByteOrder('II');\n            my $pos = 12;\n            while ($pos + $len <= $size) {\n                my $s1 = Get16u(\\$val, $pos);\n                # s2: 7=take-off?, 3=moving, 4=hovering, 9=landing?, 2=landed\n                my $s2 = Get16u(\\$val, $pos + 2);\n                $str .= \"$s1 $s2\";\n                my $num = int(($len-4)/4);\n                my ($i, $v);\n                for ($i=0; $i<$num; ++$i) {\n                    my $pt = $pos + 4 + $i * 4;\n                    if ($i > 0 && $i < 4) {\n                        $v = GetFloat(\\$val, $pt); # pitch/roll/yaw\n                    } else {\n                        $v = Get32u(\\$val, $pt);\n                        # convert time to sec, and speed(NC)/altitude to metres\n                        $v /= 1000 if $i <= 5;\n                    }\n                    $str .= \" $v\";\n                }\n                $str .= \"\\n\";\n                $pos += $len;\n            }\n            SetByteOrder('MM');\n            return \\$str;".to_string())),
+            is_offset: false,
+        }),
+        (b"sefd".as_slice(), TagInfo {
+            name: "SamsungTrailer",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"skip".as_slice(), TagInfo {
+            name: "Skip",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"thm ".as_slice(), TagInfo {
+            name: "ThumbnailImage",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"thum".as_slice(), TagInfo {
+            name: "ThumbnailImage",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"udat".as_slice(), TagInfo {
+            name: "GPSLog",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"udta".as_slice(), TagInfo {
+            name: "FLIRData",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+        (b"uuid".as_slice(), TagInfo {
+            name: "UUID-Unknown",
+            format: "unknown",
+            print_conv: None,
+            value_conv: Some(ValueConv::Function(ast_value_5228014e8243cb2b)),
+            is_offset: false,
+        }),
+        (b"wide".as_slice(), TagInfo {
+            name: "wide",
+            format: "unknown",
+            print_conv: None,
+            value_conv: None,
+            is_offset: false,
+        }),
+    ])
+    },
+);
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

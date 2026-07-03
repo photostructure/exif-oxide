@@ -6,8 +6,40 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_20::ast_value_20ed25c601606348;
+
 /// Tag definitions for QuickTime::sv3d table
 pub static QUICK_TIME_SV3D_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::sv3d table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_SV3D_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"proj".as_slice(),
+                TagInfo {
+                    name: "Projection",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"svhd".as_slice(),
+                TagInfo {
+                    name: "MetadataSource",
+                    format: "undef",
+                    print_conv: None,
+                    value_conv: Some(ValueConv::Function(ast_value_20ed25c601606348)),
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

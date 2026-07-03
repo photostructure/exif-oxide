@@ -37,6 +37,7 @@ pub fn ast_print_34de78d5cc79bdc9(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Photoshop::Main.CopyrightFlag
+/// - QuickTime::VisualSampleDesc.VideoFieldOrder
 ///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_346603e685b2cac(

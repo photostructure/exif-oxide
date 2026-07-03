@@ -84,6 +84,58 @@ pub fn ast_print_529b9dfc5148650a(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// $val =~ /^([\x20-\x7e]*)\0*$/ ? $1 : \$val
+/// ```
+/// Used by:
+/// - QuickTime::Main.UUID-Unknown
+/// - QuickTime::Meta.UUID-Unknown
+/// - QuickTime::Movie.UUID-Unknown
+/// - QuickTime::Track.UUID-Unknown
+/// - QuickTime::UserData.UUID-Unknown
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_5228014e8243cb2b(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                                                // tag_id will be filled at runtime
+        "UnknownTag",                                     // tag_name will be filled at runtime
+        "UnknownGroup",                                   // group will be filled at runtime
+        "$val =~ /^([\\x20-\\x7e]*)\\0*$/ ? $1 : \\$val", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val =~ s/^.*? //; $val
+/// ```
+/// Used by:
+/// - QuickTime::TrackAperture.CleanApertureDimensions
+/// - QuickTime::TrackAperture.EncodedPixelsDimensions
+/// - QuickTime::TrackAperture.ProductionApertureDimensions
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_5232cbea2d13b4e2(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                         // tag_id will be filled at runtime
+        "UnknownTag",              // tag_name will be filled at runtime
+        "UnknownGroup",            // group will be filled at runtime
+        "$val =~ s/^.*? //; $val", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// exp(-Image::ExifTool::Canon::CanonEv($val)*log(2))
 /// ```
 /// Used by:

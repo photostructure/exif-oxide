@@ -15,6 +15,29 @@ use crate::types::{ExifContext, TagValue};
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// $val =~ s/.* //; $val
+/// ```
+/// Used by:
+/// - QuickTime::VisualSampleDesc.Stereoscopic3D
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_6c4415236f31e2cf(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                       // tag_id will be filled at runtime
+        "UnknownTag",            // tag_name will be filled at runtime
+        "UnknownGroup",          // group will be filled at runtime
+        "$val =~ s/.* //; $val", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// my @a = split ' ', $val;
 /// $a[0] += $a[0] < 70 ? 2000 : 1900;
 /// sprintf('%.4d:%.2d:%.2d %.2d:%.2d:%.2d', @a);

@@ -21,11 +21,37 @@ shows no `QuickTime:*` or `Composite:*` diffs; same for the other 4 MOVs.
 ## Current phase
 
 - [x] Research & Planning (2026-07-03, all file:line verified against v13.59)
-- [ ] Write breaking tests
-- [ ] Task breakdown review
-- [ ] Implementation
+- [x] Write breaking tests (Task 0 DONE 2026-07-03: `tests/quicktime_video_tests.rs`;
+      the 3 image-level tests are committed `#[ignore]`d — they were validated to
+      fail on missing tags, not setup; **un-ignore them as Tasks 2-4 land**)
+- [x] Task breakdown review
+- [ ] Implementation (Task 1 DONE 2026-07-03 — see log below; Tasks 2-5 remain)
 - [ ] Review & Refinement
 - [ ] Final Integration
+
+## Session log (2026-07-03, Tasks 0-1)
+
+- **Task 1 landed**: `codegen/src/strategies/tag_kit.rs` now emits parallel
+  `*_TAGS_BY_NAME: HashMap<&'static [u8], TagInfo>` maps for non-numeric
+  keys, **gated to module QuickTime** (`emits_by_name_map`) to keep churn
+  confined — generalizing to JPEG/H264/RIFF later is a one-line change.
+  Keys are byte-string literals (`b"\xa9ART"`, `b"mvhd"`,
+  `b"location.ISO6709"`): atom IDs are raw FourCC bytes the walker will
+  read from the file, and `\xa9` isn't valid UTF-8. The field extractor
+  lossy-decodes Perl output, so U+FFFD is mapped back to 0xA9 — verified
+  unambiguous: 0xA9 is the only high byte at key position in all of
+  QuickTime.pm (grep), and zero U+FFFD leaked into generated output.
+  ExifTool `%specialTags` (NOTES/GROUPS/…) are filtered from by-name maps.
+  Counts: Keys=81, ItemList=105, Main=38, UserData=189 entries.
+- **Latent bug fixed along the way**: generated QuickTime `length($val)`
+  ValueConvs exposed that PPI emits `length_i32(&TagValue)` but
+  `src/core/string/measurement.rs` declared owned args — made
+  `length_i32`/`length_string` generic `<T: Into<TagValue>>` (the
+  `core::math::abs` convention).
+- The QuickTime coderef conversions (ConvertISO6709, date/duration, GPS
+  PrintConvs) sit in the by-name maps as `Expression("[Function: …]")`
+  placeholders — Tasks 2/4 de-stub them via `impl_registry` +
+  `src/implementations/quicktime.rs` (the ConvertXMPDate pattern).
 
 ## Required reading
 

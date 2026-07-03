@@ -119,6 +119,16 @@ pub fn ast_print_dd22782e5ba8c7cb(val: &TagValue, ctx: Option<&ExifContext>) -> 
 
 /// Original perl expression:
 /// ``` perl
+/// "Track $val"
+/// ```
+/// Used by:
+/// - QuickTime::TrackRef.ContentDescribes
+pub fn ast_print_dd8bfd628251805d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    Into::<TagValue>::into(format!("Track {}", val))
+}
+
+/// Original perl expression:
+/// ``` perl
 /// $val * 1000
 /// ```
 /// Used by:

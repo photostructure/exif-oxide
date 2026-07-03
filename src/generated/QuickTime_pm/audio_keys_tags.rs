@@ -9,6 +9,78 @@ use std::sync::LazyLock;
 /// Tag definitions for QuickTime::AudioKeys table
 pub static QUICK_TIME_AUDIOKEYS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
 
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::AudioKeys table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_AUDIOKEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"player.movie.audio.balance".as_slice(),
+                TagInfo {
+                    name: "Balance",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.movie.audio.bass".as_slice(),
+                TagInfo {
+                    name: "Bass",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.movie.audio.gain".as_slice(),
+                TagInfo {
+                    name: "AudioGain",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.movie.audio.mute".as_slice(),
+                TagInfo {
+                    name: "Mute",
+                    format: "int8u",
+                    print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                        ("0".to_string(), "Off"),
+                        ("1".to_string(), "On"),
+                    ]))),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.movie.audio.pitchshift".as_slice(),
+                TagInfo {
+                    name: "PitchShift",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.movie.audio.treble".as_slice(),
+                TagInfo {
+                    name: "Treble",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
+
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(
     tag_id: u32,

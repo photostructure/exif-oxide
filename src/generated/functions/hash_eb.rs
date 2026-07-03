@@ -29,3 +29,26 @@ pub fn ast_value_ebf06338275430d8(
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(24i32 * crate::core::exp(crate::core::negate(val - 32i32)))
 }
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// join " ",unpack("x8N*",$val)
+/// ```
+/// Used by:
+/// - QuickTime::SampleTable.PartialSyncSamples
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_ebd4040df62e2013(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                                  // tag_id will be filled at runtime
+        "UnknownTag",                       // tag_name will be filled at runtime
+        "UnknownGroup",                     // group will be filled at runtime
+        "join \" \",unpack(\"x8N*\",$val)", // original expression
+        val,
+    ))
+}

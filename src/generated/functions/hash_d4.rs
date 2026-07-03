@@ -36,3 +36,16 @@ pub fn ast_value_d4d2d606f4e9315(
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(84i32 - 3i32 * val / 26i32)
 }
+
+/// Original perl expression:
+/// ``` perl
+/// substr($val, 5)
+/// ```
+/// Used by:
+/// - QuickTime::OtherSampleDesc.FontTable
+pub fn ast_value_d4f472f774ad751(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::substr_2arg(val, 5i32))
+}

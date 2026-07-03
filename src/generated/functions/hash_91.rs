@@ -31,3 +31,34 @@ pub fn ast_print_9111b408f0b1518a(val: &TagValue, ctx: Option<&ExifContext>) -> 
         std::slice::from_ref(val),
     ))
 }
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// require Image::ExifTool::XMP;
+/// $val =  Image::ExifTool::XMP::ConvertXMPDate($val);
+/// $val =~ s/([-+]\d{2})(\d{2})$/$1:$2/; # add colon to timezone if necessary
+/// return $val;
+/// ```
+/// Used by:
+/// - QuickTime::ItemList.ContentCreateDate
+/// - QuickTime::Keys.CreationDate
+/// - QuickTime::Keys.CreationTime
+/// - QuickTime::Keys.LocationDate
+/// - QuickTime::UserData.ContentCreateDate
+/// - QuickTime::UserData.DateTimeOriginal
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_9174747ffada265c(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "require Image::ExifTool::XMP;\n        $val =  Image::ExifTool::XMP::ConvertXMPDate($val);\n        $val =~ s/([-+]\\d{2})(\\d{2})$/$1:$2/; # add colon to timezone if necessary\n        return $val;", // original expression
+                    val
+                ))
+}

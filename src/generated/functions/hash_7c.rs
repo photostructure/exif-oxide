@@ -79,6 +79,7 @@ pub fn ast_print_7cc7a4bf3f82cb33(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Nikon::ShotInfo.ShutterCount
+/// - QuickTime::ItemList.Genre
 pub fn ast_value_7c6a8820d74e378b(
     val: &TagValue,
     ctx: Option<&ExifContext>,

@@ -6,8 +6,92 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_33::ast_value_33de968bf293bd53;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_73::ast_value_7323079e2cf8d8;
+
 /// Tag definitions for QuickTime::Pittasoft table
 pub static QUICK_TIME_PITTASOFT_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::Pittasoft table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_PITTASOFT_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"3gf ".as_slice(),
+                TagInfo {
+                    name: "AccelData",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"cprt".as_slice(),
+                TagInfo {
+                    name: "Copyright",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"gps ".as_slice(),
+                TagInfo {
+                    name: "GPSLog",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"ptnm".as_slice(),
+                TagInfo {
+                    name: "OriginalFileName",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: Some(ValueConv::Function(ast_value_7323079e2cf8d8)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"ptrh".as_slice(),
+                TagInfo {
+                    name: "ptrh",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"sttm".as_slice(),
+                TagInfo {
+                    name: "StartTime",
+                    format: "int64u",
+                    print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                    value_conv: Some(ValueConv::Function(ast_value_33de968bf293bd53)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"thum".as_slice(),
+                TagInfo {
+                    name: "PreviewImage",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

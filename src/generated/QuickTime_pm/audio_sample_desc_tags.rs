@@ -82,6 +82,85 @@ pub static QUICK_TIME_AUDIOSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
     ])
 });
 
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::AudioSampleDesc table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_AUDIOSAMPLEDESC_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"SA3D".as_slice(),
+                TagInfo {
+                    name: "SpatialAudio",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"btrt".as_slice(),
+                TagInfo {
+                    name: "BitrateInfo",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"chan".as_slice(),
+                TagInfo {
+                    name: "AudioChannelLayout",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"damr".as_slice(),
+                TagInfo {
+                    name: "DecodeConfig",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"pinf".as_slice(),
+                TagInfo {
+                    name: "PurchaseInfo",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"sinf".as_slice(),
+                TagInfo {
+                    name: "ProtectionInfo",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"wave".as_slice(),
+                TagInfo {
+                    name: "Wave",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
+
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(
     tag_id: u32,

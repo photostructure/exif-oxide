@@ -62,6 +62,7 @@ pub fn ast_print_20b4fd429d540f17(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// ```
 /// Used by:
 /// - Nikon::AVITags.Software
+/// - QuickTime::sv3d.MetadataSource
 ///
 /// TODO: Add support for this expression pattern
 pub fn ast_value_20ed25c601606348(

@@ -142,6 +142,77 @@ pub static QUICK_TIME_HEVCCONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLoc
     ])
 });
 
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::HEVCConfig table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_HEVCCONFIG_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"1.1".as_slice(),
+                TagInfo {
+                    name: "GeneralTierFlag",
+                    format: "unknown",
+                    print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                        ("0".to_string(), "Main Tier"),
+                        ("1".to_string(), "High Tier"),
+                    ]))),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"1.2".as_slice(),
+                TagInfo {
+                    name: "GeneralProfileIDC",
+                    format: "unknown",
+                    print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                        ("0".to_string(), "No Profile"),
+                        ("1".to_string(), "Main"),
+                        ("10".to_string(), "Scalable Format Range Extensions"),
+                        (
+                            "11".to_string(),
+                            "High Throughput Screen Content Coding Extensions",
+                        ),
+                        ("2".to_string(), "Main 10"),
+                        ("3".to_string(), "Main Still Picture"),
+                        ("4".to_string(), "Format Range Extensions"),
+                        ("5".to_string(), "High Throughput"),
+                        ("6".to_string(), "Multiview Main"),
+                        ("7".to_string(), "Scalable Main"),
+                        ("8".to_string(), "3D Main"),
+                        ("9".to_string(), "Screen Content Coding Extensions"),
+                    ]))),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"21.1".as_slice(),
+                TagInfo {
+                    name: "NumTemporalLayers",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"21.2".as_slice(),
+                TagInfo {
+                    name: "TemporalIDNested",
+                    format: "unknown",
+                    print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                        ("0".to_string(), "No"),
+                        ("1".to_string(), "Yes"),
+                    ]))),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
+
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(
     tag_id: u32,

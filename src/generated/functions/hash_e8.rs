@@ -26,6 +26,18 @@ pub fn ast_print_e8362eee1a97a77d(val: &TagValue, ctx: Option<&ExifContext>) -> 
     }
 }
 
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%.3f s",$val/1000)
+/// ```
+/// Used by:
+/// - QuickTime::HintTrackInfo.LargestPacketDuration
+/// - QuickTime::HintTrackInfo.MaxTransmissionTime
+/// - QuickTime::HintTrackInfo.MinTransmissionTime
+pub fn ast_print_e8201d20dc0f1f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    TagValue::String(crate::core::sprintf_perl("%.3f s", &[val / 1000i32]))
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl

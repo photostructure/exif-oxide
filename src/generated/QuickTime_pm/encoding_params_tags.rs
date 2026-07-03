@@ -6,9 +6,261 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_c3::ast_value_c33ab7e5a878aae;
+
 /// Tag definitions for QuickTime::EncodingParams table
 pub static QUICK_TIME_ENCODINGPARAMS_TAGS: LazyLock<HashMap<u16, TagInfo>> =
     LazyLock::new(HashMap::new);
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::EncodingParams table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_ENCODINGPARAMS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"abrt".as_slice(),
+                TagInfo {
+                    name: "AudioAvailableBitRateRange",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"acbf".as_slice(),
+                TagInfo {
+                    name: "AudioBitRateControlMode",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"acef".as_slice(),
+                TagInfo {
+                    name: "AudioExtendFrequencies",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"brat".as_slice(),
+                TagInfo {
+                    name: "AudioCurrentTargetBitRate",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"cdcv".as_slice(),
+                TagInfo {
+                    name: "AudioComponentVersion",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: Some(ValueConv::Function(ast_value_c33ab7e5a878aae)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"cmnc".as_slice(),
+                TagInfo {
+                    name: "AudioAvailableNumberChannels",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"init".as_slice(),
+                TagInfo {
+                    name: "AudioIsInitialized",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"lmrc".as_slice(),
+                TagInfo {
+                    name: "AudioDoesSampleRateConversion",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"mdel".as_slice(),
+                TagInfo {
+                    name: "AudioMinimumDelayMode",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"mnip".as_slice(),
+                TagInfo {
+                    name: "AudioMinimumNumberInputPackets",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"mnop".as_slice(),
+                TagInfo {
+                    name: "AudioMinimumNumberOutputPackets",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"oppr".as_slice(),
+                TagInfo {
+                    name: "AudioOutputPrecedence",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"pad0".as_slice(),
+                TagInfo {
+                    name: "AudioZeroFramesPadded",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"pakb".as_slice(),
+                TagInfo {
+                    name: "AudioMaximumPacketByteSize",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"pakd".as_slice(),
+                TagInfo {
+                    name: "AudioRequiresPacketDescription",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"pakf".as_slice(),
+                TagInfo {
+                    name: "AudioPacketFrameSize",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"prmm".as_slice(),
+                TagInfo {
+                    name: "AudioCodecPrimeMethod",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"srcq".as_slice(),
+                TagInfo {
+                    name: "AudioQualitySetting",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"tbuf".as_slice(),
+                TagInfo {
+                    name: "AudioInputBufferSize",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"ubuf".as_slice(),
+                TagInfo {
+                    name: "AudioUsedInputBufferSize",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"ursr".as_slice(),
+                TagInfo {
+                    name: "AudioUseRecommendedSampleRate",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"vbrq".as_slice(),
+                TagInfo {
+                    name: "AudioVBRQuality",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"vers".as_slice(),
+                TagInfo {
+                    name: "AudioEncodingParamsVersion",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"vpk?".as_slice(),
+                TagInfo {
+                    name: "AudioHasVariablePacketByteSizes",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

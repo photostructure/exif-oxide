@@ -75,6 +75,29 @@ pub fn ast_value_4dde3a7930a81c1c(
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// $val =~ s/^-?\d+ //; \$val
+/// ```
+/// Used by:
+/// - QuickTime::UserData.AccelerometerData
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_4d2aaaa526aa446c(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                              // tag_id will be filled at runtime
+        "UnknownTag",                   // tag_name will be filled at runtime
+        "UnknownGroup",                 // group will be filled at runtime
+        "$val =~ s/^-?\\d+ //; \\$val", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// $val=~s{/}{:}g; $val
 /// ```
 /// Used by:

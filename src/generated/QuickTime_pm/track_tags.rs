@@ -6,8 +6,100 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_52::ast_value_5228014e8243cb2b;
+
 /// Tag definitions for QuickTime::Track table
 pub static QUICK_TIME_TRACK_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::Track table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_TRACK_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"mdia".as_slice(),
+                TagInfo {
+                    name: "Media",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"meco".as_slice(),
+                TagInfo {
+                    name: "OtherMeta",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"meta".as_slice(),
+                TagInfo {
+                    name: "Meta",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"tapt".as_slice(),
+                TagInfo {
+                    name: "TrackAperture",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"tkhd".as_slice(),
+                TagInfo {
+                    name: "TrackHeader",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"tref".as_slice(),
+                TagInfo {
+                    name: "TrackRef",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"udta".as_slice(),
+                TagInfo {
+                    name: "UserData",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"uuid".as_slice(),
+                TagInfo {
+                    name: "UUID-Unknown",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: Some(ValueConv::Function(ast_value_5228014e8243cb2b)),
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

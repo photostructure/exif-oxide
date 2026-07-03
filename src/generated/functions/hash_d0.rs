@@ -15,6 +15,26 @@ use crate::types::{ExifContext, TagValue};
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// $val=~s/^sdp /(SDP) /; $val
+/// ```
+/// Used by:
+/// - QuickTime::HintInfo.RealtimeStreamingProtocol
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_print_d0d045a98cb7c579(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    crate::core::missing::missing_print_conv(
+        0,                             // tag_id will be filled at runtime
+        "UnknownTag",                  // tag_name will be filled at runtime
+        "UnknownGroup",                // group will be filled at runtime
+        "$val=~s/^sdp /(SDP) /; $val", // original expression
+        val,
+    )
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// Image::ExifTool::Canon::CanonEv($val)
 /// ```
 /// Used by:

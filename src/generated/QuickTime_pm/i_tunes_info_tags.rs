@@ -6,9 +6,472 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_82::ast_print_82ebf71b1692a64d;
+use crate::generated::functions::hash_8b::ast_print_8b98163e01aaf11a;
+
 /// Tag definitions for QuickTime::iTunesInfo table
 pub static QUICK_TIME_ITUNESINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> =
     LazyLock::new(HashMap::new);
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::iTunesInfo table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_ITUNESINFO_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"ARTISTS".as_slice(),
+                TagInfo {
+                    name: "Artists",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Actors".as_slice(),
+                TagInfo {
+                    name: "Actors",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"BARCODE".as_slice(),
+                TagInfo {
+                    name: "Barcode",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"CATALOGNUMBER".as_slice(),
+                TagInfo {
+                    name: "CatalogNumber",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"COSTUME_DESIGNER".as_slice(),
+                TagInfo {
+                    name: "CostumeDesigner",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"DIRECTOR".as_slice(),
+                TagInfo {
+                    name: "Director",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"DIRECTOR_OF_PHOTOGRAPHY".as_slice(),
+                TagInfo {
+                    name: "DirectorOfPhotography",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"DISCNUMBER".as_slice(),
+                TagInfo {
+                    name: "DiscNumber",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Dynamic Range (DR)".as_slice(),
+                TagInfo {
+                    name: "DynamicRange",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Dynamic Range (R128)".as_slice(),
+                TagInfo {
+                    name: "DynamicRangeR128",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"EDITED_BY".as_slice(),
+                TagInfo {
+                    name: "EditedBy",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Encoding Params".as_slice(),
+                TagInfo {
+                    name: "EncodingParams",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"IMDB_ID".as_slice(),
+                TagInfo {
+                    name: "IMDB_ID",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"LABEL".as_slice(),
+                TagInfo {
+                    name: "Label",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"MEDIA".as_slice(),
+                TagInfo {
+                    name: "Media",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"MOOD".as_slice(),
+                TagInfo {
+                    name: "Mood",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"PRODUCER".as_slice(),
+                TagInfo {
+                    name: "Producer",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"PRODUCTION_DESIGNER".as_slice(),
+                TagInfo {
+                    name: "ProductionDesigner",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Peak Level (R128)".as_slice(),
+                TagInfo {
+                    name: "PeakLevelR128",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Peak Level (Sample)".as_slice(),
+                TagInfo {
+                    name: "PeakLevelSample",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"RATING".as_slice(),
+                TagInfo {
+                    name: "Rating",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"SCREENPLAY_BY".as_slice(),
+                TagInfo {
+                    name: "ScreenplayBy",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"SCRIPT".as_slice(),
+                TagInfo {
+                    name: "Script",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"TIPL".as_slice(),
+                TagInfo {
+                    name: "TIPL",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"TMDB_ID".as_slice(),
+                TagInfo {
+                    name: "TMDB_ID",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"TRACKNUMBER".as_slice(),
+                TagInfo {
+                    name: "TrackNumber",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Volume Level (R128)".as_slice(),
+                TagInfo {
+                    name: "VolumeLevelR128",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Volume Level (ReplayGain)".as_slice(),
+                TagInfo {
+                    name: "ReplayVolumeLevel",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"data".as_slice(),
+                TagInfo {
+                    name: "Data",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"iTunEXTC".as_slice(),
+                TagInfo {
+                    name: "ContentRating",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"iTunMOVI".as_slice(),
+                TagInfo {
+                    name: "iTunMOVI",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"iTunNORM".as_slice(),
+                TagInfo {
+                    name: "VolumeNormalization",
+                    format: "unknown",
+                    print_conv: Some(PrintConv::Function(ast_print_82ebf71b1692a64d)),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"iTunSMPB".as_slice(),
+                TagInfo {
+                    name: "iTunSMPB",
+                    format: "unknown",
+                    print_conv: Some(PrintConv::Function(ast_print_82ebf71b1692a64d)),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"iTunes_CDDB_1".as_slice(),
+                TagInfo {
+                    name: "CDDB1Info",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"iTunes_CDDB_TrackNumber".as_slice(),
+                TagInfo {
+                    name: "CDDBTrackNumber",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"initialkey".as_slice(),
+                TagInfo {
+                    name: "InitialKey",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"mean".as_slice(),
+                TagInfo {
+                    name: "Mean",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"name".as_slice(),
+                TagInfo {
+                    name: "Name",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"originaldate".as_slice(),
+                TagInfo {
+                    name: "OriginalDate",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"originalyear".as_slice(),
+                TagInfo {
+                    name: "OriginalYear",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"popularimeter".as_slice(),
+                TagInfo {
+                    name: "Popularimeter",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"replaygain_track_gain".as_slice(),
+                TagInfo {
+                    name: "ReplayTrackGain",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"replaygain_track_peak".as_slice(),
+                TagInfo {
+                    name: "ReplayTrackPeak",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"tool".as_slice(),
+                TagInfo {
+                    name: "iTunTool",
+                    format: "int32u",
+                    print_conv: Some(PrintConv::Function(ast_print_8b98163e01aaf11a)),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"~length".as_slice(),
+                TagInfo {
+                    name: "Length",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

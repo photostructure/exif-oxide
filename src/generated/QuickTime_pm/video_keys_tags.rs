@@ -6,8 +6,71 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_b3::ast_print_b3f0d27854d7192f;
+use crate::generated::functions::hash_d9::ast_value_d91b1f7aca0906fb;
+
 /// Tag definitions for QuickTime::VideoKeys table
 pub static QUICK_TIME_VIDEOKEYS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::VideoKeys table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_VIDEOKEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"camera.focal_length.35mm_equivalent".as_slice(),
+                TagInfo {
+                    name: "FocalLengthIn35mmFormat",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"camera.framereadouttimeinmicroseconds".as_slice(),
+                TagInfo {
+                    name: "FrameReadoutTime",
+                    format: "unknown",
+                    print_conv: Some(PrintConv::Function(ast_print_b3f0d27854d7192f)),
+                    value_conv: Some(ValueConv::Function(ast_value_d91b1f7aca0906fb)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"camera.identifier".as_slice(),
+                TagInfo {
+                    name: "CameraIdentifier",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"camera.lens_model".as_slice(),
+                TagInfo {
+                    name: "LensModel",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"com.apple.photos.captureMode".as_slice(),
+                TagInfo {
+                    name: "CaptureMode",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

@@ -6,6 +6,10 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_7e::ast_value_7e8d48a371a65218;
+use crate::generated::functions::hash_d4::ast_value_d4f472f774ad751;
+
 /// Tag definitions for QuickTime::OtherSampleDesc table
 pub static QUICK_TIME_OTHERSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(|| {
     HashMap::from([
@@ -31,6 +35,65 @@ pub static QUICK_TIME_OTHERSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = La
         ),
     ])
 });
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::OtherSampleDesc table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_OTHERSAMPLEDESC_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"ftab".as_slice(),
+                TagInfo {
+                    name: "FontTable",
+                    format: "undef",
+                    print_conv: None,
+                    value_conv: Some(ValueConv::Function(ast_value_d4f472f774ad751)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"mrld".as_slice(),
+                TagInfo {
+                    name: "MarlinDictionary",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"mrlh".as_slice(),
+                TagInfo {
+                    name: "MarlinHeader",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"mrlv".as_slice(),
+                TagInfo {
+                    name: "MarlinValues",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"name".as_slice(),
+                TagInfo {
+                    name: "OtherName",
+                    format: "undef",
+                    print_conv: None,
+                    value_conv: Some(ValueConv::Function(ast_value_7e8d48a371a65218)),
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

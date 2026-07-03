@@ -9,6 +9,95 @@ use std::sync::LazyLock;
 /// Tag definitions for QuickTime::Rights table
 pub static QUICK_TIME_RIGHTS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
 
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::Rights table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_RIGHTS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"aver".as_slice(),
+                TagInfo {
+                    name: "VersionRestrictions",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"medi".as_slice(),
+                TagInfo {
+                    name: "MediaFlags",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"mode".as_slice(),
+                TagInfo {
+                    name: "ModeFlags",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"plat".as_slice(),
+                TagInfo {
+                    name: "Platform",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"song".as_slice(),
+                TagInfo {
+                    name: "ItemID",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"tool".as_slice(),
+                TagInfo {
+                    name: "ItemTool",
+                    format: "string",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"tran".as_slice(),
+                TagInfo {
+                    name: "TransactionID",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"veID".as_slice(),
+                TagInfo {
+                    name: "ItemVendorID",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
+
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(
     tag_id: u32,

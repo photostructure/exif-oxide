@@ -133,27 +133,67 @@ impl TagKitStrategy {
         // First collect all valid tag entries with their tag IDs for sorting
         // This will populate self.imports through processing
         let mut tag_entries = Vec::new();
+        // String (atom-ID) keyed entries for the parallel *_BY_NAME map (QuickTime
+        // only, see emits_by_name_map). Kept alongside the u16 map; never replaces it.
+        let mut string_tag_entries: Vec<(String, String)> = Vec::new();
+        let want_by_name = Self::emits_by_name_map(&symbol.module_name);
         // Track conditional tag overrides per context (DIR_NAME -> Vec<(tag_id, entry)>)
         let mut context_overrides: std::collections::HashMap<String, Vec<(u16, String)>> =
             std::collections::HashMap::new();
 
         for (tag_key, tag_data) in table_data {
+            let is_numeric = Self::parse_numeric_tag_key(tag_key).is_some();
+            // ExifTool %specialTags (ExifTool.pm:1230) are table directives, not tags.
+            if want_by_name && !is_numeric && Self::is_special_tag_key(tag_key) {
+                continue;
+            }
             if let Some(tag_obj) = tag_data.as_object() {
-                // Standard object-style tag definition
-                if let Some((tag_id, entry)) = self.build_tag_entry(
-                    tag_key,
-                    tag_obj,
-                    &symbol.module_name,
-                    &symbol.table_name,
-                    context,
-                )? {
-                    tag_entries.push((tag_id, entry));
+                if is_numeric {
+                    // Standard numeric object-style tag definition -> u16 map
+                    if let Some((tag_id, entry)) = self.build_tag_entry(
+                        tag_key,
+                        tag_obj,
+                        &symbol.module_name,
+                        &symbol.table_name,
+                        context,
+                    )? {
+                        tag_entries.push((tag_id, entry));
+                    }
+                } else if want_by_name {
+                    // String atom-ID object tag -> *_BY_NAME map
+                    let entry = self.build_string_tag_entry(
+                        tag_key,
+                        tag_obj,
+                        &symbol.module_name,
+                        &symbol.table_name,
+                        context,
+                    )?;
+                    string_tag_entries.push(entry);
                 }
             } else if let Some(tag_array) = tag_data.as_array() {
                 // Array-style conditional tag definition (like tags 0x201, 0x202)
                 // ExifTool Reference: Exif.pm lines 1125-1270 - tag 0x201 has 10 conditional variants
                 let variants = self.extract_conditional_variants(tag_key, tag_array)?;
-                if !variants.is_empty() {
+                if !is_numeric {
+                    // String atom-ID conditional tag -> *_BY_NAME (default variant only)
+                    if want_by_name {
+                        if let Some(default) = variants
+                            .iter()
+                            .rev()
+                            .find(|v| v.dir_name.is_none())
+                            .or_else(|| variants.first())
+                        {
+                            let entry = self.build_string_tag_entry(
+                                tag_key,
+                                &default.data,
+                                &symbol.module_name,
+                                &symbol.table_name,
+                                context,
+                            )?;
+                            string_tag_entries.push(entry);
+                        }
+                    }
+                } else if !variants.is_empty() {
                     debug!(
                         "Processing conditional tag {} with {} variants",
                         tag_key,
@@ -200,6 +240,11 @@ impl TagKitStrategy {
                             }
                         }
                     }
+                }
+            } else if let Some(name_str) = tag_data.as_str() {
+                // Bare-scalar atom (atomID => 'Name'), e.g. ItemList "\xa9ART" => 'Artist'.
+                if !is_numeric && want_by_name {
+                    string_tag_entries.push(Self::build_string_plain_entry(tag_key, name_str));
                 }
             }
         }
@@ -352,6 +397,35 @@ impl TagKitStrategy {
             code.push_str("}\n\n");
         }
 
+        // Emit the parallel string-keyed (atom-ID) map for non-numeric tables.
+        // ExifTool matches QuickTime atom tags byte-for-byte (ProcessMOV,
+        // QuickTime.pm), so keys are raw &[u8] FourCC / dotted IDs. This is emitted
+        // IN ADDITION TO (never in place of) the u16 map, so existing consumers are
+        // untouched. Gated to QuickTime via emits_by_name_map.
+        if !string_tag_entries.is_empty() {
+            string_tag_entries.sort_by(|a, b| a.0.cmp(&b.0));
+            let by_name_const = format!("{constant_name}_BY_NAME");
+            code.push_str(&format!(
+                "/// Atom-ID (byte-string) keyed tag definitions for {}::{} table\n",
+                symbol.module_name, symbol.table_name
+            ));
+            code.push_str(
+                "/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag\n",
+            );
+            code.push_str(
+                "/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b\"\\xa9ART\").\n",
+            );
+            code.push_str(&format!(
+                "pub static {by_name_const}: LazyLock<HashMap<&'static [u8], TagInfo>> = LazyLock::new(|| {{\n"
+            ));
+            code.push_str("    HashMap::from([\n");
+            for (_, entry) in &string_tag_entries {
+                code.push_str(entry);
+            }
+            code.push_str("    ])\n");
+            code.push_str("});\n\n");
+        }
+
         // Generate apply_value_conv function: TODO: can this be DRY'ed up and moved into src/ proper, not shoved into every generated file?
         code.push_str(&formatdoc!(r#"
             /// Apply ValueConv transformation for tags in this table
@@ -436,25 +510,40 @@ impl TagKitStrategy {
         table_name: &str,
         context: &mut ExtractionContext,
     ) -> Result<Option<(u16, String)>> {
-        // Extract basic tag information
+        // Only numeric-keyed tags belong in the u16 map. Non-numeric (string) atom
+        // IDs are routed to the parallel *_BY_NAME map by generate_tag_table_code.
+        let tag_id = match Self::parse_numeric_tag_key(tag_key) {
+            Some(id) => id,
+            None => {
+                debug!("Skipping non-numeric tag key: {}", tag_key);
+                return Ok(None);
+            }
+        };
+
         let name = tag_data
             .get("Name")
             .and_then(|v| v.as_str())
             .unwrap_or(tag_key);
+        let tag_info = self.build_tag_info_literal(name, tag_data, module, table_name, context)?;
+        let entry = format!("        ({tag_id}, {tag_info}),\n");
+
+        Ok(Some((tag_id, entry)))
+    }
+
+    /// Build the shared `TagInfo { ... }` struct literal used by both the u16 map
+    /// and the string-keyed `*_BY_NAME` map. `name` is resolved by the caller.
+    fn build_tag_info_literal(
+        &mut self,
+        name: &str,
+        tag_data: &serde_json::Map<String, JsonValue>,
+        module: &str,
+        table_name: &str,
+        context: &mut ExtractionContext,
+    ) -> Result<String> {
         let format = tag_data
             .get("Format")
             .and_then(|v| v.as_str())
             .unwrap_or("unknown");
-
-        // Parse tag ID (could be string or number)
-        let tag_id = if let Ok(id) = tag_key.parse::<u16>() {
-            id
-        } else if tag_key.starts_with("0x") || tag_key.starts_with("0X") {
-            u16::from_str_radix(&tag_key[2..], 16).unwrap_or(0)
-        } else {
-            debug!("Skipping non-numeric tag key: {}", tag_key);
-            return Ok(None);
-        };
 
         // Process PrintConv if present
         let print_conv = self.process_print_conv(tag_data, module, name, table_name, context)?;
@@ -467,17 +556,142 @@ impl TagKitStrategy {
         // that need to be adjusted by adding the base offset (e.g., ThumbnailOffset, PreviewImageStart)
         let is_offset = Self::extract_is_offset(tag_data);
 
-        // Build the formatted entry
-        let mut entry = String::new();
-        entry.push_str(&format!("        ({tag_id}, TagInfo {{\n"));
-        entry.push_str(&format!("            name: \"{name}\",\n"));
-        entry.push_str(&format!("            format: \"{format}\",\n"));
-        entry.push_str(&format!("            print_conv: {print_conv},\n"));
-        entry.push_str(&format!("            value_conv: {value_conv},\n"));
-        entry.push_str(&format!("            is_offset: {is_offset},\n"));
-        entry.push_str("        }),\n");
+        // NOTE: keep field order/format byte-identical to the previous inline
+        // emission so numeric-keyed maps stay unchanged after rustfmt.
+        Ok(format!(
+            "TagInfo {{\n            name: \"{name}\",\n            format: \"{format}\",\n            print_conv: {print_conv},\n            value_conv: {value_conv},\n            is_offset: {is_offset},\n        }}"
+        ))
+    }
 
-        Ok(Some((tag_id, entry)))
+    /// Parse a tag-table key as a numeric tag ID. Mirrors the previous inline parse
+    /// EXACTLY (malformed `0x..` -> id 0, still numeric) so numeric-keyed output is
+    /// unchanged; returns None for string atom IDs like 'mvhd' or "\xa9ART".
+    fn parse_numeric_tag_key(tag_key: &str) -> Option<u16> {
+        if let Ok(id) = tag_key.parse::<u16>() {
+            Some(id)
+        } else if tag_key.starts_with("0x") || tag_key.starts_with("0X") {
+            Some(u16::from_str_radix(&tag_key[2..], 16).unwrap_or(0))
+        } else {
+            None
+        }
+    }
+
+    /// Whether this module's string-keyed tables should ALSO emit a parallel
+    /// `<CONST>_BY_NAME: HashMap<&'static [u8], TagInfo>` map. Only QuickTime's
+    /// atom-ID tables are consumed today (by the video walker, TPP
+    /// 20260703-P1-quicktime-video-read), so we gate on the module to keep
+    /// generated churn confined to QuickTime_pm. Widen this to generalize
+    /// string-keyed tables to other container formats (JPEG, H264, RIFF, ...).
+    fn emits_by_name_map(module: &str) -> bool {
+        module == "QuickTime"
+    }
+
+    /// ExifTool %specialTags (ExifTool.pm:1230): table directives (PROCESS_PROC,
+    /// GROUPS, NOTES, VARS, ...), never tag definitions. Skipped when harvesting
+    /// string-keyed atom tables so they don't become bogus by-name entries.
+    fn is_special_tag_key(key: &str) -> bool {
+        matches!(
+            key,
+            "TABLE_NAME"
+                | "SHORT_NAME"
+                | "PROCESS_PROC"
+                | "WRITE_PROC"
+                | "CHECK_PROC"
+                | "GROUPS"
+                | "FORMAT"
+                | "FIRST_ENTRY"
+                | "TAG_PREFIX"
+                | "PRINT_CONV"
+                | "WRITABLE"
+                | "TABLE_DESC"
+                | "NOTES"
+                | "IS_OFFSET"
+                | "IS_SUBDIR"
+                | "EXTRACT_UNKNOWN"
+                | "NAMESPACE"
+                | "PREFERRED"
+                | "SRC_TABLE"
+                | "PRIORITY"
+                | "AVOID"
+                | "WRITE_GROUP"
+                | "LANG_INFO"
+                | "VARS"
+                | "DATAMEMBER"
+                | "SET_GROUP1"
+                | "PERMANENT"
+                | "INIT_TABLE"
+        )
+    }
+
+    /// Convert a non-numeric atom-ID key into a Rust byte-string literal (`b"..."`)
+    /// reproducing the EXACT bytes ExifTool compares against the 4-byte atom tag it
+    /// reads from the file (ProcessMOV, QuickTime.pm). We use `&[u8]` keys (not
+    /// `&str`): atom IDs are raw FourCC bytes, some aren't valid UTF-8, and the
+    /// walker looks them up directly from file bytes with no decode step.
+    ///
+    /// The field-extractor pipeline decodes Perl stdout with String::from_utf8_lossy
+    /// (codegen/src/field_extractor.rs), so the sole non-ASCII byte used in QuickTime
+    /// atom IDs -- 0xA9, the "\xa9" copyright prefix (ItemList:3505, UserData) -- is
+    /// replaced by U+FFFD. 0xA9 is the ONLY high byte across Main/ItemList/Keys/
+    /// UserData (verified), so U+FFFD maps back to it unambiguously.
+    fn atom_key_to_byte_literal(key: &str) -> String {
+        let mut lit = String::from("b\"");
+        for ch in key.chars() {
+            if ch == '\u{FFFD}' {
+                lit.push_str("\\xa9");
+                continue;
+            }
+            let cp = ch as u32;
+            if cp <= 0x7f {
+                match cp as u8 {
+                    b'"' => lit.push_str("\\\""),
+                    b'\\' => lit.push_str("\\\\"),
+                    b @ 0x20..=0x7e => lit.push(b as char),
+                    b => lit.push_str(&format!("\\x{b:02x}")),
+                }
+            } else {
+                // Non-ASCII, non-FFFD (not expected in QuickTime): emit the char's
+                // UTF-8 bytes as \xHH so the literal stays valid and byte-faithful.
+                let mut buf = [0u8; 4];
+                for b in ch.encode_utf8(&mut buf).as_bytes() {
+                    lit.push_str(&format!("\\x{b:02x}"));
+                }
+            }
+        }
+        lit.push('"');
+        lit
+    }
+
+    /// Build a `(sort_key, entry)` pair for a non-numeric object-style tag, keyed by
+    /// its atom-ID byte literal, for the `*_BY_NAME` map.
+    fn build_string_tag_entry(
+        &mut self,
+        tag_key: &str,
+        tag_data: &serde_json::Map<String, JsonValue>,
+        module: &str,
+        table_name: &str,
+        context: &mut ExtractionContext,
+    ) -> Result<(String, String)> {
+        let name = tag_data
+            .get("Name")
+            .and_then(|v| v.as_str())
+            .unwrap_or(tag_key);
+        let key_lit = Self::atom_key_to_byte_literal(tag_key);
+        let tag_info = self.build_tag_info_literal(name, tag_data, module, table_name, context)?;
+        let entry = format!("        ({key_lit}.as_slice(), {tag_info}),\n");
+        Ok((tag_key.to_string(), entry))
+    }
+
+    /// Build a `(sort_key, entry)` pair for a bare-scalar atom (`atomID => 'Name'`,
+    /// e.g. ItemList "\xa9ART" => 'Artist'). No Format/PrintConv/ValueConv, so it
+    /// defaults like ExifTool's implicit string tags.
+    fn build_string_plain_entry(tag_key: &str, name: &str) -> (String, String) {
+        let key_lit = Self::atom_key_to_byte_literal(tag_key);
+        let tag_info = format!(
+            "TagInfo {{\n            name: \"{name}\",\n            format: \"unknown\",\n            print_conv: None,\n            value_conv: None,\n            is_offset: false,\n        }}"
+        );
+        let entry = format!("        ({key_lit}.as_slice(), {tag_info}),\n");
+        (tag_key.to_string(), entry)
     }
 
     /// Process PrintConv field using PPI AST when available, falling back to existing impl_registry

@@ -9,6 +9,23 @@ use std::sync::LazyLock;
 /// Tag definitions for QuickTime::TimeCode table
 pub static QUICK_TIME_TIMECODE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
 
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::TimeCode table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_TIMECODE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([(
+            b"tcmi".as_slice(),
+            TagInfo {
+                name: "TCMediaInfo",
+                format: "unknown",
+                print_conv: None,
+                value_conv: None,
+                is_offset: false,
+            },
+        )])
+    });
+
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(
     tag_id: u32,

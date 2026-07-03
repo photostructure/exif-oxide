@@ -121,3 +121,26 @@ pub fn ast_print_f67d275ec420a684(val: &TagValue, ctx: Option<&ExifContext>) -> 
         val,
     )
 }
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val=~s/^(.{4})(.{2})/"Entity=$1 Index=".unpack("n",$2)." "/ie; $val
+/// ```
+/// Used by:
+/// - QuickTime::UserData.Classification
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_f6d369f7b61cb6f2(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val=~s/^(.{4})(.{2})/\"Entity=$1 Index=\".unpack(\"n\",$2).\" \"/ie; $val", // original expression
+        val,
+    ))
+}

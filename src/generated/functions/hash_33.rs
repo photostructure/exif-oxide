@@ -41,6 +41,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Panasonic::FocusInfo.FocalLength
 /// - Panasonic::FocusInfo.FocusDistance
 /// - Panasonic::Leica9.FNumber
+/// - QuickTime::ItemList.GoogleTrackDuration
 /// - RIFF::ANMF.Duration
 /// - Red::Main.FocusDistance
 pub fn ast_value_3346505e2ab784dc(
@@ -131,6 +132,30 @@ pub fn ast_value_33727ac0bdbe4a81(
         "join(\" \",map({ $_/8192 } split(\" \",$val)))", // original expression
         val,
     ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// my $secs = int($val / 1000);
+/// return ConvertUnixTime($secs) . sprintf(".%03d",$val - $secs * 1000);
+/// ```
+/// Used by:
+/// - QuickTime::Pittasoft.StartTime
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_33de968bf293bd53(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "my $secs = int($val / 1000);\n            return ConvertUnixTime($secs) . sprintf(\".%03d\",$val - $secs * 1000);", // original expression
+                    val
+                ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

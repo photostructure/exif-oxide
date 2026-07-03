@@ -9,6 +9,665 @@ use std::sync::LazyLock;
 /// Tag definitions for QuickTime::Nextbase table
 pub static QUICK_TIME_NEXTBASE_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
 
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::Nextbase table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"2nd Cam".as_slice(),
+                TagInfo {
+                    name: "SecondCam",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Alerts".as_slice(),
+                TagInfo {
+                    name: "Alerts",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Alexa".as_slice(),
+                TagInfo {
+                    name: "Alexa",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Alexa - Paired Device Name".as_slice(),
+                TagInfo {
+                    name: "Alexa - Paired Device Name",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Alexa - Pairing".as_slice(),
+                TagInfo {
+                    name: "Alexa - Pairing",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Alexa - Privacy Mode".as_slice(),
+                TagInfo {
+                    name: "Alexa - Privacy Mode",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Alexa - Wake Word Language".as_slice(),
+                TagInfo {
+                    name: "Alexa - Wake Word Language",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Audio".as_slice(),
+                TagInfo {
+                    name: "Audio",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Auto Power Off".as_slice(),
+                TagInfo {
+                    name: "Auto Power Off",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Battery Status".as_slice(),
+                TagInfo {
+                    name: "Battery Status",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Bluetooth MAC Address".as_slice(),
+                TagInfo {
+                    name: "Bluetooth MAC Address",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Bluetooth Name".as_slice(),
+                TagInfo {
+                    name: "Bluetooth Name",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Country".as_slice(),
+                TagInfo {
+                    name: "Country",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Default Settings".as_slice(),
+                TagInfo {
+                    name: "Default Settings",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Device Sounds".as_slice(),
+                TagInfo {
+                    name: "Device Sounds",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Dual Files".as_slice(),
+                TagInfo {
+                    name: "Dual Files",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Emergency SOS".as_slice(),
+                TagInfo {
+                    name: "Emergency SOS",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Exposure".as_slice(),
+                TagInfo {
+                    name: "Exposure",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Extreme Weather Mode".as_slice(),
+                TagInfo {
+                    name: "Extreme Weather Mode",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"FCC-ID".as_slice(),
+                TagInfo {
+                    name: "FCC-ID",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Firmware".as_slice(),
+                TagInfo {
+                    name: "Firmware",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Firmware Version".as_slice(),
+                TagInfo {
+                    name: "Firmware Version",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Format SD Card".as_slice(),
+                TagInfo {
+                    name: "Format SD Card",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"G Sensor".as_slice(),
+                TagInfo {
+                    name: "G Sensor",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"GPS Stamp".as_slice(),
+                TagInfo {
+                    name: "GPS Stamp",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Image Stabilisation".as_slice(),
+                TagInfo {
+                    name: "Image Stabilisation",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Keep User Settings".as_slice(),
+                TagInfo {
+                    name: "Keep User Settings",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Language".as_slice(),
+                TagInfo {
+                    name: "Language",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Linux".as_slice(),
+                TagInfo {
+                    name: "Linux",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Model".as_slice(),
+                TagInfo {
+                    name: "Model",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Model Stamp".as_slice(),
+                TagInfo {
+                    name: "Model Stamp",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"MyNextbase - Paired Device Name".as_slice(),
+                TagInfo {
+                    name: "MyNextbase - Paired Device Name",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"MyNextbase - Pairing".as_slice(),
+                TagInfo {
+                    name: "MyNextbase - Pairing",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"NBCD".as_slice(),
+                TagInfo {
+                    name: "NBCD",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Number / License Plate".as_slice(),
+                TagInfo {
+                    name: "Number / License Plate",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Parking Mode".as_slice(),
+                TagInfo {
+                    name: "Parking Mode",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"RTOS".as_slice(),
+                TagInfo {
+                    name: "RTOS",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Recording History".as_slice(),
+                TagInfo {
+                    name: "Recording History",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Resolution".as_slice(),
+                TagInfo {
+                    name: "Resolution",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Reversing Camera".as_slice(),
+                TagInfo {
+                    name: "Reversing Camera",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"SD Card Class".as_slice(),
+                TagInfo {
+                    name: "SD Card Class",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"SD Card Format".as_slice(),
+                TagInfo {
+                    name: "SD Card Format",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"SD Card Manf Date".as_slice(),
+                TagInfo {
+                    name: "SD Card Manf Date",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"SD Card Manf ID".as_slice(),
+                TagInfo {
+                    name: "SD Card Manf ID",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"SD Card Model No".as_slice(),
+                TagInfo {
+                    name: "SD Card Model No",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"SD Card OEM ID".as_slice(),
+                TagInfo {
+                    name: "SD Card OEM ID",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"SD Card Serial No".as_slice(),
+                TagInfo {
+                    name: "SD Card Serial No",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"SD Card Size".as_slice(),
+                TagInfo {
+                    name: "SD Card Size",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"SD Card Type".as_slice(),
+                TagInfo {
+                    name: "SD Card Type",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"SD Card Used Space".as_slice(),
+                TagInfo {
+                    name: "SD Card Used Space",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Screen Dimming".as_slice(),
+                TagInfo {
+                    name: "Screen Dimming",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Screen Saver".as_slice(),
+                TagInfo {
+                    name: "Screen Saver",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Serial No".as_slice(),
+                TagInfo {
+                    name: "SerialNumber",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Speed Stamp".as_slice(),
+                TagInfo {
+                    name: "Speed Stamp",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Speed Units".as_slice(),
+                TagInfo {
+                    name: "Speed Units",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"System Info".as_slice(),
+                TagInfo {
+                    name: "System Info",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Time & Date".as_slice(),
+                TagInfo {
+                    name: "TimeAndDate",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Time Lapse".as_slice(),
+                TagInfo {
+                    name: "Time Lapse",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Time Stamp".as_slice(),
+                TagInfo {
+                    name: "VideoTimeStamp",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Time Zone / DST".as_slice(),
+                TagInfo {
+                    name: "Time Zone / DST",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Video Length".as_slice(),
+                TagInfo {
+                    name: "Video Length",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Wi-Fi MAC Address".as_slice(),
+                TagInfo {
+                    name: "Wi-Fi MAC Address",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Wi-Fi Password".as_slice(),
+                TagInfo {
+                    name: "Wi-Fi Password",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"Wi-Fi SSID".as_slice(),
+                TagInfo {
+                    name: "Wi-Fi SSID",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"what3words".as_slice(),
+                TagInfo {
+                    name: "What3Words",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
+
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(
     tag_id: u32,

@@ -23,7 +23,10 @@ use crate::core::TagValue;
 /// assert_eq!(length_string(TagValue::String("hello".to_string())), TagValue::String("5".to_string()));
 /// assert_eq!(length_i32(TagValue::String("hello".to_string())), TagValue::I32(5));
 /// ```
-pub fn length_string(val: TagValue) -> TagValue {
+pub fn length_string<T: Into<TagValue>>(val: T) -> TagValue {
+    // Generic over Into<TagValue> (like core::math::abs) so PPI-generated code can
+    // pass either an owned TagValue or the &TagValue it holds as `val`.
+    let val = val.into();
     TagValue::String(match val {
         TagValue::String(s) => s.len().to_string(),
         _ => val.to_string().len().to_string(),
@@ -31,7 +34,8 @@ pub fn length_string(val: TagValue) -> TagValue {
 }
 
 /// Perl length() function returning integer (for ValueConv)
-pub fn length_i32(val: TagValue) -> TagValue {
+pub fn length_i32<T: Into<TagValue>>(val: T) -> TagValue {
+    let val = val.into();
     TagValue::I32(match val {
         TagValue::String(s) => s.len() as i32,
         _ => val.to_string().len() as i32,

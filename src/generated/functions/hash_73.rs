@@ -12,6 +12,19 @@
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
 
+/// Original perl expression:
+/// ``` perl
+/// substr($val, 4, -1)
+/// ```
+/// Used by:
+/// - QuickTime::Pittasoft.OriginalFileName
+pub fn ast_value_7323079e2cf8d8(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::substr_3arg(val, 4i32, -1i32))
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl

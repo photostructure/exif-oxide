@@ -29,6 +29,23 @@ pub fn ast_value_97197b1f1f207a54(
     })
 }
 
+/// Original perl expression:
+/// ``` perl
+/// length($val) > 4 ? substr($val,4) : $val
+/// ```
+/// Used by:
+/// - QuickTime::Main.ARDroneFile
+pub fn ast_value_975fa5d29bb03ab4(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(if crate::core::length_i32(val) > 4i32 {
+        crate::core::substr_2arg(val, 4i32)
+    } else {
+        val.clone()
+    })
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl

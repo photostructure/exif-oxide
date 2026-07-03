@@ -52,6 +52,75 @@ pub static QUICK_TIME_AV1CONFIG_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock
     ])
 });
 
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::AV1Config table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_AV1CONFIG_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"1.1".as_slice(),
+                TagInfo {
+                    name: "SeqLevelIdx0",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"2.1".as_slice(),
+                TagInfo {
+                    name: "HighBitDepth",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"2.2".as_slice(),
+                TagInfo {
+                    name: "TwelveBit",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"2.3".as_slice(),
+                TagInfo {
+                    name: "ChromaFormat",
+                    format: "unknown",
+                    print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                        ("0".to_string(), "YUV 4:4:4"),
+                        ("2".to_string(), "YUV 4:2:2"),
+                        ("3".to_string(), "YUV 4:2:0"),
+                        ("7".to_string(), "Monochrome 4:0:0"),
+                    ]))),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"2.4".as_slice(),
+                TagInfo {
+                    name: "ChromaSamplePosition",
+                    format: "unknown",
+                    print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                        ("0".to_string(), "Unknown"),
+                        ("1".to_string(), "Vertical"),
+                        ("2".to_string(), "Colocated"),
+                        ("3".to_string(), "(reserved)"),
+                    ]))),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
+
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(
     tag_id: u32,

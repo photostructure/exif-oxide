@@ -70,6 +70,7 @@ pub fn ast_value_cff599d69085933c(
 /// - Olympus::WAV.Index14
 /// - Olympus::WAV.Index15
 /// - Olympus::WAV.Index16
+/// - QuickTime::ItemList.GoogleTrackDuration
 /// - RIFF::ANMF.Duration
 ///
 /// TODO: Add support for this expression pattern

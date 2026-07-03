@@ -35,3 +35,23 @@ pub fn ast_print_b3e8606718d2531e(val: &TagValue, ctx: Option<&ExifContext>) -> 
         val.clone()
     }
 }
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// $val * 1e6 . " microseconds"
+/// ```
+/// Used by:
+/// - QuickTime::VideoKeys.FrameReadoutTime
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_print_b3f0d27854d7192f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    crate::core::missing::missing_print_conv(
+        0,                                // tag_id will be filled at runtime
+        "UnknownTag",                     // tag_name will be filled at runtime
+        "UnknownGroup",                   // group will be filled at runtime
+        "$val * 1e6 . \" microseconds\"", // original expression
+        val,
+    )
+}

@@ -6,8 +6,131 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_1b::ast_value_1bc327308dd85f28;
+use crate::generated::functions::hash_dd::ast_print_dd8bfd628251805d;
+
 /// Tag definitions for QuickTime::TrackRef table
 pub static QUICK_TIME_TRACKREF_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::TrackRef table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_TRACKREF_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"cdsc".as_slice(),
+                TagInfo {
+                    name: "ContentDescribes",
+                    format: "int32u",
+                    print_conv: Some(PrintConv::Function(ast_print_dd8bfd628251805d)),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"chap".as_slice(),
+                TagInfo {
+                    name: "ChapterListTrackID",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"clcp".as_slice(),
+                TagInfo {
+                    name: "ClosedCaptionTrack",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"fall".as_slice(),
+                TagInfo {
+                    name: "AlternateFormatTrack",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"folw".as_slice(),
+                TagInfo {
+                    name: "SubtitleTrack",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"forc".as_slice(),
+                TagInfo {
+                    name: "ForcedSubtitleTrack",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"mpod".as_slice(),
+                TagInfo {
+                    name: "ElementaryStreamTrack",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: Some(ValueConv::Function(ast_value_1bc327308dd85f28)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"scpt".as_slice(),
+                TagInfo {
+                    name: "TranscriptTrack",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"ssrc".as_slice(),
+                TagInfo {
+                    name: "Non-primarySourceTrack",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"sync".as_slice(),
+                TagInfo {
+                    name: "SyncronizedTrack",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"tmcd".as_slice(),
+                TagInfo {
+                    name: "TimecodeTrack",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

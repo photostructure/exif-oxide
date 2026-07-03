@@ -6,8 +6,71 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_7b::ast_value_7b18802565ecc470;
+use crate::generated::functions::hash_b2::ast_value_b2dc2a27f09ab8b7;
+
 /// Tag definitions for QuickTime::TomTom table
 pub static QUICK_TIME_TOMTOM_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::TomTom table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_TOMTOM_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"TTAD".as_slice(),
+                TagInfo {
+                    name: "TomTomAD",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"TTHL".as_slice(),
+                TagInfo {
+                    name: "TomTomHL",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"TTID".as_slice(),
+                TagInfo {
+                    name: "TomTomID",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: Some(ValueConv::Function(ast_value_7b18802565ecc470)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"TTVD".as_slice(),
+                TagInfo {
+                    name: "TomTomVD",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: Some(ValueConv::Function(ast_value_b2dc2a27f09ab8b7)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"TTVI".as_slice(),
+                TagInfo {
+                    name: "TomTomVI",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

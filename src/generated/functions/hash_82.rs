@@ -43,6 +43,27 @@ pub fn ast_print_822ed0bdaa60215(val: &TagValue, ctx: Option<&ExifContext>) -> T
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// $val=~s/ 0+(\w)/ $1/g; $val=~s/^\s+//; $val
+/// ```
+/// Used by:
+/// - QuickTime::iTunesInfo.VolumeNormalization
+/// - QuickTime::iTunesInfo.iTunSMPB
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_print_82ebf71b1692a64d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    crate::core::missing::missing_print_conv(
+        0,                                               // tag_id will be filled at runtime
+        "UnknownTag",                                    // tag_name will be filled at runtime
+        "UnknownGroup",                                  // group will be filled at runtime
+        "$val=~s/ 0+(\\w)/ $1/g; $val=~s/^\\s+//; $val", // original expression
+        val,
+    )
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// $val=~s/\0.*//s; $val
 /// ```
 /// Used by:

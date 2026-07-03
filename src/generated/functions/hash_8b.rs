@@ -31,6 +31,7 @@ pub fn ast_print_8b61d93238d39ea1(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// sprintf("0x%.8x", $val)
 /// ```
 /// Used by:
+/// - QuickTime::iTunesInfo.iTunTool
 /// - Sony::SR2Private.SR2SubIFDKey
 pub fn ast_print_8b98163e01aaf11a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(crate::core::sprintf_perl(

@@ -85,6 +85,7 @@ pub fn ast_value_d9d6c5d68eff95f8(
 /// $val * 1e-6
 /// ```
 /// Used by:
+/// - QuickTime::VideoKeys.FrameReadoutTime
 /// - Sigma::Main.ExposureTime2
 ///
 /// TODO: Add support for this expression pattern

@@ -9,6 +9,95 @@ use std::sync::LazyLock;
 /// Tag definitions for QuickTime::MediaInfo table
 pub static QUICK_TIME_MEDIAINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
 
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::MediaInfo table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_MEDIAINFO_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"dinf".as_slice(),
+                TagInfo {
+                    name: "DataInfo",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"gmhd".as_slice(),
+                TagInfo {
+                    name: "GenMediaHeader",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"hdlr".as_slice(),
+                TagInfo {
+                    name: "Handler",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"hmhd".as_slice(),
+                TagInfo {
+                    name: "HintHeader",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"nmhd".as_slice(),
+                TagInfo {
+                    name: "NullMediaHeader",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"smhd".as_slice(),
+                TagInfo {
+                    name: "AudioHeader",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"stbl".as_slice(),
+                TagInfo {
+                    name: "SampleTable",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"vmhd".as_slice(),
+                TagInfo {
+                    name: "VideoHeader",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
+
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(
     tag_id: u32,

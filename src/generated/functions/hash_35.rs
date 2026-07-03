@@ -18,6 +18,9 @@ use crate::types::{ExifContext, TagValue};
 /// ```
 /// Used by:
 /// - Nintendo::CameraInfo.InternalSerialNumber
+/// - QuickTime::SchemeInfo.Certificate
+/// - QuickTime::SchemeInfo.KeyID
+/// - QuickTime::SchemeInfo.UserID
 pub fn ast_value_352ee918eb5bec40(
     val: &TagValue,
     ctx: Option<&ExifContext>,

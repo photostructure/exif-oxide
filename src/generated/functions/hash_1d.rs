@@ -24,3 +24,23 @@ pub fn ast_print_1dcf63244ce05a2(val: &TagValue, ctx: Option<&ExifContext>) -> T
         std::slice::from_ref(val),
     ))
 }
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// my @a=split " ",$val;$_=int($_*1e6+.5)/1e6 foreach @a;join " ",@a
+/// ```
+/// Used by:
+/// - QuickTime::Keys.DetectedFaceBounds
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_print_1dfa399202230d70(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    crate::core::missing::missing_print_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "my @a=split \" \",$val;$_=int($_*1e6+.5)/1e6 foreach @a;join \" \",@a", // original expression
+        val,
+    )
+}

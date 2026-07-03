@@ -66,3 +66,29 @@ pub fn ast_value_c6a064d658e6a1a2(
         val,
     ))
 }
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// return \$val unless length($val) >= 6;
+/// my @a = unpack 'x2nn', $val;
+/// return $a[1] ? join(' of ', @a) : $a[0];
+/// ```
+/// Used by:
+/// - QuickTime::ItemList.DiskNumber
+/// - QuickTime::ItemList.TrackNumber
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_c622c4e099806b30(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "return \\$val unless length($val) >= 6;\n            my @a = unpack \'x2nn\', $val;\n            return $a[1] ? join(\' of \', @a) : $a[0];", // original expression
+                    val
+                ))
+}

@@ -28,6 +28,19 @@ pub fn ast_value_7b3534ab8a6d6c4b(
     ))
 }
 
+/// Original perl expression:
+/// ``` perl
+/// unpack("x4H*",$val)
+/// ```
+/// Used by:
+/// - QuickTime::TomTom.TomTomID
+pub fn ast_value_7b18802565ecc470(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(TagValue::Array(crate::core::unpack_binary("x4H*", &val)))
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl

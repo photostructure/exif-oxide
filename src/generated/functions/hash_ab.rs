@@ -38,3 +38,22 @@ pub fn ast_value_ab3c296a45f05b5b(
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(crate::core::negate(val - 64i32) / 8i32)
 }
+
+/// Original perl expression:
+/// ``` perl
+/// unpack("N",$val) . " " . substr($val, 5)
+/// ```
+/// Used by:
+/// - QuickTime::HintTrackInfo.PayloadType
+pub fn ast_value_ab91b42fd595b7b8(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::string::concat(
+        &crate::core::string::concat(
+            &TagValue::Array(crate::core::unpack_binary("N", &val)),
+            &TagValue::string(" "),
+        ),
+        &crate::core::substr_2arg(val, 5i32),
+    ))
+}

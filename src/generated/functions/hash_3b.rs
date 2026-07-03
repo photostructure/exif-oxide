@@ -46,6 +46,10 @@ pub fn ast_print_3b5d8202349cb3c2(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - FujiFilm::RAF.RawZoomTopLeft
 /// - Kodak::Type10.PreviewImageSize
 /// - Pentax::Main.PreviewImageSize
+/// - QuickTime::ItemPropCont.ImageSpatialExtent
+/// - QuickTime::TrackAperture.CleanApertureDimensions
+/// - QuickTime::TrackAperture.EncodedPixelsDimensions
+/// - QuickTime::TrackAperture.ProductionApertureDimensions
 /// - QuickTime::VideoProf.VideoSize
 /// - Sigma::Main.PreviewImageSize
 /// - Sony::Main.FullImageSize

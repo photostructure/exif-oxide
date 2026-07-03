@@ -6,9 +6,201 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_eb::ast_value_ebd4040df62e2013;
+
 /// Tag definitions for QuickTime::SampleTable table
 pub static QUICK_TIME_SAMPLETABLE_TAGS: LazyLock<HashMap<u16, TagInfo>> =
     LazyLock::new(HashMap::new);
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::SampleTable table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_SAMPLETABLE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"co64".as_slice(),
+                TagInfo {
+                    name: "ChunkOffset64",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"cslg".as_slice(),
+                TagInfo {
+                    name: "CompositionToDecodeTimelineMapping",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"ctts".as_slice(),
+                TagInfo {
+                    name: "CompositionTimeToSample",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"padb".as_slice(),
+                TagInfo {
+                    name: "SamplePaddingBits",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"sbgp".as_slice(),
+                TagInfo {
+                    name: "SampleToGroup",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"sdtp".as_slice(),
+                TagInfo {
+                    name: "IdependentAndDisposableSamples",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"sgpd".as_slice(),
+                TagInfo {
+                    name: "SampleGroupDescription",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"stco".as_slice(),
+                TagInfo {
+                    name: "ChunkOffset",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"stdp".as_slice(),
+                TagInfo {
+                    name: "SampleDegradationPriority",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"stps".as_slice(),
+                TagInfo {
+                    name: "PartialSyncSamples",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: Some(ValueConv::Function(ast_value_ebd4040df62e2013)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"stsc".as_slice(),
+                TagInfo {
+                    name: "SampleToChunk",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"stsd".as_slice(),
+                TagInfo {
+                    name: "OtherSampleDesc",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"stsh".as_slice(),
+                TagInfo {
+                    name: "ShadowSyncSampleTable",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"stss".as_slice(),
+                TagInfo {
+                    name: "SyncSampleTable",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"stsz".as_slice(),
+                TagInfo {
+                    name: "SampleSizes",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"stts".as_slice(),
+                TagInfo {
+                    name: "TimeToSampleTable",
+                    format: "undef",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"stz2".as_slice(),
+                TagInfo {
+                    name: "CompactSampleSizes",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"subs".as_slice(),
+                TagInfo {
+                    name: "Sub-sampleInformation",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

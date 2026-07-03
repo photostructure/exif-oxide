@@ -51,6 +51,29 @@ pub fn ast_print_7916bfba5811ff56(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// $val=~s/^(.{4})(.{4})/Entity=$1 Criteria=$2 /i; $val
+/// ```
+/// Used by:
+/// - QuickTime::UserData.Rating
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_79f3188f886084fc(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                                                      // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "$val=~s/^(.{4})(.{4})/Entity=$1 Criteria=$2 /i; $val", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// Image::ExifTool::Photoshop::ConvertPascalString($self,$val)
 /// ```
 /// Used by:

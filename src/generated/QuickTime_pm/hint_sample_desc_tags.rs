@@ -42,6 +42,45 @@ pub static QUICK_TIME_HINTSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> = Laz
     ])
 });
 
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::HintSampleDesc table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_HINTSAMPLEDESC_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"snro".as_slice(),
+                TagInfo {
+                    name: "SequenceNumberRandomOffset",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"tims".as_slice(),
+                TagInfo {
+                    name: "RTPTimeScale",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"tsro".as_slice(),
+                TagInfo {
+                    name: "TimestampRandomOffset",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
+
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(
     tag_id: u32,

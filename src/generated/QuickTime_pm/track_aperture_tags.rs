@@ -6,9 +6,52 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_3b::ast_print_3b6232f726868923;
+use crate::generated::functions::hash_52::ast_value_5232cbea2d13b4e2;
+
 /// Tag definitions for QuickTime::TrackAperture table
 pub static QUICK_TIME_TRACKAPERTURE_TAGS: LazyLock<HashMap<u16, TagInfo>> =
     LazyLock::new(HashMap::new);
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::TrackAperture table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_TRACKAPERTURE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"clef".as_slice(),
+                TagInfo {
+                    name: "CleanApertureDimensions",
+                    format: "fixed32u",
+                    print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
+                    value_conv: Some(ValueConv::Function(ast_value_5232cbea2d13b4e2)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"enof".as_slice(),
+                TagInfo {
+                    name: "EncodedPixelsDimensions",
+                    format: "fixed32u",
+                    print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
+                    value_conv: Some(ValueConv::Function(ast_value_5232cbea2d13b4e2)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"prof".as_slice(),
+                TagInfo {
+                    name: "ProductionApertureDimensions",
+                    format: "fixed32u",
+                    print_conv: Some(PrintConv::Function(ast_print_3b6232f726868923)),
+                    value_conv: Some(ValueConv::Function(ast_value_5232cbea2d13b4e2)),
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

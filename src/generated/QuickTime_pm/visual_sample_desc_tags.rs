@@ -6,6 +6,11 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_34::ast_value_346603e685b2cac;
+use crate::generated::functions::hash_6c::ast_value_6c4415236f31e2cf;
+use crate::generated::functions::hash_d7::ast_value_d7bb5243e2a11d3f;
+
 /// Tag definitions for QuickTime::VisualSampleDesc table
 pub static QUICK_TIME_VISUALSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> =
     LazyLock::new(|| {
@@ -75,6 +80,141 @@ pub static QUICK_TIME_VISUALSAMPLEDESC_TAGS: LazyLock<HashMap<u16, TagInfo>> =
                 TagInfo {
                     name: "CompressorName",
                     format: "string[32]",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::VisualSampleDesc table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_VISUALSAMPLEDESC_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"CDI1".as_slice(),
+                TagInfo {
+                    name: "CDI1",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"CMP1".as_slice(),
+                TagInfo {
+                    name: "CMP1",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"JPEG".as_slice(),
+                TagInfo {
+                    name: "JPEGInfo",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"avcC".as_slice(),
+                TagInfo {
+                    name: "AVCConfiguration",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"btrt".as_slice(),
+                TagInfo {
+                    name: "BitrateInfo",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"clap".as_slice(),
+                TagInfo {
+                    name: "CleanAperture",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"colr".as_slice(),
+                TagInfo {
+                    name: "ColorRepresentation",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"fiel".as_slice(),
+                TagInfo {
+                    name: "VideoFieldOrder",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: Some(ValueConv::Function(ast_value_346603e685b2cac)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"gama".as_slice(),
+                TagInfo {
+                    name: "Gamma",
+                    format: "fixed32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"pasp".as_slice(),
+                TagInfo {
+                    name: "PixelAspectRatio",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: Some(ValueConv::Function(ast_value_d7bb5243e2a11d3f)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"st3d".as_slice(),
+                TagInfo {
+                    name: "Stereoscopic3D",
+                    format: "int8u",
+                    print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                        ("0".to_string(), "Monoscopic"),
+                        ("1".to_string(), "Stereoscopic Top-Bottom"),
+                        ("2".to_string(), "Stereoscopic Left-Right"),
+                        ("3".to_string(), "Stereoscopic Stereo-Custom"),
+                        ("4".to_string(), "Stereoscopic Right-Left"),
+                    ]))),
+                    value_conv: Some(ValueConv::Function(ast_value_6c4415236f31e2cf)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"sv3d".as_slice(),
+                TagInfo {
+                    name: "SphericalVideo",
+                    format: "unknown",
                     print_conv: None,
                     value_conv: None,
                     is_offset: false,

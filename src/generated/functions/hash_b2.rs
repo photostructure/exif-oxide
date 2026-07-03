@@ -72,6 +72,29 @@ pub fn ast_print_b2688837e8cc9d23(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
+/// my @a = ($val =~ /[\x20-\x7e]+/g); "@a"
+/// ```
+/// Used by:
+/// - QuickTime::TomTom.TomTomVD
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_value_b2dc2a27f09ab8b7(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    Ok(crate::core::missing::missing_value_conv(
+        0,                                             // tag_id will be filled at runtime
+        "UnknownTag",                                  // tag_name will be filled at runtime
+        "UnknownGroup",                                // group will be filled at runtime
+        "my @a = ($val =~ /[\\x20-\\x7e]+/g); \"@a\"", // original expression
+        val,
+    ))
+}
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
 /// my @a = split ' ',$val;
 /// $_ /= 0x4000 foreach @a[2,5,8];
 /// return "@a";

@@ -132,3 +132,25 @@ pub fn ast_print_b41bd13e5416819e(val: &TagValue, ctx: Option<&ExifContext>) -> 
         },
     )
 }
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// return $val unless $val =~ /^\d+$/;
+/// require Image::ExifTool::ID3;
+/// Image::ExifTool::ID3::PrintGenre($val - 1); # note the "- 1"
+/// ```
+/// Used by:
+/// - QuickTime::ItemList.Genre
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_print_b44196c2fac95fc5(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    crate::core::missing::missing_print_conv(
+                    0, // tag_id will be filled at runtime
+                    "UnknownTag", // tag_name will be filled at runtime
+                    "UnknownGroup", // group will be filled at runtime
+                    "return $val unless $val =~ /^\\d+$/;\n            require Image::ExifTool::ID3;\n            Image::ExifTool::ID3::PrintGenre($val - 1); # note the \"- 1\"", // original expression
+                    val
+                )
+}

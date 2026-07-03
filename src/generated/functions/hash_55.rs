@@ -72,3 +72,23 @@ pub fn ast_value_551d2c3da692067(
         val,
     ))
 }
+
+/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Original perl expression:
+/// ``` perl
+/// my @a=split(" ",$val);sprintf("%d bytes in %.3f s",$a[1],$a[0]/1000)
+/// ```
+/// Used by:
+/// - QuickTime::HintTrackInfo.MaxDataRate
+///
+/// TODO: Add support for this expression pattern
+pub fn ast_print_55e009153568d4f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    tracing::warn!("Missing implementation for expression in {}", file!());
+    crate::core::missing::missing_print_conv(
+        0,              // tag_id will be filled at runtime
+        "UnknownTag",   // tag_name will be filled at runtime
+        "UnknownGroup", // group will be filled at runtime
+        "my @a=split(\" \",$val);sprintf(\"%d bytes in %.3f s\",$a[1],$a[0]/1000)", // original expression
+        val,
+    )
+}

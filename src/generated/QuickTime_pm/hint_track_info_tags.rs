@@ -6,9 +6,194 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_55::ast_print_55e009153568d4f;
+use crate::generated::functions::hash_75::ast_print_751f06764d997d79;
+use crate::generated::functions::hash_ab::ast_value_ab91b42fd595b7b8;
+use crate::generated::functions::hash_e8::ast_print_e8201d20dc0f1f;
+
 /// Tag definitions for QuickTime::HintTrackInfo table
 pub static QUICK_TIME_HINTTRACKINFO_TAGS: LazyLock<HashMap<u16, TagInfo>> =
     LazyLock::new(HashMap::new);
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::HintTrackInfo table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_HINTTRACKINFO_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"dimm".as_slice(),
+                TagInfo {
+                    name: "ImmediateDataBytes",
+                    format: "int64u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"dmax".as_slice(),
+                TagInfo {
+                    name: "LargestPacketDuration",
+                    format: "int32u",
+                    print_conv: Some(PrintConv::Function(ast_print_e8201d20dc0f1f)),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"dmed".as_slice(),
+                TagInfo {
+                    name: "MediaTrackBytes",
+                    format: "int64u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"drep".as_slice(),
+                TagInfo {
+                    name: "RepeatedDataBytes",
+                    format: "int64u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"maxr".as_slice(),
+                TagInfo {
+                    name: "MaxDataRate",
+                    format: "int32u",
+                    print_conv: Some(PrintConv::Function(ast_print_55e009153568d4f)),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"npck".as_slice(),
+                TagInfo {
+                    name: "NumPackets",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"nump".as_slice(),
+                TagInfo {
+                    name: "NumPackets",
+                    format: "int64u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"payt".as_slice(),
+                TagInfo {
+                    name: "PayloadType",
+                    format: "undef",
+                    print_conv: Some(PrintConv::Function(ast_print_751f06764d997d79)),
+                    value_conv: Some(ValueConv::Function(ast_value_ab91b42fd595b7b8)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"pmax".as_slice(),
+                TagInfo {
+                    name: "LargestPacketSize",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"tmax".as_slice(),
+                TagInfo {
+                    name: "MaxTransmissionTime",
+                    format: "int32u",
+                    print_conv: Some(PrintConv::Function(ast_print_e8201d20dc0f1f)),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"tmin".as_slice(),
+                TagInfo {
+                    name: "MinTransmissionTime",
+                    format: "int32u",
+                    print_conv: Some(PrintConv::Function(ast_print_e8201d20dc0f1f)),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"totl".as_slice(),
+                TagInfo {
+                    name: "TotalBytes",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"tpaY".as_slice(),
+                TagInfo {
+                    name: "TotalBytesNoRTPHeaders",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"tpay".as_slice(),
+                TagInfo {
+                    name: "TotalBytesNoRTPHeaders",
+                    format: "int32u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"tpyl".as_slice(),
+                TagInfo {
+                    name: "TotalBytesNoRTPHeaders",
+                    format: "int64u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"trpY".as_slice(),
+                TagInfo {
+                    name: "TotalBytes",
+                    format: "int64u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"trpy".as_slice(),
+                TagInfo {
+                    name: "TotalBytes",
+                    format: "int64u",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

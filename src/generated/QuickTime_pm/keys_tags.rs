@@ -6,8 +6,854 @@ use crate::types::{PrintConv, TagInfo, ValueConv};
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+// Generated imports for conversion functions
+use crate::generated::functions::hash_1d::ast_print_1dfa399202230d70;
+use crate::generated::functions::hash_3a::ast_print_3a205edef25c6138;
+use crate::generated::functions::hash_8a::ast_value_8a814e7eab2cdf95;
+use crate::generated::functions::hash_91::ast_value_9174747ffada265c;
+use crate::generated::functions::hash_c4::ast_value_c4bbb7add95c9c5f;
+
 /// Tag definitions for QuickTime::Keys table
 pub static QUICK_TIME_KEYS_TAGS: LazyLock<HashMap<u16, TagInfo>> = LazyLock::new(HashMap::new);
+
+/// Atom-ID (byte-string) keyed tag definitions for QuickTime::Keys table
+/// Keys are the exact bytes ExifTool matches against the 4-byte atom tag
+/// (copyright-prefixed IDs keep the raw 0xA9 byte, e.g. b"\xa9ART").
+pub static QUICK_TIME_KEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo>> =
+    LazyLock::new(|| {
+        HashMap::from([
+            (
+                b"Encoded_With".as_slice(),
+                TagInfo {
+                    name: "EncodedWith",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"album".as_slice(),
+                TagInfo {
+                    name: "Album",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"apple.photos.variation-identifier".as_slice(),
+                TagInfo {
+                    name: "ApplePhotosVariationIdentifier",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"artist".as_slice(),
+                TagInfo {
+                    name: "artist",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"artwork".as_slice(),
+                TagInfo {
+                    name: "artwork",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"author".as_slice(),
+                TagInfo {
+                    name: "Author",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"collection.user".as_slice(),
+                TagInfo {
+                    name: "UserCollection",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"com.android.capture.fps".as_slice(),
+                TagInfo {
+                    name: "AndroidCaptureFPS",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"com.android.manufacturer".as_slice(),
+                TagInfo {
+                    name: "AndroidMake",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"com.android.model".as_slice(),
+                TagInfo {
+                    name: "AndroidModel",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"com.android.version".as_slice(),
+                TagInfo {
+                    name: "AndroidVersion",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"com.xiaomi.hdr10".as_slice(),
+                TagInfo {
+                    name: "XiaomiHDR10",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"com.xiaomi.preview_video_cover".as_slice(),
+                TagInfo {
+                    name: "XiaomiPreviewVideoCover",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"comment".as_slice(),
+                TagInfo {
+                    name: "comment",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"compatible_brands".as_slice(),
+                TagInfo {
+                    name: "CompatibleBrands",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"content.identifier".as_slice(),
+                TagInfo {
+                    name: "ContentIdentifier",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"copyright".as_slice(),
+                TagInfo {
+                    name: "Copyright",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"creation_time".as_slice(),
+                TagInfo {
+                    name: "CreationTime",
+                    format: "unknown",
+                    print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                    value_conv: Some(ValueConv::Function(ast_value_9174747ffada265c)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"creationdate".as_slice(),
+                TagInfo {
+                    name: "CreationDate",
+                    format: "unknown",
+                    print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                    value_conv: Some(ValueConv::Function(ast_value_9174747ffada265c)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"description".as_slice(),
+                TagInfo {
+                    name: "description",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"detected-face".as_slice(),
+                TagInfo {
+                    name: "FaceInfo",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"detected-face.bounds".as_slice(),
+                TagInfo {
+                    name: "DetectedFaceBounds",
+                    format: "unknown",
+                    print_conv: Some(PrintConv::Function(ast_print_1dfa399202230d70)),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"detected-face.face-id".as_slice(),
+                TagInfo {
+                    name: "DetectedFaceID",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"detected-face.roll-angle".as_slice(),
+                TagInfo {
+                    name: "DetectedFaceRollAngle",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"detected-face.yaw-angle".as_slice(),
+                TagInfo {
+                    name: "DetectedFaceYawAngle",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"direction.facing".as_slice(),
+                TagInfo {
+                    name: "CameraDirection",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"direction.motion".as_slice(),
+                TagInfo {
+                    name: "CameraMotion",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"director".as_slice(),
+                TagInfo {
+                    name: "director",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"displayname".as_slice(),
+                TagInfo {
+                    name: "DisplayName",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"encoder".as_slice(),
+                TagInfo {
+                    name: "encoder",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"full-frame-rate-playback-intent".as_slice(),
+                TagInfo {
+                    name: "FullFrameRatePlaybackIntent",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"genre".as_slice(),
+                TagInfo {
+                    name: "genre",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"information".as_slice(),
+                TagInfo {
+                    name: "information",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"keywords".as_slice(),
+                TagInfo {
+                    name: "keywords",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"live-photo-info".as_slice(),
+                TagInfo {
+                    name: "LivePhotoInfo",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: Some(ValueConv::Function(ast_value_c4bbb7add95c9c5f)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"live-photo.auto".as_slice(),
+                TagInfo {
+                    name: "LivePhotoAuto",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"live-photo.vitality-score".as_slice(),
+                TagInfo {
+                    name: "LivePhotoVitalityScore",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"live-photo.vitality-scoring-version".as_slice(),
+                TagInfo {
+                    name: "LivePhotoVitalityScoringVersion",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"location.ISO6709".as_slice(),
+                TagInfo {
+                    name: "GPSCoordinates",
+                    format: "unknown",
+                    print_conv: Some(PrintConv::Expression(
+                        "[Function: Image::ExifTool::QuickTime::PrintGPSCoordinates]".to_string(),
+                    )),
+                    value_conv: Some(ValueConv::Expression(
+                        "[Function: Image::ExifTool::QuickTime::ConvertISO6709]".to_string(),
+                    )),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"location.accuracy.horizontal".as_slice(),
+                TagInfo {
+                    name: "LocationAccuracyHorizontal",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"location.body".as_slice(),
+                TagInfo {
+                    name: "LocationBody",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"location.date".as_slice(),
+                TagInfo {
+                    name: "LocationDate",
+                    format: "unknown",
+                    print_conv: Some(PrintConv::Function(ast_print_3a205edef25c6138)),
+                    value_conv: Some(ValueConv::Function(ast_value_9174747ffada265c)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"location.name".as_slice(),
+                TagInfo {
+                    name: "LocationName",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"location.note".as_slice(),
+                TagInfo {
+                    name: "LocationNote",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"location.role".as_slice(),
+                TagInfo {
+                    name: "LocationRole",
+                    format: "unknown",
+                    print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                        ("0".to_string(), "Shooting Location"),
+                        ("1".to_string(), "Real Location"),
+                        ("2".to_string(), "Fictional Location"),
+                    ]))),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"major_brand".as_slice(),
+                TagInfo {
+                    name: "MajorBrand",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"make".as_slice(),
+                TagInfo {
+                    name: "Make",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"minor_version".as_slice(),
+                TagInfo {
+                    name: "MinorVersion",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"model".as_slice(),
+                TagInfo {
+                    name: "Model",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.movie.audio.balance".as_slice(),
+                TagInfo {
+                    name: "Balance",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.movie.audio.bass".as_slice(),
+                TagInfo {
+                    name: "Bass",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.movie.audio.gain".as_slice(),
+                TagInfo {
+                    name: "AudioGain",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.movie.audio.mute".as_slice(),
+                TagInfo {
+                    name: "Mute",
+                    format: "int8u",
+                    print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                        ("0".to_string(), "Off"),
+                        ("1".to_string(), "On"),
+                    ]))),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.movie.audio.pitchshift".as_slice(),
+                TagInfo {
+                    name: "PitchShift",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.movie.audio.treble".as_slice(),
+                TagInfo {
+                    name: "Treble",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.movie.visual.brightness".as_slice(),
+                TagInfo {
+                    name: "Brightness",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.movie.visual.color".as_slice(),
+                TagInfo {
+                    name: "Color",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.movie.visual.contrast".as_slice(),
+                TagInfo {
+                    name: "Contrast",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.movie.visual.tint".as_slice(),
+                TagInfo {
+                    name: "Tint",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"player.version".as_slice(),
+                TagInfo {
+                    name: "PlayerVersion",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"producer".as_slice(),
+                TagInfo {
+                    name: "producer",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"publisher".as_slice(),
+                TagInfo {
+                    name: "publisher",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"rating.user".as_slice(),
+                TagInfo {
+                    name: "UserRating",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"samsung.android.utc_offset".as_slice(),
+                TagInfo {
+                    name: "AndroidTimeZone",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"scene-illuminance".as_slice(),
+                TagInfo {
+                    name: "SceneIlluminance",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: Some(ValueConv::Function(ast_value_8a814e7eab2cdf95)),
+                    is_offset: false,
+                },
+            ),
+            (
+                b"sdpd".as_slice(),
+                TagInfo {
+                    name: "SDPD",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"setu".as_slice(),
+                TagInfo {
+                    name: "SETU",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"smartstyle-info".as_slice(),
+                TagInfo {
+                    name: "SmartStyleInfo",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"smartstyle.bypassed".as_slice(),
+                TagInfo {
+                    name: "SmartstyleBypassed",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"smartstyle.cast".as_slice(),
+                TagInfo {
+                    name: "SmartstyleCast",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"smartstyle.color".as_slice(),
+                TagInfo {
+                    name: "SmartstyleColor",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"smartstyle.intensity".as_slice(),
+                TagInfo {
+                    name: "SmartstyleIntensity",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"smartstyle.rendering-version".as_slice(),
+                TagInfo {
+                    name: "SmartstyleRenderingVersion",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"smartstyle.tone".as_slice(),
+                TagInfo {
+                    name: "SmartstyleTone",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"software".as_slice(),
+                TagInfo {
+                    name: "software",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"still-image-time".as_slice(),
+                TagInfo {
+                    name: "StillImageTime",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"title".as_slice(),
+                TagInfo {
+                    name: "title",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"version".as_slice(),
+                TagInfo {
+                    name: "Version",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"video-orientation".as_slice(),
+                TagInfo {
+                    name: "VideoOrientation",
+                    format: "unknown",
+                    print_conv: Some(PrintConv::Simple(std::collections::HashMap::from([
+                        ("1".to_string(), "Horizontal (normal)"),
+                        ("2".to_string(), "Mirror horizontal"),
+                        ("3".to_string(), "Rotate 180"),
+                        ("4".to_string(), "Mirror vertical"),
+                        ("5".to_string(), "Mirror horizontal and rotate 270 CW"),
+                        ("6".to_string(), "Rotate 90 CW"),
+                        ("7".to_string(), "Mirror horizontal and rotate 90 CW"),
+                        ("8".to_string(), "Rotate 270 CW"),
+                    ]))),
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"xiaomi.exifInfo.videoinfo".as_slice(),
+                TagInfo {
+                    name: "XiaomiExifInfo",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+            (
+                b"year".as_slice(),
+                TagInfo {
+                    name: "year",
+                    format: "unknown",
+                    print_conv: None,
+                    value_conv: None,
+                    is_offset: false,
+                },
+            ),
+        ])
+    });
 
 /// Apply ValueConv transformation for tags in this table
 pub fn apply_value_conv(

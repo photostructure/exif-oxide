@@ -28,3 +28,17 @@ pub fn ast_value_7e8fc5d758244b19(
             Into::<TagValue>::into((val - 28i32) / 16i32),
         ))
 }
+
+/// Original perl expression:
+/// ``` perl
+/// substr($val, 4)
+/// ```
+/// Used by:
+/// - QuickTime::OtherSampleDesc.OtherName
+/// - QuickTime::UserData.GarminSettings
+pub fn ast_value_7e8d48a371a65218(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::substr_2arg(val, 4i32))
+}
