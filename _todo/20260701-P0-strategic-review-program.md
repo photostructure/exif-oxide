@@ -93,7 +93,7 @@ tier, and land the reliability foundations as discrete TPPs.
 | 2 | Snapshot-oracle integrity (make compat test assert; allowlist; version-skew guard) | `_todo/20260701-P1-snapshot-oracle-integrity.md` | 🟨 IN PROGRESS — Task 1 (breaking test) done via the GPS fix (`tests/snapshot_oracle_tests.rs`, commit `141c4167`); Tasks 2-8 (assertive test, allowlist, version-skew guard) not started |
 | 3 | cargo-fuzz infrastructure | `_done/20260701-P1-fuzzing-infrastructure.md` | ✅ DONE 2026-07-03 — 9 targets, nightly CI job, 5 real crash bugs found AND fixed (alloc-bomb, 3 overflow panics, makernote-recursion stack overflow); double-review (Claude 8-angle + codex) each caught a distinct real bug; reproducers committed under fuzz/artifacts/ |
 | 4 | GPSPosition composite sign bug | `_todo/P03-implementation-backlog.md` (Next Steps) | ✅ DONE 2026-07-02, commit `141c4167` (byte-exact; review-gated; compat 84/191) |
-| 5 | Video/QuickTime read support (22 blocked tags) | **no TPP yet — needs authoring** | ⬜ not started |
+| 5 | Video/QuickTime read support (22 blocked tags) | `_todo/20260703-P1-quicktime-video-read.md` | 🟨 TPP authored 2026-07-03 (fable agent, citations spot-verified); implementation not started. Key findings: generated QuickTime tables half-empty (tag_kit.rs parses keys as u16, dropping `'mvhd'`-style atom IDs); `function_registry.rs:193-210` maps to a nonexistent `implementations::quicktime` module (silent-stub trap); 20 CR3 snapshots also blocked on the same walker |
 | 6 | napi-rs Node binding spike | `_todo/20260701-P3-napi-node-binding-spike.md` | ⬜ not started (its Task 1 is the licensing question below) |
 | 7 | XMP value conversion (8 of 13 type mismatches, one root cause) | `_done/20260703-P1-xmp-value-conversion.md` | ✅ DONE 2026-07-03 — compat 86→94/191; review caught 2 missing PrintConv arms + a latent negative-EV `print_fraction` bug (shared EXIF path), all fixed |
 
@@ -251,8 +251,12 @@ tier, and land the reliability foundations as discrete TPPs.
 - [x] Task 4: Fix GPSPosition sign bug per P03 backlog. **Proof**:
       `compare-with-exiftool test-images/apple/IMG_3755.JPG` shows no
       GPSPosition diff. (DONE 2026-07-02, commit `141c4167`.)
-- [ ] Task 5: Author the video/QuickTime read TPP (item #5 has no TPP).
+- [x] Task 5: Author the video/QuickTime read TPP (item #5 has no TPP).
       **Proof**: new TPP in `_todo/` per TPP-GUIDE, under 400 lines.
+      (DONE 2026-07-03: `_todo/20260703-P1-quicktime-video-read.md`, 370
+      lines; load-bearing claims verified by orchestrator — empty
+      `QUICK_TIME_MAIN_TAGS`, u16 key-drop at tag_kit.rs:450, phantom
+      `implementations::quicktime` mapping, 17 supported QuickTime tags.)
 - [ ] Task 6: Complete child TPP #6 (napi spike), starting with the AGPL
       question. **Proof**: TPP in `_done/` with spike write-up.
 - [ ] Task 7: Re-triage MILESTONES.md when the above are done; move this
