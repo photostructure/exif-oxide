@@ -12,6 +12,7 @@
 //! - Generated tag tables for 719 XMP tags across 40 namespaces
 
 pub mod processor;
+pub mod value_conversion;
 pub mod xmp_lookup;
 
 pub use processor::XmpProcessor;

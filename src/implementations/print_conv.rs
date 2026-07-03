@@ -675,25 +675,26 @@ pub fn print_fraction(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
 
     match f_val {
         Some(mut v) => {
-            // ExifTool multiplies by 1.00001 to avoid round-off errors
+            // Exif.pm:5521 - avoid round-off errors
             v *= 1.00001;
 
+            // Perl's int() truncates toward zero and the ratio tests are signed
+            // (Exif.pm:5524-5529): int(-0.33)/-0.33 is -0.0, so negative
+            // fractions fall through to the /2 and /3 branches instead of
+            // collapsing to a whole number.
             if v == 0.0 {
                 // ExifTool returns '0' string, but JSON output shows number 0
                 // Match ExifTool's JSON behavior for zero values
                 TagValue::F64(0.0)
-            } else if (v.floor() / v).abs() > 0.999 {
-                // Whole number
-                TagValue::string(format!("{:+.0}", v.floor()))
-            } else if ((v * 2.0).floor() / (v * 2.0)).abs() > 0.999 {
-                // Half fraction (n/2)
-                TagValue::string(format!("{:+.0}/2", (v * 2.0).floor()))
-            } else if ((v * 3.0).floor() / (v * 3.0)).abs() > 0.999 {
-                // Third fraction (n/3)
-                TagValue::string(format!("{:+.0}/3", (v * 3.0).floor()))
+            } else if v.trunc() / v > 0.999 {
+                TagValue::string(format!("{:+}", v.trunc() as i64))
+            } else if (v * 2.0).trunc() / (v * 2.0) > 0.999 {
+                TagValue::string(format!("{:+}/2", (v * 2.0).trunc() as i64))
+            } else if (v * 3.0).trunc() / (v * 3.0) > 0.999 {
+                TagValue::string(format!("{:+}/3", (v * 3.0).trunc() as i64))
             } else {
-                // Use scientific notation with 3 significant digits
-                TagValue::string(format!("{:+.3}", v))
+                // Exif.pm:5531 sprintf("%+.3g",$val)
+                TagValue::string(crate::core::fmt::sprintf_perl("%+.3g", &[TagValue::F64(v)]))
             }
         }
         None => TagValue::string(format!("Unknown ({})", val)),
@@ -1359,6 +1360,35 @@ mod tests {
         assert_eq!(
             print_fraction(&TagValue::SRational(0, 3), None),
             TagValue::F64(0.0)
+        );
+
+        // Negative fractions: Perl int() truncates toward zero, so
+        // int(-0.33)/-0.33 is -0.0 and the whole-number branch must NOT
+        // fire (Exif.pm:5524) - regression caught via the XMP
+        // ExposureCompensation review
+        assert_eq!(
+            print_fraction(&TagValue::SRational(-1, 3), None),
+            TagValue::string("-1/3")
+        );
+        assert_eq!(
+            print_fraction(&TagValue::SRational(-1, 2), None),
+            TagValue::string("-1/2")
+        );
+        assert_eq!(
+            print_fraction(&TagValue::SRational(-2, 3), None),
+            TagValue::string("-2/3")
+        );
+        assert_eq!(
+            print_fraction(&TagValue::SRational(-1, 1), None),
+            TagValue::string("-1")
+        );
+        assert_eq!(
+            print_fraction(&TagValue::SRational(1, 3), None),
+            TagValue::string("+1/3")
+        );
+        assert_eq!(
+            print_fraction(&TagValue::SRational(2, 1), None),
+            TagValue::string("+2")
         );
 
         // Note: Other fraction formatting tests not critical for ExposureCompensation fix

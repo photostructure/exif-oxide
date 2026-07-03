@@ -133,10 +133,37 @@ impl XmpProcessor {
                     };
 
                     // Handle different RDF container types and value formats
-                    let final_value = self.process_xmp_value(property_value)?;
+                    let raw_value = self.process_xmp_value(property_value)?;
 
-                    // Apply PrintConv if available from generated tables
-                    let print_value = self.apply_xmp_print_conv(tag_info, &final_value);
+                    // Layer 1 (XMP.pm:3673-3687, FoundXMP): format-driven conversion
+                    // keyed on Writable — rational -> ConvertRational, date ->
+                    // ConvertXMPDate — applied before the value is stored. The parsed
+                    // structure is keyed by display name, so renamed tags (e.g.
+                    // GPSTimeStamp -> GPSDateTime) miss the property-name lookup above;
+                    // fall back to a by-name lookup purely to recover the Writable format.
+                    let format_info = tag_info.or_else(|| {
+                        super::xmp_lookup::lookup_xmp_tag_by_name(namespace_prefix, property_name)
+                    });
+                    let converted_value =
+                        super::value_conversion::apply_writable_conversion(format_info, raw_value);
+
+                    // Layer 2 (XMP.pm:2042-2166): per-tag ValueConv/PrintConv for the
+                    // exif-namespace photo cluster. Every other tag falls back to the
+                    // generic Simple-lookup PrintConv path.
+                    let (final_value, print_value) = if namespace_prefix == "exif" {
+                        if let Some(pair) = super::value_conversion::apply_exif_photo_conv(
+                            &tag_name,
+                            &converted_value,
+                        ) {
+                            pair
+                        } else {
+                            let print = self.apply_xmp_print_conv(tag_info, &converted_value);
+                            (converted_value, print)
+                        }
+                    } else {
+                        let print = self.apply_xmp_print_conv(tag_info, &converted_value);
+                        (converted_value, print)
+                    };
 
                     // Create individual TagEntry with XMP group
                     flattened_tags.push(TagEntry {

@@ -96,6 +96,7 @@ tier, and land the reliability foundations as discrete TPPs.
 | 4 | GPSPosition composite sign bug | `_todo/P03-implementation-backlog.md` (Next Steps) | ✅ DONE 2026-07-02, commit `141c4167` (byte-exact; review-gated; compat 84/191) |
 | 5 | Video/QuickTime read support (22 blocked tags) | **no TPP yet — needs authoring** | ⬜ not started |
 | 6 | napi-rs Node binding spike | `_todo/20260701-P3-napi-node-binding-spike.md` | ⬜ not started (its Task 1 is the licensing question below) |
+| 7 | XMP value conversion (8 of 13 type mismatches, one root cause) | `_done/20260703-P1-xmp-value-conversion.md` | ✅ DONE 2026-07-03 — compat 86→94/191; review caught 2 missing PrintConv arms + a latent negative-EV `print_fraction` bug (shared EXIF path), all fixed |
 
 ## Orchestration guidance (from Matthew, 2026-07-02)
 
@@ -115,17 +116,29 @@ tier, and land the reliability foundations as discrete TPPs.
   `third-party/exiftool/exiftool` script and
   `cargo run --bin compare-with-exiftool <image> [group]`.
 
-## Session state at pause (2026-07-03) — resume here
+## Session state (2026-07-03 end of session) — resume here
 
-- **Committed, NOT pushed** (push to main was blocked by the auto-mode
-  classifier; Matthew should `git push origin main` or approve the
-  prompt): `f2bdb304` (13.59 bump, item #1), `e19553f5` (tracker),
-  `7fa2fd78` (lint rot), `141c4167` (GPSPosition, item #4). The
-  submodule fork push DID land (`origin/docs` = "Update to 13.59").
-- ~~Uncommitted working tree = item #3 (fuzzing) only~~ CLOSED 2026-07-03:
-  item #3 committed and moved to `_done/` (two more fuzz-found crashes fixed
-  during final validation; see that TPP's COMPLETION STATE). First nightly
-  fuzz CI run happens after this lands on GitHub.
+- **Everything is committed AND pushed** through `f792da07`
+  (Matthew's precommit→`verify` Makefile rename). Earlier "committed,
+  not pushed" backlog is resolved. Highlights this session:
+  - `cb3506ca` — item #3 (fuzzing) landed; TPP in `_done/`; 5 crash bugs
+    fixed. First nightly fuzz CI run pending on GitHub (07:00 UTC cron).
+  - `1438c0c4` — compat 84→86 (see next bullet).
+  - `f4e2a58d` — **security**: quick-xml 0.38→0.41 (RUSTSEC-2026-0194/0195,
+    two HIGH DoS on the untrusted-XMP path), bytes 1.12.0, anyhow 1.0.103.
+    `make audit` was crashing on the advisory DB's new CVSS 4.0 vectors —
+    fixed by `cargo install cargo-audit` (0.22.2); anyone else hitting
+    "unsupported CVSS version: 4.0" needs the same upgrade. Also: a
+    corrupted `~/.cargo/registry/src/.../rustversion-1.0.22` blocked the
+    install; `rm -rf` of that extracted dir fixed it.
+  - `f010615e` — deleted dead `codegen/src/schemas/tag_kit.rs` (source of
+    the 7 dead_code warnings in every `make codegen`).
+- **Shelf-ware candidate (Matthew to decide)**:
+  `examples/validate_quick_xml_xmp_v3.rs` is a 517-line quick-xml
+  evaluation spike predating the shipped `src/xmp/processor.rs`. It has
+  now broken on BOTH quick-xml bumps (`e6ab6393`, and again this session —
+  migrated to 0.41 to keep the build green). Suggest deleting it; the
+  processor + tests + fuzz_xmp cover its purpose.
 - **Compat 84→86 (43%→45%), 2026-07-03**: two root-cause fixes — (a) codegen
   treated standalone double-quoted interpolated strings as literals, so 9
   composite ValueConvs (IPTC DateTimeCreated/DigitalCreationDateTime, GPS+Sony
@@ -139,9 +152,17 @@ tier, and land the reliability foundations as discrete TPPs.
   $$self{VALUE}{DateTimeOriginal}`, Exif.pm:4952) and orchestration never
   evaluates it. Needs a `condition` field on CompositeTagDef + runtime
   evaluation; would clear 1 of the 5 only-in-exif-oxide gaps.
-- **Next after #3 closes**: item #2 remaining tasks (assertive compat
-  test + allowlist + version-skew guard — its TPP session log has the
-  current 84/191 numbers), then #5 (author video TPP with a fable
+- **Item #7 landed 2026-07-03 (compat 86→94/191, 49%)**: XMP read-time
+  value conversion (`_done/20260703-P1-xmp-value-conversion.md`). Worth
+  remembering: the adversarial review caught that the pre-existing
+  `print_fraction` (EXIF ExposureCompensation path) printed every
+  negative EV as a whole number (`floor` vs Perl's truncate-toward-zero
+  `int`) — latent because no compat snapshot has a negative EV. Pattern
+  held: implement → adversarial review → empirically vet each finding
+  against vendored exiftool → fix → commit.
+- **Next after #7**: item #2 remaining tasks (assertive compat
+  test + allowlist + version-skew guard — the allowlist triage surface
+  is now 92 gaps at 94/191), then #5 (author video TPP with a fable
   subagent), then #6 (napi spike; licensing answered above).
 - Also uncommitted: `.claude/settings.local.json` (Matthew's, leave) and
   `docs/chats/` (Matthew's, leave).
@@ -152,7 +173,18 @@ tier, and land the reliability foundations as discrete TPPs.
   ExifTool's rules; the GPSPosition special-case in
   `src/composite_tags/orchestration.rs` can then be simplified away).
 
-## Follow-up candidates (small, non-blocking; found 2026-07-02)
+## Follow-up candidates (small, non-blocking)
+
+- **Next compat moves (post-#7, 94/191)**: (a) composite `Condition`
+  support (see session state above, ~1-2 tags but correctness); (b) the
+  name-keyed COMPOSITE_TAGS collision below (~4 GPS tags); (c) the 5
+  remaining type mismatches, each a distinct small root cause:
+  IPTC:Keywords list accumulation, EXIF:XPKeywords UCS-2 decode,
+  EXIF:GPSProcessingMethod encoding-prefix strip, MakerNotes:Categories
+  (Canon), XMP:Source apostrophe truncation (possible XML quote-parsing
+  bug — worth a look, could corrupt other values); (d) XMP
+  GPSLatitude/GPSLongitude DMS→decimal (`ToDegrees`) conversion, noted
+  during #7 on iphone_x.jpg.
 
 - **codegen should prune stale `src/generated/` files** — staleness turned
   two 13.59 codegen bugs into build breaks (details in
@@ -202,16 +234,17 @@ tier, and land the reliability foundations as discrete TPPs.
 
 ## Tasks
 
-- [ ] Task 1: Complete child TPP #1 (version catch-up). **Proof**: TPP in
-      `_done/`, `docs/guides/EXIFTOOL-UPGRADE.md` exists.
+- [x] Task 1: Complete child TPP #1 (version catch-up). **Proof**: TPP in
+      `_done/`, `docs/guides/EXIFTOOL-UPGRADE.md` exists. (DONE 2026-07-02,
+      commit `f2bdb304`.)
 - [ ] Task 2: Complete child TPP #2 (snapshot oracle). **Proof**: TPP in
       `_done/`, `make compat-test` exits non-zero on an undocumented diff.
 - [x] Task 3: Complete child TPP #3 (fuzzing). **Proof**: TPP in `_done/`,
       CI fuzz job green. (2026-07-03: TPP in `_done/`; job is wired and
       validated locally — first nightly run pending on GitHub.)
-- [ ] Task 4: Fix GPSPosition sign bug per P03 backlog. **Proof**:
+- [x] Task 4: Fix GPSPosition sign bug per P03 backlog. **Proof**:
       `compare-with-exiftool test-images/apple/IMG_3755.JPG` shows no
-      GPSPosition diff.
+      GPSPosition diff. (DONE 2026-07-02, commit `141c4167`.)
 - [ ] Task 5: Author the video/QuickTime read TPP (item #5 has no TPP).
       **Proof**: new TPP in `_todo/` per TPP-GUIDE, under 400 lines.
 - [ ] Task 6: Complete child TPP #6 (napi spike), starting with the AGPL

@@ -3,6 +3,9 @@
 //! This module provides lookup functions that map XMP namespace prefixes and
 //! property names to their canonical tag information from ExifTool's XMP definitions.
 
+use std::collections::HashMap;
+use std::sync::LazyLock;
+
 use crate::core::XmpTagInfo;
 
 // Import all generated XMP namespace tables
@@ -37,63 +40,81 @@ use crate::generated::MWG_pm::{keywords_tags::XMP_MWG_KW_TAGS, regions_tags::XMP
 /// * `Some(&XmpTagInfo)` if the tag is found in generated tables
 /// * `None` if the namespace or property is not in generated tables
 pub fn lookup_xmp_tag(namespace: &str, property: &str) -> Option<&'static XmpTagInfo> {
-    match namespace {
+    namespace_table(namespace)?.get(property)
+}
+
+/// Look up XMP tag info by its resolved display name within a namespace.
+///
+/// The parsed XMP structure is keyed by canonical tag name, so renamed tags (e.g.
+/// exif:GPSTimeStamp is stored as its renamed "GPSDateTime", XMP.pm:2350) are
+/// missed by a property-name [`lookup_xmp_tag`]. This scans the namespace table for
+/// a matching `.name` so callers can still recover the tag's `Writable` format.
+pub fn lookup_xmp_tag_by_name(namespace: &str, name: &str) -> Option<&'static XmpTagInfo> {
+    namespace_table(namespace)?
+        .values()
+        .find(|info| info.name == name)
+}
+
+/// Resolve a namespace prefix to its generated tag table.
+fn namespace_table(namespace: &str) -> Option<&'static HashMap<&'static str, XmpTagInfo>> {
+    let table: &'static LazyLock<HashMap<&'static str, XmpTagInfo>> = match namespace {
         // Core XMP namespaces
-        "dc" => XMP_DC_TAGS.get(property),
-        "xmp" => XMP_XMP_TAGS.get(property),
-        "xmpRights" => XMP_XMP_RIGHTS_TAGS.get(property),
-        "xmpMM" => XMP_XMP_MM_TAGS.get(property),
-        "xmpBJ" => XMP_XMP_BJ_TAGS.get(property),
-        "xmpNote" => XMP_XMP_NOTE_TAGS.get(property),
-        "xmpTPg" => XMP_XMP_TPG_TAGS.get(property),
+        "dc" => &XMP_DC_TAGS,
+        "xmp" => &XMP_XMP_TAGS,
+        "xmpRights" => &XMP_XMP_RIGHTS_TAGS,
+        "xmpMM" => &XMP_XMP_MM_TAGS,
+        "xmpBJ" => &XMP_XMP_BJ_TAGS,
+        "xmpNote" => &XMP_XMP_NOTE_TAGS,
+        "xmpTPg" => &XMP_XMP_TPG_TAGS,
 
         // TIFF/EXIF in XMP
-        "tiff" => XMP_TIFF_TAGS.get(property),
-        "exif" => XMP_EXIF_TAGS.get(property),
-        "exifEX" => XMP_EXIF_EX_TAGS.get(property),
-        "aux" => XMP_AUX_TAGS.get(property),
+        "tiff" => &XMP_TIFF_TAGS,
+        "exif" => &XMP_EXIF_TAGS,
+        "exifEX" => &XMP_EXIF_EX_TAGS,
+        "aux" => &XMP_AUX_TAGS,
 
         // Adobe applications
-        "photoshop" => XMP_PHOTOSHOP_TAGS.get(property),
-        "crs" => XMP_CRS_TAGS.get(property),
-        "lr" => XMP_LR_TAGS.get(property),
+        "photoshop" => &XMP_PHOTOSHOP_TAGS,
+        "crs" => &XMP_CRS_TAGS,
+        "lr" => &XMP_LR_TAGS,
 
         // IPTC
-        "Iptc4xmpCore" | "iptc4xmpCore" => XMP_IPTC4XMP_CORE_TAGS.get(property),
-        "Iptc4xmpExt" | "iptc4xmpExt" => XMP_IPTC4XMP_EXT_TAGS.get(property),
+        "Iptc4xmpCore" | "iptc4xmpCore" => &XMP_IPTC4XMP_CORE_TAGS,
+        "Iptc4xmpExt" | "iptc4xmpExt" => &XMP_IPTC4XMP_EXT_TAGS,
 
         // Creative Commons (from XMP2.pl)
-        "cc" => XMP_CC_TAGS.get(property),
+        "cc" => &XMP_CC_TAGS,
 
         // iView MediaPro (from XMP2.pl)
-        "mediapro" => XMP_MEDIAPRO_TAGS.get(property),
+        "mediapro" => &XMP_MEDIAPRO_TAGS,
 
         // Metadata Working Group (from MWG.pm)
-        "mwg-rs" => XMP_MWG_RS_TAGS.get(property),
-        "mwg-kw" => XMP_MWG_KW_TAGS.get(property),
+        "mwg-rs" => &XMP_MWG_RS_TAGS,
+        "mwg-kw" => &XMP_MWG_KW_TAGS,
 
         // PDF
-        "pdf" => XMP_PDF_TAGS.get(property),
-        "pdfx" => XMP_PDFX_TAGS.get(property),
+        "pdf" => &XMP_PDF_TAGS,
+        "pdfx" => &XMP_PDFX_TAGS,
 
         // Other namespaces
-        "album" => XMP_ALBUM_TAGS.get(property),
-        "rdf" => XMP_RDF_TAGS.get(property),
-        "x" => XMP_X_TAGS.get(property),
-        "et" => XMP_ET_TAGS.get(property),
+        "album" => &XMP_ALBUM_TAGS,
+        "rdf" => &XMP_RDF_TAGS,
+        "x" => &XMP_X_TAGS,
+        "et" => &XMP_ET_TAGS,
 
         // Structure type namespaces (stArea, stDim, etc.)
-        "stArea" => XMP_ST_AREA_TAGS.get(property),
-        "stDim" => XMP_ST_DIM_TAGS.get(property),
-        "stFnt" => XMP_ST_FNT_TAGS.get(property),
-        "stJob" => XMP_ST_JOB_TAGS.get(property),
-        "stMfs" => XMP_ST_MFS_TAGS.get(property),
-        "stEvt" => XMP_ST_EVT_TAGS.get(property),
-        "stRef" => XMP_ST_REF_TAGS.get(property),
-        "stVer" => XMP_ST_VER_TAGS.get(property),
+        "stArea" => &XMP_ST_AREA_TAGS,
+        "stDim" => &XMP_ST_DIM_TAGS,
+        "stFnt" => &XMP_ST_FNT_TAGS,
+        "stJob" => &XMP_ST_JOB_TAGS,
+        "stMfs" => &XMP_ST_MFS_TAGS,
+        "stEvt" => &XMP_ST_EVT_TAGS,
+        "stRef" => &XMP_ST_REF_TAGS,
+        "stVer" => &XMP_ST_VER_TAGS,
 
-        _ => None,
-    }
+        _ => return None,
+    };
+    Some(&**table)
 }
 
 /// Get the canonical tag name for an XMP property
