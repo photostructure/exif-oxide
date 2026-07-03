@@ -452,9 +452,15 @@ pub fn exif_time_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Res
 
 /// XMP date conversion
 /// ExifTool pattern: require Image::ExifTool::XMP; return Image::ExifTool::XMP::ConvertXMPDate($val);
+///
+/// Delegates to the exact ConvertXMPDate port (XMP.pm:3383-3394) so any
+/// codegen-wired ValueConv using this expression converts for real. Was a
+/// pass-through stub before the XMP value-conversion work landed.
 pub fn xmp_date_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
-    // For now, pass through - implement specific XMP date conversion when needed
-    Ok(value.clone())
+    match value {
+        TagValue::String(s) => Ok(crate::xmp::value_conversion::convert_xmp_date(s)),
+        _ => Ok(value.clone()),
+    }
 }
 
 /// Reference long strings (> 32 chars) to avoid duplication
@@ -693,5 +699,18 @@ mod tests {
         } else {
             panic!("Expected F64 result");
         }
+    }
+
+    #[test]
+    fn test_xmp_date_value_conv_delegates_to_convert_xmp_date() {
+        // Was a pass-through stub; must now apply ConvertXMPDate (XMP.pm:3383)
+        let iso = TagValue::string("2005-06-08T12:05:36+01:00");
+        assert_eq!(
+            xmp_date_value_conv(&iso, None).unwrap(),
+            TagValue::string("2005:06:08 12:05:36+01:00")
+        );
+        // Non-strings pass through untouched
+        let num = TagValue::F64(1.5);
+        assert_eq!(xmp_date_value_conv(&num, None).unwrap(), num);
     }
 }
