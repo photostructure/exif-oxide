@@ -238,13 +238,22 @@ impl RustGenerator {
         }
 
         let node = &statement.children[0];
-        matches!(
-            node.class.as_str(),
-            "PPI::Token::Number"
-                | "PPI::Token::Number::Float"
-                | "PPI::Token::Quote::Single"
-                | "PPI::Token::Quote::Double"
-        )
+        match node.class.as_str() {
+            "PPI::Token::Number" | "PPI::Token::Number::Float" | "PPI::Token::Quote::Single" => {
+                true
+            }
+            // A double-quoted string is only a literal when it contains no
+            // interpolation. Perl interpolates `$...` (e.g. IPTC's
+            // DateTimeCreated ValueConv '"$val[0] $val[1]"'), so those must
+            // take the normal visit path where visit_string interpolates;
+            // this fast path would emit the raw Perl text verbatim.
+            "PPI::Token::Quote::Double" => node
+                .string_value
+                .as_ref()
+                .or(node.content.as_ref())
+                .is_none_or(|s| !s.contains('$')),
+            _ => false,
+        }
     }
 
     /// Special handling for standalone literals in ValueConv context

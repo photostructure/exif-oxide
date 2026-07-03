@@ -221,6 +221,10 @@ static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
             "Image::ExifTool::Exif::ExifDate($val)",
             ("crate::implementations::value_conv", "exif_date_value_conv"),
         );
+        m.insert(
+            "Image::ExifTool::Exif::ExifTime($val)",
+            ("crate::implementations::value_conv", "exif_time_value_conv"),
+        );
 
         // ExifTool function calls for datetime conversions
         m.insert(

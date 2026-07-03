@@ -395,10 +395,59 @@ pub fn sony_fnumber_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> 
 }
 
 /// EXIF date conversion
-/// ExifTool pattern: Image::ExifTool::Exif::ExifDate($val)
+/// ExifTool: lib/Image/ExifTool/Exif.pm:6068-6076 sub ExifDate
+/// Separates YYYY MM DD with colons. Bad formats recognized: '2003-10-22',
+/// '2003/10/22', '2003 10 22', '20031022' ("have seen many other characters,
+/// including nulls, used erroneously"). Used by e.g. IPTC DateCreated
+/// (IPTC.pm:412), whose wire format is digits[8].
 pub fn exif_date_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
-    // For now, pass through - implement specific date conversion when needed
-    Ok(value.clone())
+    use regex::Regex;
+    use std::sync::LazyLock;
+
+    // ExifTool: $date =~ s/(\d{4})[^\d]*(\d{2})[^\d]*(\d{2})$/$1:$2:$3/;
+    static DATE_RE: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"(\d{4})[^\d]*(\d{2})[^\d]*(\d{2})$").unwrap());
+
+    match value {
+        TagValue::String(s) => {
+            // ExifTool: $date =~ s/\0$//; (remove any null terminator)
+            let s = s.strip_suffix('\0').unwrap_or(s);
+            Ok(TagValue::String(
+                DATE_RE.replace(s, "${1}:${2}:${3}").into_owned(),
+            ))
+        }
+        _ => Ok(value.clone()),
+    }
+}
+
+/// EXIF time conversion
+/// ExifTool: lib/Image/ExifTool/Exif.pm:6085-6094 sub ExifTime
+/// Adds ':' separators to HHMMSS and any trailing ±HHMM timezone; leaves an
+/// already-separated zone intact (e.g. '10:30:55+05:00'). Used by e.g. IPTC
+/// TimeCreated (IPTC.pm:422), whose wire format is string[11].
+pub fn exif_time_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
+    use regex::Regex;
+    use std::sync::LazyLock;
+
+    // ExifTool: $time =~ s/^(\d{2})(\d{2})(\d{2})/$1:$2:$3/;
+    static TIME_RE: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"^(\d{2})(\d{2})(\d{2})").unwrap());
+    // ExifTool: $time =~ s/([+-]\d{2})(\d{2})\s*$/$1:$2/; (to timezone too)
+    static TZ_RE: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"([+-]\d{2})(\d{2})\s*$").unwrap());
+
+    match value {
+        TagValue::String(s) => {
+            // ExifTool: $time =~ tr/ /:/; (use ':' not ' ' as a separator)
+            let t = s.replace(' ', ":");
+            // ExifTool: $time =~ s/\0$//; (remove any null terminator)
+            let t = t.strip_suffix('\0').unwrap_or(&t);
+            let t = TIME_RE.replace(t, "${1}:${2}:${3}");
+            let t = TZ_RE.replace(&t, "${1}:${2}");
+            Ok(TagValue::String(t.into_owned()))
+        }
+        _ => Ok(value.clone()),
+    }
 }
 
 /// XMP date conversion
@@ -462,6 +511,50 @@ pub fn remove_prefix_colon_value_conv(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_exif_date_value_conv() {
+        // ExifTool: lib/Image/ExifTool/Exif.pm:6068-6076 sub ExifDate
+        // IPTC DateCreated arrives as "YYYYMMDD" (digits[8]); ExifTool
+        // separates with colons. Also accepts '-', '/', ' ' separators.
+        for (input, expected) in [
+            ("20201119", "2020:11:19"),
+            ("2003-10-22", "2003:10:22"),
+            ("2003/10/22", "2003:10:22"),
+            ("2003 10 22", "2003:10:22"),
+            ("2020:11:19", "2020:11:19"), // already separated
+            ("20201119\0", "2020:11:19"), // strips null terminator
+        ] {
+            let result = exif_date_value_conv(&TagValue::string(input), None).unwrap();
+            assert_eq!(
+                result,
+                TagValue::string(expected),
+                "ExifDate({input:?}) should be {expected:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn test_exif_time_value_conv() {
+        // ExifTool: lib/Image/ExifTool/Exif.pm:6085-6094 sub ExifTime
+        // IPTC TimeCreated arrives as "HHMMSS" or "HHMMSS±HHMM" (string[11]).
+        for (input, expected) in [
+            ("143632", "14:36:32"),
+            ("143632+0100", "14:36:32+01:00"),
+            ("143632-0500", "14:36:32-05:00"),
+            ("14:36:32", "14:36:32"),             // already separated
+            ("14 36 32", "14:36:32"),             // tr/ /:/
+            ("14:36:32+05:00", "14:36:32+05:00"), // zone already separated
+            ("143632\0", "14:36:32"),             // strips null terminator
+        ] {
+            let result = exif_time_value_conv(&TagValue::string(input), None).unwrap();
+            assert_eq!(
+                result,
+                TagValue::string(expected),
+                "ExifTime({input:?}) should be {expected:?}"
+            );
+        }
+    }
 
     #[test]
     fn test_gps_coordinate_conversion() {

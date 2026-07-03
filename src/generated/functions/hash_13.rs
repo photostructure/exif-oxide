@@ -60,33 +60,6 @@ pub fn ast_print_139aec60e3135c33(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// Image::ExifTool::Exif::ExifTime($val)
-/// ```
-/// Used by:
-/// - IPTC::ApplicationRecord.DigitalCreationTime
-/// - IPTC::ApplicationRecord.ExpirationTime
-/// - IPTC::ApplicationRecord.ReleaseTime
-/// - IPTC::ApplicationRecord.TimeCreated
-/// - IPTC::EnvelopeRecord.TimeSent
-///
-/// TODO: Add support for this expression pattern
-pub fn ast_value_135828bb10970bc4(
-    val: &TagValue,
-    ctx: Option<&ExifContext>,
-) -> Result<TagValue, crate::core::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(crate::core::missing::missing_value_conv(
-        0,                                       // tag_id will be filled at runtime
-        "UnknownTag",                            // tag_name will be filled at runtime
-        "UnknownGroup",                          // group will be filled at runtime
-        "Image::ExifTool::Exif::ExifTime($val)", // original expression
-        val,
-    ))
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
 /// Image::ExifTool::Pentax::PentaxEv($val)
 /// ```
 /// Used by:
@@ -105,6 +78,24 @@ pub fn ast_value_13b75c0babf8de5d(
         "Image::ExifTool::Pentax::PentaxEv($val)", // original expression
         val,
     ))
+}
+
+/// Registry fallback: ValueConv implementation found
+/// Original perl expression:
+/// ``` perl
+/// Image::ExifTool::Exif::ExifTime($val)
+/// ```
+/// Used by:
+/// - IPTC::ApplicationRecord.DigitalCreationTime
+/// - IPTC::ApplicationRecord.ExpirationTime
+/// - IPTC::ApplicationRecord.ReleaseTime
+/// - IPTC::ApplicationRecord.TimeCreated
+/// - IPTC::EnvelopeRecord.TimeSent
+pub fn ast_value_135828bb10970bc4(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    crate::implementations::value_conv::exif_time_value_conv(val, ctx)
 }
 
 /// Registry fallback: ValueConv implementation found

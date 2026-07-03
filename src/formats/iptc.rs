@@ -149,6 +149,14 @@ impl IptcParser {
                 let tag_name = format!("IPTC:{}", tag_def.name);
                 let tag_value = self.convert_tag_value(&tag_data, tag_def)?;
 
+                // Apply the tag's ValueConv, as ExifTool does before storing
+                // (e.g. DateCreated => ExifDate, TimeCreated => ExifTime,
+                // IPTC.pm:412/422).
+                let tag_value = match &tag_def.value_conv {
+                    Some(crate::types::ValueConv::Function(func)) => func(&tag_value, None)?,
+                    _ => tag_value,
+                };
+
                 debug!("Extracted IPTC tag: {} = {:?}", tag_name, tag_value);
                 extracted_tags.insert(tag_name, tag_value);
             } else {
@@ -608,6 +616,28 @@ mod tests {
         let tags = result.unwrap();
         assert_eq!(tags.len(), 1);
         assert!(tags.contains_key("IPTC:Keywords"));
+    }
+
+    #[test]
+    fn test_date_time_created_value_conv_applied() {
+        // IPTC:DateCreated (2:55) and IPTC:TimeCreated (2:60) define ValueConv
+        // (ExifDate/ExifTime, IPTC.pm:412/422), which the parser must apply:
+        // ExifTool stores "2020:11:19", not the raw "20201119" wire format.
+        let mut data = Vec::new();
+        data.extend_from_slice(&[0x1c, 0x02, 55, 0x00, 0x08]);
+        data.extend_from_slice(b"20201119");
+        data.extend_from_slice(&[0x1c, 0x02, 60, 0x00, 0x0b]);
+        data.extend_from_slice(b"143632+0100");
+
+        let tags = parse_iptc_metadata(&data).unwrap();
+        assert_eq!(
+            tags.get("IPTC:DateCreated"),
+            Some(&TagValue::string("2020:11:19"))
+        );
+        assert_eq!(
+            tags.get("IPTC:TimeCreated"),
+            Some(&TagValue::string("14:36:32+01:00"))
+        );
     }
 
     #[test]

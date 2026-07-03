@@ -277,7 +277,11 @@ pub fn composite_valueconv_exif_previewimagesize(
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    Ok(TagValue::String("$val[0]x$val[1]".to_string()))
+    Ok(TagValue::String(format!(
+        "{}x{}",
+        vals.first().cloned().unwrap_or(TagValue::Empty),
+        vals.get(1).cloned().unwrap_or(TagValue::Empty)
+    )))
 }
 
 /// Original perl expression:
@@ -322,7 +326,11 @@ pub fn composite_valueconv_gps_gpsdatetime(
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    Ok(TagValue::String("$val[0] $val[1]Z".to_string()))
+    Ok(TagValue::String(format!(
+        "{} {}Z",
+        vals.first().cloned().unwrap_or(TagValue::Empty),
+        vals.get(1).cloned().unwrap_or(TagValue::Empty)
+    )))
 }
 
 /// Original perl expression:
@@ -479,7 +487,11 @@ pub fn composite_valueconv_iptc_datetimecreated(
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    Ok(TagValue::String("$val[0] $val[1]".to_string()))
+    Ok(TagValue::String(format!(
+        "{} {}",
+        vals.first().cloned().unwrap_or(TagValue::Empty),
+        vals.get(1).cloned().unwrap_or(TagValue::Empty)
+    )))
 }
 
 /// Original perl expression:
@@ -500,7 +512,11 @@ pub fn composite_valueconv_iptc_digitalcreationdatetime(
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    Ok(TagValue::String("$val[0] $val[1]".to_string()))
+    Ok(TagValue::String(format!(
+        "{} {}",
+        vals.first().cloned().unwrap_or(TagValue::Empty),
+        vals.get(1).cloned().unwrap_or(TagValue::Empty)
+    )))
 }
 
 /// Original perl expression:
@@ -748,7 +764,11 @@ pub fn composite_valueconv_kodak_datecreated(
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    Ok(TagValue::String("$val[0]:$val[1]".to_string()))
+    Ok(TagValue::String(format!(
+        "{}:{}",
+        vals.first().cloned().unwrap_or(TagValue::Empty),
+        vals.get(1).cloned().unwrap_or(TagValue::Empty)
+    )))
 }
 
 /// Original perl expression:
@@ -803,7 +823,11 @@ pub fn composite_valueconv_nikon_lensspec(
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    Ok(TagValue::String("$val[0] $val[1]".to_string()))
+    Ok(TagValue::String(format!(
+        "{} {}",
+        vals.first().cloned().unwrap_or(TagValue::Empty),
+        vals.get(1).cloned().unwrap_or(TagValue::Empty)
+    )))
 }
 
 /// Original perl expression:
@@ -874,7 +898,11 @@ pub fn composite_valueconv_olympus_lenstype(
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    Ok(TagValue::String("$val[0] $val[1]".to_string()))
+    Ok(TagValue::String(format!(
+        "{} {}",
+        vals.first().cloned().unwrap_or(TagValue::Empty),
+        vals.get(1).cloned().unwrap_or(TagValue::Empty)
+    )))
 }
 
 /// Original perl expression:
@@ -895,7 +923,12 @@ pub fn composite_valueconv_panasonic_advancedscenemode(
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    Ok(TagValue::String("$val[0] $val[1] $val[2]".to_string()))
+    Ok(TagValue::String(format!(
+        "{} {} {}",
+        vals.first().cloned().unwrap_or(TagValue::Empty),
+        vals.get(1).cloned().unwrap_or(TagValue::Empty),
+        vals.get(2).cloned().unwrap_or(TagValue::Empty)
+    )))
 }
 
 /// Original perl expression:
@@ -1007,7 +1040,11 @@ pub fn composite_valueconv_sony_gpsdatetime(
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    Ok(TagValue::String("$val[0] $val[1]Z".to_string()))
+    Ok(TagValue::String(format!(
+        "{} {}Z",
+        vals.first().cloned().unwrap_or(TagValue::Empty),
+        vals.get(1).cloned().unwrap_or(TagValue::Empty)
+    )))
 }
 
 /// Original perl expression:

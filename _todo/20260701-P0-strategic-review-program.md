@@ -126,6 +126,19 @@ tier, and land the reliability foundations as discrete TPPs.
   item #3 committed and moved to `_done/` (two more fuzz-found crashes fixed
   during final validation; see that TPP's COMPLETION STATE). First nightly
   fuzz CI run happens after this lands on GitHub.
+- **Compat 84→86 (43%→45%), 2026-07-03**: two root-cause fixes — (a) codegen
+  treated standalone double-quoted interpolated strings as literals, so 9
+  composite ValueConvs (IPTC DateTimeCreated/DigitalCreationDateTime, GPS+Sony
+  GPSDateTime, PreviewImageSize, Kodak DateCreated, Nikon LensSpec, Olympus
+  LensType, Panasonic AdvancedSceneMode) returned the raw Perl text; (b) the
+  IPTC parser never applied per-tag ValueConv, and ExifDate/ExifTime were
+  stubs — now implemented (Exif.pm:6068-6094), covering 10 IPTC date/time
+  tags. **Follow-up found**: `Composite:DateTimeOriginal` is emitted with a
+  correct value on files where ExifTool suppresses it — codegen drops
+  ExifTool's composite `Condition` (e.g. `not defined
+  $$self{VALUE}{DateTimeOriginal}`, Exif.pm:4952) and orchestration never
+  evaluates it. Needs a `condition` field on CompositeTagDef + runtime
+  evaluation; would clear 1 of the 5 only-in-exif-oxide gaps.
 - **Next after #3 closes**: item #2 remaining tasks (assertive compat
   test + allowlist + version-skew guard — its TPP session log has the
   current 84/191 numbers), then #5 (author video TPP with a fable
