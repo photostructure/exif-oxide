@@ -86,7 +86,7 @@ Analysis at `docs/analysis/expressions/required-expressions-analysis.json` shows
 
 Check `_todo/` for active TPPs (deferred work is parked in `_paused/`). The immediate focus is:
 
-1. Fix any build issues (`make precommit` must pass)
+1. Fix any build issues (`make verify` must pass)
 2. Audit required tags against current implementation
 3. Fill critical gaps for PhotoStructure integration
 

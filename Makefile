@@ -1,4 +1,4 @@
-.PHONY: all ast-check ast-test check check-fmt fmt lint yamllint unit-test test t codegen-test fix build install doc clean clean-generated clean-all check-deps check-perl codegen sync expression-analysis expression-analysis-force perl-setup perl-deps update upgrade-gha upgrade audit tests precommit compat-gen compat-gen-force compat-test test-mime-compat binary-compat-test cmp compat compat-force compat-full help
+.PHONY: all ast-check ast-test check check-fmt fmt lint yamllint unit-test test t codegen-test fix build install doc clean clean-generated clean-all check-deps check-perl codegen sync expression-analysis expression-analysis-force perl-setup perl-deps update upgrade-gha upgrade audit tests verify compat-gen compat-gen-force compat-test test-mime-compat binary-compat-test cmp compat compat-force compat-full help
 
 # Default target: build the project
 all: build
@@ -148,15 +148,15 @@ audit: check-deps
 # All tests including unit, integration, codegen, and compatibility tests
 tests: codegen-test test compat-full
 
-# Pre-commit checks: codegen, fix code, lint, test, audit, and build. We don't
+# Full pre-commit validation: codegen, fix code, lint, test, audit, and build. We don't
 # clean-all because that leaves the tree temporarily broken, and we don't
 # upgrade because changes to Cargo.toml can cause the rust analyzer to OOM (!!)
 # IMPORTANT: codegen must run BEFORE any cargo commands to ensure generated files exist
-precommit: perl-deps codegen audit fix check tests build 
-	@echo "✅ precommit successful 🥳"
+verify: perl-deps codegen audit fix check tests build
+	@echo "✅ verify successful 🥳"
 
 # This should
-prerelease: clean-all upgrade precommit
+prerelease: clean-all upgrade verify
 	@echo "✅ prerelease successful 🥳"
 
 # Generate ExifTool JSON reference data for compatibility testing (only missing files)
@@ -277,7 +277,7 @@ help:
 	@echo "  make perl-setup    - Set up local Perl environment"
 	@echo "  make perl-deps     - Install Perl dependencies"
 	@echo "  make audit         - Security audit for vulnerabilities"
-	@echo "  make precommit     - Run full pre-commit checks"
+	@echo "  make verify        - Run full pre-commit validation"
 	@echo ""
 	@echo "Testing:"
 	@echo "  make tests         - Run all tests including unit, integration, codegen, and compatibility"

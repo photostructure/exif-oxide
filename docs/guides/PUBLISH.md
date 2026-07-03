@@ -103,7 +103,7 @@ cargo publish
 ```bash
 make unit-test              # Fast unit tests only
 make test                   # All tests including integration tests
-make precommit              # Full validation before commit
+make verify                 # Full validation before commit
 ```
 
 ### Published Crate Testing
@@ -159,7 +159,7 @@ Controls release behavior:
 
 - Check package size (should be <10MB)
 - Verify all dependencies are valid
-- Ensure tests pass: `make precommit`
+- Ensure tests pass: `make verify`
 
 ### Integration Tests Fail in CI
 
