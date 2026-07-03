@@ -89,7 +89,7 @@ pub fn composite_printconv_exif_circleofconfusion(
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String(crate::core::sprintf_perl(
         "%.3f mm",
-        &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
+        std::slice::from_ref(&vals.first().cloned().unwrap_or(TagValue::Empty)),
     )))
 }
 
@@ -123,7 +123,7 @@ pub fn composite_printconv_exif_focallength35efl(
         } else {
             TagValue::String(crate::core::sprintf_perl(
                 "%.1f mm",
-                &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
+                std::slice::from_ref(&vals.first().cloned().unwrap_or(TagValue::Empty)),
             ))
         },
     )
@@ -174,7 +174,7 @@ pub fn composite_printconv_exif_hyperfocaldistance(
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String(crate::core::sprintf_perl(
         "%.2f m",
-        &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
+        std::slice::from_ref(&vals.first().cloned().unwrap_or(TagValue::Empty)),
     )))
 }
 
@@ -219,7 +219,7 @@ pub fn composite_printconv_exif_lightvalue(
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String(crate::core::sprintf_perl(
         "%.1f",
-        &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
+        std::slice::from_ref(&vals.first().cloned().unwrap_or(TagValue::Empty)),
     )))
 }
 
@@ -300,7 +300,7 @@ pub fn composite_printconv_exif_scalefactor35efl(
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String(crate::core::sprintf_perl(
         "%.1f",
-        &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
+        std::slice::from_ref(&vals.first().cloned().unwrap_or(TagValue::Empty)),
     )))
 }
 
@@ -593,7 +593,7 @@ pub fn composite_printconv_canon_digitalzoom(
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String(crate::core::sprintf_perl(
         "%.2fx",
-        &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
+        std::slice::from_ref(&vals.first().cloned().unwrap_or(TagValue::Empty)),
     )))
 }
 
@@ -648,7 +648,7 @@ pub fn composite_printconv_canon_iso(
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(TagValue::String(crate::core::sprintf_perl(
         "%.0f",
-        &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
+        std::slice::from_ref(&vals.first().cloned().unwrap_or(TagValue::Empty)),
     )))
 }
 
@@ -983,7 +983,7 @@ pub fn composite_printconv_sony_focusdistance2(
         } else {
             TagValue::String(crate::core::sprintf_perl(
                 "%.4g m",
-                &[vals.first().cloned().unwrap_or(TagValue::Empty).clone()],
+                std::slice::from_ref(&vals.first().cloned().unwrap_or(TagValue::Empty)),
             ))
         },
     )

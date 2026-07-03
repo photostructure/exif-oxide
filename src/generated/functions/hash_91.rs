@@ -26,5 +26,8 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::ExtraInfo3.BatteryTemperature
 /// - Sony::Tag9406.BatteryTemperature
 pub fn ast_print_9111b408f0b1518a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.1f C", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl(
+        "%.1f C",
+        std::slice::from_ref(val),
+    ))
 }

@@ -33,5 +33,8 @@ pub fn ast_print_8b61d93238d39ea1(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// Used by:
 /// - Sony::SR2Private.SR2SubIFDKey
 pub fn ast_print_8b98163e01aaf11a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("0x%.8x", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl(
+        "0x%.8x",
+        std::slice::from_ref(val),
+    ))
 }

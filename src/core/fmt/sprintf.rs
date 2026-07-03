@@ -214,13 +214,7 @@ fn tagvalue_to_i64(val: &TagValue) -> i64 {
                 0
             }
         }
-        TagValue::SRational(num, den) => {
-            if *den != 0 {
-                (*num as f64 / *den as f64) as i64
-            } else {
-                0
-            }
-        }
+        TagValue::SRational(num, den) if *den != 0 => (*num as f64 / *den as f64) as i64,
         _ => 0,
     }
 }
@@ -243,13 +237,7 @@ fn tagvalue_to_f64(val: &TagValue) -> f64 {
                 0.0
             }
         }
-        TagValue::SRational(num, den) => {
-            if *den != 0 {
-                *num as f64 / *den as f64
-            } else {
-                0.0
-            }
-        }
+        TagValue::SRational(num, den) if *den != 0 => *num as f64 / *den as f64,
         _ => 0.0,
     }
 }

@@ -24,5 +24,5 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::VignetteInfo.VignetteCoefficient2
 /// - Nikon::VignetteInfo.VignetteCoefficient3
 pub fn ast_print_58281d11fd553f56(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.5f", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%.5f", std::slice::from_ref(val)))
 }

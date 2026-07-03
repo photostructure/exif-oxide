@@ -51,7 +51,10 @@ pub fn ast_value_133a2729aa715f5f(
 /// - Sony::ExtraInfo3.BatteryVoltage1
 /// - Sony::ExtraInfo3.BatteryVoltage2
 pub fn ast_print_139aec60e3135c33(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.2f V", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl(
+        "%.2f V",
+        std::slice::from_ref(val),
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

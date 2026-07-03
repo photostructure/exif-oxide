@@ -37,7 +37,7 @@ pub fn ast_value_8226079554149ee(
 /// Used by:
 /// - Sony::Tag9416.Tag9416_0000
 pub fn ast_print_822ed0bdaa60215(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%3d", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%3d", std::slice::from_ref(val)))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

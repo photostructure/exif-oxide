@@ -156,9 +156,9 @@ pub fn extract_byte_array_value(
         Ok(bytes[..count].to_vec())
     } else if entry.is_inline() {
         // Should not happen - more than 4 bytes can't fit inline
-        return Err(ExifError::ParseError(format!(
+        Err(ExifError::ParseError(format!(
             "BYTE array with count {count} cannot be stored inline"
-        )));
+        )))
     } else {
         // Value stored at offset
         let offset = entry.value_or_offset as usize;
@@ -200,9 +200,9 @@ pub fn extract_short_array_value(
         Ok(values)
     } else if entry.is_inline() {
         // Should not happen - more than 2 SHORT values can't fit inline
-        return Err(ExifError::ParseError(format!(
+        Err(ExifError::ParseError(format!(
             "SHORT array with count {count} cannot be stored inline"
-        )));
+        )))
     } else {
         // Value stored at offset
         let offset = entry.value_or_offset as usize;

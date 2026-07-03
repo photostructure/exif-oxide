@@ -58,7 +58,10 @@ pub fn ast_print_3780eb052f6af33a(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// Used by:
 /// - Panasonic::Leica6.LensSerialNumber
 pub fn ast_print_3772add5dac32189(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.10d", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl(
+        "%.10d",
+        std::slice::from_ref(val),
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

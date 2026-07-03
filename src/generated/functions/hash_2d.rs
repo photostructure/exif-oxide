@@ -40,7 +40,10 @@ pub fn ast_value_2da539a22da2bce2(
 /// - QuickTime::AudioProf.AudioCodecInfo
 /// - QuickTime::VideoProf.VideoCodecInfo
 pub fn ast_print_2d66b9944b9eb1b1(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("0x%.4x", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl(
+        "0x%.4x",
+        std::slice::from_ref(val),
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

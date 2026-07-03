@@ -54,5 +54,8 @@ pub fn ast_value_25c85203cdf230c8(
 /// - Nikon::LensData01.FocusPosition
 /// - Nikon::LensData0204.FocusPosition
 pub fn ast_print_257ede59d0ae2b60(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("0x%02x", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl(
+        "0x%02x",
+        std::slice::from_ref(val),
+    ))
 }

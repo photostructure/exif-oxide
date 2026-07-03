@@ -19,5 +19,8 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Canon::Main.SerialNumber
 pub fn ast_print_9adcfe1358ee0d0d(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.10u", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl(
+        "%.10u",
+        std::slice::from_ref(val),
+    ))
 }

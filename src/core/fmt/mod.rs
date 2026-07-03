@@ -117,7 +117,7 @@ pub fn sprintf_with_string_concat_repeat(
     // Convert TagValue to slice for sprintf_perl
     match args {
         TagValue::Array(arr) => sprintf_perl(&complete_format, arr),
-        single_val => sprintf_perl(&complete_format, &[single_val.clone()]),
+        single_val => sprintf_perl(&complete_format, std::slice::from_ref(single_val)),
     }
 }
 

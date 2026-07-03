@@ -45,7 +45,10 @@ pub fn ast_value_c52c83ef53c04e47(
 /// - FujiFilm::MRAW.ExposureCompensation
 /// - FujiFilm::MRAW.ExposureCompensation2
 pub fn ast_print_c55f0a78a353c4e4(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%+.2f", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl(
+        "%+.2f",
+        std::slice::from_ref(val),
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

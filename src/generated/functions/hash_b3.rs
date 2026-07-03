@@ -30,7 +30,7 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::Tag9416.StopsAboveBaseISO
 pub fn ast_print_b3e8606718d2531e(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val.is_truthy() {
-        TagValue::String(crate::core::sprintf_perl("%.1f", &[val.clone()]))
+        TagValue::String(crate::core::sprintf_perl("%.1f", std::slice::from_ref(val)))
     } else {
         val.clone()
     }

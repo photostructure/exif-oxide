@@ -19,7 +19,7 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Panasonic::Leica2.SerialNumber
 pub fn ast_print_ccb205b5fb8d3f95(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.7d", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%.7d", std::slice::from_ref(val)))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

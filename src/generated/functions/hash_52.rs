@@ -35,7 +35,7 @@ pub fn ast_value_52fd700bac71f2a3(
 /// - Nikon::RotationInfoD500.IntervalFrame
 pub fn ast_print_52df9ad712959d2(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val > 0i32 {
-        TagValue::String(crate::core::sprintf_perl("%.0f", &[val.clone()]))
+        TagValue::String(crate::core::sprintf_perl("%.0f", std::slice::from_ref(val)))
     } else {
         Into::<TagValue>::into("")
     }
@@ -48,7 +48,10 @@ pub fn ast_print_52df9ad712959d2(val: &TagValue, ctx: Option<&ExifContext>) -> T
 /// Used by:
 /// - DJI::ThermalParams2.ObjectDistance
 pub fn ast_print_52836b45c0320e15(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.1f m", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl(
+        "%.1f m",
+        std::slice::from_ref(val),
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

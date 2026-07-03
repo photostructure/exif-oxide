@@ -22,7 +22,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Nikon::LensData0800.FocusDistance
 pub fn ast_print_c63abe95c8d1d776(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val.is_truthy() {
-        TagValue::String(crate::core::sprintf_perl("%.2f m", &[val.clone()]))
+        TagValue::String(crate::core::sprintf_perl(
+            "%.2f m",
+            std::slice::from_ref(val),
+        ))
     } else {
         Into::<TagValue>::into("inf")
     }

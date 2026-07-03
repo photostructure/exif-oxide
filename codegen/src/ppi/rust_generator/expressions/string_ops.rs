@@ -40,7 +40,7 @@ pub trait StringOperationsHandler {
                         self.handle_sprintf_statement_directly(child)?
                     } else {
                         // Other PPI::Statement - process recursively
-                        self.combine_statement_parts(&[], &[child.clone()])?
+                        self.combine_statement_parts(&[], std::slice::from_ref(child))?
                     }
                 } else if child.class == "PPI::Structure::List" && child.children.len() == 1 {
                     // This is likely a parenthesized expression - check if it's a ternary
@@ -52,11 +52,11 @@ pub trait StringOperationsHandler {
                         self.handle_parenthesized_ternary(expr)?
                     } else {
                         // Complex expression - recursively process it
-                        self.combine_statement_parts(&[], &[child.clone()])?
+                        self.combine_statement_parts(&[], std::slice::from_ref(child))?
                     }
                 } else {
                     // Complex expression - recursively process it
-                    self.combine_statement_parts(&[], &[child.clone()])?
+                    self.combine_statement_parts(&[], std::slice::from_ref(child))?
                 }
             };
             parts.push(part);
@@ -534,7 +534,7 @@ pub trait StringOperationsHandler {
         }
 
         // Fallback: treat as regular expression
-        self.combine_statement_parts(&[], &[expr.clone()])
+        self.combine_statement_parts(&[], std::slice::from_ref(expr))
     }
 
     /// Extract content from a node (handling strings, numbers, symbols, etc.)
@@ -547,7 +547,7 @@ pub trait StringOperationsHandler {
             Ok(num.to_string())
         } else {
             // For complex nodes, recursively process
-            self.combine_statement_parts(&[], &[node.clone()])
+            self.combine_statement_parts(&[], std::slice::from_ref(node))
         }
     }
 

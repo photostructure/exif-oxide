@@ -110,7 +110,7 @@ pub fn ast_print_b4577ab90e52c45f(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Sony::Tag9416.SonyFNumber2
 /// - Sony::Tag9416.SonyMaxApertureValue
 pub fn ast_print_b44b87d319f681cc(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.1f", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%.1f", std::slice::from_ref(val)))
 }
 
 /// Original perl expression:
@@ -121,7 +121,10 @@ pub fn ast_print_b44b87d319f681cc(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Pentax::SRInfo.SRHalfPressTime
 pub fn ast_print_b41bd13e5416819e(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     crate::core::string::concat(
-        &TagValue::String(crate::core::sprintf_perl("%.2f s", &[val.clone()])),
+        &TagValue::String(crate::core::sprintf_perl(
+            "%.2f s",
+            std::slice::from_ref(val),
+        )),
         &if val > 254.5f64 / 60i32 as f64 {
             Into::<TagValue>::into(" or longer")
         } else {

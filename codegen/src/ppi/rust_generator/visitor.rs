@@ -660,17 +660,30 @@ pub trait PpiVisitor {
                     }
                 }
 
-                let sprintf_args = if args.len() > 1 {
+                let is_copy_operand = |arg: &str| {
+                    // Primitives like 10i32 are Copy and don't need cloning
+                    arg.ends_with("i32")
+                        || arg.ends_with("u32")
+                        || arg.ends_with("f64")
+                        || arg.ends_with("i64")
+                        || arg.ends_with("u64")
+                };
+                let sprintf_args = if let [single] = &args[1..] {
+                    // A single cloned reference is better expressed with
+                    // std::slice::from_ref (clippy::cloned_ref_to_slice_refs).
+                    if is_copy_operand(single) {
+                        format!("&[{single}]")
+                    } else if single == "val" || single == "val_pt" {
+                        // Function parameters are already &TagValue.
+                        format!("std::slice::from_ref({single})")
+                    } else {
+                        format!("std::slice::from_ref(&{single})")
+                    }
+                } else if args.len() > 1 {
                     let cloned_args = args[1..]
                         .iter()
                         .map(|arg| {
-                            // Only add .clone() for references - primitives like 10i32 are Copy
-                            if arg.ends_with("i32")
-                                || arg.ends_with("u32")
-                                || arg.ends_with("f64")
-                                || arg.ends_with("i64")
-                                || arg.ends_with("u64")
-                            {
+                            if is_copy_operand(arg) {
                                 arg.clone()
                             } else {
                                 format!("{arg}.clone()")

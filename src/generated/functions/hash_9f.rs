@@ -25,5 +25,8 @@ use crate::types::{ExifContext, TagValue};
 /// - Canon::CameraInfo5DmkII.MacroMagnification
 /// - Canon::FileInfo.MacroMagnification
 pub fn ast_print_9fdbcf4006788a4b(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.1fx", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl(
+        "%.1fx",
+        std::slice::from_ref(val),
+    ))
 }

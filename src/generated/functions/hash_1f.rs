@@ -82,5 +82,5 @@ pub fn ast_value_1fe8870e96a60dd1(
 /// - Sony::Tag9405b.SonyISO
 /// - Sony::Tag9416.SonyISO
 pub fn ast_print_1f47b524bed353b1(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.0f", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%.0f", std::slice::from_ref(val)))
 }

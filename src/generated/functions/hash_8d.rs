@@ -28,7 +28,10 @@ pub fn ast_print_8d207d64d9ef2b8c(val: &TagValue, ctx: Option<&ExifContext>) -> 
     if val == 1i32 {
         Into::<TagValue>::into("1 Second")
     } else {
-        TagValue::String(crate::core::sprintf_perl("%.0f Seconds", &[val.clone()]))
+        TagValue::String(crate::core::sprintf_perl(
+            "%.0f Seconds",
+            std::slice::from_ref(val),
+        ))
     }
 }
 

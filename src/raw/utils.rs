@@ -333,10 +333,7 @@ fn apply_dimension_priority(
 ) -> (Option<u32>, Option<u32>) {
     use tracing::debug;
 
-    if sub_width.is_some() && sub_height.is_some() {
-        let sub_w = sub_width.unwrap();
-        let sub_h = sub_height.unwrap();
-
+    if let (Some(sub_w), Some(sub_h)) = (sub_width, sub_height) {
         if let (Some(ifd0_w), Some(ifd0_h)) = (ifd0_width, ifd0_height) {
             // Both IFD0 and SubIFD have dimensions - choose the larger one
             let ifd0_pixels = ifd0_w as u64 * ifd0_h as u64;

@@ -67,7 +67,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::Tag9416.MaxFocalLength
 /// - Sony::Tag9416.MinFocalLength
 pub fn ast_print_7cc7a4bf3f82cb33(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.1f mm", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl(
+        "%.1f mm",
+        std::slice::from_ref(val),
+    ))
 }
 
 /// Original perl expression:

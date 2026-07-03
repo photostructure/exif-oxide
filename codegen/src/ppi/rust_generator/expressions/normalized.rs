@@ -38,13 +38,13 @@ pub trait NormalizedAstHandler {
                 let parts: Result<Vec<String>, CodeGenError> = node
                     .children
                     .iter()
-                    .map(|child| self.combine_statement_parts(&[], &[child.clone()]))
+                    .map(|child| self.combine_statement_parts(&[], std::slice::from_ref(child)))
                     .collect();
                 Ok(parts?.join(" "))
             }
             _ => {
                 // Direct node - process it (return expression)
-                self.combine_statement_parts(&[], &[node.clone()])
+                self.combine_statement_parts(&[], std::slice::from_ref(node))
             }
         }
     }
@@ -111,7 +111,7 @@ pub trait NormalizedAstHandler {
                     Ok(format!("\"{string_value}\""))
                 } else {
                     // For complex expressions, delegate back to main combiner
-                    self.combine_statement_parts(&[], &[child.clone()])
+                    self.combine_statement_parts(&[], std::slice::from_ref(child))
                 }
             })
             .collect()
@@ -139,7 +139,7 @@ pub trait NormalizedAstHandler {
         let remaining_args = if node.children.len() > 3 {
             let args: Vec<String> = node.children[3..]
                 .iter()
-                .map(|child| self.process_function_args(&[child.clone()]))
+                .map(|child| self.process_function_args(std::slice::from_ref(child)))
                 .collect::<Result<Vec<_>, _>>()?
                 .into_iter()
                 .flatten()
@@ -277,7 +277,9 @@ pub trait NormalizedAstHandler {
                         let remaining_args = if node.children.len() > 1 {
                             let args: Result<Vec<String>, CodeGenError> = node.children[1..]
                                 .iter()
-                                .map(|child| self.combine_statement_parts(&[], &[child.clone()]))
+                                .map(|child| {
+                                    self.combine_statement_parts(&[], std::slice::from_ref(child))
+                                })
                                 .collect();
                             args?.join(", ")
                         } else {
@@ -306,7 +308,7 @@ pub trait NormalizedAstHandler {
                 let remaining_args = if node.children.len() > 1 {
                     let args: Result<Vec<String>, CodeGenError> = node.children[1..]
                         .iter()
-                        .map(|child| self.combine_statement_parts(&[], &[child.clone()]))
+                        .map(|child| self.combine_statement_parts(&[], std::slice::from_ref(child)))
                         .collect();
                     args?.join(", ")
                 } else {
@@ -322,32 +324,30 @@ pub trait NormalizedAstHandler {
                     )),
                 };
             }
-            "StringRepeat" => {
+            "StringRepeat" if format_arg.children.len() >= 2 => {
                 // Simple string repetition: repeat(string, count)
-                if format_arg.children.len() >= 2 {
-                    let repeat_string = self.extract_string_from_node(&format_arg.children[0])?;
-                    let repeat_count = self.extract_number_from_node(&format_arg.children[1])?;
-                    let combined_format = repeat_string.repeat(repeat_count);
+                let repeat_string = self.extract_string_from_node(&format_arg.children[0])?;
+                let repeat_count = self.extract_number_from_node(&format_arg.children[1])?;
+                let combined_format = repeat_string.repeat(repeat_count);
 
-                    let remaining_args = if node.children.len() > 1 {
-                        let args: Result<Vec<String>, CodeGenError> = node.children[1..]
-                            .iter()
-                            .map(|child| self.combine_statement_parts(&[], &[child.clone()]))
-                            .collect();
-                        args?.join(", ")
-                    } else {
-                        "val".to_string()
-                    };
+                let remaining_args = if node.children.len() > 1 {
+                    let args: Result<Vec<String>, CodeGenError> = node.children[1..]
+                        .iter()
+                        .map(|child| self.combine_statement_parts(&[], std::slice::from_ref(child)))
+                        .collect();
+                    args?.join(", ")
+                } else {
+                    "val".to_string()
+                };
 
-                    return match self.expression_type() {
-                        ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
-                            "TagValue::String(crate::core::sprintf_perl(\"{combined_format}\", &{remaining_args}))"
-                        )),
-                        _ => Ok(format!(
-                            "crate::core::sprintf_perl(\"{combined_format}\", &{remaining_args})"
-                        )),
-                    };
-                }
+                return match self.expression_type() {
+                    ExpressionType::PrintConv | ExpressionType::ValueConv => Ok(format!(
+                        "TagValue::String(crate::core::sprintf_perl(\"{combined_format}\", &{remaining_args}))"
+                    )),
+                    _ => Ok(format!(
+                        "crate::core::sprintf_perl(\"{combined_format}\", &{remaining_args})"
+                    )),
+                };
             }
             _ => {}
         }

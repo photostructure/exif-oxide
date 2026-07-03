@@ -35,5 +35,5 @@ pub fn ast_print_41a9f4269104a464(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Sony::CameraSettings.ImageNumber
 /// - Sony::CameraSettings3.ImageNumber
 pub fn ast_print_41e4fcf67a465f16(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.4d", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%.4d", std::slice::from_ref(val)))
 }

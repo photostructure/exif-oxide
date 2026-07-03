@@ -19,5 +19,8 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Sony::rtmd.MasterGainAdjustment
 pub fn ast_print_1dcf63244ce05a2(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.2f dB", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl(
+        "%.2f dB",
+        std::slice::from_ref(val),
+    ))
 }

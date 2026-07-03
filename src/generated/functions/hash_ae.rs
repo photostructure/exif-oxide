@@ -89,5 +89,5 @@ pub fn ast_print_aef1671fb8224b8c(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// - Panasonic::Subdir.MeasuredLV
 /// - Sony::rtmd.FrameRate
 pub fn ast_print_aec511ac08c0f1fc(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.2f", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%.2f", std::slice::from_ref(val)))
 }

@@ -19,5 +19,5 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Sony::Main.SerialNumber
 pub fn ast_print_1a89f5cf8666b2b2(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.8d", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%.8d", std::slice::from_ref(val)))
 }

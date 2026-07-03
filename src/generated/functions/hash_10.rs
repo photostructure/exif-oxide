@@ -57,7 +57,10 @@ pub fn ast_value_10ca38d85eb04aba(
 /// - Pentax::LensData.LC8
 /// - Pentax::LensData.LensKind
 pub fn ast_print_10d4206d59f12958(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("0x%.2x", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl(
+        "0x%.2x",
+        std::slice::from_ref(val),
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

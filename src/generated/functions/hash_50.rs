@@ -43,7 +43,7 @@ pub fn ast_value_503cb8adfb2500ed(
 /// - Sony::MoreSettings.ISO
 pub fn ast_print_50a2776f078ae807(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     if val.is_truthy() {
-        TagValue::String(crate::core::sprintf_perl("%.0f", &[val.clone()]))
+        TagValue::String(crate::core::sprintf_perl("%.0f", std::slice::from_ref(val)))
     } else {
         Into::<TagValue>::into("Auto")
     }

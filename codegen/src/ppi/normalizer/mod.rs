@@ -20,59 +20,6 @@ pub fn normalize_multi_pass(ast: PpiNode) -> PpiNode {
 pub(crate) mod utils {
     use super::*;
 
-    /// Check if a node represents a ternary operator (? :)
-    pub fn is_ternary(node: &PpiNode) -> bool {
-        if node.class != "PPI::Statement" {
-            return false;
-        }
-
-        let mut has_question = false;
-        let mut has_colon = false;
-
-        for child in &node.children {
-            if child.class == "PPI::Token::Operator" {
-                if let Some(ref content) = child.content {
-                    if content == "?" {
-                        has_question = true;
-                    } else if content == ":" {
-                        has_colon = true;
-                    }
-                }
-            }
-        }
-
-        has_question && has_colon
-    }
-
-    /// Extract parts of a ternary expression
-    pub fn extract_ternary(node: &PpiNode) -> Option<(Vec<PpiNode>, Vec<PpiNode>, Vec<PpiNode>)> {
-        if !is_ternary(node) {
-            return None;
-        }
-
-        let mut condition = Vec::new();
-        let mut true_branch = Vec::new();
-        let mut false_branch = Vec::new();
-        let mut current_part = &mut condition;
-
-        for child in &node.children {
-            if child.class == "PPI::Token::Operator" {
-                if let Some(ref content) = child.content {
-                    if content == "?" {
-                        current_part = &mut true_branch;
-                        continue;
-                    } else if content == ":" {
-                        current_part = &mut false_branch;
-                        continue;
-                    }
-                }
-            }
-            current_part.push(child.clone());
-        }
-
-        Some((condition, true_branch, false_branch))
-    }
-
     /// Create a normalized function call node
     pub fn create_function_call(name: &str, args: Vec<PpiNode>) -> PpiNode {
         PpiNode {

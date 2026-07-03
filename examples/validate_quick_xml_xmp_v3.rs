@@ -171,18 +171,16 @@ fn test_rdf_containers() -> Result<()> {
                     "Bag" => in_bag = true,
                     "Seq" => in_seq = true,
                     "Alt" => in_alt = true,
-                    "li" if in_bag || in_seq || in_alt => {
+                    "li" if in_alt => {
                         // Check for xml:lang attribute in Alt containers
-                        if in_alt {
-                            for attr in e.attributes() {
-                                let attr = attr?;
-                                let (_, attr_local) = reader.resolve_attribute(attr.key);
-                                let attr_name = str::from_utf8(attr_local.as_ref())?;
-                                if attr_name == "lang" {
-                                    let lang = str::from_utf8(&attr.value)?;
-                                    current_lang = lang.to_string();
-                                    alt_items.insert(lang.to_string(), String::new());
-                                }
+                        for attr in e.attributes() {
+                            let attr = attr?;
+                            let (_, attr_local) = reader.resolve_attribute(attr.key);
+                            let attr_name = str::from_utf8(attr_local.as_ref())?;
+                            if attr_name == "lang" {
+                                let lang = str::from_utf8(&attr.value)?;
+                                current_lang = lang.to_string();
+                                alt_items.insert(lang.to_string(), String::new());
                             }
                         }
                     }

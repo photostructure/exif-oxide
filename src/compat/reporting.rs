@@ -81,11 +81,9 @@ impl CompatibilityReport {
             + self.missing_tags.len()
             + self.dependency_failures.len()
             + self.type_mismatches.len();
-        let success_rate = if self.total_tags_tested > 0 {
-            (self.working_tags.len() * 100) / self.total_tags_tested
-        } else {
-            0
-        };
+        let success_rate = (self.working_tags.len() * 100)
+            .checked_div(self.total_tags_tested)
+            .unwrap_or(0);
 
         let sample_size = 30;
 

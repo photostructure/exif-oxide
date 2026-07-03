@@ -21,7 +21,10 @@ use crate::types::{ExifContext, TagValue};
 /// - Sony::Tag9400b.ModelReleaseYear
 /// - Sony::Tag9400c.ModelReleaseYear
 pub fn ast_print_705d9237f5fcef3b(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("20%.2d", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl(
+        "20%.2d",
+        std::slice::from_ref(val),
+    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

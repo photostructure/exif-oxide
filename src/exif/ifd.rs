@@ -795,23 +795,22 @@ impl ExifReader {
                     //
                     // ExifTool: lib/Image/ExifTool/Olympus.pm lines 1157-1168
                     // "Olympus really screwed up the format... the count is 2 bytes short"
-                    let subdirectory_offset = if ifd_name == "MakerNotes"
-                        && self.maker_notes_original_offset.is_some()
-                    {
-                        // Use the original MakerNotes position for offset calculation
-                        let original_offset = self.maker_notes_original_offset.unwrap();
-                        debug!(
-                            "Adjusting subdirectory offset using original MakerNotes position: {:#x} + {:#x} = {:#x}",
-                            original_offset, value, original_offset + value as usize
-                        );
-                        (original_offset + value as usize) as u32
-                    } else if ifd_name == "MakerNotes" {
-                        // Fallback if we don't have the original offset
-                        debug!(
-                            "Adjusting subdirectory offset for MakerNotes context: {:#x} + {:#x} = {:#x}",
-                            ifd_offset, value, ifd_offset + value as usize
-                        );
-                        (ifd_offset + value as usize) as u32
+                    let subdirectory_offset = if ifd_name == "MakerNotes" {
+                        if let Some(original_offset) = self.maker_notes_original_offset {
+                            // Use the original MakerNotes position for offset calculation
+                            debug!(
+                                "Adjusting subdirectory offset using original MakerNotes position: {:#x} + {:#x} = {:#x}",
+                                original_offset, value, original_offset + value as usize
+                            );
+                            (original_offset + value as usize) as u32
+                        } else {
+                            // Fallback if we don't have the original offset
+                            debug!(
+                                "Adjusting subdirectory offset for MakerNotes context: {:#x} + {:#x} = {:#x}",
+                                ifd_offset, value, ifd_offset + value as usize
+                            );
+                            (ifd_offset + value as usize) as u32
+                        }
                     } else {
                         value
                     };

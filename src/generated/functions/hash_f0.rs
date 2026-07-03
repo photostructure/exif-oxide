@@ -48,7 +48,7 @@ use crate::types::{ExifContext, TagValue};
 /// - KyoceraRaw::Main.FNumber
 /// - KyoceraRaw::Main.MaxAperture
 pub fn ast_print_f013e387a9d36985(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("%.2g", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("%.2g", std::slice::from_ref(val)))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

@@ -10,14 +10,6 @@ mod expression_precedence;
 mod conditional_statements;
 mod sneaky_conditional_assignment;
 
-// LEGACY NORMALIZERS: Kept for reference but no longer used in active pipeline
-mod binary_operators;
-mod function_calls;
-mod join_unpack;
-mod safe_division;
-mod string_ops;
-mod ternary;
-
 // ACTIVE EXPORTS: Only the normalizers used in the current pipeline
 pub use conditional_statements::ConditionalStatementsNormalizer;
 pub use expression_precedence::ExpressionPrecedenceNormalizer;

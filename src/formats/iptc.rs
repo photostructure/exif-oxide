@@ -262,7 +262,7 @@ pub fn parse_iptc_from_app13(app13_data: &[u8]) -> Result<HashMap<String, TagVal
         pos += 2;
 
         // Skip name data (padded to even boundary)
-        let padded_name_length = if name_length % 2 == 0 {
+        let padded_name_length = if name_length.is_multiple_of(2) {
             name_length
         } else {
             name_length + 1
@@ -310,7 +310,7 @@ pub fn parse_iptc_from_app13(app13_data: &[u8]) -> Result<HashMap<String, TagVal
         }
 
         // Skip to next Image Resource Block (data padded to even boundary)
-        let padded_data_length = if data_length % 2 == 0 {
+        let padded_data_length = if data_length.is_multiple_of(2) {
             data_length
         } else {
             data_length + 1

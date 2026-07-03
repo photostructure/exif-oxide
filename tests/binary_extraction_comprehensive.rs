@@ -221,7 +221,7 @@ impl ComprehensiveResults {
 
             // Sort by failure count (most common failures first)
             let mut failure_entries: Vec<_> = self.failures_by_mime_tag.iter().collect();
-            failure_entries.sort_by(|(_, files_a), (_, files_b)| files_b.len().cmp(&files_a.len()));
+            failure_entries.sort_by_key(|(_, files)| std::cmp::Reverse(files.len()));
 
             for (mime_tag, failing_files) in failure_entries {
                 println!("\n❌ {} ({} files failing)", mime_tag, failing_files.len());

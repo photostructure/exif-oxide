@@ -23,6 +23,9 @@ pub fn ast_print_1ed22ecb53d91772(val: &TagValue, ctx: Option<&ExifContext>) -> 
     if val == 0i32 {
         Into::<TagValue>::into("No Delay")
     } else {
-        TagValue::String(crate::core::sprintf_perl("%.0f sec", &[val.clone()]))
+        TagValue::String(crate::core::sprintf_perl(
+            "%.0f sec",
+            std::slice::from_ref(val),
+        ))
     }
 }

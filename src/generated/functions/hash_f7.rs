@@ -20,5 +20,5 @@ use crate::types::{ExifContext, TagValue};
 /// - JPEG::NITF.Flags
 /// - Olympus::Equipment.LensProperties
 pub fn ast_print_f7d9673b93ac13f(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    TagValue::String(crate::core::sprintf_perl("0x%x", &[val.clone()]))
+    TagValue::String(crate::core::sprintf_perl("0x%x", std::slice::from_ref(val)))
 }
