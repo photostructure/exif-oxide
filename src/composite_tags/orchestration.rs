@@ -53,6 +53,21 @@ fn compute_composite_value(
 ) -> Option<TagValue> {
     use crate::core::COMPOSITE_FALLBACKS;
 
+    // GPSPosition special case.
+    // ExifTool (Exif.pm:5290) builds GPSPosition from the SIGNED Composite
+    // GPSLatitude/GPSLongitude ValueConv results ('"$val[0] $val[1]"'). Its Require list is only
+    // [GPSLatitude, GPSLongitude] (no *Ref tags), so the dependency arrays cannot carry the
+    // west/south sign, and the signed GPS-module composites lose the name-keyed registry
+    // collision with the Sony/QuickTime GPSLatitude defs. Compute directly from the full tag map
+    // so the sign is applied and each coordinate is stringified with Perl's %.15g formatting.
+    if composite_def.name == "GPSPosition" {
+        let simple_map: HashMap<String, TagValue> = available_tags
+            .iter()
+            .map(|(k, v)| (k.clone(), v.val.clone()))
+            .collect();
+        return crate::core::composite_fallbacks::compute_gps_position(&simple_map);
+    }
+
     // Get the dependency arrays - now properly separated into raw/val/prt
     // ExifTool: lib/Image/ExifTool.pm:3553-3560
     let (vals, prts, raws) =

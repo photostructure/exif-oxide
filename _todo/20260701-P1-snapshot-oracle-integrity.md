@@ -24,6 +24,41 @@ against.
 - [ ] Review & Refinement
 - [ ] Final Integration
 
+## Session log (2026-07-02)
+
+- **State changed since authoring**: the version-catchup TPP is DONE
+  (commit `f2bdb304`) — snapshots are now regenerated with **13.59**
+  (all 379 carry `"ExifToolVersion": 13.59`), and compat stands at
+  **43% (83/191): 87 missing, 16 type mismatches, 5 only-in-exif-oxide**
+  → Task 5's triage surface is ~104 gaps, expect the allowlist to lean
+  on category-level reasons (video-blocked tags, binary-extraction,
+  etc.) with references, not 104 hand-written essays.
+- Expected snapshot-churn items from the 13.59 bump (from catchup TPP
+  triage): FujiFilm `RAFVersion`→`FirmwareVersion`, Pentax
+  `AFInfo`→`AFInfoK3III`, Nikon burst-tag rework, composite
+  `FocalLength35efl` Description change.
+- **Task 1 + the GPSPosition fix are being executed together** (the
+  breaking test doubles as program work-item #4's fix gate; fix
+  delegated 2026-07-02). The runbook `docs/guides/EXIFTOOL-UPGRADE.md`
+  §8–9 already documents regen-with-submodule-exiftool + baseline
+  comparison (Task 7's cross-reference target).
+- **GPSPosition fix LANDED (review-gated)**: byte-exact vs snapshots on
+  both acceptance images; compat 83→84 working, type mismatches 16→15.
+  Three root causes: (a) unsigned EXIF coords fed to GPSPosition because
+  the signed GPS-module composites lose a name-keyed `COMPOSITE_TAGS`
+  registry collision (GPS vs Sony vs QuickTime — follow-up in program
+  TPP); (b) Rust default float formatting vs Perl `%.15g`
+  (`format_perl_number` added); (c) ExifTool rounds every rational read
+  to 10 sig-figs (`GetRational64u`→`RoundFloat`; `round_float` ported).
+  Breaking test lives in `tests/snapshot_oracle_tests.rs` (this TPP's
+  Task 1 — extend that file for the assertive-oracle work).
+- **Review verdicts (codex + orchestrator ground-truth check)**: both
+  findings ACCEPTED — (1) zero-denominator rationals must invalidate the
+  whole coordinate (`GPS.pm:585` returns `''` on `inf|undef`;
+  `GetRational64u` yields those strings), we wrongly treated them as 0.0;
+  (2) non-finite Perl casing is `Inf`/`NaN`, not `inf`/`nan`. Fixes +
+  pinning tests applied before commit.
+
 ## Required reading
 - [TDD.md](../docs/TDD.md) — start with a failing test, this TPP's Task 1 IS that test
 - [TRUST-EXIFTOOL.md](../docs/TRUST-EXIFTOOL.md) — section 5 "Allowed deviations" is the

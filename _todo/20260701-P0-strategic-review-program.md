@@ -89,7 +89,8 @@ tier, and land the reliability foundations as discrete TPPs.
 | # | Work item | Where | Status |
 |---|-----------|-------|--------|
 | 0 | Docs/planning re-scope (MILESTONES.md, scope language, TPP migration, TODO rewrite) | commits `9e72960e`, `dcc38b20` | ✅ DONE 2026-07-01 |
-| 1 | ExifTool v13.43→13.59+ catch-up + `docs/guides/EXIFTOOL-UPGRADE.md` runbook | `_done/20260701-P0-exiftool-version-catchup.md`, commit `f2bdb304` | ✅ DONE 2026-07-02 (zero ports needed; 3 codegen bugs fixed; compat 42%→43%; lint-rot cleanup follow-up pending) |
+| 1 | ExifTool v13.43→13.59+ catch-up + `docs/guides/EXIFTOOL-UPGRADE.md` runbook | `_done/20260701-P0-exiftool-version-catchup.md`, commit `f2bdb304` | ✅ DONE 2026-07-02 (zero ports needed; 3 codegen bugs fixed; compat 42%→43%) |
+| 1b | Pre-existing lint rot (75 clippy errors at HEAD from toolchain upgrade) | commit `7fa2fd78` | ✅ DONE 2026-07-02 (`make lint` gates again; deleted 6 dead legacy normalizer passes) |
 | 2 | Snapshot-oracle integrity (make compat test assert; allowlist; version-skew guard) | `_todo/20260701-P1-snapshot-oracle-integrity.md` | ⬜ not started (sequence after or with #1 — snapshots regenerate during the bump) |
 | 3 | cargo-fuzz infrastructure | `_todo/20260701-P1-fuzzing-infrastructure.md` | ⬜ not started (independent; parallelizable) |
 | 4 | GPSPosition composite sign bug | `_todo/P03-implementation-backlog.md` (Next Steps) | ⬜ open (small, well-diagnosed) |
@@ -113,6 +114,21 @@ tier, and land the reliability foundations as discrete TPPs.
 - **Ground truth** for disputed findings: real ExifTool — the vendored
   `third-party/exiftool/exiftool` script and
   `cargo run --bin compare-with-exiftool <image> [group]`.
+
+## Follow-up candidates (small, non-blocking; found 2026-07-02)
+
+- **codegen should prune stale `src/generated/` files** — staleness turned
+  two 13.59 codegen bugs into build breaks (details in
+  `_done/20260701-P0-exiftool-version-catchup.md`).
+- **codegen-internal lint debt**: `make lint` only covers codegen's LIB;
+  its bins/tests/examples carry their own toolchain-lint debt visible via
+  `cd codegen && cargo clippy --all-targets`. Decide: widen make lint or
+  accept the scope.
+- **Orphan file**: `codegen/src/ppi/normalizer/passes/binary_operators_improved.rs`
+  is not declared as a `mod` anywhere (never compiles). Delete or wire in.
+- **tag_kit fractional-key limitation**: bit-field subtags (`4.1`) are
+  dropped from all ProcessBinaryData tables; fine while out of supported
+  scope (vetoed as a 13.59 regression — see catchup TPP post-review).
 
 ## Open questions (user decisions pending)
 

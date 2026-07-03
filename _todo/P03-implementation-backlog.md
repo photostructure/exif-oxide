@@ -3,7 +3,8 @@
 **Verified 2026-07-01**: Of the 3 "Known Bugs" listed below, 2 are already fixed and 1 remains open:
 - Megapixels sprintf: FIXED. `cargo run -- third-party/exiftool/t/images/Canon.jpg` and 3 other test images all show numeric values matching `exiftool -Megapixels`, not literal `"%.*f"`.
 - ShutterSpeed fallback: FIXED. Checked against 4 test images (Canon.jpg, Nikon.jpg, Sony.jpg, iPhone samples) - all match `exiftool -ShutterSpeed` exactly (e.g. "1/332", "1/213"), not "1/1".
-- GPSPosition sign: STILL BROKEN. `cargo run -- test-images/apple/IMG_3755.JPG` shows `"Composite:GPSPosition": "37.52583939995588 122.45673460002102"` (positive longitude) vs ExifTool's `"37.5258393999556 -122.456734600022"` (negative, correct for West). Root cause: `composite_gps_position()` in `src/core/composite_fallbacks.rs:391-408` concatenates `vals[0]`/`vals[1]` directly with `format!("{} {}", lat_val, lon_val)`, but the values it receives are not sign-adjusted for hemisphere (N/S, E/W) the way ExifTool's `Composite:GPSLatitude`/`Composite:GPSLongitude` are before being fed into `Composite:GPSPosition` (Exif.pm:5165-5196).
+- GPSPosition sign: ✅ FIXED 2026-07-02 (with %.15g formatting + ExifTool RoundFloat 10-sig-fig rational rounding; byte-exact vs snapshots on iphone_13_pro.jpg and IMG_3755.JPG; tests in tests/snapshot_oracle_tests.rs). Original diagnosis below for history. Follow-up discovered: name-keyed COMPOSITE_TAGS registry collision suppresses Composite:GPSLatitude/GPSLongitude/GPSAltitude/GPSDateTime (GPS vs Sony vs QuickTime defs) — see program TPP follow-ups.
+- (historical) GPSPosition sign: was broken. `cargo run -- test-images/apple/IMG_3755.JPG` shows `"Composite:GPSPosition": "37.52583939995588 122.45673460002102"` (positive longitude) vs ExifTool's `"37.5258393999556 -122.456734600022"` (negative, correct for West). Root cause: `composite_gps_position()` in `src/core/composite_fallbacks.rs:391-408` concatenates `vals[0]`/`vals[1]` directly with `format!("{} {}", lat_val, lon_val)`, but the values it receives are not sign-adjusted for hemisphere (N/S, E/W) the way ExifTool's `Composite:GPSLatitude`/`Composite:GPSLongitude` are before being fed into `Composite:GPSPosition` (Exif.pm:5165-5196).
 
 **Prerequisites** (both long since satisfied - P01/P02 never had standalone files):
 
@@ -97,7 +98,7 @@ Format fixes for basic EXIF tags are working. Remaining format issues are compos
 | ------------ | -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | Megapixels   | Was: shows `"%.*f"` instead of number                     | ✅ FIXED - verified against 4 test images, matches ExifTool exactly                                          |
 | ShutterSpeed | Was: shows "1/1" instead of correct value                 | ✅ FIXED - verified against 4 test images, matches ExifTool exactly                                          |
-| GPSPosition  | Wrong sign on longitude (missing hemisphere sign flip)    | 🔴 OPEN - see verification note above; fix in `composite_gps_position()` (`src/core/composite_fallbacks.rs:391`) |
+| GPSPosition  | Wrong sign on longitude (missing hemisphere sign flip)    | ✅ FIXED 2026-07-02 - compute_gps_position rewrite in composite_fallbacks.rs + orchestration special-case |
 
 ---
 

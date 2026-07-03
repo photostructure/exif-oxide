@@ -177,6 +177,25 @@ pub fn int<T: Into<TagValue>>(val: T) -> TagValue {
     }
 }
 
+/// ExifTool's RoundFloat: round `val` to `sig` significant digits.
+///
+/// ExifTool: lib/Image/ExifTool.pm:5960 `sub RoundFloat { sprintf("%.${sig}g", $val) }`.
+/// This is applied to every rational value as it is read
+/// (lib/Image/ExifTool.pm:6114 `GetRational64u` returns `RoundFloat($num/$den, 10)`),
+/// so downstream math (e.g. GPS decimal-degree conversion) combines 10-significant-digit
+/// components rather than full-precision divisions. We must match this to reproduce
+/// ExifTool's exact floating-point results.
+///
+/// `%.Ng` and `%.{N-1}e` produce the same numeric value (both round to N significant
+/// digits), so we format in scientific notation and parse back to recover the rounded f64.
+pub fn round_float(val: f64, sig: usize) -> f64 {
+    if !val.is_finite() || val == 0.0 {
+        return val;
+    }
+    let precision = sig.max(1) - 1;
+    format!("{val:.precision$e}").parse::<f64>().unwrap_or(val)
+}
+
 /// Perl abs() function - absolute value
 ///
 /// Returns the absolute value of a number, following Perl's behavior.

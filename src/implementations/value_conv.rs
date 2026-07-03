@@ -20,32 +20,32 @@ use crate::types::{ExifContext, ExifError, Result, TagValue};
 pub fn gps_coordinate_value_conv(value: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
     match value {
         TagValue::RationalArray(coords) if coords.len() >= 3 => {
-            // ExifTool's ToDegrees extracts 3 numeric values using regex:
-            // my ($d, $m, $s) = ($val =~ /((?:[+-]?)(?=\d|\.\d)\d*(?:\.\d*)?(?:[Ee][+-]\d+)?)/g);
-            // For rational arrays, we can extract directly as decimals
+            // A zero denominator invalidates the whole coordinate. ExifTool reads each
+            // rational64u via GetRational64u, which returns the STRING 'inf' (num!=0) or
+            // 'undef' (num==0) when the denominator is zero (lib/Image/ExifTool.pm:6114).
+            // GPS::ToDegrees then bails on the entire coordinate:
+            //   `return '' if $val =~ /\b(inf|undef)\b/`  (lib/Image/ExifTool/GPS.pm:585)
+            // so such a component suppresses the coordinate rather than counting as zero.
+            // ToDegrees returns '' — a DEFINED empty string, not undef — so we mirror it
+            // with an empty String (renders as "" like ExifTool, and flows through as an
+            // absent coordinate: as_f64() -> None; see compute_gps_position).
+            if coords.iter().any(|(_, den)| *den == 0) {
+                return Ok(TagValue::String(String::new()));
+            }
 
-            // Extract degrees (first rational)
-            let degrees = if coords[0].1 != 0 {
-                coords[0].0 as f64 / coords[0].1 as f64
-            } else {
-                0.0 // ExifTool uses 0 for undefined values
-            };
+            // ExifTool reads each rational64u via GetRational64u = RoundFloat($num/$den, 10):
+            // every component is rounded to 10 significant digits before ToDegrees combines
+            // them, so our decimal degrees are bit-identical to ExifTool's (e.g. 49896/1511
+            // -> 33.02183984, not 33.021839841...). ExifTool: lib/Image/ExifTool.pm:5960 RoundFloat
+            let component =
+                |num: u32, den: u32| crate::core::math::round_float(num as f64 / den as f64, 10);
 
-            // Extract minutes (second rational)
-            let minutes = if coords.len() > 1 && coords[1].1 != 0 {
-                coords[1].0 as f64 / coords[1].1 as f64
-            } else {
-                0.0 // ExifTool: ($m || 0)
-            };
-
-            // Extract seconds (third rational)
-            let seconds = if coords.len() > 2 && coords[2].1 != 0 {
-                coords[2].0 as f64 / coords[2].1 as f64
-            } else {
-                0.0 // ExifTool: ($s || 0)/60
-            };
-
-            // ExifTool formula: $deg = $d + (($m || 0) + ($s || 0)/60) / 60;
+            // ExifTool's ToDegrees extracts ($d, $m, $s) via regex and computes
+            // $deg = $d + (($m || 0) + ($s || 0)/60) / 60  (lib/Image/ExifTool/GPS.pm:597).
+            // coords.len() >= 3 is guaranteed by the match guard.
+            let degrees = component(coords[0].0, coords[0].1);
+            let minutes = component(coords[1].0, coords[1].1);
+            let seconds = component(coords[2].0, coords[2].1);
             let decimal_degrees = degrees + ((minutes + seconds / 60.0) / 60.0);
 
             Ok(TagValue::F64(decimal_degrees))
@@ -523,18 +523,24 @@ mod tests {
     }
 
     #[test]
-    fn test_gps_coordinate_zero_denominators() {
-        // Test handling of zero denominators (should be treated as 0)
-        let coords = vec![(40, 1), (30, 0), (45, 1)]; // minutes has zero denominator
+    fn test_gps_coordinate_zero_denominator_invalidates() {
+        // A zero-denominator component invalidates the ENTIRE coordinate.
+        // ExifTool: GetRational64u returns 'inf'/'undef' for a zero denominator
+        // (lib/Image/ExifTool.pm:6114) and GPS::ToDegrees does
+        //   `return '' if $val =~ /\b(inf|undef)\b/`  (lib/Image/ExifTool/GPS.pm:585).
+        // So [12/1, 1/0, 0/1] must NOT compute to 12 (the pre-fix behavior) - it is suppressed.
+        let coords = vec![(12, 1), (1, 0), (0, 1)];
         let coord_value = TagValue::RationalArray(coords);
 
         let result = gps_coordinate_value_conv(&coord_value, None).unwrap();
-        if let TagValue::F64(decimal) = result {
-            // 40 + 0/60 + 45/3600 = 40.0125
-            assert!((decimal - 40.0125).abs() < 0.0001);
-        } else {
-            panic!("Expected F64 result");
-        }
+        // ToDegrees returns '' (a defined empty string, not undef) - mirror it exactly.
+        assert_eq!(
+            result,
+            TagValue::String(String::new()),
+            "zero-denominator component must invalidate the coordinate (GPS.pm:585), got {result:?}"
+        );
+        // And it must flow through as an absent coordinate, not a numeric 0/12.
+        assert_eq!(result.as_f64(), None);
     }
 
     #[test]

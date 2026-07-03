@@ -62,7 +62,8 @@ pub static COMPOSITE_FALLBACKS: LazyLock<HashMap<&'static str, CompositeFallback
                 composite_gps_longitude as CompositeFallbackFn,
             ),
             ("GPSAltitude", composite_gps_altitude as CompositeFallbackFn),
-            ("GPSPosition", composite_gps_position as CompositeFallbackFn),
+            // GPSPosition is computed in orchestration.rs from the full tag map (it needs the
+            // *Ref tags for the sign, which are not in its Require list). See compute_gps_position.
             ("GPSDateTime", composite_gps_datetime as CompositeFallbackFn),
             // DateTime composites - need subsec/offset handling
             (
@@ -384,27 +385,6 @@ pub fn composite_gps_altitude(
     };
 
     Ok(TagValue::F64(signed_altitude))
-}
-
-/// GPSPosition composite
-/// ExifTool: lib/Image/ExifTool/Exif.pm:5165-5196
-pub fn composite_gps_position(
-    vals: &[TagValue],
-    _prts: &[TagValue],
-    _raws: &[TagValue],
-    _ctx: Option<&ExifContext>,
-) -> Result<TagValue> {
-    let lat = vals.first().and_then(|v| v.as_f64());
-    let lon = vals.get(1).and_then(|v| v.as_f64());
-
-    match (lat, lon) {
-        (Some(lat_val), Some(lon_val)) => Ok(TagValue::string(format!("{} {}", lat_val, lon_val))),
-        (Some(lat_val), None) => Ok(TagValue::string(format!("{} 0", lat_val))),
-        (None, Some(lon_val)) => Ok(TagValue::string(format!("0 {}", lon_val))),
-        (None, None) => Err(ExifError::ParseError(
-            "GPSPosition requires at least one coordinate".to_string(),
-        )),
-    }
 }
 
 /// GPSDateTime composite
@@ -1343,32 +1323,115 @@ pub fn compute_gps_altitude(available_tags: &HashMap<String, TagValue>) -> Optio
     Some(TagValue::F64(signed_altitude))
 }
 
-/// Compute GPSPosition composite (HashMap interface)
-pub fn compute_gps_position(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
-    let lat_value = available_tags.get("GPSLatitude").and_then(|v| v.as_f64());
-    let lon_value = available_tags.get("GPSLongitude").and_then(|v| v.as_f64());
+/// Stringify an f64 the way Perl stringifies a number, i.e. `sprintf "%.15g"`.
+///
+/// ExifTool interpolates numeric ValueConv results into strings using Perl's default
+/// number-to-string conversion. For a double, Perl uses `%.15g` (NV_DIG = 15). Rust's default
+/// `f64` Display emits the shortest round-tripping form (up to 17 significant digits), which
+/// does not match — e.g. `40.5935972222222` (ExifTool) vs `40.59359722222222` (Rust). This
+/// reproduces `%.15g` so composite string values such as GPSPosition match ExifTool exactly.
+fn format_perl_number(value: f64) -> String {
+    format_g(value, 15)
+}
 
-    match (lat_value, lon_value) {
-        (Some(lat), Some(lon)) => Some(TagValue::string(format!("{} {}", lat, lon))),
-        (Some(lat), None) => Some(TagValue::string(format!("{} 0", lat))),
-        (None, Some(lon)) => Some(TagValue::string(format!("0 {}", lon))),
-        (None, None) => None,
+/// C-style `%g` formatting with `precision` significant digits (trailing zeros stripped).
+fn format_g(value: f64, precision: usize) -> String {
+    if value == 0.0 {
+        return "0".to_string(); // Perl prints both 0.0 and -0.0 as "0"
+    }
+    if !value.is_finite() {
+        // Perl stringifies non-finite doubles capitalized: "Inf", "-Inf", "NaN"
+        // (verified: `perl -e 'my $x = 9**9**9; print "$x"'` -> Inf).
+        return if value.is_nan() {
+            "NaN".to_string()
+        } else if value > 0.0 {
+            "Inf".to_string()
+        } else {
+            "-Inf".to_string()
+        };
+    }
+
+    let p = precision.max(1);
+    // Round to `p` significant digits via scientific notation and read back the exponent.
+    let sci = format!("{:.*e}", p - 1, value);
+    let exp: i32 = sci
+        .rsplit('e')
+        .next()
+        .and_then(|e| e.parse().ok())
+        .unwrap_or(0);
+
+    // %g rule: use exponential form when exp < -4 or exp >= precision, else fixed notation.
+    if exp < -4 || exp >= p as i32 {
+        let (mantissa, exp_part) = sci.split_once('e').unwrap_or((sci.as_str(), "0"));
+        let mantissa = strip_trailing_zeros(mantissa);
+        let exp_num: i32 = exp_part.parse().unwrap_or(0);
+        let sign = if exp_num < 0 { '-' } else { '+' };
+        format!("{mantissa}e{sign}{:02}", exp_num.abs())
+    } else {
+        let decimals = (p as i32 - 1 - exp).max(0) as usize;
+        strip_trailing_zeros(&format!("{value:.decimals$}"))
     }
 }
 
-/// Compute GPSLatitude composite (HashMap interface)
-pub fn compute_gps_latitude(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
-    let latitude = available_tags
-        .get("GPS:GPSLatitude")
-        .or_else(|| available_tags.get("EXIF:GPSLatitude"))
-        .or_else(|| available_tags.get("GPSLatitude"))?;
-    let latitude_ref = available_tags
-        .get("GPS:GPSLatitudeRef")
-        .or_else(|| available_tags.get("EXIF:GPSLatitudeRef"))
-        .or_else(|| available_tags.get("GPSLatitudeRef"))?;
+/// Drop trailing fractional zeros (and a dangling decimal point), matching `%g`.
+fn strip_trailing_zeros(s: &str) -> String {
+    if s.contains('.') {
+        s.trim_end_matches('0').trim_end_matches('.').to_string()
+    } else {
+        s.to_string()
+    }
+}
 
-    let lat_value = latitude.as_f64()?;
-    let ref_str = latitude_ref.as_string()?;
+/// Look up a GPS coordinate/ref tag under any of its group-prefixed spellings.
+///
+/// GPS IFD tags carry Group0=EXIF, Group1=GPS (lib/Image/ExifTool/GPS.pm), so depending on
+/// which map builder populated `available_tags` the same value may be keyed as
+/// "GPS:GPSLatitude", "EXIF:GPSLatitude", or the bare "GPSLatitude".
+fn gps_tag<'a>(available_tags: &'a HashMap<String, TagValue>, base: &str) -> Option<&'a TagValue> {
+    available_tags
+        .get(&format!("GPS:{base}"))
+        .or_else(|| available_tags.get(&format!("EXIF:{base}")))
+        .or_else(|| available_tags.get(base))
+}
+
+/// Compute GPSPosition composite (HashMap interface)
+///
+/// ExifTool: lib/Image/ExifTool/Exif.pm:5290 GPSPosition
+///   ValueConv => '(length($val[0]) or length($val[1])) ? "$val[0] $val[1]" : undef'
+///
+/// `$val[0]`/`$val[1]` are the ValueConv results of the *Composite* GPSLatitude/GPSLongitude
+/// (GPS.pm), i.e. the signed decimal degrees (west/south negative), interpolated into the
+/// string with Perl's default number stringification (equivalent to `sprintf "%.15g"`).
+///
+/// We therefore reuse the signed [`compute_gps_latitude`]/[`compute_gps_longitude`] logic and
+/// stringify each with [`format_perl_number`]. When a *Ref tag is absent the signed composite
+/// cannot be built, so we fall back to the unsigned EXIF coordinate — matching ExifTool, whose
+/// `$val[n]` then resolves to the EXIF tag of the same name.
+pub fn compute_gps_position(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    let lat = compute_gps_latitude(available_tags)
+        .and_then(|v| v.as_f64())
+        .or_else(|| gps_tag(available_tags, "GPSLatitude").and_then(|v| v.as_f64()));
+    let lon = compute_gps_longitude(available_tags)
+        .and_then(|v| v.as_f64())
+        .or_else(|| gps_tag(available_tags, "GPSLongitude").and_then(|v| v.as_f64()));
+
+    // ExifTool interpolates undef coordinates as the empty string ("$val[0] $val[1]").
+    let lat_str = lat.map(format_perl_number).unwrap_or_default();
+    let lon_str = lon.map(format_perl_number).unwrap_or_default();
+
+    // ExifTool guard: (length($val[0]) or length($val[1]))
+    if lat_str.is_empty() && lon_str.is_empty() {
+        return None;
+    }
+
+    Some(TagValue::string(format!("{lat_str} {lon_str}")))
+}
+
+/// Compute GPSLatitude composite (HashMap interface)
+/// ExifTool: lib/Image/ExifTool/GPS.pm ValueConv '$val[1] =~ /^S/i ? -$val[0] : $val[0]'
+pub fn compute_gps_latitude(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
+    let lat_value = gps_tag(available_tags, "GPSLatitude")?.as_f64()?;
+    let ref_str = gps_tag(available_tags, "GPSLatitudeRef")?.as_string()?;
 
     let signed = if ref_str.to_lowercase().starts_with('s') {
         -lat_value
@@ -1380,18 +1443,10 @@ pub fn compute_gps_latitude(available_tags: &HashMap<String, TagValue>) -> Optio
 }
 
 /// Compute GPSLongitude composite (HashMap interface)
+/// ExifTool: lib/Image/ExifTool/GPS.pm ValueConv '$val[1] =~ /^W/i ? -$val[0] : $val[0]'
 pub fn compute_gps_longitude(available_tags: &HashMap<String, TagValue>) -> Option<TagValue> {
-    let longitude = available_tags
-        .get("GPS:GPSLongitude")
-        .or_else(|| available_tags.get("EXIF:GPSLongitude"))
-        .or_else(|| available_tags.get("GPSLongitude"))?;
-    let longitude_ref = available_tags
-        .get("GPS:GPSLongitudeRef")
-        .or_else(|| available_tags.get("EXIF:GPSLongitudeRef"))
-        .or_else(|| available_tags.get("GPSLongitudeRef"))?;
-
-    let lon_value = longitude.as_f64()?;
-    let ref_str = longitude_ref.as_string()?;
+    let lon_value = gps_tag(available_tags, "GPSLongitude")?.as_f64()?;
+    let ref_str = gps_tag(available_tags, "GPSLongitudeRef")?.as_string()?;
 
     let signed = if ref_str.to_lowercase().starts_with('w') {
         -lon_value
@@ -2153,4 +2208,77 @@ pub fn compute_duration(available_tags: &HashMap<String, TagValue>) -> Option<Ta
     }
 
     None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn perl_number_matches_percent_15g() {
+        // ExifTool stringifies GPS ValueConv doubles with Perl's default %.15g.
+        // Rust's default Display would emit an extra digit for these values.
+        assert_eq!(format_perl_number(40.59359722222222), "40.5935972222222");
+        assert_eq!(format_perl_number(-122.38015), "-122.38015");
+        assert_eq!(format_perl_number(122.456734600022), "122.456734600022");
+        assert_eq!(format_perl_number(148.0275536), "148.0275536");
+        // Integers and sign edge cases.
+        assert_eq!(format_perl_number(0.0), "0");
+        assert_eq!(format_perl_number(-0.0), "0");
+        assert_eq!(format_perl_number(42.0), "42");
+    }
+
+    #[test]
+    fn gps_position_applies_sign_and_perl_formatting() {
+        // West longitude must be negated; both coordinates use %.15g.
+        let mut tags = HashMap::new();
+        tags.insert(
+            "EXIF:GPSLatitude".to_string(),
+            TagValue::F64(40.59359722222222),
+        );
+        tags.insert("EXIF:GPSLatitudeRef".to_string(), TagValue::string("N"));
+        tags.insert("EXIF:GPSLongitude".to_string(), TagValue::F64(122.38015));
+        tags.insert("EXIF:GPSLongitudeRef".to_string(), TagValue::string("W"));
+
+        let pos = compute_gps_position(&tags).expect("GPSPosition should compute");
+        assert_eq!(pos.as_string().unwrap(), "40.5935972222222 -122.38015");
+    }
+
+    #[test]
+    fn gps_position_falls_back_to_unsigned_without_ref() {
+        // No *Ref: ExifTool's Composite GPS(Lat|Lon) cannot build, so GPSPosition uses the
+        // unsigned EXIF coordinate rather than dropping the tag.
+        let mut tags = HashMap::new();
+        tags.insert("EXIF:GPSLatitude".to_string(), TagValue::F64(40.5));
+        tags.insert("EXIF:GPSLongitude".to_string(), TagValue::F64(122.5));
+
+        let pos = compute_gps_position(&tags).expect("GPSPosition should still compute");
+        assert_eq!(pos.as_string().unwrap(), "40.5 122.5");
+    }
+
+    #[test]
+    fn perl_number_non_finite_casing() {
+        // Perl stringifies non-finite doubles capitalized (Inf/-Inf/NaN), not inf/nan.
+        // Verified: `perl -e 'my $x = 9**9**9; print "$x"'` -> Inf.
+        assert_eq!(format_perl_number(f64::INFINITY), "Inf");
+        assert_eq!(format_perl_number(f64::NEG_INFINITY), "-Inf");
+        assert_eq!(format_perl_number(f64::NAN), "NaN");
+    }
+
+    #[test]
+    fn gps_position_renders_empty_side_when_one_coordinate_invalid() {
+        // When one coordinate is invalidated (ExifTool GPS::ToDegrees returns '' -> our
+        // TagValue::String("")), GPSPosition keeps ExifTool's length()-based join semantics
+        // ('"$val[0] $val[1]"', Exif.pm:5290): the empty side still renders with the
+        // separating space rather than dropping the tag.
+        let mut tags = HashMap::new();
+        tags.insert(
+            "EXIF:GPSLatitude".to_string(),
+            TagValue::String(String::new()),
+        );
+        tags.insert("EXIF:GPSLongitude".to_string(), TagValue::F64(122.5));
+
+        let pos = compute_gps_position(&tags).expect("one valid side should still render");
+        assert_eq!(pos.as_string().unwrap(), " 122.5");
+    }
 }
