@@ -552,7 +552,9 @@ impl XmpProcessor {
         for attr in element.attributes() {
             let attr = attr?;
             let key = std::str::from_utf8(attr.key.as_ref())?;
-            let (_, attr_local) = reader.resolve_attribute(attr.key);
+            // quick-xml 0.41: attribute resolution moved from NsReader to
+            // its NamespaceResolver accessor.
+            let (_, attr_local) = reader.resolver().resolve_attribute(attr.key);
             let attr_name = std::str::from_utf8(attr_local.as_ref())?;
 
             if attr_name == "lang" {

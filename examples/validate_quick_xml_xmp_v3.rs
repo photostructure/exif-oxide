@@ -111,7 +111,7 @@ fn test_namespace_resolution() -> Result<()> {
     loop {
         match reader.read_event_into(&mut buf)? {
             Event::Start(e) | Event::Empty(e) => {
-                let (ns_result, local) = reader.resolve_element(e.name());
+                let (ns_result, local) = reader.resolver().resolve_element(e.name());
 
                 if let ResolveResult::Bound(ns) = ns_result {
                     let namespace_str = str::from_utf8(ns.as_ref())?;
@@ -164,7 +164,7 @@ fn test_rdf_containers() -> Result<()> {
     loop {
         match reader.read_event_into(&mut buf)? {
             Event::Start(e) => {
-                let (_, local) = reader.resolve_element(e.name());
+                let (_, local) = reader.resolver().resolve_element(e.name());
                 let name = str::from_utf8(local.as_ref())?;
 
                 match name {
@@ -175,7 +175,7 @@ fn test_rdf_containers() -> Result<()> {
                         // Check for xml:lang attribute in Alt containers
                         for attr in e.attributes() {
                             let attr = attr?;
-                            let (_, attr_local) = reader.resolve_attribute(attr.key);
+                            let (_, attr_local) = reader.resolver().resolve_attribute(attr.key);
                             let attr_name = str::from_utf8(attr_local.as_ref())?;
                             if attr_name == "lang" {
                                 let lang = str::from_utf8(&attr.value)?;
@@ -201,7 +201,7 @@ fn test_rdf_containers() -> Result<()> {
                 }
             }
             Event::End(e) => {
-                let (_, local) = reader.resolve_element(e.name());
+                let (_, local) = reader.resolver().resolve_element(e.name());
                 let name = str::from_utf8(local.as_ref())?;
 
                 match name {
@@ -262,7 +262,7 @@ fn test_nested_structures() -> Result<()> {
     loop {
         match reader.read_event_into(&mut buf)? {
             Event::Start(e) => {
-                let (_, local) = reader.resolve_element(e.name());
+                let (_, local) = reader.resolver().resolve_element(e.name());
                 let name = str::from_utf8(local.as_ref())?;
 
                 if name == "CreatorContactInfo" {
@@ -270,7 +270,7 @@ fn test_nested_structures() -> Result<()> {
                     // Check for rdf:parseType="Resource"
                     for attr in e.attributes() {
                         let attr = attr?;
-                        let (_, attr_local) = reader.resolve_attribute(attr.key);
+                        let (_, attr_local) = reader.resolver().resolve_attribute(attr.key);
                         let attr_name = str::from_utf8(attr_local.as_ref())?;
                         if attr_name == "parseType" {
                             let value = str::from_utf8(&attr.value)?;
@@ -288,7 +288,7 @@ fn test_nested_structures() -> Result<()> {
                 }
             }
             Event::End(e) => {
-                let (_, local) = reader.resolve_element(e.name());
+                let (_, local) = reader.resolver().resolve_element(e.name());
                 let name = str::from_utf8(local.as_ref())?;
 
                 if name == "CreatorContactInfo" {
@@ -326,7 +326,7 @@ fn test_language_alternatives() -> Result<()> {
     loop {
         match reader.read_event_into(&mut buf)? {
             Event::Start(e) => {
-                let (_, local) = reader.resolve_element(e.name());
+                let (_, local) = reader.resolver().resolve_element(e.name());
                 let name = str::from_utf8(local.as_ref())?;
 
                 if name == "title" {
@@ -337,7 +337,7 @@ fn test_language_alternatives() -> Result<()> {
                     // Extract xml:lang attribute
                     for attr in e.attributes() {
                         let attr = attr?;
-                        let (_, attr_local) = reader.resolve_attribute(attr.key);
+                        let (_, attr_local) = reader.resolver().resolve_attribute(attr.key);
                         let attr_name = str::from_utf8(attr_local.as_ref())?;
                         if attr_name == "lang" {
                             current_lang = str::from_utf8(&attr.value)?.to_string();
@@ -352,7 +352,7 @@ fn test_language_alternatives() -> Result<()> {
                 }
             }
             Event::End(e) => {
-                let (_, local) = reader.resolve_element(e.name());
+                let (_, local) = reader.resolver().resolve_element(e.name());
                 let name = str::from_utf8(local.as_ref())?;
 
                 if name == "title" {
