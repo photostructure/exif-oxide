@@ -1,0 +1,143 @@
+# TPP: Strategic Review Program — Read-Only Re-Scope & Reliability Foundations
+
+## Summary
+
+Umbrella tracker for the 2026-07-01 strategic review. This is a **program
+TPP**: it records the review's findings and decisions, and tracks the child
+TPPs that implement them. Implementation detail lives in the child TPPs, not
+here. A future session should read this file first, then `/tpp` the next
+unstarted child.
+
+**Problem**: exif-oxide's goal ("full read+write ExifTool port") was
+unbounded, the planning docs had drifted from reality, and several
+reliability gaps (never-failing compat test, no fuzzing, 16-release
+submodule lag) were invisible.
+**Solution**: re-scope to read-only with a permanent real-ExifTool fallback
+tier, and land the reliability foundations as discrete TPPs.
+**Success**: all child TPPs in the table below reach `_done/`.
+
+## Current phase
+
+- [x] Research & Planning (five-agent review, 2026-07-01)
+- [x] Task breakdown (child TPPs authored)
+- [ ] Implementation (child TPPs; see Program Status)
+- [ ] Final Integration (all children done, MILESTONES.md re-triaged)
+
+## Required reading
+
+- [docs/MILESTONES.md](../docs/MILESTONES.md) — the scope tiers and priority
+  order this program implements
+- [_paused/WRITE-SUPPORT.md](../_paused/WRITE-SUPPORT.md) — the write-support
+  deferral decision and its revival prerequisites
+
+## Decisions made (2026-07-01, with the user)
+
+1. **Read-only indefinitely.** Writing is ~half of ExifTool's scope and the
+   only component that can corrupt user files. All writes delegate to real
+   ExifTool (PhotoStructure already ships exiftool-vendored.js).
+2. **Tiered architecture is permanent, not a bridge.** exif-oxide is the
+   native fast path for covered tags/formats; real ExifTool (vendored Perl
+   today, possibly a Perl-in-WASM build like the zeroperl-based ExifTool
+   ports later) serves the long tail of reads and all writes. exif-oxide
+   never has to be complete before it's useful.
+3. **Keep this repo — do not restart.** The assets (codegen table
+   extraction, 379-snapshot compat harness, 328+193-image corpus,
+   manufacturer offset logic) outweigh the fragility, which is concentrated
+   in one subsystem (see next).
+4. **Freeze the PPI transpiler.** The Perl→Rust expression transpiler
+   (normalizer ~4.7k LOC + visitor ~2k LOC) is where every recorded
+   emergency recovery originated. Treat as stable, change-averse code.
+   **Re-evaluate a runtime expression interpreter instead** only if (a) we
+   chase expression coverage far beyond the required-tags list, or (b) the
+   transpiler causes another emergency. Do not rewrite it proactively.
+
+## Findings worth preserving (verified, with corrections)
+
+- **Version facts**: pinned submodule is **v13.43** (read `$VERSION` in
+  `third-party/exiftool/lib/Image/ExifTool.pm`; `git describe` reports a
+  misleading `11.18-265` because only the 11.18 tag is annotated). Upstream
+  was 13.59 (2026-05-27): 16 releases behind, including 4 security releases.
+  Earlier "v13.10 / 42 releases behind" figures were artifacts of the
+  `git describe` gotcha.
+- **Release churn**: ~80% of a typical ExifTool release is table data that
+  `make codegen` absorbs with zero human work; ~20% is procedural logic
+  (Geotag interpolation, QuickTime parsing, Canon extender regex) needing
+  manual ports. Monthly bumps are automatable with agent triage of the
+  logic diffs — the child catch-up TPP builds the runbook.
+- **The compat test never fails.** `test_exiftool_compatibility` prints a
+  report and returns Ok unconditionally; its known-failures mechanism is
+  dead code (`if 1 > 2`). Every mismatch currently "passes."
+- **Composite bugs**: Megapixels and ShutterSpeed are already fixed; only
+  GPSPosition remains (longitude sign + precision,
+  `src/core/composite_fallbacks.rs:391`, tracked in P03 backlog).
+- **Landscape** (2026-07 web survey): no alternative meets full-fidelity +
+  write + permissive-license + embeddable. Exiv2 is GPL and admits less
+  coverage than ExifTool; little_exif write is toy-scale; kamadak-exif /
+  nom-exif are read-only. exif-oxide's approach is genuinely differentiated.
+- **No `unsafe` in src/** (excluding generated): fuzz crashes will be
+  panics or allocation bombs, not memory unsafety.
+
+## Program status
+
+| # | Work item | Where | Status |
+|---|-----------|-------|--------|
+| 0 | Docs/planning re-scope (MILESTONES.md, scope language, TPP migration, TODO rewrite) | commits `9e72960e`, `dcc38b20` | ✅ DONE 2026-07-01 |
+| 1 | ExifTool v13.43→13.59+ catch-up + `docs/guides/EXIFTOOL-UPGRADE.md` runbook | `_todo/20260701-P0-exiftool-version-catchup.md` | ⬜ not started — **do this first** |
+| 2 | Snapshot-oracle integrity (make compat test assert; allowlist; version-skew guard) | `_todo/20260701-P1-snapshot-oracle-integrity.md` | ⬜ not started (sequence after or with #1 — snapshots regenerate during the bump) |
+| 3 | cargo-fuzz infrastructure | `_todo/20260701-P1-fuzzing-infrastructure.md` | ⬜ not started (independent; parallelizable) |
+| 4 | GPSPosition composite sign bug | `_todo/P03-implementation-backlog.md` (Next Steps) | ⬜ open (small, well-diagnosed) |
+| 5 | Video/QuickTime read support (22 blocked tags) | **no TPP yet — needs authoring** | ⬜ not started |
+| 6 | napi-rs Node binding spike | `_todo/20260701-P3-napi-node-binding-spike.md` | ⬜ not started (its Task 1 is the licensing question below) |
+
+## Open questions (user decisions pending)
+
+- **AGPL vs. napi linking**: exif-oxide is `AGPL-3.0-or-later`
+  (`Cargo.toml:11`). A napi addon links AGPL code directly into
+  PhotoStructure's process — materially different from spawning GPL
+  ExifTool as a subprocess. The user owns the copyright and can
+  dual-license; needs a deliberate decision before the napi spike is
+  treated as a production path.
+- **`third-party/exiftool/doc/concepts/IMAGE_DATA_HASH.md`** is untracked
+  inside the submodule (the other doc/concepts files are committed to the
+  photostructure/exiftool fork). Commit it to the fork or relocate to
+  `docs/`; until then the parent repo shows the submodule as dirty.
+
+## Tribal knowledge
+
+- The submodule working tree accumulates codegen's mechanical `my` → `our`
+  patches when a codegen run doesn't clean up. Verified safe to discard
+  with `git -C third-party/exiftool checkout -- .` after confirming the
+  diff is only `my`/`our` rewrites — but always sample the diff first.
+- MILESTONES.md priority order is deliberate: the catch-up bump (#1)
+  regenerates all snapshots, so doing oracle-integrity (#2) simultaneously
+  or immediately after avoids triaging compat diffs twice.
+- Child TPPs were fact-checked against source on 2026-07-01 (file:line
+  citations, entry points, corpus counts). If much time has passed,
+  re-verify their "verified" claims before trusting them.
+
+## Tasks
+
+- [ ] Task 1: Complete child TPP #1 (version catch-up). **Proof**: TPP in
+      `_done/`, `docs/guides/EXIFTOOL-UPGRADE.md` exists.
+- [ ] Task 2: Complete child TPP #2 (snapshot oracle). **Proof**: TPP in
+      `_done/`, `make compat-test` exits non-zero on an undocumented diff.
+- [ ] Task 3: Complete child TPP #3 (fuzzing). **Proof**: TPP in `_done/`,
+      CI fuzz job green.
+- [ ] Task 4: Fix GPSPosition sign bug per P03 backlog. **Proof**:
+      `compare-with-exiftool test-images/apple/IMG_3755.JPG` shows no
+      GPSPosition diff.
+- [ ] Task 5: Author the video/QuickTime read TPP (item #5 has no TPP).
+      **Proof**: new TPP in `_todo/` per TPP-GUIDE, under 400 lines.
+- [ ] Task 6: Complete child TPP #6 (napi spike), starting with the AGPL
+      question. **Proof**: TPP in `_done/` with spike write-up.
+- [ ] Task 7: Re-triage MILESTONES.md when the above are done; move this
+      program TPP to `_done/`.
+
+## Files referenced
+
+- `docs/MILESTONES.md` — scope tiers + priorities (this program implements it)
+- `_todo/20260701-*.md` — the four child TPPs
+- `_todo/P03-implementation-backlog.md` — GPSPosition bug
+- `_paused/WRITE-SUPPORT.md` — write deferral rationale
+- `tests/exiftool_compatibility_tests.rs:441-458` — the never-failing test
+- `third-party/exiftool/lib/Image/ExifTool.pm:32` — `$VERSION` ground truth

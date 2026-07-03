@@ -83,7 +83,10 @@ In order:
    fallback to real ExifTool for anything exif-oxide doesn't yet support.
    This is the integration path into PhotoStructure.
 
-See `_todo/` for the TPPs covering items 1-3 and 6.
+This priority list is tracked as a program in
+`_todo/20260701-P0-strategic-review-program.md`, which records the review's
+findings/decisions and links the child TPPs covering items 1-3 and 6.
+Start there when continuing this work in a new session.
 
 ## Non-Goals
 
