@@ -12,6 +12,7 @@ pub mod nikon;
 pub mod olympus;
 pub mod panasonic_raw;
 pub mod print_conv;
+pub mod quicktime;
 pub mod raw_conv;
 pub mod ricoh;
 pub mod sony;

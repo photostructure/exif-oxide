@@ -232,6 +232,17 @@ static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
             ("crate::implementations::value_conv", "xmp_date_value_conv"),
         );
 
+        // QuickTime date tags (%timeInfo, QuickTime.pm:280). Folds the 1970-epoch
+        // RawConv patch + ConvertUnixTime (ExifTool.pm:6784); codegen drops the
+        // DATAMEMBER RawConv, so the patch lives in the Rust impl.
+        m.insert(
+            "ConvertUnixTime($val, $self->Options(\"QuickTimeUTC\") || $$self{FileType} eq \"CR3\")",
+            (
+                "crate::implementations::quicktime",
+                "convert_unix_time_quicktime",
+            ),
+        );
+
         // String processing patterns
         m.insert(
             "length($val) > 32 ? \\$val : $val",

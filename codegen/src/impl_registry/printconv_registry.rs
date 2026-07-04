@@ -88,6 +88,25 @@ static PRINTCONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
             ),
         );
 
+        // QuickTime duration tags (%durationInfo, QuickTime.pm:315 and
+        // MediaHeader:7271). ValueConv already divided ticks by the timescale; the
+        // PrintConv formats via ConvertDuration (ExifTool.pm:6877) when the
+        // relevant timescale data member is set.
+        m.insert(
+            "$$self{TimeScale} ? ConvertDuration($val) : $val",
+            (
+                "crate::implementations::quicktime",
+                "convert_duration_print_conv",
+            ),
+        );
+        m.insert(
+            "$$self{MediaTS} ? ConvertDuration($val) : $val",
+            (
+                "crate::implementations::quicktime",
+                "media_duration_print_conv",
+            ),
+        );
+
         // ExifTool function calls that should be mapped to our implementations
         m.insert(
             "Image::ExifTool::Exif::PrintExposureTime($val)",

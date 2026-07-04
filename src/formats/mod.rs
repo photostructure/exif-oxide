@@ -9,6 +9,7 @@ mod gif;
 mod iptc;
 mod jpeg;
 mod png;
+mod quicktime;
 mod tiff;
 
 pub use avif::{
@@ -1234,8 +1235,28 @@ pub fn extract_metadata(
                             }
                         }
                     }
+                    "MOV" | "MP4" => {
+                        // QuickTime / MP4 container: streaming atom walker.
+                        // TPP: _todo/20260703-P1-quicktime-video-read.md (Task 2).
+                        // CR3/HEIC are handled elsewhere / out of scope (TZ trap).
+                        reader.seek(SeekFrom::Start(0))?;
+                        match quicktime::extract_quicktime_metadata(&mut reader) {
+                            Ok(mut qt_entries) => {
+                                tag_entries.append(&mut qt_entries);
+                            }
+                            Err(e) => {
+                                // Corrupt container: keep File: tags, note the failure.
+                                tags.insert(
+                                    "Warning:QuickTimeParseError".to_string(),
+                                    TagValue::string(format!(
+                                        "Failed to parse QuickTime container: {e}"
+                                    )),
+                                );
+                            }
+                        }
+                    }
                     _ => {
-                        // Other MOV-based formats not yet supported (MP4, QuickTime, HEIF, etc.)
+                        // Other MOV-based formats not yet supported (HEIF, CR3, etc.)
                         tags.insert(
                             "System:ExifDetectionStatus".to_string(),
                             TagValue::string(format!(

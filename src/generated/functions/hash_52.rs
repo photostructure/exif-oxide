@@ -57,33 +57,6 @@ pub fn ast_print_52836b45c0320e15(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// $$self{TimeScale} ? ConvertDuration($val) : $val
-/// ```
-/// Used by:
-/// - QuickTime::MovieHeader.CurrentTime
-/// - QuickTime::MovieHeader.Duration
-/// - QuickTime::MovieHeader.PosterTime
-/// - QuickTime::MovieHeader.PreviewDuration
-/// - QuickTime::MovieHeader.PreviewTime
-/// - QuickTime::MovieHeader.SelectionDuration
-/// - QuickTime::MovieHeader.SelectionTime
-/// - QuickTime::TrackHeader.TrackDuration
-///
-/// TODO: Add support for this expression pattern
-pub fn ast_print_529b9dfc5148650a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    crate::core::missing::missing_print_conv(
-        0,                                                  // tag_id will be filled at runtime
-        "UnknownTag",                                       // tag_name will be filled at runtime
-        "UnknownGroup",                                     // group will be filled at runtime
-        "$$self{TimeScale} ? ConvertDuration($val) : $val", // original expression
-        val,
-    )
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
 /// $val =~ /^([\x20-\x7e]*)\0*$/ ? $1 : \$val
 /// ```
 /// Used by:
@@ -155,4 +128,22 @@ pub fn ast_value_527c9bdc7d50b8f1(
         "exp(-Image::ExifTool::Canon::CanonEv($val)*log(2))", // original expression
         val,
     ))
+}
+
+/// Registry fallback: PrintConv implementation found
+/// Original perl expression:
+/// ``` perl
+/// $$self{TimeScale} ? ConvertDuration($val) : $val
+/// ```
+/// Used by:
+/// - QuickTime::MovieHeader.CurrentTime
+/// - QuickTime::MovieHeader.Duration
+/// - QuickTime::MovieHeader.PosterTime
+/// - QuickTime::MovieHeader.PreviewDuration
+/// - QuickTime::MovieHeader.PreviewTime
+/// - QuickTime::MovieHeader.SelectionDuration
+/// - QuickTime::MovieHeader.SelectionTime
+/// - QuickTime::TrackHeader.TrackDuration
+pub fn ast_print_529b9dfc5148650a(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    crate::implementations::quicktime::convert_duration_print_conv(val, ctx)
 }

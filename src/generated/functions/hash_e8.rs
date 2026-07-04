@@ -38,10 +38,10 @@ pub fn ast_print_e8201d20dc0f1f(val: &TagValue, ctx: Option<&ExifContext>) -> Ta
     TagValue::String(crate::core::sprintf_perl("%.3f s", &[val / 1000i32]))
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
+/// Registry fallback: ValueConv implementation found
 /// Original perl expression:
 /// ``` perl
-/// ConvertUnixTime($val, $self->Options("QuickTimeUTC") || $$self{FileType} eq "CR3")
+/// ConvertUnixTime($val, $self->Options(\"QuickTimeUTC\") || $$self{FileType} eq \"CR3\")
 /// ```
 /// Used by:
 /// - QuickTime::MediaHeader.MediaCreateDate
@@ -51,18 +51,9 @@ pub fn ast_print_e8201d20dc0f1f(val: &TagValue, ctx: Option<&ExifContext>) -> Ta
 /// - QuickTime::Preview.PreviewDate
 /// - QuickTime::TrackHeader.TrackCreateDate
 /// - QuickTime::TrackHeader.TrackModifyDate
-///
-/// TODO: Add support for this expression pattern
 pub fn ast_value_e8af3016409e62f1(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(crate::core::missing::missing_value_conv(
-        0,              // tag_id will be filled at runtime
-        "UnknownTag",   // tag_name will be filled at runtime
-        "UnknownGroup", // group will be filled at runtime
-        "ConvertUnixTime($val, $self->Options(\"QuickTimeUTC\") || $$self{FileType} eq \"CR3\")", // original expression
-        val,
-    ))
+    crate::implementations::quicktime::convert_unix_time_quicktime(val, ctx)
 }

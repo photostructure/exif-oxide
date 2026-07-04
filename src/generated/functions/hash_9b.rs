@@ -31,26 +31,6 @@ pub fn ast_value_9b826d8a33505bd4(
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
-/// $$self{MediaTS} ? ConvertDuration($val) : $val
-/// ```
-/// Used by:
-/// - QuickTime::MediaHeader.MediaDuration
-///
-/// TODO: Add support for this expression pattern
-pub fn ast_print_9b70d43f79fc1751(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    crate::core::missing::missing_print_conv(
-        0,                                                // tag_id will be filled at runtime
-        "UnknownTag",                                     // tag_name will be filled at runtime
-        "UnknownGroup",                                   // group will be filled at runtime
-        "$$self{MediaTS} ? ConvertDuration($val) : $val", // original expression
-        val,
-    )
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
 /// Image::ExifTool::Exif::PrintCFAPattern($val)
 /// ```
 /// Used by:
@@ -89,4 +69,15 @@ pub fn ast_value_9b17beab9e0d58ca(
         "sprintf(\"%2d:%.2d:%.2d.%.2d\",split(\" \", $val))", // original expression
         val,
     ))
+}
+
+/// Registry fallback: PrintConv implementation found
+/// Original perl expression:
+/// ``` perl
+/// $$self{MediaTS} ? ConvertDuration($val) : $val
+/// ```
+/// Used by:
+/// - QuickTime::MediaHeader.MediaDuration
+pub fn ast_print_9b70d43f79fc1751(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    crate::implementations::quicktime::media_duration_print_conv(val, ctx)
 }

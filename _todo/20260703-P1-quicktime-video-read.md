@@ -25,9 +25,63 @@ shows no `QuickTime:*` or `Composite:*` diffs; same for the other 4 MOVs.
       the 3 image-level tests are committed `#[ignore]`d — they were validated to
       fail on missing tags, not setup; **un-ignore them as Tasks 2-4 land**)
 - [x] Task breakdown review
-- [ ] Implementation (Task 1 DONE 2026-07-03 — see log below; Tasks 2-5 remain)
+- [ ] Implementation (Tasks 1-2 DONE 2026-07-03 — see logs below; Tasks 3-5 remain)
 - [ ] Review & Refinement
 - [ ] Final Integration
+
+## Session log (2026-07-03, Task 2)
+
+- **Walker landed**: `src/formats/quicktime.rs` — hand-written seek-based atom
+  walker (Option A). Seeks past `mdat` (verified on the 37 MB eos_500d.mov,
+  never `read_to_end`); handles 8-byte / size==1 64-bit / size==0-to-EOF
+  headers; container routing moov→mvhd/trak, trak→tkhd/mdia, mdia→mdhd/hdlr/minf,
+  minf→stbl→stsd; clearly-marked TODO arms for Task 3 (meta/keys/ilst, udta,
+  stsd/CompressorName) and Task 4 (tkhd MatrixStructure + hdlr HandlerType, the
+  latter already captured into walker state). Defensive: malformed/truncated
+  atoms stop the walk, never panic (3 walker unit tests).
+- **Conversions**: `src/implementations/quicktime.rs` — exact ports of
+  `%timeInfo` RawConv 1970-epoch patch (QuickTime.pm:257) + ConvertUnixTime
+  gmtime (ExifTool.pm:6784), `%durationInfo` + ConvertDuration (ExifTool.pm:6877
+  — threshold is `< 30`, not 60), FixWrongFormat (QuickTime.pm:8872). Version-1
+  mvhd/tkhd/mdhd int64u date/duration shift handled per the ExifTool Hook.
+- **Codegen de-stub**: registered the date ValueConv + the two duration
+  PrintConvs in `codegen/src/impl_registry/{valueconv,printconv}_registry.rs`;
+  `make codegen` rewrote only `hash_e8`/`hash_52`/`hash_9b` bodies from
+  placeholders to real calls (table files unchanged). No dangling
+  `calc_sample_rate`/`unpack_lang` (dormant — not reached by any expression).
+- **Priority**: TrackHeader = first-track-wins, MediaHeader/mvhd = last-wins,
+  resolved inside the walker (one TagEntry per name). Proven on IMG_3755:
+  TrackDuration=2.96 s (video) vs MediaDuration=0.00 s (metadata track);
+  ImageWidth=1920 from the video track (audio 0×0 → FixWrongFormat undef → no tag).
+- **Results**: all 5 MOV snapshots match 13/13 core tags (11 QuickTime binary
+  tags + Composite:ImageSize/Megapixels, which fall out for free). Core tests
+  `canon_eos500d_mov_core_tags_match_exiftool` /
+  `exiftool_quicktime_mov_core_tags_match_exiftool` un-ignored + green; unit
+  tests `timeinfo_1970_epoch_patch` / `convert_duration_seconds` implemented +
+  green. apple test stays ignored (needs Task 3 Keys + Task 4 GPS/Rotation).
+- **Compat gate green, 0 removals**: the QuickTime tags are also allowlisted for
+  the 20 CR3 + HEIC snapshots (walker not wired for CR3 — out of scope), so they
+  remain valid gaps there and the stale-ratchet correctly flags nothing. Working
+  count stays 23/191 until CR3/HEIC route through the walker (follow-up).
+- Dispatch wired at `src/formats/mod.rs` for file types MOV + MP4 only.
+- **Post-review verdicts (double-review gate: codex + Claude subagent,
+  2026-07-03)**: no blockers. Claude reviewer fuzzed 10 hand-built malicious
+  MOVs (0 panics/hangs; recursion is structurally cycle-proof — the container
+  state machine never re-enters a parent kind) and verified v1 layouts against
+  vendored exiftool on a hand-built v1 file. ACCEPTED: (a) v1 boxes had zero
+  committed coverage (all 5 corpus MOVs are v0) → in-memory v1 fixture test
+  added in `src/formats/quicktime.rs`; (b) codex: the Perl RawConv also
+  patches when the `QuickTimeUTC` option is set — option not exposed in
+  exif-oxide, divergence documented in `patch_time_zero` docs instead of dead
+  code. VETOED: codex's "generated table path passes ctx=None so durations
+  can't convert" (that path has no runtime consumer — the walker calls core
+  helpers directly, by documented design; Claude reviewer independently
+  confirmed no double-conversion); codex's "u64::MAX dates render zero date
+  vs Perl's `1900:01:00 00:00:00`" (Perl's output there is platform-dependent
+  gmtime overflow on garbage input; we render the zero date, never panic —
+  documented in `patch_time_zero` docs). Benign note: nested size-0 atoms are
+  dispatched-then-terminated vs ExifTool's pure-terminator handling — verified
+  no spurious tags on the Canon files that use them.
 
 ## Session log (2026-07-03, Tasks 0-1)
 

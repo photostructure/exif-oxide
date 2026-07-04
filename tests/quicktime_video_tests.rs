@@ -109,7 +109,6 @@ fn apple_img3755_quicktime_and_composite_tags_match_exiftool() {
 /// eos_500d.mov has NO Apple Keys metadata: proves the walker decodes mvhd/tkhd
 /// (dates, duration, dimensions) without depending on ItemList/Keys.
 #[test]
-#[ignore = "RED until the QuickTime atom walker lands (TPP 20260703-P1-quicktime-video-read Tasks 2-4); validated to fail on missing tags 2026-07-03"]
 fn canon_eos500d_mov_core_tags_match_exiftool() {
     // Snapshot: generated/exiftool-json/test_images_canon_eos_500d_mov.json
     let tags = tags_for("test-images/canon/eos_500d.mov");
@@ -122,7 +121,6 @@ fn canon_eos500d_mov_core_tags_match_exiftool() {
 /// The tiny ExifTool test fixture (3871 bytes, no Keys atoms) is another
 /// Apple-metadata-free proof of the core mvhd/tkhd path.
 #[test]
-#[ignore = "RED until the QuickTime atom walker lands (TPP 20260703-P1-quicktime-video-read Tasks 2-4); validated to fail on missing tags 2026-07-03"]
 fn exiftool_quicktime_mov_core_tags_match_exiftool() {
     // Snapshot: generated/exiftool-json/third_party_exiftool_t_images_QuickTime_mov.json
     let tags = tags_for("third-party/exiftool/t/images/QuickTime.mov");
@@ -160,16 +158,36 @@ fn convert_iso6709_three_forms() {
 /// software" that writes 1970-epoch instead of 1904-epoch dates: subtract
 /// 2082844800 ONLY when `$val >= 2082844800`, else warn and pass through.
 #[test]
-#[ignore = "Task 2: %timeInfo 1970-epoch RawConv patch not implemented yet"]
 fn timeinfo_1970_epoch_patch() {
-    todo!("wire to src/implementations/quicktime.rs %timeInfo RawConv port");
+    use exif_oxide::implementations::quicktime::{convert_unix_time, patch_time_zero};
+
+    // Genuine 1904-epoch value (>= offset) is shifted to Unix seconds and rendered
+    // via gmtime (eos_500d mvhd CreateDate 3324892129 -> 2009:05:11 13:08:49).
+    let unix = patch_time_zero(3_324_892_129);
+    assert_eq!(unix, 1_242_047_329);
+    assert_eq!(convert_unix_time(unix, false), "2009:05:11 13:08:49");
+
+    // Brain-dead 1970-epoch value (< offset) is passed through unchanged.
+    assert_eq!(patch_time_zero(1_000_000_000), 1_000_000_000);
+
+    // Zero stays the ExifTool zero date.
+    assert_eq!(patch_time_zero(0), 0);
+    assert_eq!(convert_unix_time(0, false), "0000:00:00 00:00:00");
 }
 
-/// Task 2: ConvertDuration (ExifTool.pm:6877) renders durations < 60 s as
+/// Task 2: ConvertDuration (ExifTool.pm:6877) renders durations < 30 s as
 /// e.g. "2.96 s" after ValueConv divides raw ticks by TimeScale
 /// (%durationInfo, QuickTime.pm:314-317).
 #[test]
-#[ignore = "Task 2: ConvertDuration not implemented yet"]
 fn convert_duration_seconds() {
-    todo!("wire to src/implementations/quicktime.rs ConvertDuration port");
+    use exif_oxide::implementations::quicktime::convert_duration;
+
+    // ticks / TimeScale -> "X.XX s" under 30 s.
+    assert_eq!(convert_duration(15000.0 / 2000.0), "7.50 s"); // eos_500d
+    assert_eq!(convert_duration(2980.0 / 600.0), "4.97 s"); // QuickTime.mov
+    assert_eq!(convert_duration(0.0), "0 s");
+    // A tiny non-zero MediaDuration (apple metadata track) rounds to "0.00 s".
+    assert_eq!(convert_duration(0.0001), "0.00 s");
+    // >= 30 s switches to H:MM:SS (ExifTool.pm:6883-6894).
+    assert_eq!(convert_duration(90.0), "0:01:30");
 }
