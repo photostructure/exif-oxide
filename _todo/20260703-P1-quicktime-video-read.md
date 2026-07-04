@@ -25,9 +25,28 @@ shows no `QuickTime:*` or `Composite:*` diffs; same for the other 4 MOVs.
       the 3 image-level tests are committed `#[ignore]`d — they were validated to
       fail on missing tags, not setup; **un-ignore them as Tasks 2-4 land**)
 - [x] Task breakdown review
-- [ ] Implementation (Tasks 1-2 DONE 2026-07-03 — see logs below; Tasks 3-5 remain)
+- [ ] Implementation (Tasks 1-2 DONE + review-gated + pushed — see logs below;
+      **Task 3 IN FLIGHT** as of 2026-07-03 ~18:30: an opus subagent is
+      implementing Keys/ilst (Make/Model/Software/CreationDate) + stsd
+      CompressorName + hdlr HandlerDescription + Task-4 state capture
+      (raw GPSCoordinates string, MatrixStructure, LensModel), including
+      investigating how canon eos_500d.mov stores Model (`exiftool -v3`,
+      not Apple mdta). If its report was lost to compaction: `git status`
+      shows its edits; review-gate per the workflow note below, then commit.
+      Tasks 4-5 not started)
 - [ ] Review & Refinement
 - [ ] Final Integration
+
+**Workflow (per program-TPP orchestration guidance)**: one opus
+implementation subagent per task → double-review gate (now formalized as
+the `/coding:double-review` skill in `~/src/claude-code-skills`: codex
+`codex exec --sandbox read-only "/review …" </dev/null &` + a Claude review
+subagent, identically scoped and blind; vet every finding empirically
+against the vendored exiftool/Perl before accept/veto; record verdicts
+here) → one Conventional Commit per task, push without asking (this repo's
+exception). When tags start passing, `make compat-test`'s stale-ratchet
+demands removing exactly those tags from `config/compat_known_gaps.json` —
+but QuickTime tags stay allowlisted while CR3 snapshots still miss them.
 
 ## Session log (2026-07-03, Task 2)
 
@@ -138,23 +157,12 @@ fujifilm gfx100rf, t/images QuickTime). `.mp4` is NOT in the snapshot
 generator's SUPPORTED_EXTENSIONS (`tools/generate_exiftool_json.sh:23`), so
 pixel_7_pro.mp4 / gopro jump.mp4 have no snapshots yet.
 
-## Verified current state (2026-07-03)
+## Current state (updated 2026-07-03 post-Task-2)
 
-- **Dispatch gap**: `src/formats/mod.rs:1237-1246` — the `"MOV"` format arm
-  handles AVIF/HEIC (ispe dimensions via `src/formats/avif.rs`) then falls
-  into a `_ =>` "not yet supported" arm for MOV/MP4/CR3/HEIF.
-- **Generated tables exist but are half shelf-ware** — nothing outside
-  `src/generated/` references any `QuickTime_pm` symbol:
-  - String-keyed atom tables are **EMPTY**: `QUICK_TIME_MAIN_TAGS`,
-    `QUICK_TIME_ITEMLIST_TAGS`, `QUICK_TIME_KEYS_TAGS`,
-    `QUICK_TIME_USERDATA_TAGS` are `LazyLock::new(HashMap::new)` because
-    `codegen/src/strategies/tag_kit.rs:450-453` parses tag keys as `u16`;
-    atom IDs like `'mvhd'` / `'com.apple.quicktime.make'` don't fit.
-  - Binary tables ARE populated: `movie_header_tags.rs`,
-    `track_header_tags.rs` (MatrixStructure/ImageWidth present),
-    `media_header_tags.rs`, `handler_tags.rs` — but their date/duration
-    conversions are missing-impl stubs (e.g. `ast_value_e8af3016409e62f1`
-    in `src/generated/functions/hash_e8.rs:44` warns and passes through).
+Pre-implementation gaps (empty string-keyed tables, no dispatch arm, missing
+`implementations::quicktime`) are all resolved by Tasks 1-2 — see session
+logs. Still true and needed by Tasks 4-5:
+
 - **Composites generated but not computable**:
   `src/generated/composite_tags.rs:2775-2914` has the QuickTime GPS splits
   + Rotation, but Rotation's ValueConv is the expression
@@ -163,16 +171,12 @@ pixel_7_pro.mp4 / gopro jump.mp4 have no snapshots yet.
   the name-keyed `COMPOSITE_TAGS` HashMap loses the GPS-vs-Sony-vs-QuickTime
   same-name defs (`src/composite_tags/orchestration.rs:200-202`; program
   TPP follow-up (b)).
-- **Landmine**: `codegen/src/impl_registry/function_registry.rs:193-210`
-  already maps `QuickTime::CalcSampleRate`/`UnpackLang` to
-  `crate::implementations::quicktime` — **that module does not exist**
-  (`src/implementations/` has no quicktime.rs). Same silent-stub trap as
-  the IPTC/XMP date stubs (see xmp TPP).
-- File detection works: FileType/MIMEType correct for MOV/MP4/CR3
-  (`src/file_detection/mov_video.rs` ftyp brands).
-- Compat-test scoring is being reworked concurrently (oracle-integrity
-  TPP) — do NOT anchor claims on its percentages; use
-  `compare-with-exiftool` per file.
+- `function_registry.rs:193-210` maps CalcSampleRate/UnpackLang into
+  `implementations::quicktime`; both remain unimplemented and dormant (no
+  expression reaches them) — leave them out unless codegen wires a call site.
+- The compat gate is tag-level: QuickTime tags stay allowlisted while the 20
+  CR3 snapshots (walker not routed for CR3) still miss them. Per-file truth =
+  `compare-with-exiftool`.
 
 ## ExifTool mechanism (all verified in QuickTime.pm v13.59)
 
@@ -261,40 +265,21 @@ Key procedural logic:
   snapshots bake in the generator machine's TZ (US Pacific:
   `2020:09:01 07:02:54-07:00`). MOV (flag off) is TZ-independent. Keep CR3
   out of this TPP's proofs or CI in another TZ will flake.
-- **Don't hand-transcribe the empty tables** — TRUST-EXIFTOOL.md bans it.
-  The fix is codegen (Task 1), not a hand registry of atom IDs.
-- **`crate::implementations::quicktime` is referenced by the codegen
-  impl_registry but doesn't exist** — creating it (Task 2) may make
-  codegen wire CalcSampleRate/UnpackLang call sites; keep signatures
-  matching what the registry emits or leave those two functions out.
 - ProcessMOV sets `PRIORITY_DIR = 'XMP'` for non-HEIC (10016) — only
   matters if a udta XMP tag name collides with an atom tag; none in our
   supported slice.
-- 5.7MB MOV is the smallest real sample; real videos are GBs — the walker
-  MUST seek past mdat, never `read_to_end` like avif.rs does.
+- Real videos are GBs — the walker MUST seek past mdat, never
+  `read_to_end` like avif.rs does (Task 2 walker already complies).
 
-## Design
+## Design (Option A — SHIPPED in Task 2)
 
-**Option A (preferred)**: hand-written streaming walker
-`src/formats/quicktime.rs` (procedural container code, like
-jpeg.rs segments / tiff.rs IFDs), dispatched from the existing `_ =>` arm
-at `src/formats/mod.rs:1237`. Hardcode the container routing table above
-(each arm cites its QuickTime.pm line); leaf atoms decode via the
-GENERATED binary tables + a new string-keyed generated Keys/ItemList
-lookup; conversions live in `src/implementations/quicktime.rs` registered
-through `codegen/src/impl_registry` so the generated stubs become real
-(exactly how ConvertXMPDate was de-stubbed, commit `2551f6e5`).
-Track state in a small struct (TimeScale, MediaTS, HandlerType per trak,
-KeysCount/key list) mirroring ExifTool's `$$self{...}` data members.
-
-**Option B (rejected)**: extend `avif.rs`'s whole-buffer box parser —
-loads entire file; unacceptable for video. Its `parse_box_header`
-(avif.rs:70) is still the reference for header/64-bit-size parsing.
-
-**Option C (rejected for now)**: fully table-driven SubDirectory dispatch
-like ExifTool — elegant but requires porting ProcessMOV's generic
-machinery (~700 lines incl. write support concerns); the supported slice
-needs ~10 container arms. Revisit if atom coverage grows.
+Hand-written streaming walker (`src/formats/quicktime.rs`) + state struct
+mirroring ExifTool's `$$self{...}` data members; leaf conversions in
+`src/implementations/quicktime.rs` registered via impl_registry (the
+ConvertXMPDate de-stub pattern, `2551f6e5`). Rejected: extending avif.rs's
+whole-buffer parser (loads entire file); a fully table-driven SubDirectory
+engine (~700 lines of ProcessMOV machinery for ~10 needed arms — revisit if
+atom coverage grows).
 
 ## Out of scope (deliberate)
 
@@ -315,54 +300,21 @@ needs ~10 container arms. Revisit if atom coverage grows.
 
 ## Tasks
 
-### Task 0: Breaking tests (TDD.md — do this FIRST)
+### Task 0: Breaking tests — ✅ DONE 2026-07-03 (commit `f26e1627`)
 
-**Success**: `cargo t quicktime_video` fails on missing tags, not setup.
-**Implementation**: new `tests/quicktime_video_tests.rs`
-(`integration-tests` feature, mirror `tests/xmp_value_conv_tests.rs`):
-assert exact snapshot values for all 17 QuickTime tags + Composite
-ImageSize/Megapixels/Rotation/GPS\*/GPSAltitudeRef on
-`test-images/apple/IMG_3755.MOV` (values in
-`generated/exiftool-json/test_images_apple_IMG_3755_MOV.json`), plus
-CreateDate/Duration/ImageWidth on `test-images/canon/eos_500d.mov` and
-`third-party/exiftool/t/images/QuickTime.mov` (no Keys — proves the
-walker doesn't require Apple metadata). Unit-test targets for later
-tasks: ConvertISO6709 3 forms, 1970-epoch patch, ConvertDuration.
-**Proof**: `cargo t quicktime_video` → assertions fail listing None.
+`tests/quicktime_video_tests.rs`, snapshot-pinned; apple image test still
+`#[ignore]`d pending Task 4 (un-ignore it then). See Tasks 0-1 session log.
 
-### Task 1: Codegen — string-keyed tag tables
+### Task 1: Codegen string-keyed tables — ✅ DONE 2026-07-03 (`f26e1627`)
 
-**Success**: `QUICK_TIME_KEYS_TAGS`/`QUICK_TIME_ITEMLIST_TAGS` non-empty
-after `make codegen`; numeric-keyed tables byte-identical.
-**Implementation**: in `codegen/src/strategies/tag_kit.rs` (key parse at
-:450-453, empty-map emission at :277), emit a parallel
-`HashMap<&'static str, TagInfo>` (e.g. `*_TAGS_BY_NAME`) for entries whose
-keys aren't numeric, instead of dropping them. Keep u16 maps untouched so
-no other module's output shifts. Gotcha: ItemList IDs include bytes like
-`"\xa9ART"` (ItemList:3505) — escape as byte-string keys or normalize;
-Keys IDs are dotted strings (`location.ISO6709`).
-**Proof**: `make codegen` then
-`grep -c "TagInfo" src/generated/QuickTime_pm/keys_tags.rs` > 20;
-`git diff --stat src/generated/` shows only QuickTime_pm (+ new fn hashes).
+`*_TAGS_BY_NAME: HashMap<&'static [u8], TagInfo>` maps, QuickTime-gated.
+See Tasks 0-1 session log for the byte-key/U+FFFD design.
 
-### Task 2: Atom walker + mvhd/tkhd/mdhd (dates, durations, dimensions)
+### Task 2: Atom walker + mvhd/tkhd/mdhd — ✅ DONE 2026-07-03 (`9d2e2390`)
 
-**Success**: 12 tags match on all 5 MOVs: CreateDate, ModifyDate,
-Duration, ImageWidth, ImageHeight, Media\*, Track\*.
-**Implementation**: `src/formats/quicktime.rs` walker (header/64-bit/size-0
-per ProcessMOV:10039-10090; seek past mdat) + container routing table
-above; decode mvhd/tkhd/mdhd through the generated binary tables; port
-`%timeInfo` (incl. 1970-epoch RawConv patch + `ConvertUnixTime`
-ExifTool.pm:6784 gmtime formatting), `%durationInfo` + `ConvertDuration`
-(ExifTool.pm:6877), `FixWrongFormat`, version-1 64-bit Hook, and the
-Priority-0 first-wins vs default last-wins duplicate rule into
-`src/implementations/quicktime.rs`; register the timeInfo/durationInfo
-expressions in `codegen/src/impl_registry` so the generated stubs resolve
-(verify `hash_e8`/`hash_52` stubs disappear after `make codegen`).
-Wire dispatch at `src/formats/mod.rs:1237` for file types MOV and MP4.
-**Proof**: `cargo run --bin compare-with-exiftool -- test-images/canon/eos_500d.mov`
-→ no QuickTime diffs except Make/Model-class Keys tags;
-`cargo t quicktime_video` date/duration/dimension assertions pass.
+All 5 MOVs match 13/13 core tags; double-review gate passed (verdicts in the
+Task 2 session log). Walker: `src/formats/quicktime.rs`; conversions:
+`src/implementations/quicktime.rs`; dispatch: MOV|MP4 in `formats/mod.rs`.
 
 ### Task 3: Keys/ItemList (Make, Model, Software, CreationDate)
 
@@ -413,15 +365,6 @@ gfx100rf / QuickTime.mov EXIF+MakerNotes tags need embedded-EXIF udta
 routing (Canon CNTH:2044 → Canon::CNTH, Fuji:1921, Pentax:2283 → existing
 TIFF pipeline) — file as follow-up TPP with CR3 unless trivially small.
 **Proof**: `make verify` clean; diffs-per-file list recorded in this TPP.
-
-## If architecture changed
-
-- Generated tables moved/renamed? `rg -l "QUICK_TIME" src/generated/` and
-  re-check whether string-keyed maps now exist before redoing Task 1.
-- Composite fallback registry gone? `rg "COMPOSITE_FALLBACKS" src/` — the
-  goal (Rotation from HandlerType+MatrixStructure) is unchanged.
-- Compat scoring changed (likely — oracle TPP): the per-file ground truth
-  is still `generated/exiftool-json/*_mov.json` + compare-with-exiftool.
 
 ## Files referenced
 

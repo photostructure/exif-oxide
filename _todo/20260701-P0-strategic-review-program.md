@@ -117,6 +117,20 @@ tier, and land the reliability foundations as discrete TPPs.
 
 ## Session state (2026-07-03, third session) — resume here
 
+- **QuickTime implementation is live and mid-flight**: Tasks 0-2 of
+  `_todo/20260703-P1-quicktime-video-read.md` are pushed (`f26e1627`
+  codegen string-keyed tables + breaking tests; `9d2e2390` the atom
+  walker — all 5 MOV snapshots match 13/13 core tags, double-review-gated
+  with verdicts recorded in that TPP). **A Task 3 opus subagent
+  (Keys/ilst: Make/Model/Software/CreationDate + CompressorName +
+  HandlerDescription) was in flight at handoff time** — if its report is
+  gone, `git status` shows its edits; review-gate then commit per that
+  TPP's workflow note.
+- **The review gate is now a reusable skill**: `/coding:double-review`
+  in `~/src/claude-code-skills` (extracted from tpp-orchestrate steps
+  4-6, which now reference it; Matthew committed it). First live run on
+  Task 2: codex + Claude reviewer, 1 accepted fix (v1 fixture test),
+  1 documented divergence, 2 evidence-backed vetoes.
 - **Items #2 and #5-authoring landed 2026-07-03 (third session)**: the
   compat gate (see table row #2 — headline is now an honest **23/191**
   with 168 triaged+allowlisted gaps) and the QuickTime TPP (`2d654d4d`).
