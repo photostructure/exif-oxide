@@ -55,10 +55,10 @@ non_snake_case = "allow"
 byteorder = "1.5" # Efficient endian handling
 thiserror = "2.0" # Error handling
 anyhow = "1.0" # Error handling in examples/tests
-regex = "1.12" # For parsing ExifTool tables (used in dev tools)
+regex = "1.13" # For parsing ExifTool tables (used in dev tools)
 serde = { version = "1.0", features = ["derive"] } # Serialization
 serde_json = "1.0" # JSON output
-clap = { version = "4.5", features = ["derive"] } # CLI argument parsing
+clap = { version = "4.6", features = ["derive"] } # CLI argument parsing
 quick-xml = "0.41" # Fast XML parsing for XMP metadata
 tracing = "0.1" # Structured logging and instrumentation
 tracing-subscriber = { version = "0.3", features = [
@@ -67,23 +67,23 @@ tracing-subscriber = { version = "0.3", features = [
 chrono = { version = "0.4", features = [
     "serde",
 ] } # Date and time handling for File:FileModifyDate
-indexmap = { version = "2.12", features = [
+indexmap = { version = "2.14", features = [
     "serde",
 ] } # Preserves insertion order for tag output
 
 # Cryptographic hashing for ImageDataHash support (ExifTool -api requesttags=imagedatahash)
-md-5 = "0.10"    # MD5 hashing (default algorithm, matches ExifTool default)
-sha2 = "0.10"    # SHA256/SHA512 support (optional algorithms)
-digest = "0.10"  # Common trait for hash algorithms
+md-5 = "0.11"    # MD5 hashing (default algorithm, matches ExifTool default)
+sha2 = "0.11"    # SHA256/SHA512 support (optional algorithms)
+digest = "0.11"  # Common trait for hash algorithms
 
 [dev-dependencies]
 criterion = "0.8" # Benchmarking
 pretty_assertions = "1.4" # Better test assertions
-tempfile = "3.23" # Temporary files for testing
-clap = { version = "4.5", features = [
+tempfile = "3.27" # Temporary files for testing
+clap = { version = "4.6", features = [
     "derive",
 ] } # CLI argument parsing for analysis tools
-similar = { version = "2.7", features = [
+similar = { version = "3.1", features = [
     "text",
 ] } # Text diffing for ExifTool comparison
 tracing-test = "0.2" # Testing utilities for tracing
