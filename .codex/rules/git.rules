@@ -1,0 +1,17 @@
+prefix_rule(
+    pattern = ["git", ["add", "rm", "mv", "commit"]],
+    decision = "allow",
+    justification = "This repository permits staging, moving or removing tracked files, and committing without approval.",
+    match = [
+        "git add src/lib.rs",
+        "git rm obsolete.rs",
+        "git mv old.rs new.rs",
+        "git commit -m test",
+    ],
+    not_match = [
+        "git push",
+        "git reset --hard",
+        "rm obsolete.rs",
+        "mv old.rs new.rs",
+    ],
+)
