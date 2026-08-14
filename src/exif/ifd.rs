@@ -398,11 +398,16 @@ impl ExifReader {
                         value_extraction::extract_long_value(data, entry, byte_order)? as i32,
                     )
                 } else {
-                    // No signed array helper either; the reinterpretation is
-                    // per element. FujiFilm 0x100A (FocusPixel) is SLONG count 2.
-                    TagValue::U32Array(value_extraction::extract_long_array(
-                        data, entry, byte_order,
-                    )?)
+                    // No signed array helper and no I32Array variant, so the
+                    // reinterpretation is per element into a heterogeneous
+                    // Array. Storing these as U32Array would print
+                    // WhiteBalanceFineTune's -100 as 4294967196.
+                    TagValue::Array(
+                        value_extraction::extract_long_array(data, entry, byte_order)?
+                            .into_iter()
+                            .map(|v| TagValue::I32(v as i32))
+                            .collect(),
+                    )
                 }
             }
             TiffFormat::SShort => {
@@ -411,9 +416,12 @@ impl ExifReader {
                         value_extraction::extract_short_value(data, entry, byte_order)? as i16,
                     )
                 } else {
-                    TagValue::U16Array(value_extraction::extract_short_array_value(
-                        data, entry, byte_order,
-                    )?)
+                    TagValue::Array(
+                        value_extraction::extract_short_array_value(data, entry, byte_order)?
+                            .into_iter()
+                            .map(|v| TagValue::I16(v as i16))
+                            .collect(),
+                    )
                 }
             }
             TiffFormat::Rational => {
