@@ -75,7 +75,16 @@ fn unpack_bytes(spec: &str, bytes: &[u8]) -> Vec<TagValue> {
                         break;
                     }
                 }
-                let count = if count_str.is_empty() {
+                let count = if spec_chars.peek() == Some(&'*') {
+                    // Perl '*': repeat for all remaining data (perlfunc unpack)
+                    spec_chars.next();
+                    let elem_size = match ch {
+                        'n' | 'v' => 2,
+                        'N' | 'V' => 4,
+                        _ => 1,
+                    };
+                    bytes.len().saturating_sub(byte_index) / elem_size
+                } else if count_str.is_empty() {
                     1
                 } else {
                     count_str.parse::<usize>().unwrap_or(1)
@@ -198,6 +207,31 @@ mod tests {
                 TagValue::U8(0x14)
             ]
         );
+    }
+
+    #[test]
+    fn test_unpack_c_star_consumes_all_bytes() {
+        // Perl: unpack "C*", "\0\x01\x01\0" => (0, 1, 1, 0)
+        // Panasonic.pm:286 FirmwareVersion depends on this.
+        let bytes = TagValue::Binary(vec![0x00, 0x01, 0x01, 0x00]);
+        let result = unpack_binary("C*", &bytes);
+        assert_eq!(
+            result,
+            vec![
+                TagValue::U8(0),
+                TagValue::U8(1),
+                TagValue::U8(1),
+                TagValue::U8(0)
+            ]
+        );
+    }
+
+    #[test]
+    fn test_unpack_n_star_consumes_pairs() {
+        // Perl: unpack "n*", four bytes => two big-endian shorts
+        let bytes = TagValue::Binary(vec![0x12, 0x34, 0x56, 0x78]);
+        let result = unpack_binary("n*", &bytes);
+        assert_eq!(result, vec![TagValue::U16(0x1234), TagValue::U16(0x5678)]);
     }
 
     #[test]

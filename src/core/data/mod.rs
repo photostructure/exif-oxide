@@ -86,21 +86,11 @@ pub fn pack_c_star_bit_extract(val: &TagValue, shifts: &[i32], mask: i32, offset
 pub fn join_unpack_binary(separator: &str, format: &str, val: &TagValue) -> TagValue {
     let unpacked = unpack_binary(format, val);
 
-    // Convert unpacked values to strings
-    let strings: Vec<String> = unpacked
-        .iter()
-        .map(|v| match v {
-            TagValue::String(s) => s.clone(),
-            TagValue::U8(n) => format!("{n:02x}"),
-            TagValue::U16(n) => format!("{n:04x}"),
-            TagValue::U32(n) => format!("{n:08x}"),
-            TagValue::I32(n) => {
-                let b = *n as u8;
-                format!("{b:02x}")
-            }
-            _ => v.to_string(),
-        })
-        .collect();
+    // Convert unpacked values to strings. Numeric formats (C, n, N, ...)
+    // stringify in DECIMAL, exactly as Perl's join over unpack does; hex
+    // rendering belongs to the 'H' formats, which unpack_binary already
+    // returns as TagValue::String.
+    let strings: Vec<String> = unpacked.iter().map(|v| v.to_string()).collect();
 
     TagValue::String(strings.join(separator))
 }
@@ -108,6 +98,15 @@ pub fn join_unpack_binary(separator: &str, format: &str, val: &TagValue) -> TagV
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_join_unpack_c_star_is_decimal() {
+        // Perl: join " ", unpack "C*", $val stringifies numbers in DECIMAL.
+        // Probe (vendored 13.59): exiftool -FirmwareVersion# dmc-g5.jpg => "0 1 1 0"
+        let binary_data = TagValue::Binary(vec![0x00, 0x01, 0x01, 0x00]);
+        let result = join_unpack_binary(" ", "C*", &binary_data);
+        assert_eq!(result, TagValue::String("0 1 1 0".to_string()));
+    }
 
     #[test]
     fn test_join_unpack_binary() {
@@ -120,9 +119,10 @@ mod tests {
         let result = join_unpack_binary("-", "H2H2", &TagValue::Binary(vec![0x12, 0x34]));
         assert_eq!(result, TagValue::String("12-34".to_string()));
 
-        // Test with unsigned chars
+        // Test with unsigned chars — Perl stringifies C values in decimal:
+        // perl -e 'print join " ", unpack "C3", "\x10\x20\x30"' => 16 32 48
         let result = join_unpack_binary(" ", "C3", &TagValue::Binary(vec![0x10, 0x20, 0x30]));
-        assert_eq!(result, TagValue::String("10 20 30".to_string()));
+        assert_eq!(result, TagValue::String("16 32 48".to_string()));
 
         // Test empty separator
         let result = join_unpack_binary("", "H2H2", &TagValue::Binary(vec![0xAB, 0xCD]));
