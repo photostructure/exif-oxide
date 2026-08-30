@@ -26,9 +26,12 @@ fmt: check-deps
 lint:
 	cargo clippy --all-targets --all-features -- -D warnings
 
-# Run yamllint on YAML files
-yamllint: check-deps
-	yamllint .github/ *.yml *.yaml 2>/dev/null || true
+# Run yamllint on YAML files. No check-deps prerequisite: that would demand
+# the full dev toolchain (rg, sd, shfmt, cargo-edit, cargo-audit) on CI
+# runners that only run `make check`, and a missing yamllint already fails
+# loudly on its own.
+yamllint:
+	yamllint .github/
 
 # Run unit tests only (no integration tests)
 unit-test:
