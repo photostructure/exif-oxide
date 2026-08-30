@@ -162,9 +162,9 @@ Dual-licensed under commercial license and GNU Affero General Public License v3.
 2. Build and test:
 
    ```bash
-   make verify  # Build, test, and lint
+   make verify  # Validate without rewriting tracked source files
    # Or run tests directly:
-   cargo t         # Run tests (use 'cargo t' not 'cargo test')
+   cargo t      # Run tests (use 'cargo t' not 'cargo test')
    ```
 
 3. Run on test images:

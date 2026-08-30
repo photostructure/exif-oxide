@@ -209,7 +209,7 @@ Note: P03a/b/c/e/f/g never existed as separate files in `_todo/` or `docs/todo/`
 
 ## Quality Checklist
 
-- [ ] `make verify` passes after each PR
+- [ ] The non-mutating `make verify` gate passes after each PR
 - [ ] Each fix verified with `compare-with-exiftool` tool
 - [ ] No regressions in existing compatibility tests
 - [ ] Follow Trust ExifTool principle - copy behavior exactly
@@ -224,7 +224,7 @@ git status  # Check what changed
 git diff docs/  # Review doc changes
 git checkout HEAD -- src/  # Revert source changes if needed
 
-# Validate before declaring success
+# Validate without rewriting tracked source files before declaring success
 make verify
 cargo run --bin compare-with-exiftool -- third-party/exiftool/t/images/Canon.jpg
 ```

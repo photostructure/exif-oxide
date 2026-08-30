@@ -51,11 +51,20 @@ These will get your PR reverted immediately:
 
 ## ✅ MANDATORY BEFORE EVERY PR
 
-Ask the user
+Run the non-mutating validation gate:
 
 ```bash
-make codegen fmt lint t  # MUST pass
+make verify  # MUST pass
 ```
+
+If a change affects generated code, run `make codegen` first and include the
+resulting source changes before running `make verify`.
+
+Before a release, run `make preflight`. It cleans build artifacts,
+upgrades dependencies and GitHub Actions, installs Perl dependencies,
+regenerates code and missing compatibility snapshots, applies automatic fixes,
+and finishes with `make verify`. Review and commit its source changes before
+releasing.
 
 ## 📁 Directory Safety
 

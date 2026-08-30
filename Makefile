@@ -1,7 +1,6 @@
-.PHONY: all ast-check ast-test check check-fmt fmt lint yamllint unit-test test t codegen-test fix build install doc clean clean-generated clean-all check-deps check-perl codegen sync expression-analysis expression-analysis-force perl-setup perl-deps update upgrade-gha upgrade audit tests verify compat-gen compat-gen-force compat-test test-mime-compat binary-compat-test cmp compat compat-force compat-full help
+.DEFAULT_GOAL := build
 
-# Default target: build the project
-all: build
+.PHONY: ast-check ast-test check check-fmt fmt lint yamllint unit-test test t codegen-test fix build install doc clean clean-generated clean-all check-deps check-perl codegen sync expression-analysis expression-analysis-force perl-setup perl-deps upgrade-gha upgrade audit tests verify preflight compat-gen compat-gen-force compat-test test-mime-compat binary-compat-test cmp compat compat-force compat-full help
 
 # Check for required external tools
 check-deps:
@@ -145,19 +144,29 @@ upgrade-gha:
 audit: check-deps
 	cargo audit
 
-# All tests including unit, integration, codegen, and compatibility tests
-tests: codegen-test test compat-full
+# All tests including unit, integration, codegen, and compatibility tests.
+# Use the committed compatibility snapshots; generating missing snapshots is a
+# source-changing preparation step.
+tests: codegen-test test compat-test test-mime-compat binary-compat-test
 
-# Full pre-commit validation: codegen, fix code, lint, test, audit, and build. We don't
-# clean-all because that leaves the tree temporarily broken, and we don't
-# upgrade because changes to Cargo.toml can cause the rust analyzer to OOM (!!)
-# IMPORTANT: codegen must run BEFORE any cargo commands to ensure generated files exist
-verify: perl-deps codegen audit fix check tests build
+# Validate the checkout without rewriting tracked source files.
+verify: audit check tests build
 	@echo "✅ verify successful 🥳"
 
-# This should
-prerelease: clean-all upgrade verify
-	@echo "✅ prerelease successful 🥳"
+# Every PhotoStructure repo exposes `make preflight`: run everything that should
+# pass before cutting a release. Here that means updating dependencies and
+# generated sources, applying automatic fixes, generating any missing
+# compatibility snapshots, then running the non-mutating validation gate.
+# Recursive make calls keep this order even when the caller enables parallelism.
+preflight:
+	@$(MAKE) --no-print-directory clean-all
+	@$(MAKE) --no-print-directory upgrade
+	@$(MAKE) --no-print-directory perl-deps
+	@$(MAKE) --no-print-directory codegen
+	@$(MAKE) --no-print-directory fix
+	@$(MAKE) --no-print-directory compat-gen
+	@$(MAKE) --no-print-directory verify
+	@echo "✅ release preparation successful 🥳"
 
 # Generate ExifTool JSON reference data for compatibility testing (only missing files)
 compat-gen:
@@ -240,8 +249,8 @@ help:
 	@echo "exif-oxide Makefile targets:"
 	@echo ""
 	@echo "Default:"
-	@echo "  make               - Build the project (same as 'make all')"
-	@echo "  make all           - Build the project"
+	@echo "  make               - Build the project (same as 'make build')"
+	@echo "  make build         - Build the project in release mode"
 	@echo ""
 	@echo "Setup:"
 	@echo "  make check-deps    - Check for required external tools (jq, yamllint, etc.)"
@@ -258,6 +267,7 @@ help:
 	@echo "  make build         - Build in release mode"
 	@echo "  make install       - Install the binary locally"
 	@echo "  make doc           - Generate and open documentation"
+	@echo "  make verify        - Validate without rewriting tracked source files"
 	@echo ""
 	@echo "Code Generation:"
 	@echo "  make codegen       - Generate all code from ExifTool"
@@ -271,13 +281,12 @@ help:
 	@echo "  make clean-all     - Clean everything (build + generated)"
 	@echo ""
 	@echo "Maintenance:"
-	@echo "  make update        - Update dependencies"
 	@echo "  make upgrade-gha   - Upgrade GitHub Actions to latest versions"
 	@echo "  make upgrade       - Upgrade to latest dependency versions"
 	@echo "  make perl-setup    - Set up local Perl environment"
 	@echo "  make perl-deps     - Install Perl dependencies"
 	@echo "  make audit         - Security audit for vulnerabilities"
-	@echo "  make verify        - Run full pre-commit validation"
+	@echo "  make preflight     - Upgrade, regenerate, fix, and validate for release"
 	@echo ""
 	@echo "Testing:"
 	@echo "  make tests         - Run all tests including unit, integration, codegen, and compatibility"

@@ -261,9 +261,10 @@ The `ops.rs` module implements `Add`, `Sub`, `Mul`, `Div` for TagValue with smar
 ## Build Commands
 
 ```bash
-make codegen                    # Full pipeline (patches ExifTool, runs codegen, formats)
+make codegen                    # Full pipeline (stages a patched ExifTool copy, runs codegen, formats)
 make clean && make codegen      # Clean rebuild
-make verify                     # Full validation before commit
+make verify                     # Validate without rewriting tracked source files
+make preflight                  # Upgrade, regenerate, fix, and validate for release
 cargo t                         # Run tests (includes test-helpers feature)
 ```
 
