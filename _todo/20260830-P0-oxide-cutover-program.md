@@ -169,11 +169,18 @@ findings, triaged:**
   (build.yml:99 went `--workspace` → `-p exif-oxide`) — add a Linux step:
   perl-deps (cpanm PPI/JSON::XS) + `cargo test -p codegen --locked`.
 
-Remaining M0 checklist, in order: (1) inline fixes R905-A/B/C/F + tests;
-(2) apply numeric-order's diff, commit; (3) apply file-group-fastpath's
-diff, commit; (4) spawn R905-D division-semantics subagent (Opus,
-second-opinion, NO task chips), land it; (5) final `make verify`; (6)
-record the fresh compat score here; (7) push everything.
+R905-A/B/C/F fixed and committed (`4f26d6a7`, `83142220`, `5692b545`,
+`c4e7dcf2`). The serialization fix uncovered real damage: symbols with
+bare-typeglob values had been silently dropped on every regen, leaving 49
+generated files stale across ExifTool versions (%isPC had 4 of 6 entries);
+all refreshed against 13.59 and the full suite passes.
+
+Remaining M0 checklist, in order: (1) apply numeric-order's diff, commit;
+(2) apply file-group-fastpath's diff, commit; (3) spawn R905-D
+division-semantics subagent (Opus, second-opinion, NO task chips) — Perl
+`/` always float + whole-number floats serialize without ".0"; expect
+compat snapshot churn; land it; (4) final `make verify`; (5) record the
+fresh compat score here; (6) push everything.
 
 Session gotchas for the next operator: worktree agents spawn at a stale
 base — have them `git merge --ff-only main` before starting; long
