@@ -9,6 +9,7 @@ pub mod dsa_tags;
 pub mod face_det_info_tags;
 pub mod face_rec_info_tags;
 pub mod focus_info_tags;
+pub mod frame_selector_bits;
 pub mod leica2_tags;
 pub mod leica3_tags;
 pub mod leica4_tags;

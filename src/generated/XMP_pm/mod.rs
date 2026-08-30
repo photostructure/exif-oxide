@@ -12,6 +12,7 @@ pub mod aux_tags;
 pub mod cc_tags;
 pub mod cell_tags;
 pub mod char_name;
+pub mod char_num;
 pub mod composite_tags;
 pub mod crd_tags;
 pub mod creator_atom_tags;

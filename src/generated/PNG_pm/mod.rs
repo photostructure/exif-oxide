@@ -5,8 +5,11 @@
 pub mod animation_control_tags;
 pub mod ci_code_points_tags;
 pub mod image_header_tags;
+pub mod is_dat_chunk;
 pub mod is_txt_chunk;
 pub mod main_tags;
+pub mod month_num;
+pub mod no_leap_frog;
 pub mod physical_pixel_tags;
 pub mod png_map;
 pub mod primary_chromaticities_tags;

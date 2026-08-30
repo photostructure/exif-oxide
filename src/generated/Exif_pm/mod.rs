@@ -5,7 +5,9 @@
 pub mod composite_tags;
 pub mod compression;
 pub mod flash;
+pub mod format_number;
 pub mod ind;
+pub mod int_format;
 pub mod light_source;
 pub mod main_tags;
 pub mod orientation;

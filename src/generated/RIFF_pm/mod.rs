@@ -22,6 +22,7 @@ pub mod instrument_tags;
 pub mod is_image_data;
 pub mod junk_tags;
 pub mod main_tags;
+pub mod month_num;
 pub mod open_dml_tags;
 pub mod riff_mime_type;
 pub mod riff_type;

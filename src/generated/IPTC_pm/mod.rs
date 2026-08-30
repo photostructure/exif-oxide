@@ -8,6 +8,7 @@ pub mod envelope_record_tags;
 pub mod file_format;
 pub mod foto_station_tags;
 pub mod iptc_charset;
+pub mod is_standard_iptc;
 pub mod main_tags;
 pub mod news_photo_tags;
 pub mod object_data_tags;

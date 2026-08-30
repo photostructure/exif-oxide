@@ -5,6 +5,7 @@
 pub mod fdsc_tags;
 pub mod glpi_tags;
 pub mod go_pro_fmt;
+pub mod go_pro_size;
 pub mod gpmf_tags;
 pub mod gpri_tags;
 pub mod gps5_tags;

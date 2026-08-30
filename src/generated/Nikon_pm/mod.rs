@@ -60,6 +60,7 @@ pub mod flash_color_filter;
 pub mod flash_control_mode;
 pub mod flash_control_mode_z7;
 pub mod flash_firmware;
+pub mod flash_gn_distance;
 pub mod flash_group_options_mode;
 pub mod flash_info0100_tags;
 pub mod flash_info0102_tags;
