@@ -162,7 +162,7 @@ pub fn get_database_stats() -> (usize, HashMap<LensCategory, usize>) {
     let total = NIKON_LENS_IDS.len();
     let mut category_counts = HashMap::new();
 
-    for (_, description) in NIKON_LENS_IDS.iter() {
+    for description in NIKON_LENS_IDS.values() {
         let category = LensCategory::from_description(description);
         *category_counts.entry(category).or_insert(0) += 1;
     }

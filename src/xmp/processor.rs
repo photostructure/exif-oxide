@@ -383,8 +383,10 @@ impl XmpProcessor {
     fn convert_utf16_le_to_utf8(&self, data: &[u8]) -> Vec<u8> {
         // Convert bytes to u16 pairs (little-endian)
         let utf16_chars: Vec<u16> = data
-            .chunks_exact(2)
-            .map(|chunk| u16::from_le_bytes([chunk[0], chunk[1]]))
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .map(|chunk| u16::from_le_bytes(*chunk))
             .collect();
 
         // Convert UTF-16 to string, then to UTF-8 bytes
@@ -395,8 +397,10 @@ impl XmpProcessor {
     fn convert_utf16_be_to_utf8(&self, data: &[u8]) -> Vec<u8> {
         // Convert bytes to u16 pairs (big-endian)
         let utf16_chars: Vec<u16> = data
-            .chunks_exact(2)
-            .map(|chunk| u16::from_be_bytes([chunk[0], chunk[1]]))
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .map(|chunk| u16::from_be_bytes(*chunk))
             .collect();
 
         // Convert UTF-16 to string, then to UTF-8 bytes

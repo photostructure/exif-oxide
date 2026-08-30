@@ -59,14 +59,18 @@ pub fn convert_exif_text(value: &TagValue, _ctx: Option<&ExifContext>) -> Result
                 // Convert UTF-16 to UTF-8
                 let utf16_values: Vec<u16> = if is_little_endian {
                     text_data
-                        .chunks_exact(2)
-                        .map(|chunk| u16::from_le_bytes([chunk[0], chunk[1]]))
+                        .as_chunks::<2>()
+                        .0
+                        .iter()
+                        .map(|chunk| u16::from_le_bytes(*chunk))
                         .take_while(|&v| v != 0) // Stop at null terminator
                         .collect()
                 } else {
                     text_data
-                        .chunks_exact(2)
-                        .map(|chunk| u16::from_be_bytes([chunk[0], chunk[1]]))
+                        .as_chunks::<2>()
+                        .0
+                        .iter()
+                        .map(|chunk| u16::from_be_bytes(*chunk))
                         .take_while(|&v| v != 0) // Stop at null terminator
                         .collect()
                 };

@@ -323,10 +323,9 @@ impl ScalarArrayStrategy {
                 JsonValue::Number(n) => {
                     if let Some(i) = n.as_i64() {
                         scalar_values.push(ScalarValue::Integer(i));
-                    } else if let Some(f) = n.as_f64() {
-                        scalar_values.push(ScalarValue::Float(f));
                     } else {
-                        return None; // Invalid number
+                        let f = n.as_f64()?;
+                        scalar_values.push(ScalarValue::Float(f));
                     }
                 }
                 JsonValue::String(s) => {
