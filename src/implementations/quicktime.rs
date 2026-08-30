@@ -22,6 +22,10 @@
 //! `RawConv` patch is folded into [`convert_unix_time_quicktime`] here, and the
 //! walker applies the equivalent core helpers explicitly.
 
+use std::sync::LazyLock;
+
+use regex::Regex;
+
 use crate::types::{ExifContext, Result, TagValue};
 
 /// Seconds between the QuickTime epoch (1904-01-01) and the Unix epoch
@@ -216,6 +220,42 @@ fn duration_print_conv(val: &TagValue, ctx: Option<&ExifContext>, member: &str) 
     }
 }
 
+// ---------------------------------------------------------------------------
+// %iso8601Date (QuickTime.pm:295-311) — CreationDate / CreationTime / LocationDate
+// ---------------------------------------------------------------------------
+
+/// QuickTime.pm:300 `s/([-+]\d{2})(\d{2})$/$1:$2/` — insert the colon into a
+/// trailing `[-+]DDDD` timezone. Idempotent: an already-colonised `[-+]DD:DD`
+/// tail has only ":DD" left of the `$`, so it never matches.
+static TZ_COLON_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"([-+]\d{2})(\d{2})$").unwrap());
+
+/// ValueConv wrapper for QuickTime's `%iso8601Date` tags (CreationDate etc.,
+/// QuickTime.pm:295-302). Registered for the multi-line expression
+/// ```text
+/// require Image::ExifTool::XMP;
+/// $val =  Image::ExifTool::XMP::ConvertXMPDate($val);
+/// $val =~ s/([-+]\d{2})(\d{2})$/$1:$2/; # add colon to timezone if necessary
+/// return $val;
+/// ```
+///
+/// This is exactly `ConvertXMPDate` (reused from [`crate::xmp::value_conversion`])
+/// plus the trailing-timezone colon fix — the ONLY delta over the XMP port. The
+/// PrintConv is `$self->ConvertDateTime($val)`, which is identity without `-d`, so
+/// the walker uses this ValueConv result directly for both value and print (same
+/// conclusion as the binary date tags, QuickTime.pm:287).
+pub fn convert_iso8601_date(val: &TagValue, _ctx: Option<&ExifContext>) -> Result<TagValue> {
+    let Some(s) = val.as_string() else {
+        return Ok(val.clone());
+    };
+    // QuickTime.pm:299 ConvertXMPDate (ISO 8601 -> "YYYY:MM:DD hh:mm:ss<tz>").
+    let converted = crate::xmp::value_conversion::convert_xmp_date(s);
+    let TagValue::String(text) = &converted else {
+        return Ok(converted);
+    };
+    // QuickTime.pm:300 add colon to timezone if necessary.
+    Ok(TagValue::string(TZ_COLON_RE.replace(text, "$1:$2")))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -255,6 +295,26 @@ mod tests {
         assert_eq!(convert_duration(90.0), "0:01:30");
         // Negative sign preserved.
         assert_eq!(convert_duration(-2.96), "-2.96 s");
+    }
+
+    #[test]
+    fn convert_iso8601_date_adds_tz_colon() {
+        // iPhone CreationDate: ConvertXMPDate turns ISO into "YYYY:MM:DD hh:mm:ss-0700",
+        // then the %iso8601Date delta inserts the colon -> "-07:00" (QuickTime.pm:300).
+        assert_eq!(
+            convert_iso8601_date(&TagValue::string("2025-06-24T15:24:45-0700"), None).unwrap(),
+            TagValue::string("2025:06:24 15:24:45-07:00")
+        );
+        // Already-colonised timezone is left untouched (idempotent).
+        assert_eq!(
+            convert_iso8601_date(&TagValue::string("2025-06-24T15:24:45-07:00"), None).unwrap(),
+            TagValue::string("2025:06:24 15:24:45-07:00")
+        );
+        // Zulu / no-timezone forms pass through ConvertXMPDate unchanged.
+        assert_eq!(
+            convert_iso8601_date(&TagValue::string("2018-01-15T22:22:01Z"), None).unwrap(),
+            TagValue::string("2018:01:15 22:22:01Z")
+        );
     }
 
     #[test]

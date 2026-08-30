@@ -243,6 +243,15 @@ static VALUECONV_REGISTRY: LazyLock<HashMap<&'static str, (&'static str, &'stati
             ),
         );
 
+        // QuickTime %iso8601Date tags (CreationDate etc., QuickTime.pm:295-302). PPI
+        // can't translate the s/// timezone fix-up, so it falls here. The key is the
+        // raw multi-line ValueConv (source indentation preserved on continuation
+        // lines, first line trimmed) exactly as field_extractor emits it.
+        m.insert(
+            "require Image::ExifTool::XMP;\n        $val =  Image::ExifTool::XMP::ConvertXMPDate($val);\n        $val =~ s/([-+]\\d{2})(\\d{2})$/$1:$2/; # add colon to timezone if necessary\n        return $val;",
+            ("crate::implementations::quicktime", "convert_iso8601_date"),
+        );
+
         // String processing patterns
         m.insert(
             "length($val) > 32 ? \\$val : $val",
@@ -310,4 +319,18 @@ pub fn classify_valueconv_expression(expr: &str, module: &str) -> ValueConvType 
 #[cfg(test)]
 pub fn get_valueconv_registry() -> &'static HashMap<&'static str, (&'static str, &'static str)> {
     &VALUECONV_REGISTRY
+}
+
+#[cfg(test)]
+mod tests {
+    use super::lookup_valueconv;
+
+    #[test]
+    fn quicktime_iso8601_multiline_expression_is_registered_exactly() {
+        let expression = "require Image::ExifTool::XMP;\n        $val =  Image::ExifTool::XMP::ConvertXMPDate($val);\n        $val =~ s/([-+]\\d{2})(\\d{2})$/$1:$2/; # add colon to timezone if necessary\n        return $val;";
+        assert_eq!(
+            lookup_valueconv(expression, "QuickTime_pm"),
+            Some(("crate::implementations::quicktime", "convert_iso8601_date"))
+        );
+    }
 }

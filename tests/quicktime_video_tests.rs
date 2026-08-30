@@ -130,6 +130,36 @@ fn exiftool_quicktime_mov_core_tags_match_exiftool() {
     assert_tag(&tags, "QuickTime:ImageWidth", json!(320));
 }
 
+/// Task 3 proof isolated from the still-pending GPS/Rotation composites in the
+/// all-up Apple test above.
+#[test]
+fn apple_img3755_task3_tags_match_exiftool() {
+    let tags = tags_for("test-images/apple/IMG_3755.MOV");
+
+    assert_tag(&tags, "QuickTime:CompressorName", json!("H.264"));
+    assert_tag(
+        &tags,
+        "QuickTime:HandlerDescription",
+        json!("Core Media Data Handler"),
+    );
+    assert_tag(&tags, "QuickTime:Make", json!("Apple"));
+    assert_tag(&tags, "QuickTime:Model", json!("iPhone 13 Pro"));
+    assert_tag(&tags, "QuickTime:Software", json!(18.5));
+    assert_tag(
+        &tags,
+        "QuickTime:CreationDate",
+        json!("2025:06:24 15:24:45-07:00"),
+    );
+}
+
+/// Canon stores Model directly in a UserData `CNMN` atom rather than Apple
+/// mdta Keys/ItemList metadata (QuickTime.pm UserData:2037).
+#[test]
+fn canon_eos500d_userdata_model_matches_exiftool() {
+    let tags = tags_for("test-images/canon/eos_500d.mov");
+    assert_tag(&tags, "QuickTime:Model", json!("Canon EOS 500D"));
+}
+
 // ---------------------------------------------------------------------------
 // Unit-test targets for later tasks. The implementation modules
 // (src/implementations/quicktime.rs, GPS ISO6709 conversion, ConvertDuration)

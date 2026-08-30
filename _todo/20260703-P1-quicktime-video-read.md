@@ -25,15 +25,9 @@ shows no `QuickTime:*` or `Composite:*` diffs; same for the other 4 MOVs.
       the 3 image-level tests are committed `#[ignore]`d — they were validated to
       fail on missing tags, not setup; **un-ignore them as Tasks 2-4 land**)
 - [x] Task breakdown review
-- [ ] Implementation (Tasks 1-2 DONE + review-gated + pushed — see logs below;
-      **Task 3 IN FLIGHT** as of 2026-07-03 ~18:30: an opus subagent is
-      implementing Keys/ilst (Make/Model/Software/CreationDate) + stsd
-      CompressorName + hdlr HandlerDescription + Task-4 state capture
-      (raw GPSCoordinates string, MatrixStructure, LensModel), including
-      investigating how canon eos_500d.mov stores Model (`exiftool -v3`,
-      not Apple mdta). If its report was lost to compaction: `git status`
-      shows its edits; review-gate per the workflow note below, then commit.
-      Tasks 4-5 not started)
+- [ ] Implementation (Tasks 1-3 DONE — Task 3 regenerated + review-gated
+      2026-08-30 after the staged-copy codegen redesign unblocked `make
+      codegen`; Tasks 4-5 not started)
 - [ ] Review & Refinement
 - [ ] Final Integration
 
@@ -47,6 +41,21 @@ here) → one Conventional Commit per task, push without asking (this repo's
 exception). When tags start passing, `make compat-test`'s stale-ratchet
 demands removing exactly those tags from `config/compat_known_gaps.json` —
 but QuickTime tags stay allowlisted while CR3 snapshots still miss them.
+
+## Session log (2026-08-08, Task 3 source complete)
+
+- Faithful streaming Keys/ilst, hdlr/stsd, Canon CNMN, and Task-4 prerequisite
+  capture landed. Public MatrixStructure is default-last while the internal
+  first-video matrix remains; state/scoping matches ExifTool.
+- Proof: 14 focused walker tests and clippy pass; Canon Model integration passes.
+  MOV comparisons: Apple 24 working (only Task-3 deltas are generated Software
+  name + CreationDate conversion); other files report 21/20/21/21 working.
+- Intentional Task-3 limit: ilst flags 0x1/0x4 UTF-8 decode; other formats warn
+  and skip. XMP_/CNTH subdirectories remain Task 5.
+- 2026-08-30: submodule restored, codegen rerun via the staged-copy flow;
+  regenerated Keys names (Software) and the CreationDate iso8601 ValueConv
+  landed, and the three now-passing QuickTime tags were removed from
+  `config/compat_known_gaps.json`.
 
 ## Session log (2026-07-03, Task 2)
 
@@ -364,7 +373,8 @@ when done. Known-remaining (acceptable, documents follow-ups): eos_60d /
 gfx100rf / QuickTime.mov EXIF+MakerNotes tags need embedded-EXIF udta
 routing (Canon CNTH:2044 → Canon::CNTH, Fuji:1921, Pentax:2283 → existing
 TIFF pipeline) — file as follow-up TPP with CR3 unless trivially small.
-**Proof**: `make verify` clean; diffs-per-file list recorded in this TPP.
+**Proof**: the non-mutating `make verify` gate passes; diffs-per-file list
+recorded in this TPP.
 
 ## Files referenced
 
