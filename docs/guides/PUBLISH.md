@@ -1,198 +1,125 @@
-# Publishing Guide for exif-oxide
+# Publishing Guide
 
-This guide explains the automated release system set up for exif-oxide and how to publish new versions.
+exif-oxide uses a manually dispatched GitHub Actions workflow. There is one
+publishable crate, `exif-oxide`; the `codegen` workspace member is an internal
+tool with `publish = false`.
 
-## Overview
+The short operator checklist is in [RELEASE.md](../../RELEASE.md). This guide
+documents setup, validation, and recovery details.
 
-The project uses a modern, automated release workflow based on:
+## Prerequisites
 
-- **release-plz**: Automated version bumps and release PRs
-- **Conventional Commits**: Semantic versioning based on commit messages
-- **GitHub Actions**: Automated CI/CD pipeline
-- **Feature flags**: Conditional integration tests for published crates
+### GitHub
 
-## Initial Setup (Already Complete)
+The `Build & Release` workflow needs:
 
-The following has been configured:
+- `contents: write` to push the release commit and tag;
+- `id-token: write` for crates.io trusted publishing;
+- `SSH_SIGNING_KEY`, `GIT_USER_NAME`, and `GIT_USER_EMAIL` repository secrets
+  for the configured release commit/tag identity.
 
-### 1. GitHub Actions CI Pipeline
+All third-party actions are pinned to full commit SHAs. Update those pins in a
+separate reviewed dependency commit.
 
-- **File**: `.github/workflows/ci.yml`
-- **Coverage**: ARM/Intel macOS, ARM/Intel Windows, ARM64/AMD64 Linux (glibc + musl)
-- **Tests**: Clippy, format checks, unit tests, and integration tests
+### crates.io trusted publisher
 
-### 2. Automated Release System
+Configure the crates.io package to trust this repository's
+`.github/workflows/build.yml` workflow. The workflow obtains a short-lived
+token through `rust-lang/crates-io-auth-action`; it does not store a long-lived
+crates.io API token in GitHub.
 
-- **File**: `.github/workflows/release-plz.yml`
-- **Configuration**: `release-plz.toml`
-- **Features**: Automatic version bumps, changelog generation, GitHub releases
+## Preparing `main`
 
-### 3. Dependency Management
+From a clean checkout:
 
-- **File**: `.github/dependabot.yml`
-- **Updates**: Weekly automated dependency updates
+```bash
+make preflight
+git status --short
+```
 
-### 4. Package Configuration
+Preflight updates dependencies and GitHub Actions, regenerates source and
+missing compatibility snapshots, applies automatic fixes, and finishes with
+`make verify`. Review and commit those changes before release. It is not safe
+to dispatch a release with unreviewed preflight output or an uncommitted
+changelog.
 
-- **Optimized package size**: 312KB (down from 431MB)
-- **Feature flags**: Integration tests require `--features integration-tests`
-- **Exclusions**: Test assets and development files excluded from published crate
+Update `CHANGELOG.md` by hand, commit the final release preparation, push it to
+`main`, and wait for the normal CI run.
 
-## Publishing Workflow
+## Manual workflow sequence
 
-### Development Flow
+Open **Actions → Build & Release**, choose **Run workflow**, and select the
+SemVer bump. The workflow performs these guarded stages:
 
-1. **Make changes** following conventional commit format:
+1. Run the existing Linux checks and Linux/macOS/Windows tests.
+2. Install exactly cargo-edit 0.13.13 from its published lockfile.
+3. Run `cargo set-version` for `exif-oxide` only. cargo-edit updates root
+   `Cargo.toml` and the corresponding root `Cargo.lock` package entry.
+4. Fail if any other file changed, then create the local release commit.
+5. On that bumped commit, run locked format, Clippy, and test validation.
+6. Run, in order:
 
    ```bash
-   git commit -m "feat: add new EXIF tag support"    # Minor version bump
-   git commit -m "fix: handle malformed IFD data"    # Patch version bump
-   git commit -m "chore: update dependencies"        # No version bump
+   cargo package --list --locked -p exif-oxide
+   cargo package --locked -p exif-oxide
+   cargo publish --dry-run --locked -p exif-oxide
    ```
 
-2. **Push to main**:
+7. Create the version tag and push the commit and tag.
+8. Authenticate through crates.io trusted publishing and run a locked publish
+   for `exif-oxide` only.
 
-   ```bash
-   git push origin main
-   ```
+The workflow never runs `cargo update`. A release bump must not select new
+dependency versions after the tested preparation commit.
 
-3. **release-plz automatically**:
-   - Creates a release PR with version bump
-   - Updates `CHANGELOG.md`
-   - Runs full CI pipeline
+## Package contents
 
-### Release Flow
+The Cargo package allowlist contains:
 
-1. **Review release PR** created by release-plz
-2. **Merge release PR** when ready
-3. **Automatic actions**:
-   - Version bump in `Cargo.toml`
-   - Git tag created (e.g., `v0.2.0`)
-   - Published to crates.io
-   - GitHub release created with changelog
+- Rust sources, including generated translation modules;
+- compatibility configuration JSON read by the library and comparison tool;
+- Cargo metadata and lockfile; and
+- README, changelog, and license.
 
-## Manual Publishing (First Time Only)
+Integration tests, TPPs, scripts, local test media, the vendored ExifTool
+submodule, and CI/editor configuration are repository inputs, not crate
+contents. Inspect every release with `cargo package --list`; do not infer the
+package from the worktree.
 
-For the initial v0.1.0 release, manual publishing is required:
+## What happens after the tag
 
-### 1. Login to crates.io
-
-```bash
-cargo login
-```
-
-This opens your browser for authentication.
-
-### 2. Publish
-
-```bash
-cargo publish
-```
-
-### 3. Set Up Trusted Publishing (After First Release)
-
-1. Go to https://crates.io/me
-2. Find the "Publishing" section (appears after first publish)
-3. Add `photostructure/exif-oxide` as a trusted publisher
-4. Future releases will use secure OIDC authentication
-
-## Testing
-
-### Local Development
-
-```bash
-make unit-test              # Fast unit tests only
-make test                   # All tests including integration tests
-make verify                 # Full validation before commit
-```
-
-### Published Crate Testing
-
-Users of the published crate get:
-
-```bash
-cargo test                  # Unit tests only (239 tests)
-cargo test --features integration-tests  # All tests (requires test assets)
-```
-
-## Conventional Commit Format
-
-Use these prefixes for automatic version bumps:
-
-| Prefix   | Version Bump          | Example                                 |
-| -------- | --------------------- | --------------------------------------- |
-| `feat:`  | Minor (0.1.0 → 0.2.0) | `feat: add RAW format support`          |
-| `fix:`   | Patch (0.1.0 → 0.1.1) | `fix: handle corrupted EXIF data`       |
-| `perf:`  | Patch                 | `perf: optimize tag lookup performance` |
-| `chore:` | None                  | `chore: update dependencies`            |
-| `docs:`  | None                  | `docs: update API documentation`        |
-| `test:`  | None                  | `test: add integration tests for Canon` |
-
-### Breaking Changes
-
-Add `!` after type or include `BREAKING CHANGE:` in footer:
-
-```bash
-git commit -m "feat!: change API to return Result<>"  # Major version bump
-```
-
-## Configuration Files
-
-### release-plz.toml
-
-Controls release behavior:
-
-- Conventional commit types that trigger releases
-- Changelog generation
-- GitHub release creation
-- PR template
+`build-binaries.yml` validates that the tag matches `Cargo.toml`, builds on six
+native platform/architecture runners, produces SHA-256 checksums, and uploads
+the archives to a draft GitHub Release. It publishes that release only when
+all builds complete.
 
 ## Troubleshooting
 
-### Release PR Not Created
+### Version-bump scope check fails
 
-- Check commit messages follow conventional format
-- Ensure commits include `feat:`, `fix:`, or `perf:` prefixes
-- Verify GitHub Actions have proper permissions
+Do not weaken the file check. A release bump should modify only root
+`Cargo.toml` and `Cargo.lock`. Put dependency or workspace-member changes in a
+separate reviewed commit, then rerun the workflow.
 
-### Publish Fails
+### Package or dry-run fails before push
 
-- Check package size (should be <10MB)
-- Verify all dependencies are valid
-- Ensure tests pass: `make verify`
+No remote release state exists yet. Reproduce the three package commands in a
+clean checkout, fix the source or manifest on `main`, and dispatch again.
 
-### Integration Tests Fail in CI
+### Push fails
 
-- Verify test assets are available in repository
-- Check that `integration-tests` feature is enabled in CI
-- Ensure all integration test files have `#![cfg(feature = "integration-tests")]`
+The local runner commit/tag were not published to crates.io. Check whether
+`main` advanced or the tag already exists. Never overwrite an existing release
+tag; reconcile the repository state and make a new deliberate dispatch.
 
-## Future Maintenance
+### Publish fails after the tag was pushed
 
-The release system is fully automated. Your only responsibilities are:
+Inspect the crates.io version and the tag-triggered binary workflow before any
+retry. If crates.io already accepted the version, it cannot be overwritten.
+If only binaries failed, repair that workflow without republishing the crate.
 
-1. **Write good commit messages** using conventional format
-2. **Review and merge release PRs** created by release-plz
-3. **Monitor CI status** and fix any issues
+### Manual emergency publish
 
-The system handles:
-
-- ✅ Version bumping
-- ✅ Changelog generation
-- ✅ Git tagging
-- ✅ crates.io publishing
-- ✅ GitHub releases
-- ✅ Dependency updates
-
-## Emergency Manual Release
-
-If automation fails, you can always release manually:
-
-```bash
-# Bump version in Cargo.toml manually
-cargo publish
-git tag v0.x.x
-git push origin v0.x.x
-```
-
-Then create a GitHub release manually using the tag.
+Use the exact tagged commit and repeat locked validation, package build, and
+publish dry-run first. Manual publishing is a recovery procedure, not a way to
+bypass a failed gate.

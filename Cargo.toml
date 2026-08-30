@@ -13,13 +13,14 @@ repository = "https://github.com/photostructure/exif-oxide"
 keywords = ["exiftool", "exif", "metadata", "image", "video"]
 categories = ["multimedia::images", "parser-implementations"]
 default-run = "exif-oxide"
-exclude = [
-    "third-party/*",       # Exclude ExifTool submodule (400MB+)
-    "test-images/*",       # Exclude test images (integration tests use feature flag)
-    "docs/*",              # Exclude docs  
-    "codegen/generated/*", # Exclude codegen artifacts
-    "generated/*",         # Exclude compat artifacts
-    ".*/*",                # Exclude dev bot and gha gunk
+include = [
+    "/src/**",
+    "/config/*.json",
+    "/Cargo.toml",
+    "/Cargo.lock",
+    "/README.md",
+    "/CHANGELOG.md",
+    "/LICENSE",
 ]
 
 [lints.clippy]

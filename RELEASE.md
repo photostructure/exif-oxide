@@ -1,93 +1,76 @@
 # Release Process
 
-## How to Release
+Releases are started manually with the `Build & Release` GitHub Actions
+workflow. No automated release PR is created.
 
-1. **Edit CHANGELOG.md** with your release notes
-2. **Go to Actions → Build & Release → Run workflow**
-3. **Select version bump** (patch, minor, or major)
-4. **Click "Run workflow"**
+## Prepare the release
 
-The workflow will:
+1. Run `make preflight` locally.
+2. Review and commit every dependency, generated-code, snapshot, and
+   automatic-fix change produced by preflight.
+3. Update `CHANGELOG.md`, review it, and commit it.
+4. Push the clean, reviewed preparation commits to `main` and wait for CI.
 
-- Run format, clippy, and tests on Linux
-- Run tests on macOS and Windows
-- Bump version in all Cargo.toml files
-- Commit and create signed git tag
-- Push to main
-- Publish to crates.io
-- The tag triggers `build-binaries.yml` which builds binaries for 5 platforms and creates the GitHub Release
+`make preflight` is intentionally mutating. Do not treat its output as an
+automatic release commit.
+
+## Run the workflow
+
+1. Open **Actions → Build & Release → Run workflow**.
+2. Choose `patch`, `minor`, or `major`.
+3. Run the workflow from `main`.
+
+The publish job runs only after the Linux checks and cross-platform test matrix
+pass. It then:
+
+1. installs the pinned cargo-edit release;
+2. bumps only the publishable `exif-oxide` package and its lockfile entry;
+3. rejects any version-bump diff outside root `Cargo.toml` and `Cargo.lock`;
+4. creates a local release commit, but does not tag or push it yet;
+5. reruns locked format, Clippy, and test validation on that commit;
+6. lists and builds the locked crate package, then performs a locked crates.io
+   publish dry-run;
+7. creates and pushes the version tag only after every check succeeds; and
+8. authenticates with crates.io trusted publishing and publishes only
+   `exif-oxide`.
+
+No dependency upgrade runs in the release workflow. Dependency changes must be
+prepared, tested, reviewed, and committed separately before dispatch.
+
+The pushed `v*.*.*` tag starts `build-binaries.yml`, which builds native
+binaries for Linux x86-64/ARM64, macOS Intel/Apple Silicon, and Windows
+x86-64/ARM64. It uploads checksums to a draft GitHub Release and publishes the
+release only after every binary build succeeds.
+
+## Failure boundaries
+
+- A failure before the push step leaves no remote release commit or tag. Fix
+  the problem on `main` and dispatch again.
+- A push failure leaves crates.io untouched. Resolve the branch/tag conflict
+  before retrying; do not force-push a release tag.
+- A failure after the tag push may have started the binary workflow. Inspect
+  both workflows before retrying or changing any tag.
+- The crates.io publish is irreversible for that version. Never publish
+  manually unless the package and dry-run commands below pass on the exact
+  tagged commit.
+
+## Local package rehearsal
+
+Run these commands from a clean checkout of the release candidate:
+
+```bash
+cargo package --list --locked -p exif-oxide
+cargo package --locked -p exif-oxide
+cargo publish --dry-run --locked -p exif-oxide
+```
+
+The package must contain `src/generated/` and `config/*.json`; both are needed
+by the published crate. Tests, plans, scripts, the ExifTool submodule, and
+repository administration files are intentionally excluded.
 
 ## Workflows
 
-| Workflow             | Trigger                               | Purpose                                      |
-| -------------------- | ------------------------------------- | -------------------------------------------- |
-| `build.yml`          | Push, PR, or manual workflow_dispatch | CI checks + release on manual trigger        |
-| `build-binaries.yml` | Git tag (`v*.*.*`)                    | Cross-platform binary builds, GitHub release |
-
-## Build Targets
-
-Binaries are built natively on all platforms (no cross-compilation):
-
-| Target                      | OS           | Architecture | Runner            |
-| --------------------------- | ------------ | ------------ | ----------------- |
-| `x86_64-unknown-linux-gnu`  | Linux        | x86_64       | `ubuntu-latest`   |
-| `aarch64-unknown-linux-gnu` | Linux        | ARM64        | `ubuntu-24.04-arm`|
-| `x86_64-apple-darwin`       | macOS        | Intel        | `macos-15-intel`  |
-| `aarch64-apple-darwin`      | macOS        | Apple Silicon| `macos-15`        |
-| `x86_64-pc-windows-msvc`    | Windows      | x86_64       | `windows-latest`  |
-| `aarch64-pc-windows-msvc`   | Windows      | ARM64        | `windows-11-arm`  |
-
-## Security
-
-The binary release workflow:
-
-- **No curl-to-sh scripts** - No piping remote scripts to shell
-- **All native runners** - No cross-compilation, builds run on native architecture
-- **SHA256 checksums** - Generated for every release artifact
-- **Pinned action versions** - All GitHub Actions pinned to specific commit SHAs
-- **Draft releases** - Artifacts upload to draft, then published after all builds succeed
-
-## Installation Options
-
-After release, users can install via:
-
-```bash
-# From source (requires Rust)
-cargo install exif-oxide
-
-# Pre-built binary (no Rust needed)
-cargo binstall exif-oxide
-
-# Or download directly from GitHub Releases
-```
-
-## Configuration Files
-
-- `.github/workflows/build.yml` - CI and release workflow
-- `.github/workflows/build-binaries.yml` - Binary builds (ripgrep-style)
-
-## Why Not cargo-dist or release-plz?
-
-We evaluated both tools and opted for a simpler, ripgrep-style approach instead.
-
-### cargo-dist
-
-- **Security concern**: Installs via `curl ... | sh` - piping remote scripts to shell
-- **Complexity**: ~300 line generated workflow with JSON manifests and multi-phase orchestration
-- **Opacity**: Hard to audit what the tool actually does
-- **Dependency**: Requires installing cargo-dist binary in CI
-
-### release-plz
-
-- **PR-based workflow**: Creates release PRs rather than direct releases, adding process overhead
-- **Automatic changelogs**: git-cliff integration produces mechanical changelogs; we prefer hand-written release notes
-- **Configuration complexity**: Multiple config files (release-plz.toml, cliff.toml)
-
-### Our approach
-
-Following [ripgrep](https://github.com/BurntSushi/ripgrep), [bat](https://github.com/sharkdp/bat), and [fd](https://github.com/sharkdp/fd):
-
-- **~170 lines** of straightforward YAML
-- **Native runners only** - no cross-compilation tools to install
-- **Fully auditable** - every step is visible in the workflow
-- **No external dependencies** - just cargo, gh CLI, and standard Unix tools
+| Workflow                               | Trigger                   | Purpose                              |
+| -------------------------------------- | ------------------------- | ------------------------------------ |
+| `.github/workflows/build.yml`          | Push, PR, manual dispatch | CI and the guarded crates.io release |
+| `.github/workflows/build-binaries.yml` | Version tag               | Native binaries and GitHub Release   |
