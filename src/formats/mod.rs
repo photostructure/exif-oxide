@@ -109,155 +109,12 @@ pub fn extract_metadata(
 
     // Get actual file metadata
     let file_metadata = std::fs::metadata(path)?;
-    let file_size = file_metadata.len();
 
     let mut tags = IndexMap::new();
     let mut tag_entries = Vec::new();
 
-    // Basic file information (now real data) - create as TagEntry objects with filtering
-    if filter_opts.should_extract_tag("FileName", "File") {
-        let filename = path
-            .file_name()
-            .unwrap_or_default()
-            .to_string_lossy()
-            .to_string();
-        tag_entries.push(TagEntry {
-            group: "File".to_string(),
-            group1: "System".to_string(),
-            name: "FileName".to_string(),
-            value: TagValue::String(filename.clone()),
-            print: TagValue::String(filename),
-        });
-    }
-
-    if filter_opts.should_extract_tag("Directory", "File") {
-        let directory = path
-            .parent()
-            .unwrap_or_else(|| Path::new("."))
-            .to_string_lossy()
-            .to_string();
-        tag_entries.push(TagEntry {
-            group: "File".to_string(),
-            group1: "System".to_string(),
-            name: "Directory".to_string(),
-            value: TagValue::String(directory.clone()),
-            print: TagValue::String(directory),
-        });
-    }
-
-    // FileSize - return raw bytes as per user requirement
-    // Store as string for the numeric value (ExifTool compatibility)
-    if filter_opts.should_extract_tag("FileSize", "File") {
-        tag_entries.push(TagEntry {
-            group: "File".to_string(),
-            group1: "System".to_string(),
-            name: "FileSize".to_string(),
-            value: TagValue::U64(file_size),
-            print: TagValue::U64(file_size),
-        });
-    }
-
-    // Format file modification time to match ExifTool format: "YYYY:MM:DD HH:MM:SS±TZ:TZ"
-    // ExifTool.pm formats this as local time with timezone offset
-    if filter_opts.should_extract_tag("FileModifyDate", "File") {
-        if let Ok(modified) = file_metadata.modified() {
-            use chrono::{DateTime, Local};
-            let datetime: DateTime<Local> = modified.into();
-            // Format to match ExifTool exactly: "2025:06:30 10:16:40-07:00"
-            let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
-            tag_entries.push(TagEntry {
-                group: "File".to_string(),
-                group1: "System".to_string(),
-                name: "FileModifyDate".to_string(),
-                value: TagValue::String(formatted.clone()),
-                print: TagValue::String(formatted),
-            });
-        }
-    }
-
-    // Add FileAccessDate - ExifTool.pm:1427
-    if filter_opts.should_extract_tag("FileAccessDate", "File") {
-        if let Ok(accessed) = file_metadata.accessed() {
-            use chrono::{DateTime, Local};
-            let datetime: DateTime<Local> = accessed.into();
-            let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
-            tag_entries.push(TagEntry {
-                group: "File".to_string(),
-                group1: "System".to_string(),
-                name: "FileAccessDate".to_string(),
-                value: TagValue::String(formatted.clone()),
-                print: TagValue::String(formatted),
-            });
-        }
-    }
-
-    // Add FileCreateDate (Windows/macOS) or FileInodeChangeDate (Unix)
-    // ExifTool.pm:1437 and 1463
-    #[cfg(any(target_os = "windows", target_os = "macos"))]
-    {
-        if filter_opts.should_extract_tag("FileCreateDate", "File") {
-            if let Ok(created) = file_metadata.created() {
-                use chrono::{DateTime, Local};
-                let datetime: DateTime<Local> = created.into();
-                let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
-                tag_entries.push(TagEntry {
-                    group: "File".to_string(),
-                    group1: "System".to_string(),
-                    name: "FileCreateDate".to_string(),
-                    value: TagValue::String(formatted.clone()),
-                    print: TagValue::String(formatted),
-                });
-            }
-        }
-    }
-
-    #[cfg(not(any(target_os = "windows", target_os = "macos")))]
-    {
-        // On Unix systems, use ctime as FileInodeChangeDate
-        // This represents when the inode was last changed (not creation time)
-        // ExifTool.pm:2860-2861 uses stat[10] which is ctime
-        if filter_opts.should_extract_tag("FileInodeChangeDate", "File") {
-            if let Some(ctime) = get_unix_ctime(path) {
-                use chrono::{Local, TimeZone};
-                let datetime = Local.timestamp_opt(ctime as i64, 0).single();
-                if let Some(datetime) = datetime {
-                    let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
-                    tag_entries.push(TagEntry {
-                        group: "File".to_string(),
-                        group1: "System".to_string(),
-                        name: "FileInodeChangeDate".to_string(),
-                        value: TagValue::String(formatted.clone()),
-                        print: TagValue::String(formatted),
-                    });
-                }
-            }
-        }
-    }
-
-    // Add FilePermissions - ExifTool.pm:1473-1517
-    // Format as Unix permissions string like "-rw-rw-r--"
-    #[cfg(unix)]
-    {
-        if filter_opts.should_extract_tag("FilePermissions", "File") {
-            use std::os::unix::fs::PermissionsExt;
-            let mode = file_metadata.permissions().mode();
-            let permissions_str = format_unix_permissions(mode);
-            tag_entries.push(TagEntry {
-                group: "File".to_string(),
-                group1: "System".to_string(),
-                name: "FilePermissions".to_string(),
-                value: TagValue::String(permissions_str.clone()),
-                print: TagValue::String(permissions_str),
-            });
-        }
-    }
-
-    #[cfg(not(unix))]
-    {
-        // On non-Unix systems (like Windows), ExifTool shows different attributes
-        // For now, we'll skip this as it requires Win32API::File
-        // TODO: Implement Windows file attributes when Win32 API is available
-    }
+    // Basic file information from stat(), shared with the File-only shortcut
+    push_system_tags(path, &file_metadata, &filter_opts, &mut tag_entries);
 
     // Add FileType and FileTypeExtension using ExifTool-compatible values
     // Note: We'll store the initial file type here, but it may be overridden later
@@ -316,42 +173,11 @@ pub fn extract_metadata(
         });
     }
 
-    // PERFORMANCE OPTIMIZATION: Skip format-specific processing if only File group tags are requested
-    // Check if any non-File group tags are needed (EXIF, MakerNotes, etc.)
-    let needs_format_processing = !filter_opts.extract_all
-        && filter_opts.has_specific_requests()
-        && (filter_opts
-            .requested_tags
-            .iter()
-            .any(|tag| !is_file_group_tag(tag))
-            || filter_opts
-                .requested_groups
-                .iter()
-                .any(|group| group.to_lowercase() != "file")
-            || filter_opts
-                .group_all_patterns
-                .iter()
-                .any(|pattern| !pattern.to_lowercase().starts_with("file:"))
-            || filter_opts.glob_patterns.iter().any(|pattern| {
-                // Check if glob pattern could match non-File group tags
-                let pattern_lower = pattern.to_lowercase();
-                !(pattern_lower == "file:*"
-                    || pattern_lower.starts_with("file")
-                    || matches!(
-                        pattern_lower.as_str(),
-                        "filename*"
-                            | "directory*"
-                            | "filesize*"
-                            | "filemodifydate*"
-                            | "fileaccessdate*"
-                            | "fileinodechangedate*"
-                            | "filecreatedate*"
-                            | "filepermissions*"
-                            | "filetype*"
-                            | "filetypeextension*"
-                            | "mimetype*"
-                    ))
-            }));
+    // PERFORMANCE OPTIMIZATION: Skip format-specific processing if only File group tags
+    // are requested. `is_file_group_only()` requests already returned above via
+    // extract_file_tags_only, so anything still selecting tags here can match outside
+    // the File group and needs the format parsers.
+    let needs_format_processing = !filter_opts.extract_all && filter_opts.has_specific_requests();
 
     // Only do format-specific processing if needed
     if filter_opts.extract_all || needs_format_processing {
@@ -1469,8 +1295,145 @@ fn add_exif_byte_order_tag(exif_reader: &ExifReader, tag_entries: &mut Vec<TagEn
     }
 }
 
+/// Emit the File group tags that come from `stat()` alone.
+///
+/// Both `extract_metadata` and its File-only shortcut `extract_file_tags_only` call
+/// this, so a request that takes the shortcut gets exactly the tags a full parse
+/// would have produced for the same names.
+///
+/// ExifTool: lib/Image/ExifTool.pm:2895-2921 (ExtractInfo's stat-derived pseudo-tags)
+fn push_system_tags(
+    path: &Path,
+    file_metadata: &std::fs::Metadata,
+    filter_opts: &FilterOptions,
+    tag_entries: &mut Vec<TagEntry>,
+) {
+    use chrono::{DateTime, Local};
+
+    /// ExifTool formats these as local time with a UTC offset: "2025:06:30 10:16:40-07:00"
+    fn format_local(datetime: DateTime<Local>) -> String {
+        datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string()
+    }
+
+    fn push_string_tag(tag_entries: &mut Vec<TagEntry>, name: &str, value: String) {
+        tag_entries.push(TagEntry {
+            group: "File".to_string(),
+            group1: "System".to_string(),
+            name: name.to_string(),
+            value: TagValue::String(value.clone()),
+            print: TagValue::String(value),
+        });
+    }
+
+    // These tags are File in family 0 and System in family 1, and a request may name
+    // either (`-File:all`, `-System:all`), so both families are offered to the matcher -
+    // the same pair the central filtering chokepoint passes.
+    let wanted = |name: &str| filter_opts.should_extract_tag_in_groups(name, &["File", "System"]);
+
+    if wanted("FileName") {
+        let filename = path
+            .file_name()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .to_string();
+        push_string_tag(tag_entries, "FileName", filename);
+    }
+
+    if wanted("Directory") {
+        let directory = path
+            .parent()
+            .unwrap_or_else(|| Path::new("."))
+            .to_string_lossy()
+            .to_string();
+        push_string_tag(tag_entries, "Directory", directory);
+    }
+
+    // FileSize stays in bytes; ExifTool's PrintConv abbreviates it ("16 MB")
+    if wanted("FileSize") {
+        let file_size = file_metadata.len();
+        tag_entries.push(TagEntry {
+            group: "File".to_string(),
+            group1: "System".to_string(),
+            name: "FileSize".to_string(),
+            value: TagValue::U64(file_size),
+            print: TagValue::U64(file_size),
+        });
+    }
+
+    // ExifTool.pm:2907-2908
+    if wanted("FileModifyDate") {
+        if let Ok(modified) = file_metadata.modified() {
+            push_string_tag(tag_entries, "FileModifyDate", format_local(modified.into()));
+        }
+    }
+
+    if wanted("FileAccessDate") {
+        if let Ok(accessed) = file_metadata.accessed() {
+            push_string_tag(tag_entries, "FileAccessDate", format_local(accessed.into()));
+        }
+    }
+
+    // FileCreateDate (Windows/macOS) or FileInodeChangeDate (Unix)
+    //
+    // KNOWN DIVERGENCE on macOS: ExifTool.pm:2909 picks FileCreateDate only on
+    // MSWin32 and FileInodeChangeDate on every other platform, and reaches for the
+    // macOS creation time separately (MacOS::GetFileCreateDate, ExifTool.pm:2953-2960)
+    // only when that tag is explicitly requested. We report FileCreateDate on macOS
+    // instead. Left as-is here so the shortcut and the full parse agree; fixing it
+    // needs macOS coverage.
+    #[cfg(any(target_os = "windows", target_os = "macos"))]
+    if wanted("FileCreateDate") {
+        if let Ok(created) = file_metadata.created() {
+            push_string_tag(tag_entries, "FileCreateDate", format_local(created.into()));
+        }
+    }
+
+    #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+    if wanted("FileInodeChangeDate") {
+        // ctime - when the inode was last changed, not creation time.
+        // ExifTool.pm:2910 uses stat[10].
+        if let Some(ctime) = get_unix_ctime(path) {
+            use chrono::TimeZone;
+            if let Some(datetime) = Local.timestamp_opt(ctime as i64, 0).single() {
+                push_string_tag(tag_entries, "FileInodeChangeDate", format_local(datetime));
+            }
+        }
+    }
+
+    // ExifTool.pm:1505-1536, 2921. Non-Unix systems report different attributes
+    // (Win32API::File), which we do not implement.
+    #[cfg(unix)]
+    if wanted("FilePermissions") {
+        use std::os::unix::fs::PermissionsExt;
+        let mode = file_metadata.permissions().mode();
+        tag_entries.push(TagEntry {
+            group: "File".to_string(),
+            group1: "System".to_string(),
+            name: "FilePermissions".to_string(),
+            value: unix_permissions_value(mode),
+            print: TagValue::String(format_unix_permissions(mode)),
+        });
+    }
+}
+
+/// FilePermissions ValueConv: the file mode written in octal.
+///
+/// ExifTool.pm:1516 - `ValueConv => 'sprintf("%.3o", $val)'`, so `-FilePermissions#`
+/// prints 100664 for a 0o100664 mode. The digits read as a decimal number, which is
+/// how ExifTool emits them in JSON, so we keep the tag numeric rather than quoting it.
+/// Its Notes warn that bit tests on this value must go through `oct()`.
+#[cfg(unix)]
+fn unix_permissions_value(mode: u32) -> TagValue {
+    // A u32 has at most 11 octal digits, so the digit string always fits in a u64.
+    TagValue::U64(
+        format!("{mode:03o}")
+            .parse::<u64>()
+            .expect("octal digits of a u32 parse as a u64"),
+    )
+}
+
 /// Format Unix file permissions to match ExifTool's format
-/// ExifTool.pm:1486-1517 - Converts octal mode to rwx string
+/// ExifTool.pm:1518-1536 - PrintConv converts the octal mode to an rwx string
 #[cfg(unix)]
 fn format_unix_permissions(mode: u32) -> String {
     let file_type = match mode & 0o170000 {
@@ -1632,98 +1595,11 @@ fn extract_file_tags_only(
 
     // Get actual file metadata
     let file_metadata = std::fs::metadata(path)?;
-    let file_size = file_metadata.len();
 
     let mut tag_entries = Vec::new();
 
-    // Basic file information - only extract tags that match the filter
-    let filename = path
-        .file_name()
-        .unwrap_or_default()
-        .to_string_lossy()
-        .to_string();
-
-    if filter_opts.should_extract_tag("FileName", "File") {
-        tag_entries.push(TagEntry {
-            group: "File".to_string(),
-            group1: "System".to_string(),
-            name: "FileName".to_string(),
-            value: TagValue::String(filename.clone()),
-            print: TagValue::String(filename),
-        });
-    }
-
-    let directory = path
-        .parent()
-        .unwrap_or_else(|| Path::new("."))
-        .to_string_lossy()
-        .to_string();
-
-    if filter_opts.should_extract_tag("Directory", "File") {
-        tag_entries.push(TagEntry {
-            group: "File".to_string(),
-            group1: "System".to_string(),
-            name: "Directory".to_string(),
-            value: TagValue::String(directory.clone()),
-            print: TagValue::String(directory),
-        });
-    }
-
-    if filter_opts.should_extract_tag("FileSize", "File") {
-        tag_entries.push(TagEntry {
-            group: "File".to_string(),
-            group1: "System".to_string(),
-            name: "FileSize".to_string(),
-            value: TagValue::U64(file_size),
-            print: TagValue::U64(file_size),
-        });
-    }
-
-    // File timestamps
-    if filter_opts.should_extract_tag("FileModifyDate", "File") {
-        if let Ok(modified) = file_metadata.modified() {
-            use chrono::{DateTime, Local};
-            let datetime: DateTime<Local> = modified.into();
-            let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
-            tag_entries.push(TagEntry {
-                group: "File".to_string(),
-                group1: "System".to_string(),
-                name: "FileModifyDate".to_string(),
-                value: TagValue::String(formatted.clone()),
-                print: TagValue::String(formatted),
-            });
-        }
-    }
-
-    if filter_opts.should_extract_tag("FileAccessDate", "File") {
-        if let Ok(accessed) = file_metadata.accessed() {
-            use chrono::{DateTime, Local};
-            let datetime: DateTime<Local> = accessed.into();
-            let formatted = datetime.format("%Y:%m:%d %H:%M:%S%:z").to_string();
-            tag_entries.push(TagEntry {
-                group: "File".to_string(),
-                group1: "System".to_string(),
-                name: "FileAccessDate".to_string(),
-                value: TagValue::String(formatted.clone()),
-                print: TagValue::String(formatted),
-            });
-        }
-    }
-
-    // File permissions (Unix only)
-    #[cfg(unix)]
-    if filter_opts.should_extract_tag("FilePermissions", "File") {
-        use std::os::unix::fs::PermissionsExt;
-        let mode = file_metadata.permissions().mode();
-        let permissions_str = format_unix_permissions(mode);
-        tag_entries.push(TagEntry {
-            group: "File".to_string(),
-            group1: "System".to_string(),
-            name: "FilePermissions".to_string(),
-            value: TagValue::String(permissions_str.clone()),
-            print: TagValue::String(permissions_str),
-        });
-    }
+    // The same stat() tags the full parse produces, so the two paths cannot drift
+    push_system_tags(path, &file_metadata, filter_opts, &mut tag_entries);
 
     // For FileType, FileTypeExtension, and MIMEType, we need basic file detection
     // This is much lighter than full format parsing
@@ -1778,6 +1654,17 @@ fn extract_file_tags_only(
         }
     }
 
+    // Numeric requests (-TagName#) surface the ValueConv value, the same transformation
+    // the full-parse path applies at its filtering chokepoint. Without this a
+    // `-FilePermissions#` request would return the rwx string in `print` here and the
+    // octal mode there.
+    for entry in &mut tag_entries {
+        let groups = [entry.group.as_str(), entry.group1.as_str()];
+        if filter_opts.should_use_numeric_in_groups(&entry.name, &groups) {
+            entry.print = entry.value.clone();
+        }
+    }
+
     // Create final ExifData structure
     let source_file = path.to_string_lossy().to_string();
     let mut exif_data = ExifData::new(source_file, env!("CARGO_PKG_VERSION").to_string());
@@ -1798,31 +1685,6 @@ fn extract_file_tags_only(
         exif_data.tags.len()
     );
     Ok(exif_data)
-}
-
-/// Check if a tag name belongs to the File group (for performance optimization)
-fn is_file_group_tag(tag_name: &str) -> bool {
-    matches!(
-        tag_name.to_lowercase().as_str(),
-        "filename"
-            | "directory"
-            | "filesize"
-            | "filemodifydate"
-            | "fileaccessdate"
-            | "fileinodechangedate"
-            | "filecreatedate"
-            | "filepermissions"
-            | "filetype"
-            | "filetypeextension"
-            | "mimetype"
-            | "imagewidth"
-            | "imageheight"
-            | "bitspersample"
-            | "colorcomponents"
-            | "ycbcrsubsampling"
-            | "encodingprocess"
-            | "exifbyteorder"
-    )
 }
 
 /// Get Unix ctime (inode change time) from file path

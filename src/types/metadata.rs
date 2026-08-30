@@ -470,60 +470,85 @@ impl FilterOptions {
     }
 
     /// Determine if only File group tags are requested (performance optimization)
-    /// This enables early return without expensive EXIF/MakerNotes parsing
+    ///
+    /// When this holds, `formats::extract_metadata` answers from `stat()` plus a short
+    /// magic-number read instead of parsing EXIF/MakerNotes.
+    ///
+    /// The shortcut is only sound when no request can select a tag outside the File
+    /// group, so it keys on the *group* portion of each request. A wildcard tag NAME
+    /// never does: ExifTool matches it against every extracted tag name regardless of
+    /// group, which is why `-File*#` also returns `EXIF:FileSource`
+    /// (lib/Image/ExifTool.pm:5376-5382).
     pub fn is_file_group_only(&self) -> bool {
-        if self.extract_all {
+        if self.extract_all || !self.has_specific_requests() {
             return false;
         }
 
-        // Check if all requested items are File group related
-        let all_file_related = self.requested_tags.iter().all(|tag| {
-            // Common File group tags that don't require format-specific parsing
-            matches!(
-                tag.to_lowercase().as_str(),
-                "filename"
-                    | "directory"
-                    | "filesize"
-                    | "filemodifydate"
-                    | "fileaccessdate"
-                    | "fileinodechangedate"
-                    | "filecreatedate"
-                    | "filepermissions"
-                    | "filetype"
-                    | "filetypeextension"
-                    | "mimetype"
-            )
-        }) && self
-            .requested_groups
+        // The same three request lists `should_extract_tag_in_groups` walks, held to
+        // the stricter standard the shortcut needs.
+        self.requested_groups
             .iter()
-            .all(|group| group.to_lowercase() == "file")
+            .all(|group| group.eq_ignore_ascii_case("file"))
             && self
-                .group_all_patterns
+                .requested_tags
                 .iter()
-                .all(|pattern| pattern.to_lowercase() == "file:all")
-            && self.glob_patterns.iter().all(|pattern| {
-                // Check if glob pattern could match non-File group tags
-                // Only File group patterns or pure File tag patterns should be considered file-only
-                let pattern_lower = pattern.to_lowercase();
-                pattern_lower == "file:*"
-                    || pattern_lower.starts_with("file")
-                    || matches!(
-                        pattern_lower.as_str(),
-                        "filename*"
-                            | "directory*"
-                            | "filesize*"
-                            | "filemodifydate*"
-                            | "fileaccessdate*"
-                            | "fileinodechangedate*"
-                            | "filecreatedate*"
-                            | "filepermissions*"
-                            | "filetype*"
-                            | "filetypeextension*"
-                            | "mimetype*"
-                    )
-            });
+                .chain(self.group_all_patterns.iter())
+                .chain(self.glob_patterns.iter())
+                .all(|request| Self::is_file_group_request(request))
+    }
 
-        all_file_related && self.has_specific_requests()
+    /// Can this request only ever select File group tags?
+    ///
+    /// Requests are split the way [`FilterOptions::request_matches_tag`] splits them -
+    /// at the last colon, tag portion non-empty (ExifTool.pm:5348). Only the group
+    /// portion can restrict a request to one group, so:
+    ///
+    /// - `File:anything` qualifies, whatever the tag portion is.
+    /// - An unqualified request matches by name in *every* group, so it qualifies only
+    ///   when the name itself is one no other group uses. A wildcard name never is:
+    ///   `-File*#` returns `EXIF:FileSource` too.
+    ///
+    /// Anything else is conservatively refused, which costs a full parse but never
+    /// returns a short answer: multi-group specs (`-File:System:FileName`), `*`/`all`
+    /// groups, and family-1 names like `-System:all` all take the slow path.
+    fn is_file_group_request(request: &str) -> bool {
+        match request.rsplit_once(':') {
+            Some((group_spec, tag_spec)) if !tag_spec.is_empty() => {
+                Self::is_file_group_spec(group_spec)
+            }
+            _ => Self::is_file_only_tag_name(request),
+        }
+    }
+
+    /// Does this group spec pin a request to the File group?
+    ///
+    /// `File` matches the File group in either family (ExifTool.pm:5252 compares a bare
+    /// group name against every family), and `0File` pins it to family 0
+    /// (ExifTool.pm:5243-5250). Only File group tags carry either.
+    fn is_file_group_spec(group_spec: &str) -> bool {
+        group_spec.eq_ignore_ascii_case("file") || group_spec.eq_ignore_ascii_case("0file")
+    }
+
+    /// Tag names only ever produced by `formats::extract_file_tags_only`.
+    ///
+    /// An exact request for one of these cannot select a tag from another group, so
+    /// the shortcut answers it in full. These are ExifTool's System/File pseudo-tags:
+    /// lib/Image/ExifTool.pm:1317-1517 and 9583.
+    fn is_file_only_tag_name(tag: &str) -> bool {
+        matches!(
+            tag.to_lowercase().as_str(),
+            "filename"
+                | "directory"
+                | "filesize"
+                | "filemodifydate"
+                | "fileaccessdate"
+                | "fileinodechangedate"
+                | "filecreatedate"
+                | "filepermissions"
+                | "filetype"
+                | "filetypeextension"
+                | "mimetype"
+        )
     }
 }
 
@@ -1478,46 +1503,96 @@ mod tests {
         assert!(!filter_opts.should_extract_tag("FNumber", "EXIF"));
     }
 
+    /// A wildcard *name* pattern never restricts the request to the File group,
+    /// so it must not trigger the stat-only shortcut.
+    ///
+    /// ExifTool matches a wildcard request against every extracted tag name
+    /// regardless of group (lib/Image/ExifTool.pm:5376-5382), so `File*` also picks
+    /// up EXIF:FileSource:
+    ///
+    /// ```console
+    /// $ third-party/exiftool/exiftool -j -G "-File*#" test-images/nikon/d3500.jpg
+    /// {
+    ///   "File:FileName": "d3500.jpg",
+    ///   ...
+    ///   "File:FilePermissions": 100664,
+    ///   "File:FileType": "JPEG",
+    ///   "File:FileTypeExtension": "JPG",
+    ///   "EXIF:FileSource": 3
+    /// }
+    /// ```
+    /// (vendored ExifTool 13.59, probed 2026-08-30)
     #[test]
-    fn test_is_file_group_only_with_glob_patterns() {
-        // GPS glob pattern should NOT be file-only
-        let gps_filter = FilterOptions {
-            requested_tags: Vec::new(),
-            requested_groups: Vec::new(),
-            group_all_patterns: Vec::new(),
-            extract_all: false,
-            numeric_tags: HashSet::new(),
-            glob_patterns: vec!["GPS*".to_string()],
-            compute_image_hash: false,
-            image_hash_type: ImageHashType::default(),
-        };
-        assert!(!gps_filter.is_file_group_only());
+    fn test_is_file_group_only_rejects_bare_name_patterns() {
+        for pattern in ["GPS*", "File*", "file*", "MIMEType*", "*", "File?ype"] {
+            let filter = FilterOptions {
+                extract_all: false,
+                glob_patterns: vec![pattern.to_string()],
+                ..Default::default()
+            };
+            assert!(
+                !filter.is_file_group_only(),
+                "name pattern {pattern:?} can match tags outside the File group"
+            );
+        }
+    }
 
-        // File glob pattern SHOULD be file-only
-        let file_filter = FilterOptions {
-            requested_tags: Vec::new(),
-            requested_groups: Vec::new(),
-            group_all_patterns: Vec::new(),
+    /// The stat-only shortcut stays available for requests whose *group* portion
+    /// pins them to the File group, which is where its performance value lies.
+    ///
+    /// ```console
+    /// $ third-party/exiftool/exiftool -j -G "-File:all" test-images/nikon/d3500.jpg
+    /// { "File:FileName": ..., "File:MIMEType": "image/jpeg", ... }   # File group only
+    /// ```
+    /// (vendored ExifTool 13.59, probed 2026-08-30)
+    #[test]
+    fn test_is_file_group_only_allows_group_qualified_requests() {
+        let group_all = FilterOptions {
             extract_all: false,
-            numeric_tags: HashSet::new(),
-            glob_patterns: vec!["File*".to_string()],
-            compute_image_hash: false,
-            image_hash_type: ImageHashType::default(),
+            group_all_patterns: vec!["File:all".to_string()],
+            ..Default::default()
         };
-        assert!(file_filter.is_file_group_only());
+        assert!(group_all.is_file_group_only());
 
-        // MIMEType glob pattern SHOULD be file-only (File group tag)
-        let mime_filter = FilterOptions {
-            requested_tags: Vec::new(),
-            requested_groups: Vec::new(),
-            group_all_patterns: Vec::new(),
-            extract_all: false,
-            numeric_tags: HashSet::new(),
-            glob_patterns: vec!["MIMEType*".to_string()],
-            compute_image_hash: false,
-            image_hash_type: ImageHashType::default(),
-        };
-        assert!(mime_filter.is_file_group_only());
+        let group_only = FilterOptions::groups_only(vec!["File".to_string()]);
+        assert!(group_only.is_file_group_only());
+
+        for pattern in ["File:*", "file:*", "File:File*", "File:MIMEType"] {
+            let filter = FilterOptions {
+                extract_all: false,
+                glob_patterns: vec![pattern.to_string()],
+                ..Default::default()
+            };
+            assert!(
+                filter.is_file_group_only(),
+                "group-qualified pattern {pattern:?} should keep the File-only shortcut"
+            );
+        }
+
+        // A different group, or a wildcard group, reaches beyond File.
+        for pattern in ["EXIF:*", "*:File*", "*:*"] {
+            let filter = FilterOptions {
+                extract_all: false,
+                glob_patterns: vec![pattern.to_string()],
+                ..Default::default()
+            };
+            assert!(
+                !filter.is_file_group_only(),
+                "pattern {pattern:?} is not restricted to the File group"
+            );
+        }
+    }
+
+    /// Exact tag-name requests keep the shortcut: these names are only ever
+    /// produced by the File-group emitters in `formats::extract_file_tags_only`.
+    #[test]
+    fn test_is_file_group_only_allows_exact_file_tag_names() {
+        let filter = FilterOptions::tags_only(vec!["MIMEType".to_string(), "FileType".to_string()]);
+        assert!(filter.is_file_group_only());
+
+        let mixed =
+            FilterOptions::tags_only(vec!["MIMEType".to_string(), "Orientation".to_string()]);
+        assert!(!mixed.is_file_group_only());
     }
 }
 

@@ -10,6 +10,8 @@ use std::path::{Path, PathBuf};
 
 const TEST_IMAGE_CANON: &str = "test-images/canon/eos_rebel_t3i.jpg";
 const TEST_IMAGE_RICOH: &str = "third-party/exiftool/t/images/Ricoh2.jpg";
+/// Has an EXIF FileSource tag, which a `File*` *name* pattern also selects.
+const TEST_IMAGE_NIKON: &str = "test-images/nikon/d3000.jpg";
 
 /// Resolve a repo-relative test asset, searching the crate directory and its ancestors.
 ///
@@ -724,4 +726,292 @@ fn test_illegal_characters_are_stripped_from_tag_requests() {
         "-EX.IF:FNumber names an invalid group and must match nothing, got {:?}",
         result.tags.iter().map(|t| &t.name).collect::<Vec<_>>()
     );
+}
+
+/// A bare `File*` request is a tag-NAME pattern, not a group request, so it must not
+/// trigger the File-group shortcut that skips EXIF parsing.
+///
+/// ExifTool matches a wildcard request against every extracted tag name regardless of
+/// group (lib/Image/ExifTool.pm:5376-5382), which is why `File*` also returns the EXIF
+/// FileSource tag. Probed with vendored ExifTool 13.59 on 2026-08-30:
+///
+/// ```console
+/// $ third-party/exiftool/exiftool -j -G "-File*#" test-images/nikon/d3000.jpg
+/// [{
+///   "SourceFile": "test-images/nikon/d3000.jpg",
+///   "File:FileName": "d3000.jpg",
+///   "File:FileSize": 3043468,
+///   "File:FileModifyDate": "...",
+///   "File:FileAccessDate": "...",
+///   "File:FileInodeChangeDate": "...",
+///   "File:FilePermissions": 100664,
+///   "File:FileType": "JPEG",
+///   "File:FileTypeExtension": "JPG",
+///   "EXIF:FileSource": 3
+/// }]
+/// ```
+#[test]
+fn test_bare_file_name_pattern_reaches_exif_tags() {
+    let Some(image) = find_test_asset(TEST_IMAGE_NIKON) else {
+        eprintln!("skipping: {TEST_IMAGE_NIKON} not available");
+        return;
+    };
+
+    let mut numeric_tags = HashSet::new();
+    numeric_tags.insert("File*".to_string());
+
+    let filter = FilterOptions {
+        extract_all: false,
+        glob_patterns: vec!["File*".to_string()],
+        numeric_tags,
+        ..Default::default()
+    };
+
+    let result = extract_metadata(&image, false, false, Some(filter)).unwrap();
+
+    assert!(
+        result
+            .tags
+            .iter()
+            .any(|t| t.group == "EXIF" && t.name == "FileSource"),
+        "EXIF:FileSource should match the File* name pattern, got: {:?}",
+        result
+            .tags
+            .iter()
+            .map(|t| format!("{}:{}", t.group, t.name))
+            .collect::<Vec<_>>()
+    );
+
+    // The File group tags ExifTool returns for the same request are still there,
+    // including FileInodeChangeDate, which the stat-only shortcut never emitted.
+    for expected in [
+        "FileName",
+        "FileSize",
+        "FileModifyDate",
+        "FileAccessDate",
+        "FilePermissions",
+        "FileType",
+        "FileTypeExtension",
+    ] {
+        assert!(
+            result
+                .tags
+                .iter()
+                .any(|t| t.group == "File" && t.name == expected),
+            "File:{expected} missing from -File* output"
+        );
+    }
+    #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+    assert!(
+        result
+            .tags
+            .iter()
+            .any(|t| t.group == "File" && t.name == "FileInodeChangeDate"),
+        "File:FileInodeChangeDate missing from -File* output"
+    );
+
+    // ExifTool's wildcards only ever apply to the tag name, so nothing whose name
+    // fails to start with "File" may appear - notably no Directory or MIMEType.
+    for tag in &result.tags {
+        assert!(
+            tag.name.to_lowercase().starts_with("file"),
+            "{}:{} does not match the File* name pattern",
+            tag.group,
+            tag.name
+        );
+    }
+}
+
+/// The stat-only shortcut is a deliberate performance optimization: a request pinned
+/// to the File *group* must still take it rather than parsing the whole file.
+///
+/// ```console
+/// $ third-party/exiftool/exiftool -j -G "-File:all" test-images/nikon/d3000.jpg
+/// [{ "File:FileName": ..., "File:MIMEType": "image/jpeg", ... }]   # File group only
+/// ```
+/// (vendored ExifTool 13.59, probed 2026-08-30)
+#[test]
+fn test_file_group_qualified_requests_keep_fast_path() {
+    let group_all = FilterOptions {
+        extract_all: false,
+        group_all_patterns: vec!["File:all".to_string()],
+        ..Default::default()
+    };
+    assert!(
+        group_all.is_file_group_only(),
+        "-File:all must keep the stat-only shortcut"
+    );
+
+    let qualified_glob = FilterOptions {
+        extract_all: false,
+        glob_patterns: vec!["File:*".to_string()],
+        ..Default::default()
+    };
+    assert!(
+        qualified_glob.is_file_group_only(),
+        "-File:* must keep the stat-only shortcut"
+    );
+
+    let Some(image) = find_test_asset(TEST_IMAGE_NIKON) else {
+        eprintln!("skipping: {TEST_IMAGE_NIKON} not available");
+        return;
+    };
+    let result = extract_metadata(&image, false, false, Some(group_all)).unwrap();
+    assert!(
+        result.tags.iter().all(|t| t.group == "File"),
+        "-File:all returned a non-File tag: {:?}",
+        result
+            .tags
+            .iter()
+            .find(|t| t.group != "File")
+            .map(|t| format!("{}:{}", t.group, t.name))
+    );
+    assert!(
+        result.tags.iter().any(|t| t.name == "MIMEType"),
+        "-File:all should include File:MIMEType"
+    );
+
+    // The shortcut used to skip FileInodeChangeDate, so `-File:all` returned one tag
+    // fewer than a full parse of the same file and one fewer than ExifTool.
+    #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+    assert!(
+        result.tags.iter().any(|t| t.name == "FileInodeChangeDate"),
+        "-File:all should include File:FileInodeChangeDate"
+    );
+
+    // Known gap, not asserted here: ExifTool's -File:all also returns the File group
+    // tags that come from parsing the image (ImageWidth, ImageHeight, BitsPerSample,
+    // ColorComponents, EncodingProcess, YCbCrSubSampling, ExifByteOrder,
+    // CurrentIPTCDigest). The shortcut is stat-only by design and omits them.
+}
+
+/// The shortcut must return exactly what a full parse would return for the same tag
+/// names - that is the only thing that makes skipping the parse safe.
+#[test]
+fn test_fast_path_system_tags_match_full_parse() {
+    let file_tags: Vec<String> = [
+        "FileName",
+        "Directory",
+        "FileSize",
+        "FileModifyDate",
+        "FileAccessDate",
+        "FileInodeChangeDate",
+        "FileCreateDate",
+        "FilePermissions",
+        "FileType",
+        "FileTypeExtension",
+        "MIMEType",
+    ]
+    .iter()
+    .map(|s| s.to_string())
+    .collect();
+
+    let Some(path) = find_test_asset(TEST_IMAGE_NIKON) else {
+        eprintln!("skipping: {TEST_IMAGE_NIKON} not available");
+        return;
+    };
+    let describe = |filter: FilterOptions| -> Vec<String> {
+        let mut described: Vec<String> = extract_metadata(&path, false, false, Some(filter))
+            .unwrap()
+            .tags
+            .iter()
+            .filter(|t| t.group == "File")
+            .map(|t| format!("{}/{}={:?}/{:?}", t.group1, t.name, t.value, t.print))
+            .collect();
+        described.sort();
+        described
+    };
+
+    // Plain requests, and the same requests with `#` - the numeric transformation has
+    // to happen on both paths too.
+    for numeric_tags in [
+        HashSet::new(),
+        HashSet::from(["FilePermissions".to_string(), "FileSize".to_string()]),
+    ] {
+        let shortcut = FilterOptions {
+            requested_tags: file_tags.clone(),
+            extract_all: false,
+            numeric_tags: numeric_tags.clone(),
+            ..Default::default()
+        };
+        assert!(
+            shortcut.is_file_group_only(),
+            "exact File tag names should take the shortcut"
+        );
+
+        // Adding one EXIF tag forces the full parse without changing which File tags match.
+        let mut with_exif = file_tags.clone();
+        with_exif.push("Orientation".to_string());
+        let full = FilterOptions {
+            requested_tags: with_exif,
+            extract_all: false,
+            numeric_tags: numeric_tags.clone(),
+            ..Default::default()
+        };
+        assert!(!full.is_file_group_only());
+
+        assert_eq!(
+            describe(shortcut),
+            describe(full),
+            "the File-only shortcut disagrees with a full parse (numeric: {numeric_tags:?})"
+        );
+    }
+}
+
+/// FilePermissions carries two different values: ExifTool's ValueConv is the octal
+/// file mode (`sprintf("%.3o", $val)`) and its PrintConv is the `rwx` string.
+/// ExifTool: lib/Image/ExifTool.pm:1505-1536
+///
+/// ```console
+/// $ third-party/exiftool/exiftool -j -G "-FilePermissions#" test-images/nikon/d3000.jpg
+/// [{ "File:FilePermissions": 100664 }]
+/// $ third-party/exiftool/exiftool -j -G -FilePermissions test-images/nikon/d3000.jpg
+/// [{ "File:FilePermissions": "-rw-rw-r--" }]
+/// ```
+/// (vendored ExifTool 13.59, probed 2026-08-30)
+#[cfg(unix)]
+#[test]
+fn test_file_permissions_value_is_octal_mode() {
+    use std::os::unix::fs::PermissionsExt;
+
+    let Some(path) = find_test_asset(TEST_IMAGE_NIKON) else {
+        eprintln!("skipping: {TEST_IMAGE_NIKON} not available");
+        return;
+    };
+    let mode = std::fs::metadata(&path).unwrap().permissions().mode();
+    let expected_value = TagValue::U64(format!("{mode:03o}").parse::<u64>().unwrap());
+
+    // The stat-only path (-File:all) and the full parse (-File*) must agree.
+    let fast_path = FilterOptions {
+        extract_all: false,
+        group_all_patterns: vec!["File:all".to_string()],
+        ..Default::default()
+    };
+    let full_path = FilterOptions {
+        extract_all: false,
+        glob_patterns: vec!["File*".to_string()],
+        ..Default::default()
+    };
+
+    for (label, filter) in [("File:all", fast_path), ("File*", full_path)] {
+        let result = extract_metadata(&path, false, false, Some(filter)).unwrap();
+        let entry = result
+            .tags
+            .iter()
+            .find(|t| t.name == "FilePermissions")
+            .unwrap_or_else(|| panic!("-{label} should return FilePermissions"));
+
+        assert_eq!(
+            entry.value, expected_value,
+            "-{label}: FilePermissions value should be the octal mode"
+        );
+        match &entry.print {
+            TagValue::String(s) => assert_eq!(
+                s.len(),
+                10,
+                "-{label}: FilePermissions print should be the rwx string, got {s:?}"
+            ),
+            other => panic!("-{label}: expected an rwx string, got {other:?}"),
+        }
+    }
 }
