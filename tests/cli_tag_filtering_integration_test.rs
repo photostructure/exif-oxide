@@ -461,4 +461,17 @@ fn test_numeric_with_glob_patterns() {
     for tag in &result.tags {
         assert!(tag.name.starts_with("GPS"), "Non-GPS tag: {}", tag.name);
     }
+
+    // The `#` applies to every tag the wildcard matches, not just an exact name.
+    // ExifTool: lib/Image/ExifTool.pm:5364-5382 (SetFoundTags)
+    // Reference: `exiftool -j -G "-GPS*#" Ricoh2.jpg` => "EXIF:GPSAltitudeRef": 0
+    let altitude_ref = result
+        .tags
+        .iter()
+        .find(|t| t.name == "GPSAltitudeRef")
+        .expect("GPSAltitudeRef should be extracted by the GPS* pattern");
+    match &altitude_ref.print {
+        TagValue::U8(0) | TagValue::U16(0) => (),
+        other => panic!("Expected numeric GPSAltitudeRef 0, got: {other:?}"),
+    }
 }

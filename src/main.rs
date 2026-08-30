@@ -56,8 +56,8 @@ fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
             if filter_arg.ends_with('#') && filter_arg.len() > 1 {
                 // Numeric tag: -TagName# or -Pattern#
                 let tag_name = &filter_arg[..filter_arg.len() - 1];
-                if tag_name.contains('*') {
-                    // Glob pattern with numeric: -GPS*#
+                if FilterOptions::has_wildcard(tag_name) {
+                    // Glob pattern with numeric: -GPS*#, -*Duration*#
                     glob_patterns.push(tag_name.to_string());
                     numeric_tags.insert(tag_name.to_string());
                 } else {
@@ -68,8 +68,8 @@ fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
             } else if filter_arg.ends_with(":all") {
                 // Group all pattern: -GroupName:all
                 group_all_patterns.push(filter_arg.to_string());
-            } else if filter_arg.contains('*') {
-                // Glob pattern: -GPS*, -*tude, -*Date*, -EXIF:*
+            } else if FilterOptions::has_wildcard(filter_arg) {
+                // Glob pattern: -GPS*, -*tude, -*Date*, -EXIF:*, -Dur?tion
                 glob_patterns.push(filter_arg.to_string());
             } else if filter_arg.contains(':') {
                 // Group:tag pattern (future extension)

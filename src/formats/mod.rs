@@ -1395,7 +1395,7 @@ pub fn extract_metadata(
                 .filter_map(|mut tag_entry| {
                     if filter_opts.should_extract_tag(&tag_entry.name, &tag_entry.group) {
                         // P12: Apply numeric value control (# suffix) - use ValueConv instead of PrintConv
-                        if filter_opts.should_use_numeric(&tag_entry.name) {
+                        if filter_opts.should_use_numeric(&tag_entry.name, &tag_entry.group) {
                             tag_entry.print = tag_entry.value.clone();
                         }
                         Some(tag_entry)

@@ -196,59 +196,158 @@ impl FilterOptions {
             }
         }
 
-        // Check glob patterns (case-insensitive)
-        // Test against both tag name and group:tag format like ExifTool
-        for pattern in &self.glob_patterns {
-            if Self::matches_glob_pattern(tag_name, pattern) {
-                return true;
-            }
-            // Also check group:tag format for patterns like "EXIF:*"
-            let qualified_name = format!("{}:{}", tag_group, tag_name);
-            if Self::matches_glob_pattern(&qualified_name, pattern) {
-                return true;
-            }
+        // Check glob patterns (case-insensitive), against the tag name and - for
+        // group-qualified patterns like "EXIF:*" - the "Group:TagName" form
+        self.glob_patterns
+            .iter()
+            .any(|pattern| Self::request_matches_tag(pattern, tag_name, tag_group))
+    }
+
+    /// Match one ExifTool tag request against a tag, honouring an optional group prefix.
+    ///
+    /// ExifTool splits `Group:Tag` apart *before* expanding wildcards, so the wildcards
+    /// only ever apply to the tag name. Two consequences we reproduce here:
+    ///
+    /// - An unqualified pattern is matched against the tag name alone. `-EXIF*` returns
+    ///   only tags whose *name* starts with "Exif", not the whole EXIF group.
+    /// - A group portion containing a wildcard is an invalid group name; ExifTool warns
+    ///   and the request matches nothing. Only `*` (any group) is allowed there.
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5348-5360, 5376-5382 (SetFoundTags)
+    fn request_matches_tag(pattern: &str, tag_name: &str, tag_group: &str) -> bool {
+        if Self::matches_glob_pattern(tag_name, pattern) {
+            return true;
         }
 
-        false
+        // Group-qualified request. ExifTool splits at the last colon (`/^(.*):(.+)/`).
+        let Some((group_pattern, tag_pattern)) = pattern.rsplit_once(':') else {
+            return false;
+        };
+        // ExifTool: lib/Image/ExifTool.pm:5350-5359 - the group may be '*' (any group),
+        // otherwise a wildcard there is rejected as an invalid group name.
+        if Self::has_wildcard(group_pattern) && group_pattern != "*" {
+            return false;
+        }
+        // An empty group portion constrains nothing: ExifTool passes it to
+        // GroupMatches("") which keeps every match. `-:*Duration*` selects the same
+        // tags as `-*Duration*`.
+        if group_pattern.is_empty() {
+            return Self::matches_glob_pattern(tag_name, tag_pattern);
+        }
+
+        Self::matches_glob_pattern(&format!("{tag_group}:{tag_name}"), pattern)
+    }
+
+    /// Does this tag request contain a wildcard?
+    ///
+    /// ExifTool treats a requested tag name as a pattern as soon as it contains
+    /// `*` or `?`.
+    /// ExifTool: lib/Image/ExifTool.pm:5376 (`elsif ($tag =~ /[*?]/)`)
+    pub fn has_wildcard(pattern: &str) -> bool {
+        pattern.contains('*') || pattern.contains('?')
     }
 
     /// Check if a tag should use numeric output (ValueConv instead of PrintConv)
-    pub fn should_use_numeric(&self, tag_name: &str) -> bool {
-        self.numeric_tags.contains(tag_name)
+    pub fn should_use_numeric(&self, tag_name: &str, tag_group: &str) -> bool {
+        Self::numeric_request_matches(&self.numeric_tags, tag_name, tag_group)
     }
 
-    /// Check if a string matches a glob pattern (case-insensitive)
-    /// Supports ExifTool-style wildcards: prefix (*), suffix (*), and middle (*)
-    /// Examples: "GPS*" matches "GPSLatitude", "*tude" matches "Latitude", "*Date*" matches "CreateDate"
+    /// Check whether a numeric-output request (`-TagName#`) applies to this tag.
+    ///
+    /// ExifTool strips the trailing `#` from the tag portion of the request and then
+    /// matches the remaining name against the extracted tag names, so wildcards work
+    /// exactly as they do for plain tag requests: `-*Duration*#` prints every tag
+    /// whose name contains "Duration" as its ValueConv value.
+    ///
+    /// A group-qualified request such as `-QuickTime:*Duration*#` only applies to tags
+    /// in that group, mirroring ExifTool splitting the group off the request and using
+    /// it to filter the wildcard matches.
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5348-5382 and 5398-5401 (SetFoundTags)
+    pub fn numeric_request_matches(
+        numeric_tags: &HashSet<String>,
+        tag_name: &str,
+        tag_group: &str,
+    ) -> bool {
+        numeric_tags
+            .iter()
+            .any(|pattern| Self::request_matches_tag(pattern, tag_name, tag_group))
+    }
+
+    /// Check if a string matches an ExifTool tag-name pattern (case-insensitive).
+    ///
+    /// ExifTool converts a requested tag name containing `*` or `?` into a regular
+    /// expression by expanding `*` to `[-\w]*` and `?` to `[-\w]`, then matches it
+    /// anchored and case-insensitively against every extracted tag name:
+    ///
+    /// ```text
+    /// $tag =~ s/\*/[-\w]*/g;
+    /// $tag =~ s/\?/[-\w]/g;
+    /// @matches = grep(/^$tag$/i, keys %$tagHash);
+    /// ```
+    ///
+    /// Because the wildcards expand to `[-\w]`, they never match the `:` that
+    /// separates a group from a tag name - ExifTool splits the group off the request
+    /// before matching. We keep that property so patterns like `QuickTime:*Duration*`
+    /// only match within the named group.
+    ///
+    /// Examples: "GPS*" matches "GPSLatitude", "*tude" matches "Latitude",
+    /// "*Date*" matches "CreateDate", "Dur?tion" matches "Duration".
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5376-5382 (SetFoundTags)
     fn matches_glob_pattern(text: &str, pattern: &str) -> bool {
-        let text_lower = text.to_lowercase();
-        let pattern_lower = pattern.to_lowercase();
-
-        if pattern_lower == "*" {
-            return true; // * matches everything
+        // ExifTool: lib/Image/ExifTool.pm:5367-5368 - a tag name of '*' matches all tags
+        if pattern == "*" {
+            return true;
         }
 
-        if !pattern_lower.contains('*') {
-            return text_lower == pattern_lower; // Exact match if no wildcards
+        let text: Vec<char> = text.to_lowercase().chars().collect();
+        let pattern: Vec<char> = pattern.to_lowercase().chars().collect();
+
+        // Greedy wildcard match with backtracking. `star_p`/`star_t` remember the
+        // most recent `*` so it can consume one more character when the rest of the
+        // pattern fails to line up.
+        let (mut t, mut p) = (0usize, 0usize);
+        let mut star: Option<(usize, usize)> = None;
+
+        while t < text.len() {
+            if p < pattern.len() && pattern[p] == '*' {
+                star = Some((p, t));
+                p += 1;
+            } else if p < pattern.len()
+                && ((pattern[p] == '?' && Self::is_tag_name_char(text[t]))
+                    || (pattern[p] != '?' && pattern[p] == text[t]))
+            {
+                p += 1;
+                t += 1;
+            } else if let Some((star_p, star_t)) = star {
+                // Let the `*` swallow one more character, but only characters that
+                // ExifTool's `[-\w]*` expansion can match.
+                if !Self::is_tag_name_char(text[star_t]) {
+                    return false;
+                }
+                star = Some((star_p, star_t + 1));
+                t = star_t + 1;
+                p = star_p + 1;
+            } else {
+                return false;
+            }
         }
 
-        // Handle different wildcard patterns
-        if pattern_lower.starts_with('*') && pattern_lower.ends_with('*') {
-            // Middle wildcard: "*Date*" matches anything containing "date"
-            let middle = &pattern_lower[1..pattern_lower.len() - 1];
-            text_lower.contains(middle)
-        } else if let Some(suffix) = pattern_lower.strip_prefix('*') {
-            // Suffix wildcard: "*tude" matches anything ending with "tude"
-            text_lower.ends_with(suffix)
-        } else if pattern_lower.ends_with('*') {
-            // Prefix wildcard: "GPS*" matches anything starting with "gps"
-            let prefix = &pattern_lower[..pattern_lower.len() - 1];
-            text_lower.starts_with(prefix)
-        } else {
-            // Multiple * in pattern - for now, treat as exact match
-            // TODO: Could implement full glob matching if needed
-            text_lower == pattern_lower
+        // Trailing `*`s can match the empty string
+        while p < pattern.len() && pattern[p] == '*' {
+            p += 1;
         }
+        p == pattern.len()
+    }
+
+    /// Characters ExifTool's wildcards can match.
+    ///
+    /// ExifTool expands `*` to `[-\w]*` and `?` to `[-\w]`, and tag names are
+    /// restricted to `[-A-Za-z0-9_]`.
+    /// ExifTool: lib/Image/ExifTool.pm:5379-5380
+    fn is_tag_name_char(c: char) -> bool {
+        c.is_ascii_alphanumeric() || c == '_' || c == '-'
     }
 
     /// Determine if only File group tags are requested (performance optimization)
@@ -520,9 +619,11 @@ impl ExifData {
 
         // Insert tags in the sorted order
         for (key, entry) in tag_pairs {
-            // Determine whether to use value or print field
+            // Determine whether to use value or print field.
+            // Numeric requests support wildcards (`-*Duration*#`) just like plain tag
+            // requests do. ExifTool: lib/Image/ExifTool.pm:5364-5382
             let should_use_value = numeric_tags
-                .map(|set| set.contains(&entry.name))
+                .map(|set| FilterOptions::numeric_request_matches(set, &entry.name, &entry.group))
                 .unwrap_or(false);
 
             if should_use_value {
@@ -769,6 +870,133 @@ mod tests {
         assert!(FilterOptions::matches_glob_pattern("GPSAltitude", "gps*"));
     }
 
+    /// ExifTool: lib/Image/ExifTool.pm:5376-5382 (SetFoundTags) translates a
+    /// requested tag name containing `*` or `?` into `[-\w]*` / `[-\w]` and
+    /// matches it case-insensitively against the whole tag name.
+    #[test]
+    fn test_matches_glob_pattern_exiftool_semantics() {
+        // '?' matches exactly one word character
+        assert!(FilterOptions::matches_glob_pattern("Duration", "Dur?tion"));
+        assert!(!FilterOptions::matches_glob_pattern(
+            "Duration",
+            "Duration?"
+        ));
+        assert!(!FilterOptions::matches_glob_pattern("Durtion", "Dur?tion"));
+
+        // More than one '*' in a pattern
+        assert!(FilterOptions::matches_glob_pattern(
+            "SubSecTimeOriginal",
+            "Sub*Time*"
+        ));
+        assert!(!FilterOptions::matches_glob_pattern(
+            "SubSecDateOriginal",
+            "Sub*Time*"
+        ));
+
+        // '*' expands to [-\w]* so it never crosses the group separator
+        assert!(!FilterOptions::matches_glob_pattern(
+            "QuickTime:Duration",
+            "Quick*Duration"
+        ));
+        // ...but an explicit group prefix in the pattern still matches
+        assert!(FilterOptions::matches_glob_pattern(
+            "QuickTime:Duration",
+            "QuickTime:*Duration*"
+        ));
+    }
+
+    /// ExifTool: lib/Image/ExifTool.pm:5364-5382 - the `#` suffix is stripped from
+    /// the tag portion of the request and the remainder is matched with wildcards,
+    /// so `-*Duration*#` requests numeric output for every matching tag.
+    #[test]
+    fn test_should_use_numeric_with_glob_pattern() {
+        let mut numeric_tags = HashSet::new();
+        numeric_tags.insert("*Duration*".to_string());
+        let filter_opts = FilterOptions {
+            extract_all: false,
+            numeric_tags,
+            glob_patterns: vec!["*Duration*".to_string()],
+            ..Default::default()
+        };
+
+        assert!(filter_opts.should_use_numeric("Duration", "QuickTime"));
+        assert!(filter_opts.should_use_numeric("TrackDuration", "QuickTime"));
+        assert!(!filter_opts.should_use_numeric("ImageWidth", "QuickTime"));
+    }
+
+    /// ExifTool matches requested tag names case-insensitively (`/^$tag$/i`).
+    /// ExifTool: lib/Image/ExifTool.pm:5382
+    #[test]
+    fn test_should_use_numeric_is_case_insensitive() {
+        let mut numeric_tags = HashSet::new();
+        numeric_tags.insert("orientation".to_string());
+        let filter_opts = FilterOptions {
+            extract_all: false,
+            numeric_tags,
+            requested_tags: vec!["orientation".to_string()],
+            ..Default::default()
+        };
+
+        assert!(filter_opts.should_use_numeric("Orientation", "EXIF"));
+    }
+
+    /// A group-qualified numeric request only applies to that group.
+    /// ExifTool: lib/Image/ExifTool.pm:5348-5360, 5398-5401 (group is split off the
+    /// request and used to filter the wildcard matches).
+    #[test]
+    fn test_should_use_numeric_with_group_qualified_pattern() {
+        let mut numeric_tags = HashSet::new();
+        numeric_tags.insert("QuickTime:*Duration*".to_string());
+        let filter_opts = FilterOptions {
+            extract_all: false,
+            numeric_tags,
+            glob_patterns: vec!["QuickTime:*Duration*".to_string()],
+            ..Default::default()
+        };
+
+        assert!(filter_opts.should_use_numeric("Duration", "QuickTime"));
+        assert!(!filter_opts.should_use_numeric("Duration", "EXIF"));
+    }
+
+    /// `prepare_for_serialization` is the JSON-output path used by the CLI and by
+    /// `extract_metadata_json`; it must honour the same wildcard semantics.
+    /// ExifTool: lib/Image/ExifTool.pm:5376-5382
+    #[test]
+    fn test_prepare_for_serialization_numeric_glob_pattern() {
+        let mut data = ExifData::new("test.mov".to_string(), "0.1.0-oxide".to_string());
+        data.tags = vec![
+            TagEntry {
+                group: "QuickTime".to_string(),
+                group1: "QuickTime".to_string(),
+                name: "Duration".to_string(),
+                value: TagValue::F64(2.965),
+                print: TagValue::String("2.96 s".to_string()),
+            },
+            TagEntry {
+                group: "QuickTime".to_string(),
+                group1: "QuickTime".to_string(),
+                name: "ImageWidth".to_string(),
+                value: TagValue::U32(1920),
+                print: TagValue::String("1920 px".to_string()),
+            },
+        ];
+
+        let mut numeric_tags = HashSet::new();
+        numeric_tags.insert("*Duration*".to_string());
+        data.prepare_for_serialization(Some(&numeric_tags));
+
+        assert_eq!(
+            data.legacy_tags.get("QuickTime:Duration"),
+            Some(&TagValue::F64(2.965)),
+            "-*Duration*# must select the ValueConv result"
+        );
+        assert_eq!(
+            data.legacy_tags.get("QuickTime:ImageWidth"),
+            Some(&TagValue::String("1920 px".to_string())),
+            "non-matching tags must keep their PrintConv result"
+        );
+    }
+
     #[test]
     fn test_should_extract_tag_with_glob_patterns() {
         let filter_opts = FilterOptions {
@@ -789,10 +1017,83 @@ mod tests {
 
         // Should not match non-GPS tags
         assert!(!filter_opts.should_extract_tag("Make", "EXIF"));
-        // Note: "Altitude" in GPS group creates "GPS:Altitude" which DOES match "GPS*" pattern
-        // This is correct ExifTool behavior - group-qualified names are checked
-        assert!(filter_opts.should_extract_tag("Altitude", "GPS"));
+        // An unqualified pattern is matched against the tag NAME only, never against
+        // "Group:TagName" - ExifTool splits the group off the request before matching,
+        // and its wildcards expand to [-\w] which cannot match the ':' separator.
+        // ExifTool: lib/Image/ExifTool.pm:5348-5382
+        // Verified: `exiftool -j -G "-QuickTime*" IMG_3755.MOV` returns no tags even
+        // though every tag in the file is in the QuickTime group, and
+        // `exiftool -j -G "-EXIF*" Ricoh2.jpg` returns only Exif*-named tags.
+        assert!(!filter_opts.should_extract_tag("Altitude", "GPS"));
         assert!(!filter_opts.should_extract_tag("Altitude", "EXIF")); // Different group
+    }
+
+    /// A wildcard is never allowed to expand into the group portion of a qualified
+    /// request: ExifTool splits the group off first and rejects a group name holding
+    /// anything outside `[-\w:]`.
+    /// ExifTool: lib/Image/ExifTool.pm:5348-5359
+    /// Verified: `exiftool -j -G "-Quick*:Duration#" IMG_3755.MOV` warns
+    /// "Invalid group name 'Quick*'" and returns no tags, while `-*:Duration#` and
+    /// `-QuickTime:*Duration*#` both return the numeric Duration.
+    #[test]
+    fn test_wildcard_never_expands_into_group_prefix() {
+        let mut numeric_tags = HashSet::new();
+        numeric_tags.insert("Quick*:Duration".to_string());
+        let invalid_group = FilterOptions {
+            extract_all: false,
+            glob_patterns: vec!["Quick*:Duration".to_string()],
+            numeric_tags,
+            ..Default::default()
+        };
+        assert!(!invalid_group.should_extract_tag("Duration", "QuickTime"));
+        assert!(!invalid_group.should_use_numeric("Duration", "QuickTime"));
+
+        // A group portion of exactly '*' is valid and selects any group
+        let any_group = FilterOptions {
+            extract_all: false,
+            glob_patterns: vec!["*:Duration".to_string()],
+            ..Default::default()
+        };
+        assert!(any_group.should_extract_tag("Duration", "QuickTime"));
+    }
+
+    /// An empty group portion imposes no group constraint.
+    /// ExifTool: lib/Image/ExifTool.pm:5348 splits `:*Duration*` into group "" and tag
+    /// "*Duration*", and `GroupMatches("")` constrains nothing.
+    /// Verified: `exiftool -j -G "-:*Duration*#" IMG_3755.MOV` warns
+    /// `Invalid TAG name: ":*Duration*#"` (exiftool:1445) but still returns every
+    /// *Duration* tag numerically; `-:Duration` likewise returns just Duration, so the
+    /// request is honoured rather than dropped.
+    #[test]
+    fn test_empty_group_prefix_imposes_no_group_constraint() {
+        let mut numeric_tags = HashSet::new();
+        numeric_tags.insert(":*Duration*".to_string());
+        let filter_opts = FilterOptions {
+            extract_all: false,
+            glob_patterns: vec![":*Duration*".to_string()],
+            numeric_tags,
+            ..Default::default()
+        };
+
+        assert!(filter_opts.should_extract_tag("TrackDuration", "QuickTime"));
+        assert!(filter_opts.should_use_numeric("TrackDuration", "QuickTime"));
+        assert!(!filter_opts.should_extract_tag("ImageWidth", "QuickTime"));
+    }
+
+    /// A group-qualified pattern still selects the whole group.
+    /// Verified: `exiftool -j -G "-EXIF:*" Ricoh2.jpg` returns every EXIF tag.
+    /// ExifTool: lib/Image/ExifTool.pm:5348-5350, 5367-5373
+    #[test]
+    fn test_should_extract_tag_with_group_qualified_glob() {
+        let filter_opts = FilterOptions {
+            extract_all: false,
+            glob_patterns: vec!["EXIF:*".to_string()],
+            ..Default::default()
+        };
+
+        assert!(filter_opts.should_extract_tag("Make", "EXIF"));
+        assert!(filter_opts.should_extract_tag("GPSLatitude", "EXIF"));
+        assert!(!filter_opts.should_extract_tag("MIMEType", "File"));
     }
 
     #[test]
