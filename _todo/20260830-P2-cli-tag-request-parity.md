@@ -28,10 +28,11 @@ first (docs/TDD.md), and ExifTool's `SetFoundTags`
 2. **Family-1 group requests unsupported.** `-ExifIFD:FNum?er#` matches in
    ExifTool (group1) and returns nothing here — the matcher only sees
    family-0 groups.
-3. **Numeric selectors lose request order.** ExifTool honors the later
-   request: `-Duration "-*Duration*#"` keeps the PrintConv string,
-   `"-*Duration*#" -Duration` yields the number. Ours is an unordered
-   `HashSet` in `FilterOptions`; needs an ordered request list.
+3. **Numeric selectors lose request order.** ExifTool honors the FIRST
+   matching request (proven by probes; the original "later request wins"
+   note here was a misreading): `-Duration "-*Duration*#"` keeps the
+   PrintConv string, `"-*Duration*#" -Duration` yields the number. Ours
+   was an unordered `HashSet` in `FilterOptions`; needed an ordered list.
 4. **`-all#` and `-*#` are broken** (`-all#` returns nothing; `-*#` hits a
    length guard in the CLI arg parser).
 5. **No illegal-character sterilization.** ExifTool strips characters
@@ -40,11 +41,16 @@ first (docs/TDD.md), and ExifTool's `SetFoundTags`
 
 ## Progress (2026-08-30)
 
-Items 2, 4, 5 landed (`74229584`, worktree agent + Codex review). Items 1
-and 3 are reworking onto that commit in their worktrees (see the management
-TPP `20260830-P0-oxide-cutover-program.md` for merge mechanics).
-Item 3 ground truth: **first-match-wins** (SetFoundTags appends per request
-ExifTool.pm:5433-5436; JSON writer noDups exiftool:2947-2953).
+All five items landed 2026-08-30: items 2/4/5 in `74229584`, item 1 in
+`0035b00b` (File fast path keyed on request groups; FilePermissions
+value/print split; -System:all works), item 3 in `c7f0d725`
+(**first-match-wins** ordered TagRequest list — SetFoundTags appends per
+request ExifTool.pm:5433-5436, JSON writer noDups exiftool:2947-2953 —
+and the duplicated CLI arg parsers un-forked). Deferred findings below
+remain open; new addition:
+
+13. `-*:all` routes to group_all_patterns and matches by group-name
+    equality, selecting nothing where ExifTool selects every group.
 
 ## Deferred findings from the 2026-08-30 fixes (all probe-confirmed)
 

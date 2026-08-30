@@ -175,12 +175,17 @@ bare-typeglob values had been silently dropped on every regen, leaving 49
 generated files stale across ExifTool versions (%isPC had 4 of 6 entries);
 all refreshed against 13.59 and the full suite passes.
 
-Remaining M0 checklist, in order: (1) apply numeric-order's diff, commit;
-(2) apply file-group-fastpath's diff, commit; (3) spawn R905-D
-division-semantics subagent (Opus, second-opinion, NO task chips) — Perl
-`/` always float + whole-number floats serialize without ".0"; expect
-compat snapshot churn; land it; (4) final `make verify`; (5) record the
-fresh compat score here; (6) push everything.
+All three parity worktree agents are LANDED: `74229584` (matcher),
+`0035b00b` (File fast path + FilePermissions split), `c7f0d725`
+(first-match-wins ordered numeric selectors; both CLI parsers un-forked).
+`_todo/20260830-P2-cli-tag-request-parity.md` records 13 deferred
+follow-ups. Worktree symlink farms cleaned; the three agent worktrees under
+`.claude/worktrees/` can be pruned.
+
+Remaining M0 checklist, in order: (1) float-division subagent (R905-D:
+Perl `/` always float + whole-number floats serialize without ".0") is
+RUNNING in the main checkout — land it; (2) final `make verify`; (3)
+record the fresh compat score here; (4) push everything.
 
 Session gotchas for the next operator: worktree agents spawn at a stale
 base — have them `git merge --ff-only main` before starting; long
