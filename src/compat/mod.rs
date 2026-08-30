@@ -30,6 +30,11 @@ pub fn load_supported_tags() -> Vec<String> {
     serde_json::from_str(CONFIG_JSON).expect("Failed to parse supported_tags.json")
 }
 
+/// Tags whose values depend on filesystem state at read time, not file
+/// content. Inode ctime changes on every checkout, sync, or copy, so a
+/// committed snapshot of these can never be stably compared.
+const VOLATILE_TAGS: &[&str] = &["File:FileInodeChangeDate"];
+
 /// Filter JSON object to only include supported tags
 /// Handles group-prefixed tag names from supported_tags.json
 pub fn filter_to_supported_tags(data: &Value) -> Value {
@@ -43,6 +48,10 @@ pub fn filter_to_supported_tags(data: &Value) -> Value {
                 // Always include SourceFile
                 if key.as_str() == "SourceFile" {
                     return true;
+                }
+
+                if VOLATILE_TAGS.contains(&key.as_str()) {
+                    return false;
                 }
 
                 // Check if the full group:tag key is in the supported list
