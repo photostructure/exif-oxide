@@ -22,8 +22,7 @@ pub mod tests;
 // Re-export everything for backward compatibility
 pub use errors::CodeGenError;
 pub use expressions::{
-    BinaryOperationsHandler, ComplexPatternHandler, ExpressionCombiner, NormalizedAstHandler,
-    StringOperationsHandler,
+    ComplexPatternHandler, ExpressionCombiner, NormalizedAstHandler, StringOperationsHandler,
 };
 pub use functions::FunctionGenerator;
 pub use generator::RustGenerator;
@@ -56,17 +55,6 @@ impl PpiVisitor for RustGenerator {
 }
 
 impl ExpressionCombiner for RustGenerator {}
-
-impl BinaryOperationsHandler for RustGenerator {
-    fn handle_regex_operation(
-        &self,
-        left: &str,
-        op: &str,
-        right: &str,
-    ) -> Result<String, CodeGenError> {
-        StringOperationsHandler::handle_regex_operation(self, left, op, right)
-    }
-}
 
 impl StringOperationsHandler for RustGenerator {
     fn expression_type(&self) -> &ExpressionType {

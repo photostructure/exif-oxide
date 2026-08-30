@@ -192,6 +192,7 @@ impl PpiFunctionRegistry {
             #![allow(clippy::collapsible_else_if)]
             #![allow(clippy::unnecessary_cast)]
             #![allow(clippy::erasing_op)]
+            #![allow(clippy::needless_return)]
 
             use {import_path};
 

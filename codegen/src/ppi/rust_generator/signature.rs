@@ -80,7 +80,8 @@ fn generate_composite_signature(expression_type: &ExpressionType, function_name:
     // - clippy::blocks_in_conditions: regex blocks in if conditions
     // - clippy::unnecessary_cast: numeric literal casts
     // - clippy::redundant_clone: defensive cloning
-    let allow_attrs = "#[allow(unused_variables, clippy::get_first, clippy::collapsible_else_if, clippy::blocks_in_conditions, clippy::unnecessary_cast, clippy::redundant_clone)]";
+    // - clippy::needless_return: Perl's explicit `return` is translated as-is
+    let allow_attrs = "#[allow(unused_variables, clippy::get_first, clippy::collapsible_else_if, clippy::blocks_in_conditions, clippy::unnecessary_cast, clippy::redundant_clone, clippy::needless_return)]";
 
     match expression_type {
         ExpressionType::ValueConv => {

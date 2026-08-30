@@ -4,9 +4,7 @@
 //! PPI AST nodes and generating Rust code from them.
 
 use super::errors::CodeGenError;
-use super::expressions::{
-    is_boolean_expression, wrap_branch_for_owned, wrap_condition_for_bool, wrap_for_string_concat,
-};
+use super::expressions::{wrap_branch_for_owned, wrap_condition_for_bool, wrap_for_string_concat};
 use crate::impl_registry::lookup_function;
 use crate::ppi::types::*;
 use indoc::formatdoc;
@@ -94,6 +92,7 @@ pub trait PpiVisitor {
             }
             "BinaryOperation" => self.visit_normalized_binary_operation(node),
             "UnaryNegation" => self.visit_unary_negation(node),
+            "LogicalNegation" => self.visit_logical_negation(node),
             "ArrayAccess" => self.visit_array_access(node),
             // Normalized component nodes (parts of larger structures)
             "Condition" | "Assignment" | "TrueBranch" | "FalseBranch" => {
@@ -406,6 +405,14 @@ pub trait PpiVisitor {
 
         // Handle special Perl keywords
         match word.as_str() {
+            "defined" => {
+                // Perl's `defined` has no translation here: our TagValue
+                // operands are always present, and rendering the keyword as a
+                // bare Rust identifier produced code that did not compile.
+                Err(CodeGenError::UnsupportedStructure(
+                    "Perl `defined` requires fallback implementation".to_string(),
+                ))
+            }
             "undef" => {
                 // Perl's undef translates to appropriate default value
                 match self.expression_type() {
@@ -622,16 +629,8 @@ pub trait PpiVisitor {
                         && second_child.children.len() == 2
                     {
                         // Extract unpack's format and data directly
-                        let unpack_format = self.visit_node(&second_child.children[0])?;
-                        // Unwrap TagValue conversion for unpack format string too
-                        let unpack_format = if unpack_format.starts_with("Into::<TagValue>::into(")
-                            && unpack_format.ends_with(")")
-                        {
-                            let inner = &unpack_format[23..unpack_format.len() - 1];
-                            inner.to_string()
-                        } else {
-                            unpack_format
-                        };
+                        let unpack_format =
+                            self.render_unpack_template(&second_child.children[0])?;
                         let data = self.visit_node(&second_child.children[1])?;
                         // Pass unpack result directly as &[TagValue] slice
                         return match self.expression_type() {
@@ -751,7 +750,7 @@ pub trait PpiVisitor {
                     {
                         // Extract unpack's format and data directly
                         let separator = &args[0]; // Already visited
-                        let format_str = self.visit_node(&second_child.children[0])?;
+                        let format_str = self.render_unpack_template(&second_child.children[0])?;
                         let data = self.visit_node(&second_child.children[1])?;
                         // join_unpack_binary already returns TagValue
                         return Ok(format!(
@@ -777,17 +776,7 @@ pub trait PpiVisitor {
                         "unpack requires exactly 2 arguments (format, data)".to_string(),
                     ));
                 }
-                // Unwrap TagValue conversion for format string (same as sprintf)
-                let format_str = &args[0];
-                let format_str = if format_str.starts_with("Into::<TagValue>::into(")
-                    && format_str.ends_with(")")
-                {
-                    // Extract the inner string literal from Into::<TagValue>::into("string")
-                    let inner = &format_str[23..format_str.len() - 1];
-                    inner.to_string()
-                } else {
-                    format_str.clone()
-                };
+                let format_str = self.render_unpack_template(&node.children[0])?;
                 let data = &args[1];
                 // unpack_binary returns Vec<TagValue>, wrap in TagValue::Array
                 Ok(format!(
@@ -801,7 +790,8 @@ pub trait PpiVisitor {
                         "if requires exactly 2 arguments (condition, statement)".to_string(),
                     ));
                 }
-                let condition = &args[0];
+                // Perl evaluates the condition in boolean context.
+                let condition = self.render_condition_as_bool(&node.children[0])?;
                 let statement = &args[1];
 
                 // Generate Rust if statement
@@ -1265,22 +1255,42 @@ pub trait PpiVisitor {
             ));
         };
 
-        // Process the value/expression after the keyword
-        let value = if node.children.len() > 1 {
-            // Skip whitespace and process the rest
-            let mut expr_parts = Vec::new();
-            for i in 1..node.children.len() {
-                if node.children[i].class != "PPI::Token::Whitespace" {
-                    expr_parts.push(self.visit_node(&node.children[i])?);
-                }
-            }
-            if expr_parts.is_empty() {
-                "".to_string()
-            } else {
-                expr_parts.join(" ")
-            }
-        } else {
+        // Process the value/expression after the keyword.
+        //
+        // The tokens after `return` are one expression, so they are rendered as
+        // one: joining each child's rendering with spaces leaked Perl syntax
+        // into the output, e.g. `return $a . $b` became `return a . b` instead
+        // of a concat call. `PPI::Statement::Break` is not an expression
+        // container the normalizer descends into, so the expression is
+        // normalized at this boundary.
+        let operands: Vec<PpiNode> = node.children[1..]
+            .iter()
+            .filter(|child| Self::is_expression_operand(child))
+            .cloned()
+            .collect();
+
+        let value = if operands.is_empty() {
             "".to_string()
+        } else {
+            let expression = PpiNode {
+                class: "PPI::Statement::Expression".to_string(),
+                content: None,
+                children: operands,
+                symbol_type: None,
+                numeric_value: None,
+                string_value: None,
+                structure_bounds: None,
+            };
+            let rendered = self.visit_node(&expression)?;
+            match self.expression_type() {
+                // These return an owned TagValue, so a returned literal or
+                // borrowed operand needs the same conversion a ternary branch
+                // gets.
+                ExpressionType::ValueConv | ExpressionType::PrintConv => {
+                    self.render_owned_branch(&expression, rendered)
+                }
+                ExpressionType::Condition => rendered,
+            }
         };
 
         // Generate appropriate Rust control flow
@@ -1627,7 +1637,7 @@ pub trait PpiVisitor {
             ));
         }
 
-        let condition = self.visit_node(&node.children[0])?;
+        let condition = self.render_condition_as_bool(&node.children[0])?;
         let assignment = self.visit_node(&node.children[1])?;
         let return_expr = self.visit_node(&node.children[2])?;
 
@@ -1671,14 +1681,14 @@ pub trait PpiVisitor {
         }
 
         // Process each part of the ternary expression normally
-        let condition = self.visit_node(&node.children[0])?;
         let true_branch = self.visit_node(&node.children[1])?;
         let false_branch = self.visit_node(&node.children[2])?;
 
-        // Wrap condition for bool conversion and branches for ownership
-        let condition_wrapped = wrap_condition_for_bool(&condition);
-        let true_branch_wrapped = wrap_branch_for_owned(&true_branch);
-        let false_branch_wrapped = wrap_branch_for_owned(&false_branch);
+        // The condition is evaluated in boolean context; the branches are the
+        // expression's value and must share one owned type.
+        let condition_wrapped = self.render_condition_as_bool(&node.children[0])?;
+        let true_branch_wrapped = self.render_owned_branch(&node.children[1], true_branch);
+        let false_branch_wrapped = self.render_owned_branch(&node.children[2], false_branch);
 
         Ok(format!(
             "if {condition_wrapped} {{ {true_branch_wrapped} }} else {{ {false_branch_wrapped} }}"
@@ -1693,8 +1703,8 @@ pub trait PpiVisitor {
             ));
         }
 
-        // Process the condition and body
-        let condition = self.visit_node(&node.children[0])?;
+        // Perl evaluates the condition in boolean context.
+        let condition = self.render_condition_as_bool(&node.children[0])?;
         let body = self.visit_node(&node.children[1])?;
 
         Ok(format!("if {condition} {{ {body} }}"))
@@ -1724,6 +1734,32 @@ pub trait PpiVisitor {
 
         let operand = self.visit_node(&node.children[0])?;
         Ok(format!("crate::core::negate({operand})"))
+    }
+
+    /// Visit logical negation nodes (`!EXPR`, and the `unless` conditions the
+    /// ConditionalStatementsNormalizer rewrites into one).
+    ///
+    /// Perl's `!` evaluates its operand in boolean context and yields a
+    /// boolean, so the operand is rendered as a Rust `bool`.
+    fn visit_logical_negation(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        if node.children.len() != 1 {
+            return Err(CodeGenError::UnsupportedStructure(format!(
+                "LogicalNegation must have exactly 1 child, got {}",
+                node.children.len()
+            )));
+        }
+
+        let operand = &node.children[0];
+        let rendered = self.render_condition_as_bool(operand)?;
+
+        // Rust's `!` binds tighter than every comparison and logical operator,
+        // so a compound operand keeps its parentheses. A truthiness call or a
+        // block is already self-delimiting.
+        if Self::node_is_logical_operation(operand) || self.node_renders_bool(operand) {
+            Ok(format!("!({rendered})"))
+        } else {
+            Ok(format!("!{rendered}"))
+        }
     }
 
     /// Re-add source-level parentheses around an infix operand.
@@ -1763,6 +1799,259 @@ pub trait PpiVisitor {
             "TernaryOperation" | "TernaryOp" | "SafeDivision" => true,
             "PPI::Structure::List" => Self::grouping_is_compound(child),
             _ => false,
+        }
+    }
+
+    /// Whether this node renders a Rust `bool` in the current function context.
+    ///
+    /// This decision is structural: rendered Rust text is never inspected to
+    /// rediscover Perl operators. Comparisons always render bool. Perl logical
+    /// operators render bool only for Condition functions; ValueConv/PrintConv
+    /// must preserve Perl's operand-returning semantics as a `TagValue`.
+    fn node_renders_bool(&self, node: &PpiNode) -> bool {
+        match node.class.as_str() {
+            "BinaryOperation" => match node.content.as_deref() {
+                Some(
+                    "=~" | "!~" | "eq" | "ne" | "lt" | "gt" | "le" | "ge" | "==" | "!=" | "<" | ">"
+                    | "<=" | ">=",
+                ) => true,
+                Some("&&" | "||" | "and" | "or") => {
+                    *self.expression_type() == ExpressionType::Condition
+                }
+                _ => false,
+            },
+            _ => {
+                matches!(Self::sole_meaningful_child(node), Some(child) if self.node_renders_bool(child))
+            }
+        }
+    }
+
+    /// Whether this child carries part of a statement's expression, as opposed
+    /// to formatting or the statement terminator.
+    fn is_expression_operand(child: &PpiNode) -> bool {
+        match child.class.as_str() {
+            "PPI::Token::Whitespace" | "PPI::Token::Comment" => false,
+            "PPI::Token::Structure" => child.content.as_deref() != Some(";"),
+            _ => true,
+        }
+    }
+
+    /// The single meaningful child of a container node, when it has exactly one.
+    ///
+    /// Grouping containers (`( … )`, statements, normalizer component wrappers)
+    /// carry the type and shape of what they wrap. Whitespace, comments, and
+    /// statement terminators are not operands.
+    fn sole_meaningful_child(node: &PpiNode) -> Option<&PpiNode> {
+        if !matches!(
+            node.class.as_str(),
+            "PPI::Document"
+                | "PPI::Statement"
+                | "PPI::Statement::Expression"
+                | "PPI::Structure::List"
+                | "Condition"
+                | "TrueBranch"
+                | "FalseBranch"
+        ) {
+            return None;
+        }
+
+        let mut meaningful = node.children.iter().filter(|child| {
+            !matches!(
+                child.class.as_str(),
+                "PPI::Token::Whitespace" | "PPI::Token::Comment" | "PPI::Token::Structure"
+            )
+        });
+        match (meaningful.next(), meaningful.next()) {
+            (Some(child), None) => Some(child),
+            _ => None,
+        }
+    }
+
+    /// Whether a logical operand needs parentheses to preserve its typed AST
+    /// grouping when embedded in another Rust logical expression.
+    fn node_is_logical_operation(node: &PpiNode) -> bool {
+        if node.class == "BinaryOperation"
+            && matches!(node.content.as_deref(), Some("&&" | "||" | "and" | "or"))
+        {
+            return true;
+        }
+
+        matches!(Self::sole_meaningful_child(node), Some(child) if Self::node_is_logical_operation(child))
+    }
+
+    /// Render a node as a Rust `bool` for an `if`/ternary condition.
+    ///
+    /// Perl evaluates a condition in boolean context, where a logical operator
+    /// never has to materialize an operand's value: `A or B` is true exactly
+    /// when `A` is true or `B` is true. Rendering the operands directly as
+    /// bools keeps the owned-`TagValue` form of `or`/`and` — which
+    /// ValueConv/PrintConv functions need when the operator's *value* is the
+    /// result — out of a position that requires `bool`.
+    fn render_condition_as_bool(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        // `visit_list` drops a single grouping's parentheses, so recursing into
+        // the wrapped node renders the same code with its structure visible.
+        if let Some(child) = Self::sole_meaningful_child(node) {
+            return self.render_condition_as_bool(child);
+        }
+
+        if node.class == "BinaryOperation" && node.children.len() == 2 {
+            let rust_operator = match node.content.as_deref() {
+                Some("&&" | "and") => Some("&&"),
+                Some("||" | "or") => Some("||"),
+                _ => None,
+            };
+            if let Some(rust_operator) = rust_operator {
+                let left = self.render_condition_operand_as_bool(&node.children[0])?;
+                let right = self.render_condition_operand_as_bool(&node.children[1])?;
+                return Ok(format!("{left} {rust_operator} {right}"));
+            }
+        }
+
+        let rendered = self.visit_node(node)?;
+        if self.node_renders_bool(node) {
+            Ok(rendered)
+        } else {
+            Ok(wrap_condition_for_bool(&rendered))
+        }
+    }
+
+    /// One operand of a logical operator in condition position. A nested
+    /// logical operand keeps its AST grouping with parentheses, since Rust's
+    /// `&&`/`||` precedence would otherwise regroup it.
+    fn render_condition_operand_as_bool(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        let rendered = self.render_condition_as_bool(node)?;
+        if Self::node_is_logical_operation(node) {
+            Ok(format!("({rendered})"))
+        } else {
+            Ok(rendered)
+        }
+    }
+
+    /// Convert a structurally known operand into one owned `TagValue`.
+    /// Unsupported result shapes fail closed instead of emitting Rust whose
+    /// logical branches have incompatible types.
+    fn render_owned_logical_operand(
+        &self,
+        node: &PpiNode,
+        rendered: String,
+    ) -> Result<String, CodeGenError> {
+        if self.node_renders_bool(node) {
+            return Ok(format!("TagValue::Bool({rendered})"));
+        }
+
+        match node.class.as_str() {
+            "PPI::Token::Symbol" => match rendered.as_str() {
+                "val" | "val_pt" => Ok(format!("{rendered}.clone()")),
+                _ if self.is_composite_context() || node.is_self_reference() => Ok(rendered),
+                _ => Err(CodeGenError::UnsupportedStructure(format!(
+                    "Logical operand symbol {:?} has no proven TagValue representation",
+                    node.content
+                ))),
+            },
+            "PPI::Token::Number" | "PPI::Token::Number::Hex" | "PPI::Token::Number::Float" => {
+                let owned = wrap_branch_for_owned(&rendered);
+                if owned == rendered {
+                    Err(CodeGenError::UnsupportedStructure(format!(
+                        "Logical numeric operand {rendered} has no proven TagValue conversion"
+                    )))
+                } else {
+                    Ok(owned)
+                }
+            }
+            "PPI::Token::Quote::Double" | "PPI::Token::Quote::Single" => {
+                // An interpolating literal already renders as a TagValue in
+                // some contexts; only a bare Rust literal or `format!` needs
+                // the conversion.
+                if rendered.starts_with("Into::<TagValue>::into(")
+                    || rendered.starts_with("TagValue::String(")
+                {
+                    Ok(rendered)
+                } else {
+                    Ok(format!("Into::<TagValue>::into({rendered})"))
+                }
+            }
+            "ArrayAccess" => Ok(rendered),
+            "StringConcat" | "StringRepeat" => {
+                if *self.expression_type() == ExpressionType::Condition {
+                    Ok(format!("Into::<TagValue>::into({rendered})"))
+                } else {
+                    Ok(rendered)
+                }
+            }
+            "BinaryOperation" => match node.content.as_deref() {
+                // These visitor paths have an owned TagValue contract.
+                Some("." | "**" | "&&" | "||" | "and" | "or") => Ok(rendered),
+                _ => Err(CodeGenError::UnsupportedStructure(format!(
+                    "Logical operand {:?} has no proven TagValue representation",
+                    node.content
+                ))),
+            },
+            "PPI::Document"
+            | "PPI::Statement"
+            | "PPI::Statement::Expression"
+            | "PPI::Structure::List"
+            | "Condition"
+            | "TrueBranch"
+            | "FalseBranch" => {
+                let mut meaningful = node.children.iter().filter(|child| {
+                    !matches!(
+                        child.class.as_str(),
+                        "PPI::Token::Whitespace" | "PPI::Token::Comment" | "PPI::Token::Structure"
+                    )
+                });
+                match (meaningful.next(), meaningful.next()) {
+                    (Some(child), None) => self.render_owned_logical_operand(child, rendered),
+                    _ => Err(CodeGenError::UnsupportedStructure(
+                        "Logical operand container has no single typed value".to_string(),
+                    )),
+                }
+            }
+            _ => Err(CodeGenError::UnsupportedStructure(format!(
+                "Logical operand {} has no proven TagValue representation",
+                node.class
+            ))),
+        }
+    }
+
+    /// Convert one ternary branch into the owned value the other branch also
+    /// produces.
+    ///
+    /// The structural conversion is preferred: the node's class proves the Rust
+    /// type of what was just rendered, which is how an interpolated literal
+    /// (`"Unknown ($val)"` → `format!(…)`, a `String`) becomes the `TagValue` a
+    /// ValueConv/PrintConv function returns. Shapes the structural rule cannot
+    /// prove keep the older string-shape wrapper rather than failing the whole
+    /// expression.
+    fn render_owned_branch(&self, node: &PpiNode, rendered: String) -> String {
+        if *self.expression_type() == ExpressionType::Condition {
+            // Condition functions return bool; a TagValue branch is not the
+            // owned form they need.
+            return wrap_branch_for_owned(&rendered);
+        }
+
+        self.render_owned_logical_operand(node, rendered.clone())
+            .unwrap_or_else(|_| wrap_branch_for_owned(&rendered))
+    }
+
+    /// Render an operand as Perl truthiness for a Condition function.
+    fn render_logical_condition_operand(
+        &self,
+        node: &PpiNode,
+        rendered: String,
+    ) -> Result<String, CodeGenError> {
+        let condition = if self.node_renders_bool(node) {
+            rendered
+        } else if matches!(rendered.as_str(), "val" | "val_pt") {
+            format!("{rendered}.is_truthy()")
+        } else {
+            let owned = self.render_owned_logical_operand(node, rendered)?;
+            format!("({owned}).is_truthy()")
+        };
+
+        if Self::node_is_logical_operation(node) {
+            Ok(format!("({condition})"))
+        } else {
+            Ok(condition)
         }
     }
 
@@ -1953,35 +2242,52 @@ pub trait PpiVisitor {
                 let right = self.parenthesize_grouping(&node.children[1], right);
                 Ok(format!("{left} {operator} {right}"))
             }
-            "&&" => {
-                // Logical AND - in Perl returns first falsy or last value
-                // For simplicity, we treat as boolean when both sides are comparisons
-                if is_boolean_expression(&left) && is_boolean_expression(&right) {
+            "&&" | "and" => {
+                // Perl perlop: `&&` and `and` both short-circuit and return the
+                // first falsy or last value. Their different precedence has
+                // already been preserved by the typed BinaryOperation tree.
+                if *self.expression_type() == ExpressionType::Condition {
+                    let left = self.render_logical_condition_operand(&node.children[0], left)?;
+                    let right = self.render_logical_condition_operand(&node.children[1], right)?;
                     Ok(format!("{left} && {right}"))
                 } else {
-                    // Perl semantics: return left if falsy, else right
+                    let left = self.render_owned_logical_operand(&node.children[0], left)?;
+                    let right = self.render_owned_logical_operand(&node.children[1], right)?;
                     Ok(format!(
-                        "if ({}).is_truthy() {{ {} }} else {{ {}.clone() }}",
-                        left,
-                        wrap_branch_for_owned(&right),
-                        left
+                        "{{ let logical_left = {left}; if logical_left.is_truthy() {{ {right} }} else {{ logical_left }} }}"
                     ))
                 }
             }
-            "||" => {
-                // Perl || returns first truthy value or last value
-                // NOT a boolean OR - it returns the actual value
-                Ok(format!(
-                    "if ({}).is_truthy() {{ {}.clone() }} else {{ {} }}",
-                    left,
-                    left,
-                    wrap_branch_for_owned(&right)
-                ))
+            "||" | "or" => {
+                // Perl perlop: `||` and `or` both short-circuit and return the
+                // first truthy or last value. Their precedence distinction is
+                // structural, not an aliasing decision made by the renderer.
+                if *self.expression_type() == ExpressionType::Condition {
+                    let left = self.render_logical_condition_operand(&node.children[0], left)?;
+                    let right = self.render_logical_condition_operand(&node.children[1], right)?;
+                    Ok(format!("{left} || {right}"))
+                } else {
+                    let left = self.render_owned_logical_operand(&node.children[0], left)?;
+                    let right = self.render_owned_logical_operand(&node.children[1], right)?;
+                    Ok(format!(
+                        "{{ let logical_left = {left}; if logical_left.is_truthy() {{ logical_left }} else {{ {right} }} }}"
+                    ))
+                }
             }
             "&" | "|" | "^" => {
                 // Bitwise operations - keep parentheses since these might be used
                 // in conditions and need to preserve precedence with comparisons
                 Ok(format!("({left} {operator} {right})"))
+            }
+            ">>" => {
+                // Right shift. Perl and Rust agree on where the shift binds
+                // relative to the arithmetic and bitwise operators around it,
+                // and `TagValue` implements `Shr<i32>`. There is no `Shl`
+                // implementation, so `<<` deliberately falls through to the
+                // unsupported-operator fallback below.
+                let left = self.parenthesize_grouping(&node.children[0], left);
+                let right = self.parenthesize_grouping(&node.children[1], right);
+                Ok(format!("{left} {operator} {right}"))
             }
             "x" => {
                 // String repetition operator: $string x $count
@@ -1994,6 +2300,21 @@ pub trait PpiVisitor {
                 )))
             }
         }
+    }
+
+    /// Render a `pack`/`unpack` template argument as a Rust `&str`.
+    ///
+    /// A quoted template renders as a string literal (or as our own
+    /// `Into::<TagValue>::into("…")` wrapper in PrintConv context), which is
+    /// already a `&str` once unwrapped. A computed template — Perl's
+    /// `"H2" x 29` — renders as an owned `String`, so it has to be borrowed:
+    /// `unpack_binary` and `join_unpack_binary` both take `&str`.
+    fn render_unpack_template(&self, node: &PpiNode) -> Result<String, CodeGenError> {
+        let rendered = self.visit_node(node)?;
+        if self.is_string_literal_or_wrapped(&rendered) {
+            return Ok(self.extract_string_literal(&rendered));
+        }
+        Ok(format!("&{rendered}"))
     }
 
     /// Check if a string is a string literal or TagValue-wrapped string literal

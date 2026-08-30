@@ -10,13 +10,8 @@ use std::fmt::Write;
 use tracing::trace;
 
 use crate::ppi::rust_generator::{
-    errors::CodeGenError,
-    expressions::{
-        wrap_branch_for_owned, wrap_condition_for_bool, BinaryOperationsHandler, ExpressionCombiner,
-    },
-    functions::FunctionGenerator,
-    pattern_matching, signature,
-    visitor::PpiVisitor,
+    errors::CodeGenError, expressions::ExpressionCombiner, functions::FunctionGenerator,
+    pattern_matching, signature, visitor::PpiVisitor,
 };
 use crate::ppi::types::{ExpressionContext, ExpressionType, PpiNode};
 
@@ -167,6 +162,14 @@ impl RustGenerator {
             self.visit_node(&normalized_ast)?
         };
 
+        // A body whose last statement is `return EXPR` already produces the
+        // function's result on every path; `visit_break` emitted the `Ok(...)`
+        // those returns need. Wrapping it again would make the wrapper
+        // unreachable.
+        if Self::body_returns_explicitly(&normalized_ast) {
+            return Ok(code);
+        }
+
         // Wrap the generated expression based on expression type and context
         match self.expression_type {
             ExpressionType::ValueConv => {
@@ -191,6 +194,27 @@ impl RustGenerator {
                 }
             }
             ExpressionType::Condition => Ok(code),
+        }
+    }
+
+    /// Whether the last statement of this body is an explicit Perl `return`.
+    fn body_returns_explicitly(node: &PpiNode) -> bool {
+        let last = node.children.iter().rev().find(|child| {
+            !matches!(
+                child.class.as_str(),
+                "PPI::Token::Whitespace" | "PPI::Token::Comment" | "PPI::Token::Structure"
+            )
+        });
+
+        match last {
+            Some(statement) if statement.class == "PPI::Statement::Break" => statement
+                .children
+                .first()
+                .is_some_and(|keyword| keyword.content.as_deref() == Some("return")),
+            Some(document) if document.class == "PPI::Document" => {
+                Self::body_returns_explicitly(document)
+            }
+            _ => false,
         }
     }
 
@@ -362,13 +386,34 @@ impl RustGenerator {
 
     /// Visit statement node - processes children and combines them intelligently
     pub fn visit_statement(&self, node: &PpiNode) -> Result<String, CodeGenError> {
-        self.process_node_sequence(&node.children)
+        self.visit_normalized_expression_container(node)
     }
 
     /// Visit expression node - handles complex expressions with function composition
     /// PPI::Statement::Expression (4,172 occurrences) - Essential for complex expressions
     pub fn visit_expression(&self, node: &PpiNode) -> Result<String, CodeGenError> {
-        self.process_node_sequence(&node.children)
+        self.visit_normalized_expression_container(node)
+    }
+
+    /// Normalize a flat PPI expression before rendering any of its children.
+    ///
+    /// Most callers arrive through `generate_body`, which normalizes the whole
+    /// document. Shared-pipeline/registry callers may already hold a normalized
+    /// tree for hashing or diagnostics, while these visitor entry points are
+    /// also called directly. Normalization is therefore intentionally
+    /// idempotent at these public boundaries; it is never replaced by asking
+    /// the renderer to rediscover operators from generated strings.
+    fn visit_normalized_expression_container(
+        &self,
+        node: &PpiNode,
+    ) -> Result<String, CodeGenError> {
+        let normalized = crate::ppi::normalizer::normalize_multi_pass(node.clone());
+        match normalized.class.as_str() {
+            "PPI::Statement" | "PPI::Statement::Expression" => {
+                self.process_node_sequence(&normalized.children)
+            }
+            _ => self.visit_node(&normalized),
+        }
     }
 
     /// Process a sequence of child nodes with intelligent pattern recognition
@@ -559,17 +604,6 @@ impl RustGenerator {
             }
         }
 
-        // Check for binary operation patterns first
-        let parts: Vec<String> = children
-            .iter()
-            .filter(|child| child.class != "PPI::Token::Whitespace")
-            .map(|child| self.visit_node(child))
-            .collect::<Result<Vec<_>, _>>()?;
-
-        if let Some(binary_result) = self.try_binary_operation_pattern(&parts)? {
-            return Ok(binary_result);
-        }
-
         // Look for other patterns in the sequence
         let mut processed = Vec::new();
         let mut i = 0;
@@ -723,7 +757,6 @@ impl RustGenerator {
                 };
                 let normalized_condition =
                     crate::ppi::normalizer::normalize_multi_pass(condition_ast);
-                let condition = self.process_node_sequence(&normalized_condition.children)?;
 
                 let true_ast = PpiNode {
                     class: "PPI::Statement".to_string(),
@@ -749,10 +782,11 @@ impl RustGenerator {
                 let normalized_false = crate::ppi::normalizer::normalize_multi_pass(false_ast);
                 let false_expr = self.process_node_sequence(&normalized_false.children)?;
 
-                // Wrap condition for bool conversion and branches for ownership
-                let condition_wrapped = wrap_condition_for_bool(&condition);
-                let true_expr_wrapped = wrap_branch_for_owned(&true_expr);
-                let false_expr_wrapped = wrap_branch_for_owned(&false_expr);
+                // The condition is evaluated in boolean context; the branches
+                // are the expression's value and must share one owned type.
+                let condition_wrapped = self.render_condition_as_bool(&normalized_condition)?;
+                let true_expr_wrapped = self.render_owned_branch(&normalized_true, true_expr);
+                let false_expr_wrapped = self.render_owned_branch(&normalized_false, false_expr);
 
                 // Generate Rust if-else expression
                 let result = format!(

@@ -19,7 +19,7 @@ use crate::ppi::types::*;
 
 /// Trait for combining expression parts into coherent Rust code
 pub trait ExpressionCombiner:
-    BinaryOperationsHandler + StringOperationsHandler + NormalizedAstHandler + ComplexPatternHandler
+    StringOperationsHandler + NormalizedAstHandler + ComplexPatternHandler
 {
     /// Combine statement parts, handling normalized AST nodes and basic patterns
     fn combine_statement_parts(
@@ -113,11 +113,6 @@ pub trait ExpressionCombiner:
                 };
                 return Ok(result);
             }
-        }
-
-        // Binary operations
-        if let Some(result) = self.try_binary_operation_pattern(parts)? {
-            return Ok(result);
         }
 
         // No pattern recognized - return error to trigger function registry fallback

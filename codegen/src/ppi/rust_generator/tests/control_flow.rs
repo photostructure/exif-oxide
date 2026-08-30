@@ -97,8 +97,13 @@ fn test_return_statement() {
 
     let result = generator.generate_function(&ast).unwrap();
 
-    // Should generate proper return statement for ValueConv
-    assert!(result.contains("return Ok(val)"));
+    // Should generate proper return statement for ValueConv. The parameter is
+    // `&TagValue` while the function returns an owned `TagValue`, so the
+    // returned operand is cloned.
+    assert!(
+        result.contains("return Ok(val.clone())"),
+        "ValueConv must return an owned TagValue; got:\n{result}"
+    );
     assert!(result.contains("pub fn test_return"));
 }
 

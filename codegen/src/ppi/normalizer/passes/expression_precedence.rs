@@ -1065,20 +1065,7 @@ impl ExpressionPrecedenceNormalizer {
             if child.class == "PPI::Token::Operator" && child.content.as_deref() == Some(",") {
                 // Comma separator - finish current arg
                 if !current_arg_nodes.is_empty() {
-                    if current_arg_nodes.len() == 1 {
-                        args.push(current_arg_nodes.into_iter().next().unwrap());
-                    } else {
-                        // Multiple nodes - this should be a processed binary operation
-                        args.push(PpiNode {
-                            class: "PPI::Statement::Expression".to_string(),
-                            content: None,
-                            children: current_arg_nodes,
-                            symbol_type: None,
-                            numeric_value: None,
-                            string_value: None,
-                            structure_bounds: None,
-                        });
-                    }
+                    args.push(self.finish_argument(current_arg_nodes));
                     current_arg_nodes = Vec::new();
                 }
             } else if !matches!(
@@ -1091,19 +1078,7 @@ impl ExpressionPrecedenceNormalizer {
 
         // Add final arg
         if !current_arg_nodes.is_empty() {
-            if current_arg_nodes.len() == 1 {
-                args.push(current_arg_nodes.into_iter().next().unwrap());
-            } else {
-                args.push(PpiNode {
-                    class: "PPI::Statement::Expression".to_string(),
-                    content: None,
-                    children: current_arg_nodes,
-                    symbol_type: None,
-                    numeric_value: None,
-                    string_value: None,
-                    structure_bounds: None,
-                });
-            }
+            args.push(self.finish_argument(current_arg_nodes));
         }
 
         // If no commas found, return the original expression
@@ -1112,6 +1087,31 @@ impl ExpressionPrecedenceNormalizer {
         } else {
             args
         }
+    }
+
+    /// Turn one comma-delimited token run into a single argument node.
+    ///
+    /// A run of more than one token is itself an expression, so it has to be
+    /// normalized like any other: `join(" ", unpack("C*", $val))` leaves
+    /// `[Word(unpack), Structure::List]` here, and only normalization turns that
+    /// into the typed `FunctionCall` node the join/sprintf handlers match on.
+    /// Without it the nested call is rediscovered from rendered strings one
+    /// level up, which is how `sprintf` lost Perl's argument splatting and
+    /// `join` received a `TagValue::Array` where a `&[TagValue]` was required.
+    fn finish_argument(&self, nodes: Vec<PpiNode>) -> PpiNode {
+        if nodes.len() == 1 {
+            return nodes.into_iter().next().unwrap();
+        }
+
+        self.transform(PpiNode {
+            class: "PPI::Statement::Expression".to_string(),
+            content: None,
+            children: nodes,
+            symbol_type: None,
+            numeric_value: None,
+            string_value: None,
+            structure_bounds: None,
+        })
     }
 
     /// Preprocess unary operators by converting them to binary operations
@@ -1179,6 +1179,22 @@ impl ExpressionPrecedenceNormalizer {
                         vec![PpiNode {
                             class: "UnaryNegation".to_string(),
                             content: Some("-".to_string()),
+                            children: vec![operand_tokens[0].clone()],
+                            symbol_type: None,
+                            numeric_value: None,
+                            string_value: None,
+                            structure_bounds: None,
+                        }]
+                    }
+                    "!" => {
+                        // Perl logical negation. It has to become a typed node
+                        // here: precedence climbing parses a left operand
+                        // first, so a leading `!` token has nothing to attach
+                        // to and the loop stops after it, silently discarding
+                        // the operand.
+                        vec![PpiNode {
+                            class: "LogicalNegation".to_string(),
+                            content: Some("!".to_string()),
                             children: vec![operand_tokens[0].clone()],
                             symbol_type: None,
                             numeric_value: None,
