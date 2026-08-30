@@ -55,7 +55,7 @@ pub static QUICK_TIME_KEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             (
                 b"artist".as_slice(),
                 TagInfo {
-                    name: "artist",
+                    name: "Artist",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -65,7 +65,7 @@ pub static QUICK_TIME_KEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             (
                 b"artwork".as_slice(),
                 TagInfo {
-                    name: "artwork",
+                    name: "Artwork",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -155,7 +155,7 @@ pub static QUICK_TIME_KEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             (
                 b"comment".as_slice(),
                 TagInfo {
-                    name: "comment",
+                    name: "Comment",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -215,7 +215,7 @@ pub static QUICK_TIME_KEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             (
                 b"description".as_slice(),
                 TagInfo {
-                    name: "description",
+                    name: "Description",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -295,7 +295,7 @@ pub static QUICK_TIME_KEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             (
                 b"director".as_slice(),
                 TagInfo {
-                    name: "director",
+                    name: "Director",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -315,7 +315,7 @@ pub static QUICK_TIME_KEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             (
                 b"encoder".as_slice(),
                 TagInfo {
-                    name: "encoder",
+                    name: "Encoder",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -335,7 +335,7 @@ pub static QUICK_TIME_KEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             (
                 b"genre".as_slice(),
                 TagInfo {
-                    name: "genre",
+                    name: "Genre",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -345,7 +345,7 @@ pub static QUICK_TIME_KEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             (
                 b"information".as_slice(),
                 TagInfo {
-                    name: "information",
+                    name: "Information",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -355,7 +355,7 @@ pub static QUICK_TIME_KEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             (
                 b"keywords".as_slice(),
                 TagInfo {
-                    name: "keywords",
+                    name: "Keywords",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -636,7 +636,7 @@ pub static QUICK_TIME_KEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             (
                 b"producer".as_slice(),
                 TagInfo {
-                    name: "producer",
+                    name: "Producer",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -646,7 +646,7 @@ pub static QUICK_TIME_KEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             (
                 b"publisher".as_slice(),
                 TagInfo {
-                    name: "publisher",
+                    name: "Publisher",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -776,7 +776,7 @@ pub static QUICK_TIME_KEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             (
                 b"software".as_slice(),
                 TagInfo {
-                    name: "software",
+                    name: "Software",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -796,7 +796,7 @@ pub static QUICK_TIME_KEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             (
                 b"title".as_slice(),
                 TagInfo {
-                    name: "title",
+                    name: "Title",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -845,7 +845,7 @@ pub static QUICK_TIME_KEYS_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             (
                 b"year".as_slice(),
                 TagInfo {
-                    name: "year",
+                    name: "Year",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,

@@ -30,7 +30,8 @@ use std::sync::LazyLock;
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_exif_aperture(
     vals: &[TagValue],
@@ -38,13 +39,14 @@ pub fn composite_valueconv_exif_aperture(
     raws: &[TagValue],
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    Ok(
-        if (vals.first().cloned().unwrap_or(TagValue::Empty)).is_truthy() {
-            vals.first().cloned().unwrap_or(TagValue::Empty).clone()
+    Ok({
+        let logical_left = vals.first().cloned().unwrap_or(TagValue::Empty);
+        if logical_left.is_truthy() {
+            logical_left
         } else {
             vals.get(1).cloned().unwrap_or(TagValue::Empty)
-        },
-    )
+        }
+    })
 }
 
 /// Original perl expression:
@@ -57,7 +59,8 @@ pub fn composite_valueconv_exif_aperture(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_exif_circleofconfusion(
     vals: &[TagValue],
@@ -79,7 +82,8 @@ pub fn composite_valueconv_exif_circleofconfusion(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_exif_circleofconfusion(
     vals: &[TagValue],
@@ -95,6 +99,45 @@ pub fn composite_printconv_exif_circleofconfusion(
 
 /// Original perl expression:
 /// ``` perl
+/// return $val[0] if $val[0] and $val[0]=~/ /;
+/// return "$val[1] $val[2]";
+/// ```
+#[allow(
+    unused_variables,
+    clippy::get_first,
+    clippy::collapsible_else_if,
+    clippy::blocks_in_conditions,
+    clippy::unnecessary_cast,
+    clippy::redundant_clone,
+    clippy::needless_return
+)]
+pub fn composite_valueconv_exif_datetimeoriginal(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    {
+        if (vals.first().cloned().unwrap_or(TagValue::Empty)).is_truthy()
+            && vals
+                .first()
+                .cloned()
+                .unwrap_or(TagValue::Empty)
+                .to_string()
+                .contains(r" ")
+        {
+            return Ok(vals.first().cloned().unwrap_or(TagValue::Empty));
+        };
+        return Ok(TagValue::String(format!(
+            "{} {}",
+            vals.get(1).cloned().unwrap_or(TagValue::Empty),
+            vals.get(2).cloned().unwrap_or(TagValue::Empty)
+        )));
+    }
+}
+
+/// Original perl expression:
+/// ``` perl
 /// $val[1] ? sprintf("%.1f mm (35 mm equivalent: %.1f mm)", $val[0], $val) : sprintf("%.1f mm", $val)
 /// ```
 #[allow(
@@ -103,7 +146,8 @@ pub fn composite_printconv_exif_circleofconfusion(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_exif_focallength35efl(
     vals: &[TagValue],
@@ -131,6 +175,41 @@ pub fn composite_printconv_exif_focallength35efl(
 
 /// Original perl expression:
 /// ``` perl
+/// (length($val[0]) or length($val[1])) ? "$val[0] $val[1]" : undef
+/// ```
+#[allow(
+    unused_variables,
+    clippy::get_first,
+    clippy::collapsible_else_if,
+    clippy::blocks_in_conditions,
+    clippy::unnecessary_cast,
+    clippy::redundant_clone,
+    clippy::needless_return
+)]
+pub fn composite_valueconv_exif_gpsposition(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(
+        if (crate::core::length_i32(vals.first().cloned().unwrap_or(TagValue::Empty))).is_truthy()
+            || (crate::core::length_i32(vals.get(1).cloned().unwrap_or(TagValue::Empty)))
+                .is_truthy()
+        {
+            TagValue::String(format!(
+                "{} {}",
+                vals.first().cloned().unwrap_or(TagValue::Empty),
+                vals.get(1).cloned().unwrap_or(TagValue::Empty)
+            ))
+        } else {
+            TagValue::String("".to_string())
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
 /// "$prt[0], $prt[1]"
 /// ```
 #[allow(
@@ -139,7 +218,8 @@ pub fn composite_printconv_exif_focallength35efl(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_exif_gpsposition(
     vals: &[TagValue],
@@ -164,7 +244,8 @@ pub fn composite_printconv_exif_gpsposition(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_exif_hyperfocaldistance(
     vals: &[TagValue],
@@ -188,7 +269,8 @@ pub fn composite_printconv_exif_hyperfocaldistance(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_exif_lensid(
     vals: &[TagValue],
@@ -209,7 +291,8 @@ pub fn composite_valueconv_exif_lensid(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_exif_lightvalue(
     vals: &[TagValue],
@@ -233,7 +316,8 @@ pub fn composite_printconv_exif_lightvalue(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_exif_megapixels(
     vals: &[TagValue],
@@ -269,7 +353,8 @@ pub fn composite_printconv_exif_megapixels(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_exif_previewimagesize(
     vals: &[TagValue],
@@ -294,7 +379,8 @@ pub fn composite_valueconv_exif_previewimagesize(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_exif_scalefactor35efl(
     vals: &[TagValue],
@@ -318,7 +404,8 @@ pub fn composite_printconv_exif_scalefactor35efl(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_gps_gpsdatetime(
     vals: &[TagValue],
@@ -343,7 +430,8 @@ pub fn composite_valueconv_gps_gpsdatetime(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_gps_gpsdestlatitude(
     vals: &[TagValue],
@@ -377,7 +465,8 @@ pub fn composite_valueconv_gps_gpsdestlatitude(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_gps_gpsdestlongitude(
     vals: &[TagValue],
@@ -411,7 +500,8 @@ pub fn composite_valueconv_gps_gpsdestlongitude(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_gps_gpslatitude(
     vals: &[TagValue],
@@ -445,7 +535,8 @@ pub fn composite_valueconv_gps_gpslatitude(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_gps_gpslongitude(
     vals: &[TagValue],
@@ -479,7 +570,8 @@ pub fn composite_valueconv_gps_gpslongitude(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_iptc_datetimecreated(
     vals: &[TagValue],
@@ -504,7 +596,8 @@ pub fn composite_valueconv_iptc_datetimecreated(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_iptc_digitalcreationdatetime(
     vals: &[TagValue],
@@ -529,7 +622,8 @@ pub fn composite_valueconv_iptc_digitalcreationdatetime(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_apple_runtimesincepowerup(
     vals: &[TagValue],
@@ -557,7 +651,8 @@ pub fn composite_valueconv_apple_runtimesincepowerup(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_canon_conditionalfec(
     vals: &[TagValue],
@@ -578,7 +673,8 @@ pub fn composite_valueconv_canon_conditionalfec(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_canon_conditionalfec(
     vals: &[TagValue],
@@ -599,7 +695,8 @@ pub fn composite_printconv_canon_conditionalfec(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_canon_digitalzoom(
     vals: &[TagValue],
@@ -623,7 +720,8 @@ pub fn composite_printconv_canon_digitalzoom(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_canon_drivemode(
     vals: &[TagValue],
@@ -646,6 +744,51 @@ pub fn composite_valueconv_canon_drivemode(
 
 /// Original perl expression:
 /// ``` perl
+/// return $val[0] if $val[0] and $val[0] =~ /^\d+$/;
+/// return undef unless $val[1] and $val[2];
+/// return $val[1] * $val[2] / 100;
+/// ```
+#[allow(
+    unused_variables,
+    clippy::get_first,
+    clippy::collapsible_else_if,
+    clippy::blocks_in_conditions,
+    clippy::unnecessary_cast,
+    clippy::redundant_clone,
+    clippy::needless_return
+)]
+pub fn composite_valueconv_canon_iso(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    {
+        if (vals.first().cloned().unwrap_or(TagValue::Empty)).is_truthy() && {
+            use regex::Regex;
+            use std::sync::LazyLock;
+            static REGEX_FB69BFFEC4DAECF7: LazyLock<Regex> =
+                LazyLock::new(|| Regex::new(r"^\d+$").unwrap());
+            REGEX_FB69BFFEC4DAECF7
+                .is_match(&vals.first().cloned().unwrap_or(TagValue::Empty).to_string())
+        } {
+            return Ok(vals.first().cloned().unwrap_or(TagValue::Empty));
+        };
+        if !((vals.get(1).cloned().unwrap_or(TagValue::Empty)).is_truthy()
+            && (vals.get(2).cloned().unwrap_or(TagValue::Empty)).is_truthy())
+        {
+            return Ok(TagValue::String("".to_string()));
+        };
+        return Ok(Into::<TagValue>::into(
+            vals.get(1).cloned().unwrap_or(TagValue::Empty)
+                * vals.get(2).cloned().unwrap_or(TagValue::Empty)
+                / 100i32 as f64,
+        ));
+    }
+}
+
+/// Original perl expression:
+/// ``` perl
 /// sprintf("%.0f",$val)
 /// ```
 #[allow(
@@ -654,7 +797,8 @@ pub fn composite_valueconv_canon_drivemode(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_canon_iso(
     vals: &[TagValue],
@@ -678,7 +822,8 @@ pub fn composite_printconv_canon_iso(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_canon_lens(
     vals: &[TagValue],
@@ -699,7 +844,8 @@ pub fn composite_valueconv_canon_lens(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_canon_lens35efl(
     vals: &[TagValue],
@@ -717,6 +863,71 @@ pub fn composite_valueconv_canon_lens35efl(
 
 /// Original perl expression:
 /// ``` perl
+/// ($val[0]==3 or $val[0]==4 or $val[0]==6) ? 1 : 0
+/// ```
+#[allow(
+    unused_variables,
+    clippy::get_first,
+    clippy::collapsible_else_if,
+    clippy::blocks_in_conditions,
+    clippy::unnecessary_cast,
+    clippy::redundant_clone,
+    clippy::needless_return
+)]
+pub fn composite_valueconv_canon_redeyereduction(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(
+        if (vals.first().cloned().unwrap_or(TagValue::Empty) == 3i32
+            || vals.first().cloned().unwrap_or(TagValue::Empty) == 4i32)
+            || vals.first().cloned().unwrap_or(TagValue::Empty) == 6i32
+        {
+            Into::<TagValue>::into(1i32)
+        } else {
+            Into::<TagValue>::into(0i32)
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
+/// $val[0] ? (($val[0] eq "4" and $val[2]) ? 7 : $val[0]) : $val[1] + 10
+/// ```
+#[allow(
+    unused_variables,
+    clippy::get_first,
+    clippy::collapsible_else_if,
+    clippy::blocks_in_conditions,
+    clippy::unnecessary_cast,
+    clippy::redundant_clone,
+    clippy::needless_return
+)]
+pub fn composite_valueconv_canon_shootingmode(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(
+        if (vals.first().cloned().unwrap_or(TagValue::Empty)).is_truthy() {
+            if vals.first().cloned().unwrap_or(TagValue::Empty).to_string() == "4"
+                && (vals.get(2).cloned().unwrap_or(TagValue::Empty)).is_truthy()
+            {
+                Into::<TagValue>::into(7i32)
+            } else {
+                vals.first().cloned().unwrap_or(TagValue::Empty)
+            }
+        } else {
+            vals.get(1).cloned().unwrap_or(TagValue::Empty)
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
 /// $val eq "7" ? "Bulb" : ($val[0] ? $prt[0] : $prt[1])
 /// ```
 #[allow(
@@ -725,7 +936,8 @@ pub fn composite_valueconv_canon_lens35efl(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_canon_shootingmode(
     vals: &[TagValue],
@@ -756,7 +968,8 @@ pub fn composite_printconv_canon_shootingmode(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_kodak_datecreated(
     vals: &[TagValue],
@@ -781,7 +994,8 @@ pub fn composite_valueconv_kodak_datecreated(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_nikon_autofocus(
     vals: &[TagValue],
@@ -807,6 +1021,42 @@ pub fn composite_valueconv_nikon_autofocus(
 
 /// Original perl expression:
 /// ``` perl
+/// (($val[0] !~ /^Manual/i) and ($val[1] == 1)) ? 1 : 0
+/// ```
+#[allow(
+    unused_variables,
+    clippy::get_first,
+    clippy::collapsible_else_if,
+    clippy::blocks_in_conditions,
+    clippy::unnecessary_cast,
+    clippy::redundant_clone,
+    clippy::needless_return
+)]
+pub fn composite_valueconv_nikon_contrastdetectaf(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(
+        if {
+            use regex::Regex;
+            use std::sync::LazyLock;
+            static REGEX_79469736F9FB14CD: LazyLock<Regex> =
+                LazyLock::new(|| Regex::new(r"(?i)^Manual").unwrap());
+            !REGEX_79469736F9FB14CD
+                .is_match(&vals.first().cloned().unwrap_or(TagValue::Empty).to_string())
+        } && vals.get(1).cloned().unwrap_or(TagValue::Empty) == 1i32
+        {
+            Into::<TagValue>::into(1i32)
+        } else {
+            Into::<TagValue>::into(0i32)
+        },
+    )
+}
+
+/// Original perl expression:
+/// ``` perl
 /// "$val[0] $val[1]"
 /// ```
 #[allow(
@@ -815,7 +1065,8 @@ pub fn composite_valueconv_nikon_autofocus(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_nikon_lensspec(
     vals: &[TagValue],
@@ -840,7 +1091,8 @@ pub fn composite_valueconv_nikon_lensspec(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_nikon_lensspec(
     vals: &[TagValue],
@@ -865,7 +1117,8 @@ pub fn composite_printconv_nikon_lensspec(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_nikon_phasedetectaf(
     vals: &[TagValue],
@@ -890,7 +1143,8 @@ pub fn composite_valueconv_nikon_phasedetectaf(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_olympus_lenstype(
     vals: &[TagValue],
@@ -915,7 +1169,8 @@ pub fn composite_valueconv_olympus_lenstype(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_panasonic_advancedscenemode(
     vals: &[TagValue],
@@ -941,7 +1196,8 @@ pub fn composite_valueconv_panasonic_advancedscenemode(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_sony_focusdistance(
     vals: &[TagValue],
@@ -972,7 +1228,8 @@ pub fn composite_valueconv_sony_focusdistance(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_sony_focusdistance(
     vals: &[TagValue],
@@ -994,6 +1251,47 @@ pub fn composite_printconv_sony_focusdistance(
 
 /// Original perl expression:
 /// ``` perl
+/// return undef unless $val;
+/// return 'inf' if $val >= 255;
+/// return (2**($val/16-5) + 1) * $val[1] / 1000;
+/// ```
+#[allow(
+    unused_variables,
+    clippy::get_first,
+    clippy::collapsible_else_if,
+    clippy::blocks_in_conditions,
+    clippy::unnecessary_cast,
+    clippy::redundant_clone,
+    clippy::needless_return
+)]
+pub fn composite_valueconv_sony_focusdistance2(
+    vals: &[TagValue],
+    prts: &[TagValue],
+    raws: &[TagValue],
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    {
+        if !(vals.first().cloned().unwrap_or(TagValue::Empty)).is_truthy() {
+            return Ok(TagValue::String("".to_string()));
+        };
+        if vals.first().cloned().unwrap_or(TagValue::Empty) >= 255i32 {
+            return Ok(Into::<TagValue>::into("inf"));
+        };
+        return Ok(Into::<TagValue>::into(
+            (crate::core::power(
+                Into::<TagValue>::into(2i32),
+                Into::<TagValue>::into(
+                    vals.first().cloned().unwrap_or(TagValue::Empty) / 16i32 as f64 - 5i32,
+                ),
+            ) + 1i32)
+                * vals.get(1).cloned().unwrap_or(TagValue::Empty)
+                / 1000i32 as f64,
+        ));
+    }
+}
+
+/// Original perl expression:
+/// ``` perl
 /// $val eq "inf" ? $val : sprintf("%.4g m", $val)
 /// ```
 #[allow(
@@ -1002,7 +1300,8 @@ pub fn composite_printconv_sony_focusdistance(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_sony_focusdistance2(
     vals: &[TagValue],
@@ -1032,7 +1331,8 @@ pub fn composite_printconv_sony_focusdistance2(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_sony_gpsdatetime(
     vals: &[TagValue],
@@ -1057,7 +1357,8 @@ pub fn composite_valueconv_sony_gpsdatetime(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_sony_gpslatitude(
     vals: &[TagValue],
@@ -1091,7 +1392,8 @@ pub fn composite_valueconv_sony_gpslatitude(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_sony_gpslongitude(
     vals: &[TagValue],
@@ -1125,7 +1427,8 @@ pub fn composite_valueconv_sony_gpslongitude(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_panasonicraw_imageheight(
     vals: &[TagValue],
@@ -1146,7 +1449,8 @@ pub fn composite_valueconv_panasonicraw_imageheight(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_panasonicraw_imagewidth(
     vals: &[TagValue],
@@ -1167,7 +1471,8 @@ pub fn composite_valueconv_panasonicraw_imagewidth(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_quicktime_gpsaltitude(
     vals: &[TagValue],
@@ -1191,7 +1496,8 @@ pub fn composite_printconv_quicktime_gpsaltitude(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_printconv_quicktime_gpsaltitude2(
     vals: &[TagValue],
@@ -1215,7 +1521,8 @@ pub fn composite_printconv_quicktime_gpsaltitude2(
     clippy::collapsible_else_if,
     clippy::blocks_in_conditions,
     clippy::unnecessary_cast,
-    clippy::redundant_clone
+    clippy::redundant_clone,
+    clippy::needless_return
 )]
 pub fn composite_valueconv_xmp_lensid(
     vals: &[TagValue],
@@ -1423,7 +1730,7 @@ pub static COMPOSITE_EXIF_DATETIMEORIGINAL: CompositeTagDef = CompositeTagDef {
     require: &[],
     desire: &["DateTimeCreated", "DateCreated", "TimeCreated"],
     inhibit: &[],
-    value_conv: None, // PPI generation failed
+    value_conv: Some(composite_valueconv_exif_datetimeoriginal),
     print_conv: None, // PPI generation failed
     value_conv_expr: Some(
         r#"return $val[0] if $val[0] and $val[0]=~/ /;
@@ -1490,7 +1797,7 @@ pub static COMPOSITE_EXIF_GPSPOSITION: CompositeTagDef = CompositeTagDef {
     require: &["GPSLatitude", "GPSLongitude"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // PPI generation failed
+    value_conv: Some(composite_valueconv_exif_gpsposition),
     print_conv: Some(composite_printconv_exif_gpsposition),
     value_conv_expr: Some("(length($val[0]) or length($val[1])) ? \"$val[0] $val[1]\" : undef"),
     print_conv_expr: Some("\"$prt[0], $prt[1]\""),
@@ -2118,7 +2425,7 @@ pub static COMPOSITE_CANON_ISO: CompositeTagDef = CompositeTagDef {
     require: &[],
     desire: &["Canon:CameraISO", "Canon:BaseISO", "Canon:AutoISO"],
     inhibit: &[],
-    value_conv: None, // PPI generation failed
+    value_conv: Some(composite_valueconv_canon_iso),
     print_conv: Some(composite_printconv_canon_iso),
     value_conv_expr: Some(
         r"return $val[0] if $val[0] and $val[0] =~ /^\d+$/;
@@ -2193,7 +2500,7 @@ pub static COMPOSITE_CANON_REDEYEREDUCTION: CompositeTagDef = CompositeTagDef {
     require: &["CanonFlashMode", "FlashBits"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // PPI generation failed
+    value_conv: Some(composite_valueconv_canon_redeyereduction),
     print_conv: None,
     value_conv_expr: Some("($val[0]==3 or $val[0]==4 or $val[0]==6) ? 1 : 0"),
     print_conv_expr: None,
@@ -2208,7 +2515,7 @@ pub static COMPOSITE_CANON_SHOOTINGMODE: CompositeTagDef = CompositeTagDef {
     require: &["CanonExposureMode", "EasyMode"],
     desire: &["BulbDuration"],
     inhibit: &[],
-    value_conv: None, // PPI generation failed
+    value_conv: Some(composite_valueconv_canon_shootingmode),
     print_conv: Some(composite_printconv_canon_shootingmode),
     value_conv_expr: Some(
         "$val[0] ? (($val[0] eq \"4\" and $val[2]) ? 7 : $val[0]) : $val[1] + 10",
@@ -2345,7 +2652,7 @@ pub static COMPOSITE_NIKON_CONTRASTDETECTAF: CompositeTagDef = CompositeTagDef {
     require: &["Nikon:FocusMode", "Nikon:AFDetectionMethod"],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // PPI generation failed
+    value_conv: Some(composite_valueconv_nikon_contrastdetectaf),
     print_conv: None,
     value_conv_expr: Some(r"(($val[0] !~ /^Manual/i) and ($val[1] == 1)) ? 1 : 0"),
     print_conv_expr: None,
@@ -2605,7 +2912,7 @@ pub static COMPOSITE_SONY_FOCUSDISTANCE2: CompositeTagDef = CompositeTagDef {
     ],
     desire: &[],
     inhibit: &[],
-    value_conv: None, // PPI generation failed
+    value_conv: Some(composite_valueconv_sony_focusdistance2),
     print_conv: Some(composite_printconv_sony_focusdistance2),
     value_conv_expr: Some("return undef unless $val;\n            return 'inf' if $val >= 255;\n            return (2**($val/16-5) + 1) * $val[1] / 1000;"),
     print_conv_expr: Some("$val eq \"inf\" ? $val : sprintf(\"%.4g m\", $val)"),

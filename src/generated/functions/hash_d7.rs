@@ -8,6 +8,7 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
@@ -70,6 +71,19 @@ pub fn ast_value_d77131ce3c8c832c(
     Ok(crate::core::negate(val))
 }
 
+/// Original perl expression:
+/// ``` perl
+/// join(":", unpack("N*",$val))
+/// ```
+/// Used by:
+/// - QuickTime::VisualSampleDesc.PixelAspectRatio
+pub fn ast_value_d7bb5243e2a11d3f(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::join_unpack_binary(":", "N*", &val))
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -126,29 +140,6 @@ pub fn ast_value_d7477adc3dcbfb13(
         "UnknownTag",   // tag_name will be filled at runtime
         "UnknownGroup", // group will be filled at runtime
         "$_=$val; /^[\\x00-\\x09]/ and $_=join(\"\",unpack(\"CCCC\",$_)); $_", // original expression
-        val,
-    ))
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// join(":", unpack("N*",$val))
-/// ```
-/// Used by:
-/// - QuickTime::VisualSampleDesc.PixelAspectRatio
-///
-/// TODO: Add support for this expression pattern
-pub fn ast_value_d7bb5243e2a11d3f(
-    val: &TagValue,
-    ctx: Option<&ExifContext>,
-) -> Result<TagValue, crate::core::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(crate::core::missing::missing_value_conv(
-        0,                                  // tag_id will be filled at runtime
-        "UnknownTag",                       // tag_name will be filled at runtime
-        "UnknownGroup",                     // group will be filled at runtime
-        "join(\":\", unpack(\"N*\",$val))", // original expression
         val,
     ))
 }

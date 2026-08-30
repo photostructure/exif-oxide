@@ -8,11 +8,11 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// ($val >> 16) . "." . ($val & 0xffff)
@@ -20,18 +20,15 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - SigmaRaw::Header.FileVersion
 /// - SigmaRaw::Header4.FileVersion
-///
-/// TODO: Add support for this expression pattern
 pub fn ast_value_9d90e808fc13dd1(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(crate::core::missing::missing_value_conv(
-        0,                                        // tag_id will be filled at runtime
-        "UnknownTag",                             // tag_name will be filled at runtime
-        "UnknownGroup",                           // group will be filled at runtime
-        "($val >> 16) . \".\" . ($val & 0xffff)", // original expression
-        val,
+    Ok(crate::core::string::concat(
+        &crate::core::string::concat(
+            &Into::<TagValue>::into(val >> 16i32),
+            &TagValue::string("."),
+        ),
+        &(val & 0xffffu32),
     ))
 }

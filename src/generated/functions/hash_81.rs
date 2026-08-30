@@ -8,31 +8,22 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// ($val >> 4) * ($val & 0x0f)
 /// ```
 /// Used by:
 /// - Pentax::CAFPointInfo.NumCAFPoints
-///
-/// TODO: Add support for this expression pattern
 pub fn ast_value_815bd09165f3fde6(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(crate::core::missing::missing_value_conv(
-        0,                             // tag_id will be filled at runtime
-        "UnknownTag",                  // tag_name will be filled at runtime
-        "UnknownGroup",                // group will be filled at runtime
-        "($val >> 4) * ($val & 0x0f)", // original expression
-        val,
-    ))
+    Ok((val >> 4i32) * (val & 0x0fu32))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

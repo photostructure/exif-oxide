@@ -8,9 +8,30 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
+
+/// Original perl expression:
+/// ``` perl
+/// length($val)==4 ? sprintf("%.4d:%.2d:%.2d",unpack("nC2",$val)) : "Unknown ($val)"
+/// ```
+/// Used by:
+/// - Pentax::Main.Date
+pub fn ast_value_676f07102a6401b3(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(if crate::core::length_i32(val) == 4i32 {
+        TagValue::String(crate::core::sprintf_perl(
+            "%.4d:%.2d:%.2d",
+            &crate::core::unpack_binary("nC2", &val),
+        ))
+    } else {
+        Into::<TagValue>::into(format!("Unknown ({})", val))
+    })
+}
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -35,29 +56,6 @@ pub fn ast_print_674572cac8977577(val: &TagValue, ctx: Option<&ExifContext>) -> 
         "Image::ExifTool::GPS::ToDMS($self, $val, 1, \"E\")", // original expression
         val,
     )
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// length($val)==4 ? sprintf("%.4d:%.2d:%.2d",unpack("nC2",$val)) : "Unknown ($val)"
-/// ```
-/// Used by:
-/// - Pentax::Main.Date
-///
-/// TODO: Add support for this expression pattern
-pub fn ast_value_676f07102a6401b3(
-    val: &TagValue,
-    ctx: Option<&ExifContext>,
-) -> Result<TagValue, crate::core::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(crate::core::missing::missing_value_conv(
-        0,              // tag_id will be filled at runtime
-        "UnknownTag",   // tag_name will be filled at runtime
-        "UnknownGroup", // group will be filled at runtime
-        "length($val)==4 ? sprintf(\"%.4d:%.2d:%.2d\",unpack(\"nC2\",$val)) : \"Unknown ($val)\"", // original expression
-        val,
-    ))
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

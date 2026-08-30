@@ -8,11 +8,11 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// ($val >> 2) . " " . ($val & 0x3)
@@ -20,19 +20,13 @@ use crate::types::{ExifContext, TagValue};
 /// Used by:
 /// - Panasonic::Leica2.LensType
 /// - Panasonic::Subdir.LensType
-///
-/// TODO: Add support for this expression pattern
 pub fn ast_value_a15e00efdd4e457(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(crate::core::missing::missing_value_conv(
-        0,                                    // tag_id will be filled at runtime
-        "UnknownTag",                         // tag_name will be filled at runtime
-        "UnknownGroup",                       // group will be filled at runtime
-        "($val >> 2) . \" \" . ($val & 0x3)", // original expression
-        val,
+    Ok(crate::core::string::concat(
+        &crate::core::string::concat(&Into::<TagValue>::into(val >> 2i32), &TagValue::string(" ")),
+        &(val & 0x3u32),
     ))
 }
 

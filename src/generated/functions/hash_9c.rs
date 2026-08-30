@@ -8,6 +8,7 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
@@ -24,6 +25,23 @@ pub fn ast_print_9c532d14777c2531(val: &TagValue, ctx: Option<&ExifContext>) -> 
 
 /// Original perl expression:
 /// ``` perl
+/// join(" ", unpack("H2"x14, $val))
+/// ```
+/// Used by:
+/// - Nikon::AFInfo2V0300.AFPointsUsed
+pub fn ast_value_9ca88525365dbac(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::join_unpack_binary(
+        " ",
+        &"H2".repeat(14i32 as usize),
+        &val,
+    ))
+}
+
+/// Original perl expression:
+/// ``` perl
 /// sprintf("%.1f kPa",$val)
 /// ```
 /// Used by:
@@ -32,28 +50,5 @@ pub fn ast_print_9c34f7195c5f73e7(val: &TagValue, ctx: Option<&ExifContext>) -> 
     TagValue::String(crate::core::sprintf_perl(
         "%.1f kPa",
         std::slice::from_ref(val),
-    ))
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// join(" ", unpack("H2"x14, $val))
-/// ```
-/// Used by:
-/// - Nikon::AFInfo2V0300.AFPointsUsed
-///
-/// TODO: Add support for this expression pattern
-pub fn ast_value_9ca88525365dbac(
-    val: &TagValue,
-    ctx: Option<&ExifContext>,
-) -> Result<TagValue, crate::core::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(crate::core::missing::missing_value_conv(
-        0,                                      // tag_id will be filled at runtime
-        "UnknownTag",                           // tag_name will be filled at runtime
-        "UnknownGroup",                         // group will be filled at runtime
-        "join(\" \", unpack(\"H2\"x14, $val))", // original expression
-        val,
     ))
 }

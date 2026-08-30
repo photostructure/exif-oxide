@@ -78,7 +78,7 @@ pub static QUICK_TIME_MAIN_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             is_offset: false,
         }),
         (b"free".as_slice(), TagInfo {
-            name: "free",
+            name: "Free",
             format: "unknown",
             print_conv: None,
             value_conv: None,
@@ -120,7 +120,7 @@ pub static QUICK_TIME_MAIN_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             is_offset: false,
         }),
         (b"junk".as_slice(), TagInfo {
-            name: "junk",
+            name: "Junk",
             format: "unknown",
             print_conv: None,
             value_conv: None,
@@ -281,7 +281,7 @@ pub static QUICK_TIME_MAIN_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], TagInfo
             is_offset: false,
         }),
         (b"wide".as_slice(), TagInfo {
-            name: "wide",
+            name: "Wide",
             format: "unknown",
             print_conv: None,
             value_conv: None,

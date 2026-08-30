@@ -63,7 +63,7 @@ pub static QUICK_TIME_PITTASOFT_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Ta
             (
                 b"ptrh".as_slice(),
                 TagInfo {
-                    name: "ptrh",
+                    name: "Ptrh",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,

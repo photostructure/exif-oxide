@@ -8,9 +8,23 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
+
+/// Original perl expression:
+/// ``` perl
+/// (($val >> 6) & 0x3fff) + 1
+/// ```
+/// Used by:
+/// - RIFF::VP8L.ImageHeight
+pub fn ast_value_db86c7b303596132(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok((val >> 6i32 & 0x3fffu32) + 1i32)
+}
 
 /// Original perl expression:
 /// ``` perl
@@ -27,27 +41,4 @@ pub fn ast_value_db584f0afe19b808(
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
     Ok(crate::core::negate(val) / 2i32)
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// (($val >> 6) & 0x3fff) + 1
-/// ```
-/// Used by:
-/// - RIFF::VP8L.ImageHeight
-///
-/// TODO: Add support for this expression pattern
-pub fn ast_value_db86c7b303596132(
-    val: &TagValue,
-    ctx: Option<&ExifContext>,
-) -> Result<TagValue, crate::core::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(crate::core::missing::missing_value_conv(
-        0,                            // tag_id will be filled at runtime
-        "UnknownTag",                 // tag_name will be filled at runtime
-        "UnknownGroup",               // group will be filled at runtime
-        "(($val >> 6) & 0x3fff) + 1", // original expression
-        val,
-    ))
 }

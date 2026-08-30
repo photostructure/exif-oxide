@@ -8,6 +8,7 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
@@ -67,6 +68,23 @@ pub fn ast_value_ce42a84d72bc5d72(
     Ok(53190i32 - val)
 }
 
+/// Original perl expression:
+/// ``` perl
+/// sprintf("%x.%x.%x", unpack("nCC", $val))
+/// ```
+/// Used by:
+/// - Jpeg2000::FileType.MinorVersion
+/// - QuickTime::FileType.MinorVersion
+pub fn ast_value_cec214fb85ae5247(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(TagValue::String(crate::core::sprintf_perl(
+        "%x.%x.%x",
+        &crate::core::unpack_binary("nCC", &val),
+    )))
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -86,30 +104,6 @@ pub fn ast_value_cedbb1b70a73dd28(
         "UnknownTag",   // tag_name will be filled at runtime
         "UnknownGroup", // group will be filled at runtime
         "(IsInt($val) and $val < 4 and $$self{Model} =~ /Optio 555\\b/) ? $val + 0.1 : $val", // original expression
-        val,
-    ))
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// sprintf("%x.%x.%x", unpack("nCC", $val))
-/// ```
-/// Used by:
-/// - Jpeg2000::FileType.MinorVersion
-/// - QuickTime::FileType.MinorVersion
-///
-/// TODO: Add support for this expression pattern
-pub fn ast_value_cec214fb85ae5247(
-    val: &TagValue,
-    ctx: Option<&ExifContext>,
-) -> Result<TagValue, crate::core::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(crate::core::missing::missing_value_conv(
-        0,                                              // tag_id will be filled at runtime
-        "UnknownTag",                                   // tag_name will be filled at runtime
-        "UnknownGroup",                                 // group will be filled at runtime
-        "sprintf(\"%x.%x.%x\", unpack(\"nCC\", $val))", // original expression
         val,
     ))
 }

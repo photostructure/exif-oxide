@@ -8,9 +8,35 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
+
+/// Original perl expression:
+/// ``` perl
+/// $val=~/[\0-\x2f]/ ? join(" ",unpack("C*",$val)) : $val
+/// ```
+/// Used by:
+/// - Panasonic::Main.FirmwareVersion
+pub fn ast_value_c9162365d287d6f8(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(
+        if {
+            use regex::Regex;
+            use std::sync::LazyLock;
+            static REGEX_774BBD57BB66FAF9: LazyLock<Regex> =
+                LazyLock::new(|| Regex::new(r"[\x00-\x2f]").unwrap());
+            REGEX_774BBD57BB66FAF9.is_match(&val.to_string())
+        } {
+            crate::core::join_unpack_binary(" ", "C*", &val)
+        } else {
+            val.clone()
+        },
+    )
+}
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
@@ -31,29 +57,6 @@ pub fn ast_value_c9eb0334cb0e5f1(
         "UnknownTag",                  // tag_name will be filled at runtime
         "UnknownGroup",                // group will be filled at runtime
         "$val =~ s/Qual:\\s*//, $val", // original expression
-        val,
-    ))
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// $val=~/[\0-\x2f]/ ? join(" ",unpack("C*",$val)) : $val
-/// ```
-/// Used by:
-/// - Panasonic::Main.FirmwareVersion
-///
-/// TODO: Add support for this expression pattern
-pub fn ast_value_c9162365d287d6f8(
-    val: &TagValue,
-    ctx: Option<&ExifContext>,
-) -> Result<TagValue, crate::core::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(crate::core::missing::missing_value_conv(
-        0,                                                              // tag_id will be filled at runtime
-        "UnknownTag",   // tag_name will be filled at runtime
-        "UnknownGroup", // group will be filled at runtime
-        "$val=~/[\\0-\\x2f]/ ? join(\" \",unpack(\"C*\",$val)) : $val", // original expression
         val,
     ))
 }

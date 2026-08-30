@@ -8,6 +8,7 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
@@ -32,6 +33,32 @@ pub fn ast_print_76c7cc600804b004(val: &TagValue, ctx: Option<&ExifContext>) -> 
     }
 }
 
+/// Original perl expression:
+/// ``` perl
+/// return 'Off' unless $val;
+/// return (($val&0xfff) / 10) . ' s' . ($val & 0x4000 ? ', Custom' : '');
+/// ```
+/// Used by:
+/// - Canon::CameraSettings.SelfTimer
+pub fn ast_print_76cfbd458e230bac(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
+    {
+        if !val.is_truthy() {
+            return Into::<TagValue>::into("Off");
+        };
+        return crate::core::string::concat(
+            &crate::core::string::concat(
+                &Into::<TagValue>::into((val & 0xfffu32) / 10i32),
+                &Into::<TagValue>::into(" s"),
+            ),
+            &if (val & 0x4000u32).is_truthy() {
+                Into::<TagValue>::into(", Custom")
+            } else {
+                Into::<TagValue>::into("")
+            },
+        );
+    }
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -53,25 +80,4 @@ pub fn ast_value_76a70de7f6a5937a(
         "exp(Image::ExifTool::Pentax::PentaxEv($val-68)*log(2)/2)", // original expression
         val,
     ))
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// return 'Off' unless $val;
-/// return (($val&0xfff) / 10) . ' s' . ($val & 0x4000 ? ', Custom' : '');
-/// ```
-/// Used by:
-/// - Canon::CameraSettings.SelfTimer
-///
-/// TODO: Add support for this expression pattern
-pub fn ast_print_76cfbd458e230bac(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    crate::core::missing::missing_print_conv(
-                    0, // tag_id will be filled at runtime
-                    "UnknownTag", // tag_name will be filled at runtime
-                    "UnknownGroup", // group will be filled at runtime
-                    "return \'Off\' unless $val;\n            return (($val&0xfff) / 10) . \' s\' . ($val & 0x4000 ? \', Custom\' : \'\');", // original expression
-                    val
-                )
 }

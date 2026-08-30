@@ -8,6 +8,7 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
@@ -44,27 +45,24 @@ pub fn ast_value_c6ef25cf23665b03(
     Ok((val - 50i32) / 10i32)
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// length($val)>=3 ? sprintf("%.2d:%.2d:%.2d",unpack("C3",$val)) : "Unknown ($val)"
 /// ```
 /// Used by:
 /// - Pentax::Main.Time
-///
-/// TODO: Add support for this expression pattern
 pub fn ast_value_c6a064d658e6a1a2(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(crate::core::missing::missing_value_conv(
-        0,              // tag_id will be filled at runtime
-        "UnknownTag",   // tag_name will be filled at runtime
-        "UnknownGroup", // group will be filled at runtime
-        "length($val)>=3 ? sprintf(\"%.2d:%.2d:%.2d\",unpack(\"C3\",$val)) : \"Unknown ($val)\"", // original expression
-        val,
-    ))
+    Ok(if crate::core::length_i32(val) >= 3i32 {
+        TagValue::String(crate::core::sprintf_perl(
+            "%.2d:%.2d:%.2d",
+            &crate::core::unpack_binary("C3", &val),
+        ))
+    } else {
+        Into::<TagValue>::into(format!("Unknown ({})", val))
+    })
 }
 
 /// PLACEHOLDER: Unsupported expression (missing implementation)

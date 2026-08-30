@@ -8,6 +8,7 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
@@ -30,7 +31,6 @@ pub fn ast_print_34de78d5cc79bdc9(val: &TagValue, ctx: Option<&ExifContext>) -> 
     }
 }
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// join(" ",unpack("C*", $val))
@@ -38,18 +38,9 @@ pub fn ast_print_34de78d5cc79bdc9(val: &TagValue, ctx: Option<&ExifContext>) -> 
 /// Used by:
 /// - Photoshop::Main.CopyrightFlag
 /// - QuickTime::VisualSampleDesc.VideoFieldOrder
-///
-/// TODO: Add support for this expression pattern
 pub fn ast_value_346603e685b2cac(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(crate::core::missing::missing_value_conv(
-        0,                                  // tag_id will be filled at runtime
-        "UnknownTag",                       // tag_name will be filled at runtime
-        "UnknownGroup",                     // group will be filled at runtime
-        "join(\" \",unpack(\"C*\", $val))", // original expression
-        val,
-    ))
+    Ok(crate::core::join_unpack_binary(" ", "C*", &val))
 }

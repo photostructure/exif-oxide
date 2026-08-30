@@ -8,6 +8,7 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
@@ -20,10 +21,13 @@ use crate::types::{ExifContext, TagValue};
 /// - PNG::AnimationControl.AnimationPlays
 /// - RIFF::ANIM.AnimationLoopCount
 pub fn ast_print_cbdfe9256b8c5e45(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
-    if (val).is_truthy() {
-        val.clone()
-    } else {
-        Into::<TagValue>::into("inf")
+    {
+        let logical_left = val.clone();
+        if logical_left.is_truthy() {
+            logical_left
+        } else {
+            Into::<TagValue>::into("inf")
+        }
     }
 }
 

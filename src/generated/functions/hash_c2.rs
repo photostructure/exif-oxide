@@ -8,6 +8,7 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
@@ -22,7 +23,7 @@ use crate::types::{ExifContext, TagValue};
 pub fn ast_print_c23821edccdd4b5c(val: &TagValue, ctx: Option<&ExifContext>) -> TagValue {
     TagValue::String(crate::core::sprintf_perl(
         "Ver.%.2x.%.3d",
-        &[val >> 8i32, val & 0xffu32],
+        &[val >> 8i32, (val & 0xffu32).clone()],
     ))
 }
 

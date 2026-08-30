@@ -8,6 +8,7 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
@@ -44,6 +45,22 @@ pub fn ast_value_b71eb9c67e0faca3(
     Ok((val + 100i32) / 2i32)
 }
 
+/// Original perl expression:
+/// ``` perl
+/// (($val >> 2) & 0xffff) . " " . ($val & 0x3)
+/// ```
+/// Used by:
+/// - Panasonic::Data1.LensType
+pub fn ast_value_b714a38a402e4241(
+    val: &TagValue,
+    ctx: Option<&ExifContext>,
+) -> Result<TagValue, crate::core::types::ExifError> {
+    Ok(crate::core::string::concat(
+        &crate::core::string::concat(&(val >> 2i32 & 0xffffu32), &TagValue::string(" ")),
+        &(val & 0x3u32),
+    ))
+}
+
 /// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
@@ -63,29 +80,6 @@ pub fn ast_value_b7ac49cbeefb8652(
         "UnknownTag",   // tag_name will be filled at runtime
         "UnknownGroup", // group will be filled at runtime
         "$_=$val; tr/-/:/; s/^(\\d{4}:\\d{2}:\\d{2})/$1 /; $_", // original expression
-        val,
-    ))
-}
-
-/// PLACEHOLDER: Unsupported expression (missing implementation)
-/// Original perl expression:
-/// ``` perl
-/// (($val >> 2) & 0xffff) . " " . ($val & 0x3)
-/// ```
-/// Used by:
-/// - Panasonic::Data1.LensType
-///
-/// TODO: Add support for this expression pattern
-pub fn ast_value_b714a38a402e4241(
-    val: &TagValue,
-    ctx: Option<&ExifContext>,
-) -> Result<TagValue, crate::core::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(crate::core::missing::missing_value_conv(
-        0,                                               // tag_id will be filled at runtime
-        "UnknownTag",                                    // tag_name will be filled at runtime
-        "UnknownGroup",                                  // group will be filled at runtime
-        "(($val >> 2) & 0xffff) . \" \" . ($val & 0x3)", // original expression
         val,
     ))
 }

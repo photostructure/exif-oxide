@@ -8,29 +8,23 @@
 #![allow(clippy::collapsible_else_if)]
 #![allow(clippy::unnecessary_cast)]
 #![allow(clippy::erasing_op)]
+#![allow(clippy::needless_return)]
 
 use crate::core::{abs, atan2, cos, exp, int, log, power, sin, sqrt};
 use crate::types::{ExifContext, TagValue};
 
-/// PLACEHOLDER: Unsupported expression (missing implementation)
 /// Original perl expression:
 /// ``` perl
 /// ($val >> 8) . " " . ($val & 0xff)
 /// ```
 /// Used by:
 /// - Exif::Main.DevelopmentType
-///
-/// TODO: Add support for this expression pattern
 pub fn ast_value_6d9f685f256a775a(
     val: &TagValue,
     ctx: Option<&ExifContext>,
 ) -> Result<TagValue, crate::core::types::ExifError> {
-    tracing::warn!("Missing implementation for expression in {}", file!());
-    Ok(crate::core::missing::missing_value_conv(
-        0,                                     // tag_id will be filled at runtime
-        "UnknownTag",                          // tag_name will be filled at runtime
-        "UnknownGroup",                        // group will be filled at runtime
-        "($val >> 8) . \" \" . ($val & 0xff)", // original expression
-        val,
+    Ok(crate::core::string::concat(
+        &crate::core::string::concat(&Into::<TagValue>::into(val >> 8i32), &TagValue::string(" ")),
+        &(val & 0xffu32),
     ))
 }

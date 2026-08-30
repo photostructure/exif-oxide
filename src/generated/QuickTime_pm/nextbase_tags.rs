@@ -48,7 +48,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Alexa - Paired Device Name".as_slice(),
                 TagInfo {
-                    name: "Alexa - Paired Device Name",
+                    name: "Alexa-PairedDeviceName",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -58,7 +58,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Alexa - Pairing".as_slice(),
                 TagInfo {
-                    name: "Alexa - Pairing",
+                    name: "Alexa-Pairing",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -68,7 +68,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Alexa - Privacy Mode".as_slice(),
                 TagInfo {
-                    name: "Alexa - Privacy Mode",
+                    name: "Alexa-PrivacyMode",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -78,7 +78,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Alexa - Wake Word Language".as_slice(),
                 TagInfo {
-                    name: "Alexa - Wake Word Language",
+                    name: "Alexa-WakeWordLanguage",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -98,7 +98,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Auto Power Off".as_slice(),
                 TagInfo {
-                    name: "Auto Power Off",
+                    name: "AutoPowerOff",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -108,7 +108,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Battery Status".as_slice(),
                 TagInfo {
-                    name: "Battery Status",
+                    name: "BatteryStatus",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -118,7 +118,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Bluetooth MAC Address".as_slice(),
                 TagInfo {
-                    name: "Bluetooth MAC Address",
+                    name: "BluetoothMACAddress",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -128,7 +128,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Bluetooth Name".as_slice(),
                 TagInfo {
-                    name: "Bluetooth Name",
+                    name: "BluetoothName",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -148,7 +148,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Default Settings".as_slice(),
                 TagInfo {
-                    name: "Default Settings",
+                    name: "DefaultSettings",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -158,7 +158,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Device Sounds".as_slice(),
                 TagInfo {
-                    name: "Device Sounds",
+                    name: "DeviceSounds",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -168,7 +168,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Dual Files".as_slice(),
                 TagInfo {
-                    name: "Dual Files",
+                    name: "DualFiles",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -178,7 +178,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Emergency SOS".as_slice(),
                 TagInfo {
-                    name: "Emergency SOS",
+                    name: "EmergencySOS",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -198,7 +198,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Extreme Weather Mode".as_slice(),
                 TagInfo {
-                    name: "Extreme Weather Mode",
+                    name: "ExtremeWeatherMode",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -228,7 +228,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Firmware Version".as_slice(),
                 TagInfo {
-                    name: "Firmware Version",
+                    name: "FirmwareVersion",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -238,7 +238,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Format SD Card".as_slice(),
                 TagInfo {
-                    name: "Format SD Card",
+                    name: "FormatSDCard",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -248,7 +248,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"G Sensor".as_slice(),
                 TagInfo {
-                    name: "G Sensor",
+                    name: "GSensor",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -258,7 +258,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"GPS Stamp".as_slice(),
                 TagInfo {
-                    name: "GPS Stamp",
+                    name: "GPSStamp",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -268,7 +268,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Image Stabilisation".as_slice(),
                 TagInfo {
-                    name: "Image Stabilisation",
+                    name: "ImageStabilisation",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -278,7 +278,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Keep User Settings".as_slice(),
                 TagInfo {
-                    name: "Keep User Settings",
+                    name: "KeepUserSettings",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -318,7 +318,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Model Stamp".as_slice(),
                 TagInfo {
-                    name: "Model Stamp",
+                    name: "ModelStamp",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -328,7 +328,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"MyNextbase - Paired Device Name".as_slice(),
                 TagInfo {
-                    name: "MyNextbase - Paired Device Name",
+                    name: "MyNextbase-PairedDeviceName",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -338,7 +338,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"MyNextbase - Pairing".as_slice(),
                 TagInfo {
-                    name: "MyNextbase - Pairing",
+                    name: "MyNextbase-Pairing",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -358,7 +358,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Number / License Plate".as_slice(),
                 TagInfo {
-                    name: "Number / License Plate",
+                    name: "NumberLicensePlate",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -368,7 +368,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Parking Mode".as_slice(),
                 TagInfo {
-                    name: "Parking Mode",
+                    name: "ParkingMode",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -388,7 +388,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Recording History".as_slice(),
                 TagInfo {
-                    name: "Recording History",
+                    name: "RecordingHistory",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -408,7 +408,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Reversing Camera".as_slice(),
                 TagInfo {
-                    name: "Reversing Camera",
+                    name: "ReversingCamera",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -418,7 +418,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"SD Card Class".as_slice(),
                 TagInfo {
-                    name: "SD Card Class",
+                    name: "SDCardClass",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -428,7 +428,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"SD Card Format".as_slice(),
                 TagInfo {
-                    name: "SD Card Format",
+                    name: "SDCardFormat",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -438,7 +438,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"SD Card Manf Date".as_slice(),
                 TagInfo {
-                    name: "SD Card Manf Date",
+                    name: "SDCardManfDate",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -448,7 +448,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"SD Card Manf ID".as_slice(),
                 TagInfo {
-                    name: "SD Card Manf ID",
+                    name: "SDCardManfID",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -458,7 +458,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"SD Card Model No".as_slice(),
                 TagInfo {
-                    name: "SD Card Model No",
+                    name: "SDCardModelNo",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -468,7 +468,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"SD Card OEM ID".as_slice(),
                 TagInfo {
-                    name: "SD Card OEM ID",
+                    name: "SDCardOEMID",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -478,7 +478,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"SD Card Serial No".as_slice(),
                 TagInfo {
-                    name: "SD Card Serial No",
+                    name: "SDCardSerialNo",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -488,7 +488,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"SD Card Size".as_slice(),
                 TagInfo {
-                    name: "SD Card Size",
+                    name: "SDCardSize",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -498,7 +498,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"SD Card Type".as_slice(),
                 TagInfo {
-                    name: "SD Card Type",
+                    name: "SDCardType",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -508,7 +508,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"SD Card Used Space".as_slice(),
                 TagInfo {
-                    name: "SD Card Used Space",
+                    name: "SDCardUsedSpace",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -518,7 +518,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Screen Dimming".as_slice(),
                 TagInfo {
-                    name: "Screen Dimming",
+                    name: "ScreenDimming",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -528,7 +528,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Screen Saver".as_slice(),
                 TagInfo {
-                    name: "Screen Saver",
+                    name: "ScreenSaver",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -548,7 +548,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Speed Stamp".as_slice(),
                 TagInfo {
-                    name: "Speed Stamp",
+                    name: "SpeedStamp",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -558,7 +558,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Speed Units".as_slice(),
                 TagInfo {
-                    name: "Speed Units",
+                    name: "SpeedUnits",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -568,7 +568,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"System Info".as_slice(),
                 TagInfo {
-                    name: "System Info",
+                    name: "SystemInfo",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -588,7 +588,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Time Lapse".as_slice(),
                 TagInfo {
-                    name: "Time Lapse",
+                    name: "TimeLapse",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -608,7 +608,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Time Zone / DST".as_slice(),
                 TagInfo {
-                    name: "Time Zone / DST",
+                    name: "TimeZoneDST",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -618,7 +618,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Video Length".as_slice(),
                 TagInfo {
-                    name: "Video Length",
+                    name: "VideoLength",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -628,7 +628,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Wi-Fi MAC Address".as_slice(),
                 TagInfo {
-                    name: "Wi-Fi MAC Address",
+                    name: "Wi-FiMACAddress",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -638,7 +638,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Wi-Fi Password".as_slice(),
                 TagInfo {
-                    name: "Wi-Fi Password",
+                    name: "Wi-FiPassword",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
@@ -648,7 +648,7 @@ pub static QUICK_TIME_NEXTBASE_TAGS_BY_NAME: LazyLock<HashMap<&'static [u8], Tag
             (
                 b"Wi-Fi SSID".as_slice(),
                 TagInfo {
-                    name: "Wi-Fi SSID",
+                    name: "Wi-FiSSID",
                     format: "unknown",
                     print_conv: None,
                     value_conv: None,
