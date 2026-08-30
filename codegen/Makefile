@@ -33,8 +33,10 @@ clean:
 check:
 	cargo check -p codegen
 
+# The eval makes local::lib Perl modules (PPI) visible to tests that shell out
+# to scripts/ppi_ast.pl, matching codegen-with-staged-exiftool.sh.
 test: generate-expression-tests
-	cargo test -p codegen
+	eval "$$(perl -I "$$HOME/perl5/lib/perl5" -Mlocal::lib)" && cargo test -p codegen
 
 # Fast Expression Development Targets (P07 Implementation)
 
