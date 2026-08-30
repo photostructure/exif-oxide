@@ -7,6 +7,10 @@
 use strict;
 use warnings;
 use FindBin qw($Bin);
+
+# local::lib fallback so PPI/JSON::XS resolve without ambient PERL5LIB
+# (harmless no-op when the directory does not exist).
+use lib ( $ENV{HOME} ? "$ENV{HOME}/perl5/lib/perl5" : () );
 use JSON::XS;
 
 # Add our PPI library to path
