@@ -664,6 +664,36 @@ impl TagKitStrategy {
 
     /// Build a `(sort_key, entry)` pair for a non-numeric object-style tag, keyed by
     /// its atom-ID byte literal, for the `*_BY_NAME` map.
+    /// Port of ExifTool `MakeTagName` (ExifTool.pm:6451-6459), applied to a
+    /// string-keyed atom ID that has no explicit `Name`. ExifTool derives the tag
+    /// Name at table-load time via `$$tagInfo{Name} or MakeTagName($tagID)`
+    /// (ExifTool.pm:5913), so e.g. the nameless Keys entry `software => { }` reads
+    /// out as `Software`, not the raw key. Only the by-name (string-keyed) path
+    /// needs this; numeric-keyed entries keep the previous raw-key fallback so
+    /// their generated output is unchanged.
+    fn make_tag_name(tag_id: &str) -> String {
+        // ExifTool.pm:6454 tr/-_a-zA-Z0-9//dc — remove illegal characters.
+        let mut name: String = tag_id
+            .chars()
+            .filter(|c| c.is_ascii_alphanumeric() || *c == '-' || *c == '_')
+            .collect();
+        // ExifTool.pm:6455 ucfirst — capitalize the first letter.
+        if let Some(first) = name.get(0..1) {
+            let upper = first.to_ascii_uppercase();
+            name.replace_range(0..1, &upper);
+        }
+        // ExifTool.pm:6457 must be >= 2 chars and not start with '-' or a digit.
+        let bad_start = name
+            .chars()
+            .next()
+            .map(|c| c == '-' || c.is_ascii_digit())
+            .unwrap_or(true);
+        if name.len() < 2 || bad_start {
+            name = format!("Tag{name}");
+        }
+        name
+    }
+
     fn build_string_tag_entry(
         &mut self,
         tag_key: &str,
@@ -672,10 +702,16 @@ impl TagKitStrategy {
         table_name: &str,
         context: &mut ExtractionContext,
     ) -> Result<(String, String)> {
-        let name = tag_data
-            .get("Name")
-            .and_then(|v| v.as_str())
-            .unwrap_or(tag_key);
+        // ExifTool derives the Name from the tag ID when the entry omits one
+        // (MakeTagName, ExifTool.pm:5913); mirror that instead of leaking the raw key.
+        let derived_name;
+        let name = match tag_data.get("Name").and_then(|v| v.as_str()) {
+            Some(n) => n,
+            None => {
+                derived_name = Self::make_tag_name(tag_key);
+                derived_name.as_str()
+            }
+        };
         let key_lit = Self::atom_key_to_byte_literal(tag_key);
         let tag_info = self.build_tag_info_literal(name, tag_data, module, table_name, context)?;
         let entry = format!("        ({key_lit}.as_slice(), {tag_info}),\n");
@@ -1127,5 +1163,22 @@ impl ExtractionStrategy for TagKitStrategy {
 
         info!("TagKitStrategy generated {} files", files.len());
         Ok(files)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::TagKitStrategy;
+
+    #[test]
+    fn make_tag_name_matches_exiftool() {
+        // ExifTool.pm MakeTagName:6451-6459.
+        assert_eq!(TagKitStrategy::make_tag_name("software"), "Software");
+        assert_eq!(
+            TagKitStrategy::make_tag_name("location.ISO6709"),
+            "LocationISO6709"
+        );
+        assert_eq!(TagKitStrategy::make_tag_name("1"), "Tag1");
+        assert_eq!(TagKitStrategy::make_tag_name("-bad"), "Tag-bad");
     }
 }
