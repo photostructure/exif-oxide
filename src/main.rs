@@ -47,8 +47,22 @@ fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
             // Process tag/group filters
             let filter_arg = &arg[1..]; // Remove leading '-'
 
-            // Check for invalid short options (1-2 characters or unknown single-char flags)
-            if filter_arg.len() <= 2 {
+            // Reject short arguments that cannot be tag requests.
+            //
+            // ExifTool's own guard is `length $_ eq 1 and $_ ne '*'` (exiftool:1393):
+            // a one-character argument is an error unless it is exactly `*`, and
+            // anything longer is a tag request. exif-oxide is stricter about
+            // two-character arguments because it implements none of ExifTool's short
+            // options (-n, -b, -s, ...), and failing loudly on those beats silently
+            // matching no tags. A wildcard can never be one of those options, so
+            // `-*`, `-*#` and `-?#` are let through - matching ExifTool, which accepts
+            // all three and rejects only a bare `-?`.
+            let is_tag_request = match filter_arg.len() {
+                1 => filter_arg == "*",
+                2 => FilterOptions::has_wildcard(filter_arg),
+                _ => true,
+            };
+            if !is_tag_request {
                 eprintln!("Unknown option {}", arg);
                 std::process::exit(1);
             }
@@ -660,6 +674,63 @@ mod tests {
         assert!(filter_opts.requested_tags.contains(&"FNumber".to_string()));
         assert!(filter_opts.numeric_tags.contains("Orientation"));
         assert!(!filter_opts.numeric_tags.contains("FNumber"));
+    }
+
+    /// The unknown-option guard used to reject every argument of two characters or
+    /// fewer, which swallowed `-*` and `-*#` - legitimate ExifTool requests for every
+    /// tag.
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5367 (`$tag =~ /^(\*|all)$/i`) makes `*` a
+    /// request for all tags, and exiftool:1393
+    /// (`length $_ eq 1 and $_ ne '*' and Error(...)`) is the guard that lets it
+    /// through. Verified: `exiftool -j -G "-*#" canon/eos_rebel_t3i.jpg` returns every
+    /// tag with its ValueConv value, identical to `exiftool -j -G "-all#"`; `-*`, `-?*`,
+    /// `-*?` and `-?#` are likewise accepted while a bare `-?` is "Unknown option".
+    /// Before this guard was relaxed, `exif-oxide "-*#" image.jpg` printed
+    /// "Unknown option -*#" and exited 1.
+    #[test]
+    fn test_parse_exiftool_args_bare_wildcard() {
+        let image = "image.jpg".to_string();
+        let star_numeric = "-*#".to_string();
+        let (files, filter_opts) = parse_exiftool_args(vec![&image, &star_numeric]);
+
+        assert_eq!(files, vec!["image.jpg"]);
+        assert!(filter_opts.glob_patterns.contains(&"*".to_string()));
+        assert!(filter_opts.numeric_tags.contains("*"));
+        assert!(filter_opts.should_extract_tag("Orientation", "EXIF"));
+        assert!(filter_opts.should_use_numeric("Orientation", "EXIF"));
+
+        let star = "-*".to_string();
+        let (files, filter_opts) = parse_exiftool_args(vec![&image, &star]);
+
+        assert_eq!(files, vec!["image.jpg"]);
+        assert!(filter_opts.glob_patterns.contains(&"*".to_string()));
+        assert!(filter_opts.numeric_tags.is_empty());
+
+        // Two-character wildcard requests are accepted too, matching ExifTool.
+        let single_char_numeric = "-?#".to_string();
+        let (_, filter_opts) = parse_exiftool_args(vec![&image, &single_char_numeric]);
+        assert!(filter_opts.glob_patterns.contains(&"?".to_string()));
+    }
+
+    /// `-all#` is `-all` with numeric output: every tag, ValueConv values.
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5364 strips the `#`, :5367 expands `all`.
+    /// Verified: `exiftool -j -G "-all#" canon/eos_rebel_t3i.jpg`.
+    #[test]
+    fn test_parse_exiftool_args_all_numeric() {
+        let image = "image.jpg".to_string();
+        let all_numeric = "-all#".to_string();
+        let (files, filter_opts) = parse_exiftool_args(vec![&image, &all_numeric]);
+
+        assert_eq!(files, vec!["image.jpg"]);
+        assert!(
+            !filter_opts.extract_all,
+            "-all# must stay a filtered request so the numeric selection still applies"
+        );
+        assert!(filter_opts.numeric_tags.contains("all"));
+        assert!(filter_opts.should_extract_tag("Orientation", "EXIF"));
+        assert!(filter_opts.should_use_numeric("Orientation", "EXIF"));
     }
 
     #[test]

@@ -6,10 +6,28 @@
 use exif_oxide::formats::extract_metadata;
 use exif_oxide::types::{FilterOptions, TagValue};
 use std::collections::HashSet;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 const TEST_IMAGE_CANON: &str = "test-images/canon/eos_rebel_t3i.jpg";
 const TEST_IMAGE_RICOH: &str = "third-party/exiftool/t/images/Ricoh2.jpg";
+
+/// Resolve a repo-relative test asset, searching the crate directory and its ancestors.
+///
+/// A `git worktree` created under `<repo>/.claude/worktrees/<name>` carries neither the
+/// untracked `test-images/` tree nor a populated `third-party/exiftool` submodule, so the
+/// asset only exists in the primary checkout further up the path. Returns `None` when the
+/// asset is missing entirely, letting a test skip instead of panicking.
+fn find_test_asset(relative: &str) -> Option<PathBuf> {
+    let mut dir = Some(Path::new(env!("CARGO_MANIFEST_DIR")));
+    while let Some(current) = dir {
+        let candidate = current.join(relative);
+        if candidate.exists() {
+            return Some(candidate);
+        }
+        dir = current.parent();
+    }
+    None
+}
 
 #[test]
 fn test_specific_tag_filtering() {
@@ -474,4 +492,236 @@ fn test_numeric_with_glob_patterns() {
         TagValue::U8(0) | TagValue::U16(0) => (),
         other => panic!("Expected numeric GPSAltitudeRef 0, got: {other:?}"),
     }
+}
+
+// ---------------------------------------------------------------------------
+// CLI tag-request parity gaps (_todo/20260830-P2-cli-tag-request-parity.md),
+// items 2, 4 and 5. Every expectation below was probed against vendored
+// ExifTool 13.59 (third-party/exiftool/exiftool) before the test was written.
+// ---------------------------------------------------------------------------
+
+/// Item 2: a family-1 group name selects tags by their Group1 (subdirectory).
+///
+/// ExifTool hands the group portion of a request to `GroupMatches`
+/// (lib/Image/ExifTool.pm:5398-5401), which compares a bare group name against
+/// *every* group family returned by `GetGroup($tag, -1)`
+/// (lib/Image/ExifTool.pm:5237-5253). "ExifIFD" therefore matches on family 1,
+/// exactly as "EXIF" matches on family 0.
+///
+/// Probes (vendored ExifTool 13.59, canon/eos_rebel_t3i.jpg):
+///   exiftool -j -G  "-ExifIFD:FNum?er#" => {"EXIF:FNumber": 4}
+///   exiftool -j -G1 -FNumber -Make      => {"ExifIFD:FNumber": 4.0, "IFD0:Make": "Canon"}
+#[test]
+fn test_family1_group_request_selects_by_group1() {
+    let Some(image) = find_test_asset(TEST_IMAGE_CANON) else {
+        eprintln!("skipping: {TEST_IMAGE_CANON} not available");
+        return;
+    };
+
+    let mut numeric_tags = HashSet::new();
+    numeric_tags.insert("ExifIFD:FNum?er".to_string());
+    let filter = FilterOptions {
+        extract_all: false,
+        glob_patterns: vec!["ExifIFD:FNum?er".to_string()],
+        numeric_tags,
+        ..Default::default()
+    };
+
+    let result = extract_metadata(&image, false, false, Some(filter)).unwrap();
+
+    let names: Vec<&str> = result.tags.iter().map(|t| t.name.as_str()).collect();
+    assert_eq!(
+        names,
+        vec!["FNumber"],
+        "-ExifIFD:FNum?er# must select the ExifIFD FNumber and nothing else"
+    );
+    let fnumber = &result.tags[0];
+    assert_eq!(fnumber.group, "EXIF");
+    assert_eq!(fnumber.group1, "ExifIFD");
+    assert_eq!(
+        fnumber.print, fnumber.value,
+        "the `#` suffix must select the ValueConv result"
+    );
+}
+
+/// Item 2: a family-1 group name that does not hold the tag matches nothing,
+/// while the correct family-1 name does.
+///
+/// Probes (vendored ExifTool 13.59, canon/eos_rebel_t3i.jpg):
+///   exiftool -j -G "-ExifIFD:Make" => no tags (Make lives in IFD0)
+///   exiftool -j -G "-IFD0:Make"    => {"EXIF:Make": "Canon"}
+#[test]
+fn test_family1_group_request_rejects_wrong_subdirectory() {
+    let Some(image) = find_test_asset(TEST_IMAGE_CANON) else {
+        eprintln!("skipping: {TEST_IMAGE_CANON} not available");
+        return;
+    };
+
+    let wrong_ifd = FilterOptions {
+        extract_all: false,
+        requested_tags: vec!["ExifIFD:Make".to_string()],
+        ..Default::default()
+    };
+    let result = extract_metadata(&image, false, false, Some(wrong_ifd)).unwrap();
+    assert!(
+        result.tags.is_empty(),
+        "Make is in IFD0, so -ExifIFD:Make must match nothing, got {:?}",
+        result.tags.iter().map(|t| &t.name).collect::<Vec<_>>()
+    );
+
+    let right_ifd = FilterOptions {
+        extract_all: false,
+        requested_tags: vec!["IFD0:Make".to_string()],
+        ..Default::default()
+    };
+    let result = extract_metadata(&image, false, false, Some(right_ifd)).unwrap();
+    let names: Vec<&str> = result.tags.iter().map(|t| t.name.as_str()).collect();
+    assert_eq!(names, vec!["Make"], "-IFD0:Make must select EXIF:Make");
+}
+
+/// Item 4: `-all#` requests every tag with its ValueConv value.
+///
+/// ExifTool: lib/Image/ExifTool.pm:5367-5368 - a tag name of `*` or `all`
+/// (case-insensitive) matches every extracted tag; :5364 strips the `#` first.
+///
+/// Probes (vendored ExifTool 13.59, canon/eos_rebel_t3i.jpg):
+///   exiftool -j -G "-all#" => same 329 output lines as an unfiltered run, with
+///                             "EXIF:Orientation": 8 (not "Rotate 270 CW")
+///   exiftool -j -G "-ALL#" => identical (the match is case-insensitive)
+#[test]
+fn test_all_numeric_request_returns_every_tag_numerically() {
+    let Some(image) = find_test_asset(TEST_IMAGE_CANON) else {
+        eprintln!("skipping: {TEST_IMAGE_CANON} not available");
+        return;
+    };
+
+    let unfiltered = extract_metadata(&image, false, false, None).unwrap();
+
+    let mut numeric_tags = HashSet::new();
+    numeric_tags.insert("all".to_string());
+    let filter = FilterOptions {
+        extract_all: false,
+        requested_tags: vec!["all".to_string()],
+        numeric_tags,
+        ..Default::default()
+    };
+    let result = extract_metadata(&image, false, false, Some(filter)).unwrap();
+
+    assert_eq!(
+        result.tags.len(),
+        unfiltered.tags.len(),
+        "-all# must return the same tags as an unfiltered extraction"
+    );
+
+    let orientation = result
+        .tags
+        .iter()
+        .find(|t| t.name == "Orientation")
+        .expect("-all# must include EXIF:Orientation");
+    match &orientation.print {
+        TagValue::U8(8) | TagValue::U16(8) => (),
+        other => panic!("-all# must give Orientation its numeric value 8, got {other:?}"),
+    }
+}
+
+/// Item 4: `-*#` is the same request as `-all#`.
+///
+/// ExifTool: lib/Image/ExifTool.pm:5367 matches `/^(\*|all)$/i`.
+///
+/// Probe (vendored ExifTool 13.59, canon/eos_rebel_t3i.jpg):
+///   exiftool -j -G "-*#" => byte-identical to `exiftool -j -G "-all#"`
+#[test]
+fn test_star_numeric_request_returns_every_tag_numerically() {
+    let Some(image) = find_test_asset(TEST_IMAGE_CANON) else {
+        eprintln!("skipping: {TEST_IMAGE_CANON} not available");
+        return;
+    };
+
+    let unfiltered = extract_metadata(&image, false, false, None).unwrap();
+
+    let mut numeric_tags = HashSet::new();
+    numeric_tags.insert("*".to_string());
+    let filter = FilterOptions {
+        extract_all: false,
+        glob_patterns: vec!["*".to_string()],
+        numeric_tags,
+        ..Default::default()
+    };
+    let result = extract_metadata(&image, false, false, Some(filter)).unwrap();
+
+    assert_eq!(
+        result.tags.len(),
+        unfiltered.tags.len(),
+        "-*# must return the same tags as an unfiltered extraction"
+    );
+
+    let orientation = result
+        .tags
+        .iter()
+        .find(|t| t.name == "Orientation")
+        .expect("-*# must include EXIF:Orientation");
+    match &orientation.print {
+        TagValue::U8(8) | TagValue::U16(8) => (),
+        other => panic!("-*# must give Orientation its numeric value 8, got {other:?}"),
+    }
+}
+
+/// Item 5: characters outside `[-\w*?]` are deleted from the tag portion of a
+/// request before it is matched.
+///
+/// ExifTool: lib/Image/ExifTool.pm:5378 (`$tag =~ tr/-_A-Za-z0-9*?//dc;`) for
+/// wildcard requests and :5386 (`tr/-_A-Za-z0-9//dc`) for plain ones. The `-j`
+/// option turns on Duplicates (exiftool:949), so :5386 - not the "Invalid tag
+/// name" branch at :5396 - is the one the JSON CLI reaches.
+///
+/// Probes (vendored ExifTool 13.59, canon/eos_rebel_t3i.jpg). Each warns
+/// `Invalid TAG name` from exiftool:1445 and then matches anyway:
+///   exiftool -j -G "-F*Num.ber" => EXIF:FNumber, MakerNotes:FlashGuideNumber,
+///                                  MakerNotes:FNumber, Composite:FileNumber
+///   exiftool -j -G "-FNum.ber"  => EXIF:FNumber, MakerNotes:FNumber
+///   exiftool -j -G "-EX.IF:FNumber" => no tags, plus
+///                                  "Warning: Invalid group name 'EX.IF'"
+#[test]
+fn test_illegal_characters_are_stripped_from_tag_requests() {
+    let Some(image) = find_test_asset(TEST_IMAGE_CANON) else {
+        eprintln!("skipping: {TEST_IMAGE_CANON} not available");
+        return;
+    };
+
+    // Wildcard request with an illegal '.' - sterilized to "F*Number".
+    let wildcard = FilterOptions {
+        extract_all: false,
+        glob_patterns: vec!["F*Num.ber".to_string()],
+        ..Default::default()
+    };
+    let result = extract_metadata(&image, false, false, Some(wildcard)).unwrap();
+    assert!(
+        result.tags.iter().any(|t| t.name == "FNumber"),
+        "-F*Num.ber must sterilize to F*Number and match FNumber, got {:?}",
+        result.tags.iter().map(|t| &t.name).collect::<Vec<_>>()
+    );
+
+    // Plain request with an illegal '.' - sterilized to "FNumber".
+    let plain = FilterOptions {
+        extract_all: false,
+        requested_tags: vec!["FNum.ber".to_string()],
+        ..Default::default()
+    };
+    let result = extract_metadata(&image, false, false, Some(plain)).unwrap();
+    let names: Vec<&str> = result.tags.iter().map(|t| t.name.as_str()).collect();
+    assert_eq!(names, vec!["FNumber"], "-FNum.ber must match FNumber");
+
+    // An illegal character in the *group* portion is not sterilized: ExifTool
+    // warns and replaces the group with 'invalid', which matches nothing.
+    let bad_group = FilterOptions {
+        extract_all: false,
+        requested_tags: vec!["EX.IF:FNumber".to_string()],
+        ..Default::default()
+    };
+    let result = extract_metadata(&image, false, false, Some(bad_group)).unwrap();
+    assert!(
+        result.tags.is_empty(),
+        "-EX.IF:FNumber names an invalid group and must match nothing, got {:?}",
+        result.tags.iter().map(|t| &t.name).collect::<Vec<_>>()
+    );
 }

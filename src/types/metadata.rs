@@ -160,82 +160,193 @@ impl FilterOptions {
 
     /// Check if a tag should be extracted based on current filters
     /// Uses case-insensitive matching to match ExifTool behavior
+    ///
+    /// This form only knows the tag's family-0 group. Use
+    /// [`FilterOptions::should_extract_tag_in_groups`] wherever the tag's Group1 is
+    /// known, so that family-1 requests like `-ExifIFD:FNumber` can match.
     pub fn should_extract_tag(&self, tag_name: &str, tag_group: &str) -> bool {
+        self.should_extract_tag_in_groups(tag_name, &[tag_group])
+    }
+
+    /// Check if a tag should be extracted, given every group family it belongs to.
+    ///
+    /// `tag_groups` is indexed by ExifTool group family: `[group0, group1]`. ExifTool
+    /// matches a bare group name against *all* families (see
+    /// [`FilterOptions::group_name_matches`]), so both entries matter.
+    ///
+    /// Every kind of request - a plain tag name, a group-qualified name, a wildcard,
+    /// `all` - runs through the same matcher, mirroring ExifTool's single request loop.
+    /// ExifTool: lib/Image/ExifTool.pm:5345-5401 (SetFoundTags)
+    pub fn should_extract_tag_in_groups(&self, tag_name: &str, tag_groups: &[&str]) -> bool {
         if self.extract_all {
             return true;
         }
 
-        let tag_name_lower = tag_name.to_lowercase();
-        let tag_group_lower = tag_group.to_lowercase();
-
-        // Check specific tag requests (case-insensitive)
-        if self
-            .requested_tags
-            .iter()
-            .any(|t| t.to_lowercase() == tag_name_lower)
-        {
+        // `requested_groups` is an exif-oxide convenience (FilterOptions::groups_only),
+        // not an ExifTool request string: a bare group name here selects the group
+        // rather than a tag of that name.
+        if self.requested_groups.iter().any(|requested| {
+            tag_groups
+                .iter()
+                .any(|group| group.eq_ignore_ascii_case(requested))
+        }) {
             return true;
         }
 
-        // Check group filters (case-insensitive)
-        if self
-            .requested_groups
+        self.requested_tags
             .iter()
-            .any(|g| g.to_lowercase() == tag_group_lower)
-        {
-            return true;
-        }
-
-        // Check group:all patterns (case-insensitive)
-        for pattern in &self.group_all_patterns {
-            let pattern_lower = pattern.to_lowercase();
-            if let Some((group_part, all_part)) = pattern_lower.split_once(':') {
-                if all_part == "all" && group_part == tag_group_lower {
-                    return true;
-                }
-            }
-        }
-
-        // Check glob patterns (case-insensitive), against the tag name and - for
-        // group-qualified patterns like "EXIF:*" - the "Group:TagName" form
-        self.glob_patterns
-            .iter()
-            .any(|pattern| Self::request_matches_tag(pattern, tag_name, tag_group))
+            .chain(self.group_all_patterns.iter())
+            .chain(self.glob_patterns.iter())
+            .any(|pattern| Self::request_matches_tag(pattern, tag_name, tag_groups))
     }
 
     /// Match one ExifTool tag request against a tag, honouring an optional group prefix.
     ///
-    /// ExifTool splits `Group:Tag` apart *before* expanding wildcards, so the wildcards
-    /// only ever apply to the tag name. Two consequences we reproduce here:
+    /// This reproduces the body of ExifTool's request loop
+    /// (lib/Image/ExifTool.pm:5345-5401) in order:
     ///
-    /// - An unqualified pattern is matched against the tag name alone. `-EXIF*` returns
-    ///   only tags whose *name* starts with "Exif", not the whole EXIF group.
-    /// - A group portion containing a wildcard is an invalid group name; ExifTool warns
-    ///   and the request matches nothing. Only `*` (any group) is allowed there.
+    /// 1. Split `Group:Tag` at the *last* colon (:5348, `/^(.*):(.+)/`), so the group
+    ///    portion may itself name several groups.
+    /// 2. Require the group portion to match (:5398-5401 via `GroupMatches`).
+    /// 3. A tag portion of `*` or `all` matches every tag (:5367).
+    /// 4. Otherwise delete illegal characters from the tag portion (:5378, :5386) and
+    ///    match it as a wildcard pattern or as an exact case-insensitive name.
     ///
-    /// ExifTool: lib/Image/ExifTool.pm:5348-5360, 5376-5382 (SetFoundTags)
-    fn request_matches_tag(pattern: &str, tag_name: &str, tag_group: &str) -> bool {
-        if Self::matches_glob_pattern(tag_name, pattern) {
+    /// `pattern` must already have had its single trailing `#` removed - ExifTool strips
+    /// exactly one (:5364) and the CLI argument parsers do that when they decide whether
+    /// a request is a numeric one. Stripping a second `#` here would make `-all##`
+    /// select every tag, where ExifTool sterilizes it down to a request for a tag
+    /// literally named "all" and returns nothing.
+    ///
+    /// Because the wildcards expand to `[-\w]`, they never match the `:` that separates
+    /// a group from a tag name - the group is split off before matching, so `-EXIF*`
+    /// returns only tags whose *name* starts with "Exif", not the whole EXIF group.
+    fn request_matches_tag(pattern: &str, tag_name: &str, tag_groups: &[&str]) -> bool {
+        // ExifTool: lib/Image/ExifTool.pm:5348 - `/^(.*):(.+)/` is greedy, so the split
+        // happens at the last colon and the tag portion must be non-empty.
+        let (group_spec, tag_spec) = match pattern.rsplit_once(':') {
+            Some((group, tag)) if !tag.is_empty() => (Some(group), tag),
+            _ => (None, pattern),
+        };
+
+        if let Some(group_spec) = group_spec {
+            if !Self::group_spec_matches(group_spec, tag_groups) {
+                return false;
+            }
+        }
+
+        // ExifTool: lib/Image/ExifTool.pm:5367-5368 - "tag name of '*' or 'all' matches
+        // all tags". This is checked before sterilization, so `-al.l` is *not* a request
+        // for every tag.
+        if tag_spec == "*" || tag_spec.eq_ignore_ascii_case("all") {
             return true;
         }
 
-        // Group-qualified request. ExifTool splits at the last colon (`/^(.*):(.+)/`).
-        let Some((group_pattern, tag_pattern)) = pattern.rsplit_once(':') else {
-            return false;
-        };
-        // ExifTool: lib/Image/ExifTool.pm:5350-5359 - the group may be '*' (any group),
-        // otherwise a wildcard there is rejected as an invalid group name.
-        if Self::has_wildcard(group_pattern) && group_pattern != "*" {
+        let tag_spec = Self::sterilize_tag_spec(tag_spec);
+        if Self::has_wildcard(&tag_spec) {
+            Self::matches_glob_pattern(tag_name, &tag_spec)
+        } else {
+            tag_spec.eq_ignore_ascii_case(tag_name)
+        }
+    }
+
+    /// Delete the characters ExifTool refuses to match on from a tag request.
+    ///
+    /// ExifTool "sterilizes" the tag portion of a request before matching:
+    /// `$tag =~ tr/-_A-Za-z0-9*?//dc;` for wildcard requests
+    /// (lib/Image/ExifTool.pm:5378) and `tr/-_A-Za-z0-9//dc` for plain ones (:5386).
+    /// A single pass that keeps `*` and `?` covers both, because the second form only
+    /// runs when the request has no wildcards left to keep.
+    ///
+    /// The :5386 branch is reached whenever the Duplicates option is on, which the
+    /// `-j` JSON output turns on unconditionally (exiftool:949) - so the "Invalid tag
+    /// name" dead end at :5396 is unreachable for JSON output, which is all exif-oxide
+    /// produces.
+    fn sterilize_tag_spec(tag_spec: &str) -> String {
+        tag_spec
+            .chars()
+            .filter(|c| Self::is_tag_name_char(*c) || *c == '*' || *c == '?')
+            .collect()
+    }
+
+    /// Does the group portion of a request match this tag's groups?
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5350-5360 validates the group name, then
+    /// :5398-5401 hands it to `GroupMatches` (:5218-5259).
+    fn group_spec_matches(group_spec: &str, tag_groups: &[&str]) -> bool {
+        // ExifTool: :5350 - a group of '*' or 'all' means "any group".
+        if group_spec == "*" || group_spec.eq_ignore_ascii_case("all") {
+            return true;
+        }
+        // ExifTool: :5357-5359 - a group name outside `[-\w:]` is invalid; ExifTool
+        // warns and substitutes 'invalid', which matches nothing. Note this happens
+        // *instead of* sterilization: illegal characters are not silently dropped here.
+        if !group_spec
+            .chars()
+            .all(|c| Self::is_tag_name_char(c) || c == ':')
+        {
             return false;
         }
-        // An empty group portion constrains nothing: ExifTool passes it to
-        // GroupMatches("") which keeps every match. `-:*Duration*` selects the same
-        // tags as `-*Duration*`.
-        if group_pattern.is_empty() {
-            return Self::matches_glob_pattern(tag_name, tag_pattern);
+        // An empty group portion constrains nothing: `GroupMatches("")` splits into an
+        // empty list and every tag falls through as a match. `-:*Duration*` therefore
+        // selects the same tags as `-*Duration*`.
+        if group_spec.is_empty() {
+            return true;
+        }
+        // ExifTool: :5224 - the group portion may name several groups separated by ':'
+        // (eg. "EXIF:ExifIFD"), and every one of them must match.
+        group_spec
+            .split(':')
+            .all(|group| Self::group_name_matches(group, tag_groups))
+    }
+
+    /// Does one group name from a request match this tag's groups?
+    ///
+    /// A bare name matches *any* family, which is how `-ExifIFD:FNumber` (family 1) and
+    /// `-EXIF:FNumber` (family 0) both work. A leading number pins the name to that
+    /// family, so `-1ExifIFD:FNumber` matches but `-1EXIF:FNumber` does not.
+    ///
+    /// `GroupMatches` peels the family number off *before* it looks for `*`/`all`, so a
+    /// family number in front of `all` is ignored entirely: `-1all:FNumber` and
+    /// `-0all:FNumber` both select every group, exactly like `-all:FNumber`.
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5227-5228 (family prefix, stripped first),
+    /// :5241 (`*`/`all` skipped), :5243-5250 (family-pinned compare), :5252 (bare name
+    /// compared against every family of `GetGroup($tag, -1)`).
+    ///
+    /// exif-oxide models families 0 and 1 only, so a request naming a family-2 group
+    /// (`-Image:FNumber`, which ExifTool does match) finds nothing here. ExifTool's
+    /// `id-` prefix (family 7, match by tag ID) is likewise not modelled; it falls
+    /// through to a plain name comparison and matches nothing.
+    fn group_name_matches(group: &str, tag_groups: &[&str]) -> bool {
+        if group.is_empty() {
+            return true;
         }
 
-        Self::matches_glob_pattern(&format!("{tag_group}:{tag_name}"), pattern)
+        // ExifTool: :5227 - `s/^(\d*)(id-)?//i` peels an optional family number off the
+        // front of the group name, before :5241 checks the remainder for `*`/`all`.
+        let digits = group.len() - group.trim_start_matches(|c: char| c.is_ascii_digit()).len();
+        let (family, name) = group.split_at(digits);
+
+        // ExifTool: :5241 - `next if $grp eq '*' or $grp eq 'all'` skips the whole check,
+        // family number and all.
+        if name == "*" || name.eq_ignore_ascii_case("all") {
+            return true;
+        }
+
+        if digits > 0 {
+            // ExifTool: :5244 - `last unless defined $groups[$f]`, so a family we do not
+            // model cannot match.
+            return family
+                .parse::<usize>()
+                .ok()
+                .and_then(|family| tag_groups.get(family))
+                .is_some_and(|tag_group| tag_group.eq_ignore_ascii_case(name));
+        }
+
+        tag_groups
+            .iter()
+            .any(|tag_group| tag_group.eq_ignore_ascii_case(name))
     }
 
     /// Does this tag request contain a wildcard?
@@ -248,8 +359,16 @@ impl FilterOptions {
     }
 
     /// Check if a tag should use numeric output (ValueConv instead of PrintConv)
+    ///
+    /// This form only knows the tag's family-0 group; use
+    /// [`FilterOptions::should_use_numeric_in_groups`] wherever Group1 is known.
     pub fn should_use_numeric(&self, tag_name: &str, tag_group: &str) -> bool {
-        Self::numeric_request_matches(&self.numeric_tags, tag_name, tag_group)
+        self.should_use_numeric_in_groups(tag_name, &[tag_group])
+    }
+
+    /// Check if a tag should use numeric output, given every group family it belongs to.
+    pub fn should_use_numeric_in_groups(&self, tag_name: &str, tag_groups: &[&str]) -> bool {
+        Self::numeric_request_matches(&self.numeric_tags, tag_name, tag_groups)
     }
 
     /// Check whether a numeric-output request (`-TagName#`) applies to this tag.
@@ -267,11 +386,11 @@ impl FilterOptions {
     pub fn numeric_request_matches(
         numeric_tags: &HashSet<String>,
         tag_name: &str,
-        tag_group: &str,
+        tag_groups: &[&str],
     ) -> bool {
         numeric_tags
             .iter()
-            .any(|pattern| Self::request_matches_tag(pattern, tag_name, tag_group))
+            .any(|pattern| Self::request_matches_tag(pattern, tag_name, tag_groups))
     }
 
     /// Check if a string matches an ExifTool tag-name pattern (case-insensitive).
@@ -623,7 +742,13 @@ impl ExifData {
             // Numeric requests support wildcards (`-*Duration*#`) just like plain tag
             // requests do. ExifTool: lib/Image/ExifTool.pm:5364-5382
             let should_use_value = numeric_tags
-                .map(|set| FilterOptions::numeric_request_matches(set, &entry.name, &entry.group))
+                .map(|set| {
+                    FilterOptions::numeric_request_matches(
+                        set,
+                        &entry.name,
+                        &[&entry.group, &entry.group1],
+                    )
+                })
                 .unwrap_or(false);
 
             if should_use_value {
@@ -1094,6 +1219,263 @@ mod tests {
         assert!(filter_opts.should_extract_tag("Make", "EXIF"));
         assert!(filter_opts.should_extract_tag("GPSLatitude", "EXIF"));
         assert!(!filter_opts.should_extract_tag("MIMEType", "File"));
+    }
+
+    /// A bare group name matches *any* group family, so a family-1 (subdirectory)
+    /// name selects tags the same way a family-0 name does.
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5398-5401 passes the group portion to
+    /// `GroupMatches`, which at :5238 expands the tag to every family via
+    /// `GetGroup($tag, -1)` and at :5252 accepts a match in any of them.
+    ///
+    /// Verified on canon/eos_rebel_t3i.jpg, where `exiftool -j -G1 -FNumber -Make`
+    /// reports `ExifIFD:FNumber` and `IFD0:Make`:
+    ///   `exiftool -j -G "-ExifIFD:FNum?er#"` => `"EXIF:FNumber": 4`
+    ///   `exiftool -j -G "-ExifIFD:Make"`     => no tags
+    ///   `exiftool -j -G "-IFD0:Make"`        => `"EXIF:Make": "Canon"`
+    #[test]
+    fn test_family1_group_name_matches() {
+        let mut numeric_tags = HashSet::new();
+        numeric_tags.insert("ExifIFD:FNum?er".to_string());
+        let filter_opts = FilterOptions {
+            extract_all: false,
+            glob_patterns: vec!["ExifIFD:FNum?er".to_string()],
+            numeric_tags,
+            ..Default::default()
+        };
+
+        assert!(filter_opts.should_extract_tag_in_groups("FNumber", &["EXIF", "ExifIFD"]));
+        assert!(filter_opts.should_use_numeric_in_groups("FNumber", &["EXIF", "ExifIFD"]));
+        // Same tag name, different subdirectory
+        assert!(!filter_opts.should_extract_tag_in_groups("FNumber", &["MakerNotes", "Canon"]));
+        // The family-0 name still works
+        assert!(FilterOptions {
+            extract_all: false,
+            requested_tags: vec!["EXIF:FNumber".to_string()],
+            ..Default::default()
+        }
+        .should_extract_tag_in_groups("FNumber", &["EXIF", "ExifIFD"]));
+    }
+
+    /// A number in front of a group name pins it to that family.
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5227-5228 peels the family number off, :5243-5250
+    /// compares only that family, and :5244 rejects families the tag does not have.
+    ///
+    /// Verified on canon/eos_rebel_t3i.jpg:
+    ///   `exiftool -j -G "-1ExifIFD:FNumber"` => `"EXIF:FNumber": 4.0`
+    ///   `exiftool -j -G "-0EXIF:FNumber"`    => `"EXIF:FNumber": 4.0`
+    ///   `exiftool -j -G "-1EXIF:FNumber"`    => no tags (family 1 is ExifIFD)
+    #[test]
+    fn test_family_numbered_group_prefix() {
+        let groups = ["EXIF", "ExifIFD"];
+        for (request, expected) in [
+            ("1ExifIFD:FNumber", true),
+            ("0EXIF:FNumber", true),
+            ("1EXIF:FNumber", false),
+            ("0ExifIFD:FNumber", false),
+        ] {
+            let filter_opts = FilterOptions {
+                extract_all: false,
+                requested_tags: vec![request.to_string()],
+                ..Default::default()
+            };
+            assert_eq!(
+                filter_opts.should_extract_tag_in_groups("FNumber", &groups),
+                expected,
+                "-{request} against groups {groups:?}"
+            );
+        }
+    }
+
+    /// The group portion may name several groups; every one must match.
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5348 splits at the *last* colon, so
+    /// "EXIF:ExifIFD:FNumber" has the group portion "EXIF:ExifIFD"; `GroupMatches`
+    /// then splits that on ':' (:5224) and requires all parts to match (:5255).
+    ///
+    /// Verified on canon/eos_rebel_t3i.jpg:
+    ///   `exiftool -j -G "-EXIF:ExifIFD:FNumber"` => `"EXIF:FNumber": 4.0`
+    ///   `exiftool -j -G "-EXIF:IFD0:FNumber"`    => no tags
+    #[test]
+    fn test_multi_family_group_spec() {
+        let both = FilterOptions {
+            extract_all: false,
+            requested_tags: vec!["EXIF:ExifIFD:FNumber".to_string()],
+            ..Default::default()
+        };
+        assert!(both.should_extract_tag_in_groups("FNumber", &["EXIF", "ExifIFD"]));
+
+        let contradictory = FilterOptions {
+            extract_all: false,
+            requested_tags: vec!["EXIF:IFD0:FNumber".to_string()],
+            ..Default::default()
+        };
+        assert!(!contradictory.should_extract_tag_in_groups("FNumber", &["EXIF", "ExifIFD"]));
+    }
+
+    /// A group portion of `all` means "any group", exactly like `*` - and a family
+    /// number in front of `all` is ignored, because `GroupMatches` strips the number
+    /// before it tests for `all`.
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5350 (`$group =~ /^(\*|all)$/i`), :5227 (prefix
+    /// stripped) and :5241 (`next if $grp eq '*' or $grp eq 'all'`).
+    /// Verified on canon/eos_rebel_t3i.jpg: `-all:FNumber`, `-*:FNumber`,
+    /// `-1all:FNumber` and `-0all:FNumber` all return EXIF:FNumber and
+    /// MakerNotes:FNumber, while `-1*:FNumber` and `-0*:FNumber` return nothing
+    /// ("1*" fails the `^[-\w:]*$` group-name check at :5357).
+    #[test]
+    fn test_group_all_means_any_group() {
+        for request in ["all:FNumber", "*:FNumber", "1all:FNumber", "0all:FNumber"] {
+            let filter_opts = FilterOptions {
+                extract_all: false,
+                requested_tags: vec![request.to_string()],
+                ..Default::default()
+            };
+            assert!(filter_opts.should_extract_tag_in_groups("FNumber", &["EXIF", "ExifIFD"]));
+            assert!(filter_opts.should_extract_tag_in_groups("FNumber", &["MakerNotes", "Canon"]));
+            assert!(!filter_opts.should_extract_tag_in_groups("Orientation", &["EXIF", "IFD0"]));
+        }
+    }
+
+    /// Exactly one trailing `#` is stripped from a request, by the argument parser.
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5364 (`$tag =~ s/#$//`) removes one `#`; what is
+    /// left goes through the ordinary branches. `all#` therefore reaches :5386, is
+    /// sterilized to "all", and asks for a tag *named* "all" rather than for every tag.
+    ///
+    /// Verified on canon/eos_rebel_t3i.jpg:
+    ///   `exiftool -j -G "-all##"` => no tags (warns `Invalid TAG name: "all##"`)
+    ///   `exiftool -j -G "-*##"`   => every tag ("*#" keeps its wildcard after
+    ///                                sterilization, so it still matches everything)
+    #[test]
+    fn test_only_one_numeric_suffix_is_stripped() {
+        // What the argument parser hands us for `-all##`
+        let doubled = FilterOptions {
+            extract_all: false,
+            requested_tags: vec!["all#".to_string()],
+            ..Default::default()
+        };
+        assert!(!doubled.should_extract_tag("Orientation", "EXIF"));
+        assert!(doubled.should_extract_tag("all", "EXIF"));
+
+        // ...and for `-*##`
+        let doubled_star = FilterOptions {
+            extract_all: false,
+            glob_patterns: vec!["*#".to_string()],
+            ..Default::default()
+        };
+        assert!(doubled_star.should_extract_tag("Orientation", "EXIF"));
+    }
+
+    /// A tag name of `*` or `all` (case-insensitive) matches every tag.
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5367-5368
+    /// (`elsif ($tag =~ /^(\*|all)$/i)` - "tag name of '*' or 'all' matches all tags").
+    /// Verified: `exiftool -j -G "-all#"`, `"-*#"` and `"-ALL#"` on
+    /// canon/eos_rebel_t3i.jpg all return the same 329 output lines as an
+    /// unfiltered run, with `"EXIF:Orientation": 8` instead of "Rotate 270 CW".
+    #[test]
+    fn test_all_and_star_match_every_tag() {
+        for request in ["all", "ALL", "*"] {
+            let mut numeric_tags = HashSet::new();
+            numeric_tags.insert(request.to_string());
+            let filter_opts = FilterOptions {
+                extract_all: false,
+                requested_tags: vec![request.to_string()],
+                numeric_tags,
+                ..Default::default()
+            };
+
+            assert!(
+                filter_opts.should_extract_tag("Orientation", "EXIF"),
+                "-{request}# must select EXIF:Orientation"
+            );
+            assert!(
+                filter_opts.should_extract_tag("MIMEType", "File"),
+                "-{request}# must select File:MIMEType"
+            );
+            assert!(
+                filter_opts.should_use_numeric("Orientation", "EXIF"),
+                "-{request}# must select the ValueConv result"
+            );
+        }
+    }
+
+    /// `Group:all` restricts the "all tags" request to that group.
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5348-5350 splits the group off, :5367 expands
+    /// `all`, :5398-5401 filters the matches by group.
+    /// Verified: `exiftool -j -G "-EXIF:all#" canon/eos_rebel_t3i.jpg` returns 52 EXIF
+    /// tags numerically and no File tags.
+    #[test]
+    fn test_group_qualified_all_restricts_to_that_group() {
+        let filter_opts = FilterOptions {
+            extract_all: false,
+            group_all_patterns: vec!["EXIF:all".to_string()],
+            ..Default::default()
+        };
+
+        assert!(filter_opts.should_extract_tag("Orientation", "EXIF"));
+        assert!(!filter_opts.should_extract_tag("MIMEType", "File"));
+    }
+
+    /// Characters outside `[-\w*?]` are deleted from the tag portion of a request.
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5378 (`$tag =~ tr/-_A-Za-z0-9*?//dc;`) for
+    /// wildcard requests, :5386 (`tr/-_A-Za-z0-9//dc`) for plain ones. `-j` enables
+    /// Duplicates (exiftool:949), so the JSON CLI always reaches one of those two
+    /// branches rather than the "Invalid tag name" branch at :5396.
+    ///
+    /// Verified on canon/eos_rebel_t3i.jpg - each warns `Invalid TAG name`
+    /// (exiftool:1445) and then matches anyway:
+    ///   `exiftool -j -G "-F*Num.ber"` => EXIF:FNumber, MakerNotes:FlashGuideNumber,
+    ///                                    MakerNotes:FNumber, Composite:FileNumber
+    ///   `exiftool -j -G "-FNum.ber"`  => EXIF:FNumber, MakerNotes:FNumber
+    ///   `exiftool -j -G "-*Duration*.#"` on canon/eos_500d.mov => every *Duration* tag
+    #[test]
+    fn test_illegal_characters_are_sterilized() {
+        let wildcard = FilterOptions {
+            extract_all: false,
+            glob_patterns: vec!["F*Num.ber".to_string()],
+            ..Default::default()
+        };
+        assert!(wildcard.should_extract_tag("FNumber", "EXIF"));
+        assert!(wildcard.should_extract_tag("FlashGuideNumber", "MakerNotes"));
+        assert!(!wildcard.should_extract_tag("Orientation", "EXIF"));
+
+        let plain = FilterOptions {
+            extract_all: false,
+            requested_tags: vec!["FNum.ber".to_string()],
+            ..Default::default()
+        };
+        assert!(plain.should_extract_tag("FNumber", "EXIF"));
+        assert!(!plain.should_extract_tag("FlashGuideNumber", "MakerNotes"));
+
+        let duration = FilterOptions {
+            extract_all: false,
+            glob_patterns: vec!["*Duration*.".to_string()],
+            ..Default::default()
+        };
+        assert!(duration.should_extract_tag("TrackDuration", "QuickTime"));
+        assert!(!duration.should_extract_tag("ImageWidth", "QuickTime"));
+    }
+
+    /// An illegal character in the *group* portion is not sterilized: ExifTool warns
+    /// and substitutes the group name 'invalid', which matches nothing.
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5357-5359
+    /// Verified: `exiftool -j -G "-EX.IF:FNumber" canon/eos_rebel_t3i.jpg` prints
+    /// "Warning: Invalid group name 'EX.IF'" and returns no tags.
+    #[test]
+    fn test_illegal_group_name_matches_nothing() {
+        let filter_opts = FilterOptions {
+            extract_all: false,
+            requested_tags: vec!["EX.IF:FNumber".to_string()],
+            ..Default::default()
+        };
+
+        assert!(!filter_opts.should_extract_tag("FNumber", "EXIF"));
     }
 
     #[test]
