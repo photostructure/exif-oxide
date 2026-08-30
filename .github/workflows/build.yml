@@ -99,6 +99,15 @@ jobs:
       - name: Run tests
         run: cargo test -p exif-oxide --features test-helpers,integration-tests --locked
 
+      # The codegen crate's tests (including the PPI renderer regression
+      # suite) shell out to Perl scripts that need PPI/JSON::XS, so they only
+      # run where we install the Perl dependencies.
+      - name: Run codegen tests (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          make perl-deps
+          cargo test -p codegen --locked
+
   # Release - only runs on manual trigger
   publish:
     name: Publish
