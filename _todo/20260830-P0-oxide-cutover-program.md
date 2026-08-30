@@ -119,12 +119,67 @@ crossbeam-epoch RUSTSEC bump, check-perl.sh local::lib self-activation,
 codegen Makefile test env, and `use lib` fallback in ppi_ast.pl /
 field_extractor.pl. The four completed P0 TPPs moved to `_done/`.
 
-In flight: three Opus worktree agents on
-`_todo/20260830-P2-cli-tag-request-parity.md` (parity-matcher: items 2/4/5;
-numeric-order: item 3; file-group-fastpath: item 1), each probing vendored
-ExifTool first and Codex-second-opinioning its diff; orchestrator merges
-their diffs sequentially, then final verify. Remaining in M0 after that:
-Codex review of the full `4ff8ef21..HEAD` diff, push. Deliberately NOT
+CLI parity (three Opus worktree agents on
+`_todo/20260830-P2-cli-tag-request-parity.md`): **parity-matcher (items
+2/4/5) LANDED as `74229584`** — family-0/1 group matching, `-all#`/`-*#`,
+sterilization, SetFoundTags-ordered `request_matches_tag`, 40-form parity
+sweep. Two agents still reworking in their worktrees after that commit
+conflicted with their bases; both were told: commit locally on the worktree
+branch, `git merge main`, resolve onto the new matcher API, re-probe/test,
+then the orchestrator takes `git diff main...HEAD` and applies it to the
+main checkout (validate with `cargo t` + clippy --all-features + fmt there —
+worktrees lack test-images and a populated submodule, so full tests only
+run in the main checkout):
+- numeric-order (item 3, ordered numeric selectors): worktree
+  `.claude/worktrees/agent-afda610e477376220`. Pinned semantics:
+  **FIRST-match-wins** (SetFoundTags appends per request,
+  ExifTool.pm:5433-5436; GetInfo 3266-3290; JSON writer noDups
+  exiftool:2947-2953). Its pre-merge state: fix done, 770 tests, Codex
+  findings resolved (2 accepted: `-EXIF:*` misrouted, `--GPS*` inclusion
+  bug; 1 vetoed pre-existing).
+- file-group-fastpath (item 1 + FilePermissions value/print split):
+  worktree `.claude/worktrees/agent-ab5a6bb14d7f72eb1`. Pre-merge: done,
+  759 tests, fast-path perf preserved (9ms vs 62ms). Asked to re-probe its
+  deferred R875-B (`-File:FilePermissions#`) which 74229584 may have fixed.
+- parity-matcher's worktree `.claude/worktrees/agent-aca0614b14692b8fd` is
+  merged and can be pruned.
+
+**Codex review of the landed range `4ff8ef21..HEAD` (17 commits): 6
+findings, triaged:**
+- R905-A ACCEPT, fix inline: default codegen only WARNS on configured
+  modules missing from the staged tree (`codegen/src/main.rs:170`) — must
+  hard-error before extraction, with a test.
+- R905-B ACCEPT, fix inline: field_extractor.pl catches per-symbol JSON
+  serialization errors with warn-and-continue (`:182`, `:232-235`) and
+  exits 0 → partial module passes. Track failures, exit nonzero.
+- R905-C ACCEPT partially, fix inline: `join_unpack_binary`
+  (src/core/data/mod.rs:92-100) formats `C*` bytes as HEX; Perl gives
+  decimal (probe: Panasonic FirmwareVersion `0 1 1 0` vs our
+  `00 01 01 00`). Fix decimal-for-C. DEFERRED: regex-on-binary-scalar
+  stringification corner (TagValue::Binary stringifies as placeholder).
+- R905-D ACCEPT, subagent AFTER numeric-order lands (same-file conflicts):
+  Perl `/` is always float division; TagValue ops keep Int/Int→Int
+  (ops.rs:62), so Canon SelfTimer 15 → "1 s" instead of "1.5 s". Fix =
+  float division + serialize whole-number floats without ".0" (this
+  absorbs the known `4.0` vs `4` `-Tag#` issue). The compat oracle
+  adjudicates fallout; expect snapshot churn.
+- R905-E CLOSED: `-all#` was fixed by `74229584`; the review raced it
+  (verified: 103 tags, numeric, at current HEAD).
+- R905-F ACCEPT, fix inline: CI no longer runs codegen tests
+  (build.yml:99 went `--workspace` → `-p exif-oxide`) — add a Linux step:
+  perl-deps (cpanm PPI/JSON::XS) + `cargo test -p codegen --locked`.
+
+Remaining M0 checklist, in order: (1) inline fixes R905-A/B/C/F + tests;
+(2) apply numeric-order's diff, commit; (3) apply file-group-fastpath's
+diff, commit; (4) spawn R905-D division-semantics subagent (Opus,
+second-opinion, NO task chips), land it; (5) final `make verify`; (6)
+record the fresh compat score here; (7) push everything.
+
+Session gotchas for the next operator: worktree agents spawn at a stale
+base — have them `git merge --ff-only main` before starting; long
+multi-line `git commit -m` can be spuriously denied — use `-F <file>`;
+`codex exec` needs `< /dev/null`; `./scripts/capture.sh` for anything
+where stderr matters. Deliberately NOT
 committed:
 `.claude/settings.local.json` (destructive-git allowlist hunk — Matthew to
 review), `docs/chats/unknown-tags.md` (stale transcript, distill-or-delete).
