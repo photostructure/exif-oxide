@@ -260,22 +260,29 @@ pub fn exposureprogram_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) ->
     })
 }
 
+/// `sprintf(($val<1 ? "%.2f" : "%.1f"), $val)` - the formatting half of
+/// ExifTool's PrintFNumber (Exif.pm:5715-5723).
+///
+/// The result is a *string* in ExifTool, which its JSON writer emits unquoted
+/// because it matches the JSON number pattern (exiftool:3801 EscapeJSON). The
+/// trailing zero is therefore significant: `exiftool -FNumber -j` reports `8.0`,
+/// not `8`, so this must not return a bare F64.
+fn format_fnumber(f_number: f64) -> TagValue {
+    if f_number < 1.0 {
+        TagValue::string(format!("{f_number:.2}"))
+    } else {
+        TagValue::string(format!("{f_number:.1}"))
+    }
+}
+
 /// FNumber PrintConv - formats f-stop values
-/// ExifTool: lib/Image/ExifTool/Exif.pm PrintFNumber function (lines 5607-5615)
+/// ExifTool: lib/Image/ExifTool/Exif.pm:5715-5723 PrintFNumber
 /// Uses 2 decimal places for values < 1.0, 1 decimal place for values >= 1.0
-/// NOTE: This returns a numeric TagValue to preserve JSON numeric serialization
 pub fn fnumber_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValue {
     match val.as_f64() {
         Some(f_number) => {
             if f_number > 0.0 {
-                // ExifTool logic: 2 decimal places for < 1.0, 1 decimal place for >= 1.0
-                // Apply the same rounding as ExifTool but return as numeric value
-                let rounded = if f_number < 1.0 {
-                    (f_number * 100.0).round() / 100.0 // 2 decimal places
-                } else {
-                    (f_number * 10.0).round() / 10.0 // 1 decimal place
-                };
-                TagValue::F64(rounded)
+                format_fnumber(f_number)
             } else {
                 TagValue::string(format!("Unknown ({val})"))
             }
@@ -286,12 +293,7 @@ pub fn fnumber_print_conv(val: &TagValue, _ctx: Option<&ExifContext>) -> TagValu
                 if *denom != 0 {
                     let f_number = *num as f64 / *denom as f64;
                     if f_number > 0.0 {
-                        let rounded = if f_number < 1.0 {
-                            (f_number * 100.0).round() / 100.0 // 2 decimal places
-                        } else {
-                            (f_number * 10.0).round() / 10.0 // 1 decimal place
-                        };
-                        return TagValue::F64(rounded);
+                        return format_fnumber(f_number);
                     }
                 }
             }
@@ -1105,44 +1107,61 @@ mod tests {
         );
     }
 
+    /// PrintFNumber returns sprintf's *string*, so the trailing zero is part of
+    /// the output. ExifTool's JSON writer emits it unquoted (EscapeJSON,
+    /// exiftool:3801), which is why `exiftool -FNumber -j` reports `8.0`.
+    ///
+    /// Ground truth (Exif.pm:5715-5723 transcribed to a probe):
+    /// ```text
+    /// $ perl -e 'for my $v (4,2.8,1.4,11,0.640234375,0.95,0.7) {
+    ///       printf("%s -> %s\n",$v,sprintf(($v<1 ? "%.2f" : "%.1f"),$v)) }'
+    ///   4 -> 4.0        2.8 -> 2.8      1.4 -> 1.4      11 -> 11.0
+    ///   0.640234375 -> 0.64             0.95 -> 0.95    0.7 -> 0.70
+    /// ```
     #[test]
     fn test_fnumber_print_conv() {
         // Values >= 1.0 get 1 decimal place
         assert_eq!(
             fnumber_print_conv(&TagValue::F64(4.0), None),
-            TagValue::F64(4.0)
+            TagValue::string("4.0")
         );
         assert_eq!(
             fnumber_print_conv(&TagValue::F64(2.8), None),
-            TagValue::F64(2.8)
+            TagValue::string("2.8")
         );
         assert_eq!(
             fnumber_print_conv(&TagValue::F64(1.4), None),
-            TagValue::F64(1.4)
+            TagValue::string("1.4")
         );
         assert_eq!(
             fnumber_print_conv(&TagValue::F64(11.0), None),
-            TagValue::F64(11.0)
+            TagValue::string("11.0")
         );
         assert_eq!(
             fnumber_print_conv(&TagValue::F64(0.640234375), None),
-            TagValue::F64(0.64)
+            TagValue::string("0.64")
         );
 
         // Values < 1.0 get 2 decimal places
         assert_eq!(
             fnumber_print_conv(&TagValue::F64(0.95), None),
-            TagValue::F64(0.95)
+            TagValue::string("0.95")
         );
         assert_eq!(
             fnumber_print_conv(&TagValue::F64(0.7), None),
-            TagValue::F64(0.7)
+            TagValue::string("0.70")
         );
 
         // Test with rational input
         assert_eq!(
             fnumber_print_conv(&TagValue::Rational(4, 1), None),
-            TagValue::F64(4.0)
+            TagValue::string("4.0")
+        );
+
+        // The string still serializes as an unquoted JSON number, as ExifTool does.
+        assert_eq!(
+            serde_json::to_string(&fnumber_print_conv(&TagValue::F64(8.0), None)).unwrap(),
+            "8.0"
         );
     }
 

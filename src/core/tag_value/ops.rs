@@ -134,11 +134,45 @@ macro_rules! impl_arithmetic_op {
     };
 }
 
-// Implement the four basic arithmetic operations
+// Implement the three arithmetic operations that keep integer operands integral.
+// Division is deliberately excluded - see `impl_perl_div!` below.
 impl_arithmetic_op!(Add, add, +);
 impl_arithmetic_op!(Sub, sub, -);
 impl_arithmetic_op!(Mul, mul, *);
-impl_arithmetic_op!(Div, div, /);
+
+/// Numify a TagValue the way Perl numifies a scalar in numeric context:
+/// numbers keep their value, anything non-numeric becomes 0.
+fn numify(value: &TagValue) -> f64 {
+    value.to_numeric().unwrap_or(0.0)
+}
+
+// Perl's `/` is ALWAYS floating-point division. Integer division exists only
+// inside the lexical scope of `use integer`, which ExifTool never enables in a
+// conversion expression, so every generated division must keep its fractional
+// part: `perl -e 'print 15/10'` prints 1.5, not 1.
+// perlop, "Multiplicative Operators".
+//
+// Perl dies on division by zero; these impls yield infinity/NaN instead of
+// panicking, which is what the integer arms this replaced already tried to do
+// via explicit zero checks (and what the U32/U32 arm got wrong: it panicked).
+macro_rules! impl_perl_div {
+    ($rhs:ty, $to_f64:expr) => {
+        impl Div<$rhs> for &TagValue {
+            type Output = TagValue;
+
+            fn div(self, rhs: $rhs) -> Self::Output {
+                #[allow(clippy::redundant_closure_call)]
+                TagValue::F64(numify(self) / ($to_f64)(rhs))
+            }
+        }
+    };
+}
+
+impl_perl_div!(&TagValue, numify);
+impl_perl_div!(i32, |v: i32| v as f64);
+impl_perl_div!(u32, |v: u32| v as f64);
+impl_perl_div!(i64, |v: i64| v as f64);
+impl_perl_div!(f64, |v: f64| v);
 
 // Also need to handle literals on the left side (e.g., 2 * val)
 impl Mul<&TagValue> for i32 {
@@ -267,14 +301,7 @@ impl Div<TagValue> for i32 {
     type Output = TagValue;
 
     fn div(self, rhs: TagValue) -> Self::Output {
-        match rhs {
-            TagValue::I32(v) => TagValue::I32(self / v),
-            TagValue::F64(v) => TagValue::F64((self as f64) / v),
-            _ => {
-                let val = rhs.to_numeric().unwrap_or(1.0);
-                TagValue::F64((self as f64) / val)
-            }
-        }
+        self / (&rhs)
     }
 }
 
@@ -307,63 +334,26 @@ impl Div<TagValue> for f64 {
     type Output = TagValue;
 
     fn div(self, rhs: TagValue) -> Self::Output {
-        let val = rhs.to_numeric().unwrap_or(1.0);
-        TagValue::F64(self / val)
+        self / (&rhs)
     }
 }
 
-impl Div<&TagValue> for i32 {
-    type Output = TagValue;
+// Literal-on-the-left division. Same Perl rule: always floating point.
+macro_rules! impl_perl_div_lhs {
+    ($lhs:ty) => {
+        impl Div<&TagValue> for $lhs {
+            type Output = TagValue;
 
-    fn div(self, rhs: &TagValue) -> Self::Output {
-        match rhs {
-            TagValue::I32(v) if *v != 0 => TagValue::I32(self / v),
-            TagValue::U32(v) if *v != 0 => TagValue::I32(self / (*v as i32)),
-            TagValue::F64(v) if *v != 0.0 => TagValue::F64((self as f64) / v),
-            _ => {
-                let val = rhs.to_numeric().unwrap_or(1.0);
-                if val != 0.0 {
-                    TagValue::F64((self as f64) / val)
-                } else {
-                    TagValue::F64(f64::INFINITY)
-                }
+            fn div(self, rhs: &TagValue) -> Self::Output {
+                TagValue::F64((self as f64) / numify(rhs))
             }
         }
-    }
+    };
 }
 
-impl Div<&TagValue> for f64 {
-    type Output = TagValue;
-
-    fn div(self, rhs: &TagValue) -> Self::Output {
-        let val = rhs.to_numeric().unwrap_or(1.0);
-        if val != 0.0 {
-            TagValue::F64(self / val)
-        } else {
-            TagValue::F64(f64::INFINITY)
-        }
-    }
-}
-
-impl Div<&TagValue> for u32 {
-    type Output = TagValue;
-
-    fn div(self, rhs: &TagValue) -> Self::Output {
-        match rhs {
-            TagValue::U32(v) if *v != 0 => TagValue::U32(self / v),
-            TagValue::I32(v) if *v > 0 => TagValue::U32(self / (*v as u32)),
-            TagValue::F64(v) if *v > 0.0 => TagValue::F64((self as f64) / v),
-            _ => {
-                let val = rhs.to_numeric().unwrap_or(1.0);
-                if val > 0.0 {
-                    TagValue::F64((self as f64) / val)
-                } else {
-                    TagValue::F64(f64::INFINITY)
-                }
-            }
-        }
-    }
-}
+impl_perl_div_lhs!(i32);
+impl_perl_div_lhs!(u32);
+impl_perl_div_lhs!(f64);
 
 // Operations for u32 with owned TagValue (not just borrowed)
 impl Mul<TagValue> for u32 {
@@ -954,11 +944,74 @@ mod tests {
         assert_eq!(result, TagValue::U32(15));
     }
 
+    /// Perl's `/` is always floating-point division. Integer division only happens
+    /// under a lexical `use integer`, which ExifTool never enables in conversions.
+    ///
+    /// Probe (perl 5, vendored ExifTool's interpreter):
+    ///   $ perl -e 'print 15/10'   -> 1.5
+    ///   $ perl -e 'print 100/4'   -> 25
+    ///   $ perl -e 'print 4/1'     -> 4
+    ///
+    /// perlop, "Multiplicative Operators": binary `/` divides two numbers.
     #[test]
-    fn test_divide_tagvalues() {
-        let val = TagValue::U32(100);
-        let result = &val / 4;
-        assert_eq!(result, TagValue::U32(25));
+    fn test_divide_is_always_floating_point() {
+        // The exact case from Canon SelfTimer (Canon.pm:2231): ($val & 0xfff) / 10
+        assert_eq!(&TagValue::I32(15) / &TagValue::I32(10), TagValue::F64(1.5));
+        assert_eq!(&TagValue::U16(15) / &TagValue::U16(10), TagValue::F64(1.5));
+        assert_eq!(&TagValue::U32(15) / &TagValue::U32(10), TagValue::F64(1.5));
+        assert_eq!(&TagValue::U8(15) / &TagValue::U8(10), TagValue::F64(1.5));
+
+        // Integer literal divisors take the same path.
+        assert_eq!(&TagValue::U16(15) / 10i32, TagValue::F64(1.5));
+        assert_eq!(&TagValue::U32(15) / 10u32, TagValue::F64(1.5));
+        assert_eq!(&TagValue::I32(15) / 10i64, TagValue::F64(1.5));
+
+        // Literal on the left divided by a TagValue.
+        assert_eq!(1i32 / &TagValue::I32(2), TagValue::F64(0.5));
+        assert_eq!(1u32 / &TagValue::U32(2), TagValue::F64(0.5));
+        assert_eq!(1i32 / TagValue::I32(2), TagValue::F64(0.5));
+
+        // Exact quotients still come back as F64 (Perl has one numeric type here);
+        // it is the *serialization* that renders 25.0 as "25", not the arithmetic.
+        assert_eq!(&TagValue::U32(100) / 4, TagValue::F64(25.0));
+        assert_eq!(&TagValue::U32(100) / &TagValue::U32(4), TagValue::F64(25.0));
+    }
+
+    /// Perl's `+`, `-` and `*` on integer-valued operands stay integer-valued, so
+    /// only `/` changes representation. Guards against over-correcting the fix.
+    #[test]
+    fn test_non_division_ops_keep_integer_variants() {
+        assert_eq!(&TagValue::U32(10) + &TagValue::U32(5), TagValue::U32(15));
+        assert_eq!(&TagValue::U32(10) - &TagValue::U32(5), TagValue::U32(5));
+        assert_eq!(&TagValue::U32(10) * &TagValue::U32(5), TagValue::U32(50));
+    }
+
+    /// Rational division routes through `to_numeric()` and was already float;
+    /// confirm the fix leaves it alone.
+    #[test]
+    fn test_rational_division_unchanged() {
+        // 1/2 divided by 1/4 == 2
+        let a = TagValue::Rational(1, 2);
+        let b = TagValue::Rational(1, 4);
+        assert_eq!(&a / &b, TagValue::F64(2.0));
+        assert_eq!(&TagValue::Rational(1, 2) / 2, TagValue::F64(0.25));
+    }
+
+    /// Integer division by zero used to panic in the integer arms - reachable from
+    /// PanasonicRaw DistortionScale `1 / (1 + $val/32768)` (PanasonicRaw.pm:460)
+    /// at raw -32768, which is generated as
+    /// `1i32 / (1i32 + val / 32768i32)` in functions/hash_39.rs.
+    ///
+    /// Perl dies there ("Illegal division by zero"); ExifTool catches it and drops
+    /// the tag. Producing infinity is not that behaviour, but it is a strict
+    /// improvement on crashing, and matching ExifTool needs fallible generated
+    /// conversions - tracked separately.
+    #[test]
+    fn test_divide_by_zero_yields_infinity_not_panic() {
+        let r = &TagValue::U32(5) / &TagValue::U32(0);
+        assert_eq!(r, TagValue::F64(f64::INFINITY));
+        let r = &TagValue::I32(5) / 0i32;
+        assert_eq!(r, TagValue::F64(f64::INFINITY));
     }
 
     #[test]

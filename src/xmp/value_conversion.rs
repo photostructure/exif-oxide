@@ -168,11 +168,12 @@ fn subject_distance_print_conv(value: &TagValue) -> TagValue {
 
 /// XMP.pm:2090 ApertureValue/MaxApertureValue PrintConv `sprintf("%.1f",$val)`.
 ///
-/// ExifTool emits the sprintf result as a JSON number (e.g. `8.0`), so we round to
-/// one decimal place and keep a numeric TagValue to match that serialization.
+/// sprintf returns a string, and ExifTool's JSON writer emits it unquoted because
+/// it matches the JSON number pattern (exiftool:3801 EscapeJSON). The trailing
+/// zero is part of the output - `exiftool -XMP:ApertureValue -j` reports `8.0`.
 fn aperture_print_conv(value: &TagValue) -> TagValue {
     match value.as_f64() {
-        Some(v) => TagValue::F64((v * 10.0).round() / 10.0),
+        Some(v) => TagValue::string(format!("{v:.1}")),
         None => value.clone(),
     }
 }
