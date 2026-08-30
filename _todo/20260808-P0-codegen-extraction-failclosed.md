@@ -21,7 +21,7 @@ ExifTool submodule, or change the user's Perl installation.
 - [x] Task breakdown
 - [x] Implementation
 - [x] Review & Refinement
-- [ ] Final Integration
+- [x] Final Integration
 
 ## Required reading
 
@@ -147,6 +147,8 @@ stale or partial generated files that can be mistaken for a complete port.
 - The XS mismatch remains an environment blocker to successful extraction.
   No attempt was made to alter Perl. Root Git status still shows the already
   dirty ExifTool submodule; no submodule command or file write was performed.
-- Full repository `make verify`/`cargo t` remains for Final Integration after
+- Final Integration 2026-08-30: landed as commit `4742fb34`; repository
+  `make verify` green on the integrated tree.
+- Full repository `make verify`/`cargo t` was deferred for Final Integration after
   the concurrent QuickTime/codegen worktree is assembled. Keep this TPP in
   `_todo/` until that shared gate passes.

@@ -22,7 +22,7 @@ boundaries.
 - [x] Task breakdown
 - [x] Implementation
 - [x] Review & Refinement
-- [ ] Final Integration
+- [x] Final Integration
 
 ## Required reading
 
@@ -119,7 +119,7 @@ Rejected. `codegen` is an internal tool and explicitly has `publish = false`.
        manual workflow, trusted publishing, and failure boundaries.
 5. [x] Run YAML lint/static invariant checks and exercise version bump,
        package-list, package, and publish-dry-run commands in an isolated copy.
-6. [ ] Run repository `make verify` after concurrent parser/codegen work is
+6. [x] Run repository `make verify` after concurrent parser/codegen work is
        integrated, then move this TPP to `_done/` with the release repair commit.
 
 ## Acceptance gates

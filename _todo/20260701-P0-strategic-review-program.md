@@ -93,11 +93,26 @@ tier, and land the reliability foundations as discrete TPPs.
 | 2 | Snapshot-oracle integrity (make compat test assert; allowlist; version-skew guard) | `_done/20260701-P1-snapshot-oracle-integrity.md` | ✅ DONE 2026-07-03 — compat test is a hard gate (allowlist + stale-entry ratchet in `config/compat_known_gaps.json`, 168 triaged gaps in 14 root-cause groups); version-skew guard (committed `.exiftool-version` marker, vendored-exiftool-only generator, incremental regen aborts on skew). **Headline metric reframed: 94/191 under old first-seen-wins counting = 23/191 under honest works-in-every-file counting — not a regression.** Newly visible bugs: HEIC EXIF extraction (0/32 on IMG_9757.heic), Nikon Z-series NEF→NRW misdetection |
 | 3 | cargo-fuzz infrastructure | `_done/20260701-P1-fuzzing-infrastructure.md` | ✅ DONE 2026-07-03 — 9 targets, nightly CI job, 5 real crash bugs found AND fixed (alloc-bomb, 3 overflow panics, makernote-recursion stack overflow); double-review (Claude 8-angle + codex) each caught a distinct real bug; reproducers committed under fuzz/artifacts/ |
 | 4 | GPSPosition composite sign bug | `_todo/P03-implementation-backlog.md` (Next Steps) | ✅ DONE 2026-07-02, commit `141c4167` (byte-exact; review-gated; compat 84/191) |
-| 5 | Video/QuickTime read support (32 allowlisted tags) | `_todo/20260703-P1-quicktime-video-read.md` | 🟨 Tasks 0-2 committed; Task 3 source/tests complete 2026-08-08 and blocked only on approved codegen regeneration. Tasks 4-5 remain. Do not extend the manual walker into HEIC/CR3; use it as the characterization slice for the faithful IR migration. |
+| 5 | Video/QuickTime read support (32 allowlisted tags) | `_todo/20260703-P1-quicktime-video-read.md` | 🟨 Tasks 0-3 committed (Task 3 regenerated + landed 2026-08-30; CompressorName/Make/Model/Software/CreationDate off the allowlist). Tasks 4-5 remain. Do not extend the manual walker into HEIC/CR3; use it as the characterization slice for the faithful IR migration. |
 | 6 | napi-rs Node binding spike | `_todo/20260701-P3-napi-node-binding-spike.md` | ⬜ not started (its Task 1 is the licensing question below) |
 | 7 | XMP value conversion (8 of 13 type mismatches, one root cause) | `_done/20260703-P1-xmp-value-conversion.md` | ✅ DONE 2026-07-03 — compat 86→94/191; review caught 2 missing PrintConv arms + a latent negative-EV `print_fraction` bug (shared EXIF path), all fixed |
 | 8 | Compatibility oracle v2 (explicit common-media contract, corpus manifest, file x tag matrix) | `_todo/20260808-P0-compatibility-oracle-v2.md` | 🟨 TPP authored 2026-08-08 from corpus/gate audit; execute immediately after the sealed QuickTime Tasks 3-5 slice |
 | 9 | Faithful read IR + direct ExifTool processor dispatch | `_todo/20260808-P1-faithful-read-ir.md` | 🟨 TPP authored 2026-08-08 from architecture audit; generate lossless metadata first, migrate Canon/Panasonic in shadow mode, then shared ISO-BMFF |
+| 10 | Codegen extraction fail-closed (zero-symbol/malformed JSONL runs no longer exit 0) | `_done/20260808-P0-codegen-extraction-failclosed.md` | ✅ DONE 2026-08-30, commit `4742fb34` |
+| 11 | Codegen patches a staged ExifTool copy; submodule never mutated (trap-lifecycle design rejected, residue restored) | `_done/20260808-P0-codegen-patch-lifecycle.md` | ✅ DONE 2026-08-30, commit `fad216d4` |
+| 12 | PPI rendered-string reparse recovery + structural renderer regressions from first real regen (6 classes, 21 regression tests) | `_done/20260808-P0-ppi-string-reparse-recovery.md` | ✅ DONE 2026-08-30, commit `ca0a5235`; regen `aefa13c0` (placeholders 272→254) |
+| 13 | Release workflow repair (publishable manual dispatch, package allowlist, verify/preflight split) | `_done/20260808-P0-release-workflow-repair.md` | ✅ DONE 2026-08-30, commits `d967232e`, `a10c511e` |
+
+**2026-08-30 replan (recorded decisions):** PhotoStructure will switch to `-G`
+family-0 tag names (per Matthew) with a groupless lookup helper following
+ExifTool's merging heuristics on the wrapper side — this supersedes any plan to
+port ExifTool's bare-name priority-suppression machinery into exif-oxide.
+Integration is a `-stay_open` CLI work-alike behind exiftool-vendored; napi
+stays parked. LLM-assisted porting of procedural Perl is allowed only once a
+real Perl-vs-Rust differential harness exists (the expression-test infra is
+fixture-based, not differential). Wildcard numeric requests (`-*Duration*#`)
+fixed 2026-08-30 (`a7c35700`); remaining CLI request-parity gaps are in
+`_todo/20260830-P2-cli-tag-request-parity.md`.
 
 ## Orchestration guidance (from Matthew, 2026-07-02)
 
