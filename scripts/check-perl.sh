@@ -5,6 +5,11 @@
 
 set -e
 
+# Make local::lib Perl modules (PPI, JSON::XS) visible so `perl -c` can
+# resolve the scripts' dependencies without ambient PERL5LIB, matching
+# codegen/scripts/exiftool-patcher.sh.
+eval "$(perl -I "$HOME/perl5/lib/perl5" -Mlocal::lib)"
+
 # Function to check a single Perl file
 check_perl_file() {
   local file="$1"
