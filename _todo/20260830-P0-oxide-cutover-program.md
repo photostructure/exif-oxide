@@ -113,9 +113,19 @@ Landed on main (all review-gated; PPI + glob work Codex-second-opinioned):
   ExifTool parity); crossbeam-epoch RUSTSEC bump
 - Perl/XS env rebuilt for perl 5.40.1 (was blocking codegen + 14 tests)
 
-Remaining in M0: `make verify` green (audit ✅, check-perl fix in flight),
-move 4 completed P0 TPPs to `_done/`, Codex review of the full
-`4ff8ef21..HEAD` diff, push. Deliberately NOT committed:
+**`make verify` GREEN (16m40s, full gate: audit, check, codegen-test, test,
+compat, mime-compat, binary-compat, build)** after four env repairs:
+crossbeam-epoch RUSTSEC bump, check-perl.sh local::lib self-activation,
+codegen Makefile test env, and `use lib` fallback in ppi_ast.pl /
+field_extractor.pl. The four completed P0 TPPs moved to `_done/`.
+
+In flight: three Opus worktree agents on
+`_todo/20260830-P2-cli-tag-request-parity.md` (parity-matcher: items 2/4/5;
+numeric-order: item 3; file-group-fastpath: item 1), each probing vendored
+ExifTool first and Codex-second-opinioning its diff; orchestrator merges
+their diffs sequentially, then final verify. Remaining in M0 after that:
+Codex review of the full `4ff8ef21..HEAD` diff, push. Deliberately NOT
+committed:
 `.claude/settings.local.json` (destructive-git allowlist hunk — Matthew to
 review), `docs/chats/unknown-tags.md` (stale transcript, distill-or-delete).
 
