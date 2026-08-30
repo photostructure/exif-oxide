@@ -182,10 +182,46 @@ All three parity worktree agents are LANDED: `74229584` (matcher),
 follow-ups. Worktree symlink farms cleaned; the three agent worktrees under
 `.claude/worktrees/` can be pruned.
 
-Remaining M0 checklist, in order: (1) float-division subagent (R905-D:
-Perl `/` always float + whole-number floats serialize without ".0") is
-RUNNING in the main checkout — land it; (2) final `make verify`; (3)
-record the fresh compat score here; (4) push everything.
+R905-D LANDED (`e30572dc`): Div excluded from the arithmetic macro and
+always numifies to f64 (Add/Sub/Mul keep integer variants — Perl leaves
+those integral); `perl_number()` serializes whole-number floats as JSON
+integers (exclusive 2^63 bound) across F64/F64Array/all rational forms;
+PrintFNumber and XMP ApertureValue now return sprintf *strings* as
+ExifTool does (they had relied on serde emitting "8.0" from bare F64).
+The old integer Div arms panicked on divide-by-zero (PanasonicRaw
+DistortionScale at raw -32768); now infinity. Full `make verify` green
+(16m19s, agent-run on the exact committed tree).
+
+Compat adjudication for R905-D: `config/compat_known_gaps.json`
+UNCHANGED — the gate compares parsed JSON so it was blind to `4.0` vs
+`4` in both directions. Sharper text-level oracle over all 379
+snapshots: 1843 values changed rendering (`.0` dropped), zero changed
+value; 2946 `-Tag#` numeric values probed live against 13.59: 0
+int-vs-float mismatches.
+
+Deferred findings from R905-D (Codex-vetted, all pre-existing):
+
+- R014-A: numeric-looking Strings are parsed and re-rendered, so
+  `"1.00"` → `1.0` (53 literals in snapshots, mostly EXIF:Software /
+  Composite:Megapixels). Needs the pipeline to carry the literal token
+  past `extract_metadata_json`'s serde_json::Value round-trip. Pinned as
+  `test_numeric_strings_lose_redundant_precision`.
+- R014-B: divide-by-zero yields infinity (JSON null) where ExifTool
+  warns and drops the tag — needs fallible generated conversions.
+- Perl `%.15g` + `RoundFloat($val,10)` (ExifTool.pm:6119): 740/2946
+  numeric-mode values differ only in float precision (we emit
+  `2.8284271247461903`, ExifTool `2.82842712474619`). The single largest
+  remaining numeric-fidelity gap.
+- `fnumber_print_conv` non-positive branch returns `Unknown (…)`;
+  PrintFNumber returns `$val` unchanged when `!IsFloat($val) or $val<=0`.
+- NONDETERMINISTIC OUTPUT (real defect, own TPP:
+  `_todo/20260830-P1-nondeterministic-output.md`): identical runs flip
+  Composite:FocalLength35efl 26↔5.7, MakerNotes:FileNumber
+  130-0112↔6-5535, XMP:NativeDigest between source tags. Pre-existing
+  (pre-fix binary flips identically). Poisons snapshot ratchets.
+
+M0 checklist: (1) R905-D landed ✓; (2) `make verify` green ✓; (3) compat
+recorded above ✓; (4) push everything — done this session.
 
 Session gotchas for the next operator: worktree agents spawn at a stale
 base — have them `git merge --ff-only main` before starting; long

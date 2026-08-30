@@ -57,9 +57,8 @@ remain open; new addition:
 1. Families 2+, `id-`, `Copy0`, `FileN:` request forms unsupported —
    `TagEntry` models only families 0/1, so `-Image:FNumber` (family 2,
    matches in ExifTool) finds nothing.
-2. Whole-number float serialization emits `4.0` where ExifTool prints `4`
-   (every `-Tag#`) — being absorbed by the R905-D float-division fix
-   tracked in the management TPP.
+2. ~~Whole-number float serialization emits `4.0` where ExifTool prints
+   `4`~~ RESOLVED by the R905-D float-division fix (`e30572dc`).
 3. No `Invalid TAG name` / `Invalid group name` diagnostics channel.
 4. `ExifTool:ExifToolVersion` suppressed for every filtered request
    (`src/formats/mod.rs` keys the P12 rule on `extract_all`); ExifTool
