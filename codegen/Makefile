@@ -6,7 +6,7 @@
 # Default target
 all: codegen
 
-# Main codegen pipeline (Rust now handles everything including patch cleanup)
+# Main codegen pipeline (patches a staged ExifTool copy; the submodule is never modified)
 codegen:
 	@flock --exclusive --timeout=30 .make.flock $(MAKE) --no-print-directory codegen-flocked
 
@@ -18,10 +18,8 @@ codegen:
 #   RUST_LOG=debug make codegen  # verbose: per-module details
 #   RUST_LOG=trace make codegen  # very verbose: PPI node inspection
 codegen-flocked:
-	@echo "🔧 Applying universal ExifTool patching..." ; \
-	./scripts/exiftool-patcher.sh ; \
-	echo "🚀 Running Rust codegen..." ; \
-	RUST_LOG=warn cargo run ; ret=$$? ; \
+	@echo "🔧 Running Rust codegen against a staged ExifTool copy..." ; \
+	RUST_LOG=warn ./scripts/codegen-with-staged-exiftool.sh ; ret=$$? ; \
 	if [ $$ret -eq 0 ]; then \
 		echo "🔧 Reformatting generated Rust code..." ; \
 		cd .. && cargo fmt -- src/generated/**/*.rs 2>/dev/null ; \
@@ -30,7 +28,6 @@ codegen-flocked:
 
 clean:
 	cargo clean
-	./scripts/exiftool-patcher-undo.sh
 	rm -rf tests/generated
 
 check:

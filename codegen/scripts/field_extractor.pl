@@ -17,8 +17,9 @@ use Scalar::Util qw(blessed reftype refaddr);
 use lib "$Bin";
 use PPI::Simple;
 
-# Add ExifTool lib directory to @INC
-use lib "$Bin/../../third-party/exiftool/lib";
+# Add ExifTool lib directory to @INC. EXIFTOOL_BASE lets codegen point us at a
+# staged (patched) copy so the third-party/exiftool submodule is never modified.
+use lib ( $ENV{EXIFTOOL_BASE} ? "$ENV{EXIFTOOL_BASE}/lib" : "$Bin/../../third-party/exiftool/lib" );
 
 # JSON serializer
 my $json =

@@ -22,7 +22,9 @@ MARKER="# EXIF-OXIDE PATCHED"
 # Set up local::lib environment for perltidy access (inherited by all subshells)
 eval $(perl -I "$HOME/perl5/lib/perl5/" -Mlocal::lib)
 
-EXIFTOOL_BASE="$(cd ../third-party/exiftool && pwd)"
+# Optional argument: the ExifTool directory to patch (default: the submodule).
+# Codegen passes a staged temporary copy so the submodule is never modified.
+EXIFTOOL_BASE="$(cd "${1:-../third-party/exiftool}" && pwd)"
 PATCHER="./scripts/exiftool-patcher.pl"
 CONFIG_FILE="../config/exiftool_modules.json"
 
