@@ -2,8 +2,8 @@
 //!
 //! Tests the new public API functions added for tag filtering support
 
+use exif_oxide::types::TagRequest;
 use exif_oxide::{extract_metadata_json_with_filter, extract_metadata_with_filter, FilterOptions};
-use std::collections::HashSet;
 use std::path::Path;
 
 const TEST_IMAGE: &str = "test-images/canon/eos_rebel_t3i.jpg";
@@ -31,18 +31,7 @@ fn test_extract_metadata_json_with_filter_specific_tag() {
 #[test]
 fn test_extract_metadata_json_with_filter_numeric_control() {
     // Test numeric control with # suffix
-    let mut numeric_tags = HashSet::new();
-    numeric_tags.insert("Orientation".to_string());
-
-    let filter = FilterOptions {
-        requested_tags: vec!["Orientation".to_string()],
-        requested_groups: vec![],
-        group_all_patterns: vec![],
-        extract_all: false,
-        numeric_tags,
-        glob_patterns: vec![],
-        ..Default::default()
-    };
+    let filter = FilterOptions::from_requests(vec![TagRequest::new("Orientation", true)]);
 
     let result = extract_metadata_json_with_filter(TEST_IMAGE, Some(filter)).unwrap();
     let obj = result.as_object().unwrap();
@@ -63,7 +52,7 @@ fn test_extract_metadata_json_with_filter_glob_pattern() {
         requested_groups: vec![],
         group_all_patterns: vec![],
         extract_all: false,
-        numeric_tags: HashSet::new(),
+        tag_requests: vec![],
         glob_patterns: vec!["*Image*".to_string()],
         ..Default::default()
     };
@@ -93,7 +82,7 @@ fn test_extract_metadata_json_with_filter_middle_wildcard() {
         requested_groups: vec![],
         group_all_patterns: vec![],
         extract_all: false,
-        numeric_tags: HashSet::new(),
+        tag_requests: vec![],
         glob_patterns: vec!["*Date*".to_string()],
         ..Default::default()
     };
@@ -177,7 +166,7 @@ fn test_extract_metadata_json_with_filter_group_all() {
         requested_groups: vec![],
         group_all_patterns: vec!["File:all".to_string()],
         extract_all: false,
-        numeric_tags: HashSet::new(),
+        tag_requests: vec![],
         glob_patterns: vec![],
         ..Default::default()
     };

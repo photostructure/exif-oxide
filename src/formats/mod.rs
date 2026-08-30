@@ -1212,8 +1212,24 @@ pub fn extract_metadata(
     // Matches ExifTool's FoundTag architecture: all tags go through single filtering point
     let filtered_tag_entries = if let Some(filter_opts) = &filter_options {
         if filter_opts.extract_all {
-            // No filtering requested - return all tags
-            all_tag_entries
+            if filter_opts.tag_requests.is_empty() {
+                // No filtering requested - return all tags
+                all_tag_entries
+            } else {
+                // `-all` selects every tag, but an earlier `-TAG#` in the same command
+                // line can still ask for ValueConv output: `-Orientation# -all` prints
+                // Orientation numerically. Nothing is filtered out here, only reprinted.
+                all_tag_entries
+                    .into_iter()
+                    .map(|mut tag_entry| {
+                        let groups = [tag_entry.group.as_str(), tag_entry.group1.as_str()];
+                        if filter_opts.should_use_numeric_in_groups(&tag_entry.name, &groups) {
+                            tag_entry.print = tag_entry.value.clone();
+                        }
+                        tag_entry
+                    })
+                    .collect()
+            }
         } else {
             // Apply allowlist filtering like ExifTool's REQ_TAG_LOOKUP + IgnoreTags={all => 1}
             all_tag_entries

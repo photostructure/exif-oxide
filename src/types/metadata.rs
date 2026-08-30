@@ -7,7 +7,70 @@ use crate::hash::ImageHashType;
 use crate::types::TagValue;
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
+
+/// One `-TAG` request, in the order it appeared on the command line.
+///
+/// **The first request that matches a tag decides whether that tag prints its
+/// ValueConv (`#`) or its PrintConv value.** Three ExifTool steps produce that rule:
+///
+/// 1. `SetFoundTags` walks `REQUESTED_TAGS` in order and appends each request's
+///    matches to `@foundTags`, recording the indices contributed by a `#` request in
+///    `@byValue` (lib/Image/ExifTool.pm:5433-5436). A tag matched by several requests
+///    therefore appears several times, in request order.
+/// 2. `GetInfo` renames each by-value entry's key to `"Tag #"` and deletes the plain
+///    PrintConv entry only when no non-by-value request also produced it
+///    (lib/Image/ExifTool.pm:3266-3290). Both keys survive, still in request order.
+/// 3. The JSON writer walks `@foundTags` and does `next if $noDups{$tok}` on the tag
+///    name (exiftool:2947-2953), so the first entry wins and later ones are skipped.
+///
+/// Plain `-G` text output prints *both* lines, in request order, which is why the
+/// later line is the one that catches the eye there - it is not the winner.
+///
+/// Probed against vendored ExifTool 13.59 (test-images/canon/eos_rebel_t3i.jpg):
+/// `-Orientation -Orientation#` => "Rotate 270 CW"; `-Orientation# -Orientation` => 8.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TagRequest {
+    /// The request with its leading `-` and trailing `#` removed.
+    /// Examples: "Duration", "*Duration*", "QuickTime:Duration", "EXIF:all", "all"
+    pub pattern: String,
+
+    /// The request ended in `#`: print the ValueConv value for tags it matches.
+    /// ExifTool: lib/Image/ExifTool.pm:5364 (`$byValue = 1 if $tag =~ s/#$//`)
+    pub numeric: bool,
+}
+
+impl TagRequest {
+    /// Build a request from an already-split pattern and `#` flag.
+    pub fn new(pattern: impl Into<String>, numeric: bool) -> Self {
+        Self {
+            pattern: pattern.into(),
+            numeric,
+        }
+    }
+
+    /// Parse one request argument that has already had its leading `-` removed.
+    ///
+    /// ExifTool strips a trailing `#` from the tag portion and remembers that the tag
+    /// was requested by value; everything else about the request - group prefix,
+    /// wildcards, `all` - is then handled exactly as it would be without the `#`.
+    /// ExifTool: lib/Image/ExifTool.pm:5364
+    ///
+    /// `--all` is accepted as a spelling of `-all`. Every other `--TAG` is ExifTool's
+    /// *exclusion* syntax, which exif-oxide does not implement; the second `-` is kept
+    /// in the pattern so such a request matches nothing rather than silently turning
+    /// into the opposite request. `matches_glob_pattern` compares literally, and no
+    /// tag name starts with `-`.
+    pub fn parse(filter_arg: &str) -> Self {
+        if filter_arg.eq_ignore_ascii_case("-all") {
+            return Self::new("all", false);
+        }
+        match filter_arg.strip_suffix('#') {
+            Some(pattern) if !pattern.is_empty() => Self::new(pattern, true),
+            _ => Self::new(filter_arg, false),
+        }
+    }
+}
 
 /// Configuration for filtering which tags to extract and how to format them
 ///
@@ -18,19 +81,16 @@ use std::collections::{HashMap, HashSet};
 /// # Examples
 ///
 /// ```
-/// use exif_oxide::types::FilterOptions;
-/// use std::collections::HashSet;
+/// use exif_oxide::types::{FilterOptions, TagRequest};
 ///
 /// // Extract only MIMEType tag (performance optimized - no EXIF parsing needed)
 /// let mime_only = FilterOptions::tags_only(vec!["MIMEType".to_string()]);
 ///
-/// // Extract all EXIF group tags with some numeric values
-/// let mut numeric_tags = HashSet::new();
-/// numeric_tags.insert("Orientation".to_string());
-/// let mut exif_with_numeric = FilterOptions::default();
-/// exif_with_numeric.group_all_patterns = vec!["EXIF:all".to_string()];
-/// exif_with_numeric.extract_all = false;
-/// exif_with_numeric.numeric_tags = numeric_tags;
+/// // The same requests the CLI would see for `-EXIF:all -Orientation#`
+/// let exif_with_numeric = FilterOptions::from_requests(vec![
+///     TagRequest::new("EXIF:all", false),
+///     TagRequest::new("Orientation", true),
+/// ]);
 ///
 /// // Compute ImageDataHash with SHA256
 /// use exif_oxide::hash::ImageHashType;
@@ -54,9 +114,13 @@ pub struct FilterOptions {
     /// When true, all other filters are ignored
     pub extract_all: bool,
 
-    /// Tags that should use numeric values instead of PrintConv
-    /// These correspond to ExifTool's -TagName# syntax
-    pub numeric_tags: HashSet<String>,
+    /// Every `-TAG` request in command-line order, each carrying its `#` flag.
+    ///
+    /// This is ExifTool's `REQUESTED_TAGS`: the other fields on this struct are the
+    /// extraction index built from it, but order is only recoverable here, and order
+    /// is what decides ValueConv-vs-PrintConv when several requests match one tag.
+    /// ExifTool: lib/Image/ExifTool.pm:5329, 5345 (SetFoundTags)
+    pub tag_requests: Vec<TagRequest>,
 
     /// Glob patterns for tag/group matching (case-insensitive)
     /// Examples: ["GPS*", "*tude", "*Date*", "Canon*"]
@@ -89,7 +153,7 @@ impl Default for FilterOptions {
             requested_groups: Vec::new(),
             group_all_patterns: Vec::new(),
             extract_all: true, // Default to extracting all tags for backward compatibility
-            numeric_tags: HashSet::new(),
+            tag_requests: Vec::new(),
             glob_patterns: Vec::new(),
             compute_image_hash: false, // Only compute when explicitly requested
             image_hash_type: ImageHashType::default(), // MD5, matching ExifTool default
@@ -106,15 +170,86 @@ impl FilterOptions {
     /// Create FilterOptions for specific tags only
     pub fn tags_only(tags: Vec<String>) -> Self {
         Self {
+            tag_requests: tags.iter().map(|tag| TagRequest::new(tag, false)).collect(),
             requested_tags: tags,
             requested_groups: Vec::new(),
             group_all_patterns: Vec::new(),
             extract_all: false,
-            numeric_tags: HashSet::new(),
             glob_patterns: Vec::new(),
             compute_image_hash: false,
             image_hash_type: ImageHashType::default(),
         }
+    }
+
+    /// Build FilterOptions from the ordered request list, the way the CLI does.
+    ///
+    /// Every request is classified *after* its `#` has been stripped, so `-EXIF:all#`
+    /// selects the EXIF group exactly as `-EXIF:all` does and differs only in how the
+    /// matched tags print. An empty request list means "no filters", which extracts
+    /// everything - the same fallback ExifTool uses when no tags are named
+    /// (lib/Image/ExifTool.pm:5340).
+    ///
+    /// The three pattern buckets are all matched through `request_matches_tag`, so the
+    /// split between them no longer changes what is selected; it is kept because
+    /// `is_file_group_only` and the compat JSON filter still read them individually.
+    pub fn from_requests(tag_requests: Vec<TagRequest>) -> Self {
+        let mut requested_tags = Vec::new();
+        let mut group_all_patterns = Vec::new();
+        let mut glob_patterns = Vec::new();
+        // A bare `-all` needs no filtering at all, which lets extraction take its fast
+        // path. `-all#` cannot: that path skips the numeric override in
+        // `formats::extract_metadata`, so the request has to stay a real filter.
+        // ExifTool: lib/Image/ExifTool.pm:5367 - `-all` matches every tag.
+        let extract_all = tag_requests.is_empty()
+            || tag_requests
+                .iter()
+                .any(|request| !request.numeric && Self::is_all_keyword(&request.pattern));
+
+        for request in &tag_requests {
+            let pattern = request.pattern.as_str();
+            if Self::is_all_keyword(pattern) {
+                // `-all#`: keep it as a pattern so the numeric override still runs.
+                if request.numeric {
+                    requested_tags.push(pattern.to_string());
+                }
+            } else if pattern
+                .rsplit_once(':')
+                .is_some_and(|(_, tag)| tag.eq_ignore_ascii_case("all"))
+            {
+                // `Group:all` only. `Group:*` selects the same tags but travels the
+                // glob path, because `is_file_group_only` reads `group_all_patterns`
+                // expecting the literal "file:all".
+                group_all_patterns.push(pattern.to_string());
+            } else if Self::has_wildcard(pattern) {
+                glob_patterns.push(pattern.to_string());
+            } else {
+                requested_tags.push(pattern.to_string());
+            }
+        }
+
+        // A bare `-all` subsumes every other selector.
+        if extract_all {
+            requested_tags.clear();
+            group_all_patterns.clear();
+            glob_patterns.clear();
+        }
+
+        Self {
+            requested_tags,
+            requested_groups: Vec::new(),
+            group_all_patterns,
+            extract_all,
+            tag_requests,
+            glob_patterns,
+            compute_image_hash: false,
+            image_hash_type: ImageHashType::default(),
+        }
+    }
+
+    /// Is this request's tag portion ExifTool's "everything" keyword?
+    /// ExifTool: lib/Image/ExifTool.pm:5350, 5367 (`/^(\*|all)$/i`)
+    fn is_all_keyword(pattern: &str) -> bool {
+        pattern == "*" || pattern.eq_ignore_ascii_case("all")
     }
 
     /// Create FilterOptions for specific groups
@@ -124,7 +259,7 @@ impl FilterOptions {
             requested_groups: groups,
             group_all_patterns: Vec::new(),
             extract_all: false,
-            numeric_tags: HashSet::new(),
+            tag_requests: Vec::new(),
             glob_patterns: Vec::new(),
             compute_image_hash: false,
             image_hash_type: ImageHashType::default(),
@@ -138,7 +273,7 @@ impl FilterOptions {
             requested_groups: Vec::new(),
             group_all_patterns: Vec::new(),
             extract_all: false,
-            numeric_tags: HashSet::new(),
+            tag_requests: Vec::new(),
             glob_patterns: Vec::new(),
             compute_image_hash: true,
             image_hash_type: hash_type,
@@ -368,29 +503,34 @@ impl FilterOptions {
 
     /// Check if a tag should use numeric output, given every group family it belongs to.
     pub fn should_use_numeric_in_groups(&self, tag_name: &str, tag_groups: &[&str]) -> bool {
-        Self::numeric_request_matches(&self.numeric_tags, tag_name, tag_groups)
+        Self::numeric_request_matches(&self.tag_requests, tag_name, tag_groups)
     }
 
-    /// Check whether a numeric-output request (`-TagName#`) applies to this tag.
+    /// Decide whether a tag prints its ValueConv value, from the ordered request list.
     ///
-    /// ExifTool strips the trailing `#` from the tag portion of the request and then
-    /// matches the remaining name against the extracted tag names, so wildcards work
-    /// exactly as they do for plain tag requests: `-*Duration*#` prints every tag
-    /// whose name contains "Duration" as its ValueConv value.
+    /// The **first** request that matches the tag wins. ExifTool appends each
+    /// request's matches to the found-tag list in request order and records which
+    /// entries came from a `#` request; the JSON writer prints the first entry for a
+    /// tag name and skips every later one, so a tag matched by several requests is
+    /// printed the way its earliest matching request asked for.
     ///
-    /// A group-qualified request such as `-QuickTime:*Duration*#` only applies to tags
-    /// in that group, mirroring ExifTool splitting the group off the request and using
-    /// it to filter the wildcard matches.
+    /// Wildcards work here exactly as they do for plain tag requests, because
+    /// ExifTool strips the `#` before expanding them: `-*Duration*#` prints every tag
+    /// whose name contains "Duration" as its ValueConv value. A group-qualified
+    /// request such as `-QuickTime:*Duration*#` only matches tags in that group, so a
+    /// request naming the wrong group is skipped and the next request decides.
     ///
-    /// ExifTool: lib/Image/ExifTool.pm:5348-5382 and 5398-5401 (SetFoundTags)
+    /// ExifTool: lib/Image/ExifTool.pm:5345-5437 (SetFoundTags), 3266-3290 (GetInfo),
+    /// exiftool:2947-2953 (JSON `%noDups`).
     pub fn numeric_request_matches(
-        numeric_tags: &HashSet<String>,
+        tag_requests: &[TagRequest],
         tag_name: &str,
         tag_groups: &[&str],
     ) -> bool {
-        numeric_tags
+        tag_requests
             .iter()
-            .any(|pattern| Self::request_matches_tag(pattern, tag_name, tag_groups))
+            .find(|request| Self::request_matches_tag(&request.pattern, tag_name, tag_groups))
+            .is_some_and(|request| request.numeric)
     }
 
     /// Check if a string matches an ExifTool tag-name pattern (case-insensitive).
@@ -726,10 +866,10 @@ impl ExifData {
 
     /// Convert tags to legacy format for JSON serialization
     /// This populates legacy_tags from the TagEntry vector
-    pub fn prepare_for_serialization(
-        &mut self,
-        numeric_tags: Option<&std::collections::HashSet<String>>,
-    ) {
+    ///
+    /// `tag_requests` is the command-line request list in order; the first request
+    /// matching a tag decides whether its ValueConv or PrintConv value is emitted.
+    pub fn prepare_for_serialization(&mut self, tag_requests: Option<&[TagRequest]>) {
         use tracing::debug;
 
         // Preserve existing legacy_tags (like System: and Warning: tags) before clearing
@@ -763,13 +903,14 @@ impl ExifData {
 
         // Insert tags in the sorted order
         for (key, entry) in tag_pairs {
-            // Determine whether to use value or print field.
-            // Numeric requests support wildcards (`-*Duration*#`) just like plain tag
-            // requests do. ExifTool: lib/Image/ExifTool.pm:5364-5382
-            let should_use_value = numeric_tags
-                .map(|set| {
+            // Determine whether to use value or print field. Numeric requests support
+            // wildcards (`-*Duration*#`) just like plain tag requests do, and the
+            // earliest matching request decides.
+            // ExifTool: lib/Image/ExifTool.pm:5345-5437, 3266-3290
+            let should_use_value = tag_requests
+                .map(|requests| {
                     FilterOptions::numeric_request_matches(
-                        set,
+                        requests,
                         &entry.name,
                         &[&entry.group, &entry.group1],
                     )
@@ -1060,15 +1201,9 @@ mod tests {
     /// so `-*Duration*#` requests numeric output for every matching tag.
     #[test]
     fn test_should_use_numeric_with_glob_pattern() {
-        let mut numeric_tags = HashSet::new();
-        numeric_tags.insert("*Duration*".to_string());
-        let filter_opts = FilterOptions {
-            extract_all: false,
-            numeric_tags,
-            glob_patterns: vec!["*Duration*".to_string()],
-            ..Default::default()
-        };
+        let filter_opts = FilterOptions::from_requests(vec![TagRequest::new("*Duration*", true)]);
 
+        assert_eq!(filter_opts.glob_patterns, vec!["*Duration*"]);
         assert!(filter_opts.should_use_numeric("Duration", "QuickTime"));
         assert!(filter_opts.should_use_numeric("TrackDuration", "QuickTime"));
         assert!(!filter_opts.should_use_numeric("ImageWidth", "QuickTime"));
@@ -1078,14 +1213,7 @@ mod tests {
     /// ExifTool: lib/Image/ExifTool.pm:5382
     #[test]
     fn test_should_use_numeric_is_case_insensitive() {
-        let mut numeric_tags = HashSet::new();
-        numeric_tags.insert("orientation".to_string());
-        let filter_opts = FilterOptions {
-            extract_all: false,
-            numeric_tags,
-            requested_tags: vec!["orientation".to_string()],
-            ..Default::default()
-        };
+        let filter_opts = FilterOptions::from_requests(vec![TagRequest::new("orientation", true)]);
 
         assert!(filter_opts.should_use_numeric("Orientation", "EXIF"));
     }
@@ -1095,17 +1223,129 @@ mod tests {
     /// request and used to filter the wildcard matches).
     #[test]
     fn test_should_use_numeric_with_group_qualified_pattern() {
-        let mut numeric_tags = HashSet::new();
-        numeric_tags.insert("QuickTime:*Duration*".to_string());
-        let filter_opts = FilterOptions {
-            extract_all: false,
-            numeric_tags,
-            glob_patterns: vec!["QuickTime:*Duration*".to_string()],
-            ..Default::default()
-        };
+        let filter_opts =
+            FilterOptions::from_requests(vec![TagRequest::new("QuickTime:*Duration*", true)]);
 
         assert!(filter_opts.should_use_numeric("Duration", "QuickTime"));
         assert!(!filter_opts.should_use_numeric("Duration", "EXIF"));
+    }
+
+    /// The `#` is stripped before the request is classified, so `-Group:all#` picks
+    /// the group-all path rather than being mistaken for a tag named "EXIF:all".
+    /// ExifTool: lib/Image/ExifTool.pm:5364 (`$byValue = 1 if $tag =~ s/#$//`)
+    #[test]
+    fn test_tag_request_parse_strips_numeric_suffix() {
+        assert_eq!(
+            TagRequest::parse("Duration"),
+            TagRequest::new("Duration", false)
+        );
+        assert_eq!(
+            TagRequest::parse("Duration#"),
+            TagRequest::new("Duration", true)
+        );
+        assert_eq!(
+            TagRequest::parse("*Duration*#"),
+            TagRequest::new("*Duration*", true)
+        );
+        assert_eq!(
+            TagRequest::parse("EXIF:all#"),
+            TagRequest::new("EXIF:all", true)
+        );
+        // A lone '#' is not a numeric marker for an empty request
+        assert_eq!(TagRequest::parse("#"), TagRequest::new("#", false));
+    }
+
+    /// The first request that matches a tag decides how it is printed.
+    ///
+    /// Probed against vendored ExifTool 13.59 with test-images/apple/IMG_3755.MOV:
+    ///
+    /// ```text
+    /// exiftool -j -Duration "-*Duration*#"  => "Duration": "2.96 s", "TrackDuration": 2.965
+    /// exiftool -j "-*Duration*#" -Duration  => "Duration": 2.965
+    /// ```
+    ///
+    /// ExifTool: lib/Image/ExifTool.pm:5345-5437 (SetFoundTags appends each request's
+    /// matches in order), 3266-3290 (GetInfo renames by-value entries), exiftool:2947-2953
+    /// (the JSON writer keeps the first entry per tag name).
+    #[test]
+    fn test_should_use_numeric_honours_request_order() {
+        let print_first = FilterOptions::from_requests(vec![
+            TagRequest::new("Duration", false),
+            TagRequest::new("*Duration*", true),
+        ]);
+        assert!(!print_first.should_use_numeric("Duration", "QuickTime"));
+        assert!(print_first.should_use_numeric("TrackDuration", "QuickTime"));
+
+        let numeric_first = FilterOptions::from_requests(vec![
+            TagRequest::new("*Duration*", true),
+            TagRequest::new("Duration", false),
+        ]);
+        assert!(numeric_first.should_use_numeric("Duration", "QuickTime"));
+        assert!(numeric_first.should_use_numeric("TrackDuration", "QuickTime"));
+    }
+
+    /// A request naming a group the tag is not in never matches, so the decision
+    /// falls through to the next request.
+    ///
+    /// Probed (ExifTool 13.59, IMG_3755.MOV):
+    /// `exiftool -j "-EXIF:Duration#" -Duration`      => `"Duration": "2.96 s"`
+    /// `exiftool -j "-QuickTime:Duration#" -Duration` => `"Duration": 2.965`
+    /// `exiftool -j -Duration "-QuickTime:Duration#"` => `"Duration": "2.96 s"`
+    #[test]
+    fn test_should_use_numeric_skips_requests_for_other_groups() {
+        let wrong_group = FilterOptions::from_requests(vec![
+            TagRequest::new("EXIF:Duration", true),
+            TagRequest::new("Duration", false),
+        ]);
+        assert!(!wrong_group.should_use_numeric("Duration", "QuickTime"));
+
+        let right_group = FilterOptions::from_requests(vec![
+            TagRequest::new("QuickTime:Duration", true),
+            TagRequest::new("Duration", false),
+        ]);
+        assert!(right_group.should_use_numeric("Duration", "QuickTime"));
+
+        let bare_first = FilterOptions::from_requests(vec![
+            TagRequest::new("Duration", false),
+            TagRequest::new("QuickTime:Duration", true),
+        ]);
+        assert!(!bare_first.should_use_numeric("Duration", "QuickTime"));
+    }
+
+    /// `all` (and `*`) match every tag, so an `-all` request takes its turn in the
+    /// order like any other request.
+    ///
+    /// Probed (ExifTool 13.59, test-images/canon/eos_5d_mark_iii.jpg):
+    /// `exiftool -j -all -Orientation#`         => `"Orientation": "Horizontal (normal)"`
+    /// `exiftool -j -Orientation# -all`         => `"Orientation": 1`
+    /// `exiftool -j "-EXIF:all" -Orientation#`  => `"Orientation": "Horizontal (normal)"`
+    /// `exiftool -j -ALL` matches `-all` exactly (351 output lines both ways).
+    /// ExifTool: lib/Image/ExifTool.pm:5350, 5367 (`/^(\*|all)$/i`)
+    #[test]
+    fn test_all_keyword_participates_in_request_order() {
+        let all_first = FilterOptions::from_requests(vec![
+            TagRequest::new("all", false),
+            TagRequest::new("Orientation", true),
+        ]);
+        assert!(all_first.extract_all);
+        assert!(!all_first.should_use_numeric("Orientation", "EXIF"));
+
+        let numeric_first = FilterOptions::from_requests(vec![
+            TagRequest::new("Orientation", true),
+            TagRequest::new("all", false),
+        ]);
+        assert!(numeric_first.extract_all);
+        assert!(numeric_first.should_use_numeric("Orientation", "EXIF"));
+
+        let group_all_first = FilterOptions::from_requests(vec![
+            TagRequest::new("EXIF:all", false),
+            TagRequest::new("Orientation", true),
+        ]);
+        assert!(!group_all_first.should_use_numeric("Orientation", "EXIF"));
+        assert!(
+            group_all_first.should_use_numeric("Orientation", "MakerNotes"),
+            "EXIF:all does not match a MakerNotes tag, so -Orientation# decides"
+        );
     }
 
     /// `prepare_for_serialization` is the JSON-output path used by the CLI and by
@@ -1131,9 +1371,7 @@ mod tests {
             },
         ];
 
-        let mut numeric_tags = HashSet::new();
-        numeric_tags.insert("*Duration*".to_string());
-        data.prepare_for_serialization(Some(&numeric_tags));
+        data.prepare_for_serialization(Some(&[TagRequest::new("*Duration*", true)]));
 
         assert_eq!(
             data.legacy_tags.get("QuickTime:Duration"),
@@ -1147,6 +1385,67 @@ mod tests {
         );
     }
 
+    /// The JSON path must honour request order, not just the presence of a `#`.
+    ///
+    /// Probed against vendored ExifTool 13.59 with test-images/apple/IMG_3755.MOV:
+    ///
+    /// ```text
+    /// exiftool -j -G -Duration "-*Duration*#"
+    ///   => "QuickTime:Duration": "2.96 s", "QuickTime:TrackDuration": 2.965
+    /// exiftool -j -G "-*Duration*#" -Duration
+    ///   => "QuickTime:Duration": 2.965,   "QuickTime:TrackDuration": 2.965
+    /// ```
+    #[test]
+    fn test_prepare_for_serialization_honours_request_order() {
+        let quicktime_tags = || {
+            vec![
+                TagEntry {
+                    group: "QuickTime".to_string(),
+                    group1: "QuickTime".to_string(),
+                    name: "Duration".to_string(),
+                    value: TagValue::F64(2.965),
+                    print: TagValue::String("2.96 s".to_string()),
+                },
+                TagEntry {
+                    group: "QuickTime".to_string(),
+                    group1: "QuickTime".to_string(),
+                    name: "TrackDuration".to_string(),
+                    value: TagValue::F64(2.965),
+                    print: TagValue::String("2.96 s".to_string()),
+                },
+            ]
+        };
+
+        let mut print_first = ExifData::new("test.mov".to_string(), "0.1.0-oxide".to_string());
+        print_first.tags = quicktime_tags();
+        print_first.prepare_for_serialization(Some(&[
+            TagRequest::new("Duration", false),
+            TagRequest::new("*Duration*", true),
+        ]));
+        assert_eq!(
+            print_first.legacy_tags.get("QuickTime:Duration"),
+            Some(&TagValue::String("2.96 s".to_string())),
+            "-Duration came first, so Duration keeps its PrintConv result"
+        );
+        assert_eq!(
+            print_first.legacy_tags.get("QuickTime:TrackDuration"),
+            Some(&TagValue::F64(2.965)),
+            "TrackDuration is only matched by the numeric wildcard"
+        );
+
+        let mut numeric_first = ExifData::new("test.mov".to_string(), "0.1.0-oxide".to_string());
+        numeric_first.tags = quicktime_tags();
+        numeric_first.prepare_for_serialization(Some(&[
+            TagRequest::new("*Duration*", true),
+            TagRequest::new("Duration", false),
+        ]));
+        assert_eq!(
+            numeric_first.legacy_tags.get("QuickTime:Duration"),
+            Some(&TagValue::F64(2.965)),
+            "-*Duration*# came first, so Duration prints its ValueConv result"
+        );
+    }
+
     #[test]
     fn test_should_extract_tag_with_glob_patterns() {
         let filter_opts = FilterOptions {
@@ -1154,7 +1453,7 @@ mod tests {
             requested_groups: Vec::new(),
             group_all_patterns: Vec::new(),
             extract_all: false,
-            numeric_tags: HashSet::new(),
+            tag_requests: Vec::new(),
             glob_patterns: vec!["GPS*".to_string()],
             compute_image_hash: false,
             image_hash_type: ImageHashType::default(),
@@ -1187,23 +1486,13 @@ mod tests {
     /// `-QuickTime:*Duration*#` both return the numeric Duration.
     #[test]
     fn test_wildcard_never_expands_into_group_prefix() {
-        let mut numeric_tags = HashSet::new();
-        numeric_tags.insert("Quick*:Duration".to_string());
-        let invalid_group = FilterOptions {
-            extract_all: false,
-            glob_patterns: vec!["Quick*:Duration".to_string()],
-            numeric_tags,
-            ..Default::default()
-        };
+        let invalid_group =
+            FilterOptions::from_requests(vec![TagRequest::new("Quick*:Duration", true)]);
         assert!(!invalid_group.should_extract_tag("Duration", "QuickTime"));
         assert!(!invalid_group.should_use_numeric("Duration", "QuickTime"));
 
         // A group portion of exactly '*' is valid and selects any group
-        let any_group = FilterOptions {
-            extract_all: false,
-            glob_patterns: vec!["*:Duration".to_string()],
-            ..Default::default()
-        };
+        let any_group = FilterOptions::from_requests(vec![TagRequest::new("*:Duration", false)]);
         assert!(any_group.should_extract_tag("Duration", "QuickTime"));
     }
 
@@ -1216,14 +1505,7 @@ mod tests {
     /// request is honoured rather than dropped.
     #[test]
     fn test_empty_group_prefix_imposes_no_group_constraint() {
-        let mut numeric_tags = HashSet::new();
-        numeric_tags.insert(":*Duration*".to_string());
-        let filter_opts = FilterOptions {
-            extract_all: false,
-            glob_patterns: vec![":*Duration*".to_string()],
-            numeric_tags,
-            ..Default::default()
-        };
+        let filter_opts = FilterOptions::from_requests(vec![TagRequest::new(":*Duration*", true)]);
 
         assert!(filter_opts.should_extract_tag("TrackDuration", "QuickTime"));
         assert!(filter_opts.should_use_numeric("TrackDuration", "QuickTime"));
@@ -1260,14 +1542,8 @@ mod tests {
     ///   `exiftool -j -G "-IFD0:Make"`        => `"EXIF:Make": "Canon"`
     #[test]
     fn test_family1_group_name_matches() {
-        let mut numeric_tags = HashSet::new();
-        numeric_tags.insert("ExifIFD:FNum?er".to_string());
-        let filter_opts = FilterOptions {
-            extract_all: false,
-            glob_patterns: vec!["ExifIFD:FNum?er".to_string()],
-            numeric_tags,
-            ..Default::default()
-        };
+        let filter_opts =
+            FilterOptions::from_requests(vec![TagRequest::new("ExifIFD:FNum?er", true)]);
 
         assert!(filter_opts.should_extract_tag_in_groups("FNumber", &["EXIF", "ExifIFD"]));
         assert!(filter_opts.should_use_numeric_in_groups("FNumber", &["EXIF", "ExifIFD"]));
@@ -1403,14 +1679,7 @@ mod tests {
     #[test]
     fn test_all_and_star_match_every_tag() {
         for request in ["all", "ALL", "*"] {
-            let mut numeric_tags = HashSet::new();
-            numeric_tags.insert(request.to_string());
-            let filter_opts = FilterOptions {
-                extract_all: false,
-                requested_tags: vec![request.to_string()],
-                numeric_tags,
-                ..Default::default()
-            };
+            let filter_opts = FilterOptions::from_requests(vec![TagRequest::new(request, true)]);
 
             assert!(
                 filter_opts.should_extract_tag("Orientation", "EXIF"),

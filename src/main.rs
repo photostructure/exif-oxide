@@ -1,12 +1,11 @@
 use clap::{Arg, Command};
-use std::collections::HashSet;
 use std::path::PathBuf;
 use tracing::{debug, error, info};
 
 // Import our library modules
 use exif_oxide::formats::extract_metadata;
 use exif_oxide::hash::ImageHashType;
-use exif_oxide::types::FilterOptions;
+use exif_oxide::types::{FilterOptions, TagRequest};
 
 /// Parse command line arguments into file paths and filter options
 /// Supports ExifTool-style tag filtering patterns:
@@ -18,21 +17,13 @@ use exif_oxide::types::FilterOptions;
 /// Returns (file_paths, filter_options) or exits on error
 fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
     let mut file_paths = Vec::new();
-    let mut requested_tags = Vec::new();
-    let requested_groups = Vec::new();
-    let mut group_all_patterns = Vec::new();
-    let mut glob_patterns = Vec::new();
-    let mut numeric_tags = HashSet::new();
-    let mut extract_all = false;
+    let mut tag_requests = Vec::new();
 
     // Debug: print all received arguments
     debug!("CLI args received: {:?}", args);
 
     for arg in args {
-        if arg == "-all" || arg == "--all" {
-            // Special case: extract all tags
-            extract_all = true;
-        } else if arg == "-ver" {
+        if arg == "-ver" {
             // Version flag - print version and exit
             println!("{}", env!("CARGO_PKG_VERSION"));
             std::process::exit(0);
@@ -67,32 +58,10 @@ fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
                 std::process::exit(1);
             }
 
-            if filter_arg.ends_with('#') && filter_arg.len() > 1 {
-                // Numeric tag: -TagName# or -Pattern#
-                let tag_name = &filter_arg[..filter_arg.len() - 1];
-                if FilterOptions::has_wildcard(tag_name) {
-                    // Glob pattern with numeric: -GPS*#, -*Duration*#
-                    glob_patterns.push(tag_name.to_string());
-                    numeric_tags.insert(tag_name.to_string());
-                } else {
-                    // Regular numeric tag: -TagName#
-                    requested_tags.push(tag_name.to_string());
-                    numeric_tags.insert(tag_name.to_string());
-                }
-            } else if filter_arg.ends_with(":all") {
-                // Group all pattern: -GroupName:all
-                group_all_patterns.push(filter_arg.to_string());
-            } else if FilterOptions::has_wildcard(filter_arg) {
-                // Glob pattern: -GPS*, -*tude, -*Date*, -EXIF:*, -Dur?tion
-                glob_patterns.push(filter_arg.to_string());
-            } else if filter_arg.contains(':') {
-                // Group:tag pattern (future extension)
-                // For now, treat as specific tag request
-                requested_tags.push(filter_arg.to_string());
-            } else {
-                // Simple tag name: -TagName
-                requested_tags.push(filter_arg.to_string());
-            }
+            // Record the request in command-line order; classification happens in
+            // FilterOptions::from_requests so the CLI and the compat filter parser
+            // cannot drift apart.
+            tag_requests.push(TagRequest::parse(filter_arg));
         } else if arg == "-" || arg == "--" {
             // Stdin markers
             file_paths.push(arg);
@@ -102,48 +71,7 @@ fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
         }
     }
 
-    // Build FilterOptions based on parsed arguments
-    let filter_options = if extract_all {
-        // -all flag overrides everything else
-        FilterOptions {
-            requested_tags: Vec::new(),
-            requested_groups: Vec::new(),
-            group_all_patterns: Vec::new(),
-            extract_all: true,
-            numeric_tags,
-            glob_patterns: Vec::new(),
-            compute_image_hash: false,
-            image_hash_type: ImageHashType::default(),
-        }
-    } else if requested_tags.is_empty()
-        && requested_groups.is_empty()
-        && group_all_patterns.is_empty()
-        && glob_patterns.is_empty()
-    {
-        // No filters specified - extract all tags (backward compatibility)
-        FilterOptions {
-            requested_tags: Vec::new(),
-            requested_groups: Vec::new(),
-            group_all_patterns: Vec::new(),
-            extract_all: true,
-            numeric_tags,
-            glob_patterns: Vec::new(),
-            compute_image_hash: false,
-            image_hash_type: ImageHashType::default(),
-        }
-    } else {
-        // Specific filters requested
-        FilterOptions {
-            requested_tags,
-            requested_groups,
-            group_all_patterns,
-            extract_all: false,
-            numeric_tags,
-            glob_patterns,
-            compute_image_hash: false,
-            image_hash_type: ImageHashType::default(),
-        }
-    };
+    let filter_options = FilterOptions::from_requests(tag_requests);
 
     // Debug: print final filter options
     debug!("Final FilterOptions: {:?}", filter_options);
@@ -379,16 +307,7 @@ fn process_files(
                     let tag_name = &filter_options.requested_tags[0]; // We validated exactly one tag
                                                                       // For binary extraction, we need full metadata to find offset/length tags
                                                                       // Extract metadata again without filtering to get all tags
-                    let no_filters = FilterOptions {
-                        requested_tags: Vec::new(),
-                        requested_groups: Vec::new(),
-                        group_all_patterns: Vec::new(),
-                        extract_all: true,
-                        numeric_tags: std::collections::HashSet::new(),
-                        glob_patterns: Vec::new(),
-                        compute_image_hash: false,
-                        image_hash_type: ImageHashType::default(),
-                    };
+                    let no_filters = FilterOptions::extract_all();
                     match process_single_file(path, show_missing, show_warnings, &no_filters) {
                         Ok(full_metadata) => {
                             return extract_binary_data(&full_metadata, tag_name, path);
@@ -422,16 +341,10 @@ fn process_files(
         }
     }
 
-    // Prepare for serialization by converting tags to legacy format
-    // Pass numeric_tags to determine which tags should use numeric values
-    let numeric_tags_ref = if filter_options.numeric_tags.is_empty() {
-        None
-    } else {
-        Some(&filter_options.numeric_tags)
-    };
-
+    // Prepare for serialization by converting tags to legacy format.
+    // The ordered request list decides which tags print their ValueConv value.
     for result in &mut results {
-        result.prepare_for_serialization(numeric_tags_ref);
+        result.prepare_for_serialization(Some(&filter_options.tag_requests));
     }
 
     // Output as JSON array matching ExifTool format
@@ -619,8 +532,13 @@ mod tests {
         assert!(filter_opts
             .requested_tags
             .contains(&"ExposureTime".to_string()));
-        assert!(filter_opts.numeric_tags.contains("FNumber"));
-        assert!(filter_opts.numeric_tags.contains("ExposureTime"));
+        assert_eq!(
+            filter_opts.tag_requests,
+            vec![
+                TagRequest::new("FNumber", true),
+                TagRequest::new("ExposureTime", true),
+            ]
+        );
         assert_eq!(filter_opts.requested_tags.len(), 2);
     }
 
@@ -672,8 +590,87 @@ mod tests {
             .requested_tags
             .contains(&"Orientation".to_string()));
         assert!(filter_opts.requested_tags.contains(&"FNumber".to_string()));
-        assert!(filter_opts.numeric_tags.contains("Orientation"));
-        assert!(!filter_opts.numeric_tags.contains("FNumber"));
+        assert!(filter_opts.should_use_numeric("Orientation", "EXIF"));
+        assert!(!filter_opts.should_use_numeric("FNumber", "EXIF"));
+    }
+
+    /// The request list keeps command-line order, and each request keeps its own `#`
+    /// flag, because the first request that matches a tag decides how it is printed.
+    ///
+    /// Probed against vendored ExifTool 13.59 with test-images/apple/IMG_3755.MOV:
+    /// `exiftool -j -Duration "-*Duration*#"` => `"Duration": "2.96 s"`
+    /// `exiftool -j "-*Duration*#" -Duration` => `"Duration": 2.965`
+    #[test]
+    fn test_parse_exiftool_args_preserves_request_order() {
+        let image = "video.mov".to_string();
+        let exact = "-Duration".to_string();
+        let numeric_glob = "-*Duration*#".to_string();
+
+        let (_, print_first) = parse_exiftool_args(vec![&image, &exact, &numeric_glob]);
+        assert_eq!(
+            print_first.tag_requests,
+            vec![
+                TagRequest::new("Duration", false),
+                TagRequest::new("*Duration*", true),
+            ]
+        );
+        assert!(!print_first.should_use_numeric("Duration", "QuickTime"));
+        assert!(print_first.should_use_numeric("TrackDuration", "QuickTime"));
+
+        let (_, numeric_first) = parse_exiftool_args(vec![&image, &numeric_glob, &exact]);
+        assert_eq!(
+            numeric_first.tag_requests,
+            vec![
+                TagRequest::new("*Duration*", true),
+                TagRequest::new("Duration", false),
+            ]
+        );
+        assert!(numeric_first.should_use_numeric("Duration", "QuickTime"));
+    }
+
+    /// `-Group:all#` must strip the `#` before classifying, or `EXIF:all` is mistaken
+    /// for a tag name and the group is never extracted.
+    ///
+    /// Probed (ExifTool 13.59, test-images/canon/eos_5d_mark_iii.jpg):
+    /// `exiftool -j -G "-EXIF:all#"` => 54 EXIF tags with `"EXIF:Orientation": 1`
+    #[test]
+    fn test_parse_exiftool_args_group_all_numeric() {
+        let image = "image.jpg".to_string();
+        let exif_all_numeric = "-EXIF:all#".to_string();
+
+        let (_, filter_opts) = parse_exiftool_args(vec![&image, &exif_all_numeric]);
+
+        assert_eq!(filter_opts.group_all_patterns, vec!["EXIF:all"]);
+        assert!(!filter_opts.extract_all);
+        assert!(filter_opts.should_extract_tag("Orientation", "EXIF"));
+        assert!(filter_opts.should_use_numeric("Orientation", "EXIF"));
+    }
+
+    /// `-Group:*` stays a glob so the group is actually extracted, and `--TAG` is
+    /// never silently turned into `-TAG`.
+    ///
+    /// Probed (ExifTool 13.59, test-images/canon/eos_5d_mark_iii.jpg):
+    /// `exiftool -j -G "-EXIF:*"`  => the whole EXIF group
+    /// `exiftool -j -G "--GPS*"`   => every tag EXCEPT the GPS* ones (exclusion)
+    #[test]
+    fn test_parse_exiftool_args_group_glob_and_double_dash() {
+        let image = "image.jpg".to_string();
+        let exif_glob = "-EXIF:*".to_string();
+        let (_, group_glob) = parse_exiftool_args(vec![&image, &exif_glob]);
+        assert_eq!(group_glob.glob_patterns, vec!["EXIF:*"]);
+        assert!(group_glob.group_all_patterns.is_empty());
+        assert!(group_glob.should_extract_tag("Make", "EXIF"));
+
+        let double_dash = "--GPS*".to_string();
+        let (_, excluded) = parse_exiftool_args(vec![&image, &double_dash]);
+        assert!(
+            !excluded.should_extract_tag("GPSVersionID", "EXIF"),
+            "--GPS* is ExifTool's exclusion syntax, never an inclusion"
+        );
+
+        let double_dash_all = "--all".to_string();
+        let (_, all_alias) = parse_exiftool_args(vec![&image, &double_dash_all]);
+        assert!(all_alias.extract_all, "--all is a spelling of -all");
     }
 
     /// The unknown-option guard used to reject every argument of two characters or
@@ -695,8 +692,7 @@ mod tests {
         let (files, filter_opts) = parse_exiftool_args(vec![&image, &star_numeric]);
 
         assert_eq!(files, vec!["image.jpg"]);
-        assert!(filter_opts.glob_patterns.contains(&"*".to_string()));
-        assert!(filter_opts.numeric_tags.contains("*"));
+        assert_eq!(filter_opts.tag_requests, vec![TagRequest::new("*", true)]);
         assert!(filter_opts.should_extract_tag("Orientation", "EXIF"));
         assert!(filter_opts.should_use_numeric("Orientation", "EXIF"));
 
@@ -704,8 +700,9 @@ mod tests {
         let (files, filter_opts) = parse_exiftool_args(vec![&image, &star]);
 
         assert_eq!(files, vec!["image.jpg"]);
-        assert!(filter_opts.glob_patterns.contains(&"*".to_string()));
-        assert!(filter_opts.numeric_tags.is_empty());
+        assert_eq!(filter_opts.tag_requests, vec![TagRequest::new("*", false)]);
+        assert!(filter_opts.should_extract_tag("Orientation", "EXIF"));
+        assert!(!filter_opts.should_use_numeric("Orientation", "EXIF"));
 
         // Two-character wildcard requests are accepted too, matching ExifTool.
         let single_char_numeric = "-?#".to_string();
@@ -728,7 +725,7 @@ mod tests {
             !filter_opts.extract_all,
             "-all# must stay a filtered request so the numeric selection still applies"
         );
-        assert!(filter_opts.numeric_tags.contains("all"));
+        assert_eq!(filter_opts.tag_requests, vec![TagRequest::new("all", true)]);
         assert!(filter_opts.should_extract_tag("Orientation", "EXIF"));
         assert!(filter_opts.should_use_numeric("Orientation", "EXIF"));
     }

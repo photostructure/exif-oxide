@@ -4,12 +4,12 @@
 //! Tests all features against real image files to ensure ExifTool compatibility
 
 use exif_oxide::formats::extract_metadata;
-use exif_oxide::types::{FilterOptions, TagValue};
-use std::collections::HashSet;
+use exif_oxide::types::{FilterOptions, TagRequest, TagValue};
 use std::path::{Path, PathBuf};
 
 const TEST_IMAGE_CANON: &str = "test-images/canon/eos_rebel_t3i.jpg";
 const TEST_IMAGE_RICOH: &str = "third-party/exiftool/t/images/Ricoh2.jpg";
+const TEST_IMAGE_APPLE_MOV: &str = "test-images/apple/IMG_3755.MOV";
 /// Has an EXIF FileSource tag, which a `File*` *name* pattern also selects.
 const TEST_IMAGE_NIKON: &str = "test-images/nikon/d3000.jpg";
 
@@ -61,18 +61,7 @@ fn test_case_insensitive_tag_filtering() {
 #[test]
 fn test_numeric_value_control() {
     // Test numeric control with # suffix like -Orientation#
-    let mut numeric_tags = HashSet::new();
-    numeric_tags.insert("Orientation".to_string());
-
-    let filter = FilterOptions {
-        requested_tags: vec!["Orientation".to_string()],
-        requested_groups: vec![],
-        group_all_patterns: vec![],
-        extract_all: false,
-        numeric_tags,
-        glob_patterns: vec![],
-        ..Default::default()
-    };
+    let filter = FilterOptions::from_requests(vec![TagRequest::new("Orientation", true)]);
 
     let result = extract_metadata(Path::new(TEST_IMAGE_CANON), false, false, Some(filter)).unwrap();
 
@@ -94,7 +83,7 @@ fn test_group_all_filtering() {
         requested_groups: vec![],
         group_all_patterns: vec!["EXIF:all".to_string()],
         extract_all: false,
-        numeric_tags: HashSet::new(),
+        tag_requests: vec![],
         glob_patterns: vec![],
         ..Default::default()
     };
@@ -126,7 +115,7 @@ fn test_prefix_wildcard_gps() {
         requested_groups: vec![],
         group_all_patterns: vec![],
         extract_all: false,
-        numeric_tags: HashSet::new(),
+        tag_requests: vec![],
         glob_patterns: vec!["GPS*".to_string()],
         ..Default::default()
     };
@@ -158,7 +147,7 @@ fn test_suffix_wildcard() {
         requested_groups: vec![],
         group_all_patterns: vec![],
         extract_all: false,
-        numeric_tags: HashSet::new(),
+        tag_requests: vec![],
         glob_patterns: vec!["*Width".to_string()],
         ..Default::default()
     };
@@ -190,7 +179,7 @@ fn test_middle_wildcard() {
         requested_groups: vec![],
         group_all_patterns: vec![],
         extract_all: false,
-        numeric_tags: HashSet::new(),
+        tag_requests: vec![],
         glob_patterns: vec!["*Image*".to_string()],
         ..Default::default()
     };
@@ -222,7 +211,7 @@ fn test_middle_wildcard_date_pattern() {
         requested_groups: vec![],
         group_all_patterns: vec![],
         extract_all: false,
-        numeric_tags: HashSet::new(),
+        tag_requests: vec![],
         glob_patterns: vec!["*Date*".to_string()],
         ..Default::default()
     };
@@ -256,18 +245,11 @@ fn test_middle_wildcard_date_pattern() {
 #[test]
 fn test_complex_filtering_combination() {
     // Test complex filtering: -Orientation# -EXIF:all -GPS*
-    let mut numeric_tags = HashSet::new();
-    numeric_tags.insert("Orientation".to_string());
-
-    let filter = FilterOptions {
-        requested_tags: vec!["Orientation".to_string()],
-        requested_groups: vec![],
-        group_all_patterns: vec!["EXIF:all".to_string()],
-        extract_all: false,
-        numeric_tags,
-        glob_patterns: vec!["GPS*".to_string()],
-        ..Default::default()
-    };
+    let filter = FilterOptions::from_requests(vec![
+        TagRequest::new("Orientation", true),
+        TagRequest::new("EXIF:all", false),
+        TagRequest::new("GPS*", false),
+    ]);
 
     let result = extract_metadata(Path::new(TEST_IMAGE_RICOH), false, false, Some(filter)).unwrap();
 
@@ -340,7 +322,7 @@ fn test_group_qualified_glob_patterns() {
         requested_groups: vec![],
         group_all_patterns: vec![],
         extract_all: false,
-        numeric_tags: HashSet::new(),
+        tag_requests: vec![],
         glob_patterns: vec!["EXIF:GPS*".to_string()],
         ..Default::default()
     };
@@ -364,7 +346,7 @@ fn test_no_matches_wildcard() {
         requested_groups: vec![],
         group_all_patterns: vec![],
         extract_all: false,
-        numeric_tags: HashSet::new(),
+        tag_requests: vec![],
         glob_patterns: vec!["NonExistent*".to_string()],
         ..Default::default()
     };
@@ -385,7 +367,7 @@ fn test_multiple_glob_patterns() {
         requested_groups: vec![],
         group_all_patterns: vec![],
         extract_all: false,
-        numeric_tags: HashSet::new(),
+        tag_requests: vec![],
         glob_patterns: vec!["*Date*".to_string(), "*Width*".to_string()],
         ..Default::default()
     };
@@ -434,7 +416,7 @@ fn test_case_insensitive_glob_patterns() {
         requested_groups: vec![],
         group_all_patterns: vec![],
         extract_all: false,
-        numeric_tags: HashSet::new(),
+        tag_requests: vec![],
         glob_patterns: vec!["gps*".to_string()], // lowercase
         ..Default::default()
     };
@@ -459,18 +441,7 @@ fn test_case_insensitive_glob_patterns() {
 #[test]
 fn test_numeric_with_glob_patterns() {
     // Test numeric control combined with glob patterns: -GPS*#
-    let mut numeric_tags = HashSet::new();
-    numeric_tags.insert("GPS*".to_string());
-
-    let filter = FilterOptions {
-        requested_tags: vec![],
-        requested_groups: vec![],
-        group_all_patterns: vec![],
-        extract_all: false,
-        numeric_tags,
-        glob_patterns: vec!["GPS*".to_string()],
-        ..Default::default()
-    };
+    let filter = FilterOptions::from_requests(vec![TagRequest::new("GPS*", true)]);
 
     let result = extract_metadata(Path::new(TEST_IMAGE_RICOH), false, false, Some(filter)).unwrap();
 
@@ -494,6 +465,60 @@ fn test_numeric_with_glob_patterns() {
         TagValue::U8(0) | TagValue::U16(0) => (),
         other => panic!("Expected numeric GPSAltitudeRef 0, got: {other:?}"),
     }
+}
+
+/// When several requests match one tag, the earliest one decides how it prints.
+/// ExifTool appends every request's matches to its found-tag list in request order
+/// and the JSON writer keeps only the first entry per tag name.
+///
+/// Probed against vendored ExifTool 13.59:
+///
+/// ```text
+/// exiftool -j -G -Duration "-*Duration*#" test-images/apple/IMG_3755.MOV
+///   => "QuickTime:Duration": "2.96 s",  "QuickTime:TrackDuration": 2.965
+/// exiftool -j -G "-*Duration*#" -Duration test-images/apple/IMG_3755.MOV
+///   => "QuickTime:Duration": 2.965,     "QuickTime:TrackDuration": 2.965
+/// ```
+///
+/// ExifTool: lib/Image/ExifTool.pm:5345-5437 (SetFoundTags), 3266-3290 (GetInfo),
+/// exiftool:2947-2953 (JSON `%noDups`).
+#[test]
+fn test_numeric_request_order_decides_duration_output() {
+    let duration_of = |filter: FilterOptions| -> TagValue {
+        let mut result = extract_metadata(
+            Path::new(TEST_IMAGE_APPLE_MOV),
+            false,
+            false,
+            Some(filter.clone()),
+        )
+        .unwrap();
+        result.prepare_for_serialization(Some(&filter.tag_requests));
+        result
+            .legacy_tags
+            .get("QuickTime:Duration")
+            .expect("QuickTime:Duration should be extracted")
+            .clone()
+    };
+
+    let print_first = FilterOptions::from_requests(vec![
+        TagRequest::new("Duration", false),
+        TagRequest::new("*Duration*", true),
+    ]);
+    assert_eq!(
+        duration_of(print_first),
+        TagValue::String("2.96 s".to_string()),
+        "-Duration comes first, so Duration keeps its PrintConv string"
+    );
+
+    let numeric_first = FilterOptions::from_requests(vec![
+        TagRequest::new("*Duration*", true),
+        TagRequest::new("Duration", false),
+    ]);
+    let numeric = duration_of(numeric_first);
+    assert!(
+        matches!(numeric, TagValue::F64(v) if (v - 2.965).abs() < 1e-9),
+        "-*Duration*# comes first, so Duration prints its ValueConv number, got {numeric:?}"
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -520,14 +545,7 @@ fn test_family1_group_request_selects_by_group1() {
         return;
     };
 
-    let mut numeric_tags = HashSet::new();
-    numeric_tags.insert("ExifIFD:FNum?er".to_string());
-    let filter = FilterOptions {
-        extract_all: false,
-        glob_patterns: vec!["ExifIFD:FNum?er".to_string()],
-        numeric_tags,
-        ..Default::default()
-    };
+    let filter = FilterOptions::from_requests(vec![TagRequest::new("ExifIFD:FNum?er", true)]);
 
     let result = extract_metadata(&image, false, false, Some(filter)).unwrap();
 
@@ -599,14 +617,11 @@ fn test_all_numeric_request_returns_every_tag_numerically() {
 
     let unfiltered = extract_metadata(&image, false, false, None).unwrap();
 
-    let mut numeric_tags = HashSet::new();
-    numeric_tags.insert("all".to_string());
-    let filter = FilterOptions {
-        extract_all: false,
-        requested_tags: vec!["all".to_string()],
-        numeric_tags,
-        ..Default::default()
-    };
+    let filter = FilterOptions::from_requests(vec![TagRequest::new("all", true)]);
+    assert!(
+        !filter.extract_all,
+        "-all# must stay a filtered request so the numeric override still runs"
+    );
     let result = extract_metadata(&image, false, false, Some(filter)).unwrap();
 
     assert_eq!(
@@ -626,6 +641,106 @@ fn test_all_numeric_request_returns_every_tag_numerically() {
     }
 }
 
+/// `-all#` mixed with an exact request: the exact request still wins when it comes
+/// first, and only for the tag it names. This exercises the numeric override inside
+/// `formats::extract_metadata` (reached because `-all#` keeps `extract_all` off),
+/// which is a different code path from `prepare_for_serialization`.
+///
+/// Probes (vendored ExifTool 13.59, canon/eos_rebel_t3i.jpg):
+///   exiftool -j -G -Orientation -all#
+///     => "EXIF:Orientation": "Rotate 270 CW", "EXIF:ExposureTime": 0.0005
+///   exiftool -j -G -all# -Orientation => "EXIF:Orientation": 8
+#[test]
+fn test_all_numeric_mixed_with_exact_request_honours_order() {
+    let Some(image) = find_test_asset(TEST_IMAGE_CANON) else {
+        eprintln!("skipping: {TEST_IMAGE_CANON} not available");
+        return;
+    };
+
+    // A numeric request overwrites `print` with `value`, so `print == value` is the
+    // signal that the `#` applied to this tag.
+    let printed_numerically = |filter: FilterOptions, tag: &str| -> bool {
+        let entry = extract_metadata(&image, false, false, Some(filter))
+            .unwrap()
+            .tags
+            .into_iter()
+            .find(|t| t.name == tag)
+            .unwrap_or_else(|| panic!("{tag} should be extracted"));
+        entry.print == entry.value
+    };
+
+    let exact_first = || {
+        FilterOptions::from_requests(vec![
+            TagRequest::new("Orientation", false),
+            TagRequest::new("all", true),
+        ])
+    };
+    assert!(
+        !printed_numerically(exact_first(), "Orientation"),
+        "-Orientation matched before -all#, so Orientation keeps its PrintConv string"
+    );
+    assert!(
+        printed_numerically(exact_first(), "ExposureTime"),
+        "ExposureTime is only matched by -all#, so it prints its ValueConv value"
+    );
+
+    let all_first = FilterOptions::from_requests(vec![
+        TagRequest::new("all", true),
+        TagRequest::new("Orientation", false),
+    ]);
+    assert!(
+        printed_numerically(all_first, "Orientation"),
+        "-all# matched first, so Orientation prints its ValueConv value"
+    );
+}
+
+/// `-all` takes the unfiltered extraction path, but an earlier `-TAG#` must still
+/// select ValueConv output for the tag it names - otherwise the structured API and
+/// the JSON API disagree about the same FilterOptions.
+///
+/// Probes (vendored ExifTool 13.59, canon/eos_rebel_t3i.jpg):
+///   exiftool -j -G -Orientation# -all => "EXIF:Orientation": 8
+///   exiftool -j -G -all -Orientation# => "EXIF:Orientation": "Rotate 270 CW"
+#[test]
+fn test_numeric_request_applies_under_extract_all() {
+    let Some(image) = find_test_asset(TEST_IMAGE_CANON) else {
+        eprintln!("skipping: {TEST_IMAGE_CANON} not available");
+        return;
+    };
+
+    let numeric_first = FilterOptions::from_requests(vec![
+        TagRequest::new("Orientation", true),
+        TagRequest::new("all", false),
+    ]);
+    assert!(numeric_first.extract_all, "a bare -all skips filtering");
+    let result = extract_metadata(&image, false, false, Some(numeric_first)).unwrap();
+    let orientation = result
+        .tags
+        .iter()
+        .find(|t| t.name == "Orientation")
+        .expect("-all must include EXIF:Orientation");
+    match &orientation.print {
+        TagValue::U8(8) | TagValue::U16(8) => (),
+        other => panic!("-Orientation# matched before -all, expected numeric 8, got {other:?}"),
+    }
+
+    let all_first = FilterOptions::from_requests(vec![
+        TagRequest::new("all", false),
+        TagRequest::new("Orientation", true),
+    ]);
+    let result = extract_metadata(&image, false, false, Some(all_first)).unwrap();
+    let orientation = result
+        .tags
+        .iter()
+        .find(|t| t.name == "Orientation")
+        .expect("-all must include EXIF:Orientation");
+    assert_eq!(
+        orientation.print,
+        TagValue::String("Rotate 270 CW".to_string()),
+        "-all matched first, so Orientation keeps its PrintConv string"
+    );
+}
+
 /// Item 4: `-*#` is the same request as `-all#`.
 ///
 /// ExifTool: lib/Image/ExifTool.pm:5367 matches `/^(\*|all)$/i`.
@@ -641,14 +756,7 @@ fn test_star_numeric_request_returns_every_tag_numerically() {
 
     let unfiltered = extract_metadata(&image, false, false, None).unwrap();
 
-    let mut numeric_tags = HashSet::new();
-    numeric_tags.insert("*".to_string());
-    let filter = FilterOptions {
-        extract_all: false,
-        glob_patterns: vec!["*".to_string()],
-        numeric_tags,
-        ..Default::default()
-    };
+    let filter = FilterOptions::from_requests(vec![TagRequest::new("*", true)]);
     let result = extract_metadata(&image, false, false, Some(filter)).unwrap();
 
     assert_eq!(
@@ -757,15 +865,7 @@ fn test_bare_file_name_pattern_reaches_exif_tags() {
         return;
     };
 
-    let mut numeric_tags = HashSet::new();
-    numeric_tags.insert("File*".to_string());
-
-    let filter = FilterOptions {
-        extract_all: false,
-        glob_patterns: vec!["File*".to_string()],
-        numeric_tags,
-        ..Default::default()
-    };
+    let filter = FilterOptions::from_requests(vec![TagRequest::new("File*", true)]);
 
     let result = extract_metadata(&image, false, false, Some(filter)).unwrap();
 
@@ -924,36 +1024,30 @@ fn test_fast_path_system_tags_match_full_parse() {
 
     // Plain requests, and the same requests with `#` - the numeric transformation has
     // to happen on both paths too.
-    for numeric_tags in [
-        HashSet::new(),
-        HashSet::from(["FilePermissions".to_string(), "FileSize".to_string()]),
-    ] {
-        let shortcut = FilterOptions {
-            requested_tags: file_tags.clone(),
-            extract_all: false,
-            numeric_tags: numeric_tags.clone(),
-            ..Default::default()
+    for numeric in [&[][..], &["FilePermissions", "FileSize"][..]] {
+        let requests = |extra: Option<&str>| -> Vec<TagRequest> {
+            file_tags
+                .iter()
+                .map(String::as_str)
+                .chain(extra)
+                .map(|tag| TagRequest::new(tag, numeric.contains(&tag)))
+                .collect()
         };
+
+        let shortcut = FilterOptions::from_requests(requests(None));
         assert!(
             shortcut.is_file_group_only(),
             "exact File tag names should take the shortcut"
         );
 
         // Adding one EXIF tag forces the full parse without changing which File tags match.
-        let mut with_exif = file_tags.clone();
-        with_exif.push("Orientation".to_string());
-        let full = FilterOptions {
-            requested_tags: with_exif,
-            extract_all: false,
-            numeric_tags: numeric_tags.clone(),
-            ..Default::default()
-        };
+        let full = FilterOptions::from_requests(requests(Some("Orientation")));
         assert!(!full.is_file_group_only());
 
         assert_eq!(
             describe(shortcut),
             describe(full),
-            "the File-only shortcut disagrees with a full parse (numeric: {numeric_tags:?})"
+            "the File-only shortcut disagrees with a full parse (numeric: {numeric:?})"
         );
     }
 }

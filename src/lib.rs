@@ -96,50 +96,28 @@ pub fn extract_metadata_json(file_path: &str) -> Result<Value, ExifError> {
 ///
 /// # Examples
 ///
+/// Requests are supplied in command-line order, because the first request that
+/// matches a tag decides whether that tag's ValueConv or PrintConv value is
+/// returned - the same rule ExifTool applies.
+///
 /// ```no_run
 /// use exif_oxide::{extract_metadata_json_with_filter, FilterOptions};
-/// use std::collections::HashSet;
+/// use exif_oxide::types::TagRequest;
 ///
 /// // Extract only MIMEType tag
 /// let filter = FilterOptions::tags_only(vec!["MIMEType".to_string()]);
 /// let result = extract_metadata_json_with_filter("image.jpg", Some(filter))?;
 ///
 /// // Extract Orientation with numeric value (like -Orientation#)
-/// let mut numeric_tags = HashSet::new();
-/// numeric_tags.insert("Orientation".to_string());
-/// let filter = FilterOptions {
-///     requested_tags: vec!["Orientation".to_string()],
-///     requested_groups: vec![],
-///     group_all_patterns: vec![],
-///     extract_all: false,
-///     numeric_tags,
-///     glob_patterns: vec![],
-///     ..Default::default()
-/// };
+/// let filter = FilterOptions::from_requests(vec![TagRequest::new("Orientation", true)]);
 /// let result = extract_metadata_json_with_filter("image.jpg", Some(filter))?;
 ///
 /// // Extract all EXIF group tags (like -EXIF:all)
-/// let filter = FilterOptions {
-///     requested_tags: vec![],
-///     requested_groups: vec![],
-///     group_all_patterns: vec!["EXIF:all".to_string()],
-///     extract_all: false,
-///     numeric_tags: HashSet::new(),
-///     glob_patterns: vec![],
-///     ..Default::default()
-/// };
+/// let filter = FilterOptions::from_requests(vec![TagRequest::new("EXIF:all", false)]);
 /// let result = extract_metadata_json_with_filter("image.jpg", Some(filter))?;
 ///
 /// // Extract GPS tags with wildcard (like -GPS*)
-/// let filter = FilterOptions {
-///     requested_tags: vec![],
-///     requested_groups: vec![],
-///     group_all_patterns: vec![],
-///     extract_all: false,
-///     numeric_tags: HashSet::new(),
-///     glob_patterns: vec!["GPS*".to_string()],
-///     ..Default::default()
-/// };
+/// let filter = FilterOptions::from_requests(vec![TagRequest::new("GPS*", false)]);
 /// let result = extract_metadata_json_with_filter("image.jpg", Some(filter))?;
 /// # Ok::<(), exif_oxide::ExifError>(())
 /// ```
@@ -154,16 +132,11 @@ pub fn extract_metadata_json_with_filter(
     let path = Path::new(file_path);
     let mut exif_data = formats::extract_metadata(path, false, false, filter_options.clone())?;
 
-    // Prepare for serialization with numeric tags if specified
-    let numeric_tags_ref = filter_options.as_ref().and_then(|f| {
-        if f.numeric_tags.is_empty() {
-            None
-        } else {
-            Some(&f.numeric_tags)
-        }
-    });
+    // Prepare for serialization; the ordered request list decides which tags print
+    // their ValueConv value.
+    let tag_requests = filter_options.as_ref().map(|f| f.tag_requests.as_slice());
 
-    exif_data.prepare_for_serialization(numeric_tags_ref);
+    exif_data.prepare_for_serialization(tag_requests);
 
     // Convert ExifData to JSON
     let json = serde_json::to_value(&exif_data)
