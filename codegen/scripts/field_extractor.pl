@@ -51,6 +51,11 @@ if ( @ARGV < 1 ) {
 my $module_path   = shift @ARGV;
 my @target_fields = @ARGV;
 
+# Fail closed: a symbol that cannot be serialized must abort generation,
+# not silently shrink the module's output (the run would otherwise pass
+# with partial data).
+my $serialization_failures = 0;
+
 # Extract module name from path
 my $module_name = basename($module_path);
 $module_name =~ s/\.pm$//;
@@ -100,6 +105,12 @@ extract_symbols( $package_name, $module_name, \@target_fields,
 
 # Extract lexical arrays from source code
 extract_lexical_arrays( $module_path, $module_name, \@target_fields );
+
+if ($serialization_failures) {
+    print STDERR "Error: $serialization_failures symbol(s) failed JSON"
+      . " serialization for $module_name; aborting\n";
+    exit 1;
+}
 
 print STDERR "Field extraction with AST complete for $module_name\n";
 
@@ -185,7 +196,8 @@ sub extract_array_symbol {
         print "$json_data\n";
     };
     if ($@) {
-        print STDERR "Warning: Failed to serialize array $symbol_name: $@\n";
+        print STDERR "Error: Failed to serialize array $symbol_name: $@\n";
+        $serialization_failures++;
     }
 }
 
@@ -202,6 +214,17 @@ sub extract_hash_symbol {
 
     # Skip if no data after filtering
     return unless $size > 0;
+
+    # Symbols holding nothing but glob aliases (namespace plumbing like
+    # %Charset's Decompose/Recompose) are not data; skip them rather than
+    # emitting lookup tables of "[Glob: ...]" placeholder strings.
+    my $has_real_value =
+      grep { ref($_) or !defined($_) or $_ !~ /^\[Glob: / }
+      values %$filtered_data;
+    unless ($has_real_value) {
+        print STDERR "Skipping glob-only symbol: $symbol_name\n";
+        return;
+    }
 
     # For non-composite tables, apply size limit to prevent huge output
     if ( !$is_composite_table && $size > 1000 ) {
@@ -231,7 +254,8 @@ sub extract_hash_symbol {
 
     eval { print $json->encode($symbol_data) . "\n"; };
     if ($@) {
-        print STDERR "Warning: Failed to serialize $symbol_name: $@\n";
+        print STDERR "Error: Failed to serialize $symbol_name: $@\n";
+        $serialization_failures++;
     }
 }
 
@@ -306,6 +330,12 @@ sub filter_code_refs {
     $seen  //= {};
 
     return "[MaxDepth]" if $depth > 10;
+
+    # Bare typeglob VALUES (e.g. *Image::ExifTool::UserDefined::FileTypes)
+    # are not refs, so they'd pass the !ref check below and choke JSON::XS.
+    if ( !ref($data) && ref( \$data ) eq 'GLOB' ) {
+        return "[Glob: $data]";
+    }
 
     if ( !ref($data) ) {
         return $data;

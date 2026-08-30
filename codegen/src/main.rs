@@ -130,6 +130,38 @@ fn load_default_modules(_current_dir: &Path) -> Result<Vec<String>> {
     Ok(all_modules)
 }
 
+/// Resolve configured module paths against the ExifTool base directory,
+/// failing closed when any configured module is missing: a truncated staged
+/// copy or a config typo must abort generation, not silently drop a module.
+fn resolve_configured_module_paths(
+    exiftool_base_dir: &Path,
+    configured: &[String],
+) -> Result<Vec<std::path::PathBuf>> {
+    let mut module_paths = Vec::new();
+    let mut missing = Vec::new();
+    for module_path_str in configured {
+        let full_path = exiftool_base_dir.join(module_path_str);
+        if full_path.exists() {
+            module_paths.push(full_path);
+        } else {
+            missing.push(format!(
+                "{} (resolved to {})",
+                module_path_str,
+                full_path.display()
+            ));
+        }
+    }
+    if !missing.is_empty() {
+        anyhow::bail!(
+            "{} configured ExifTool module(s) missing from {}:\n  {}",
+            missing.len(),
+            exiftool_base_dir.display(),
+            missing.join("\n  ")
+        );
+    }
+    Ok(module_paths)
+}
+
 /// Run field extraction with strategy-based processing
 fn run_universal_extraction(
     current_dir: &Path,
@@ -164,21 +196,7 @@ where
 
     // Load module paths from configuration
     let default_modules = load_default_modules(current_dir)?;
-    let mut module_paths = Vec::new();
-
-    // Convert relative paths from JSON config to absolute paths
-    for module_path_str in &default_modules {
-        let full_path = exiftool_base_dir.join(module_path_str);
-        if full_path.exists() {
-            module_paths.push(full_path);
-        } else {
-            warn!(
-                "⚠️  Module path not found: {} (resolved to {})",
-                module_path_str,
-                full_path.display()
-            );
-        }
-    }
+    let module_paths = resolve_configured_module_paths(&exiftool_base_dir, &default_modules)?;
 
     info!(
         "📦 Found {} ExifTool modules to process",
@@ -579,6 +597,29 @@ mod tests {
             module: module.to_string(),
             metadata: FieldMetadata::default(),
         }
+    }
+
+    #[test]
+    fn missing_configured_module_fails_resolution() {
+        let staged = tempfile::tempdir().unwrap();
+        let present = "lib/Image/ExifTool/Present.pm";
+        let present_path = staged.path().join(present);
+        std::fs::create_dir_all(present_path.parent().unwrap()).unwrap();
+        std::fs::write(&present_path, "1;\n").unwrap();
+
+        let configured = vec![
+            present.to_string(),
+            "lib/Image/ExifTool/MissingModule.pm".to_string(),
+        ];
+        let error = resolve_configured_module_paths(staged.path(), &configured).unwrap_err();
+        let message = format!("{error:#}");
+        assert!(
+            message.contains("MissingModule.pm"),
+            "error must name the missing module: {message}"
+        );
+
+        let ok = resolve_configured_module_paths(staged.path(), &configured[..1].to_vec()).unwrap();
+        assert_eq!(ok, vec![present_path]);
     }
 
     #[test]
