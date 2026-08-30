@@ -21,7 +21,7 @@ mod ppi; // PPI JSON parsing for codegen-time AST processing
 mod schemas;
 mod strategies;
 
-use field_extractor::FieldExtractor;
+use field_extractor::{FieldExtractor, FieldSymbol};
 use file_operations::create_directories;
 use strategies::StrategyDispatcher;
 
@@ -137,8 +137,28 @@ fn run_universal_extraction(
     selected_modules: Option<&Vec<String>>,
 ) -> Result<()> {
     let extractor = FieldExtractor::new();
+    run_universal_extraction_with(current_dir, output_dir, selected_modules, |module_path| {
+        extractor.extract_module(module_path)
+    })
+}
+
+/// Injectable implementation used to prove extraction failure behavior without
+/// depending on the host Perl installation.
+fn run_universal_extraction_with<F>(
+    current_dir: &Path,
+    output_dir: &str,
+    selected_modules: Option<&Vec<String>>,
+    extract_module: F,
+) -> Result<()>
+where
+    F: Fn(&Path) -> Result<Vec<FieldSymbol>>,
+{
     let mut dispatcher = StrategyDispatcher::new();
-    let exiftool_base_dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../third-party/exiftool");
+    // EXIFTOOL_BASE points at a staged (patched) copy of ExifTool so the
+    // third-party/exiftool submodule is never modified during generation.
+    let exiftool_base_dir = std::env::var_os("EXIFTOOL_BASE")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|| Path::new(env!("CARGO_MANIFEST_DIR")).join("../third-party/exiftool"));
 
     info!("🔍 Building ExifTool module paths from configuration");
 
@@ -217,24 +237,29 @@ fn run_universal_extraction(
 
     let start = Instant::now();
     let mut all_symbols = Vec::new();
+    let selected_module_count = selected_paths.len();
+    let mut extraction_failures = Vec::new();
 
     // Extract symbols from selected modules
     for module_path in selected_paths {
-        match extractor.extract_module(module_path) {
+        let module_name = module_path
+            .file_name()
+            .and_then(|name| name.to_str())
+            .unwrap_or("unknown module");
+
+        match extract_module(module_path) {
+            Ok(symbols) if symbols.is_empty() => {
+                let failure = format!("{}: extractor returned no symbols", module_path.display());
+                warn!("❌ {failure}");
+                extraction_failures.push(failure);
+            }
             Ok(symbols) => {
-                let module_name = module_path
+                let module_stem = module_path
                     .file_stem()
                     .and_then(|name| name.to_str())
-                    .unwrap_or("unknown")
-                    .strip_suffix(".pm")
-                    .unwrap_or_else(|| {
-                        module_path
-                            .file_stem()
-                            .and_then(|name| name.to_str())
-                            .unwrap_or("unknown")
-                    });
+                    .unwrap_or("unknown");
 
-                info!("✅ {}: {} symbols extracted", module_name, symbols.len());
+                info!("✅ {}: {} symbols extracted", module_stem, symbols.len());
 
                 debug!(
                     "  📋 {} symbols ready for strategy processing",
@@ -243,7 +268,9 @@ fn run_universal_extraction(
                 all_symbols.extend(symbols);
             }
             Err(e) => {
-                warn!("❌ Failed to extract from {}: {}", module_path.display(), e);
+                let failure = format!("{}: {e:#}", module_path.display());
+                warn!("❌ Failed to extract from {module_name}: {e:#}");
+                extraction_failures.push(failure);
             }
         }
     }
@@ -254,45 +281,57 @@ fn run_universal_extraction(
         extraction_time.as_secs_f64()
     );
 
+    if !extraction_failures.is_empty() {
+        return Err(anyhow::anyhow!(
+            "Field extraction incomplete: {} of {} selected modules failed; refusing partial code generation:\n- {}",
+            extraction_failures.len(),
+            selected_module_count,
+            extraction_failures.join("\n- ")
+        ));
+    }
+
+    if all_symbols.is_empty() {
+        return Err(anyhow::anyhow!(
+            "Field extraction produced no symbols across {} selected modules; refusing empty code generation",
+            selected_module_count
+        ));
+    }
+
     // Process extracted symbols through strategy system
-    if !all_symbols.is_empty() {
-        let strategy_start = Instant::now();
-        info!(
-            "🎯 Processing {} symbols through strategy system",
-            all_symbols.len()
-        );
+    let strategy_start = Instant::now();
+    info!(
+        "🎯 Processing {} symbols through strategy system",
+        all_symbols.len()
+    );
 
-        match dispatcher.process_symbols(all_symbols, output_dir) {
-            Ok(generated_files) => {
-                let strategy_time = strategy_start.elapsed();
-                info!(
-                    "✅ Strategy processing completed in {:.2}s ({} files generated)",
-                    strategy_time.as_secs_f64(),
-                    generated_files.len()
-                );
+    match dispatcher.process_symbols(all_symbols, output_dir) {
+        Ok(generated_files) => {
+            let strategy_time = strategy_start.elapsed();
+            info!(
+                "✅ Strategy processing completed in {:.2}s ({} files generated)",
+                strategy_time.as_secs_f64(),
+                generated_files.len()
+            );
 
-                // Generate mod.rs files after files are written to disk
-                let mod_update_start = Instant::now();
-                info!("📄 Updating mod.rs files after file generation");
-                update_mod_files(output_dir)?;
-                let mod_update_time = mod_update_start.elapsed();
+            // Generate mod.rs files after files are written to disk
+            let mod_update_start = Instant::now();
+            info!("📄 Updating mod.rs files after file generation");
+            update_mod_files(output_dir)?;
+            let mod_update_time = mod_update_start.elapsed();
 
-                info!(
-                    "📝 mod.rs files updated in {:.2}s",
-                    mod_update_time.as_secs_f64()
-                );
-                info!(
-                    "🏁 Total field extraction time: {:.2}s",
-                    (extraction_time + strategy_time + mod_update_time).as_secs_f64()
-                );
-            }
-            Err(e) => {
-                warn!("❌ Strategy processing failed: {}", e);
-                return Err(e);
-            }
+            info!(
+                "📝 mod.rs files updated in {:.2}s",
+                mod_update_time.as_secs_f64()
+            );
+            info!(
+                "🏁 Total field extraction time: {:.2}s",
+                (extraction_time + strategy_time + mod_update_time).as_secs_f64()
+            );
         }
-    } else {
-        warn!("⚠️  No symbols extracted for processing");
+        Err(e) => {
+            warn!("❌ Strategy processing failed: {}", e);
+            return Err(e);
+        }
     }
 
     Ok(())
@@ -520,4 +559,88 @@ fn update_mod_files(output_dir: &str) -> Result<()> {
     info!("📋 Updated main mod.rs with {} new modules", modules_added);
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::field_extractor::FieldMetadata;
+    use serde_json::Value as JsonValue;
+
+    fn selected_modules(names: &[&str]) -> Vec<String> {
+        names.iter().map(|name| (*name).to_string()).collect()
+    }
+
+    fn test_symbol(module: &str) -> FieldSymbol {
+        FieldSymbol {
+            symbol_type: "unsupported-test-type".to_string(),
+            name: "TEST_SYMBOL".to_string(),
+            data: JsonValue::Null,
+            module: module.to_string(),
+            metadata: FieldMetadata::default(),
+        }
+    }
+
+    #[test]
+    fn selected_module_extraction_failure_is_not_success() {
+        let output_dir = tempfile::tempdir().unwrap();
+        let modules = selected_modules(&["QuickTime.pm"]);
+
+        let error = run_universal_extraction_with(
+            Path::new(env!("CARGO_MANIFEST_DIR")),
+            output_dir.path().to_str().unwrap(),
+            Some(&modules),
+            |_| Err(anyhow::anyhow!("simulated XS handshake failure")),
+        )
+        .unwrap_err();
+
+        let message = format!("{error:#}");
+        assert!(message.contains("QuickTime.pm"), "{message}");
+        assert!(
+            message.contains("simulated XS handshake failure"),
+            "{message}"
+        );
+    }
+
+    #[test]
+    fn partial_module_extraction_failure_aborts_before_output() {
+        let output_dir = tempfile::tempdir().unwrap();
+        let modules = selected_modules(&["ExifTool.pm", "QuickTime.pm"]);
+
+        let error = run_universal_extraction_with(
+            Path::new(env!("CARGO_MANIFEST_DIR")),
+            output_dir.path().to_str().unwrap(),
+            Some(&modules),
+            |module_path| match module_path.file_name().and_then(|name| name.to_str()) {
+                Some("ExifTool.pm") => Ok(vec![test_symbol("ExifTool")]),
+                Some("QuickTime.pm") => Err(anyhow::anyhow!("simulated module failure")),
+                other => panic!("unexpected module: {other:?}"),
+            },
+        )
+        .unwrap_err();
+
+        let message = format!("{error:#}");
+        assert!(message.contains("QuickTime.pm"), "{message}");
+        assert!(message.contains("simulated module failure"), "{message}");
+        assert!(
+            !output_dir.path().join("strategy_selection.log").exists(),
+            "strategy processing must not run after a partial extraction"
+        );
+    }
+
+    #[test]
+    fn zero_symbols_cannot_complete_codegen() {
+        let output_dir = tempfile::tempdir().unwrap();
+        let modules = selected_modules(&["QuickTime.pm"]);
+
+        let error = run_universal_extraction_with(
+            Path::new(env!("CARGO_MANIFEST_DIR")),
+            output_dir.path().to_str().unwrap(),
+            Some(&modules),
+            |_| Ok(Vec::new()),
+        )
+        .unwrap_err();
+
+        assert!(format!("{error:#}").contains("QuickTime.pm"));
+    }
 }

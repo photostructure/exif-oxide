@@ -100,10 +100,11 @@ impl FieldExtractor {
         let parse_start = std::time::Instant::now();
         let stdout_str = String::from_utf8_lossy(&output.stdout);
         let mut symbols = Vec::new();
+        let mut parse_failures = Vec::new();
         let line_count = stdout_str.lines().count();
         trace!("📋 Parsing {} lines of JSON output", line_count);
 
-        for line in stdout_str.lines() {
+        for (line_index, line) in stdout_str.lines().enumerate() {
             let line = line.trim();
 
             if line.is_empty() {
@@ -123,7 +124,7 @@ impl FieldExtractor {
                 }
                 Err(e) => {
                     warn!("Failed to parse JSON line: {} - Error: {}", line, e);
-                    // Continue processing other lines rather than failing
+                    parse_failures.push(format!("line {}: {e}", line_index + 1));
                 }
             }
         }
@@ -134,8 +135,34 @@ impl FieldExtractor {
             parse_time.as_millis()
         );
 
+        if !parse_failures.is_empty() {
+            return Err(anyhow::anyhow!(
+                "Field extractor returned {} malformed JSON records for {}:\n- {}",
+                parse_failures.len(),
+                module_path.display(),
+                parse_failures.join("\n- ")
+            ));
+        }
+
         let total_time = extract_start.elapsed();
         let symbol_count = symbols.len();
+
+        if symbols.is_empty() {
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            let stderr = stderr.trim();
+            let stderr_context = if stderr.is_empty() {
+                "no stderr output"
+            } else {
+                stderr
+            };
+            return Err(anyhow::anyhow!(
+                "Field extractor produced no symbols for {} after {:.2}ms ({} stdout lines; stderr: {})",
+                module_path.display(),
+                total_time.as_millis(),
+                line_count,
+                stderr_context
+            ));
+        }
 
         info!(
             "Field extraction completed: {} symbols extracted in {:.2}ms (perl: {:.1}ms, parse: {:.1}ms)",
@@ -214,5 +241,53 @@ mod tests {
         assert_eq!(symbol.name, "VERSION");
         assert_eq!(symbol.module, "DNG");
         assert_eq!(symbol.data.as_str().unwrap(), "1.25");
+    }
+
+    #[test]
+    fn successful_process_with_no_symbols_is_an_extraction_error() {
+        let temp_dir = tempfile::tempdir().unwrap();
+        let script_path = temp_dir.path().join("empty_extractor.pl");
+        std::fs::write(
+            &script_path,
+            "print STDERR qq(simulated XS handshake mismatch\\n); exit 0;\n",
+        )
+        .unwrap();
+        let module_path = temp_dir.path().join("QuickTime.pm");
+        std::fs::write(&module_path, "# test module\n").unwrap();
+        let extractor = FieldExtractor {
+            script_path: script_path.to_string_lossy().into_owned(),
+        };
+
+        let error = extractor.extract_module(&module_path).unwrap_err();
+        let message = format!("{error:#}");
+
+        assert!(message.contains("QuickTime.pm"), "{message}");
+        assert!(message.contains("no symbols"), "{message}");
+        assert!(
+            message.contains("simulated XS handshake mismatch"),
+            "{message}"
+        );
+    }
+
+    #[test]
+    fn malformed_record_prevents_partial_module_success() {
+        let temp_dir = tempfile::tempdir().unwrap();
+        let script_path = temp_dir.path().join("partial_extractor.pl");
+        std::fs::write(
+            &script_path,
+            r#"print "{\"type\":\"scalar\",\"name\":\"VERSION\",\"data\":\"1\",\"module\":\"QuickTime\",\"metadata\":{\"size\":1}}\nnot-json\n";"#,
+        )
+        .unwrap();
+        let module_path = temp_dir.path().join("QuickTime.pm");
+        std::fs::write(&module_path, "# test module\n").unwrap();
+        let extractor = FieldExtractor {
+            script_path: script_path.to_string_lossy().into_owned(),
+        };
+
+        let error = extractor.extract_module(&module_path).unwrap_err();
+        let message = format!("{error:#}");
+
+        assert!(message.contains("QuickTime.pm"), "{message}");
+        assert!(message.contains("line 2"), "{message}");
     }
 }
