@@ -250,14 +250,22 @@ matrix now exercises only unit + asset-free tests, so cross-platform
 coverage of real parsing is thin until an asset strategy (LFS vs nightly
 runner) lands.
 
+M1a PLANNED and decisions resolved (Matthew, 2026-08-30): plan +
+verified consumer contract in `_todo/20260830-P1-stay-open-m1a.md`.
+Key decisions: `-ver` and ExifToolVersion report `13.59`; Error/Warning
+key shape strictly follows ExifTool (bare without `-G`, `ExifTool:`-
+prefixed with `-G` — M1b must teach the wrapper's errorsAndWarnings()
+the prefixed form); warnings always emitted; `EXIF_OXIDE_LOG=/path`
+debug file logging in stay_open mode. Implementation starts AFTER the
+nondeterminism fix lands (same tree).
+
 Session gotchas for the next operator: worktree agents spawn at a stale
 base — have them `git merge --ff-only main` before starting; long
 multi-line `git commit -m` can be spuriously denied — use `-F <file>`;
 `codex exec` needs `< /dev/null`; `./scripts/capture.sh` for anything
-where stderr matters. Deliberately NOT
-committed:
-`.claude/settings.local.json` (destructive-git allowlist hunk — Matthew to
-review), `docs/chats/unknown-tags.md` (stale transcript, distill-or-delete).
+where stderr matters. `.claude/settings.local.json` stays uncommitted
+permanently (Matthew, 2026-08-30: "I won't commit .claude/settings —
+don't ask again").
 
 New follow-up TPP: `_todo/20260830-P2-cli-tag-request-parity.md` (5
 confirmed CLI request divergences deferred from the glob fix).
@@ -269,4 +277,6 @@ confirmed CLI request divergences deferred from the glob fix).
 - Geolocation: accept initial absence (city/country auto-tags degrade;
   58/231 fixtures change tzSource label) until a Geolocation.dat reader is
   ported?
-- `-ver` reports 13.59? Oracle corpus in CI (LFS vs nightly runner)?
+- ~~`-ver` reports 13.59?~~ DECIDED yes (2026-08-30, see M1a TPP).
+- Oracle corpus in CI (LFS vs nightly runner)? Sharper now that the CI
+  platform matrix runs only asset-free tests.

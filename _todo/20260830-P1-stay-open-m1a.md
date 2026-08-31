@@ -175,21 +175,26 @@ then `{ready}` — ExifTool "NEVER say die" (exiftool:348).
   residue.
 - Optional differential (framing only) vs vendored exiftool.
 
-## Decisions (Matthew) — see also parent TPP open decisions
+## Decisions (Matthew, 2026-08-30 — ALL RESOLVED)
 
-1. `-ver` value: recommend `13.59` named constant (codegen-sync note).
-   Auto-derive from submodule at codegen time is a possible follow-up.
-2. `ExifToolVersion` JSON key: recommend same constant.
-3. `Error`/`Warning` keys: recommend BARE keys always (consumer reads
-   bare; real ExifTool under `-G` emits `ExifTool:Error` which the
-   consumer would MISS — record for M1b).
-4. Warning gating: recommend always emit first `Warning` in JSON; defer
-   stderr `[minor]` semantics to M3.
-5. `-x` in M1a: accept-and-ignore (exclusion semantics are M3).
-6. Classic-mode exit codes (ExifTool exits 1 on any failed file; we
-   exit 0): defer — batch-cluster ignores exit codes.
-7. Debug escape hatch: optional `EXIF_OXIDE_LOG=/path` file logging in
-   stay_open mode (never a std stream).
+1. `-ver` value: **`13.59`** named constant (codegen-sync note;
+   auto-derive from submodule at codegen time is a possible follow-up).
+2. `ExifToolVersion` JSON key: **same constant** (`13.59`).
+3. `Error`/`Warning` keys: **strict ExifTool faithfulness** — the key
+   shape follows the request exactly as ExifTool does (exiftool:2949):
+   bare `Error`/`Warning` when `-G` is NOT requested (today's ReadTask
+   payload, so exiftool-vendored's errorsAndWarnings() keeps working),
+   `ExifTool:Error`/`ExifTool:Warning` when `-G` IS requested.
+   CONSEQUENCE FOR M1b: the wrapper's errorsAndWarnings() reads only
+   bare `t.Error`/`t.Warning` (ErrorsAndWarnings.ts:22-29) and must
+   learn the prefixed keys as part of the `-G` migration.
+4. Warning gating: **always emit** first `Warning` in JSON; stderr
+   `[minor]` semantics deferred to M3.
+5. `-x` in M1a: accept-and-ignore (exclusion semantics are M3) —
+   default taken.
+6. Classic-mode exit codes: deferred — batch-cluster ignores them.
+7. Debug escape hatch: **yes** — `EXIF_OXIDE_LOG=/path` writes tracing
+   to that file in stay_open mode; never a std stream.
 
 ## Risks
 
