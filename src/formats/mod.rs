@@ -1505,10 +1505,13 @@ fn extract_file_tags_only(
         }
     }
 
-    // Create final ExifData structure (ExifToolVersion is the emulated
-    // ExifTool version, decision 2 in the M1a TPP)
+    // Create final ExifData structure. This shortcut only ever serves
+    // filtered requests (is_file_group_only), and ExifTool omits
+    // ExifToolVersion from filtered output (probed: `exiftool -j -struct -G
+    // -FileSize x.jpg` has no version key) - so the version stays empty,
+    // matching the full-parse path's gating.
     let source_file = path.to_string_lossy().to_string();
-    let mut exif_data = ExifData::new(source_file, crate::EXIFTOOL_VERSION.to_string());
+    let mut exif_data = ExifData::new(source_file, String::new());
 
     // Set tag entries
     exif_data.tags = tag_entries;
