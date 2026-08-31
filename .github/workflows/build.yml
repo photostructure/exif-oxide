@@ -54,6 +54,16 @@ jobs:
           echo "${{ github.workspace }}/third-party/exiftool" >> $GITHUB_PATH
           third-party/exiftool/exiftool -ver
 
+      - name: Cache Perl dependencies
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/perl5
+          key: perl5-${{ runner.os }}-${{ hashFiles('cpanfile') }}
+
+      # check-perl syntax-checks scripts that `use PPI`/local::lib
+      - name: Install Perl dependencies
+        run: make perl-deps
+
       - name: Run format check, clippy, and tests
         run: make check
 
@@ -98,6 +108,13 @@ jobs:
 
       - name: Run tests
         run: cargo test -p exif-oxide --features test-helpers,integration-tests --locked
+
+      - name: Cache Perl dependencies (Linux)
+        if: runner.os == 'Linux'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/perl5
+          key: perl5-${{ runner.os }}-${{ hashFiles('cpanfile') }}
 
       # The codegen crate's tests (including the PPI renderer regression
       # suite) shell out to Perl scripts that need PPI/JSON::XS, so they only
