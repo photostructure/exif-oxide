@@ -21,6 +21,37 @@ fn main() {
     // StreamHandler.ts:75-81, :95-100).
     let raw_args: Vec<String> = std::env::args().skip(1).collect();
     if let Some(seed_args) = exif_oxide::cli::detect_stay_open(&raw_args) {
+        // Debug escape hatch (M1a decision 7): EXIF_OXIDE_LOG=/path routes
+        // tracing to that file - NEVER a std stream. Without it, no
+        // subscriber is installed and all tracing events are discarded.
+        // (The consumer replaces the child env with {LANG:"C"}, so this can
+        // only be set deliberately.)
+        if let Some(path) = std::env::var_os("EXIF_OXIDE_LOG").filter(|p| !p.is_empty()) {
+            if let Ok(file) = std::fs::OpenOptions::new()
+                .create(true)
+                .append(true)
+                .open(&path)
+            {
+                let filter = tracing_subscriber::EnvFilter::try_from_default_env()
+                    .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("debug"));
+                tracing_subscriber::fmt()
+                    .with_env_filter(filter)
+                    .with_writer(std::sync::Mutex::new(file))
+                    .with_ansi(false)
+                    .init();
+            }
+            // An unopenable log path is silently ignored: there is nowhere
+            // safe to report it.
+        }
+
+        // Panics must never write to stderr (the default hook prints
+        // "thread panicked at ..." there, which would poison the protocol).
+        // catch_unwind in the REPL turns them into task errors; the hook
+        // forwards details to tracing for EXIF_OXIDE_LOG debugging.
+        std::panic::set_hook(Box::new(|info| {
+            tracing::error!("panic: {info}");
+        }));
+
         let stdin = std::io::stdin();
         let stdout = std::io::stdout();
         let stderr = std::io::stderr();

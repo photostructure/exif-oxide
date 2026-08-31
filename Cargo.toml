@@ -104,7 +104,11 @@ opt-level = 3     # Maximum optimization (equivalent to -O3)
 lto = true        # Link-time optimization
 codegen-units = 1 # Single codegen unit for better optimization
 strip = true      # Strip symbols automatically
-panic = "abort"   # Smaller binary, faster panic
+# panic = "unwind" (the default) is REQUIRED: -stay_open mode contains
+# per-command panics with catch_unwind (src/cli/stay_open.rs) so one bad file
+# cannot kill the consumer's process pool - ExifTool "NEVER say die"
+# (exiftool:348). panic = "abort" would turn every panic into process death.
+panic = "unwind"
 
 # The profile that 'dist' will build with
 [profile.dist]

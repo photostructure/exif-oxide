@@ -5,10 +5,14 @@
 
 use std::process::Command;
 
-/// Helper function to run the exif-oxide binary with given arguments
+/// Helper function to run the exif-oxide binary with given arguments.
+///
+/// Uses the harness-built binary (CARGO_BIN_EXE) instead of `cargo run`:
+/// a nested `cargo run` carries different feature flags than `cargo t`, so it
+/// used to REBUILD target/debug/exif-oxide mid-test-run and race every other
+/// test that spawns the binary.
 fn run_exif_oxide(args: &[&str]) -> std::process::Output {
-    let mut cmd = Command::new("cargo");
-    cmd.args(["run", "--quiet", "--"]);
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_exif-oxide"));
     cmd.args(args);
     cmd.output().expect("Failed to execute exif-oxide")
 }
@@ -108,8 +112,7 @@ fn test_debug_logging_for_compatibility_flags() {
     // Test that debug logging shows ignored flags when RUST_LOG=debug
     let test_file = "/tmp/test_nonexistent.jpg";
 
-    let mut cmd = Command::new("cargo");
-    cmd.args(["run", "--quiet", "--"]);
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_exif-oxide"));
     cmd.args([test_file, "-j", "-struct", "-G"]);
     cmd.env("RUST_LOG", "debug");
 
@@ -125,8 +128,7 @@ fn test_short_invalid_filters_exit_with_error() {
     // Test that short invalid filters cause immediate error exit
     let test_file = "/tmp/test_nonexistent.jpg";
 
-    let mut cmd = Command::new("cargo");
-    cmd.args(["run", "--quiet", "--"]);
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_exif-oxide"));
     cmd.args([test_file, "-xy"]);
 
     let output = cmd.output().expect("Failed to execute exif-oxide");
@@ -246,8 +248,7 @@ mod edge_cases {
         // Test that exactly 2-character filters cause errors
         let test_file = "/tmp/test_nonexistent.jpg";
 
-        let mut cmd = Command::new("cargo");
-        cmd.args(["run", "--quiet", "--"]);
+        let mut cmd = Command::new(env!("CARGO_BIN_EXE_exif-oxide"));
         cmd.args([test_file, "-AB"]);
 
         let output = cmd.output().expect("Failed to execute exif-oxide");

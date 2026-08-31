@@ -459,10 +459,11 @@ impl RawFormatHandler for MinoltaRawHandler {
                     continue;
                 }
 
-                // Unknown block - skip with warning
+                // Unknown block - skip with a tracing warning (never stderr:
+                // stray stderr kills the stay_open consumer's pool, M1a T4)
                 _ => {
                     let tag_str = String::from_utf8_lossy(&block.tag);
-                    eprintln!("Warning: Unknown MRW block type: {tag_str}");
+                    tracing::warn!("Unknown MRW block type: {tag_str}");
                     continue;
                 }
             }

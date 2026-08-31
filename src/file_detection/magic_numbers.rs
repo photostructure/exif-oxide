@@ -27,7 +27,9 @@ pub fn scan_for_embedded_signatures(buffer: &[u8]) -> Option<String> {
     // Look for JPEG signature: \xff\xd8\xff
     if let Some(pos) = buffer.windows(3).position(|w| w == b"\xff\xd8\xff") {
         if pos > 0 {
-            eprintln!("Warning: Processing JPEG-like data after unknown {pos}-byte header");
+            // tracing, not stderr: in -stay_open mode any stray stderr kills
+            // the consumer's process pool (M1a T4).
+            tracing::warn!("Processing JPEG-like data after unknown {pos}-byte header");
         }
         return Some("JPEG".to_string());
     }
@@ -38,7 +40,8 @@ pub fn scan_for_embedded_signatures(buffer: &[u8]) -> Option<String> {
         .position(|w| w == b"II*\0" || w == b"MM\0*")
     {
         if pos > 0 {
-            eprintln!("Warning: Processing TIFF-like data after unknown {pos}-byte header");
+            // tracing, not stderr: see the JPEG branch above.
+            tracing::warn!("Processing TIFF-like data after unknown {pos}-byte header");
         }
         return Some("TIFF".to_string());
     }

@@ -81,7 +81,17 @@ pub fn run<R: BufRead, W: Write, E: Write>(
     loop {
         match reader.next_event() {
             ArgfileEvent::Command(cmd) => {
-                execute_command(&cmd.args, &mut out, &mut err);
+                // ExifTool "NEVER say die" (exiftool:348): a panic in one
+                // command must not take down the process pool. The panic
+                // surfaces as a task error on stderr (a task IS pending right
+                // now) and the ready token still arrives. Requires
+                // panic=unwind; the release profile is set accordingly.
+                let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                    execute_command(&cmd.args, &mut out, &mut err)
+                }));
+                if let Err(payload) = outcome {
+                    let _ = writeln!(err, "Error: internal error: {}", describe_panic(&payload));
+                }
                 // stderr is flushed BEFORE the ready token so the consumer
                 // has every diagnostic when it resolves the task
                 // (exiftool:429-442; exiftool-vendored streamFlushMillis).
@@ -101,10 +111,31 @@ pub fn run<R: BufRead, W: Write, E: Write>(
     }
 }
 
+/// Render a caught panic payload for the task-error line.
+fn describe_panic(payload: &(dyn std::any::Any + Send)) -> &str {
+    if let Some(s) = payload.downcast_ref::<&str>() {
+        s
+    } else if let Some(s) = payload.downcast_ref::<String>() {
+        s
+    } else {
+        "unknown panic"
+    }
+}
+
 /// Parse and run one command, writing its stdout/stderr. Never panics out
 /// and never exits: a bad command becomes stderr lines (surfaced as the task
 /// error by the consumer) followed by the caller's ready token.
 fn execute_command(args: &[String], out: &mut impl Write, err: &mut impl Write) {
+    // Test-only crash injection so the panic-containment contract stays
+    // covered end-to-end (tests/stay_open_protocol.rs); CI always enables
+    // test-helpers, release builds never do.
+    #[cfg(feature = "test-helpers")]
+    if let Some(trigger) = std::env::var_os("EXIF_OXIDE_TEST_PANIC") {
+        if args.iter().any(|a| std::ffi::OsStr::new(a) == trigger) {
+            panic!("test-injected panic (EXIF_OXIDE_TEST_PANIC)");
+        }
+    }
+
     let parsed = parse_command(args);
 
     // -echo/-echo2 print before any other output (exiftool:1016-1028).

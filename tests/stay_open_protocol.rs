@@ -36,13 +36,20 @@ impl StayOpenSession {
     }
 
     fn spawn_with_args(args: &[&str]) -> Self {
-        let mut child = Command::new(env!("CARGO_BIN_EXE_exif-oxide"))
+        Self::spawn_with_env(args, &[])
+    }
+
+    fn spawn_with_env(args: &[&str], env: &[(&str, &str)]) -> Self {
+        let mut command = Command::new(env!("CARGO_BIN_EXE_exif-oxide"));
+        command
             .args(args)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .spawn()
-            .expect("spawn exif-oxide");
+            .stderr(Stdio::piped());
+        for (k, v) in env {
+            command.env(k, v);
+        }
+        let mut child = command.spawn().expect("spawn exif-oxide");
         let stdin = child.stdin.take();
         let stdout = Arc::new(Mutex::new(Vec::new()));
         let stderr = Arc::new(Mutex::new(Vec::new()));
@@ -284,4 +291,109 @@ fn test_option_value_execute_not_terminator() {
     );
     s.send("-stay_open\nFalse\n");
     s.expect_clean_exit();
+}
+
+// ---- T4: zero stray output + crash containment -----------------------------
+
+/// Internal diagnostics (library eprintln!/tracing) must never reach stderr
+/// in stay_open mode. This file takes the embedded-signature detection
+/// fallback, which used to eprintln! "Warning: Processing JPEG-like data
+/// after unknown 7-byte header" (src/file_detection/magic_numbers.rs), and
+/// its parse failure used to reach stderr via the default tracing
+/// subscriber. Both must surface ONLY as the JSON ExifTool:Error entry.
+#[test]
+fn test_internal_diagnostics_never_reach_stderr() {
+    use std::io::Write as _;
+    let mut f = tempfile::Builder::new()
+        .suffix(".bin")
+        .tempfile()
+        .expect("create temp file");
+    // 7 garbage bytes, then a JPEG signature: triggers
+    // scan_for_embedded_signatures' "after unknown header" diagnostic.
+    f.write_all(b"GARBAGE\xff\xd8\xff\xe0\x00\x10JFIF\x00\x01\x01\x00\x00\x01\x00\x01\x00\x00")
+        .expect("write temp file");
+    let path = f.path().to_str().unwrap().to_string();
+
+    let mut s = StayOpenSession::spawn();
+    s.send(&format!("-json\n-all\n{path}\n-execute1\n"));
+    s.wait_for_ready("{ready1}", 1);
+    assert_eq!(
+        s.stderr_string(),
+        "",
+        "internal diagnostics must not leak to stderr"
+    );
+    assert!(
+        s.stdout_string().contains("ExifTool:Error"),
+        "the failure must surface in the JSON entry instead: {}",
+        s.stdout_string()
+    );
+    s.send("-stay_open\nFalse\n");
+    s.expect_clean_exit();
+}
+
+/// A panic inside command execution must not kill the process: ExifTool
+/// "NEVER say die" (exiftool:348). The panic surfaces as an
+/// `Error: internal error: ...` stderr line while the task is pending (so
+/// the consumer fails that one task), the ready token still arrives, and
+/// the session keeps serving. Panic injection uses the test-helpers-only
+/// EXIF_OXIDE_TEST_PANIC hook.
+#[test]
+fn test_panic_is_contained_per_command() {
+    let mut s = StayOpenSession::spawn_with_env(
+        &["-stay_open", "True", "-@", "-"],
+        &[("EXIF_OXIDE_TEST_PANIC", "INJECT_PANIC_NOW")],
+    );
+    s.send("-ver\n-execute1\n");
+    s.wait_for_ready("{ready1}", 1);
+    assert_eq!(s.stderr_string(), "");
+
+    s.send("INJECT_PANIC_NOW\n-execute2\n");
+    s.wait_for_ready("{ready2}", 1);
+    assert!(
+        s.stderr_string().contains("Error: internal error:"),
+        "panic must surface as a task error: {:?}",
+        s.stderr_string()
+    );
+
+    // The session survives and keeps serving.
+    s.send("-ver\n-execute3\n");
+    s.wait_for_ready("{ready3}", 1);
+    assert!(s
+        .stdout_string()
+        .ends_with(&format!("{}\n{{ready3}}\n", exif_oxide::EXIFTOOL_VERSION)));
+    s.send("-stay_open\nFalse\n");
+    s.expect_clean_exit();
+}
+
+/// EXIF_OXIDE_LOG=/path routes tracing to that file in stay_open mode
+/// (M1a decision 7); stdout/stderr stay clean.
+#[test]
+fn test_exif_oxide_log_file_escape_hatch() {
+    use std::io::Write as _;
+    let log = tempfile::NamedTempFile::new().expect("log file");
+    let log_path = log.path().to_str().unwrap().to_string();
+
+    let mut f = tempfile::Builder::new()
+        .suffix(".bin")
+        .tempfile()
+        .expect("create temp file");
+    f.write_all(b"GARBAGE\xff\xd8\xff\xe0\x00\x10JFIF\x00")
+        .expect("write temp file");
+    let path = f.path().to_str().unwrap().to_string();
+
+    let mut s = StayOpenSession::spawn_with_env(
+        &["-stay_open", "True", "-@", "-"],
+        &[("EXIF_OXIDE_LOG", log_path.as_str())],
+    );
+    s.send(&format!("-json\n-all\n{path}\n-execute1\n"));
+    s.wait_for_ready("{ready1}", 1);
+    assert_eq!(s.stderr_string(), "", "logging must go to the file only");
+    s.send("-stay_open\nFalse\n");
+    s.expect_clean_exit();
+
+    let logged = std::fs::read_to_string(&log_path).expect("read log");
+    assert!(
+        logged.contains("Failed to process"),
+        "tracing output must land in EXIF_OXIDE_LOG: {logged:?}"
+    );
 }
