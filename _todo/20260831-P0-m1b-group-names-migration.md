@@ -120,8 +120,16 @@ Defaults taken (flagged, overridable): keep last-wins degroup collision
 order (neither order reproduces the Priority merge); fix the
 never-populated `zoneSource` (ExifToolVendoredTags.ts:39-46) in
 passing; `readArgs` suffices for readRaw (no groupNames injection
-there). Awaiting Matthew: semver, bare-GPS-quartet confirmation,
-deprecation stance (see Open decisions).
+there).
+
+Phase A decisions (Matthew, 2026-08-31): **major bump — target
+v38.0.0** (do not bump in the branch; release flow owns it);
+**keep the bare GPS quartet**; **README recommends group-names mode as
+the forward path** (bare mode documented but implicitly legacy);
+implementation leaves ALL changes UNCOMMITTED in the working tree —
+Matthew (2026-08-31, superseding the earlier branch-commits answer):
+"don't make commits to exiftool-vendored without approval!" Every
+commit there requires explicit per-instance approval; pushes likewise.
 
 ## Progress log
 
