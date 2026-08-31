@@ -223,6 +223,32 @@ Deferred findings from R905-D (Codex-vetted, all pre-existing):
 M0 checklist: (1) R905-D landed ✓; (2) `make verify` green ✓; (3) compat
 recorded above ✓; (4) push everything — done this session.
 
+CI REPAIRED (run 33345599993 is the first green Build & Release since at
+least July). The push surfaced four stacked failures, each one gate
+deeper; all fixed and pushed:
+
+- `53642b23`: CI's dtolnay stable is 1.98, local was 1.96 — six new
+  clippy lints (question_mark, for_kv_map, 4× chunks_exact_to_as_chunks).
+  Installed 1.98.0 additively and ran the exact CI gate locally. See
+  memory `ci-clippy-newer-than-local`.
+- `3ecc7d5f`: `yamllint` target required check-deps (full dev toolchain)
+  and its lint was `|| true` over dead root globs — now a real bare
+  `yamllint .github/` gate.
+- `392053de`: check-perl needs PPI/local::lib — check job now runs
+  `make perl-deps` first with a ~/perl5 cache (shared key with the Linux
+  test job). Deleted unreferenced root `debug_sprintf.pl`.
+- `bcc20946`: THE LONG-STANDING RED — CI enabled `integration-tests` on
+  runners that can never have the gitignored test-images/ tree. CI now
+  runs `--features test-helpers` only; the six ungated asset-reading
+  test files got the conventional `#![cfg(feature = "integration-tests")]`
+  gate (13 files already had it). Publish-job validation trimmed the
+  same way.
+
+Consequence to weigh with the oracle-corpus decision below: the platform
+matrix now exercises only unit + asset-free tests, so cross-platform
+coverage of real parsing is thin until an asset strategy (LFS vs nightly
+runner) lands.
+
 Session gotchas for the next operator: worktree agents spawn at a stale
 base — have them `git merge --ff-only main` before starting; long
 multi-line `git commit -m` can be spuriously denied — use `-F <file>`;
