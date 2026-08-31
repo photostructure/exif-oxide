@@ -63,6 +63,66 @@ umbrella TPP's M1b entry)
   helper (a class needs hydrate/dehydrate at the worker-IPC boundary).
   Planners should evaluate on the merits.
 
+## Phase A plan (2026-08-31, planner verified vs live Perl; key
+## citations re-verified: ReadTask.ts:109/:170-174/:235-237/:243-251)
+
+Verified ground truth: under `-json -G` every ExifTool key is
+`Group:Name` (exiftool:2952) EXCEPT `SourceFile` (bare, :2682);
+Error/Warning/ExifToolVersion/Geolocation* are group `ExifTool`
+(ExifTool.pm:1226-1227); `-json` forces Duplicates=1 (exiftool:952) so
+the same bare name appears under several groups; bare-mode winners come
+from the internal Priority merge and are NOT recoverable from -G order
+(verified: oly.jpg MeteringMode→MakerNotes but ExposureMode→EXIF, same
+output order). Wrapper today: degroup only on exact `-G`
+(ReadTask.ts:109); library-synthesized keys stay bare (SourceFile,
+errors/warnings, zone/tz/tzSource, parsed GPS quartet,
+invalidUtf8Bytes); tz/video heuristics read a last-wins degrouped view
+(:216-224) so they WORK under -G (approximation either way);
+errorsAndWarnings() misses ExifTool:Error (ErrorsAndWarnings.ts:21-29);
+NEW BUG: version-preservation regex (ReadTask.ts:170-174) can't match
+`"ExifTool:ExifToolVersion"` so 13.30→13.3 under -G.
+
+The contract: prefixed keys = ExifTool's output verbatim (except the
+GPS quartet's prefixed keys carry the library's validated sign-corrected
+values; invalid GPS omits all GPS keys); bare keys = the library's own
+namespace (SourceFile, errors, warnings, zone, tz, tzSource,
+invalidUtf8Bytes, parsed GPS quartet). errors/warnings aggregate
+stderr + JSON Error/Warning in EITHER shape. Heuristics documented as
+approximations for multi-group names.
+
+Tasks (ordered, one implementation agent): T1 errorsAndWarnings reads
+both shapes (+ ReadRawTask.parse cast; WriteTask untouched); T2 version
+regex `/"(?:ExifTool:)?ExifToolVersion".../`; T3 first-class
+`groupNames: boolean` option (ExifToolOptions near :343-381, default
+false, ReadTaskOptionFields, `-G` injection in ReadTask args, pin
+back-compat: readArgs ["-G"] still degroups, `-G1` still does NOT);
+T4 GPS/synthetic contract locked by parse()-harness tests (minimal code;
+keep :243 guard); T5 typing — Layer B `tag(t, name)` helper (exact key
+then degrouped fallback; two-arg overload if template-literal inference
+fails) + Layer A `GroupedTags` via mapped types over the EXISTING
+per-group interfaces (~50 lines in the mktags footer, NOT a second
+22k-line Tags.ts; APP-group caveat) + `read()` overload for
+`groupNames: true`; T6 docs (README contract section; fix the
+`["-g"]` jsdoc example at ExifTool.ts:350 — lowercase -g produces
+nested objects ReadTask mangles). Sizing: T1/T2 <1h each, T3+T4 half
+day, T5 the long pole, T6 1h.
+
+Back-compat proof: with groupNames unset and no -G, every change is
+unreachable or provably identical (bare keys never contain ':'); the
+existing 1,975-line ReadTask.spec + live ExifTool.spec runs are the
+gate (`npm run preflight` zero snapshot edits). Disclosed delta for
+EXISTING -G users: JSON-embedded errors start populating errors[]
+(bugfix; changelog). Live differential spec: read 4 test files bare vs
+groupNames, assert bare-key namespace, equal errors/warnings/zone,
+degrouped superset, string ExifToolVersion.
+
+Defaults taken (flagged, overridable): keep last-wins degroup collision
+order (neither order reproduces the Priority merge); fix the
+never-populated `zoneSource` (ExifToolVendoredTags.ts:39-46) in
+passing; `readArgs` suffices for readRaw (no groupNames injection
+there). Awaiting Matthew: semver, bare-GPS-quartet confirmation,
+deprecation stance (see Open decisions).
+
 ## Progress log
 
 ### 2026-08-31
@@ -70,4 +130,5 @@ umbrella TPP's M1b entry)
 M1b started. Two read-only planning agents launched: Phase A plan
 (exiftool-vendored.js -G coherence, additive) and Phase B plan
 (PhotoStructure migration order, helper design, trap-by-trap fixes,
-fixture-regen strategy). Plans land here when vetted.
+fixture-regen strategy). Phase A plan landed and is recorded above;
+Phase B planner still running.
