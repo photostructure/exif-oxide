@@ -252,12 +252,13 @@ runner) lands.
 
 M1a PLANNED and decisions resolved (Matthew, 2026-08-30): plan +
 verified consumer contract in `_todo/20260830-P1-stay-open-m1a.md`.
-Key decisions: `-ver` and ExifToolVersion report `13.59`; Error/Warning
-key shape strictly follows ExifTool (bare without `-G`, `ExifTool:`-
-prefixed with `-G` — M1b must teach the wrapper's errorsAndWarnings()
-the prefixed form); warnings always emitted; `EXIF_OXIDE_LOG=/path`
-debug file logging in stay_open mode. Implementation starts AFTER the
-nondeterminism fix lands (same tree).
+Key decisions: `-ver` and ExifToolVersion report `13.59`; exif-oxide
+emulates ONLY ExifTool's `-G` output mode (Matthew: no bare-name mode,
+acknowledged breaking change) so Error/Warning are ALWAYS
+`ExifTool:Error`/`ExifTool:Warning` and M1b must teach the wrapper's
+errorsAndWarnings() the prefixed form; warnings always emitted;
+`EXIF_OXIDE_LOG=/path` debug file logging in stay_open mode.
+Implementation starts AFTER the nondeterminism fix lands (same tree).
 
 Session gotchas for the next operator: worktree agents spawn at a stale
 base — have them `git merge --ff-only main` before starting; long

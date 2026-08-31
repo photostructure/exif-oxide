@@ -170,8 +170,10 @@ then `{ready}` — ExifTool "NEVER say die" (exiftool:348).
 - `tests/stay_open_readtask_replay.rs` `#![cfg(feature =
   "integration-tests")]`: replay the full default ReadTask payload
   verbatim ×3 files + one missing-file cycle; per cycle: JSON array of
-  one object, SourceFile echoes path, no `errors`/`System:`/
-  `Warning:*` keys, ExifToolVersion matches constant, no cross-task
+  one object, SourceFile echoes path, no lowercase `errors` key, no
+  `System:*DetectionStatus` keys, no invented `Warning:Xxx` multi-keys —
+  errors/warnings appear ONLY as `ExifTool:Error`/`ExifTool:Warning`
+  (decision 3) — ExifToolVersion matches constant, no cross-task
   residue.
 - Optional differential (framing only) vs vendored exiftool.
 
@@ -180,14 +182,16 @@ then `{ready}` — ExifTool "NEVER say die" (exiftool:348).
 1. `-ver` value: **`13.59`** named constant (codegen-sync note;
    auto-derive from submodule at codegen time is a possible follow-up).
 2. `ExifToolVersion` JSON key: **same constant** (`13.59`).
-3. `Error`/`Warning` keys: **strict ExifTool faithfulness** — the key
-   shape follows the request exactly as ExifTool does (exiftool:2949):
-   bare `Error`/`Warning` when `-G` is NOT requested (today's ReadTask
-   payload, so exiftool-vendored's errorsAndWarnings() keeps working),
-   `ExifTool:Error`/`ExifTool:Warning` when `-G` IS requested.
-   CONSEQUENCE FOR M1b: the wrapper's errorsAndWarnings() reads only
-   bare `t.Error`/`t.Warning` (ErrorsAndWarnings.ts:22-29) and must
-   learn the prefixed keys as part of the `-G` migration.
+3. `Error`/`Warning` keys (revised by Matthew, 2026-08-30: "We should
+   only worry about emulating -G output … it'll be a big breaking
+   change for consumers"): exif-oxide emulates ONLY ExifTool's `-G`
+   output mode — there is no bare-name mode at all. Keys are therefore
+   ALWAYS `ExifTool:Error`/`ExifTool:Warning` (exiftool:2949), and
+   `-G`/`-G1` on the command line stay accepted no-ops. This is an
+   acknowledged breaking change for consumers, absorbed by the M1b
+   wrapper migration: errorsAndWarnings() reads only bare
+   `t.Error`/`t.Warning` today (ErrorsAndWarnings.ts:22-29) and must
+   learn the prefixed keys along with `-G` tag names.
 4. Warning gating: **always emit** first `Warning` in JSON; stderr
    `[minor]` semantics deferred to M3.
 5. `-x` in M1a: accept-and-ignore (exclusion semantics are M3) —
