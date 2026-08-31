@@ -49,8 +49,8 @@ fn test_help_contains_compatibility_info() {
     // Should contain ExifTool compatibility section
     assert!(output.contains("EXIFTOOL COMPATIBILITY"));
     assert!(output.contains("-ver"));
-    assert!(output.contains("-j, -struct, -G"));
-    assert!(output.contains("Ignored"));
+    assert!(output.contains("-j -json -struct -G"));
+    assert!(output.contains("no-ops"));
 }
 
 #[test]
@@ -70,15 +70,17 @@ fn test_compatibility_flags_ignored() {
 
 #[test]
 fn test_short_invalid_filters_error() {
-    // Test that short invalid filters like -a, -xy cause errors
+    // Short args that are neither ExifTool options nor wildcards cause errors.
+    // (`-a` is ExifTool's -duplicates flag, exiftool:874, so it is no longer
+    // rejected; `-z` matches nothing.)
     let test_file = "/tmp/test_nonexistent.jpg";
 
-    let output = run_exif_oxide(&[test_file, "-a"]);
+    let output = run_exif_oxide(&[test_file, "-z"]);
 
     // Should fail due to the short invalid flag
     assert!(!output.status.success());
     let stderr = String::from_utf8(output.stderr).expect("Invalid UTF-8");
-    assert!(stderr.contains("Unknown option -a"));
+    assert!(stderr.contains("Unknown option -z"));
 }
 
 #[test]
@@ -114,11 +116,8 @@ fn test_debug_logging_for_compatibility_flags() {
     let output = cmd.output().expect("Failed to execute exif-oxide");
     let stderr = String::from_utf8(output.stderr).expect("Invalid UTF-8");
 
-    // Should contain debug messages about ignoring flags
-    assert!(
-        stderr.contains("Ignoring ExifTool compatibility flag: -j")
-            || stderr.contains("compatibility flag")
-    );
+    // Should contain debug messages showing the parsed command
+    assert!(stderr.contains("CLI args received") || stderr.contains("Parsed command"));
 }
 
 #[test]
@@ -195,32 +194,38 @@ mod edge_cases {
 
     #[test]
     fn test_version_flag_with_other_args() {
-        // Test that -ver flag works even when other args are present
-        // Version should take precedence and exit immediately
+        // -ver prints the version first, and any files on the command line are
+        // still processed afterwards - matching ExifTool. Probed (ExifTool
+        // 13.59): `exiftool -ver missing.jpg` prints "13.59" on stdout AND
+        // "Error: File not found - missing.jpg" on stderr (exiftool:779-793
+        // runs -ver inside the normal command loop).
         let output = run_exif_oxide_stdout(&["-ver", "image.jpg", "-FNumber"]);
 
-        // Should just show version, not process other args
-        assert!(output.trim().ends_with("-dev") || output.trim().contains("."));
-        assert!(!output.contains("Error"));
-        assert!(!output.contains("File not found"));
+        let first_line = output.lines().next().expect("version line");
+        assert!(
+            first_line
+                .split('.')
+                .all(|p| !p.is_empty() && p.bytes().all(|b| b.is_ascii_digit())),
+            "first line must be the bare version number, got {first_line:?}"
+        );
     }
 
     #[test]
     fn test_compatibility_flags_case_sensitivity() {
-        // Test that compatibility flags are case-sensitive
+        // ExifTool matches most options case-insensitively (`my $a = lc $_`,
+        // exiftool:696): -STRUCT and -J are the same flags as -struct and -j
+        // (`/^(-)?struct$/i` exiftool:1294, `/^(csv|j(son)?)...$/i` :940).
         let test_file = "/tmp/test_nonexistent.jpg";
 
-        // Test that -STRUCT is NOT treated as a compatibility flag (case sensitive)
         let output = run_exif_oxide(&[test_file, "-STRUCT"]);
         let stderr = String::from_utf8(output.stderr).expect("Invalid UTF-8");
-
-        // Should work fine (STRUCT would be treated as a regular filter)
         assert!(stderr.contains("File not found"));
+        assert!(!stderr.contains("Unknown option"));
 
-        // Test that short uppercase versions cause errors (not compatibility flags)
         let output2 = run_exif_oxide(&[test_file, "-J"]);
         let stderr2 = String::from_utf8(output2.stderr).expect("Invalid UTF-8");
-        assert!(stderr2.contains("Unknown option -J"));
+        assert!(stderr2.contains("File not found"));
+        assert!(!stderr2.contains("Unknown option"));
     }
 
     #[test]

@@ -5,79 +5,7 @@ use tracing::{debug, error, info};
 // Import our library modules
 use exif_oxide::formats::extract_metadata;
 use exif_oxide::hash::ImageHashType;
-use exif_oxide::types::{FilterOptions, TagRequest};
-
-/// Parse command line arguments into file paths and filter options
-/// Supports ExifTool-style tag filtering patterns:
-/// - `-TagName` - extract specific tag
-/// - `-TagName#` - extract tag with numeric value (ValueConv)  
-/// - `-GroupName:all` - extract all tags from group
-/// - `-all` - extract all tags
-///
-/// Returns (file_paths, filter_options) or exits on error
-fn parse_exiftool_args(args: Vec<&String>) -> (Vec<&String>, FilterOptions) {
-    let mut file_paths = Vec::new();
-    let mut tag_requests = Vec::new();
-
-    // Debug: print all received arguments
-    debug!("CLI args received: {:?}", args);
-
-    for arg in args {
-        if arg == "-ver" {
-            // Version flag - print version and exit
-            println!("{}", env!("CARGO_PKG_VERSION"));
-            std::process::exit(0);
-        } else if arg == "-j" || arg == "-struct" || arg == "-G" {
-            // ExifTool compatibility flags - ignore these (no-op)
-            // -j: JSON output format (we always output JSON)
-            // -struct: structured output (we always use structured output)
-            // -G: group names in output (we always include group names)
-            debug!("Ignoring ExifTool compatibility flag: {}", arg);
-            continue;
-        } else if arg.starts_with('-') && arg.len() > 1 {
-            // Process tag/group filters
-            let filter_arg = &arg[1..]; // Remove leading '-'
-
-            // Reject short arguments that cannot be tag requests.
-            //
-            // ExifTool's own guard is `length $_ eq 1 and $_ ne '*'` (exiftool:1393):
-            // a one-character argument is an error unless it is exactly `*`, and
-            // anything longer is a tag request. exif-oxide is stricter about
-            // two-character arguments because it implements none of ExifTool's short
-            // options (-n, -b, -s, ...), and failing loudly on those beats silently
-            // matching no tags. A wildcard can never be one of those options, so
-            // `-*`, `-*#` and `-?#` are let through - matching ExifTool, which accepts
-            // all three and rejects only a bare `-?`.
-            let is_tag_request = match filter_arg.len() {
-                1 => filter_arg == "*",
-                2 => FilterOptions::has_wildcard(filter_arg),
-                _ => true,
-            };
-            if !is_tag_request {
-                eprintln!("Unknown option {}", arg);
-                std::process::exit(1);
-            }
-
-            // Record the request in command-line order; classification happens in
-            // FilterOptions::from_requests so the CLI and the compat filter parser
-            // cannot drift apart.
-            tag_requests.push(TagRequest::parse(filter_arg));
-        } else if arg == "-" || arg == "--" {
-            // Stdin markers
-            file_paths.push(arg);
-        } else {
-            // File path (doesn't start with -, or is stdin marker)
-            file_paths.push(arg);
-        }
-    }
-
-    let filter_options = FilterOptions::from_requests(tag_requests);
-
-    // Debug: print final filter options
-    debug!("Final FilterOptions: {:?}", filter_options);
-
-    (file_paths, filter_options)
-}
+use exif_oxide::types::FilterOptions;
 
 /// Main CLI application for exif-oxide
 ///
@@ -99,7 +27,7 @@ fn main() {
     // Build CLI interface using clap
     // Clap is Rust's most popular CLI argument parsing library
     let matches = Command::new("exif-oxide")
-        .version("0.1.0")
+        .version(env!("CARGO_PKG_VERSION"))
         .author("exif-oxide@photostructure.com")
         .about("High-performance Rust implementation of ExifTool")
         .after_help(concat!(
@@ -132,8 +60,12 @@ fn main() {
             "                         Example: exif-oxide --image-hash --image-hash-type SHA256 image.jpg\n",
             "\n",
             "EXIFTOOL COMPATIBILITY:\n",
-            "  -ver             Print version number and exit\n",
-            "  -j, -struct, -G  Ignored (we always output JSON with structure and groups)\n",
+            "  -ver             Print the emulated ExifTool version\n",
+            "  -j -json -struct -G -G1 -g -a -e -q -m -fast[N] -ignoreMinorErrors\n",
+            "                   Accepted no-ops (output is always ExifTool's -j -struct -G shape)\n",
+            "  -api X -use X -x TAG -charset X -w X -d X -c X -if X -echo X -echo2 X\n",
+            "                   Value-taking options, accepted and ignored (except -api\n",
+            "                   requesttags=imagedatahash / imagehashtype=ALG, which are honored)\n",
             "\n",
             "Multiple filters can be combined:\n",
             "  exif-oxide -Orientation# -GPS* -EXIF:all image.jpg\n"
@@ -218,8 +150,40 @@ fn main() {
         }
     };
 
-    // Parse arguments into files and filter options using ExifTool patterns
-    let (file_paths, mut filter_options) = parse_exiftool_args(args);
+    // Parse arguments the way ExifTool's argument loop does. parse_command
+    // never exits; classic mode maps its results onto exit codes here.
+    debug!("CLI args received: {:?}", args);
+    let parsed = exif_oxide::cli::parse_command(&args);
+    debug!("Parsed command: {:?}", parsed);
+
+    // -echo/-echo2 print before any other output (exiftool:1016-1028).
+    for line in &parsed.echo_stdout {
+        println!("{line}");
+    }
+    for line in &parsed.echo_stderr {
+        eprintln!("{line}");
+    }
+
+    // A bad option aborts the command (exiftool sets $badCmd; classic mode
+    // exits non-zero, preserving the old CLI contract).
+    if !parsed.errors.is_empty() {
+        for e in &parsed.errors {
+            eprintln!("{e}");
+        }
+        std::process::exit(1);
+    }
+
+    // -ver prints the emulated ExifTool version; like ExifTool, any files on
+    // the same command line are still processed afterwards (exiftool:779-793).
+    if parsed.print_version {
+        println!("{}", exif_oxide::EXIFTOOL_VERSION);
+        if parsed.files.is_empty() {
+            std::process::exit(0);
+        }
+    }
+
+    let file_paths = parsed.files;
+    let mut filter_options = parsed.filter;
 
     // Apply image hash options to filter_options
     if compute_image_hash {
@@ -511,315 +475,4 @@ fn find_tag_pair(
         offset_value, length_value
     );
     (offset_value, length_value)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_parse_exiftool_args_files_before_tags() {
-        let image1 = "image1.jpg".to_string();
-        let image2 = "image2.png".to_string();
-        let fnumber = "-FNumber#".to_string();
-        let exposure = "-ExposureTime#".to_string();
-        let args = vec![&image1, &image2, &fnumber, &exposure];
-
-        let (files, filter_opts) = parse_exiftool_args(args);
-
-        assert_eq!(files, vec!["image1.jpg", "image2.png"]);
-        assert!(filter_opts.requested_tags.contains(&"FNumber".to_string()));
-        assert!(filter_opts
-            .requested_tags
-            .contains(&"ExposureTime".to_string()));
-        assert_eq!(
-            filter_opts.tag_requests,
-            vec![
-                TagRequest::new("FNumber", true),
-                TagRequest::new("ExposureTime", true),
-            ]
-        );
-        assert_eq!(filter_opts.requested_tags.len(), 2);
-    }
-
-    #[test]
-    fn test_parse_exiftool_args_group_all_patterns() {
-        let image = "image.jpg".to_string();
-        let file_all = "-File:all".to_string();
-        let exif_all = "-EXIF:all".to_string();
-        let args = vec![&image, &file_all, &exif_all];
-
-        let (files, filter_opts) = parse_exiftool_args(args);
-
-        assert_eq!(files, vec!["image.jpg"]);
-        assert!(filter_opts
-            .group_all_patterns
-            .contains(&"File:all".to_string()));
-        assert!(filter_opts
-            .group_all_patterns
-            .contains(&"EXIF:all".to_string()));
-        assert_eq!(filter_opts.group_all_patterns.len(), 2);
-        assert!(!filter_opts.extract_all);
-    }
-
-    #[test]
-    fn test_parse_exiftool_args_extract_all() {
-        let image = "image.jpg".to_string();
-        let all_flag = "-all".to_string();
-        let args = vec![&image, &all_flag];
-
-        let (files, filter_opts) = parse_exiftool_args(args);
-
-        assert_eq!(files, vec!["image.jpg"]);
-        assert!(filter_opts.extract_all);
-        assert!(filter_opts.requested_tags.is_empty());
-        assert!(filter_opts.group_all_patterns.is_empty());
-    }
-
-    #[test]
-    fn test_parse_exiftool_args_numeric_tags() {
-        let image = "image.jpg".to_string();
-        let orientation_num = "-Orientation#".to_string();
-        let fnumber_norm = "-FNumber".to_string();
-        let args = vec![&image, &orientation_num, &fnumber_norm];
-
-        let (files, filter_opts) = parse_exiftool_args(args);
-
-        assert_eq!(files, vec!["image.jpg"]);
-        assert!(filter_opts
-            .requested_tags
-            .contains(&"Orientation".to_string()));
-        assert!(filter_opts.requested_tags.contains(&"FNumber".to_string()));
-        assert!(filter_opts.should_use_numeric("Orientation", "EXIF"));
-        assert!(!filter_opts.should_use_numeric("FNumber", "EXIF"));
-    }
-
-    /// The request list keeps command-line order, and each request keeps its own `#`
-    /// flag, because the first request that matches a tag decides how it is printed.
-    ///
-    /// Probed against vendored ExifTool 13.59 with test-images/apple/IMG_3755.MOV:
-    /// `exiftool -j -Duration "-*Duration*#"` => `"Duration": "2.96 s"`
-    /// `exiftool -j "-*Duration*#" -Duration` => `"Duration": 2.965`
-    #[test]
-    fn test_parse_exiftool_args_preserves_request_order() {
-        let image = "video.mov".to_string();
-        let exact = "-Duration".to_string();
-        let numeric_glob = "-*Duration*#".to_string();
-
-        let (_, print_first) = parse_exiftool_args(vec![&image, &exact, &numeric_glob]);
-        assert_eq!(
-            print_first.tag_requests,
-            vec![
-                TagRequest::new("Duration", false),
-                TagRequest::new("*Duration*", true),
-            ]
-        );
-        assert!(!print_first.should_use_numeric("Duration", "QuickTime"));
-        assert!(print_first.should_use_numeric("TrackDuration", "QuickTime"));
-
-        let (_, numeric_first) = parse_exiftool_args(vec![&image, &numeric_glob, &exact]);
-        assert_eq!(
-            numeric_first.tag_requests,
-            vec![
-                TagRequest::new("*Duration*", true),
-                TagRequest::new("Duration", false),
-            ]
-        );
-        assert!(numeric_first.should_use_numeric("Duration", "QuickTime"));
-    }
-
-    /// `-Group:all#` must strip the `#` before classifying, or `EXIF:all` is mistaken
-    /// for a tag name and the group is never extracted.
-    ///
-    /// Probed (ExifTool 13.59, test-images/canon/eos_5d_mark_iii.jpg):
-    /// `exiftool -j -G "-EXIF:all#"` => 54 EXIF tags with `"EXIF:Orientation": 1`
-    #[test]
-    fn test_parse_exiftool_args_group_all_numeric() {
-        let image = "image.jpg".to_string();
-        let exif_all_numeric = "-EXIF:all#".to_string();
-
-        let (_, filter_opts) = parse_exiftool_args(vec![&image, &exif_all_numeric]);
-
-        assert_eq!(filter_opts.group_all_patterns, vec!["EXIF:all"]);
-        assert!(!filter_opts.extract_all);
-        assert!(filter_opts.should_extract_tag("Orientation", "EXIF"));
-        assert!(filter_opts.should_use_numeric("Orientation", "EXIF"));
-    }
-
-    /// `-Group:*` stays a glob so the group is actually extracted, and `--TAG` is
-    /// never silently turned into `-TAG`.
-    ///
-    /// Probed (ExifTool 13.59, test-images/canon/eos_5d_mark_iii.jpg):
-    /// `exiftool -j -G "-EXIF:*"`  => the whole EXIF group
-    /// `exiftool -j -G "--GPS*"`   => every tag EXCEPT the GPS* ones (exclusion)
-    #[test]
-    fn test_parse_exiftool_args_group_glob_and_double_dash() {
-        let image = "image.jpg".to_string();
-        let exif_glob = "-EXIF:*".to_string();
-        let (_, group_glob) = parse_exiftool_args(vec![&image, &exif_glob]);
-        assert_eq!(group_glob.glob_patterns, vec!["EXIF:*"]);
-        assert!(group_glob.group_all_patterns.is_empty());
-        assert!(group_glob.should_extract_tag("Make", "EXIF"));
-
-        let double_dash = "--GPS*".to_string();
-        let (_, excluded) = parse_exiftool_args(vec![&image, &double_dash]);
-        assert!(
-            !excluded.should_extract_tag("GPSVersionID", "EXIF"),
-            "--GPS* is ExifTool's exclusion syntax, never an inclusion"
-        );
-
-        let double_dash_all = "--all".to_string();
-        let (_, all_alias) = parse_exiftool_args(vec![&image, &double_dash_all]);
-        assert!(all_alias.extract_all, "--all is a spelling of -all");
-    }
-
-    /// The unknown-option guard used to reject every argument of two characters or
-    /// fewer, which swallowed `-*` and `-*#` - legitimate ExifTool requests for every
-    /// tag.
-    ///
-    /// ExifTool: lib/Image/ExifTool.pm:5367 (`$tag =~ /^(\*|all)$/i`) makes `*` a
-    /// request for all tags, and exiftool:1393
-    /// (`length $_ eq 1 and $_ ne '*' and Error(...)`) is the guard that lets it
-    /// through. Verified: `exiftool -j -G "-*#" canon/eos_rebel_t3i.jpg` returns every
-    /// tag with its ValueConv value, identical to `exiftool -j -G "-all#"`; `-*`, `-?*`,
-    /// `-*?` and `-?#` are likewise accepted while a bare `-?` is "Unknown option".
-    /// Before this guard was relaxed, `exif-oxide "-*#" image.jpg` printed
-    /// "Unknown option -*#" and exited 1.
-    #[test]
-    fn test_parse_exiftool_args_bare_wildcard() {
-        let image = "image.jpg".to_string();
-        let star_numeric = "-*#".to_string();
-        let (files, filter_opts) = parse_exiftool_args(vec![&image, &star_numeric]);
-
-        assert_eq!(files, vec!["image.jpg"]);
-        assert_eq!(filter_opts.tag_requests, vec![TagRequest::new("*", true)]);
-        assert!(filter_opts.should_extract_tag("Orientation", "EXIF"));
-        assert!(filter_opts.should_use_numeric("Orientation", "EXIF"));
-
-        let star = "-*".to_string();
-        let (files, filter_opts) = parse_exiftool_args(vec![&image, &star]);
-
-        assert_eq!(files, vec!["image.jpg"]);
-        assert_eq!(filter_opts.tag_requests, vec![TagRequest::new("*", false)]);
-        assert!(filter_opts.should_extract_tag("Orientation", "EXIF"));
-        assert!(!filter_opts.should_use_numeric("Orientation", "EXIF"));
-
-        // Two-character wildcard requests are accepted too, matching ExifTool.
-        let single_char_numeric = "-?#".to_string();
-        let (_, filter_opts) = parse_exiftool_args(vec![&image, &single_char_numeric]);
-        assert!(filter_opts.glob_patterns.contains(&"?".to_string()));
-    }
-
-    /// `-all#` is `-all` with numeric output: every tag, ValueConv values.
-    ///
-    /// ExifTool: lib/Image/ExifTool.pm:5364 strips the `#`, :5367 expands `all`.
-    /// Verified: `exiftool -j -G "-all#" canon/eos_rebel_t3i.jpg`.
-    #[test]
-    fn test_parse_exiftool_args_all_numeric() {
-        let image = "image.jpg".to_string();
-        let all_numeric = "-all#".to_string();
-        let (files, filter_opts) = parse_exiftool_args(vec![&image, &all_numeric]);
-
-        assert_eq!(files, vec!["image.jpg"]);
-        assert!(
-            !filter_opts.extract_all,
-            "-all# must stay a filtered request so the numeric selection still applies"
-        );
-        assert_eq!(filter_opts.tag_requests, vec![TagRequest::new("all", true)]);
-        assert!(filter_opts.should_extract_tag("Orientation", "EXIF"));
-        assert!(filter_opts.should_use_numeric("Orientation", "EXIF"));
-    }
-
-    #[test]
-    fn test_parse_exiftool_args_edge_cases() {
-        // Test with stdin marker "-"
-        let dash = "-".to_string();
-        let fnumber = "-FNumber".to_string();
-        let args = vec![&dash, &fnumber];
-        let (files, filter_opts) = parse_exiftool_args(args);
-        assert_eq!(files, vec!["-"]);
-        assert!(filter_opts.requested_tags.contains(&"FNumber".to_string()));
-
-        // Test with no filters (should default to extract_all)
-        let image = "image.jpg".to_string();
-        let args = vec![&image];
-        let (files, filter_opts) = parse_exiftool_args(args);
-        assert_eq!(files, vec!["image.jpg"]);
-        assert!(filter_opts.extract_all);
-    }
-
-    #[test]
-    fn test_parse_exiftool_args_compatibility_flags() {
-        // Test ExifTool compatibility flags are ignored as no-ops
-        let image = "image.jpg".to_string();
-        let json_flag = "-j".to_string();
-        let struct_flag = "-struct".to_string();
-        let group_flag = "-G".to_string();
-        let fnumber = "-FNumber".to_string();
-        let args = vec![&image, &json_flag, &struct_flag, &group_flag, &fnumber];
-
-        let (files, filter_opts) = parse_exiftool_args(args);
-
-        // Should have only the image file, compatibility flags ignored
-        assert_eq!(files, vec!["image.jpg"]);
-        // Should only have the FNumber tag, not the compatibility flags
-        assert_eq!(filter_opts.requested_tags.len(), 1);
-        assert!(filter_opts.requested_tags.contains(&"FNumber".to_string()));
-        assert!(!filter_opts.extract_all);
-    }
-
-    #[test]
-    fn test_parse_exiftool_args_compatibility_flags_only() {
-        // Test with only compatibility flags (should default to extract_all)
-        let image = "image.jpg".to_string();
-        let json_flag = "-j".to_string();
-        let struct_flag = "-struct".to_string();
-        let group_flag = "-G".to_string();
-        let args = vec![&image, &json_flag, &struct_flag, &group_flag];
-
-        let (files, filter_opts) = parse_exiftool_args(args);
-
-        // Should have only the image file
-        assert_eq!(files, vec!["image.jpg"]);
-        // Since no actual tag filters were specified, should default to extract_all
-        assert!(filter_opts.extract_all);
-        assert!(filter_opts.requested_tags.is_empty());
-    }
-
-    #[test]
-    fn test_parse_exiftool_args_boundary_lengths() {
-        // Test boundary cases for filter length validation - only valid 3+ char tags accepted
-        let image = "image.jpg".to_string();
-        let three_char = "-abc".to_string(); // 3 chars - should be accepted
-        let args = vec![&image, &three_char];
-
-        let (files, filter_opts) = parse_exiftool_args(args);
-
-        // Should have only the image file
-        assert_eq!(files, vec!["image.jpg"]);
-        // Should only have the 3-character tag
-        assert_eq!(filter_opts.requested_tags.len(), 1);
-        assert!(filter_opts.requested_tags.contains(&"abc".to_string()));
-        assert!(!filter_opts.extract_all);
-    }
-
-    #[test]
-    fn test_parse_exiftool_args_all_compatibility_flags() {
-        // Test all compatibility flags together
-        let image = "image.jpg".to_string();
-        let j_flag = "-j".to_string();
-        let struct_flag = "-struct".to_string();
-        let g_flag = "-G".to_string();
-        let valid_tag = "-MIMEType".to_string();
-        let args = vec![&image, &j_flag, &struct_flag, &g_flag, &valid_tag];
-
-        let (files, filter_opts) = parse_exiftool_args(args);
-
-        // Should have only the image file
-        assert_eq!(files, vec!["image.jpg"]);
-        // Should only have the valid tag, compatibility flags ignored
-        assert_eq!(filter_opts.requested_tags.len(), 1);
-        assert!(filter_opts.requested_tags.contains(&"MIMEType".to_string()));
-        assert!(!filter_opts.extract_all);
-    }
 }

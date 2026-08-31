@@ -20,6 +20,19 @@
 //! test images and the ExifTool submodule to be available. They are automatically
 //! excluded from published crates to keep package size manageable.
 
+/// The ExifTool version this build emulates.
+///
+/// ⚠️ MUST stay in sync with the vendored submodule: `third-party/exiftool/exiftool`
+/// line 14 (`my $version = '13.59';`). Bump this constant whenever the submodule
+/// is updated. (Auto-deriving it at codegen time is a possible follow-up.)
+///
+/// Reported by `-ver` and as the `ExifToolVersion` JSON value. The
+/// exiftool-vendored.js consumer's startup health check rejects anything not
+/// matching `/^\d{1,3}\.\d{1,3}(?:\.\d{1,3})?$/` (VersionTask.ts:7), so this
+/// must never carry a suffix like `-dev` or `-oxide`.
+pub const EXIFTOOL_VERSION: &str = "13.59";
+
+pub mod cli;
 pub mod compat;
 pub mod composite_tags;
 pub mod core;
