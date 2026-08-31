@@ -46,7 +46,8 @@ the tracker for the 2026-07/08 workstreams; this TPP owns the cutover.
 
 ## Milestones (gates in the artifact; sequence by dependency)
 
-- **M0 Land the tree** — 2026-08-30, IN PROGRESS, nearly done (see log).
+- **M0 Land the tree** — DONE 2026-08-30 (see log; CI green at
+  `bcc20946`).
 - **M1a stay_open protocol conformance** — argfile filtering, `-execute[N]`,
   `{ready[N]}` with stderr flushed first, bare-numeric `-ver`, zero stray
   stdout/stderr (batch-cluster kills children on unexpected output; tracing
