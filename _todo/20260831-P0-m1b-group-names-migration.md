@@ -131,6 +131,101 @@ Matthew (2026-08-31, superseding the earlier branch-commits answer):
 "don't make commits to exiftool-vendored without approval!" Every
 commit there requires explicit per-instance approval; pushes likewise.
 
+## Phase B plan (2026-08-31, planner verified anchors + probed real
+## ExifTool; spot-checked: ReadRawTags.ts:126 choke point,
+## ParsingSettings.ts:109 useMWG default true, MWG composites emit as
+## Composite:* under -G family 0)
+
+STAGED LANDING (each stage's fixture diff answers one question):
+- Stage 0: drop `-use MWG` while still bare-name; fixture regen diff =
+  the isolated MWG-dependency measurement Matthew ratifies.
+- Stage 1: flip -G on + a ~50-line degroup shim at the ReadRawTags
+  boundary (prefixed→bare via the precedence table); diff = pure
+  merge-policy delta, zero key churn.
+- Stage 2: dual-keyed object; consumers/tier lists migrate
+  module-by-module, each green.
+- Stage 3: persisted-name normalizers, settings colon handling,
+  sidecar-overlay eviction.
+- Stage 4: remove shim, flip Tags to the grouped type (tsc catches
+  stragglers), final regen = pure key renames.
+Single-flag-flip alternative rejected (un-reviewable combined diff).
+Stage 0 can land against v37.2.0 now; Stage 1+ needs the Phase A
+release (or npm link/tarball pin — flag for Matthew).
+
+Helper (task 1): plain data + functions in new
+src/core/tags/TagGroupPrecedence.ts — bareName(), pluckTag(tags,name)
+(exact bare key → explicit chain → DefaultGroupOrder), omitByBareName().
+~23-row table with per-row survey citations + spec pinned to a
+checked-in survey fixture. Tags-CLASS REJECTED on merits: worker-IPC
+JSON revivers (ShimDelegation.ts:86-97), FileCache consumers, {...t}
+spread idioms (ReadTags.ts:157), DESIGN-PRINCIPLES rule 4. NOTE:
+pluck/pluckDeep already exist in fe/Object.ts:397-433 — don't shadow.
+
+Precedence-table highlights (planner re-ran survey on current corpus:
+23 names, 221/381 files — pin fixture to a named corpus revision):
+exposure cluster EXIF-first; lens Composite→XMP→MakerNotes; LensInfo
+EXIF→XMP (keeps lensId "mli" stable); ImageWidth/Height
+File→QuickTime→EXIF; dates handled by capturedAt tiers (helper chain
+QuickTime→EXIF→XMP); GPS stays bare-synthetic; PreviewImage stays bare
+for -b extraction (presence via suffix match); Rating XMP-first
+(Matthew decision); Copyright cross-name chain (MWG-equivalent,
+Matthew decision).
+
+Traps: (a) sidecar overlay → BARE-NAME EVICTION in the merge loop
+(delete same-bareName keys before assignFields, recording into
+result.original) — reproduces today's semantics with one rule and
+removes the sidecar dimension from pluckTag; IgnoredSidecarFields via
+omitByBareName. (b) capturedAtSrcDetail stores bareName(key)
+(CapturedAt.ts:662); UIDs keep bare synonym vocabulary + pluckTag picks
+→ byte-stable IDs (only LensInfo intersects collisions; EXIF-first row
+matches bare winner); v1.1 ':' decoder never meets a prefixed key; no
+DB migration. (c) TagNameArraySetting subclass:
+splitStringArrayKeepingColons + bare→canonical rename map in
+toValidValues; TOML arrays parse natively; autoUpgradeSettings persists
+normalized names; unknown custom names pass through (release note).
+(d) heuristics via bareName(): isUtcTagName, GeoTagger
+startsWith("Geolocation"), History (written ResourceEvent.Changed
+vocabulary STAYS BARE — stable sidecar file format — translated on
+read-back); PLUS TWO NEW: coerceTagTypes (ReadRawTags.ts:216-245,
+TagMetadata.json is bare-keyed — every lookup misses under -G) and
+srcHasIccProfile_ (HeifConvert.ts:243-261; key becomes
+ICC_Profile:ICC_Profile — P3-desaturation regression, invisible to
+fixtures, needs targeted test). Audit: AssetRevision.field vocabulary;
+`as any` casts escape the type net — grep as checklist.
+
+MWG evidence (probed): composites emit as Composite:* under -G;
+XMP mwg-rs Regions extract WITHOUT -use MWG (WhoTagger unaffected);
+consumed today: Rating (MWG's pure XMP mirror — implements the
+documented "prefer XMP" intent), Keywords (already unioned; drop loses
+only IPTC-truncation reconciliation), Copyright (needs replacement
+chain EXIF:Copyright→XMP:Rights→IPTC:CopyrightNotice), geo names
+(synonyms already enumerated). RECOMMEND DROP, ratified by the Stage-0
+fixture diff; keep useMWG as a setting (Perl users), document exif-oxide
+won't honor it.
+
+Verification: 140 assertEqlsPrior fixtures; keystone
+exif-tags-noinfer.json (231 entries) directly asserts
+cameraId/imageId/lensId byte-stability. Workflow: test.sh --force-fix
+(sources ~/.psenv) in core then library; review git diff examples/json/
+with a keys-changed vs values-changed classifier script; runner
+auto-re-runs rewritten specs (self-verifying regen). NO test-running CI
+exists in PhotoStructure — the gate is local preflight; fixture-regen
+commits must be reviewed, not rubber-stamped.
+
+Phase A contract asks (from Phase B): first-class groupNames option
+(also flips HeifConvert.ts:246); errorsAndWarnings reads prefixed;
+pinned synthetic-key contract INCLUDING invalidUtf8Bytes inner keys =
+emitted prefixed keys; a distinct grouped-keys Tags type (without it
+Phase B loses its compile-time net — push back hard). Geolocation keys:
+consumed as ExifTool:Geolocation* (consistent with the approved Phase A
+contract; taken as default).
+
+Defaults taken (flagged): plain-data helper (both planners concur);
+includedPreviewTags strips groups before preview WRITES (status quo
+write locations); Geolocation consumed prefixed. Awaiting Matthew:
+Stage-0 go-ahead, Rating chain, Copyright chain, MakerNotes dates in
+capturedAt tiers, release-notes stance for custom bare-name settings.
+
 ## Progress log
 
 ### 2026-08-31
