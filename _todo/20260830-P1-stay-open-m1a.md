@@ -9,10 +9,116 @@ key citations spot-verified (main.rs:26-29/:51-59, exiftool:4896/:4925/
 ## Current phase
 
 - [x] Research & Planning
-- [ ] Write breaking tests
-- [ ] Implementation
-- [ ] Review & Refinement
-- [ ] Final Integration
+- [x] Write breaking tests
+- [x] Implementation
+- [x] Review & Refinement (Codex adversarial review; findings + verdicts in
+      the log below. First review attempt died mid-exploration without
+      producing findings and was rerun to completion.)
+- [x] Final Integration (`make verify` green on the final tree)
+
+## Implementation log (2026-08-31)
+
+All five tasks landed, one commit each, TDD-first (breaking tests written and
+confirmed red before each fix):
+
+- T1 `203b264a` feat(cli): option table + non-exiting parser
+  (src/cli/options.rs; parity suite moved verbatim from main.rs; `-ver` and
+  `ExifToolVersion` report `EXIFTOOL_VERSION` = "13.59", src/lib.rs).
+- T2 `b1a44b87` fix(metadata): ExifTool:Error/ExifTool:Warning keys, invented
+  System:*DetectionStatus and Warning:Xxx keys removed, file-not-found =>
+  stderr + no JSON entry. Extra probe finding folded in: ExifTool treats
+  Error/Warning as filterable ExifTool-group tags (`-*Date*` omits them,
+  `-all`/unfiltered include them) - prepare_for_serialization now takes the
+  FilterOptions and applies the same gate. `make compat` after T2: clean.
+- T3 `a7da686e` feat(stay_open): ReadStayOpen/FilterArgfileLine port
+  (src/cli/argfile.rs, full %optArgs table; CSTR quirks verified against the
+  actual Perl) + REPL (src/cli/stay_open.rs) + mode dispatch before
+  clap/tracing; classic mode shares cli::collect_entries.
+- T4 `d60ca2ad` fix(stay_open): catch_unwind per command + tracing-only panic
+  hook; three library eprintln! sites converted to tracing::warn!;
+  EXIF_OXIDE_LOG=/path file logging (decision 7); release profile switched
+  panic="abort" -> "unwind" (required for containment; release binary
+  re-verified against the protocol). Also fixed a real test race: tests that
+  spawned `cargo run` rebuilt the binary with different features mid-run.
+- T5 `ce1a8ff0` test(stay_open): verbatim ReadTask payload replay x3 files +
+  missing-file cycle (feature-gated) + framing differential vs the vendored
+  exiftool (byte-for-byte identical `-ver` cycle output).
+- `9a43b820` fix(formats): File-only fast path no longer emits
+  ExifToolVersion for filtered requests (self-review probe, pre-Codex).
+- `5f42092e` test(compat): commit the two sony/a7r_vi snapshots that
+  `make compat` generated (corpus images existed without snapshots; every
+  sibling a7r body already has committed snapshots).
+- `814e737a` fix(stay_open): the five Codex findings below.
+
+Protocol coverage lives in tests/stay_open_protocol.rs (asset-free, ungated,
+10 tests) and src/cli/{options,argfile,stay_open}.rs unit suites.
+
+### Codex adversarial review (completed 2026-08-31; verdict "REVISE")
+
+The reviewed range was 812a5f36..ce1a8ff0. All five findings were vetted
+empirically against the vendored ExifTool 13.59 before adjudication; all five
+were ACCEPTED and fixed TDD-first in commit `814e737a`. (Commit `9a43b820` -
+the File-only ExifToolVersion gating fix - came from my own probe
+`exiftool -j -struct -G -FileSize x.jpg` BEFORE the review finished; it is
+not a Codex finding.)
+
+- R581-A (major) - post-argfile argv ran as an eager first command, emitting
+  stdout with no task pending. ACCEPT. Evidence:
+  `printf -- '-stay_open\nFalse\n' | exiftool -stay_open True -@ - -ver
+  -execute` emits nothing until False, then `13.59\n` with NO ready token
+  (@moreArgs, exiftool:829, :1283-1285; ready gated on `$stayOpen >= 2`,
+  :430). Fixed: `StayOpenInvocation` partitions argv at the `-@ -` pair;
+  deferred args run after False (no ready tokens, trailing partial included),
+  never on EOF (ExifTool spins and never reaches them). Byte-for-byte
+  differential vs the reference now passes, including
+  `-ver -execute3 -echo2 boo` (stdout `13.59\n`, stderr `boo\n`).
+- R581-B (major) - Perl's `$` matches before one final newline, so a
+  `#[CSTR]`-decoded `-execute\n` terminates a command; we treated it as a
+  plain arg and desynchronized task boundaries. ACCEPT. Evidence: probed
+  repro gives `13.59\n{ready}\n{ready2}\n` from Perl vs our (pre-fix)
+  `13.59\n{ready2}\n`. Fixed with one-trailing-newline tolerance in the
+  `$`-anchored paths only (is_execute + trailing-number %optArgs match);
+  exact hash lookups keep the newline and still miss, matching Perl. Known
+  remaining corner (documented, CSTR-only, no consumer impact): a
+  trailing-newline arg reaching the COMMAND parser (e.g. `-echo\n`) is
+  classified as a tag request where ExifTool's `$`-anchored option regexes
+  would still match.
+- R581-C (major) - `-lang`'s value became a phantom file path (consumers may
+  send readArgs `["-lang","en"]`). ACCEPT. Evidence: exiftool:1150 consumes
+  the optional value iff it doesn't start with a dash; probed
+  `-lang\nen\n-ver\n-execute7\n` => only `13.59\n{ready7}\n` from Perl vs
+  our extra `Error: File not found - en`. Fixed like `-charset`.
+- R581-D (minor) - `-C`/`-W` were rejected although ExifTool matches
+  `-c`/`-w` case-insensitively. ACCEPT. Evidence: `/^c(oordFormat)?$/i`
+  exiftool:901, `/^(w|textout|tagout)([!+]*)$/i` exiftool:1334. Fixed with
+  the whole `[!+]*` family; `-D`/`-P`/`-X` stay distinct and rejected
+  (regression-asserted).
+- R581-E (nit) - an unterminated final line was executed; ExifTool only
+  consumes newline-terminated argfile lines (exiftool:4943). ACCEPT.
+  Evidence: probed `printf '%s\n%s' -ver -execute | exiftool -stay_open
+  True -@ -` waits forever (timeout), ours (pre-fix) ran the command. Fixed:
+  a final chunk without `\n` is discarded and reported as EOF.
+
+Codex also explicitly cleared: the %optArgs table and -D/-P/-X guards, the
+tag-request fallthrough parity (nothing newly swallowed), the JSON contract
+(no lowercase keys, filter gating, no `[]`), zero stray output on the
+default path, the unwind profiles, and consumer pipe handling.
+
+Process note: the first review invocation appeared dead mid-exploration (my
+completion-waiters used self-matching pgrep patterns), so the "vetted" state
+was recorded prematurely; the run had in fact completed and its findings
+were then vetted and fixed as above.
+
+Documented divergences (beyond the planned EOF/residue ones):
+
+- `-q` + bare `-execute`: ExifTool suppresses the `{ready}` token entirely
+  (probed: `-q\n-ver\n-execute\n` prints only "13.59"; exiftool:430-434).
+  We treat `-q` as a no-op per T1 and always emit the token - suppressing it
+  would hang any batch-cluster-style consumer, and exiftool-vendored.js
+  never sends `-q`.
+- Funny-dash `−execute` (U+2212): accepted by ExifTool's main argv loop
+  (:629) but not by ReadStayOpen's chunker; we match the chunker (ASCII
+  only) since stay_open commands only ever pass through it.
 
 ## Verified consumer contract (cited from real code, not assumptions)
 
