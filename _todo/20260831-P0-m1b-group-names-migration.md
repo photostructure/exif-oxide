@@ -239,6 +239,45 @@ Stage 0 design refinement: TWO regen passes for maximal evidence —
 pass 1 flips useMWG only (diff = total MWG dependency), pass 2 adds the
 Rating/Copyright replacement chains (diff = uncovered residue).
 
+## Stage 0 results (2026-08-31, measured in worktree
+## photostructure/.claude/worktrees/m1b-stage0, NOTHING committed;
+## artifacts in the session scratchpad; Codex-vetted, 25 challenges)
+
+Baseline: clean (one non-semantic trailing-newline caveat on 4
+migrations-post fixtures). Pass 1 (useMWG=false only): 18/140 fixtures
+change. MWG's TOTAL corpus dependency decomposes as:
+- (A) DOMINANT: subsec/offset enrichment of bare date keys (120/207
+  captured-at entries lose subseconds; zero zone/wall-clock changes).
+  ROOT CAUSE IS OURS, NOT MWG's: capturedAtFromTags candidates never
+  populate capturedAtPrecisionMs/Raw, so the precision tie-break
+  compares undefined===undefined and DateTimeOriginal beats
+  SubSecDateTimeOriginal alphabetically (CapturedAt.ts:627-651). MWG
+  masked this defect; fixable in bare mode, recovers all 120 losses.
+- (B) MWG strict mode suppressed "non-standard EXIF" in Panasonic RW2
+  embedded JPEGs; dropping RESURRECTS maker notes on 6 RW2s (+1 DNG):
+  serial numbers/lens fields appear → cameraId changes on 6, lensId on
+  2+4, image hashes shift deterministically. New values are MORE
+  correct (byte-identical to each RW2's JPG sibling) but re-key
+  existing DB rows on rebuild — in-place migration behavior unassessed.
+- (C) taumata.jpg loses Where State (IPTC Province-State was bridged
+  only by MWG's composite) — one-line fix: add Province-State /
+  Country-PrimaryLocationName to tagGeoSynonyms.
+- (D) Rating/Keywords/Copyright/Description: ZERO corpus dependency
+  (444-file dual-mode scan; Subject carries all Keywords values; no
+  file has Rights/CopyrightNotice at all).
+Pass 2 (extractCopyright chain wired + validated on synthetic files;
+Rating chain is a NO-OP in bare mode — documented, defers to Stage 1/2):
+residue delta vs pass 1 = ZERO across all 140 fixtures. imageId
+byte-stable (231/231). 6 hard-coded spec assertions fail (subsec + one
+read-side zone-attribution case on `writes AllDates` — written bytes
+identical; decide attribution before editing the assertion).
+
+RECOMMENDATION: ratify the drop CONDITIONALLY, bundled with: (1) the
+capturedAt precision tie-break fix (own fixture pass), (2) the IPTC geo
+synonyms, (3) a decision on Panasonic RW2 cameraId/lensId/hash
+re-keying for existing libraries, (4) the zone-attribution decision.
+Worktree kept in place for review; revert commands in the agent report.
+
 ## Progress log
 
 ### 2026-08-31
