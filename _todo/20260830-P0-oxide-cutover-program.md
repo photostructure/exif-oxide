@@ -58,6 +58,38 @@ the tracker for the 2026-07/08 workstreams; this TPP owns the cutover.
 - **M1b group-names migration** (exiftool-vendored + PhotoStructure repos):
   `-G` mode, groupless lookup helper + differential test, consumer/tier-list
   migration, fixture regen. Verified against Perl engine BEFORE any swap.
+  SCOPED 2026-08-30 (corpus survey + PhotoStructure inventory, both
+  verified): reproducing ExifTool's merge faithfully is impractical
+  (per-tag Priority metadata + found order + PRIORITY_DIR are not in -G
+  output) AND unnecessary — only 20 tag names corpus-wide ever collide
+  with differing values (189/379 files), winners mostly regular (EXIF for
+  the exposure cluster, Composite for lens aggregates, container-type for
+  CreateDate/ModifyDate), and PhotoStructure already runs its own
+  per-field precedence chains (CapturedAt 4-tier, MakeModel, Lens,
+  Exposure, Duration, Rating, Orientation, SizeInfo, GPS, Keywords) on
+  top of ExifTool's merge. ~190 distinct bare names consumed (~30 list
+  constants + ~40 files of literal access; 69 names multi-group in
+  practice). Four sharp edges needing deliberate decisions, not sed:
+  (a) ReadRawMergedTags.ts:189-209 sidecar overlay merges by shared bare
+  keyspace — under -G, sidecar XMP:Rating stops colliding with file
+  EXIF:Rating and sidecar-wins silently evaporates → the ONE place a
+  groupless-resolution helper is required; (b) persisted values embed
+  tag names: capturedAtSrcDetail + cameraId/imageId/lensId
+  (ExifUid.ts:119-148; the v1.1 decoder splits on ':' and breaks on
+  prefixed keys) → normalize names to bare before hashing to avoid a DB
+  migration; (c) StringArraySetting splits on ':' (POSIX path.delimiter)
+  for every tag-list setting except excludedExifTags → adopt
+  splitStringArrayKeepingColons everywhere + user-config migration;
+  (d) exiftool-vendored's -G keyspace is MIXED (parsed GPS, zone/tz,
+  SourceFile, errors stay bare; raw tags gain prefixes; both GPSLatitude
+  and EXIF:GPSLatitude present) and the flat Tags interface becomes
+  runtime-useless (type-checks, reads undefined) — fix in the wrapper we
+  own; also startsWith("GPS")/startsWith("Geolocation") heuristics break
+  (ExifTags.ts:109-111, GeoTagger.ts:49). Upside: -G replaces the
+  excludedExifTags -x hack with honest group selection, and Rating can
+  genuinely prefer XMP. Differential net already exists:
+  examples/json/core/tags/exif-tags-noinfer.json (231 files, parsed
+  output) + 140 assertEqlsPrior fixtures.
 - **M2 compatibility oracle v2** — per `_todo/20260808-P0-compatibility-
   oracle-v2.md`, plus a PhotoStructure-argv comparison mode and corpus
   widening (MP4/AVI/XMP sidecars exist locally but are skipped by
