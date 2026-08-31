@@ -222,9 +222,22 @@ contract; taken as default).
 
 Defaults taken (flagged): plain-data helper (both planners concur);
 includedPreviewTags strips groups before preview WRITES (status quo
-write locations); Geolocation consumed prefixed. Awaiting Matthew:
-Stage-0 go-ahead, Rating chain, Copyright chain, MakerNotes dates in
-capturedAt tiers, release-notes stance for custom bare-name settings.
+write locations); Geolocation consumed prefixed.
+
+Phase B decisions (Matthew, 2026-08-31): Stage 0 runs NOW as an
+uncommitted experiment IN A DEDICATED WORKTREE (Matthew: "use a new
+photostructure worktree please? don't play in ~/src/photostructure");
+nothing committed anywhere in that repo — global ask-first rule
+applies; Rating chain XMP → EXIF → MakerNotes;
+Copyright adopts the full MWG-equivalent chain (EXIF:Copyright →
+XMP:Rights → IPTC:CopyrightNotice) via a small extractCopyright();
+MakerNotes date tags enter the capturedAt SECONDARY tier at Stage 2.
+Still open: MWG-drop ratification (awaits the Stage-0 diff),
+release-notes stance for custom bare-name settings.
+
+Stage 0 design refinement: TWO regen passes for maximal evidence —
+pass 1 flips useMWG only (diff = total MWG dependency), pass 2 adds the
+Rating/Copyright replacement chains (diff = uncovered residue).
 
 ## Progress log
 
