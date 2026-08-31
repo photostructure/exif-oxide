@@ -14,6 +14,21 @@ use exif_oxide::types::FilterOptions;
 /// exif-oxide image1.jpg image2.jpg image3.jpg
 /// exif-oxide --show-missing *.jpg
 fn main() {
+    // `-stay_open True -@ -` (the exiftool-vendored.js spawn) switches to the
+    // REPL BEFORE clap and BEFORE any tracing subscriber: stay_open mode must
+    // be completely silent on stdout/stderr outside task output, because the
+    // consumer kills the child on any stray bytes (batch-cluster
+    // StreamHandler.ts:75-81, :95-100).
+    let raw_args: Vec<String> = std::env::args().skip(1).collect();
+    if let Some(seed_args) = exif_oxide::cli::detect_stay_open(&raw_args) {
+        let stdin = std::io::stdin();
+        let stdout = std::io::stdout();
+        let stderr = std::io::stderr();
+        let code =
+            exif_oxide::cli::stay_open::run(stdin.lock(), stdout.lock(), stderr.lock(), seed_args);
+        std::process::exit(code);
+    }
+
     // Initialize tracing subscriber for structured logging
     // Use environment variable RUST_LOG to control logging level (e.g., RUST_LOG=debug)
     // Ensure all log output goes to stderr, not stdout, so JSON output is clean
@@ -255,75 +270,27 @@ fn process_files(
     binary_extraction: bool,
     filter_options: FilterOptions,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    use exif_oxide::types::ExifData;
-
-    let mut results = Vec::new();
-
-    // Process each file
-    for path in paths {
-        debug!("Processing file: {}", path.display());
-
-        // A missing file gets a stderr line and NO JSON entry, matching
-        // ExifTool exactly (exiftool:2312-2318: `Warn "Error: File not found
-        // - $file\n"` and return before any output is produced). The
-        // exiftool-vendored.js consumer turns this stderr line into the task
-        // error (ExifToolTask.ts:59-71).
-        if !path.exists() {
-            eprintln!("Error: File not found - {}", path.display());
-            continue;
-        }
-
-        match process_single_file(path, show_missing, show_warnings, &filter_options) {
-            Ok(metadata) => {
-                info!("Successfully processed: {}", path.display());
-
-                // Handle binary extraction if requested
-                if binary_extraction {
-                    let tag_name = &filter_options.requested_tags[0]; // We validated exactly one tag
-                                                                      // For binary extraction, we need full metadata to find offset/length tags
-                                                                      // Extract metadata again without filtering to get all tags
-                    let no_filters = FilterOptions::extract_all();
-                    match process_single_file(path, show_missing, show_warnings, &no_filters) {
-                        Ok(full_metadata) => {
-                            return extract_binary_data(&full_metadata, tag_name, path);
-                        }
-                        Err(e) => {
-                            return Err(format!(
-                                "Failed to extract full metadata for binary extraction: {}",
-                                e
-                            )
-                            .into());
-                        }
-                    }
-                }
-
-                results.push(metadata);
-            }
-            Err(e) => {
-                // An existing-but-unparseable file still gets a JSON entry,
-                // with the failure under the ExifTool:Error key (probed:
-                // vendored ExifTool 13.59 emits `"ExifTool:Error": "Unknown
-                // file type"` for such files; error storage exiftool:2403-2419).
-                error!("Failed to process {}: {}", path.display(), e);
-                let error_metadata = ExifData {
-                    source_file: path.to_string_lossy().to_string(),
-                    exif_tool_version: exif_oxide::EXIFTOOL_VERSION.to_string(),
-                    tags: vec![],
-                    legacy_tags: indexmap::IndexMap::new(),
-                    errors: vec![format!("Error processing file: {e}")],
-                    warnings: vec![],
-                    missing_implementations: None,
-                };
-                results.push(error_metadata);
-            }
-        }
+    // Binary extraction is a classic-mode-only feature: exactly one tag and
+    // one file (validated by the caller). It needs the full unfiltered
+    // metadata to locate offset/length tags.
+    if binary_extraction {
+        let path = &paths[0];
+        let tag_name = &filter_options.requested_tags[0];
+        let no_filters = FilterOptions::extract_all();
+        let full_metadata = process_single_file(path, show_missing, show_warnings, &no_filters)
+            .map_err(|e| format!("Failed to extract full metadata for binary extraction: {e}"))?;
+        return extract_binary_data(&full_metadata, tag_name, path);
     }
 
-    // Prepare for serialization by converting tags to legacy format.
-    // The ordered request list decides which tags print their ValueConv value.
-    for result in &mut results {
-        result.prepare_for_serialization(Some(&filter_options));
-    }
+    // The per-file loop (missing-file stderr lines, ExifTool:Error entries,
+    // serialization prep) is shared with the stay_open REPL.
+    let files: Vec<String> = paths
+        .iter()
+        .map(|p| p.to_string_lossy().to_string())
+        .collect();
+    let mut stderr = std::io::stderr();
+    let results =
+        exif_oxide::cli::collect_entries(&files, &filter_options, show_missing, &mut stderr);
 
     // Output as JSON array matching ExifTool format. When every file was
     // missing there is nothing to print - ExifTool emits no JSON at all in

@@ -11,9 +11,12 @@
 //! an option parser that turns one command's args into work
 //! (exiftool's `Command:` loop, :400+).
 
+pub mod argfile;
 pub mod options;
+pub mod stay_open;
 
 pub use options::{parse_command, ParsedCommand};
+pub use stay_open::{collect_entries, detect_stay_open};
 
 /// The exact one-line UTF-8-repair Perl filter exiftool-vendored.js sends as
 /// the value of `-api` in every default ReadTask payload
