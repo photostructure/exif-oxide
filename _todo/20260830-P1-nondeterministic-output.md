@@ -17,6 +17,12 @@ snapshot-based ratchet.
 - [ ] Review & Refinement
 - [ ] Final Integration
 
+## Scope (Matthew, 2026-08-30)
+
+VALUE nondeterminism only. Field/tag *ordering* differences between runs
+are explicitly out of scope — do not spend effort stabilizing output
+order. All three repros below are value flips, so all are in scope.
+
 ## Confirmed repros (2026-08-30, 5-run samples)
 
 1. `Composite:FocalLength35efl` flips between `26` and `5.7` (2/3 split).
