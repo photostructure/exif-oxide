@@ -49,7 +49,11 @@ use tracing::debug;
 /// # Arguments
 /// * `path` - Path to the image file
 /// * `show_missing` - Include missing implementation information in output
-/// * `show_warnings` - Include parsing warnings in output  
+/// * `_show_warnings` - Ignored since M1a decision 4 (2026-08-30): warnings
+///   are always collected into `ExifData::warnings` and the first one is
+///   serialized as the `ExifTool:Warning` key, matching ExifTool. The
+///   parameter is kept so the 100+ existing call sites don't churn; removing
+///   it is a candidate cleanup for M1b.
 /// * `filter_options` - Optional filtering and formatting configuration (None = extract all tags)
 ///
 /// # Examples
@@ -68,7 +72,7 @@ use tracing::debug;
 pub fn extract_metadata(
     path: &Path,
     show_missing: bool,
-    show_warnings: bool,
+    _show_warnings: bool,
     filter_options: Option<FilterOptions>,
 ) -> Result<ExifData> {
     // Ensure conversions are registered
@@ -112,6 +116,10 @@ pub fn extract_metadata(
 
     let mut tags = IndexMap::new();
     let mut tag_entries = Vec::new();
+    // Parse problems in discovery order; the first one becomes the single
+    // ExifTool:Warning JSON key at serialization time, matching ExifTool's
+    // one-Warning-tag behavior (decision 4, _todo/20260830-P1-stay-open-m1a.md).
+    let mut warnings: Vec<String> = Vec::new();
 
     // Basic file information from stat(), shared with the File-only shortcut
     push_system_tags(path, &file_metadata, &filter_opts, &mut tag_entries);
@@ -222,21 +230,13 @@ pub fn extract_metadata(
                         add_exif_byte_order_tag(&exif_reader, &mut tag_entries);
 
                         // Add RAW processing warnings as tags for debugging
-                        if show_warnings {
-                            for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
-                                tags.insert(
-                                    format!("Warning:RawWarning{i}"),
-                                    TagValue::String(warning.clone()),
-                                );
-                            }
-                        }
+                        // Parse warnings are always collected; the first one becomes the
+                        // ExifTool:Warning JSON key (decision 4, M1a TPP).
+                        warnings.extend(exif_reader.get_warnings().iter().cloned());
                     }
                     Err(e) => {
                         // Failed to parse RAW - add error information
-                        tags.insert(
-                            "Warning:RawParseError".to_string(),
-                            TagValue::string(format!("Failed to parse RAW: {e}")),
-                        );
+                        warnings.push(format!("Failed to parse RAW: {e}"));
                     }
                 }
             }
@@ -306,15 +306,9 @@ pub fn extract_metadata(
 
                 match segment_info_opt {
                     Some(segment_info) => {
-                        let exif_status = format!(
+                        debug!(
                             "EXIF data found in APP1 segment at offset {:#x}, length {} bytes",
                             segment_info.offset, segment_info.length
-                        );
-
-                        // Add EXIF detection status
-                        tags.insert(
-                            "System:ExifDetectionStatus".to_string(),
-                            TagValue::String(exif_status),
                         );
 
                         // Extract actual EXIF data using our new ExifReader
@@ -350,32 +344,18 @@ pub fn extract_metadata(
                                 add_exif_byte_order_tag(&exif_reader, &mut tag_entries);
 
                                 // Add EXIF processing warnings as tags for debugging
-                                if show_warnings {
-                                    for (i, warning) in
-                                        exif_reader.get_warnings().iter().enumerate()
-                                    {
-                                        tags.insert(
-                                            format!("Warning:ExifWarning{i}"),
-                                            TagValue::String(warning.clone()),
-                                        );
-                                    }
-                                }
+                                // Parse warnings are always collected; the first one becomes the
+                                // ExifTool:Warning JSON key (decision 4, M1a TPP).
+                                warnings.extend(exif_reader.get_warnings().iter().cloned());
                             }
                             Err(e) => {
                                 // Failed to parse EXIF - add error information
-                                tags.insert(
-                                    "Warning:ExifParseError".to_string(),
-                                    TagValue::string(format!("Failed to parse EXIF: {e}")),
-                                );
+                                warnings.push(format!("Failed to parse EXIF: {e}"));
                             }
                         }
                     }
                     None => {
                         // No EXIF data found
-                        tags.insert(
-                            "System:ExifDetectionStatus".to_string(),
-                            "No EXIF data found in JPEG".into(),
-                        );
                     }
                 }
 
@@ -383,7 +363,6 @@ pub fn extract_metadata(
                 reader.seek(SeekFrom::Start(0))?;
                 match extract_jpeg_iptc(&mut reader) {
                     Ok(iptc_tags) => {
-                        let iptc_count = iptc_tags.len();
                         if !iptc_tags.is_empty() {
                             // Convert IPTC tags to TagEntry format and add to collection
                             for (tag_name, tag_value) in iptc_tags {
@@ -400,34 +379,16 @@ pub fn extract_metadata(
                             }
 
                             // Add IPTC detection status
-                            tags.insert(
-                                "System:IptcDetectionStatus".to_string(),
-                                TagValue::String(format!(
-                                    "IPTC data found in APP13 segment ({} tags extracted)",
-                                    iptc_count
-                                )),
-                            );
                         } else {
                             // No IPTC data found
-                            tags.insert(
-                                "System:IptcDetectionStatus".to_string(),
-                                "No IPTC data found in JPEG".into(),
-                            );
                         }
                     }
                     Err(e) if e.to_string().contains("No APP13 segment") => {
                         // No APP13 segment found (not an error)
-                        tags.insert(
-                            "System:IptcDetectionStatus".to_string(),
-                            "No APP13 segment found in JPEG".into(),
-                        );
                     }
                     Err(e) => {
                         // Real error scanning for IPTC
-                        tags.insert(
-                            "Warning:IptcScanError".to_string(),
-                            TagValue::string(format!("Error scanning for IPTC: {e}")),
-                        );
+                        warnings.push(format!("Error scanning for IPTC: {e}"));
                     }
                 }
 
@@ -443,36 +404,19 @@ pub fn extract_metadata(
                                 tag_entries.extend(xmp_tag_entries);
 
                                 // Add XMP detection status
-                                tags.insert(
-                                    "System:XmpDetectionStatus".to_string(),
-                                    TagValue::String(format!(
-                                        "XMP data found ({} bytes total)",
-                                        xmp_data.len()
-                                    )),
-                                );
                             }
                             Err(e) => {
                                 // Failed to parse XMP - add error information
-                                tags.insert(
-                                    "Warning:XmpParseError".to_string(),
-                                    TagValue::string(format!("Failed to parse XMP: {e}")),
-                                );
+                                warnings.push(format!("Failed to parse XMP: {e}"));
                             }
                         }
                     }
                     Err(e) if e.to_string().contains("No XMP data found") => {
                         // No XMP data found (not an error)
-                        tags.insert(
-                            "System:XmpDetectionStatus".to_string(),
-                            "No XMP data found in JPEG".into(),
-                        );
                     }
                     Err(e) => {
                         // Real error scanning for XMP
-                        tags.insert(
-                            "Warning:XmpScanError".to_string(),
-                            TagValue::string(format!("Error scanning for XMP: {e}")),
-                        );
+                        warnings.push(format!("Error scanning for XMP: {e}"));
                     }
                 }
 
@@ -594,21 +538,13 @@ pub fn extract_metadata(
                         add_exif_byte_order_tag(&exif_reader, &mut tag_entries);
 
                         // Add EXIF processing warnings as tags for debugging
-                        if show_warnings {
-                            for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
-                                tags.insert(
-                                    format!("Warning:ExifWarning{i}"),
-                                    TagValue::String(warning.clone()),
-                                );
-                            }
-                        }
+                        // Parse warnings are always collected; the first one becomes the
+                        // ExifTool:Warning JSON key (decision 4, M1a TPP).
+                        warnings.extend(exif_reader.get_warnings().iter().cloned());
                     }
                     Err(e) => {
                         // Failed to parse TIFF - add error information
-                        tags.insert(
-                            "Warning:TiffParseError".to_string(),
-                            TagValue::string(format!("Failed to parse TIFF: {e}")),
-                        );
+                        warnings.push(format!("Failed to parse TIFF: {e}"));
                     }
                 }
 
@@ -623,36 +559,19 @@ pub fn extract_metadata(
                                 tag_entries.extend(xmp_tag_entries);
 
                                 // Add XMP detection status
-                                tags.insert(
-                                    "System:XmpDetectionStatus".to_string(),
-                                    TagValue::String(format!(
-                                        "XMP data found in TIFF IFD0 tag 0x02bc, length {} bytes",
-                                        xmp_data.len()
-                                    )),
-                                );
                             }
                             Err(e) => {
                                 // Failed to parse XMP - add error information
-                                tags.insert(
-                                    "Warning:XmpParseError".to_string(),
-                                    TagValue::string(format!("Failed to parse XMP: {e}")),
-                                );
+                                warnings.push(format!("Failed to parse XMP: {e}"));
                             }
                         }
                     }
                     Ok(None) => {
                         // No XMP data found
-                        tags.insert(
-                            "System:XmpDetectionStatus".to_string(),
-                            "No XMP data found in TIFF".into(),
-                        );
                     }
                     Err(e) => {
                         // Error extracting XMP
-                        tags.insert(
-                            "Warning:XmpExtractionError".to_string(),
-                            TagValue::string(format!("Error extracting XMP: {e}")),
-                        );
+                        warnings.push(format!("Error extracting XMP: {e}"));
                     }
                 }
             }
@@ -670,20 +589,10 @@ pub fn extract_metadata(
                         tag_entries.extend(xmp_tag_entries);
 
                         // Add XMP detection status
-                        tags.insert(
-                            "System:XmpDetectionStatus".to_string(),
-                            TagValue::String(format!(
-                                "XMP data processed from standalone file, length {} bytes",
-                                xmp_data.len()
-                            )),
-                        );
                     }
                     Err(e) => {
                         // Failed to parse XMP - add error information
-                        tags.insert(
-                            "Warning:XmpParseError".to_string(),
-                            TagValue::string(format!("Failed to parse XMP: {e}")),
-                        );
+                        warnings.push(format!("Failed to parse XMP: {e}"));
                     }
                 }
             }
@@ -746,24 +655,16 @@ pub fn extract_metadata(
                         // Add ExifByteOrder tag if EXIF data was present
                         add_exif_byte_order_tag(&exif_reader, &mut tag_entries);
                         // Add RAW processing warnings as tags for debugging
-                        if show_warnings {
-                            for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
-                                tags.insert(
-                                    format!("Warning:RawWarning{i}"),
-                                    TagValue::String(warning.clone()),
-                                );
-                            }
-                        }
+                        // Parse warnings are always collected; the first one becomes the
+                        // ExifTool:Warning JSON key (decision 4, M1a TPP).
+                        warnings.extend(exif_reader.get_warnings().iter().cloned());
                     }
                     Err(e) => {
                         // Failed to parse RAW - add error information
-                        tags.insert(
-                            "Warning:RawParseError".to_string(),
-                            TagValue::string(format!(
-                                "Failed to parse {} RAW: {e}",
-                                detection_result.format
-                            )),
-                        );
+                        warnings.push(format!(
+                            "Failed to parse {} RAW: {e}",
+                            detection_result.format
+                        ));
                     }
                 }
             }
@@ -798,20 +699,12 @@ pub fn extract_metadata(
                             add_exif_byte_order_tag(&exif_reader, &mut tag_entries);
 
                             // Add EXIF processing warnings as tags for debugging
-                            if show_warnings {
-                                for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
-                                    tags.insert(
-                                        format!("Warning:ExifWarning{i}"),
-                                        TagValue::String(warning.clone()),
-                                    );
-                                }
-                            }
+                            // Parse warnings are always collected; the first one becomes the
+                            // ExifTool:Warning JSON key (decision 4, M1a TPP).
+                            warnings.extend(exif_reader.get_warnings().iter().cloned());
                         }
                         Err(e) => {
-                            tags.insert(
-                                "Warning:CR2ParseError".to_string(),
-                                TagValue::string(format!("Failed to parse CR2: {e}")),
-                            );
+                            warnings.push(format!("Failed to parse CR2: {e}"));
                         }
                     }
                 } else {
@@ -838,23 +731,15 @@ pub fn extract_metadata(
                             // Add ExifByteOrder tag if EXIF data was present
                             add_exif_byte_order_tag(&exif_reader, &mut tag_entries);
 
-                            if show_warnings {
-                                for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
-                                    tags.insert(
-                                        format!("Warning:RawWarning{i}"),
-                                        TagValue::String(warning.clone()),
-                                    );
-                                }
-                            }
+                            // Parse warnings are always collected; the first one becomes the
+                            // ExifTool:Warning JSON key (decision 4, M1a TPP).
+                            warnings.extend(exif_reader.get_warnings().iter().cloned());
                         }
                         Err(e) => {
-                            tags.insert(
-                                "Warning:CanonRawParseError".to_string(),
-                                TagValue::string(format!(
-                                    "Failed to parse Canon {} RAW: {e}",
-                                    detection_result.file_type
-                                )),
-                            );
+                            warnings.push(format!(
+                                "Failed to parse Canon {} RAW: {e}",
+                                detection_result.file_type
+                            ));
                         }
                     }
                 }
@@ -879,23 +764,10 @@ pub fn extract_metadata(
                         tag_entries.append(&mut png_tag_entries);
 
                         // Add PNG processing status
-                        tags.insert(
-                            "System:PngDetectionStatus".to_string(),
-                            TagValue::String(format!(
-                                "PNG IHDR processed: {}x{} {} {}",
-                                ihdr.width,
-                                ihdr.height,
-                                ihdr.color_type_description(),
-                                ihdr.bit_depth
-                            )),
-                        );
                     }
                     Err(e) => {
                         // Failed to parse PNG IHDR - add error information
-                        tags.insert(
-                            "Warning:PngParseError".to_string(),
-                            TagValue::string(format!("Failed to parse PNG IHDR: {e}")),
-                        );
+                        warnings.push(format!("Failed to parse PNG IHDR: {e}"));
                     }
                 }
 
@@ -932,26 +804,10 @@ pub fn extract_metadata(
                         tag_entries.append(&mut gif_tag_entries);
 
                         // Add GIF processing status
-                        tags.insert(
-                            "System:GifDetectionStatus".to_string(),
-                            TagValue::String(format!(
-                                "GIF screen descriptor processed: {}x{} {} colors",
-                                screen_desc.image_width,
-                                screen_desc.image_height,
-                                if screen_desc.has_color_map() {
-                                    format!("{}", 2_u32.pow(screen_desc.bits_per_pixel() as u32))
-                                } else {
-                                    "no color map".to_string()
-                                }
-                            )),
-                        );
                     }
                     Err(e) => {
                         // Failed to parse GIF screen descriptor - add error information
-                        tags.insert(
-                            "Warning:GifParseError".to_string(),
-                            TagValue::string(format!("Failed to parse GIF screen descriptor: {e}")),
-                        );
+                        warnings.push(format!("Failed to parse GIF screen descriptor: {e}"));
                     }
                 }
             }
@@ -980,20 +836,10 @@ pub fn extract_metadata(
                                 tag_entries.append(&mut avif_tag_entries);
 
                                 // Add AVIF processing status
-                                tags.insert(
-                                    "System:AvifDetectionStatus".to_string(),
-                                    TagValue::String(format!(
-                                        "AVIF ispe box processed: {}x{}",
-                                        props.width, props.height
-                                    )),
-                                );
                             }
                             Err(e) => {
                                 // Failed to parse AVIF ispe box - add error information
-                                tags.insert(
-                                    "Warning:AvifParseError".to_string(),
-                                    TagValue::string(format!("Failed to parse AVIF ispe box: {e}")),
-                                );
+                                warnings.push(format!("Failed to parse AVIF ispe box: {e}"));
                             }
                         }
                     }
@@ -1019,7 +865,6 @@ pub fn extract_metadata(
                             Ok(props) => {
                                 // Create File:ImageWidth and File:ImageHeight tag entries
                                 // ExifTool creates File group tags for HEIC/HEIF dimensions
-                                let file_type = &detection_result.file_type;
                                 let mut heic_tag_entries = vec![
                                     TagEntry {
                                         group: "File".to_string(),
@@ -1041,23 +886,13 @@ pub fn extract_metadata(
                                 tag_entries.append(&mut heic_tag_entries);
 
                                 // Add HEIC/HEIF processing status
-                                tags.insert(
-                                    format!("System:{}DetectionStatus", file_type),
-                                    TagValue::String(format!(
-                                        "{} ispe box processed: {}x{}",
-                                        file_type, props.width, props.height
-                                    )),
-                                );
                             }
                             Err(e) => {
                                 // Failed to parse HEIC/HEIF ispe box - add error information
-                                tags.insert(
-                                    format!("Warning:{}ParseError", detection_result.file_type),
-                                    TagValue::string(format!(
-                                        "Failed to parse {} ispe box: {e}",
-                                        detection_result.file_type
-                                    )),
-                                );
+                                warnings.push(format!(
+                                    "Failed to parse {} ispe box: {e}",
+                                    detection_result.file_type
+                                ));
                             }
                         }
                     }
@@ -1072,36 +907,17 @@ pub fn extract_metadata(
                             }
                             Err(e) => {
                                 // Corrupt container: keep File: tags, note the failure.
-                                tags.insert(
-                                    "Warning:QuickTimeParseError".to_string(),
-                                    TagValue::string(format!(
-                                        "Failed to parse QuickTime container: {e}"
-                                    )),
-                                );
+                                warnings.push(format!("Failed to parse QuickTime container: {e}"));
                             }
                         }
                     }
                     _ => {
                         // Other MOV-based formats not yet supported (HEIF, CR3, etc.)
-                        tags.insert(
-                            "System:ExifDetectionStatus".to_string(),
-                            TagValue::string(format!(
-                                "MOV-based format {} not yet supported for dimension extraction",
-                                detection_result.file_type
-                            )),
-                        );
                     }
                 }
             }
             _ => {
                 // Other formats not yet supported
-                tags.insert(
-                    "System:ExifDetectionStatus".to_string(),
-                    TagValue::string(format!(
-                        "Format {} not yet supported for EXIF extraction",
-                        detection_result.format
-                    )),
-                );
             }
         }
     } else {
@@ -1159,9 +975,12 @@ pub fn extract_metadata(
 
     // Create final ExifData structure
     let source_file = path.to_string_lossy().to_string();
-    // P12: Only include ExifToolVersion when not filtering (matches ExifTool behavior)
+    // P12: Only include ExifToolVersion when not filtering (matches ExifTool behavior).
+    // The value is the emulated ExifTool version (decision 2, M1a TPP), never the
+    // crate version: exiftool-vendored.js treats it as an opaque passthrough tag
+    // but its bare-version shape is part of the compatibility contract.
     let version = if filter_options.as_ref().is_none_or(|f| f.extract_all) {
-        env!("CARGO_PKG_VERSION").to_string()
+        crate::EXIFTOOL_VERSION.to_string()
     } else {
         String::new() // Empty version when filtering
     };
@@ -1283,6 +1102,11 @@ pub fn extract_metadata(
 
     // Set legacy tags for backward compatibility
     exif_data.legacy_tags = filtered_legacy_tags;
+
+    // Warnings are carried out-of-band and serialized as the ExifTool:Warning
+    // key; they are never subject to tag filtering (ExifTool emits Warning
+    // even for filtered requests when extraction stumbles).
+    exif_data.warnings = warnings;
 
     // Set missing implementations if requested
     exif_data.missing_implementations = missing_implementations;
@@ -1681,9 +1505,10 @@ fn extract_file_tags_only(
         }
     }
 
-    // Create final ExifData structure
+    // Create final ExifData structure (ExifToolVersion is the emulated
+    // ExifTool version, decision 2 in the M1a TPP)
     let source_file = path.to_string_lossy().to_string();
-    let mut exif_data = ExifData::new(source_file, env!("CARGO_PKG_VERSION").to_string());
+    let mut exif_data = ExifData::new(source_file, crate::EXIFTOOL_VERSION.to_string());
 
     // Set tag entries
     exif_data.tags = tag_entries;

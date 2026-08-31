@@ -97,6 +97,11 @@ fn test_cli_show_missing() {
 }
 
 /// Test CLI error handling for non-existent file
+///
+/// Matches ExifTool exactly (exiftool:2312-2318, probed against the vendored
+/// 13.59): a missing file gets a stderr line and NO JSON entry - the
+/// exiftool-vendored.js consumer surfaces the stderr line as the task error.
+/// Exit code stays 0 (M1a decision 6: classic exit codes deferred).
 #[test]
 fn test_cli_nonexistent_file() {
     let output = Command::new(env!("CARGO_BIN_EXE_exif-oxide"))
@@ -104,23 +109,19 @@ fn test_cli_nonexistent_file() {
         .output()
         .expect("Failed to run CLI with nonexistent file");
 
-    // Our CLI returns success (0) with error info in JSON array for graceful batch processing
-    // This differs from ExifTool but allows continuous processing of multiple files
     assert!(output.status.success());
 
-    let stdout = String::from_utf8(output.stdout).unwrap();
-    let json: Value = serde_json::from_str(&stdout).expect("Output should be valid JSON");
-    assert!(json.is_array());
-    let array = json.as_array().unwrap();
-    assert_eq!(array.len(), 1);
-    let obj = &array[0];
+    let stderr = String::from_utf8(output.stderr).unwrap();
+    assert!(
+        stderr.contains("Error: File not found - nonexistent_file.jpg"),
+        "stderr must carry the ExifTool-style line: {stderr:?}"
+    );
 
-    // Should have error information
-    assert!(obj.get("errors").is_some());
-    let errors = obj["errors"].as_array().unwrap();
-    assert!(!errors.is_empty());
-    let error_msg = errors[0].as_str().unwrap();
-    assert!(error_msg.contains("File not found") || error_msg.contains("not found"));
+    let stdout = String::from_utf8(output.stdout).unwrap();
+    assert!(
+        stdout.trim().is_empty(),
+        "missing files produce no JSON entry (ExifTool prints nothing): {stdout:?}"
+    );
 }
 
 /// Test JSON structure compatibility with ExifTool format

@@ -493,7 +493,7 @@ fn test_numeric_request_order_decides_duration_output() {
             Some(filter.clone()),
         )
         .unwrap();
-        result.prepare_for_serialization(Some(&filter.tag_requests));
+        result.prepare_for_serialization(Some(&filter));
         result
             .legacy_tags
             .get("QuickTime:Duration")

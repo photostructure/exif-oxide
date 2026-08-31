@@ -146,10 +146,9 @@ pub fn extract_metadata_json_with_filter(
     let mut exif_data = formats::extract_metadata(path, false, false, filter_options.clone())?;
 
     // Prepare for serialization; the ordered request list decides which tags print
-    // their ValueConv value.
-    let tag_requests = filter_options.as_ref().map(|f| f.tag_requests.as_slice());
-
-    exif_data.prepare_for_serialization(tag_requests);
+    // their ValueConv value, and the filter decides whether the
+    // ExifTool:Error/ExifTool:Warning keys appear.
+    exif_data.prepare_for_serialization(filter_options.as_ref());
 
     // Convert ExifData to JSON
     let json = serde_json::to_value(&exif_data)

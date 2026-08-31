@@ -165,3 +165,123 @@ fn test_unknown_short_option_still_rejected() {
         "stderr must name the option: {stderr:?}"
     );
 }
+
+// ---- T2: JSON error/warning contract (ExifTool -G output emulation) --------
+
+/// An existing-but-unparseable file yields one JSON entry whose error lives
+/// under the `ExifTool:Error` key - never a lowercase `errors` array, which is
+/// invisible to the consumer (ReadTask.ts:111 overwrites `tags.errors`;
+/// ErrorsAndWarnings.ts:22-29 reads only `Error`/`Warning` tag keys).
+///
+/// Probed (vendored ExifTool 13.59): `exiftool -j -struct -G unknown.bin` =>
+/// `"ExifTool:Error": "Unknown file type"` right after ExifToolVersion
+/// (JSON key naming: exiftool:2949 `$allGroup ? "$group:$tagName" : $tagName`).
+#[test]
+fn test_unparseable_file_uses_exiftool_error_key() {
+    let f = scratch_file();
+    let path = f.path().to_str().unwrap().to_string();
+    let out = exif_oxide()
+        .args(["-all", &path])
+        .output()
+        .expect("run exif-oxide");
+    let json: serde_json::Value =
+        serde_json::from_str(&String::from_utf8(out.stdout).unwrap()).expect("JSON stdout");
+    let entries = json.as_array().expect("array");
+    assert_eq!(entries.len(), 1);
+    let obj = entries[0].as_object().expect("object");
+    assert_eq!(obj["SourceFile"].as_str(), Some(path.as_str()));
+    assert!(
+        obj.get("ExifTool:Error").is_some_and(|v| v.is_string()),
+        "entry must carry ExifTool:Error: {json}"
+    );
+    assert!(
+        !obj.contains_key("errors"),
+        "lowercase 'errors' key must not be serialized: {json}"
+    );
+}
+
+/// A missing file produces a stderr line and NO JSON entry.
+///
+/// Probed (vendored ExifTool 13.59): `exiftool -j /nonexistent-file.jpg` =>
+/// stdout empty, stderr `Error: File not found - /nonexistent-file.jpg`
+/// (exiftool:2312-2318). The consumer surfaces that stderr line as the task
+/// error (ExifToolTask.ts:59-71). Classic-mode exit code stays 0 (decision 6:
+/// deferred; batch-cluster ignores exit codes).
+#[test]
+fn test_missing_file_stderr_and_no_json_entry() {
+    let out = exif_oxide()
+        .args(["-all", "/nonexistent-dir/nonexistent-file.jpg"])
+        .output()
+        .expect("run exif-oxide");
+    let stdout = String::from_utf8(out.stdout).unwrap();
+    let stderr = String::from_utf8_lossy(&out.stderr);
+    assert!(
+        stderr.contains("Error: File not found - /nonexistent-dir/nonexistent-file.jpg"),
+        "stderr must carry the ExifTool-style line: {stderr:?}"
+    );
+    assert!(
+        stdout.trim().is_empty(),
+        "no JSON output when every file is missing (ExifTool prints nothing): {stdout:?}"
+    );
+}
+
+/// Successful parses must not carry invented `System:*DetectionStatus` or
+/// `Warning:Xxx` multi-keys - errors/warnings appear ONLY as
+/// `ExifTool:Error`/`ExifTool:Warning` (decision 3,
+/// _todo/20260830-P1-stay-open-m1a.md).
+#[test]
+fn test_no_invented_system_or_warning_keys() {
+    // A minimal valid GIF exercises the format-processing path that used to
+    // insert System:GifDetectionStatus.
+    let mut f = tempfile::Builder::new()
+        .suffix(".gif")
+        .tempfile()
+        .expect("create temp gif");
+    // GIF89a, 1x1 logical screen, no color map.
+    f.write_all(b"GIF89a\x01\x00\x01\x00\x00\x00\x00")
+        .expect("write gif");
+    let path = f.path().to_str().unwrap().to_string();
+
+    let out = exif_oxide()
+        .args(["-all", &path])
+        .output()
+        .expect("run exif-oxide");
+    let json: serde_json::Value =
+        serde_json::from_str(&String::from_utf8(out.stdout).unwrap()).expect("JSON stdout");
+    let entries = json.as_array().expect("array");
+    assert_eq!(entries.len(), 1);
+    let obj = entries[0].as_object().expect("object");
+    let bad: Vec<&String> = obj
+        .keys()
+        .filter(|k| k.starts_with("System:") || k.starts_with("Warning:"))
+        .collect();
+    assert!(
+        bad.is_empty(),
+        "no invented System:/Warning: keys allowed, found {bad:?} in {json}"
+    );
+}
+
+/// The ExifToolVersion JSON value is the emulated ExifTool version constant
+/// (decision 2), not the crate version.
+#[test]
+fn test_exiftool_version_json_value() {
+    let mut f = tempfile::Builder::new()
+        .suffix(".gif")
+        .tempfile()
+        .expect("create temp gif");
+    f.write_all(b"GIF89a\x01\x00\x01\x00\x00\x00\x00")
+        .expect("write gif");
+    let path = f.path().to_str().unwrap().to_string();
+
+    let out = exif_oxide()
+        .args([path.as_str()])
+        .output()
+        .expect("run exif-oxide");
+    let json: serde_json::Value =
+        serde_json::from_str(&String::from_utf8(out.stdout).unwrap()).expect("JSON stdout");
+    assert_eq!(
+        json[0]["ExifToolVersion"].as_str(),
+        Some(exif_oxide::EXIFTOOL_VERSION),
+        "ExifToolVersion must report the emulated ExifTool version"
+    );
+}

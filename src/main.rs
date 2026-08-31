@@ -262,6 +262,17 @@ fn process_files(
     // Process each file
     for path in paths {
         debug!("Processing file: {}", path.display());
+
+        // A missing file gets a stderr line and NO JSON entry, matching
+        // ExifTool exactly (exiftool:2312-2318: `Warn "Error: File not found
+        // - $file\n"` and return before any output is produced). The
+        // exiftool-vendored.js consumer turns this stderr line into the task
+        // error (ExifToolTask.ts:59-71).
+        if !path.exists() {
+            eprintln!("Error: File not found - {}", path.display());
+            continue;
+        }
+
         match process_single_file(path, show_missing, show_warnings, &filter_options) {
             Ok(metadata) => {
                 info!("Successfully processed: {}", path.display());
@@ -289,15 +300,18 @@ fn process_files(
                 results.push(metadata);
             }
             Err(e) => {
-                // ExifTool continues processing other files on error
-                // Create error entry similar to ExifTool's behavior
+                // An existing-but-unparseable file still gets a JSON entry,
+                // with the failure under the ExifTool:Error key (probed:
+                // vendored ExifTool 13.59 emits `"ExifTool:Error": "Unknown
+                // file type"` for such files; error storage exiftool:2403-2419).
                 error!("Failed to process {}: {}", path.display(), e);
                 let error_metadata = ExifData {
                     source_file: path.to_string_lossy().to_string(),
-                    exif_tool_version: "0.1.0-oxide".to_string(),
+                    exif_tool_version: exif_oxide::EXIFTOOL_VERSION.to_string(),
                     tags: vec![],
                     legacy_tags: indexmap::IndexMap::new(),
                     errors: vec![format!("Error processing file: {e}")],
+                    warnings: vec![],
                     missing_implementations: None,
                 };
                 results.push(error_metadata);
@@ -308,11 +322,15 @@ fn process_files(
     // Prepare for serialization by converting tags to legacy format.
     // The ordered request list decides which tags print their ValueConv value.
     for result in &mut results {
-        result.prepare_for_serialization(Some(&filter_options.tag_requests));
+        result.prepare_for_serialization(Some(&filter_options));
     }
 
-    // Output as JSON array matching ExifTool format
-    println!("{}", serde_json::to_string_pretty(&results)?);
+    // Output as JSON array matching ExifTool format. When every file was
+    // missing there is nothing to print - ExifTool emits no JSON at all in
+    // that case (probed: `exiftool -j /nonexistent.jpg` => empty stdout).
+    if !results.is_empty() {
+        println!("{}", serde_json::to_string_pretty(&results)?);
+    }
 
     Ok(())
 }
@@ -327,10 +345,9 @@ fn process_single_file(
     show_warnings: bool,
     filter_options: &FilterOptions,
 ) -> Result<exif_oxide::types::ExifData, Box<dyn std::error::Error>> {
-    // Verify file exists
-    if !path.exists() {
-        return Err(format!("File not found: {}", path.display()).into());
-    }
+    // Existence is checked by the caller (missing files never reach here, so
+    // they never get a JSON entry); a file vanishing in between surfaces as
+    // the File::open error inside extract_metadata.
 
     // Extract metadata using our library with filtering
     let metadata = extract_metadata(

@@ -810,9 +810,25 @@ pub struct ExifData {
     #[serde(flatten)]
     pub legacy_tags: IndexMap<String, TagValue>,
 
-    /// Any errors encountered during processing
-    #[serde(skip_serializing_if = "Vec::is_empty")]
+    /// Any errors encountered during processing.
+    ///
+    /// Kept in memory for programmatic callers, but never serialized as a
+    /// lowercase `errors` array: the exiftool-vendored.js consumer overwrites
+    /// `tags.errors` with its own list (ReadTask.ts:111,:257-259) and reads
+    /// errors only from the `ExifTool:Error` tag key, which
+    /// `prepare_for_serialization` emits from the first entry here
+    /// (exiftool:2949 - all keys are `Group:Tag` in the emulated -G mode).
+    #[serde(skip)]
     pub errors: Vec<String>,
+
+    /// Any warnings encountered during processing, in discovery order.
+    ///
+    /// Like `errors`, never serialized directly: the first warning becomes the
+    /// `ExifTool:Warning` JSON key (ExifTool keeps one Warning tag, storing
+    /// only the first unless duplicates are enabled; decision 4 in
+    /// _todo/20260830-P1-stay-open-m1a.md says always emit it).
+    #[serde(skip)]
+    pub warnings: Vec<String>,
 
     /// Missing implementations (only included with --show-missing)
     #[serde(
@@ -831,6 +847,7 @@ impl ExifData {
             tags: Vec::new(),
             legacy_tags: IndexMap::new(),
             errors: Vec::new(),
+            warnings: Vec::new(),
             missing_implementations: None,
         }
     }
@@ -867,19 +884,41 @@ impl ExifData {
     /// Convert tags to legacy format for JSON serialization
     /// This populates legacy_tags from the TagEntry vector
     ///
-    /// `tag_requests` is the command-line request list in order; the first request
-    /// matching a tag decides whether its ValueConv or PrintConv value is emitted.
-    pub fn prepare_for_serialization(&mut self, tag_requests: Option<&[TagRequest]>) {
+    /// `filter` carries the command-line request list in order (the first
+    /// request matching a tag decides whether its ValueConv or PrintConv value
+    /// is emitted) and decides whether the ExifTool:Error / ExifTool:Warning
+    /// keys are included. `None` means an unfiltered extract-everything run.
+    pub fn prepare_for_serialization(&mut self, filter: Option<&FilterOptions>) {
         use tracing::debug;
 
-        // Preserve existing legacy_tags (like System: and Warning: tags) before clearing
-        let existing_legacy_tags = self.legacy_tags.clone();
+        let tag_requests = filter.map(|f| f.tag_requests.as_slice());
+
         self.legacy_tags.clear();
 
-        // Re-add preserved legacy tags that don't come from TagEntry
-        for (key, value) in existing_legacy_tags {
-            if key.starts_with("System:") || key.starts_with("Warning:") {
-                self.legacy_tags.insert(key, value);
+        // The first error and the first warning surface as the ExifTool:Error /
+        // ExifTool:Warning JSON keys, placed before every other tag - matching
+        // ExifTool's own -G JSON output. Probed (vendored ExifTool 13.59):
+        // `exiftool -j -struct -G unknown.bin` emits `"ExifTool:Error": "Unknown
+        // file type"` immediately after ExifTool:ExifToolVersion; key naming per
+        // exiftool:2949 (`$allGroup ? "$group:$tagName" : $tagName`).
+        //
+        // ExifTool stores Error and Warning as ordinary tags in the ExifTool
+        // group, so tag filtering applies to them like any other tag. Probed:
+        // `exiftool -j -struct -G -*Date* truncated.jpg` omits the Warning key
+        // that the same file shows under `-all` or with no filter at all.
+        let include_diagnostic = |name: &str| {
+            filter.is_none_or(|f| f.extract_all || f.should_extract_tag(name, "ExifTool"))
+        };
+        if let Some(error) = self.errors.first() {
+            if include_diagnostic("Error") {
+                self.legacy_tags
+                    .insert("ExifTool:Error".to_string(), TagValue::string(error));
+            }
+        }
+        if let Some(warning) = self.warnings.first() {
+            if include_diagnostic("Warning") {
+                self.legacy_tags
+                    .insert("ExifTool:Warning".to_string(), TagValue::string(warning));
             }
         }
 
@@ -1371,7 +1410,10 @@ mod tests {
             },
         ];
 
-        data.prepare_for_serialization(Some(&[TagRequest::new("*Duration*", true)]));
+        data.prepare_for_serialization(Some(&FilterOptions::from_requests(vec![TagRequest::new(
+            "*Duration*",
+            true,
+        )])));
 
         assert_eq!(
             data.legacy_tags.get("QuickTime:Duration"),
@@ -1418,10 +1460,10 @@ mod tests {
 
         let mut print_first = ExifData::new("test.mov".to_string(), "0.1.0-oxide".to_string());
         print_first.tags = quicktime_tags();
-        print_first.prepare_for_serialization(Some(&[
+        print_first.prepare_for_serialization(Some(&FilterOptions::from_requests(vec![
             TagRequest::new("Duration", false),
             TagRequest::new("*Duration*", true),
-        ]));
+        ])));
         assert_eq!(
             print_first.legacy_tags.get("QuickTime:Duration"),
             Some(&TagValue::String("2.96 s".to_string())),
@@ -1435,15 +1477,67 @@ mod tests {
 
         let mut numeric_first = ExifData::new("test.mov".to_string(), "0.1.0-oxide".to_string());
         numeric_first.tags = quicktime_tags();
-        numeric_first.prepare_for_serialization(Some(&[
+        numeric_first.prepare_for_serialization(Some(&FilterOptions::from_requests(vec![
             TagRequest::new("*Duration*", true),
             TagRequest::new("Duration", false),
-        ]));
+        ])));
         assert_eq!(
             numeric_first.legacy_tags.get("QuickTime:Duration"),
             Some(&TagValue::F64(2.965)),
             "-*Duration*# came first, so Duration prints its ValueConv result"
         );
+    }
+
+    /// Errors and warnings serialize ONLY as the `ExifTool:Error` /
+    /// `ExifTool:Warning` keys (M1a decision 3: exif-oxide emulates ExifTool's
+    /// -G output mode exclusively; key naming exiftool:2949). The in-memory
+    /// vectors themselves must never appear in JSON: exiftool-vendored.js
+    /// overwrites a lowercase `errors` key (ReadTask.ts:111,:257-259) and only
+    /// reads the Error/Warning tags (ErrorsAndWarnings.ts:22-29).
+    #[test]
+    fn test_prepare_for_serialization_error_warning_keys() {
+        let mut data = ExifData::new("bad.bin".to_string(), "13.59".to_string());
+        data.errors = vec!["Unknown file type".to_string(), "second error".to_string()];
+        data.warnings = vec![
+            "Bad IFD0 directory".to_string(),
+            "second warning".to_string(),
+        ];
+        data.prepare_for_serialization(None);
+
+        // First error/warning win, mirroring ExifTool's single Error/Warning tags.
+        assert_eq!(
+            data.legacy_tags.get("ExifTool:Error"),
+            Some(&TagValue::string("Unknown file type"))
+        );
+        assert_eq!(
+            data.legacy_tags.get("ExifTool:Warning"),
+            Some(&TagValue::string("Bad IFD0 directory"))
+        );
+        // They come before every other key (probed: vendored ExifTool 13.59
+        // prints them immediately after ExifTool:ExifToolVersion).
+        let keys: Vec<&String> = data.legacy_tags.keys().collect();
+        assert_eq!(keys[0], "ExifTool:Error");
+        assert_eq!(keys[1], "ExifTool:Warning");
+
+        let json = serde_json::to_value(&data).expect("serialize");
+        let obj = json.as_object().expect("object");
+        assert!(obj.get("errors").is_none(), "no lowercase errors key");
+        assert!(obj.get("warnings").is_none(), "no lowercase warnings key");
+        assert_eq!(
+            obj["ExifTool:Error"].as_str(),
+            Some("Unknown file type"),
+            "{json}"
+        );
+        assert_eq!(obj["ExifTool:Warning"].as_str(), Some("Bad IFD0 directory"));
+    }
+
+    /// No errors/warnings means no ExifTool:Error / ExifTool:Warning keys.
+    #[test]
+    fn test_prepare_for_serialization_no_error_keys_when_clean() {
+        let mut data = ExifData::new("good.jpg".to_string(), "13.59".to_string());
+        data.prepare_for_serialization(None);
+        assert!(data.legacy_tags.get("ExifTool:Error").is_none());
+        assert!(data.legacy_tags.get("ExifTool:Warning").is_none());
     }
 
     #[test]
