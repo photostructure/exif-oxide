@@ -16,6 +16,7 @@ pub static XMP_XMP_BJ_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> = LazyLo
             writable: Some("string"),
             list: Some(XmpListType::Bag),
             resource: false,
+            priority: None,
             print_conv: None,
         },
     )])

@@ -32,6 +32,11 @@ struct XmpTagEntry {
     writable: Option<String>,
     list_type: Option<String>,
     resource: bool,
+    /// Statically resolved FoundTag priority: per-tag `Priority`, else the
+    /// table-level `PRIORITY`, else 0 when `Avoid` (per-tag, or table-level
+    /// `AVOID`). None means ExifTool's runtime default of 1.
+    /// ExifTool: lib/Image/ExifTool.pm:9469-9473, 9250-9251
+    priority: Option<i64>,
     print_conv: Option<PrintConvData>,
 }
 
@@ -52,6 +57,15 @@ impl XmpTagStrategy {
         Self {
             processed_tables: Vec::new(),
         }
+    }
+
+    /// Read an integer that the patched-module extraction may serialize as
+    /// either a JSON number or a numeric string (table-level scalars like
+    /// PRIORITY/AVOID come through as strings, e.g. "0").
+    fn as_int(value: &JsonValue) -> Option<i64> {
+        value
+            .as_i64()
+            .or_else(|| value.as_str().and_then(|s| s.trim().parse::<i64>().ok()))
     }
 
     /// Check if this is an XMP namespace table (has NAMESPACE key with string value)
@@ -78,6 +92,7 @@ impl XmpTagStrategy {
         "STRUCT_NAME",
         "PREFERRED",
         "AVOID",
+        "PRIORITY",
     ];
 
     /// Extract tag entries from the symbol data
@@ -85,8 +100,15 @@ impl XmpTagStrategy {
         &self,
         data: &serde_json::Map<String, JsonValue>,
         default_writable: Option<&str>,
+        table_priority: Option<i64>,
+        table_avoid: bool,
     ) -> Vec<XmpTagEntry> {
         let mut tags = Vec::new();
+
+        // Table-wide default priority when a tag has no Priority of its own:
+        // table PRIORITY, else 0 when the whole table is AVOID'd.
+        // ExifTool: lib/Image/ExifTool.pm:9469-9473, 9250-9251
+        let default_priority = table_priority.or(if table_avoid { Some(0) } else { None });
 
         for (key, value) in data {
             // Skip metadata keys
@@ -103,7 +125,13 @@ impl XmpTagStrategy {
 
             // Process tag definition
             if let Some(tag_data) = value.as_object() {
-                let entry = self.build_tag_entry(key, tag_data, default_writable);
+                let entry = self.build_tag_entry(
+                    key,
+                    tag_data,
+                    default_writable,
+                    table_priority,
+                    table_avoid,
+                );
                 tags.push(entry);
             } else if value.is_object() || value.as_object().map(|o| o.is_empty()).unwrap_or(false)
             {
@@ -114,6 +142,7 @@ impl XmpTagStrategy {
                     writable: default_writable.map(String::from),
                     list_type: None,
                     resource: false,
+                    priority: default_priority,
                     print_conv: None,
                 });
             }
@@ -130,6 +159,8 @@ impl XmpTagStrategy {
         property_name: &str,
         tag_data: &serde_json::Map<String, JsonValue>,
         default_writable: Option<&str>,
+        table_priority: Option<i64>,
+        table_avoid: bool,
     ) -> XmpTagEntry {
         // Get display name (Name field or derive from property name)
         let display_name = tag_data
@@ -158,6 +189,20 @@ impl XmpTagStrategy {
             .map(|v| v == 1)
             .unwrap_or(false);
 
+        // Resolve the FoundTag priority chain: per-tag Priority, else the
+        // table PRIORITY, else 0 when Avoid'd (per-tag Avoid, else table
+        // AVOID). ExifTool: lib/Image/ExifTool.pm:9469-9473 and 9250-9251.
+        let avoid = tag_data
+            .get("Avoid")
+            .and_then(Self::as_int)
+            .map(|v| v == 1)
+            .unwrap_or(table_avoid);
+        let priority = tag_data
+            .get("Priority")
+            .and_then(Self::as_int)
+            .or(table_priority)
+            .or(if avoid { Some(0) } else { None });
+
         // Extract PrintConv if it's a simple hash map
         let print_conv = self.extract_print_conv(tag_data);
 
@@ -167,6 +212,7 @@ impl XmpTagStrategy {
             writable,
             list_type,
             resource,
+            priority,
             print_conv,
         }
     }
@@ -299,11 +345,16 @@ impl XmpTagStrategy {
                 let property_name = &tag.property_name;
                 let display_name = &tag.display_name;
                 let resource = tag.resource;
+                let priority = match tag.priority {
+                    Some(p) => format!("Some({p})"),
+                    None => "None".to_string(),
+                };
                 code.push_str(&format!("        (\"{property_name}\", XmpTagInfo {{\n"));
                 code.push_str(&format!("            name: \"{display_name}\",\n"));
                 code.push_str(&format!("            writable: {writable},\n"));
                 code.push_str(&format!("            list: {list_type},\n"));
                 code.push_str(&format!("            resource: {resource},\n"));
+                code.push_str(&format!("            priority: {priority},\n"));
                 code.push_str(&format!("            print_conv: {print_conv},\n"));
                 code.push_str("        }),\n");
             }
@@ -337,8 +388,16 @@ impl ExtractionStrategy for XmpTagStrategy {
             .ok_or_else(|| anyhow::anyhow!("Missing NAMESPACE key"))?;
 
         let default_writable = data.get("WRITABLE").and_then(|v| v.as_str());
+        // Table-level PRIORITY (e.g. 0 for tiff/exif/exifEX) and AVOID
+        // (e.g. the PRISM namespaces) feed the per-tag priority resolution.
+        let table_priority = data.get("PRIORITY").and_then(Self::as_int);
+        let table_avoid = data
+            .get("AVOID")
+            .and_then(Self::as_int)
+            .map(|v| v == 1)
+            .unwrap_or(false);
 
-        let tags = self.extract_tags(data, default_writable);
+        let tags = self.extract_tags(data, default_writable, table_priority, table_avoid);
 
         info!(
             "📦 XmpTagStrategy: Extracted {} tags from {}::{} (namespace: {})",
@@ -471,7 +530,7 @@ mod tests {
         }))
         .unwrap();
 
-        let tags = strategy.extract_tags(&data, Some("string"));
+        let tags = strategy.extract_tags(&data, Some("string"), None, false);
 
         assert_eq!(tags.len(), 3);
 

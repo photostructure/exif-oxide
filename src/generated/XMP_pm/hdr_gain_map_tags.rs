@@ -16,6 +16,7 @@ pub static XMP_HDR_GAIN_MAP_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> =
                 writable: Some("string"),
                 list: None,
                 resource: false,
+                priority: None,
                 print_conv: None,
             },
         )])

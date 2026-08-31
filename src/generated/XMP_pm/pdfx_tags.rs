@@ -15,6 +15,7 @@ pub static XMP_PDFX_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> = LazyLock
             writable: Some("string"),
             list: None,
             resource: false,
+            priority: None,
             print_conv: None,
         },
     )])

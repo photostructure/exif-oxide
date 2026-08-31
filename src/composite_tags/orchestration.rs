@@ -181,69 +181,146 @@ fn apply_composite_print_conv(
     computed_value.clone()
 }
 
+/// Return true when this composite must be deferred to a later pass because it
+/// references another Composite tag that has not been built (or dropped) yet.
+///
+/// ExifTool: lib/Image/ExifTool.pm:4044-4053 — a "Composite:Name" prefixed
+/// dependency defers while `$notBuilt{$name}`, except an Inhibit dependency
+/// once `$allBuilt` is set. lib/Image/ExifTool.pm:4074-4078 — an unprefixed
+/// non-Inhibit dependency defers while its name matches a not-yet-built
+/// Composite tag.
+fn must_defer_composite(
+    composite_def: &CompositeTagDef,
+    not_built: &HashSet<&str>,
+    all_built: bool,
+) -> bool {
+    let deps = composite_def
+        .require
+        .iter()
+        .map(|dep| (dep, false))
+        .chain(composite_def.desire.iter().map(|dep| (dep, false)))
+        .chain(composite_def.inhibit.iter().map(|dep| (dep, true)));
+
+    for (dep, is_inhibit) in deps {
+        // ExifTool matches `/^(.*):(.+)/` (greedy), i.e. splits at the LAST colon
+        if let Some((group, name)) = dep.rsplit_once(':') {
+            // Only an explicit Composite group prefix defers
+            // ExifTool: lib/Image/ExifTool.pm:4046
+            if group == "Composite" && not_built.contains(name) {
+                // ExifTool: lib/Image/ExifTool.pm:4049 - once allBuilt is set,
+                // stop deferring for Inhibit dependencies
+                if !(is_inhibit && all_built) {
+                    return true;
+                }
+            }
+        } else if !is_inhibit && not_built.contains(dep) {
+            // ExifTool: lib/Image/ExifTool.pm:4074-4078
+            return true;
+        }
+    }
+    false
+}
+
+/// Mirror ExifTool's undefined `$found` state: a composite with no Require'd
+/// tags and none of its Desire'd/Inhibit'd tags present "can't be built anyway"
+/// and is removed from `%notBuilt` so later tags stop deferring on it.
+///
+/// ExifTool: lib/Image/ExifTool.pm:4010-4092 ($found bookkeeping) and
+/// lib/Image/ExifTool.pm:4124-4126 (`elsif (not defined $found)`).
+fn composite_cannot_be_built_anyway(
+    composite_def: &CompositeTagDef,
+    available_tags: &HashMap<String, TagDependencyValues>,
+    built_composites: &HashSet<String>,
+) -> bool {
+    if !composite_def.require.is_empty() {
+        // A Require'd dependency always resolves $found to 0 or 1
+        return false;
+    }
+    if composite_def.desire.is_empty() && composite_def.inhibit.is_empty() {
+        // No dependencies at all => $found = 1 (ExifTool.pm:4013-4014)
+        return false;
+    }
+    for dep in composite_def
+        .desire
+        .iter()
+        .chain(composite_def.inhibit.iter())
+    {
+        if super::resolution::is_dependency_available(dep, available_tags, built_composites) {
+            return false;
+        }
+    }
+    true
+}
+
 /// Multi-pass composite tag resolution and computation
 /// This is the main entry point for building all composite tags
 ///
-/// ExifTool: lib/Image/ExifTool.pm:3929-4115 BuildCompositeTags
+/// ExifTool: lib/Image/ExifTool.pm:3969-4162 BuildCompositeTags
 ///
 /// Takes a map of available tags with their raw/val/prt values and returns
 /// computed composite tags as simple TagValue (the print value).
+///
+/// Composites are attempted in ExifTool's alphabetical table-key order, and a
+/// composite that depends on another Composite tag is deferred until that tag
+/// has been built (or dropped as unbuildable). Both points are required for
+/// deterministic values: without them, whether e.g. FocalLength35efl sees
+/// ScaleFactor35efl depends on HashMap iteration order, which is randomized
+/// per process.
 pub fn resolve_and_compute_composites(
     mut available_tags: HashMap<String, TagDependencyValues>,
 ) -> HashMap<String, TagValue> {
-    const MAX_PASSES: usize = 10; // Reasonable limit to prevent infinite loops
-
     let mut composite_tags = HashMap::new();
     let mut built_composites: HashSet<String> = HashSet::new();
 
-    // Collect all composite definitions from the registry
-    // Note: COMPOSITE_TAGS is a HashMap which loses duplicates for same-named tags
-    // ExifTool uses first-successful-match semantics
-    let mut pending_composites: Vec<&CompositeTagDef> = COMPOSITE_TAGS.values().copied().collect();
+    // ExifTool: lib/Image/ExifTool.pm:3984 `my @tagList = sort keys %$compTable;`
+    // The accumulated Composite table is keyed "<Module>-<TagID>"
+    // (AddCompositeTags, lib/Image/ExifTool.pm:5769-5793), so build order is
+    // alphabetical on that string.
+    let mut tag_list: Vec<&CompositeTagDef> = COMPOSITE_TAGS.values().copied().collect();
+    tag_list.sort_by_key(|def| format!("{}-{}", def.module, def.name));
 
     debug!(
-        "Starting multi-pass composite building with {} pending composites",
-        pending_composites.len()
+        "Starting multi-pass composite building with {} composites",
+        tag_list.len()
     );
 
-    // Multi-pass loop to handle composite-on-composite dependencies
-    for pass in 1..=MAX_PASSES {
-        let mut progress_made = false;
-        let mut deferred_composites = Vec::new();
-        let initial_pending_count = pending_composites.len();
+    // ExifTool: lib/Image/ExifTool.pm:3987 `my (%cache, $allBuilt);`
+    let mut all_built = false;
+    let mut pass = 0usize;
 
-        trace!(
-            "Pass {}: Processing {} pending composites",
-            pass,
-            initial_pending_count
-        );
+    loop {
+        pass += 1;
+        // ExifTool: lib/Image/ExifTool.pm:3990-3993 - %notBuilt is rebuilt from
+        // the current tag list at the start of every pass
+        let mut not_built: HashSet<&str> = tag_list.iter().map(|def| def.name).collect();
+        let mut deferred_composites: Vec<&CompositeTagDef> = Vec::new();
+        let tag_count = tag_list.len();
+        if tag_count == 0 {
+            break;
+        }
 
-        for composite_def in pending_composites {
-            // Skip if this composite has already been successfully built
-            // ExifTool: Only the first successful definition is used per tag name
+        trace!("Pass {}: Processing {} composites", pass, tag_count);
+
+        for composite_def in tag_list {
+            // Our registry is keyed by name, so a name can only be built once
             if built_composites.contains(composite_def.name) {
                 trace!("Skipping {} - already built", composite_def.name);
                 continue;
             }
 
-            // Debug GPS composite tags specifically
-            if composite_def.name.starts_with("GPS") {
+            // Defer while this composite depends on a Composite tag that is
+            // still pending in this pass
+            // ExifTool: lib/Image/ExifTool.pm:4044-4053, 4074-4078
+            if must_defer_composite(composite_def, &not_built, all_built) {
                 trace!(
-                    "Processing GPS composite {} with dependencies: require={:?}, desire={:?}",
-                    composite_def.name,
-                    composite_def.require,
-                    composite_def.desire
+                    "Deferring {} - depends on a Composite tag not yet built",
+                    composite_def.name
                 );
+                deferred_composites.push(composite_def);
+                continue;
             }
 
             let can_build = can_build_composite(composite_def, &available_tags, &built_composites);
-            if composite_def.name.starts_with("GPS") {
-                trace!(
-                    "GPS composite {} can_build_composite result: {}",
-                    composite_def.name,
-                    can_build
-                );
-            }
 
             if can_build {
                 // Resolve dependency arrays ONCE - used for both ValueConv and PrintConv
@@ -281,48 +358,70 @@ pub fn resolve_and_compute_composites(
                     composite_tags.insert(composite_name.clone(), print_value);
                     built_composites.insert(composite_def.name.to_string());
 
+                    // ExifTool: lib/Image/ExifTool.pm:4109 - later tags in this
+                    // pass no longer defer on this name
+                    not_built.remove(composite_def.name);
+
                     debug!("Built composite tag: {} (pass {})", composite_name, pass);
-                    progress_made = true;
                 } else {
-                    // Dependencies available but computation failed - try next definition with same name
-                    trace!(
-                        "Failed to compute {} - will try next definition if available",
-                        composite_def.name
-                    );
-                    deferred_composites.push(composite_def);
+                    // Computation failed. ExifTool has no failure mode at this
+                    // point (its ValueConv is evaluated lazily after FoundTag),
+                    // so treat the tag as handled: drop it from the list and
+                    // stop dependents from waiting on it.
+                    trace!("Failed to compute {} - dropping", composite_def.name);
+                    not_built.remove(composite_def.name);
                 }
             } else {
-                // Dependencies not available - defer for next pass
-                deferred_composites.push(composite_def);
+                // Not buildable. ExifTool drops the tag from the list here
+                // (only tags waiting on other Composite tags are carried to the
+                // next pass). A tag whose Desire'd/Inhibit'd dependencies are
+                // all absent additionally leaves %notBuilt so later tags in
+                // this pass stop deferring on it.
+                // ExifTool: lib/Image/ExifTool.pm:4108-4126
+                if composite_cannot_be_built_anyway(
+                    composite_def,
+                    &available_tags,
+                    &built_composites,
+                ) {
+                    trace!(
+                        "Composite {} can't be built anyway - removed from notBuilt",
+                        composite_def.name
+                    );
+                    not_built.remove(composite_def.name);
+                } else {
+                    trace!(
+                        "Missing required dependency for {} - dropping",
+                        composite_def.name
+                    );
+                }
             }
         }
 
-        let built_this_pass = initial_pending_count - deferred_composites.len();
         trace!(
-            "Pass {} complete: built {} composites, {} deferred",
+            "Pass {} complete: {} deferred of {}",
             pass,
-            built_this_pass,
-            deferred_composites.len()
+            deferred_composites.len(),
+            tag_count
         );
 
-        // Exit conditions
+        // ExifTool: lib/Image/ExifTool.pm:4149 `last unless @deferredTags;`
         if deferred_composites.is_empty() {
-            debug!("All composite tags built successfully in {} passes", pass);
             break;
         }
 
-        if !progress_made {
-            // No progress made - either circular dependency or unresolvable dependencies
-            trace!(
-                "No progress made in pass {} - {} composites remain unbuilt",
-                pass,
-                deferred_composites.len()
-            );
-            handle_unresolved_composites(&deferred_composites);
-            break;
+        // ExifTool: lib/Image/ExifTool.pm:4150-4158 - when EVERY tag was
+        // deferred, try once more ignoring Composite Inhibit deferrals; if that
+        // also defers everything, it is a circular dependency
+        if deferred_composites.len() == tag_count {
+            if all_built {
+                warn!("Circular dependency in Composite tags");
+                handle_unresolved_composites(&deferred_composites);
+                break;
+            }
+            all_built = true;
         }
 
-        pending_composites = deferred_composites;
+        tag_list = deferred_composites;
     }
 
     debug!(

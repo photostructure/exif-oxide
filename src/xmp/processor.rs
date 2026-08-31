@@ -14,6 +14,23 @@ use std::collections::HashMap;
 // P07: Use the actual generated name NS_URI instead of NAMESPACE_URIS
 use crate::generated::XMP_pm::ns_uri::NS_URI as NAMESPACE_URIS;
 
+/// One XMP property occurrence recorded in document order.
+#[derive(Debug)]
+struct XmpPropertyRef {
+    /// Namespace prefix (e.g. "dc", "tiff")
+    namespace: String,
+    /// Raw flattened property ID used for generated-table lookups
+    /// (e.g. "source", "KeywordsHierarchyKeyword")
+    property_id: String,
+    /// Display name the value is stored under in the parsed structure
+    /// (e.g. "Source", "HierarchicalKeywords1")
+    storage_key: String,
+}
+
+/// Parsed XMP packet: the namespace-keyed structure plus the properties in
+/// document order (see [`XmpProcessor::parse_xmp_xml`]).
+type ParsedXmp = (HashMap<String, TagValue>, Vec<XmpPropertyRef>);
+
 /// XMP processor for structured metadata extraction
 pub struct XmpProcessor {
     /// URI to namespace prefix reverse lookup (following ExifTool's %uri2ns)
@@ -63,7 +80,7 @@ impl XmpProcessor {
             std::str::from_utf8(&processed_data).context("XMP data is not valid UTF-8")?;
 
         // Parse XML and build structure
-        let xmp_structure = self.parse_xmp_xml(xmp_str)?;
+        let (xmp_structure, _property_order) = self.parse_xmp_xml(xmp_str)?;
 
         // Create TagEntry with structured data
         Ok(TagEntry {
@@ -93,10 +110,10 @@ impl XmpProcessor {
             std::str::from_utf8(&processed_data).context("XMP data is not valid UTF-8")?;
 
         // Parse XML and build structure
-        let xmp_structure = self.parse_xmp_xml(xmp_str)?;
+        let (xmp_structure, property_order) = self.parse_xmp_xml(xmp_str)?;
 
         // Flatten structured XMP into individual TagEntry objects
-        let flattened_tags = self.flatten_xmp_structure(&xmp_structure)?;
+        let flattened_tags = self.flatten_xmp_structure(&xmp_structure, &property_order)?;
 
         Ok(flattened_tags)
     }
@@ -113,66 +130,112 @@ impl XmpProcessor {
     fn flatten_xmp_structure(
         &self,
         xmp_structure: &HashMap<String, TagValue>,
+        property_order: &[XmpPropertyRef],
     ) -> Result<Vec<TagEntry>> {
-        let mut flattened_tags = Vec::new();
+        let mut flattened_tags: Vec<TagEntry> = Vec::new();
+        // Duplicate-name resolution state: output tag name -> (index into
+        // flattened_tags, priority of the entry currently holding the name).
+        let mut name_winners: HashMap<String, (usize, i8)> = HashMap::new();
 
-        // Process each namespace in the XMP structure
-        for (namespace_prefix, namespace_content) in xmp_structure {
-            if let TagValue::Object(namespace_obj) = namespace_content {
-                // Process each property in this namespace
-                for (property_name, property_value) in namespace_obj {
-                    // Look up tag info from generated tables
-                    let tag_info =
-                        super::xmp_lookup::lookup_xmp_tag(namespace_prefix, property_name);
+        // Iterate properties in DOCUMENT order (ExifTool processes RDF in
+        // document order and resolves duplicate names as it goes). Iterating
+        // the nested HashMaps instead made the winner of a name collision
+        // (e.g. exif:NativeDigest vs tiff:NativeDigest) random per parse.
+        for property_ref in property_order {
+            let namespace_prefix = &property_ref.namespace;
+            let property_name = &property_ref.storage_key;
+            let Some(TagValue::Object(namespace_obj)) = xmp_structure.get(namespace_prefix) else {
+                continue;
+            };
+            let Some(property_value) = namespace_obj.get(property_name) else {
+                continue;
+            };
 
-                    // Map property to ExifTool-style tag name
-                    let tag_name = if let Some(info) = tag_info {
-                        info.name.to_string()
+            // Look up tag info from generated tables by the RAW property ID —
+            // the storage key is the display name, which misses table keys
+            // whose spelling differs (e.g. dc "source" is stored as "Source",
+            // and its Avoid/priority metadata would otherwise be lost).
+            let tag_info =
+                super::xmp_lookup::lookup_xmp_tag(namespace_prefix, &property_ref.property_id);
+
+            // Map property to ExifTool-style tag name
+            let tag_name = if let Some(info) = tag_info {
+                info.name.to_string()
+            } else {
+                self.map_property_to_tag_name(namespace_prefix, &property_ref.property_id)
+            };
+
+            // Handle different RDF container types and value formats
+            let raw_value = self.process_xmp_value(property_value)?;
+
+            // Layer 1 (XMP.pm:3673-3687, FoundXMP): format-driven conversion
+            // keyed on Writable — rational -> ConvertRational, date ->
+            // ConvertXMPDate — applied before the value is stored. The parsed
+            // structure is keyed by display name, so renamed tags (e.g.
+            // GPSTimeStamp -> GPSDateTime) miss the property-name lookup above;
+            // fall back to a by-name lookup purely to recover the Writable format.
+            let format_info = tag_info.or_else(|| {
+                super::xmp_lookup::lookup_xmp_tag_by_name(namespace_prefix, property_name)
+            });
+            let converted_value =
+                super::value_conversion::apply_writable_conversion(format_info, raw_value);
+
+            // Layer 2 (XMP.pm:2042-2166): per-tag ValueConv/PrintConv for the
+            // exif-namespace photo cluster. Every other tag falls back to the
+            // generic Simple-lookup PrintConv path.
+            let (final_value, print_value) = if namespace_prefix == "exif" {
+                if let Some(pair) =
+                    super::value_conversion::apply_exif_photo_conv(&tag_name, &converted_value)
+                {
+                    pair
+                } else {
+                    let print = self.apply_xmp_print_conv(tag_info, &converted_value);
+                    (converted_value, print)
+                }
+            } else {
+                let print = self.apply_xmp_print_conv(tag_info, &converted_value);
+                (converted_value, print)
+            };
+
+            // Create individual TagEntry with XMP group
+            let entry = TagEntry {
+                group: "XMP".to_string(),
+                group1: "XMP".to_string(),
+                name: tag_name.clone(),
+                value: final_value,
+                print: print_value,
+            };
+
+            // Duplicate tag names: keep the entry ExifTool's FoundTag would
+            // leave under the base key (lib/Image/ExifTool.pm:9514-9585).
+            // XmpTagInfo::priority is the statically resolved chain — per-tag
+            // Priority, else table PRIORITY (0 for tiff/exif/exifEX), else 0
+            // for Avoid'd tags (:9469-9473, :9250-9251); undefined defaults
+            // to 1 at runtime (:9562). The PRIORITY_DIR / LOW_PRIORITY_DIR
+            // adjustments (:9553-9561) never apply to XMP directories.
+            // Example: exif:NativeDigest vs tiff:NativeDigest are both
+            // priority 0, so the FIRST one in document order keeps the name
+            // (verified against vendored exiftool in both document orders).
+            let priority: i8 = tag_info.and_then(|info| info.priority).unwrap_or(1);
+            match name_winners.get_mut(&tag_name) {
+                Some((index, stored_priority)) => {
+                    // ExifTool: lib/Image/ExifTool.pm:9544-9551 — an existing
+                    // 0-priority tag is promoted to 1 before comparison; the
+                    // newcomer takes the name when its priority is >= that
+                    // (:9564).
+                    let effective_old = if *stored_priority == 0 {
+                        1
                     } else {
-                        self.map_property_to_tag_name(namespace_prefix, property_name)
+                        *stored_priority
                     };
-
-                    // Handle different RDF container types and value formats
-                    let raw_value = self.process_xmp_value(property_value)?;
-
-                    // Layer 1 (XMP.pm:3673-3687, FoundXMP): format-driven conversion
-                    // keyed on Writable — rational -> ConvertRational, date ->
-                    // ConvertXMPDate — applied before the value is stored. The parsed
-                    // structure is keyed by display name, so renamed tags (e.g.
-                    // GPSTimeStamp -> GPSDateTime) miss the property-name lookup above;
-                    // fall back to a by-name lookup purely to recover the Writable format.
-                    let format_info = tag_info.or_else(|| {
-                        super::xmp_lookup::lookup_xmp_tag_by_name(namespace_prefix, property_name)
-                    });
-                    let converted_value =
-                        super::value_conversion::apply_writable_conversion(format_info, raw_value);
-
-                    // Layer 2 (XMP.pm:2042-2166): per-tag ValueConv/PrintConv for the
-                    // exif-namespace photo cluster. Every other tag falls back to the
-                    // generic Simple-lookup PrintConv path.
-                    let (final_value, print_value) = if namespace_prefix == "exif" {
-                        if let Some(pair) = super::value_conversion::apply_exif_photo_conv(
-                            &tag_name,
-                            &converted_value,
-                        ) {
-                            pair
-                        } else {
-                            let print = self.apply_xmp_print_conv(tag_info, &converted_value);
-                            (converted_value, print)
-                        }
-                    } else {
-                        let print = self.apply_xmp_print_conv(tag_info, &converted_value);
-                        (converted_value, print)
-                    };
-
-                    // Create individual TagEntry with XMP group
-                    flattened_tags.push(TagEntry {
-                        group: "XMP".to_string(),
-                        group1: "XMP".to_string(),
-                        name: tag_name,
-                        value: final_value,
-                        print: print_value,
-                    });
+                    if priority >= effective_old {
+                        flattened_tags[*index] = entry;
+                        *stored_priority = priority;
+                    }
+                }
+                None => {
+                    name_winners.insert(tag_name, (flattened_tags.len(), priority));
+                    flattened_tags.push(entry);
                 }
             }
         }
@@ -407,14 +470,21 @@ impl XmpProcessor {
         String::from_utf16_lossy(&utf16_chars).into_bytes()
     }
 
-    /// Parse XMP XML and build structured representation
-    fn parse_xmp_xml(&mut self, xml: &str) -> Result<HashMap<String, TagValue>> {
+    /// Parse XMP XML and build structured representation.
+    ///
+    /// Returns the namespace-keyed structure plus the (namespace, tag name)
+    /// pairs in DOCUMENT order (first appearance). The order list exists
+    /// because the HashMaps randomize iteration order per instance, while
+    /// ExifTool processes RDF properties in document order — which decides the
+    /// winner when two properties map to the same output tag name.
+    fn parse_xmp_xml(&mut self, xml: &str) -> Result<ParsedXmp> {
         let mut reader = NsReader::from_str(xml);
         reader.config_mut().trim_text(true);
 
         let mut buf = Vec::new();
         let mut root_object = HashMap::new();
         let mut namespace_objects: HashMap<String, HashMap<String, TagValue>> = HashMap::new();
+        let mut property_order: Vec<XmpPropertyRef> = Vec::new();
 
         // Clear current namespace mappings for this document
         self.current_ns_map.clear();
@@ -456,6 +526,7 @@ impl XmpProcessor {
                             text,
                             &mut element_stack,
                             &mut namespace_objects,
+                            &mut property_order,
                         )?;
                     }
                 }
@@ -470,6 +541,7 @@ impl XmpProcessor {
                                     resource_value.clone(),
                                     &element_stack,
                                     &mut namespace_objects,
+                                    &mut property_order,
                                 );
                             }
                         }
@@ -512,6 +584,7 @@ impl XmpProcessor {
                                 resource_value.clone(),
                                 &element_stack,
                                 &mut namespace_objects,
+                                &mut property_order,
                             );
                         }
                     }
@@ -535,7 +608,7 @@ impl XmpProcessor {
             }
         }
 
-        Ok(root_object)
+        Ok((root_object, property_order))
     }
 
     /// Process start element
@@ -639,6 +712,7 @@ impl XmpProcessor {
         text: String,
         element_stack: &mut [ElementContext],
         namespace_objects: &mut HashMap<String, HashMap<String, TagValue>>,
+        property_order: &mut Vec<XmpPropertyRef>,
     ) -> Result<()> {
         if element_stack.len() < 2 {
             return Ok(()); // Not enough context
@@ -663,7 +737,17 @@ impl XmpProcessor {
             .find(|e| e.container_type.is_some());
 
         // Get or create namespace object
-        let ns_object = namespace_objects.entry(root_ns).or_default();
+        let ns_object = namespace_objects.entry(root_ns.clone()).or_default();
+
+        // Record first appearance in document order (drives duplicate-name
+        // resolution during flattening)
+        if !ns_object.contains_key(&tag_name) {
+            property_order.push(XmpPropertyRef {
+                namespace: root_ns,
+                property_id: flattened_id,
+                storage_key: tag_name.clone(),
+            });
+        }
 
         // Handle based on container type
         if let Some(container) = container_element {
@@ -716,6 +800,7 @@ impl XmpProcessor {
         resource_value: String,
         element_stack: &[ElementContext],
         namespace_objects: &mut HashMap<String, HashMap<String, TagValue>>,
+        property_order: &mut Vec<XmpPropertyRef>,
     ) {
         if element_stack.len() < 2 {
             return; // Not enough context
@@ -738,7 +823,17 @@ impl XmpProcessor {
             .find(|e| e.container_type.is_some());
 
         // Get or create namespace object
-        let ns_object = namespace_objects.entry(root_ns).or_default();
+        let ns_object = namespace_objects.entry(root_ns.clone()).or_default();
+
+        // Record first appearance in document order (drives duplicate-name
+        // resolution during flattening)
+        if !ns_object.contains_key(&tag_name) {
+            property_order.push(XmpPropertyRef {
+                namespace: root_ns,
+                property_id: flattened_id,
+                storage_key: tag_name.clone(),
+            });
+        }
 
         // Handle based on container type (same logic as process_text_content)
         if let Some(container) = container_element {

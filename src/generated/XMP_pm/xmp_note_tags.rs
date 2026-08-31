@@ -15,6 +15,7 @@ pub static XMP_XMP_NOTE_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> = Lazy
             writable: Some("string"),
             list: None,
             resource: false,
+            priority: None,
             print_conv: None,
         },
     )])

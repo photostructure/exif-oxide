@@ -16,6 +16,7 @@ pub static XMP_MWG_COLL_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> = Lazy
             writable: Some("string"),
             list: Some(XmpListType::Bag),
             resource: false,
+            priority: None,
             print_conv: None,
         },
     )])

@@ -15,6 +15,7 @@ pub static XMP_ALBUM_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> = LazyLoc
             writable: Some("string"),
             list: None,
             resource: false,
+            priority: None,
             print_conv: None,
         },
     )])

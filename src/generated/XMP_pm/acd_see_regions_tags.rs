@@ -15,6 +15,7 @@ pub static XMP_ACDSEE_RS_TAGS: LazyLock<HashMap<&'static str, XmpTagInfo>> = Laz
             writable: Some("string"),
             list: None,
             resource: false,
+            priority: Some(0),
             print_conv: None,
         },
     )])
