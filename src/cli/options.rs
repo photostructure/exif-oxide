@@ -166,6 +166,14 @@ pub fn parse_command<S: AsRef<str>>(args: &[S]) -> ParsedCommand {
             if i < args.len() && !args[i].as_ref().starts_with('-') {
                 i += 1;
             }
+        } else if lower == "lang" {
+            // exiftool:1150: like -charset, the value is optional and never
+            // starts with a dash. Consuming it here keeps a consumer's
+            // readArgs like ["-lang", "en"] from turning "en" into a phantom
+            // file path (Codex review R581-C).
+            if i < args.len() && !args[i].as_ref().starts_with('-') {
+                i += 1;
+            }
         } else if let Some(n) = echo_number(&lower) {
             // exiftool:1016-1028 `/^echo(\d)?$/i`: value consumed even for
             // invalid numbers; missing value is silently ignored.
@@ -178,9 +186,11 @@ pub fn parse_command<S: AsRef<str>>(args: &[S]) -> ParsedCommand {
                     _ => {}
                 }
             }
-        } else if rest == "w" || lower == "textout" {
-            // exiftool %optArgs '-w' (output file format). Unsupported: the
-            // value is consumed and ignored so it can't become a file path.
+        } else if is_w_family(&lower) {
+            // `/^(w|textout|tagout)([!+]*)$/i` (exiftool:1334): the whole
+            // output-file family, case-insensitive (-W is the same option as
+            // -w, Codex review R581-D). Unsupported: the value is consumed
+            // and ignored so it can't become a file path.
             if next_value(args, &mut i).is_none() {
                 cmd.errors
                     .push("Expecting argument for -w option".to_string());
@@ -191,7 +201,9 @@ pub fn parse_command<S: AsRef<str>>(args: &[S]) -> ParsedCommand {
                 cmd.errors
                     .push("Expecting argument for -d option".to_string());
             }
-        } else if rest == "c" || lower == "coordformat" {
+        } else if lower == "c" || lower == "coordformat" {
+            // `/^c(oordFormat)?$/i` (exiftool:901): case-insensitive, so -C
+            // is the same option (Codex review R581-D).
             if next_value(args, &mut i).is_none() {
                 cmd.errors
                     .push("Expecting argument for -c option".to_string());
@@ -290,6 +302,20 @@ fn is_fast_flag(lower: &str) -> bool {
     lower
         .strip_prefix("fast")
         .is_some_and(|d| d.chars().all(|c| c.is_ascii_digit()))
+}
+
+/// `/^(w|textout|tagout)([!+]*)$/i` (exiftool:1334).
+fn is_w_family(lower: &str) -> bool {
+    let rest = if let Some(r) = lower.strip_prefix("textout") {
+        r
+    } else if let Some(r) = lower.strip_prefix("tagout") {
+        r
+    } else if let Some(r) = lower.strip_prefix('w') {
+        r
+    } else {
+        return false;
+    };
+    rest.chars().all(|c| c == '!' || c == '+')
 }
 
 /// `/^if(\d*)$/i` (exiftool:1131).
@@ -741,5 +767,62 @@ mod tests {
         assert_eq!(parsed.errors, vec!["Expecting module name for -use option"]);
         let parsed = parse_command(&["-x"]);
         assert_eq!(parsed.errors, vec!["Expecting tag name for -x option"]);
+    }
+}
+
+#[cfg(test)]
+mod codex_review_tests {
+    use super::*;
+
+    /// R581-C: `-lang` takes an OPTIONAL value (consumed only when the next
+    /// argument does not start with a dash, exiftool:1150), exactly like
+    /// `-charset`. Its value must never become a phantom file: the consumer
+    /// may legitimately send readArgs like ["-lang", "en"].
+    /// Probed: `-lang\nen\n-ver\n-execute7\n` => only `13.59\n{ready7}\n`.
+    #[test]
+    fn test_lang_optional_value() {
+        let parsed = parse_command(&["-lang", "en", "-all", "photo.jpg"]);
+        assert!(parsed.errors.is_empty(), "errors: {:?}", parsed.errors);
+        assert_eq!(parsed.files, vec!["photo.jpg"]);
+
+        let parsed = parse_command(&["-lang", "-ver"]);
+        assert!(parsed.errors.is_empty(), "errors: {:?}", parsed.errors);
+        assert!(parsed.print_version);
+        assert!(parsed.files.is_empty());
+    }
+
+    /// R581-D: `-c`/`-C` (`/^c(oordFormat)?$/i`, exiftool:901) and the
+    /// `-w`/`-W`/`-textout`/`-tagout` family with `!`/`+` suffixes
+    /// (`/^(w|textout|tagout)([!+]*)$/i`, exiftool:1334) are matched
+    /// case-insensitively by ExifTool - unlike `-D`/`-P`/`-X`, which are
+    /// deliberately distinct uppercase options and stay rejected.
+    #[test]
+    fn test_c_and_w_families_case_insensitive() {
+        let parsed = parse_command(&[
+            "-C",
+            "%.6f",
+            "-W",
+            "out.txt",
+            "-w!",
+            "o.txt",
+            "-tagout",
+            "t.txt",
+            "-TEXTOUT+",
+            "u.txt",
+            "-all",
+            "photo.jpg",
+        ]);
+        assert!(parsed.errors.is_empty(), "errors: {:?}", parsed.errors);
+        assert_eq!(parsed.files, vec!["photo.jpg"]);
+
+        // The uppercase case guards stay distinct (and unsupported).
+        for opt in ["-D", "-P", "-X"] {
+            let parsed = parse_command(&[opt, "photo.jpg"]);
+            assert_eq!(
+                parsed.errors,
+                vec![format!("Unknown option {opt}")],
+                "{opt} must stay rejected"
+            );
+        }
     }
 }

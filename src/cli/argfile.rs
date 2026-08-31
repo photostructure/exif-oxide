@@ -91,12 +91,29 @@ impl<R: BufRead> CommandReader<R> {
                 // StreamHandler.ts:95-100).
                 Err(_) => return ArgfileEvent::Eof,
             }
+            // An unterminated final line (read_until hit EOF before `\n`) is
+            // never an argument: ExifTool only consumes newline-terminated
+            // lines from its buffer (exiftool:4943, `while ($stayOpenBuff =~
+            // /\n/g)`) and would wait forever for the rest. With our clean
+            // EOF divergence, the partial line is discarded.
+            if raw.last() != Some(&b'\n') {
+                return ArgfileEvent::Eof;
+            }
             let line = String::from_utf8_lossy(&raw);
             let Some(arg) = filter_argfile_line(&line) else {
                 continue; // comment or blank line
             };
             self.accept(arg);
         }
+    }
+
+    /// Consume the reader, returning every event produced by seeded args plus
+    /// the trailing partial command (args accumulated with no `-execute`
+    /// yet). Used to drain ExifTool's @moreArgs equivalent after the argfile
+    /// closes, where a trailing partial command still runs like a normal CLI
+    /// invocation.
+    pub fn drain(self) -> (Vec<ArgfileEvent>, Vec<String>) {
+        (self.queued.into_iter().collect(), self.pending)
     }
 
     /// Feed one filtered argument through the ReadStayOpen state machine.
@@ -132,7 +149,8 @@ impl<R: BufRead> CommandReader<R> {
 
         let lower = arg.to_ascii_lowercase();
         if is_execute(&lower) {
-            let execute_id = lower["-execute".len()..].to_string();
+            // The id excludes any Perl-`$`-tolerated trailing newline.
+            let execute_id = strip_one_trailing_newline(&lower)["-execute".len()..].to_string();
             self.queued.push_back(ArgfileEvent::Command(Command {
                 args: std::mem::take(&mut self.pending),
                 execute_id,
@@ -152,10 +170,20 @@ impl<R: BufRead> CommandReader<R> {
 }
 
 /// `/^-execute\d*$/` on the lower-cased argument (exiftool:4962).
+///
+/// Perl's `$` also matches immediately before ONE final newline, so a
+/// `#[CSTR]`-decoded `-execute\n` still terminates a command (R581-B; probed
+/// against the vendored ExifTool). Two trailing newlines do not match.
 fn is_execute(lower: &str) -> bool {
-    lower
+    strip_one_trailing_newline(lower)
         .strip_prefix("-execute")
         .is_some_and(|d| d.chars().all(|c| c.is_ascii_digit()))
+}
+
+/// Perl's `$` anchor tolerance: at most one final `\n` is invisible to
+/// `$`-anchored regex matches (but NOT to exact hash lookups).
+fn strip_one_trailing_newline(s: &str) -> &str {
+    s.strip_suffix('\n').unwrap_or(s)
 }
 
 /// ExifTool's `%optArgs` lookup (exiftool:260-300, :4955-4960): does this
@@ -175,13 +203,16 @@ fn takes_value(arg: &str) -> bool {
         return v;
     }
     // 3) trailing-number handling: `-echo2` matches `-echo#`, `-efile2!`
-    //    matches `-efile#!` (exiftool:4959: /^(.*?)\d+(!?)$/ => "$1#$2")
-    if let Some(rest) = lower.strip_suffix('!') {
+    //    matches `-efile#!` (exiftool:4959: /^(.*?)\d+(!?)$/ => "$1#$2").
+    //    This is a `$`-anchored regex in Perl, so it tolerates one trailing
+    //    newline (R581-B) - unlike the exact hash lookups above.
+    let regex_view = strip_one_trailing_newline(&lower);
+    if let Some(rest) = regex_view.strip_suffix('!') {
         if let Some(stripped) = strip_trailing_digits(rest) {
             return opt_args_exact(&format!("{stripped}#!")).unwrap_or(false);
         }
     }
-    if let Some(stripped) = strip_trailing_digits(&lower) {
+    if let Some(stripped) = strip_trailing_digits(regex_view) {
         return opt_args_exact(&format!("{stripped}#")).unwrap_or(false);
     }
     false
@@ -619,5 +650,93 @@ mod tests {
                 execute_id: String::new(),
             })
         );
+    }
+}
+
+#[cfg(test)]
+mod codex_review_tests {
+    use super::*;
+    use std::io::Cursor;
+
+    fn reader(input: &str) -> CommandReader<Cursor<Vec<u8>>> {
+        CommandReader::new(Cursor::new(input.as_bytes().to_vec()))
+    }
+
+    /// R581-B: Perl's `$` matches before ONE final newline, so a CSTR-decoded
+    /// `-execute\n` terminates the command (`/^-execute\d*$/`,
+    /// exiftool:4962) and `-echo2\n` still matches the trailing-number
+    /// `%optArgs` pattern (`/^(.*?)\d+(!?)$/`, exiftool:4960). Exact hash
+    /// lookups do NOT get that tolerance (`$optArgs{"-echo\n"}` misses).
+    #[test]
+    fn test_cstr_trailing_newline_execute_terminates() {
+        let mut r = reader("-ver\n#[CSTR]-execute\\n\n-execute2\n");
+        assert_eq!(
+            r.next_event(),
+            ArgfileEvent::Command(Command {
+                args: vec!["-ver".to_string()],
+                execute_id: String::new(),
+            })
+        );
+        assert_eq!(
+            r.next_event(),
+            ArgfileEvent::Command(Command {
+                args: vec![],
+                execute_id: "2".to_string(),
+            })
+        );
+    }
+
+    #[test]
+    fn test_cstr_trailing_newline_echo2_takes_value() {
+        let mut r = reader("#[CSTR]-echo2\\n\n-execute\n-execute3\n");
+        match r.next_event() {
+            ArgfileEvent::Command(cmd) => {
+                assert_eq!(
+                    cmd.args,
+                    vec!["-echo2\n".to_string(), "-execute".to_string()],
+                    "the -execute line is -echo2's value even with the trailing newline"
+                );
+                assert_eq!(cmd.execute_id, "3");
+            }
+            other => panic!("expected command, got {other:?}"),
+        }
+    }
+
+    /// ...but TWO trailing newlines defeat Perl's `$` too: no termination.
+    #[test]
+    fn test_cstr_double_trailing_newline_not_execute() {
+        let mut r = reader("#[CSTR]-execute\\n\\n\n-execute4\n");
+        match r.next_event() {
+            ArgfileEvent::Command(cmd) => {
+                assert_eq!(cmd.args, vec!["-execute\n\n".to_string()]);
+                assert_eq!(cmd.execute_id, "4");
+            }
+            other => panic!("expected command, got {other:?}"),
+        }
+    }
+
+    /// Exact lookups keep the newline: a CSTR `-echo\n` is NOT the -echo
+    /// option in the chunker (Perl's hash lookup misses), so it does not
+    /// consume the next line.
+    #[test]
+    fn test_cstr_trailing_newline_exact_lookup_misses() {
+        let mut r = reader("#[CSTR]-echo\\n\n-execute5\n");
+        match r.next_event() {
+            ArgfileEvent::Command(cmd) => {
+                assert_eq!(cmd.args, vec!["-echo\n".to_string()]);
+                assert_eq!(cmd.execute_id, "5");
+            }
+            other => panic!("expected command, got {other:?}"),
+        }
+    }
+
+    /// R581-E: an unterminated final line is never an argument - ExifTool
+    /// only consumes newline-terminated lines from the argfile buffer
+    /// (exiftool:4943, probed: it waits forever rather than executing). We
+    /// discard the partial line and report EOF.
+    #[test]
+    fn test_unterminated_final_line_discarded() {
+        let mut r = reader("-ver\n-execute");
+        assert_eq!(r.next_event(), ArgfileEvent::Eof);
     }
 }

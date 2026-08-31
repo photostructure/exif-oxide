@@ -20,7 +20,7 @@ fn main() {
     // consumer kills the child on any stray bytes (batch-cluster
     // StreamHandler.ts:75-81, :95-100).
     let raw_args: Vec<String> = std::env::args().skip(1).collect();
-    if let Some(seed_args) = exif_oxide::cli::detect_stay_open(&raw_args) {
+    if let Some(invocation) = exif_oxide::cli::detect_stay_open(&raw_args) {
         // Debug escape hatch (M1a decision 7): EXIF_OXIDE_LOG=/path routes
         // tracing to that file - NEVER a std stream. Without it, no
         // subscriber is installed and all tracing events are discarded.
@@ -56,7 +56,7 @@ fn main() {
         let stdout = std::io::stdout();
         let stderr = std::io::stderr();
         let code =
-            exif_oxide::cli::stay_open::run(stdin.lock(), stdout.lock(), stderr.lock(), seed_args);
+            exif_oxide::cli::stay_open::run(stdin.lock(), stdout.lock(), stderr.lock(), invocation);
         std::process::exit(code);
     }
 

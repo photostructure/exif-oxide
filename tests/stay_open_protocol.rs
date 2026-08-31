@@ -397,3 +397,87 @@ fn test_exif_oxide_log_file_escape_hatch() {
         "tracing output must land in EXIF_OXIDE_LOG: {logged:?}"
     );
 }
+
+// ---- Codex review findings (R581-A/B/E), all probed against the vendored
+// ---- ExifTool 13.59 before being accepted -----------------------------------
+
+/// R581-A: argv AFTER `-@ -` goes to ExifTool's @moreArgs and runs only when
+/// the argfile closes - NOT as an eager first command, which would emit
+/// stdout while batch-cluster has no task pending (fatal,
+/// StreamHandler.ts:75-81).
+///
+/// Probed: `exiftool -stay_open True -@ - -ver -execute` prints NOTHING
+/// until `-stay_open False` arrives, then prints `13.59\n` with NO ready
+/// token (stayOpen is 0 by then, so the ready print at exiftool:429-442 is
+/// skipped). Even a numbered `-execute3` in the deferred args gets no token.
+#[test]
+fn test_post_argfile_argv_deferred_until_exit() {
+    let mut s =
+        StayOpenSession::spawn_with_args(&["-stay_open", "True", "-@", "-", "-ver", "-execute"]);
+    // Nothing may appear while the argfile is open and idle.
+    std::thread::sleep(Duration::from_millis(300));
+    assert_eq!(s.stdout_string(), "", "no output before the exit handshake");
+    assert_eq!(s.stderr_string(), "");
+    s.send("-stay_open\nFalse\n");
+    let (stdout, stderr) = s.expect_clean_exit();
+    assert_eq!(
+        stdout,
+        format!("{}\n", exif_oxide::EXIFTOOL_VERSION),
+        "deferred argv runs after False, with no ready token"
+    );
+    assert_eq!(stderr, "");
+}
+
+/// R581-A (companion): argv BEFORE the `-stay_open True -@ -` pairs joins the
+/// FIRST stdin command instead.
+///
+/// Probed: `exiftool -ver -stay_open True -@ -` + stdin `-execute\n` =>
+/// `13.59\n{ready}\n`.
+#[test]
+fn test_pre_argfile_argv_seeds_first_command() {
+    let mut s = StayOpenSession::spawn_with_args(&["-ver", "-stay_open", "True", "-@", "-"]);
+    s.send("-execute\n");
+    s.wait_for_ready("{ready}", 1);
+    assert_eq!(
+        s.stdout_string(),
+        format!("{}\n{{ready}}\n", exif_oxide::EXIFTOOL_VERSION)
+    );
+    s.send("-stay_open\nFalse\n");
+    s.expect_clean_exit();
+}
+
+/// R581-B: a `#[CSTR]` line whose payload ends in an escaped newline decodes
+/// to an argument with ONE trailing real newline, and Perl's `$`-anchored
+/// `/^-execute\d*$/` still matches it (`$` matches before a final newline) -
+/// so the line terminates the command.
+///
+/// Probed: `-ver\n#[CSTR]-execute\\n\n-execute2\n-stay_open\nFalse\n` =>
+/// `13.59\n{ready}\n{ready2}\n` from the vendored ExifTool; before the fix we
+/// emitted `13.59\n{ready2}\n` (one command instead of two - task
+/// desynchronization).
+#[test]
+fn test_cstr_execute_with_trailing_newline_terminates() {
+    let mut s = StayOpenSession::spawn();
+    s.send("-ver\n#[CSTR]-execute\\n\n-execute2\n");
+    s.wait_for_ready("{ready2}", 1);
+    assert_eq!(
+        s.stdout_string(),
+        format!("{}\n{{ready}}\n{{ready2}}\n", exif_oxide::EXIFTOOL_VERSION)
+    );
+    s.send("-stay_open\nFalse\n");
+    s.expect_clean_exit();
+}
+
+/// R581-E: an unterminated final line is NOT an argument. ExifTool only
+/// consumes newline-terminated lines from the argfile buffer
+/// (exiftool:4943) and never executes such a command (probed: it waits
+/// forever). With our documented clean-EOF divergence, the right behavior is
+/// to discard the partial line and exit 0 silently.
+#[test]
+fn test_unterminated_final_line_not_executed() {
+    let mut s = StayOpenSession::spawn();
+    s.send("-ver\n-execute"); // no trailing newline; then EOF
+    let (stdout, stderr) = s.expect_clean_exit();
+    assert_eq!(stdout, "", "an unterminated command must not run");
+    assert_eq!(stderr, "");
+}
