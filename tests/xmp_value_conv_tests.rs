@@ -16,6 +16,7 @@
 //!   test-images/canon/eos_1ds_mark_ii.jpg  (rational + exif cluster + dates)
 //!   test-images/apple/iphone_x.jpg         (GPS rational + date w/ fractional secs)
 
+#![cfg(feature = "integration-tests")]
 use exif_oxide::extract_metadata_json;
 use serde_json::{json, Value};
 

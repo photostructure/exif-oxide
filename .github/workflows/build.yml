@@ -106,8 +106,10 @@ jobs:
           echo "${{ github.workspace }}/third-party/exiftool" >> $GITHUB_PATH
           third-party/exiftool/exiftool -ver
 
+      # No integration-tests feature: those tests read the untracked
+      # test-images/ tree, which only exists in developer checkouts.
       - name: Run tests
-        run: cargo test -p exif-oxide --features test-helpers,integration-tests --locked
+        run: cargo test -p exif-oxide --features test-helpers --locked
 
       - name: Cache Perl dependencies (Linux)
         if: runner.os == 'Linux'
@@ -192,7 +194,7 @@ jobs:
           cargo fmt --all -- --check
           cargo check --workspace --all-targets --all-features --locked
           cargo clippy -p exif-oxide --all-targets --all-features --locked -- -D warnings
-          cargo test -p exif-oxide --features test-helpers,integration-tests --locked
+          cargo test -p exif-oxide --features test-helpers --locked
 
       - name: Inspect packaged files
         run: cargo package --list --locked -p exif-oxide

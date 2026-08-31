@@ -2,6 +2,7 @@
 //!
 //! Tests the new public API functions added for tag filtering support
 
+#![cfg(feature = "integration-tests")]
 use exif_oxide::types::TagRequest;
 use exif_oxide::{extract_metadata_json_with_filter, extract_metadata_with_filter, FilterOptions};
 use std::path::Path;

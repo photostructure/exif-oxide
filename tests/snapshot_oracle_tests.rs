@@ -8,6 +8,7 @@
 //! Unlike the numeric-normalizing compat comparison, these assertions are byte-exact,
 //! which is what catches sign/precision divergences in composite string tags.
 
+#![cfg(feature = "integration-tests")]
 use serde_json::Value;
 use std::fs;
 

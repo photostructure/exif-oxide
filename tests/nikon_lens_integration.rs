@@ -3,6 +3,7 @@
 //! This test validates that the generated Nikon lens database works
 //! correctly with actual lens metadata extracted from a real Nikon image.
 
+#![cfg(feature = "integration-tests")]
 use exif_oxide::implementations::nikon::lens_database::{get_database_stats, lookup_nikon_lens};
 
 #[test]

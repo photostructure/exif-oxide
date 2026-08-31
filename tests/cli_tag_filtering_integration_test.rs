@@ -3,6 +3,7 @@
 //! Comprehensive test suite for CLI tag filtering and PrintConv/ValueConv control
 //! Tests all features against real image files to ensure ExifTool compatibility
 
+#![cfg(feature = "integration-tests")]
 use exif_oxide::formats::extract_metadata;
 use exif_oxide::types::{FilterOptions, TagRequest, TagValue};
 use std::path::{Path, PathBuf};

@@ -3,6 +3,7 @@
 //! This test verifies that Canon CameraSettings subdirectory tags
 //! are properly extracted as individual values instead of raw arrays.
 
+#![cfg(feature = "integration-tests")]
 use exif_oxide::formats;
 use exif_oxide::types::TagValue;
 use std::path::Path;
