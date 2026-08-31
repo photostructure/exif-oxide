@@ -48,7 +48,16 @@ the tracker for the 2026-07/08 workstreams; this TPP owns the cutover.
 
 - **M0 Land the tree** — DONE 2026-08-30 (see log; CI green at
   `bcc20946`).
-- **M1a stay_open protocol conformance** — argfile filtering, `-execute[N]`,
+- **M1a stay_open protocol conformance** — IMPLEMENTED 2026-08-31
+  (`203b264a..98d64c42`, nine commits; log + vetted Codex findings
+  R581-A..E in `_todo/20260830-P1-stay-open-m1a.md`). The binary now
+  passes a byte-exact framing differential against vendored exiftool for
+  the `-ver` cycle and replays the exact exiftool-vendored ReadTask
+  payload cleanly. Release profile changed panic="abort"→"unwind" for
+  per-command containment (flagged for Matthew). New consumer-visible
+  defect exposed by always-emit warnings:
+  `_todo/20260831-P2-spurious-binarydata-warning.md`. Original scope:
+  argfile filtering, `-execute[N]`,
   `{ready[N]}` with stderr flushed first, bare-numeric `-ver`, zero stray
   stdout/stderr (batch-cluster kills children on unexpected output; tracing
   must be silenced in stay_open mode), accept-and-ignore the injected
