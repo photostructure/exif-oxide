@@ -13,8 +13,9 @@ mod quicktime;
 mod tiff;
 
 pub use avif::{
-    create_avif_tag_entries, extract_avif_dimensions, extract_heic_dimensions_primary_item,
-    parse_box_header, AvifImageProperties, IsoBox,
+    create_avif_tag_entries, extract_avif_dimensions, extract_exif_item,
+    extract_heic_dimensions_primary_item, parse_box_header, parse_iloc_box, AvifImageProperties,
+    ExifItem, IsoBox, ItemExtent, ItemLocation,
 };
 pub use detection::{
     detect_file_format, detect_file_format_from_path, get_format_properties, FileFormat,
@@ -842,6 +843,15 @@ pub fn extract_metadata(
                                 warnings.push(format!("Failed to parse AVIF ispe box: {e}"));
                             }
                         }
+
+                        // An AVIF may carry EXIF in the same meta/iinf/iloc
+                        // structure a HEIC does, so the extraction is shared.
+                        append_iso_bmff_exif(
+                            &avif_data,
+                            &mut tag_entries,
+                            &mut tags,
+                            show_warnings,
+                        );
                     }
                     "HEIC" | "HEIF" => {
                         // HEIC/HEIF format processing - extract dimensions from ispe box
@@ -895,6 +905,17 @@ pub fn extract_metadata(
                                 ));
                             }
                         }
+
+                        // The dimensions above come from image properties. The
+                        // EXIF is a separate item in the same meta box, and
+                        // until this call nothing read it: a Fuji .HIF returned
+                        // 17 tags with no camera, lens, exposure or MakerNotes.
+                        append_iso_bmff_exif(
+                            &file_data,
+                            &mut tag_entries,
+                            &mut tags,
+                            show_warnings,
+                        );
                     }
                     "MOV" | "MP4" => {
                         // QuickTime / MP4 container: streaming atom walker.
@@ -1112,6 +1133,69 @@ pub fn extract_metadata(
     exif_data.missing_implementations = missing_implementations;
 
     Ok(exif_data)
+}
+
+/// Pull the EXIF item out of an ISO BMFF file (HEIF, HEIC, AVIF) and fold its
+/// tags into the running collection.
+///
+/// ExifTool: QuickTime.pm:9345-9483 (HandleItemInfo)
+///
+/// A file with no EXIF item is normal and produces nothing here. A file whose
+/// EXIF item cannot be read records a warning rather than failing the
+/// extraction, because the File and Composite tags are still worth returning.
+fn append_iso_bmff_exif(
+    file_data: &[u8],
+    tag_entries: &mut Vec<TagEntry>,
+    tags: &mut indexmap::IndexMap<String, TagValue>,
+    show_warnings: bool,
+) {
+    let exif_item = match avif::extract_exif_item(file_data) {
+        Ok(Some(item)) => item,
+        Ok(None) => return,
+        Err(e) => {
+            tags.insert(
+                "Warning:IsoBmffExifError".to_string(),
+                TagValue::string(format!("Failed to locate EXIF item: {e}")),
+            );
+            return;
+        }
+    };
+
+    let mut exif_reader = ExifReader::new();
+
+    // The TIFF header sits at a real position in the file, and IsOffset tags
+    // (thumbnail offsets, most visibly) are stored TIFF-relative, so without
+    // this every such offset would point at the wrong bytes.
+    // ExifTool: Exif.pm:7052-7066
+    exif_reader.set_base_offset(exif_item.tiff_offset);
+
+    match exif_reader.parse_exif_data(&exif_item.tiff_data) {
+        Ok(()) => {
+            let mut exif_tag_entries = exif_reader.get_all_tag_entries();
+            tag_entries.append(&mut exif_tag_entries);
+
+            for (key, value) in exif_reader.get_all_tags() {
+                tags.insert(key, value);
+            }
+
+            add_exif_byte_order_tag(&exif_reader, tag_entries);
+
+            if show_warnings {
+                for (i, warning) in exif_reader.get_warnings().iter().enumerate() {
+                    tags.insert(
+                        format!("Warning:ExifWarning{i}"),
+                        TagValue::string(warning.clone()),
+                    );
+                }
+            }
+        }
+        Err(e) => {
+            tags.insert(
+                "Warning:IsoBmffExifError".to_string(),
+                TagValue::string(format!("Failed to parse EXIF item: {e}")),
+            );
+        }
+    }
 }
 
 /// Add ExifByteOrder tag based on TIFF header information
