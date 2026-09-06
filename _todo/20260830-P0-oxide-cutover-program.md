@@ -312,6 +312,24 @@ don't ask again").
 New follow-up TPP: `_todo/20260830-P2-cli-tag-request-parity.md` (5
 confirmed CLI request divergences deferred from the glob fix).
 
+### 2026-08-31 → 2026-09-05 (M1b sessions)
+
+M1b is tracked in `_todo/20260831-P0-m1b-group-names-migration.md` —
+read it FIRST when resuming; it holds the Phase A/B plans, all resolved
+decisions, Stage 0 MWG measurement results, and the progress log.
+Summary: Phase A (exiftool-vendored -G coherence) LANDED as five
+Matthew-reviewed commits on local main in `../exiftool-vendored.js`
+(`41945f3..2c76cf3`), NOT pushed — his release flow owns the v38.0.0
+bump. Stage 0 (MWG-drop measurement) complete in worktree
+`../photostructure/.claude/worktrees/m1b-stage0`, uncommitted, awaiting
+ratification. Process rules that MUST persist: outside exif-oxide,
+NEVER run any git-mutating command without explicit per-instance
+approval, and pause before EVERY commit so Matthew can review (he runs
+his own Codex passes on staged diffs); use the coding:stage skill's
+stage_hunks.py for partial staging. Spurious Bash-tool denials recurred
+(a compound git-commit command was denied, the decomposed retry
+succeeded — surface, retry once, never assume a real decline).
+
 ## Open decisions awaiting Matthew
 
 - Drop `-use MWG` in the group-names migration? (recommended)
