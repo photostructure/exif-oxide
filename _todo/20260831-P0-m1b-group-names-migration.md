@@ -280,6 +280,24 @@ Worktree kept in place for review; revert commands in the agent report.
 
 ## Progress log
 
+### 2026-09-05
+
+Phase A LANDED locally in ../exiftool-vendored.js (NOT pushed): five
+reviewed commits, each approved by Matthew before committing —
+`41945f3` fix(ErrorsAndWarnings) both key shapes; `b6dafe8`
+fix(ReadTask) ExifToolVersion string under -G (+ regression test added
+after Matthew's Codex finding R240-A); `4fa6506` fix(ReadTask) populate
+zoneSource; `02e33ee` feat(GroupedTags) groupNames option + contract +
+typing (full suite 1938 passing at commit time); `2c76cf3` docs.
+Design point settled in review: `readArgs: ["-G"]` behaves like
+`groupNames: true` at runtime (all parsing keys off the final args via
+`degroup`; the option is consulted only for -G injection) but without
+the GroupedTags return type; explicit `groupNames: false` does not
+strip a caller-supplied -G — documented in the option TypeDoc.
+NEXT: Matthew pushes/releases v38 when ready; Phase B Stage 1+ blocks
+on that release (or an npm link/tarball pin). Stage 0 MWG ratification
+decisions still open (tie-break fix, geo synonyms, RW2 re-keying).
+
 ### 2026-08-31
 
 M1b started. Two read-only planning agents launched: Phase A plan
