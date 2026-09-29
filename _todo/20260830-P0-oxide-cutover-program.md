@@ -23,15 +23,16 @@ the tracker for the 2026-07/08 workstreams; this TPP owns the cutover.
    what the 379-snapshot oracle measures. The wrapper gains a groupless
    lookup (`get(tags, "DateTimeOriginal")`) applying ExifTool's merging
    heuristics in TS, verified differentially against bare-name
-   `exiftool -j` over the corpus. Class-vs-helper is an open sub-choice
-   (intern suggestion, unvetted): a Tags class needs hydrate/dehydrate at
-   PhotoStructure's worker-IPC boundary; plain data + helper does not.
-3. **Recommend dropping `-use MWG`** as part of the group-names migration
-   (PhotoStructure owns cross-standard precedence; non-MWG ExifTool still
-   emits Composite:SubSecDateTimeOriginal). Undecided. If MWG stays,
-   exif-oxide must implement strict-mode reads in four modules + the MWG
-   composites (its generated MWG table is currently EMPTY — codegen bug
-   class: empty expected tables should fail closed).
+   `exiftool -j` over the corpus. Class-vs-helper: the Phase B planners
+   took plain data + helper as the default (a Tags class needs
+   hydrate/dehydrate at PhotoStructure's worker-IPC boundary); Matthew
+   hasn't ruled.
+3. **PhotoStructure drops `-use MWG` for READS ONLY** (Matthew,
+   2026-09-29): PhotoStructure owns cross-standard precedence on reads;
+   writes stay on Perl ExifTool and keep honoring the `useMWG` setting
+   (default on). exif-oxide therefore needs
+   no MWG read support. Separate codegen concern: its generated MWG table
+   is EMPTY — empty expected tables should fail closed.
 4. **Translation strategy: hybrid.** Codegen keeps tables (87.5% of
    PrintConv sites work; absorbs ~80% of each ExifTool release
    automatically). LLM-assisted porting is allowed for procedural Perl
@@ -338,7 +339,9 @@ succeeded — surface, retry once, never assume a real decline).
 
 ## Open decisions awaiting Matthew
 
-- Drop `-use MWG` in the group-names migration? (recommended)
+- ~~Drop `-use MWG` in the group-names migration?~~ DECIDED
+  2026-09-29: reads only; writes keep honoring `useMWG` (see M1b
+  tracker).
 - Tags class vs plain data + lookup helper in exiftool-vendored?
 - Geolocation: accept initial absence (city/country auto-tags degrade;
   58/231 fixtures change tzSource label) until a Geolocation.dat reader is
