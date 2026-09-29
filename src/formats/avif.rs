@@ -383,19 +383,28 @@ fn parse_infe_box(infe_data: &[u8]) -> Result<ItemInfo> {
 
     let version = infe_data[0];
 
-    let (item_id, item_type_offset) = if version == 0 || version == 1 {
-        // Version 0/1: 16-bit item ID at offset 4
+    // The item ID is 16-bit in versions 0, 1 and 2, and 32-bit only in version 3.
+    // ExifTool: QuickTime.pm:9246-9256 (ParseItemInfoEntry) — `$ver == 2` takes
+    // Get16u and `$ver == 3` takes Get32u.
+    //
+    // Reading version 2 as 32-bit made every real HEIC and HEIF file fail here.
+    // Fuji, Apple and Canon all write version 2 entries, whose box content is 13
+    // bytes, so the old `len() < 14` guard rejected each one outright: a 10-entry
+    // iinf box yielded 1 item, the Exif item was never seen, and the file came
+    // back with no EXIF at all.
+    let (item_id, item_type_offset) = if version <= 2 {
+        // Version 0/1/2: 16-bit item ID at offset 4
         let id = u16::from_be_bytes([infe_data[4], infe_data[5]]) as u32;
-        (id, 8) // Skip version/flags (4) + item_id (2) + protection_index (2)
+        (id, 8) // version/flags (4) + item_id (2) + protection_index (2)
     } else {
-        // Version 2+: 32-bit item ID at offset 4
+        // Version 3: 32-bit item ID at offset 4
         if infe_data.len() < 14 {
             return Err(crate::types::ExifError::InvalidFormat(
-                "infe box too short for version 2+ item ID".to_string(),
+                "infe box too short for version 3 item ID".to_string(),
             ));
         }
         let id = u32::from_be_bytes([infe_data[4], infe_data[5], infe_data[6], infe_data[7]]);
-        (id, 10) // Skip version/flags (4) + item_id (4) + protection_index (2)
+        (id, 10) // version/flags (4) + item_id (4) + protection_index (2)
     };
 
     // Extract item type (4 bytes ASCII)
@@ -553,6 +562,303 @@ pub fn parse_ipma_box(ipma_data: &[u8]) -> Result<Vec<ItemPropertyAssociation>> 
     }
 
     Ok(associations)
+}
+
+/// One extent of an item's data, from the 'iloc' box.
+///
+/// ExifTool: QuickTime.pm:9127-9195 (ParseItemLocation), ISO 14496-12:2015 pg.79
+#[derive(Debug, Clone)]
+pub struct ItemExtent {
+    pub offset: u64,
+    pub length: u64,
+}
+
+/// Where one item's bytes live.
+#[derive(Debug, Clone)]
+pub struct ItemLocation {
+    pub item_id: u32,
+    pub construction_method: u8,
+    pub base_offset: u64,
+    pub extents: Vec<ItemExtent>,
+}
+
+/// Read a big-endian integer of `size` bytes.
+///
+/// ExifTool: QuickTime.pm GetVarInt. A size of 0 means the field is absent and
+/// reads as 0, which is why base offsets are usually 0 in HEIC files.
+fn read_var_int(data: &[u8], pos: &mut usize, size: usize) -> Option<u64> {
+    if size == 0 {
+        return Some(0);
+    }
+    if size > 8 || *pos + size > data.len() {
+        return None;
+    }
+    let mut value: u64 = 0;
+    for byte in &data[*pos..*pos + size] {
+        value = (value << 8) | u64::from(*byte);
+    }
+    *pos += size;
+    Some(value)
+}
+
+/// Parse the 'iloc' (item location) box.
+///
+/// ExifTool: QuickTime.pm:9127-9195 (ParseItemLocation)
+///
+/// The field WIDTHS are themselves stored in the box: one packed u16 holds four
+/// nibbles giving the byte size of the offset, length, base-offset and index
+/// fields, so the entry stride is per-file rather than fixed.
+pub fn parse_iloc_box(iloc_data: &[u8]) -> Result<Vec<ItemLocation>> {
+    if iloc_data.len() < 8 {
+        return Err(crate::types::ExifError::InvalidFormat(
+            "iloc box too short".to_string(),
+        ));
+    }
+
+    let version = iloc_data[0];
+    // Bytes 1..4 are flags. Bytes 4..6 pack the four field widths.
+    let sizes = u16::from_be_bytes([iloc_data[4], iloc_data[5]]);
+    let offset_size = (sizes >> 12) as usize;
+    let length_size = ((sizes >> 8) & 0x0f) as usize;
+    let base_size = ((sizes >> 4) & 0x0f) as usize;
+    let index_size = (sizes & 0x0f) as usize;
+
+    let (item_count, mut pos) = if version < 2 {
+        (u16::from_be_bytes([iloc_data[6], iloc_data[7]]) as u32, 8)
+    } else {
+        if iloc_data.len() < 10 {
+            return Err(crate::types::ExifError::InvalidFormat(
+                "iloc box too short for version 2 item count".to_string(),
+            ));
+        }
+        (
+            u32::from_be_bytes([iloc_data[6], iloc_data[7], iloc_data[8], iloc_data[9]]),
+            10,
+        )
+    };
+
+    tracing::debug!(
+        "iloc box: version={}, items={}, offset_size={}, length_size={}, base_size={}",
+        version,
+        item_count,
+        offset_size,
+        length_size,
+        base_size
+    );
+
+    let mut locations = Vec::new();
+
+    for _ in 0..item_count {
+        let item_id = if version < 2 {
+            if pos + 2 > iloc_data.len() {
+                break;
+            }
+            let id = u16::from_be_bytes([iloc_data[pos], iloc_data[pos + 1]]) as u32;
+            pos += 2;
+            id
+        } else {
+            if pos + 4 > iloc_data.len() {
+                break;
+            }
+            let id = u32::from_be_bytes([
+                iloc_data[pos],
+                iloc_data[pos + 1],
+                iloc_data[pos + 2],
+                iloc_data[pos + 3],
+            ]);
+            pos += 4;
+            id
+        };
+
+        // Construction method only exists in versions 1 and 2.
+        let construction_method = if version == 1 || version == 2 {
+            if pos + 2 > iloc_data.len() {
+                break;
+            }
+            let method = (u16::from_be_bytes([iloc_data[pos], iloc_data[pos + 1]]) & 0x0f) as u8;
+            pos += 2;
+            method
+        } else {
+            0
+        };
+
+        // A non-zero data reference index means the bytes live in another file,
+        // which ExifTool declines to follow (QuickTime.pm:9388 "Not this file").
+        if pos + 2 > iloc_data.len() {
+            break;
+        }
+        let data_reference_index = u16::from_be_bytes([iloc_data[pos], iloc_data[pos + 1]]);
+        pos += 2;
+
+        let base_offset = match read_var_int(iloc_data, &mut pos, base_size) {
+            Some(value) => value,
+            None => break,
+        };
+
+        if pos + 2 > iloc_data.len() {
+            break;
+        }
+        let extent_count = u16::from_be_bytes([iloc_data[pos], iloc_data[pos + 1]]);
+        pos += 2;
+
+        let mut extents = Vec::new();
+        let mut truncated = false;
+        for _ in 0..extent_count {
+            if (version == 1 || version == 2)
+                && read_var_int(iloc_data, &mut pos, index_size).is_none()
+            {
+                truncated = true;
+                break;
+            }
+            let offset = match read_var_int(iloc_data, &mut pos, offset_size) {
+                Some(value) => value,
+                None => {
+                    truncated = true;
+                    break;
+                }
+            };
+            let length = match read_var_int(iloc_data, &mut pos, length_size) {
+                Some(value) => value,
+                None => {
+                    truncated = true;
+                    break;
+                }
+            };
+            extents.push(ItemExtent { offset, length });
+        }
+
+        if data_reference_index == 0 {
+            locations.push(ItemLocation {
+                item_id,
+                construction_method,
+                base_offset,
+                extents,
+            });
+        }
+
+        if truncated {
+            break;
+        }
+    }
+
+    Ok(locations)
+}
+
+/// The EXIF payload of an ISO BMFF file, ready for the TIFF parser.
+#[derive(Debug, Clone)]
+pub struct ExifItem {
+    /// TIFF bytes, starting at the "II*\0" or "MM\0*" header.
+    pub tiff_data: Vec<u8>,
+    /// Absolute position of those bytes in the file, for IsOffset adjustment.
+    pub tiff_offset: u64,
+}
+
+/// Extract the EXIF item from a HEIF, HEIC or AVIF file.
+///
+/// ExifTool: QuickTime.pm:9345-9483 (HandleItemInfo). The item whose iinf type
+/// is "Exif" holds the EXIF, iloc says where its bytes are, and the payload
+/// carries a header in front of the TIFF data (see below).
+///
+/// Returns Ok(None) when the file has no EXIF item, which is an ordinary state
+/// for an AVIF and is deliberately not an error.
+pub fn extract_exif_item(data: &[u8]) -> Result<Option<ExifItem>> {
+    let Some(meta_box) = find_box_by_type(data, b"meta")? else {
+        return Ok(None);
+    };
+
+    // meta is a FullBox: 4 bytes of version and flags before its children.
+    let meta_content = if meta_box.data.len() >= 4 {
+        &meta_box.data[4..]
+    } else {
+        return Ok(None);
+    };
+
+    let Some(iinf_box) = find_box_by_type(meta_content, b"iinf")? else {
+        return Ok(None);
+    };
+    let items = parse_iinf_box(&iinf_box.data)?;
+
+    // ExifTool: QuickTime.pm:9371 maps the item type "Exif" to its EXIF handler.
+    let Some(exif_item) = items.iter().find(|item| &item.item_type == b"Exif") else {
+        tracing::debug!("No Exif item in iinf box");
+        return Ok(None);
+    };
+
+    let Some(iloc_box) = find_box_by_type(meta_content, b"iloc")? else {
+        tracing::debug!("Exif item present but no iloc box to locate it");
+        return Ok(None);
+    };
+    let locations = parse_iloc_box(&iloc_box.data)?;
+
+    let Some(location) = locations
+        .iter()
+        .find(|loc| loc.item_id == exif_item.item_id)
+    else {
+        tracing::debug!("No iloc entry for Exif item {}", exif_item.item_id);
+        return Ok(None);
+    };
+
+    // ExifTool: QuickTime.pm:9385 declines construction methods above 0, and
+    // method 1 (data in 'idat') needs a box this does not read yet.
+    if location.construction_method != 0 {
+        tracing::debug!(
+            "Exif item uses construction method {}, not extracted",
+            location.construction_method
+        );
+        return Ok(None);
+    }
+
+    // ExifTool: QuickTime.pm:9435-9441 concatenates every extent.
+    let mut payload = Vec::new();
+    let mut payload_start = None;
+    for extent in &location.extents {
+        let start = location.base_offset.saturating_add(extent.offset);
+        let end = start.saturating_add(extent.length);
+        if end > data.len() as u64 {
+            tracing::debug!("Exif extent {}..{} is past the end of the file", start, end);
+            return Ok(None);
+        }
+        if payload_start.is_none() {
+            payload_start = Some(start);
+        }
+        payload.extend_from_slice(&data[start as usize..end as usize]);
+    }
+
+    let Some(payload_start) = payload_start else {
+        return Ok(None);
+    };
+    if payload.len() < 4 {
+        return Ok(None);
+    }
+
+    // ExifTool: QuickTime.pm:9462-9481. The payload normally opens with a
+    // 4-byte big-endian count of bytes to skip before the TIFF header, and that
+    // count is usually 6 because an "Exif\0\0" header follows it. Two malformed
+    // shapes are common enough that ExifTool names both.
+    let start = if payload.starts_with(b"MM\0\x2a") || payload.starts_with(b"II\x2a\0") {
+        // Missing Exif header: the TIFF header is already at byte 0.
+        0
+    } else if payload.starts_with(b"Exif\0\0") {
+        // Missing Exif header size.
+        6
+    } else {
+        let skip = u32::from_be_bytes([payload[0], payload[1], payload[2], payload[3]]) as usize;
+        let start = 4 + skip;
+        if start > payload.len() {
+            tracing::debug!(
+                "Invalid EXIF header: skip {} past {} bytes",
+                skip,
+                payload.len()
+            );
+            return Ok(None);
+        }
+        start
+    };
+
+    Ok(Some(ExifItem {
+        tiff_data: payload[start..].to_vec(),
+        tiff_offset: payload_start + start as u64,
+    }))
 }
 
 /// Extract HEIC/HEIF image dimensions using ExifTool's primary item detection
