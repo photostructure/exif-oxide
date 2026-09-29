@@ -104,13 +104,30 @@ the `--small`/`--full` sync suites where the RW2 files live; library web
 specs need the `public/app` bundle; generated settings docs regenerate
 even in read mode and already drift on main — regenerate once at ship).
 
-Landed on the branch (each Codex second-opinion LAND): `f3fd9936d`
-task 1 (capture-time tie-break), `3adddfd26` task 2 (IPTC geo
-synonyms + GeoTagger code pairing) with the branch TPP. Task 3 (Copyright
-chain) moved to a PER-FILE resolution so a sidecar's XMP Rights still
-overrides the main file's EXIF Copyright, as MWG's per-file composite
-did. NEXT: task 3, then task 4 (reads pass `useMWG: false`,
-breaking-change footer, full fixture regen).
+Stage 0 COMPLETE on the branch (each commit Codex second-opinion LAND):
+`f3fd9936d` capture-time tie-break; `3adddfd26` IPTC geo synonyms and the
+branch TPP; `aef56b8a4` Copyright resolved per file (so a sidecar's XMP
+Rights still overrides the main file's EXIF Copyright, as MWG's per-file
+composite did); `8e38fd870` + `365b2b790` separate reader/writer ExifTool
+pools; `5630f1af6` `resolveKeywords()`; `4d76e0f6e` reads drop MWG
+(breaking change for the `useMWG` setting's read semantics).
+
+Discoveries that changed the plan:
+- ExifTool never unloads MWG: after one `-use MWG` command, every later
+  command on that stay_open process gets MWG composites and strict mode.
+  A per-read `useMWG: false` on a shared pool is not MWG-free, so
+  Matthew chose separate reader/writer pools — the same split exif-oxide
+  needs (reads to exif-oxide, writes stay on Perl). exiftool-vendored's
+  per-call `useMWG` has this gap for every consumer (flagged to Matthew as
+  a separate task).
+- Writes keep MWG and reads don't, so round trips must hold for "written
+  with MWG, read without": MWG stores sidecar keywords joined in
+  XMP-pdf:Keywords, which bare-mode reads return (fixed by
+  `resolveKeywords`). No other PhotoStructure-written field changed.
+- Must land before ship: a third-party file whose only capture date is
+  XMP-photoshop:DateCreated loses it without MWG; needs group names.
+
+NEXT: Stage 1 (`groupNames: true` + degroup shim) is in progress.
 
 ### 2026-09-28
 

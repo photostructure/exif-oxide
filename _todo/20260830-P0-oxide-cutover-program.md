@@ -121,7 +121,9 @@ the tracker for the 2026-07/08 workstreams; this TPP owns the cutover.
 - **M6 faithful-read-IR strangler** — per `_todo/20260808-P1-faithful-read-
   ir.md`; fixes the CR3 (10%) / RAF (16%) / HEIC (20%) observation cliff.
 - **M7 PhotoStructure rollout** — ReadBackend router inside `__readRawTags`
-  (worker-resident; sync-process wrapper is bypassed by delegation), typed
+  (worker-resident; sync-process wrapper is bypassed by delegation; since
+  M1b Stage 0, reads already run on their own MWG-free ExifTool pool,
+  `exiftool()`, separate from the writer pool `exiftoolWriter()`), typed
   `UnsupportedByOxide` signal (never error-prose matching), cache keys + DB
   engine stamp so rollback invalidates native-derived values, shadow mode
   first, per-format allowlist growth, combined packaged-app Windows/macOS/
