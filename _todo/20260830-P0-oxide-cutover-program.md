@@ -317,16 +317,22 @@ confirmed CLI request divergences deferred from the glob fix).
 M1b is tracked in `_todo/20260831-P0-m1b-group-names-migration.md` —
 read it FIRST when resuming; it holds the Phase A/B plans, all resolved
 decisions, Stage 0 MWG measurement results, and the progress log.
-Summary: Phase A (exiftool-vendored -G coherence) LANDED as five
-Matthew-reviewed commits on local main in `../exiftool-vendored.js`
-(`41945f3..2c76cf3`), NOT pushed — his release flow owns the v38.0.0
-bump. Stage 0 (MWG-drop measurement) complete in worktree
-`../photostructure/.claude/worktrees/m1b-stage0`, uncommitted, awaiting
-ratification. Process rules that MUST persist: outside exif-oxide,
-NEVER run any git-mutating command without explicit per-instance
-approval, and pause before EVERY commit so Matthew can review (he runs
-his own Codex passes on staged diffs); use the coding:stage skill's
-stage_hunks.py for partial staging. Spurious Bash-tool denials recurred
+Summary: Phase A (exiftool-vendored -G coherence, `41945f3..2c76cf3`)
+shipped in exiftool-vendored v38.0.0 (2026-09-06); photostructure main
+pins 38.2.0. The 2026-08-31 Stage 0 (MWG-drop measurement) worktree and
+its uncommitted diff were lost; its findings survive only in the M1b
+tracker and are re-measured on current main.
+
+### 2026-09-28
+
+Matthew: "push this through" with `/second-opinion` before commits.
+Phase B runs in worktree `~/src/worktrees/m1b-group-names` on branch
+`feat/m1b-group-names`; vetted steps commit (and stage) on that branch
+without a per-commit pause; photostructure main and its working tree
+are never touched and nothing is pushed there. Every other
+git-mutating command outside exif-oxide (including all of
+exiftool-vendored.js) still needs explicit per-instance approval. Use the coding:stage skill's
+stage_hunks.py for partial staging. Spurious Bash-tool denials recur
 (a compound git-commit command was denied, the decomposed retry
 succeeded — surface, retry once, never assume a real decline).
 

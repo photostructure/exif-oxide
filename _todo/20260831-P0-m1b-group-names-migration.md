@@ -4,12 +4,21 @@ Umbrella: `_todo/20260830-P0-oxide-cutover-program.md` (M1b milestone,
 scoped 2026-08-30 from the corpus collision survey + PhotoStructure
 consumption inventory recorded there). Work happens in TWO OTHER REPOS:
 
-- `../exiftool-vendored.js` (public npm library, v37.2.0, clean tree)
-- `../photostructure` (branch main)
+- `../exiftool-vendored.js` (public npm library; Phase A shipped in
+  v38.0.0 on 2026-09-06, latest 38.3.0)
+- `../photostructure` — Phase B work happens ONLY in the worktree
+  `~/src/worktrees/m1b-group-names` on branch `feat/m1b-group-names`
+  (created off local main 2026-09-28)
 
-**Authorization boundary: unlike exif-oxide, NEITHER repo has standing
-commit/push authorization — always ask Matthew before `git commit` or
-`git push` there.** Read their CLAUDE.md / AGENTS.md before any change.
+**Authorization boundary** (Matthew, 2026-09-28, supersedes the
+per-commit pause for Phase B): commit each vetted step on
+`feat/m1b-group-names` after a `/second-opinion` pass, including the
+staging those commits need; NEVER touch photostructure main or its main
+working tree, NEVER push — Matthew reviews and merges the branch. Every
+other git-mutating command in photostructure, and every git-mutating
+command in exiftool-vendored.js, still needs explicit per-instance
+approval. Read their CLAUDE.md / AGENTS.md before
+any change.
 
 ## Goal and sequencing
 
@@ -149,8 +158,10 @@ STAGED LANDING (each stage's fixture diff answers one question):
 - Stage 4: remove shim, flip Tags to the grouped type (tsc catches
   stragglers), final regen = pure key renames.
 Single-flag-flip alternative rejected (un-reviewable combined diff).
-Stage 0 can land against v37.2.0 now; Stage 1+ needs the Phase A
-release (or npm link/tarball pin — flag for Matthew).
+Stage 1+ needed the Phase A release: shipped in v38.0.0, and
+photostructure main pins `exiftool-vendored` 38.2.0 (2026-09-28). That
+prerequisite is met; Stage 1 still waits for Stage 0 to be
+re-measured, ratified, and landed.
 
 Helper (task 1): plain data + functions in new
 src/core/tags/TagGroupPrecedence.ts — bareName(), pluckTag(tags,name)
@@ -239,9 +250,12 @@ Stage 0 design refinement: TWO regen passes for maximal evidence —
 pass 1 flips useMWG only (diff = total MWG dependency), pass 2 adds the
 Rating/Copyright replacement chains (diff = uncovered residue).
 
-## Stage 0 results (2026-08-31, measured in worktree
-## photostructure/.claude/worktrees/m1b-stage0, NOTHING committed;
-## artifacts in the session scratchpad; Codex-vetted, 25 challenges)
+## Stage 0 results (2026-08-31, measured against photostructure main as
+## of 2026-08-31 in worktree .claude/worktrees/m1b-stage0; Codex-vetted,
+## 25 challenges). STALE: the worktree, its uncommitted diff, and the
+## scratchpad artifacts were gone by 2026-09-28 (branch `m1b-stage0`
+## survives at 4e4ae42c0 with no commits). Re-measure on current main
+## before ratifying — see the 2026-09-28 log entry.
 
 Baseline: clean (one non-semantic trailing-newline caveat on 4
 migrations-post fixtures). Pass 1 (useMWG=false only): 18/140 fixtures
@@ -276,9 +290,43 @@ RECOMMENDATION: ratify the drop CONDITIONALLY, bundled with: (1) the
 capturedAt precision tie-break fix (own fixture pass), (2) the IPTC geo
 synonyms, (3) a decision on Panasonic RW2 cameraId/lensId/hash
 re-keying for existing libraries, (4) the zone-attribution decision.
-Worktree kept in place for review; revert commands in the agent report.
 
 ## Progress log
+
+### 2026-09-28
+
+State re-verified live after a three-week gap:
+
+- exiftool-vendored: Phase A (`41945f3..2c76cf3`) shipped in v38.0.0
+  (2026-09-06); releases continued to 38.3.0 (2026-09-28). Decision (a)
+  "release v38" is closed.
+- photostructure main pins `exiftool-vendored` 38.2.0, so `groupNames`
+  is available; its only use in PhotoStructure source is one spec
+  (`src/core/tags/ExifTool.spec.ts:723`), which writes capture time to
+  MIE/EXV/JPEG files and reads them back with `groupNames: true` to
+  check group-prefixed keys such as `MIE:DateTimeOriginal`.
+- The Stage 0 worktree and diff are lost (see the Stage 0 heading).
+- None of the MWG ratification trio has landed, and main moved under
+  two of them: `useMWG` still defaults true
+  (`src/core/settings/ParsingSettings.ts:115`); `tagGeoSynonyms`
+  (`src/core/settings/TaggingSettings.ts:333`) was rewritten around
+  `applePhotos*` and `LocationShown/LocationCreated.*` synonyms and still
+  lacks `Province-State` and `Country-PrimaryLocationName`; CapturedAt
+  lives at `src/core/tags/CapturedAt.ts` and `517376f3a` (2026-09-18,
+  "rank capture dates by provenance") reworked its ranking, so the
+  Stage 0 tie-break diagnosis (cited as CapturedAt.ts:627-651) must be
+  re-derived from current code.
+
+Matthew (2026-09-28): "push this through", with `/second-opinion`
+before every commit; branch-commit authorization recorded at the top of
+this TPP. Worktree `~/src/worktrees/m1b-group-names` created on
+`feat/m1b-group-names` off local main `e93524b49`.
+
+NEXT: (1) re-run Stage 0 passes 1 and 2 on the new branch and bring
+the ratification decisions back with fresh evidence (tie-break fix, geo
+synonyms, RW2 re-keying, zone attribution); (2) land Stage 0 as vetted
+commits; (3) Stage 1 (-G flip + degroup shim at the ReadRawTags
+boundary).
 
 ### 2026-09-05
 
