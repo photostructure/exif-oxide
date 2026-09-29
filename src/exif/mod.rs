@@ -277,7 +277,7 @@ impl ExifReader {
                 "Nikon" => format!("Nikon_0x{tag_id:04X}"),
                 "Olympus" => format!("Olympus_0x{tag_id:04X}"),
                 "Panasonic" => format!("Panasonic_0x{tag_id:04X}"),
-                "Fujifilm" => format!("Fujifilm_0x{tag_id:04X}"),
+                "FujiFilm" => format!("FujiFilm_0x{tag_id:04X}"),
                 _ => format!("Tag_{tag_id:04X}"),
             };
             tracing::debug!(
@@ -329,6 +329,20 @@ impl ExifReader {
                     return tag_def.name.to_string();
                 } else {
                     tracing::debug!("Canon tag 0x{:x} not found in CANON_MAIN_TAGS", tag_id);
+                }
+            }
+
+            // Check for FujiFilm MakerNotes tags
+            // ExifTool: FujiFilm.pm Main table, group1 "FujiFilm"
+            if source.namespace == "FujiFilm" {
+                use crate::generated::FujiFilm_pm::main_tags::FUJI_FILM_MAIN_TAGS;
+                if let Some(tag_def) = FUJI_FILM_MAIN_TAGS.get(&tag_id) {
+                    tracing::debug!(
+                        "Found FujiFilm tag name for 0x{:x}: {}",
+                        tag_id,
+                        tag_def.name
+                    );
+                    return tag_def.name.to_string();
                 }
             }
 
@@ -468,7 +482,7 @@ impl ExifReader {
                 let display_group = match namespace.as_str() {
                     "GPS" => "EXIF", // GPS tags have Group0="EXIF" per ExifTool GPS.pm:52
                     // Manufacturer MakerNotes tags display as "MakerNotes" group per ExifTool output
-                    "Canon" | "Nikon" | "Sony" | "Olympus" | "Panasonic" | "Fujifilm" => {
+                    "Canon" | "Nikon" | "Sony" | "Olympus" | "Panasonic" | "FujiFilm" => {
                         "MakerNotes"
                     }
                     other => other, // Keep other namespaces as-is
@@ -594,6 +608,7 @@ impl ExifReader {
                             name if name.starts_with("Canon") => false, // Canon maker notes - don't lookup GPS/EXIF tags
                             name if name.starts_with("Nikon") => false, // Nikon maker notes - don't lookup GPS/EXIF tags
                             name if name.starts_with("Olympus") => false, // Olympus maker notes - don't lookup GPS/EXIF tags
+                            name if name.starts_with("FujiFilm") => false, // FujiFilm maker notes - don't lookup GPS/EXIF tags
                             "MakerNotes" => false, // Generic maker notes - don't lookup GPS/EXIF tags
                             "KyoceraRaw" => false, // Kyocera RAW - don't lookup GPS/EXIF tags
                             "IFD0" if self.original_file_type.as_deref() == Some("RW2") => {
@@ -701,7 +716,20 @@ impl ExifReader {
                                 (panasonic_tag_name, None)
                             } else {
                                 // Check for manufacturer-specific maker note tags
-                                if source_info.ifd_name.starts_with("Canon")
+                                if source_info.ifd_name.starts_with("FujiFilm") {
+                                    // ExifTool: FujiFilm.pm Main table
+                                    use crate::generated::FujiFilm_pm::main_tags::FUJI_FILM_MAIN_TAGS;
+                                    let fujifilm_tag_name = FUJI_FILM_MAIN_TAGS
+                                        .get(&tag_id)
+                                        .map(|tag_def| tag_def.name.to_string())
+                                        .unwrap_or_else(|| {
+                                            Self::generate_tag_prefix_name(
+                                                tag_id,
+                                                Some(source_info),
+                                            )
+                                        });
+                                    (fujifilm_tag_name, None)
+                                } else if source_info.ifd_name.starts_with("Canon")
                                     || source_info.ifd_name == "MakerNotes"
                                 {
                                     // Use Canon-specific tag name lookup for Canon maker note tags
@@ -751,7 +779,7 @@ impl ExifReader {
                 _ => match raw_group_name {
                     "GPS" => "EXIF", // GPS tags have Group0="EXIF" per ExifTool GPS.pm:52
                     // Manufacturer MakerNotes tags display as "MakerNotes" group per ExifTool output
-                    "Canon" | "Nikon" | "Sony" | "Olympus" | "Panasonic" | "Fujifilm" => {
+                    "Canon" | "Nikon" | "Sony" | "Olympus" | "Panasonic" | "FujiFilm" => {
                         "MakerNotes"
                     }
                     other => other, // Keep other namespaces as-is

@@ -219,6 +219,13 @@ impl ExifReader {
                 "Calling Sony subdirectory processing for Tag2010, Tag9050, AFInfo and other binary sections"
             );
             crate::implementations::sony::process_sony_subdirectory_tags(self)?;
+        } else if maker_notes_data.starts_with(b"FUJIFILM")
+            || maker_notes_data.starts_with(b"GENERALE")
+        {
+            debug!("Detected FujiFilm MakerNotes signature, dispatching on data");
+            // Register before descending, as the Canon branch above does.
+            self.processed.insert(addr, "MakerNotes".to_string());
+            self.process_fujifilm_makernotes(&maker_notes_data)?;
         } else {
             // Fall back to generic tag kit processing for other manufacturers
             debug!("Non-Canon/Olympus camera, using generic MakerNotes processing");
@@ -237,6 +244,201 @@ impl ExifReader {
 
         Ok(())
     }
+
+    /// Process FujiFilm MakerNotes.
+    ///
+    /// ExifTool: lib/Image/ExifTool/MakerNotes.pm:121-134 (MakerNoteFujiFilm)
+    ///   Condition => '$$valPt =~ /^(FUJIFILM|GENERALE)/'
+    ///   OffsetPt  => '$valuePtr+8'   4-byte LE pointer to the IFD
+    ///   Base      => '$start'        value pointers are subdirectory-relative
+    ///   ByteOrder => 'LittleEndian'  regardless of the file's byte order
+    ///
+    /// Dispatch is on the DATA signature and never on Make, because the same
+    /// header is written by some Leica, Minolta and Sharp bodies
+    /// (MakerNotes.pm:122) and by GE models writing "GENERALE".
+    ///
+    /// Two details here are easy to get wrong, and both fail silently.
+    ///
+    /// The IFD does not begin 8 bytes in. Byte 8 holds a pointer TO the IFD,
+    /// which is 12 on every X-series file measured and is not a constant.
+    ///
+    /// `Base => '$start'` makes value pointers relative to the MakerNotes start
+    /// rather than to the TIFF header, which is why this parses from the
+    /// subdirectory slice instead of calling parse_ifd: value_extraction
+    /// resolves value_or_offset against whatever slice it is given, so passing
+    /// the subdirectory makes the base right by construction. Reading them
+    /// TIFF-relative still parses, since inline values are unaffected, and only
+    /// the out-of-line ones come back wrong (Quality reads as an empty string
+    /// while FilmMode reads correctly).
+    fn process_fujifilm_makernotes(&mut self, data: &[u8]) -> Result<()> {
+        // ExifTool: ByteOrder => 'LittleEndian'
+        let byte_order = ByteOrder::LittleEndian;
+
+        if data.len() < 12 {
+            self.warnings.push(format!(
+                "FujiFilm MakerNotes too small for header: {} bytes",
+                data.len()
+            ));
+            return Ok(());
+        }
+
+        // ExifTool: OffsetPt => '$valuePtr+8'
+        let ifd_offset = u32::from_le_bytes([data[8], data[9], data[10], data[11]]) as usize;
+
+        if ifd_offset + 2 > data.len() {
+            self.warnings.push(format!(
+                "FujiFilm IFD pointer {:#x} is beyond {} bytes of MakerNotes",
+                ifd_offset,
+                data.len()
+            ));
+            return Ok(());
+        }
+
+        let num_entries = byte_order.read_u16(data, ifd_offset)? as usize;
+
+        // Bound the directory before reading it. entry.count is attacker
+        // controlled elsewhere and so is this: a malformed file can claim more
+        // entries than the subdirectory holds.
+        if ifd_offset + 2 + num_entries * 12 > data.len() {
+            self.warnings.push(format!(
+                "FujiFilm IFD claims {} entries, only {} bytes available",
+                num_entries,
+                data.len() - ifd_offset
+            ));
+            return Ok(());
+        }
+
+        debug!(
+            "FujiFilm MakerNotes: IFD at {:#x} with {} entries",
+            ifd_offset, num_entries
+        );
+
+        let source_info = self.create_tag_source_info("FujiFilm");
+
+        for i in 0..num_entries {
+            let entry_offset = ifd_offset + 2 + i * 12;
+            let entry = match IfdEntry::parse(data, entry_offset, byte_order) {
+                Ok(entry) => entry,
+                Err(e) => {
+                    debug!("FujiFilm IFD entry {} unreadable: {}", i, e);
+                    continue;
+                }
+            };
+
+            match Self::extract_fujifilm_value(data, &entry, byte_order) {
+                Ok(value) => {
+                    trace!("FujiFilm tag {:#06x} = {:?}", entry.tag_id, value);
+                    self.store_tag_with_precedence(entry.tag_id, value, source_info.clone());
+                }
+                Err(e) => {
+                    debug!("FujiFilm tag {:#06x} skipped: {}", entry.tag_id, e);
+                }
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Read one FujiFilm IFD entry's value out of the MakerNotes slice.
+    ///
+    /// Raw values only. Conversions run in get_all_tag_entries (see the module
+    /// note at the top of this file), so nothing here applies a PrintConv.
+    fn extract_fujifilm_value(
+        data: &[u8],
+        entry: &IfdEntry,
+        byte_order: ByteOrder,
+    ) -> Result<TagValue> {
+        let single = entry.count == 1;
+
+        Ok(match entry.format {
+            TiffFormat::Ascii => TagValue::String(value_extraction::extract_ascii_value(
+                data,
+                entry,
+                byte_order,
+                entry.tag_id,
+            )?),
+            TiffFormat::Byte | TiffFormat::Undefined | TiffFormat::SByte => {
+                if single && entry.format == TiffFormat::Byte {
+                    TagValue::U8(value_extraction::extract_byte_value(data, entry)?)
+                } else {
+                    TagValue::U8Array(value_extraction::extract_byte_array_value(
+                        data, entry, byte_order,
+                    )?)
+                }
+            }
+            TiffFormat::Short => {
+                if single {
+                    TagValue::U16(value_extraction::extract_short_value(
+                        data, entry, byte_order,
+                    )?)
+                } else {
+                    TagValue::U16Array(value_extraction::extract_short_array_value(
+                        data, entry, byte_order,
+                    )?)
+                }
+            }
+            TiffFormat::Long => {
+                if single {
+                    TagValue::U32(value_extraction::extract_long_value(
+                        data, entry, byte_order,
+                    )?)
+                } else {
+                    TagValue::U32Array(value_extraction::extract_long_array(
+                        data, entry, byte_order,
+                    )?)
+                }
+            }
+            // No signed helpers exist in value_extraction; the widths are
+            // identical, so read unsigned and reinterpret. FujiFilm's tone,
+            // grain and colour-chrome tags are all SLONG, so this arm carries
+            // most of the film recipe.
+            TiffFormat::SLong => {
+                if single {
+                    TagValue::I32(
+                        value_extraction::extract_long_value(data, entry, byte_order)? as i32,
+                    )
+                } else {
+                    // No signed array helper and no I32Array variant, so the
+                    // reinterpretation is per element into a heterogeneous
+                    // Array. Storing these as U32Array would print
+                    // WhiteBalanceFineTune's -100 as 4294967196.
+                    TagValue::Array(
+                        value_extraction::extract_long_array(data, entry, byte_order)?
+                            .into_iter()
+                            .map(|v| TagValue::I32(v as i32))
+                            .collect(),
+                    )
+                }
+            }
+            TiffFormat::SShort => {
+                if single {
+                    TagValue::I16(
+                        value_extraction::extract_short_value(data, entry, byte_order)? as i16,
+                    )
+                } else {
+                    TagValue::Array(
+                        value_extraction::extract_short_array_value(data, entry, byte_order)?
+                            .into_iter()
+                            .map(|v| TagValue::I16(v as i16))
+                            .collect(),
+                    )
+                }
+            }
+            TiffFormat::Rational => {
+                value_extraction::extract_rational_value(data, entry, byte_order)?
+            }
+            TiffFormat::SRational => {
+                value_extraction::extract_srational_value(data, entry, byte_order)?
+            }
+            other => {
+                return Err(ExifError::ParseError(format!(
+                    "unhandled FujiFilm format {:?} (count {})",
+                    other, entry.count
+                )))
+            }
+        })
+    }
+
     /// Process a subdirectory with recursion prevention
     /// ExifTool: ProcessDirectory with PROCESSED tracking
     pub(crate) fn process_subdirectory(&mut self, dir_info: &DirectoryInfo) -> Result<()> {

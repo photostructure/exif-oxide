@@ -177,7 +177,7 @@ impl ExifReader {
             name if name.starts_with("Sony") => "Sony",
             name if name.starts_with("Olympus") => "Olympus",
             name if name.starts_with("Panasonic") => "Panasonic",
-            name if name.starts_with("Fujifilm") => "Fujifilm",
+            name if name.starts_with("FujiFilm") => "FujiFilm",
             // RAW format-specific IFDs (maintain existing behavior)
             "KyoceraRaw" => "EXIF", // Kyocera RAW uses EXIF group
             _ => "EXIF",            // Default to EXIF for unknown IFDs
@@ -191,7 +191,7 @@ impl ExifReader {
             "Sony" => "Sony".to_string(),
             "Olympus" => "Olympus".to_string(),
             "Panasonic" => "Panasonic".to_string(),
-            "Fujifilm" => "Fujifilm".to_string(),
+            "FujiFilm" => "FujiFilm".to_string(),
             _ => "Exif".to_string(),
         };
 
@@ -211,6 +211,7 @@ impl ExifReader {
         source_info: Option<&TagSourceInfo>,
     ) -> (TagValue, TagValue) {
         use crate::generated::Exif_pm::main_tags;
+        use crate::generated::FujiFilm_pm::main_tags as fujifilm_tag_kit;
         use crate::generated::GPS_pm::main_tags as gps_tag_kit;
         use crate::generated::Sony_pm::main_tags as sony_tag_kit;
 
@@ -323,6 +324,42 @@ impl ExifReader {
                 (value, print)
             } else {
                 // No tag definition found, return raw value for both
+                (value.clone(), value)
+            }
+        } else if ifd_name == "FujiFilm"
+            || (source_info.is_some() && source_info.unwrap().namespace == "FujiFilm")
+        {
+            // FujiFilm MakerNotes: both conversions come from the generated
+            // FujiFilm::Main table, so FilmMode 1536 prints as "Classic Chrome".
+            // ExifTool: lib/Image/ExifTool/FujiFilm.pm %Image::ExifTool::FujiFilm::Main
+            if let Some(tag_def) = fujifilm_tag_kit::FUJI_FILM_MAIN_TAGS.get(&tag_id) {
+                if tag_def.value_conv.is_some() {
+                    let mut value_conv_errors = Vec::new();
+                    match fujifilm_tag_kit::apply_value_conv(
+                        tag_id as u32,
+                        &value,
+                        &mut value_conv_errors,
+                    ) {
+                        Ok(converted) => value = converted,
+                        Err(e) => debug!(
+                            "Failed to apply ValueConv to FujiFilm tag 0x{:04x}: {}",
+                            tag_id, e
+                        ),
+                    }
+                }
+
+                let mut errors = Vec::new();
+                let mut warnings = Vec::new();
+                let print = fujifilm_tag_kit::apply_print_conv(
+                    tag_id as u32,
+                    &value,
+                    &mut errors,
+                    &mut warnings,
+                );
+
+                (value, print)
+            } else {
+                debug!("FujiFilm tag 0x{:04x} not in FUJI_FILM_MAIN_TAGS", tag_id);
                 (value.clone(), value)
             }
         } else if ifd_name == "Sony"
